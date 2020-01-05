@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="" />
+    <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/MapFactory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/input.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/item.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapInstance.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Renderer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tileTypes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/unit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/units.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnitBehavior.js" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1VyvZv99DSVyHqSO2xrXzO9ZT0l" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
@@ -23,11 +44,11 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -91,11 +112,25 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
-      <workItem from="1578164032503" duration="9910000" />
+      <workItem from="1578164032503" duration="17701000" />
+      <workItem from="1578238210486" duration="4054000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

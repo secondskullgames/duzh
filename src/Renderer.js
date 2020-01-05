@@ -13,6 +13,7 @@
       }
       lines.push(line);
     }
+    lines.push('','','');
     lines.push(_getStatusLine());
     _addActionLines(lines);
     container.innerHTML = lines.map(line => line.padEnd(80, ' ')).join('\n');
@@ -28,21 +29,13 @@
     } else if (element instanceof MapItem) {
       return '$';
     } else if (element instanceof Tile) {
-      const { tileTypes } = window.jwb;
-      switch (element.type) {
-        case tileTypes.WALL:
-          return '#';
-        case tileTypes.FLOOR:
-          return '.';
-        default:
-          return ' ';
-      }
+      return element.type.char;
     }
     return ' ';
   }
 
   function _getStatusLine() {
-    const { playerUnit } = window.jwb.state.map;
+    const { playerUnit } = window.jwb.state;
     return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}`;
   }
 
@@ -56,5 +49,5 @@
     }
   }
 
-  window.jwb.renderer = { render };
+  window.jwb.Renderer = { render };
 }

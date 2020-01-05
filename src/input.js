@@ -1,9 +1,36 @@
 {
-  window.onkeypress = e => {
-    const { units, playerUnit } = window.jwb.state.map;
-    const { tryMove } = window.jwb.units;
+  function keyHandler(key) {
+    const { Renderer } = window.jwb;
+    const { units } = window.jwb.state.map;
+
+    switch (key) {
+      case 'w':
+      case 'a':
+      case 's':
+      case 'd':
+        _handleMovement(key);
+        break;
+      case '>':
+        _handleStairsDown();
+        break;
+      case ' ':
+      case '.':
+        // Do nothing, but other units will update
+        break;
+      default:
+        return;
+    }
+
+    units.forEach(u => u.update());
+    Renderer.render();
+  }
+
+  function _handleMovement(key) {
+    const { playerUnit } = window.jwb.state;
+    const { tryMove } = window.jwb.utils.UnitBehavior;
+
     let [dx, dy] = [];
-    switch (e.key) {
+    switch (key) {
       case 'w':
         [dx, dy] = [0, -1];
         break;
@@ -16,14 +43,18 @@
       case 'd':
         [dx, dy] = [1, 0];
         break;
+      default:
+        throw `Invalid key ${key}`;
     }
 
-    if (!![dx, dy]) {
-      playerUnit.update = () => tryMove(playerUnit, playerUnit.x + dx, playerUnit.y + dy);
-    }
+    playerUnit.update = () => tryMove(playerUnit, playerUnit.x + dx, playerUnit.y + dy);
+  }
 
-    units.forEach(u => u.update());
+  function _handleStairsDown() {
+    window.jwb.state.loadMap(window.jwb.state.mapIndex + 1);
+  }
 
-    window.jwb.renderer.render();
-  };
+  window.onkeydown = e => keyHandler(e.key);
+
+  window.jwb.simulateKeyPress = keyHandler;
 }

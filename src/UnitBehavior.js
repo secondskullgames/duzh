@@ -1,10 +1,4 @@
 {
-  const createEnemyUnit = (x, y) => {
-    const u = new Unit(x, y, 'enemy', 50);
-    u.update = () => tryMoveRandomly(u);
-    return u;
-  };
-
   /**
    * @param {Unit} unit
    */
@@ -44,5 +38,6 @@
   }
 
   window.jwb = window.jwb || {};
-  window.jwb.units = { createEnemyUnit, tryMove };
+  window.jwb.utils = window.jwb.utils || {};
+  window.jwb.utils.UnitBehavior = { tryMove, tryMoveRandomly };
 }

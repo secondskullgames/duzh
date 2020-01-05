@@ -1,4 +1,4 @@
-class GameMap {
+class MapInstance {
   /**
    * @type int
    */
@@ -12,36 +12,28 @@ class GameMap {
    */
   tiles;
   /**
-   * @type MapItem[]
-   */
-  items;
-  /**
    * @type Unit[]
    */
   units;
   /**
-   * @type Unit
+   * @type MapItem[]
    */
-  playerUnit;
+  items;
 
-  constructor(width, height, tiles, items, units, playerUnit) {
+  constructor(width, height, tiles, units, items) {
     this.width = width;
     this.height = height;
     this.tiles = tiles;
     this.items = items;
     this.units = units;
-    this.playerUnit = playerUnit;
   }
 
   /**
-   * @returns Tile|null
+   * @returns Tile
    */
   getTile(x, y) {
-    const tile = this.tiles.filter(t => t.x === x && t.y === y)[0];
-    if (!tile) {
-      throw `No tile found at ${x}, ${y}`;
-    }
-    return tile;
+    const { TileType } = window.jwb.types;
+    return this.tiles.filter(t => t.x === x && t.y === y)[0] || new Tile(x, y, TileType.NONE);
   }
 
   /**
