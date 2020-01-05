@@ -1,6 +1,6 @@
 {
   function keyHandler(key) {
-    const { Renderer } = window.jwb;
+    const { renderer } = window.jwb;
     const { units } = window.jwb.state.map;
 
     switch (key) {
@@ -22,12 +22,12 @@
     }
 
     units.forEach(u => u.update());
-    Renderer.render();
+    renderer.render();
   }
 
   function _handleMovement(key) {
     const { playerUnit } = window.jwb.state;
-    const { tryMove } = window.jwb.utils.UnitBehavior;
+    const { tryMove } = window.jwb.utils.unitBehavior;
 
     let [dx, dy] = [];
     switch (key) {

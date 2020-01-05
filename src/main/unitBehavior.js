@@ -39,5 +39,5 @@
 
   window.jwb = window.jwb || {};
   window.jwb.utils = window.jwb.utils || {};
-  window.jwb.utils.UnitBehavior = { tryMove, tryMoveRandomly };
+  window.jwb.utils.unitBehavior = { tryMove, tryMoveRandomly };
 }

@@ -8,7 +8,8 @@ class MapSupplier {
    */
   height;
   /**
-   * @type Tile[]
+   * [y][x]
+   * @type Tile[][]
    */
   tiles;
   /**

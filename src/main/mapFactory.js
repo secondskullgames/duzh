@@ -46,7 +46,7 @@
    * @private
    */
   function _mapFromAscii(ascii) {
-    const { TileType } = window.jwb.types;
+    const { Tiles } = window.jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
     const tiles = [];
@@ -56,23 +56,24 @@
       const line = lines[y];
       for (let x = 0; x < line.length; x++) {
         const c = line[x];
-        let tileType = Object.values(TileType).filter(t => t.char === c)[0] || null;
-        if (!tileType) {
+        let tile = Object.values(Tiles).filter(t => t.char === c)[0] || null;
+        if (!tile) {
           if (c === '@') {
             playerUnitLocation = { x, y };
-            tileType = TileType.FLOOR;
+            tile = Tiles.FLOOR;
           } else if (c === 'U') {
             enemyUnitLocations.push({ x, y });
-            tileType = TileType.FLOOR;
+            tile = Tiles.FLOOR;
           } else {
-            tileType = TileType.NONE;
+            tile = Tiles.NONE;
           }
         }
-        tiles.push(new Tile(x, y, tileType));
+        tiles[y] = tiles[y] || [];
+        tiles[y][x] = tile;
       }
     }
-    const width = tiles.map(t => t.x).reduce((a, b) => Math.max(a, b)) + 1;
-    const height = tiles.map(t => t.y).reduce((a, b) => Math.max(a, b)) + 1;
+    const width = tiles.map(row => row.length).reduce((a, b) => Math.max(a, b)) + 1;
+    const height = tiles.length;
 
     /**
      * @type {Function<Coordinates, Unit>}
@@ -94,5 +95,5 @@
     );
   }
 
-  window.jwb.MapFactory = { randomMap, FIXED_MAPS };
+  window.jwb.mapFactory = { randomMap, FIXED_MAPS };
 }

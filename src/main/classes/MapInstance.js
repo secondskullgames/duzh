@@ -8,7 +8,8 @@ class MapInstance {
    */
   height;
   /**
-   * @type Tile[]
+   * [y][x]
+   * @type Tile[][]
    */
   tiles;
   /**
@@ -32,8 +33,8 @@ class MapInstance {
    * @returns Tile
    */
   getTile(x, y) {
-    const { TileType } = window.jwb.types;
-    return this.tiles.filter(t => t.x === x && t.y === y)[0] || new Tile(x, y, TileType.NONE);
+    const { Tiles } = window.jwb.types;
+    return this.tiles[y][x] || Tiles.NONE;
   }
 
   /**
@@ -64,6 +65,6 @@ class MapInstance {
     if (!this.contains(x, y)) {
       throw `(${x}, ${y}) is not on the map`;
     }
-    return this.getUnit(x, y) || this.getTile(x, y).isBlocking();
+    return this.getUnit(x, y) || this.getTile(x, y).isBlocking;
   }
 }
