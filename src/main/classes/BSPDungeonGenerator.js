@@ -3,13 +3,17 @@
  */
 class BSPDungeonGenerator {
   /**
+   * @type int
+   */
+  minSectionDimension;
+  /**
    * Including walls
    * @type int
    */
-  minRoomDimension;
+  minRoomDimension = 6;
 
   constructor(minRoomDimension) {
-    this.minRoomDimension = minRoomDimension;
+    this.minSectionDimension = minRoomDimension;
   }
 
   /**
@@ -17,23 +21,21 @@ class BSPDungeonGenerator {
    * @param {int} height
    */
   generateDungeon(width, height) {
-    const tiles = this._generateTiles(0, 0, width, height);
-    return new MapSupplier(width, height, tiles, { x: 0, width: 0 }, [], () => null, [])
+    const tiles = this._generateTiles(width, height);
+    return new MapSupplier(width, height, tiles, { x: 0, y: 0 }, [], () => null, [])
   }
 
   /**
-   * @param {int} left
-   * @param {int} top
    * @param {int} width
    * @param {int} height
    * @return Tile[]
    * @private
    */
-  _generateTiles(left, top, width, height) {
-    console.log(`_generateTiles(${left},${top},${width},${height})`);
+  _generateTiles(width, height) {
+    console.log(`_generateTiles(${width},${height})`);
     // split the area into two sub-dungeons, and recursively generate dungeons within them
-    const canSplitHorizontally = (width >= (2 * this.minRoomDimension));
-    const canSplitVertically = (height >= (2 * this.minRoomDimension));
+    const canSplitHorizontally = (width >= (2 * this.minSectionDimension));
+    const canSplitVertically = (height >= (2 * this.minSectionDimension));
 
     const splitDirections = [
       ...(canSplitHorizontally ? ['HORIZONTAL'] : []),
@@ -55,56 +57,85 @@ class BSPDungeonGenerator {
      * splitX: 9
      * leftWidth = 6            = splitX - left
      * rightWidth = 7           = right - splitX
-     *
      */
-
     if (splitDirections.length > 0) {
       const direction = splitDirections[this._randInt(0, splitDirections.length - 1)];
-      const tiles = [];
       if (direction === 'HORIZONTAL') {
-        const splitX = this._getSplitPoint(left, width);
-        console.log(`Split(X=${splitX})`);
-        const right = left + width;
-        const leftWidth = splitX - left;
-        const rightWidth = right - splitX;
-        const leftTiles = this._generateTiles(left, top, leftWidth, height);
-        const rightTiles = this._generateTiles(splitX, top, rightWidth, height);
-        tiles.push(...leftTiles, ...rightTiles);
+        const splitX = this._getSplitPoint(width);
+        console.log(`SplitX(${width} => ${splitX})`);
+        const leftWidth = splitX;
+        const rightWidth = width - splitX;
+        const leftTiles = this._generateTiles(leftWidth, height);
+        const rightTiles = this._generateTiles(rightWidth, height);
+        const tiles = [];
+        for (let y = 0; y < leftTiles.length; y++) {
+          tiles[y] = [...leftTiles[y], ...rightTiles[y]];
+        }
+        return tiles;
       } else {
-        const splitY = this._getSplitPoint(top, height);
-        console.log(`Split(Y=${splitY})`);
-        const bottom = top + height;
-        const topHeight = splitY - top;
-        const bottomHeight = bottom - splitY;
-        const topTiles = this._generateTiles(left, top, width, topHeight);
-        const bottomTiles = this._generateTiles(left, splitY, width, bottomHeight);
-        tiles.push(...topTiles, ...bottomTiles);
+        const splitY = this._getSplitPoint(height);
+        console.log(`SplitY(${height} => ${splitY})`);
+        const topHeight = splitY;
+        const bottomHeight = height - splitY;
+        const topTiles = this._generateTiles(width, topHeight);
+        const bottomTiles = this._generateTiles(width, bottomHeight);
+        return [...topTiles, ...bottomTiles];
       }
-      return tiles;
     } else {
-      return this._generateRoom(left, top, width, height);
+      return this._generateSection(width, height);
     }
   }
 
   /**
-   * @param {int} left
-   * @param {int} top
    * @param {int} width
    * @param {int} height
    * @returns {Tile[]}
    * @private
    */
-  _generateRoom(left, top, width, height) {
-    console.log(`_generateRoom(${left},${top},${width},${height})`);
-    const { TileType } = window.jwb.types;
+  _generateSection(width, height) {
+    console.log(`_generateSection(${width},${height})`);
+    const { Tiles } = window.jwb.types;
+    const roomWidth = this._randInt(this.minRoomDimension, width);
+    const roomHeight = this._randInt(this.minRoomDimension, height);
+    const room = this._generateRoom(roomWidth, roomHeight);
+
+    const roomLeft = this._randInt(0, width - roomWidth);
+    const roomTop = this._randInt(0, height - roomHeight);
     const tiles = [];
-    const [bottom, right] = [top + height, left + width]; // exclusive
-    for (let y = top; y < bottom; y++) {
-      for (let x = left; x < right; x++) {
-        if (x === left || x === (right - 1) || y === top || y === (bottom - 1)) {
-          tiles.push(new Tile(x, y, TileType.WALL));
+    for (let y = 0; y < height; y++) {
+      tiles[y] = [];
+      const roomY = y - roomTop;
+      for (let x = 0; x < width; x++) {
+        const roomX = x - roomLeft;
+        if (roomX >= 0 && roomX < room[0].length && roomY >= 0 && roomY < room.length) {
+          tiles[y][x] = room[roomY][roomX];
         } else {
-          tiles.push(new Tile(x, y, TileType.FLOOR));
+          tiles[y][x] = Tiles.NONE;
+        }
+      }
+    }
+
+    return tiles;
+  }
+
+
+  /**
+   * @param {int} width
+   * @param {int} height
+   * @returns {Tile[]}
+   * @private
+   */
+  _generateRoom(width, height) {
+    console.log(`_generateRoom(${width},${height})`);
+    const { Tiles } = window.jwb.types;
+    const tiles = [];
+    for (let y = 0; y < height; y++) {
+      tiles[y] = [];
+      for (let x = 0; x < width; x++) {
+        if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
+          tiles[y][x] = Tiles.WALL;
+        } else {
+          tiles[y][x] = Tiles.FLOOR;
         }
       }
     }
@@ -112,14 +143,13 @@ class BSPDungeonGenerator {
   }
 
   /**
-   * @param {int} min left or top
    * @param {int} dimension width or height
    * @returns {int} the min X/Y coordinate of the *second* room
    * @private
    */
-  _getSplitPoint(min, dimension) {
-    const minSplitPoint = min + this.minRoomDimension;
-    const maxSplitPoint = (min + dimension) - this.minRoomDimension;
+  _getSplitPoint(dimension) {
+    const minSplitPoint = this.minSectionDimension;
+    const maxSplitPoint = dimension - this.minSectionDimension;
     return this._randInt(minSplitPoint, maxSplitPoint);
   }
 

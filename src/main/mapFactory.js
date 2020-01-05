@@ -38,7 +38,7 @@
    * @param {int} height
    */
   function randomMap(width, height) {
-    return new BSPDungeonGenerator(4, 4).generateDungeon(width, height);
+    return new BSPDungeonGenerator(8).generateDungeon(width, height);
   }
 
   /**

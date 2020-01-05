@@ -34,7 +34,7 @@ class MapInstance {
    */
   getTile(x, y) {
     const { Tiles } = window.jwb.types;
-    return this.tiles[y][x] || Tiles.NONE;
+    return (this.tiles[y] || [])[x] || Tiles.NONE;
   }
 
   /**
