@@ -2,20 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/MapFactory.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapFactory.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/input.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/item.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapItem.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/MapInstance.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Renderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tileTypes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/unit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Unit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/units.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/UnitBehavior.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -113,7 +105,7 @@
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
       <workItem from="1578164032503" duration="17701000" />
-      <workItem from="1578238210486" duration="4054000" />
+      <workItem from="1578238210486" duration="10310000" />
     </task>
     <servers />
   </component>

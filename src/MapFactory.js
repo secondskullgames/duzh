@@ -34,6 +34,14 @@
   ];
 
   /**
+   * @param {int} width
+   * @param {int} height
+   */
+  function randomMap(width, height) {
+    return new BSPDungeonGenerator(4, 4).generateDungeon(width, height);
+  }
+
+  /**
    * @param {string} ascii
    * @private
    */
@@ -86,5 +94,5 @@
     );
   }
 
-  window.jwb.MapFactory = { FIXED_MAPS };
+  window.jwb.MapFactory = { randomMap, FIXED_MAPS };
 }

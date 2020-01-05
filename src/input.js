@@ -54,7 +54,12 @@
     window.jwb.state.loadMap(window.jwb.state.mapIndex + 1);
   }
 
-  window.onkeydown = e => keyHandler(e.key);
+  function attachEvents() {
+    window.onkeydown = e => keyHandler(e.key);
+  }
 
-  window.jwb.simulateKeyPress = keyHandler;
+  window.jwb.input = {
+    attachEvents,
+    simulateKeyPress: keyHandler
+  };
 }
