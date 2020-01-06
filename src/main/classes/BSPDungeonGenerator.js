@@ -22,10 +22,14 @@ class BSPDungeonGenerator {
   /**
    * @param {int} width
    * @param {int} height
+   * @param {int} numEnemies
+   * @param {Function<Coordinates, Unit>} enemyUnitSupplier
    */
-  generateDungeon(width, height) {
+  generateDungeon(width, height, numEnemies, enemyUnitSupplier) {
     const tiles = this._generateTiles(width, height);
-    return new MapSupplier(width, height, tiles, { x: 0, y: 0 }, [], () => null, [])
+    const enemyLocations = this._pickNLocations(tiles, numEnemies);
+    const playerLocation = this._getPlayerLocation(tiles, enemyLocations);
+    return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, [])
   }
 
   /**
@@ -125,7 +129,6 @@ class BSPDungeonGenerator {
     return tiles;
   }
 
-
   /**
    * @param {int} width
    * @param {int} height
@@ -185,40 +188,21 @@ class BSPDungeonGenerator {
     console.log(leftSection.map(row => row.join('')).join('\n'));
     console.log(rightSection.map(row => row.join('')).join('\n'));
 
-    const leftRoomRightWall = leftSection
-      .map(row => row.lastIndexOf(Tiles.WALL.char))
-      .reduce((a, b) => Math.max(a, b));
-    const leftRoomTopWall = leftSection
-      .findIndex(row => row.lastIndexOf(Tiles.WALL.char) === leftRoomRightWall);
-    const leftRoomBottomWall = leftSection
-      .map((row, i) => ((row.lastIndexOf(Tiles.WALL.char) === leftRoomRightWall) ? i : -1))
-      .reduce((a, b) => Math.max(a, b));
-
-    const rightRoomLeftWall = splitX + rightSection
-      .map(row => row.indexOf(Tiles.WALL.char))
-      .filter(x => x > -1)
-      .reduce((a, b) => Math.min(a, b));
-    const rightRoomTopWall = rightSection
-      .findIndex(row => row.indexOf(Tiles.WALL.char) === (rightRoomLeftWall - splitX));
-    const rightRoomBottomWall = rightSection
-      .map((row, i) => ((row.indexOf(Tiles.WALL.char) === (rightRoomLeftWall - splitX)) ? i : -1))
-      .reduce((a, b) => Math.max(a, b));
-
     const yCandidates = leftSection
-      .map((leftRow, i) => {
+      .map((leftRow, y) => {
         if (leftRow.indexOf(Tiles.WALL.char) > -1) {
           const leftRowRightWall = leftRow.lastIndexOf(Tiles.WALL.char);
           if (leftRow[leftRowRightWall - 1] !== Tiles.WALL.char) {
-            const rightRow = rightSection[i];
+            const rightRow = rightSection[y];
             const rightRowLeftWall = rightRow.indexOf(Tiles.WALL.char);
             if (rightRowLeftWall > -1 && (rightRow[rightRowLeftWall + 1] !== Tiles.WALL.char)) {
-              return i;
+              return y;
             }
           }
         }
         return -1;
       })
-      .filter(i => i !== -1 && i > leftRoomTopWall && i < leftRoomBottomWall);
+      .filter(i => i !== -1);
 
     const y = yCandidates[this._randInt(0, yCandidates.length - 1)];
     if (!y) {
@@ -234,37 +218,98 @@ class BSPDungeonGenerator {
     }
   }
 
+  /**
+   * TODO this does not account for the case where there's no straight line between the two rooms.
+   */
   _joinSectionsVertically(tiles, splitY) {
     const { Tiles } = window.jwb.types;
+    /**
+     * @type string[][]
+     */
     const topSection = tiles
       .filter((row, i) => i < splitY)
       .map(row => row.map(tile => tile.char));
+    /**
+     * @type string[][]
+     */
     const bottomSection = tiles
-      .filter((row, i) => i < splitY)
+      .filter((row, i) => i >= splitY)
       .map(row => row.map(tile => tile.char));
 
-    const topRoomBottomWall = topSection
-      .filter(row => row.indexOf(Tiles.WALL.char) > -1)
-      .map((row, i) => i)
-      .reduce((a, b) => Math.max(a, b));
-    const topRoomLeftWall = topSection[topRoomBottomWall].indexOf(Tiles.WALL.char);
-    const topRoomRightWall = topSection[topRoomBottomWall].lastIndexOf(Tiles.WALL.char);
+    console.log(topSection.map(row => row.join('')).join('\n'));
+    console.log(bottomSection.map(row => row.join('')).join('\n'));
 
-    const bottomRoomTopWall = splitY + bottomSection
-      .findIndex(row => row.indexOf(Tiles.WALL.char) > -1);
-    const bottomRoomLeftWall = bottomSection[bottomRoomTopWall - splitY].indexOf(Tiles.WALL.char);
-    const bottomRoomRightWall = bottomSection[bottomRoomTopWall - splitY].lastIndexOf(Tiles.WALL.char);
+    const topCols = topSection[0].map((_, x) => topSection.map(row => row[x]));
+    const bottomCols = bottomSection[0].map((_, x) => bottomSection.map(row => row[x]));
 
-    // TODO this does not account for the case where there's no straight line between the two rooms.
-    // Deal with this with multi-part paths in the future.
-    const x = this._randInt(
-      Math.max(topRoomLeftWall + 1, bottomRoomLeftWall + 1),
-      Math.min(topRoomRightWall - 1, bottomRoomRightWall - 1)
-    );
+    const xCandidates = topCols
+      .map((topCol, x) => {
+        if (topCol.indexOf(Tiles.WALL.char) > -1) {
+          const topColBottomWall = topCol.lastIndexOf(Tiles.WALL.char);
+          if (topCol[topColBottomWall - 1] !== Tiles.WALL.char) {
+            const bottomCol = bottomCols[x];
+            const bottomColTopWall = bottomCol.indexOf(Tiles.WALL.char);
+            if ((bottomColTopWall > -1) && (bottomColTopWall < (bottomCol.length - 1)) && (bottomCol[bottomColTopWall + 1] !== Tiles.WALL.char)) {
+              return x;
+            }
+          }
+        }
+        return -1;
+      })
+      .filter(i => i !== -1);
 
-    for (let y = topRoomBottomWall; y <= bottomRoomTopWall; y++) {
+    const x = xCandidates[this._randInt(0, xCandidates.length - 1)];
+    if (!x) {
+      debugger;
+    }
+
+    const topColBottomWall = topSection.map(row => row[x]).lastIndexOf(Tiles.WALL.char);
+    const bottomColTopWall = bottomSection.map(row => row[x]).indexOf(Tiles.WALL.char) + splitY;
+    for (let y = topColBottomWall; y <= bottomColTopWall; y++) {
       tiles[y][x] = Tiles.FLOOR;
       console.log(`Y Corridor: ${x} ${y}`);
     }
+  }
+
+  _pickNLocations(tiles, n) {
+    const { Tiles } = window.jwb.types;
+    /**
+     * @type {{ x: int, y: int }[]}
+     */
+    const floorTileLocations = [];
+    const enemyLocations = [];
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x] === Tiles.FLOOR) {
+          floorTileLocations.push({ x, y });
+        }
+      }
+    }
+
+    for (let i = 0; i < n; i++) {
+      const index = this._randInt(0, floorTileLocations.length - 1);
+      const { x, y } = floorTileLocations[index];
+      enemyLocations.push({ x, y});
+      floorTileLocations.splice(index, 1);
+    }
+    return enemyLocations;
+  }
+
+  _getPlayerLocation(tiles, enemyLocations) {
+    const { Tiles } = window.jwb.types;
+    /**
+     * @type {{ x: int, y: int }[]}
+     */
+    const candidateLocations = [];
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x] === Tiles.FLOOR) {
+          if (enemyLocations.findIndex(loc => loc.x === x && loc.y === y) === -1) {
+            candidateLocations.push({x, y});
+          }
+        }
+      }
+    }
+    return candidateLocations[this._randInt(0, candidateLocations.length - 1)];
   }
 }

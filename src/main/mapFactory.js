@@ -37,8 +37,17 @@
    * @param {int} width
    * @param {int} height
    */
-  function randomMap(width, height) {
-    return new BSPDungeonGenerator(8, 5).generateDungeon(width, height);
+  function randomMap(width, height, numEnemies) {
+    /**
+     * @type {Function<Coordinates, Unit>}
+     */
+    const enemyUnitSupplier = ({ x, y }) => {
+      const u = new Unit(x, y, 'enemy', 50);
+      u.update = () => tryMoveRandomly(u);
+      return u;
+    };
+
+    return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier);
   }
 
   /**
