@@ -1,7 +1,7 @@
 {
   class Renderer {
     render() {
-      const {map} = window.jwb.state;
+      const { map } = window.jwb.state;
       const container = document.getElementById('container');
       const lines = ['', '', '']; // extra room for messages
       for (let y = 0; y < map.height; y++) {

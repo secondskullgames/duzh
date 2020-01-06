@@ -2,7 +2,7 @@
   const { mapFactory } = window.jwb;
 
   window.jwb.state = new GameState(new Unit(4, 10, 'player', 100), [
-    //mapFactory.randomMap(24, 24),
+    mapFactory.randomMap(40, 6),
     mapFactory.FIXED_MAPS[0],
     mapFactory.FIXED_MAPS[1]
   ]);

@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/MapInstance.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapInstance.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/Renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Renderer.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/mapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/mapFactory.js" afterDir="false" />
     </list>
@@ -106,7 +107,7 @@
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
       <workItem from="1578164032503" duration="17701000" />
-      <workItem from="1578238210486" duration="14743000" />
+      <workItem from="1578238210486" duration="18825000" />
     </task>
     <servers />
   </component>
