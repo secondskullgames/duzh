@@ -1,6 +1,8 @@
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
  */
+//Math.random = () => 0.5;
+
 class BSPDungeonGenerator {
   /**
    * @type int
@@ -10,10 +12,11 @@ class BSPDungeonGenerator {
    * Including walls
    * @type int
    */
-  minRoomDimension = 4;
+  minRoomDimension;
 
-  constructor(minSectionDimension) {
+  constructor(minSectionDimension, minRoomDimension) {
     this.minSectionDimension = minSectionDimension;
+    this.minRoomDimension = minRoomDimension;
   }
 
   /**
@@ -82,7 +85,7 @@ class BSPDungeonGenerator {
         const topTiles = this._generateTiles(width, topHeight);
         const bottomTiles = this._generateTiles(width, bottomHeight);
         const tiles =  [...topTiles, ...bottomTiles];
-        this._joinSectionsVertically(tiles, topHeight + 1);
+        this._joinSectionsVertically(tiles, topHeight);
         return tiles;
       }
     } else {
@@ -166,53 +169,102 @@ class BSPDungeonGenerator {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
+  /** TODO this does not account for the case where there's no straight line between the two rooms.
+   * Deal with this with multi-part paths in the future.
+   */
   _joinSectionsHorizontally(tiles, splitX) {
     const { Tiles } = window.jwb.types;
-    const leftRoom = tiles
+    const leftSection = tiles
       .map(row => row.slice(0, splitX))
       .map(row => row.map(tile => tile.char));
-    const rightRoom = tiles
+    const rightSection = tiles
       .map(row => row.slice(splitX, row.length))
       .map(row => row.map(tile => tile.char));
 
-    const leftRoomRightWall = leftRoom
+    console.log('_joinSectionsHorizontally:');
+    console.log(leftSection.map(row => row.join('')).join('\n'));
+    console.log(rightSection.map(row => row.join('')).join('\n'));
+
+    const leftRoomRightWall = leftSection
       .map(row => row.lastIndexOf(Tiles.WALL.char))
       .reduce((a, b) => Math.max(a, b));
-    const leftRoomTopWall = leftRoom
+    const leftRoomTopWall = leftSection
       .findIndex(row => row.lastIndexOf(Tiles.WALL.char) === leftRoomRightWall);
-    const leftRoomBottomWall = leftRoom
+    const leftRoomBottomWall = leftSection
       .map((row, i) => ((row.lastIndexOf(Tiles.WALL.char) === leftRoomRightWall) ? i : -1))
       .reduce((a, b) => Math.max(a, b));
 
-    const rightRoomLeftWall = splitX + rightRoom
+    const rightRoomLeftWall = splitX + rightSection
       .map(row => row.indexOf(Tiles.WALL.char))
       .filter(x => x > -1)
       .reduce((a, b) => Math.min(a, b));
-    const rightRoomTopWall = rightRoom
+    const rightRoomTopWall = rightSection
       .findIndex(row => row.indexOf(Tiles.WALL.char) === (rightRoomLeftWall - splitX));
-    const rightRoomBottomWall = rightRoom
+    const rightRoomBottomWall = rightSection
       .map((row, i) => ((row.indexOf(Tiles.WALL.char) === (rightRoomLeftWall - splitX)) ? i : -1))
       .reduce((a, b) => Math.max(a, b));
 
-    // TODO this does not account for the case where there's no straight line between the two rooms.
-    // Deal with this with multi-part paths in the future.
-    const y = this._randInt(
-      Math.max(leftRoomTopWall + 1, rightRoomTopWall + 1),
-      Math.min(leftRoomBottomWall - 1, rightRoomBottomWall - 1)
-    );
+    const yCandidates = leftSection
+      .map((leftRow, i) => {
+        if (leftRow.indexOf(Tiles.WALL.char) > -1) {
+          const leftRowRightWall = leftRow.lastIndexOf(Tiles.WALL.char);
+          if (leftRow[leftRowRightWall - 1] !== Tiles.WALL.char) {
+            const rightRow = rightSection[i];
+            const rightRowLeftWall = rightRow.indexOf(Tiles.WALL.char);
+            if (rightRowLeftWall > -1 && (rightRow[rightRowLeftWall + 1] !== Tiles.WALL.char)) {
+              return i;
+            }
+          }
+        }
+        return -1;
+      })
+      .filter(i => i !== -1 && i > leftRoomTopWall && i < leftRoomBottomWall);
 
-    for (let x = leftRoomRightWall; x <= rightRoomLeftWall; x++) {
+    const y = yCandidates[this._randInt(0, yCandidates.length - 1)];
+    if (!y) {
+      debugger;
+    }
+
+    const leftRowRightWall = leftSection[y].lastIndexOf(Tiles.WALL.char);
+    const rightRowLeftWall = rightSection[y].indexOf(Tiles.WALL.char) + splitX;
+    for (let x = leftRowRightWall; x <= rightRowLeftWall; x++) {
       tiles[y] = tiles[y] || []; // TODO
       tiles[y][x] = Tiles.FLOOR;
-      console.log(`corridor: (${x}, ${y}), splitX=${splitX}, ${leftRoomRightWall}, ${rightRoomLeftWall}, ${leftRoomTopWall}, ${rightRoomTopWall}`);
-      console.log(leftRoom.map(row => row.join('')).join('\n'));
-      console.log(rightRoom.map(row => row.join('')).join('\n'));
+      console.log(`X  Corridor: ${x} ${y}`);
     }
   }
 
   _joinSectionsVertically(tiles, splitY) {
     const { Tiles } = window.jwb.types;
-    const topRoom = tiles.filter((row, i) => i < splitY);
-    const bottomRoom = tiles.filter((row, i) => i < splitY);
+    const topSection = tiles
+      .filter((row, i) => i < splitY)
+      .map(row => row.map(tile => tile.char));
+    const bottomSection = tiles
+      .filter((row, i) => i < splitY)
+      .map(row => row.map(tile => tile.char));
+
+    const topRoomBottomWall = topSection
+      .filter(row => row.indexOf(Tiles.WALL.char) > -1)
+      .map((row, i) => i)
+      .reduce((a, b) => Math.max(a, b));
+    const topRoomLeftWall = topSection[topRoomBottomWall].indexOf(Tiles.WALL.char);
+    const topRoomRightWall = topSection[topRoomBottomWall].lastIndexOf(Tiles.WALL.char);
+
+    const bottomRoomTopWall = splitY + bottomSection
+      .findIndex(row => row.indexOf(Tiles.WALL.char) > -1);
+    const bottomRoomLeftWall = bottomSection[bottomRoomTopWall - splitY].indexOf(Tiles.WALL.char);
+    const bottomRoomRightWall = bottomSection[bottomRoomTopWall - splitY].lastIndexOf(Tiles.WALL.char);
+
+    // TODO this does not account for the case where there's no straight line between the two rooms.
+    // Deal with this with multi-part paths in the future.
+    const x = this._randInt(
+      Math.max(topRoomLeftWall + 1, bottomRoomLeftWall + 1),
+      Math.min(topRoomRightWall - 1, bottomRoomRightWall - 1)
+    );
+
+    for (let y = topRoomBottomWall; y <= bottomRoomTopWall; y++) {
+      tiles[y][x] = Tiles.FLOOR;
+      console.log(`Y Corridor: ${x} ${y}`);
+    }
   }
 }
