@@ -1,5 +1,5 @@
 {
-  const generator = new BSPDungeonGenerator(4);
+  const generator = new BSPDungeonGenerator(6, 4);
 
   function testRandInt() {
     const realFunc = Math.random;

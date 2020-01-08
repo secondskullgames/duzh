@@ -27,20 +27,23 @@ class BSPDungeonGenerator {
    */
   generateDungeon(width, height, numEnemies, enemyUnitSupplier) {
     const tiles = this._generateTiles(width, height);
-    const enemyLocations = this._pickNLocations(tiles, numEnemies);
-    const playerLocation = this._getPlayerLocation(tiles, enemyLocations);
+    const enemyLocations = this._pickEnemyLocations(tiles, numEnemies);
+    const playerLocation = this._pickPlayerLocation(tiles, enemyLocations);
     return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, [])
   }
 
   /**
+   * Generate a rectangular area of tiles with the specified dimensions, consisting of any number of rooms connected
+   * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
+   * not large enough to form two sub-regions, just return a single section.
+   *
    * @param {int} width
    * @param {int} height
    * @return Tile[][]
    * @private
    */
   _generateTiles(width, height) {
-    console.log(`_generateTiles(${width},${height})`);
-    // split the area into two sub-dungeons, and recursively generate dungeons within them
+    // First, make sure the area is large enough to support two sections; if not, we're done
     const canSplitHorizontally = (width >= (2 * this.minSectionDimension));
     const canSplitVertically = (height >= (2 * this.minSectionDimension));
 
@@ -69,7 +72,6 @@ class BSPDungeonGenerator {
       const direction = splitDirections[this._randInt(0, splitDirections.length - 1)];
       if (direction === 'HORIZONTAL') {
         const splitX = this._getSplitPoint(width);
-        console.log(`SplitX(${width} => ${splitX})`);
         const leftWidth = splitX;
         const rightWidth = width - splitX;
         const leftTiles = this._generateTiles(leftWidth, height);
@@ -83,7 +85,6 @@ class BSPDungeonGenerator {
         return tiles;
       } else {
         const splitY = this._getSplitPoint(height);
-        console.log(`SplitY(${height} => ${splitY})`);
         const topHeight = splitY;
         const bottomHeight = height - splitY;
         const topTiles = this._generateTiles(width, topHeight);
@@ -93,18 +94,22 @@ class BSPDungeonGenerator {
         return tiles;
       }
     } else {
+      // Base case: return a single section
       return this._generateSection(width, height);
     }
   }
 
   /**
+   * Create a rectangular section of tiles, consisting of a room surrounded by empty spaces.  The room can be placed
+   * anywhere in the region at random, and can occupy a variable amount of space in the region
+   * (within the specified parameters).
+   *
    * @param {int} width
    * @param {int} height
-   * @return {Tile[][]} A rectangular section of tiles, consisting of a room surrounded by empty spaces
+   * @return {Tile[][]}
    * @private
    */
   _generateSection(width, height) {
-    console.log(`_generateSection(${width},${height})`);
     const { Tiles } = window.jwb.types;
     const roomWidth = this._randInt(this.minRoomDimension, width);
     const roomHeight = this._randInt(this.minRoomDimension, height);
@@ -113,11 +118,14 @@ class BSPDungeonGenerator {
     const roomLeft = this._randInt(0, width - roomWidth);
     const roomTop = this._randInt(0, height - roomHeight);
     const tiles = [];
+    // x, y are relative to the section's origin
+    // roomX, roomY are relative to the room's origin
     for (let y = 0; y < height; y++) {
       tiles[y] = [];
       const roomY = y - roomTop;
       for (let x = 0; x < width; x++) {
         const roomX = x - roomLeft;
+
         if (roomX >= 0 && roomX < room[0].length && roomY >= 0 && roomY < room.length) {
           tiles[y][x] = room[roomY][roomX];
         } else {
@@ -136,7 +144,6 @@ class BSPDungeonGenerator {
    * @private
    */
   _generateRoom(width, height) {
-    console.log(`_generateRoom(${width},${height})`);
     const { Tiles } = window.jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
@@ -184,9 +191,7 @@ class BSPDungeonGenerator {
       .map(row => row.slice(splitX, row.length))
       .map(row => row.map(tile => tile.char));
 
-    console.log('_joinSectionsHorizontally:');
-    console.log(leftSection.map(row => row.join('')).join('\n'));
-    console.log(rightSection.map(row => row.join('')).join('\n'));
+    this._logSections('HORIZONTAL', leftSection, rightSection);
 
     const yCandidates = leftSection
       .map((leftRow, y) => {
@@ -205,21 +210,18 @@ class BSPDungeonGenerator {
       .filter(i => i !== -1);
 
     const y = yCandidates[this._randInt(0, yCandidates.length - 1)];
-    if (!y) {
-      debugger;
-    }
 
     const leftRowRightWall = leftSection[y].lastIndexOf(Tiles.WALL.char);
     const rightRowLeftWall = rightSection[y].indexOf(Tiles.WALL.char) + splitX;
     for (let x = leftRowRightWall; x <= rightRowLeftWall; x++) {
-      tiles[y] = tiles[y] || []; // TODO
       tiles[y][x] = Tiles.FLOOR;
-      console.log(`X  Corridor: ${x} ${y}`);
     }
   }
 
   /**
    * TODO this does not account for the case where there's no straight line between the two rooms.
+   * @param {Tile[][]} tiles
+   * @param {int} splitY
    */
   _joinSectionsVertically(tiles, splitY) {
     const { Tiles } = window.jwb.types;
@@ -233,11 +235,10 @@ class BSPDungeonGenerator {
      * @type string[][]
      */
     const bottomSection = tiles
-      .filter((row, i) => i >= splitY)
+      .filter((row, i) => (i >= splitY))
       .map(row => row.map(tile => tile.char));
 
-    console.log(topSection.map(row => row.join('')).join('\n'));
-    console.log(bottomSection.map(row => row.join('')).join('\n'));
+    this._logSections('VERTICAL', topSection, bottomSection);
 
     const topCols = topSection[0].map((_, x) => topSection.map(row => row[x]));
     const bottomCols = bottomSection[0].map((_, x) => bottomSection.map(row => row[x]));
@@ -259,19 +260,16 @@ class BSPDungeonGenerator {
       .filter(i => i !== -1);
 
     const x = xCandidates[this._randInt(0, xCandidates.length - 1)];
-    if (!x) {
-      debugger;
-    }
 
     const topColBottomWall = topSection.map(row => row[x]).lastIndexOf(Tiles.WALL.char);
     const bottomColTopWall = bottomSection.map(row => row[x]).indexOf(Tiles.WALL.char) + splitY;
+
     for (let y = topColBottomWall; y <= bottomColTopWall; y++) {
       tiles[y][x] = Tiles.FLOOR;
-      console.log(`Y Corridor: ${x} ${y}`);
     }
   }
 
-  _pickNLocations(tiles, n) {
+  _pickEnemyLocations(tiles, n) {
     const { Tiles } = window.jwb.types;
     /**
      * @type {{ x: int, y: int }[]}
@@ -295,7 +293,7 @@ class BSPDungeonGenerator {
     return enemyLocations;
   }
 
-  _getPlayerLocation(tiles, enemyLocations) {
+  _pickPlayerLocation(tiles, enemyLocations) {
     const { Tiles } = window.jwb.types;
     /**
      * @type {{ x: int, y: int }[]}
@@ -305,11 +303,17 @@ class BSPDungeonGenerator {
       for (let x = 0; x < tiles[y].length; x++) {
         if (tiles[y][x] === Tiles.FLOOR) {
           if (enemyLocations.findIndex(loc => loc.x === x && loc.y === y) === -1) {
-            candidateLocations.push({x, y});
+            candidateLocations.push({ x, y });
           }
         }
       }
     }
     return candidateLocations[this._randInt(0, candidateLocations.length - 1)];
+  }
+
+  _logSections(name, ...sections) {
+    console.log(`Sections for ${name}:`);
+    sections.forEach(section => console.log(section.map(row => row.join('')).join('\n')));
+    console.log();
   }
 }
