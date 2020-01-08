@@ -3,6 +3,32 @@
  */
 //Math.random = () => 0.5;
 
+class MapSection {
+  /**
+   * @type int
+   */
+  width;
+  /**
+   * @type int
+   */
+  height;
+  /**
+   * @type {Rect[]}
+   */
+  rooms;
+  /**
+   * @type Tile[][]
+   */
+  tiles;
+
+  constructor(width, height, rooms, tiles) {
+    this.width = width;
+    this.height = height;
+    this.rooms = rooms;
+    this.tiles = tiles;
+  }
+}
+
 class BSPDungeonGenerator {
   /**
    * @type int
@@ -26,7 +52,8 @@ class BSPDungeonGenerator {
    * @param {Function<Coordinates, Unit>} enemyUnitSupplier
    */
   generateDungeon(width, height, numEnemies, enemyUnitSupplier) {
-    const tiles = this._generateTiles(width, height);
+    const section = this._generateSection(width, height);
+    const { tiles } = section;
     const enemyLocations = this._pickEnemyLocations(tiles, numEnemies);
     const playerLocation = this._pickPlayerLocation(tiles, enemyLocations);
     return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, [])
@@ -39,10 +66,10 @@ class BSPDungeonGenerator {
    *
    * @param {int} width
    * @param {int} height
-   * @return Tile[][]
+   * @return {MapSection}
    * @private
    */
-  _generateTiles(width, height) {
+  _generateSection(width, height) {
     // First, make sure the area is large enough to support two sections; if not, we're done
     const canSplitHorizontally = (width >= (2 * this.minSectionDimension));
     const canSplitVertically = (height >= (2 * this.minSectionDimension));
@@ -74,28 +101,34 @@ class BSPDungeonGenerator {
         const splitX = this._getSplitPoint(width);
         const leftWidth = splitX;
         const rightWidth = width - splitX;
-        const leftTiles = this._generateTiles(leftWidth, height);
-        const rightTiles = this._generateTiles(rightWidth, height);
+        const leftSection = this._generateSection(leftWidth, height);
+        const rightSection = this._generateSection(rightWidth, height);
 
         const tiles = [];
-        for (let y = 0; y < leftTiles.length; y++) {
-          tiles[y] = [...leftTiles[y], ...rightTiles[y]];
+        for (let y = 0; y < leftSection.tiles.length; y++) {
+          tiles[y] = [...leftSection.tiles[y], ...rightSection.tiles[y]];
         }
-        this._joinSectionsHorizontally(tiles, leftWidth);
-        return tiles;
+        this._joinSectionsHorizontally(tiles, leftSection, rightSection);
+        // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
+        // relative to this section's coordinates
+        const rightRooms = rightSection.rooms
+          .map(room => ({ ...room, left: room.left + splitX }));
+        return new MapSection(width, height, [...leftSection.rooms, ...rightRooms], tiles);
       } else {
         const splitY = this._getSplitPoint(height);
         const topHeight = splitY;
         const bottomHeight = height - splitY;
-        const topTiles = this._generateTiles(width, topHeight);
-        const bottomTiles = this._generateTiles(width, bottomHeight);
-        const tiles =  [...topTiles, ...bottomTiles];
-        this._joinSectionsVertically(tiles, topHeight);
-        return tiles;
+        const topSection = this._generateSection(width, topHeight);
+        const bottomSection = this._generateSection(width, bottomHeight);
+        const tiles =  [...topSection.tiles, ...bottomSection.tiles];
+        this._joinSectionsVertically(tiles, topSection, bottomSection);
+        const bottomRooms = bottomSection.rooms
+          .map(room => ({ ...room, top: room.top + splitY }));
+        return new MapSection(width, height, [...topSection.rooms, ...bottomRooms], tiles);
       }
     } else {
       // Base case: return a single section
-      return this._generateSection(width, height);
+      return this._generateSingleSection(width, height);
     }
   }
 
@@ -106,10 +139,10 @@ class BSPDungeonGenerator {
    *
    * @param {int} width
    * @param {int} height
-   * @return {Tile[][]}
+   * @return {MapSection}
    * @private
    */
-  _generateSection(width, height) {
+  _generateSingleSection(width, height) {
     const { Tiles } = window.jwb.types;
     const roomWidth = this._randInt(this.minRoomDimension, width);
     const roomHeight = this._randInt(this.minRoomDimension, height);
@@ -134,7 +167,8 @@ class BSPDungeonGenerator {
       }
     }
 
-    return tiles;
+    const roomRect = { left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight};
+    return new MapSection(width, height, [roomRect], tiles);
   }
 
   /**
@@ -179,92 +213,91 @@ class BSPDungeonGenerator {
     return Math.floor(Math.random() * (max - min) + min);
   }
 
-  /** TODO this does not account for the case where there's no straight line between the two rooms.
+  _randChoice(list) {
+    return list[this._randInt(0, list.length - 1)];
+  }
+
+  /**
+   * TODO this does not account for the case where there's no straight line between the two rooms.
    * Deal with this with multi-part paths in the future.
+   *
+   * @param {Tiles[][]} tiles The tiles of both leftSection and rightSection
+   * @param {MapSection} leftSection
+   * @param {MapSection} rightSection
    */
-  _joinSectionsHorizontally(tiles, splitX) {
-    const { Tiles } = window.jwb.types;
-    const leftSection = tiles
-      .map(row => row.slice(0, splitX))
-      .map(row => row.map(tile => tile.char));
-    const rightSection = tiles
-      .map(row => row.slice(splitX, row.length))
-      .map(row => row.map(tile => tile.char));
-
+  _joinSectionsHorizontally(tiles, leftSection, rightSection) {
     this._logSections('HORIZONTAL', leftSection, rightSection);
+    const { Tiles } = window.jwb.types;
+    /**
+     * @type {{ y: int, leftRoom: Rect, rightRoom: Rect}[]}
+     */
+    const candidates = tiles
+      .map((_, y) => {
+        const leftRooms = leftSection.rooms
+          .filter(room => (y >= room.top && y <= (room.top + room.height - 1)));
+        const rightRooms = rightSection.rooms
+          .filter(room => (y >= room.top && y <= (room.top + room.height - 1)));
 
-    const yCandidates = leftSection
-      .map((leftRow, y) => {
-        if (leftRow.indexOf(Tiles.WALL.char) > -1) {
-          const leftRowRightWall = leftRow.lastIndexOf(Tiles.WALL.char);
-          if (leftRow[leftRowRightWall - 1] !== Tiles.WALL.char) {
-            const rightRow = rightSection[y];
-            const rightRowLeftWall = rightRow.indexOf(Tiles.WALL.char);
-            if (rightRowLeftWall > -1 && (rightRow[rightRowLeftWall + 1] !== Tiles.WALL.char)) {
-              return y;
-            }
+
+        const leftRoom = leftRooms.sort((a, b) => (b.left - a.left))[0]; // find the *max* left coordinate
+        const rightRoom = rightRooms.sort((a, b) => (a.left - b.left))[0]; // find the *min* left coordinate
+
+        if (leftRoom && (y > leftRoom.top) && (y < (leftRoom.top + leftRoom.height - 1))) {
+          if (rightRoom && (y > rightRoom.top) && (y < (rightRoom.top + rightRoom.height - 1))) {
+            return { y, leftRoom, rightRoom };
           }
         }
-        return -1;
+
+        return null;
       })
-      .filter(i => i !== -1);
+      .filter(obj => !!obj);
 
-    const y = yCandidates[this._randInt(0, yCandidates.length - 1)];
+    const { y, leftRoom, rightRoom } = this._randChoice(candidates);
 
-    const leftRowRightWall = leftSection[y].lastIndexOf(Tiles.WALL.char);
-    const rightRowLeftWall = rightSection[y].indexOf(Tiles.WALL.char) + splitX;
-    for (let x = leftRowRightWall; x <= rightRowLeftWall; x++) {
+    for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
       tiles[y][x] = Tiles.FLOOR;
     }
   }
 
   /**
    * TODO this does not account for the case where there's no straight line between the two rooms.
-   * @param {Tile[][]} tiles
-   * @param {int} splitY
+   * Deal with this with multi-part paths in the future.
+   *
+   * @param {Tile[][]} tiles The tiles of both topSection and bottomSection
+   * @param {MapSection} topSection
+   * @param {MapSection} bottomSection
    */
-  _joinSectionsVertically(tiles, splitY) {
-    const { Tiles } = window.jwb.types;
-    /**
-     * @type string[][]
-     */
-    const topSection = tiles
-      .filter((row, i) => i < splitY)
-      .map(row => row.map(tile => tile.char));
-    /**
-     * @type string[][]
-     */
-    const bottomSection = tiles
-      .filter((row, i) => (i >= splitY))
-      .map(row => row.map(tile => tile.char));
-
+  _joinSectionsVertically(tiles, topSection, bottomSection) {
     this._logSections('VERTICAL', topSection, bottomSection);
+    const { Tiles } = window.jwb.types;
 
-    const topCols = topSection[0].map((_, x) => topSection.map(row => row[x]));
-    const bottomCols = bottomSection[0].map((_, x) => bottomSection.map(row => row[x]));
+    /**
+     * @type {{ x: int, topRoom: Rect, bottomRoom: Rect}[]}
+     */
+    const candidates = tiles[0]
+      .map((_, x) => {
+        const topRooms = topSection.rooms
+          .filter(room => (x >= room.left && x <= (room.left + room.width - 1)));
+        const bottomRooms = bottomSection.rooms
+          .filter(room => (x >= room.left && x <= (room.left + room.width - 1)));
 
-    const xCandidates = topCols
-      .map((topCol, x) => {
-        if (topCol.indexOf(Tiles.WALL.char) > -1) {
-          const topColBottomWall = topCol.lastIndexOf(Tiles.WALL.char);
-          if (topCol[topColBottomWall - 1] !== Tiles.WALL.char) {
-            const bottomCol = bottomCols[x];
-            const bottomColTopWall = bottomCol.indexOf(Tiles.WALL.char);
-            if ((bottomColTopWall > -1) && (bottomColTopWall < (bottomCol.length - 1)) && (bottomCol[bottomColTopWall + 1] !== Tiles.WALL.char)) {
-              return x;
-            }
+
+        const topRoom = topRooms.sort((a, b) => (b.top - a.top))[0]; // find the *max* top coordinate
+        const bottomRoom = bottomRooms.sort((a, b) => (a.top - b.top))[0]; // find the *min* top coordinate
+
+        if (topRoom && (x > topRoom.left) && (x < (topRoom.left + topRoom.width - 1))) {
+          if (bottomRoom && (x > bottomRoom.left) && (x < (bottomRoom.left + bottomRoom.width - 1))) {
+            return { x, topRoom, bottomRoom };
           }
         }
-        return -1;
+
+        return null;
       })
-      .filter(i => i !== -1);
+      .filter(obj => !!obj);
 
-    const x = xCandidates[this._randInt(0, xCandidates.length - 1)];
+    const { x, topRoom, bottomRoom } = this._randChoice(candidates);
 
-    const topColBottomWall = topSection.map(row => row[x]).lastIndexOf(Tiles.WALL.char);
-    const bottomColTopWall = bottomSection.map(row => row[x]).indexOf(Tiles.WALL.char) + splitY;
-
-    for (let y = topColBottomWall; y <= bottomColTopWall; y++) {
+    for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
       tiles[y][x] = Tiles.FLOOR;
     }
   }
@@ -313,7 +346,9 @@ class BSPDungeonGenerator {
 
   _logSections(name, ...sections) {
     console.log(`Sections for ${name}:`);
-    sections.forEach(section => console.log(section.map(row => row.join('')).join('\n')));
+    sections.forEach(section => console.log(section.tiles
+      .map(row => row.map(tile => tile.char).join(''))
+      .join('\n')));
     console.log();
   }
 }

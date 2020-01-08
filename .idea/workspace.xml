@@ -4,7 +4,8 @@
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/testBSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/testBSPDungeonGenerator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/types.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +32,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="C:/lib/nodejs/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
@@ -38,8 +40,9 @@
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes" />
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes\dungeons" />
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js" />
     </key>
   </component>
@@ -105,7 +108,7 @@
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
       <workItem from="1578164032503" duration="17701000" />
-      <workItem from="1578238210486" duration="29963000" />
+      <workItem from="1578238210486" duration="34901000" />
     </task>
     <servers />
   </component>

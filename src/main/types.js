@@ -5,6 +5,15 @@
  * }}
  */
 
+/**
+ * @typedef Rect {{
+ *   left: int,
+ *   top: int,
+ *   width: int,
+ *   height: int
+ * }}
+ */
+
 {
   window.jwb = window.jwb || {};
   window.jwb.types = window.jwb.types || [];
