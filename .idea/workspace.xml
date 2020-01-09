@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/types.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -108,7 +106,7 @@
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
       <workItem from="1578164032503" duration="17701000" />
-      <workItem from="1578238210486" duration="36524000" />
+      <workItem from="1578238210486" duration="36619000" />
     </task>
     <servers />
   </component>

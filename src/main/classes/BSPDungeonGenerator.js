@@ -35,10 +35,13 @@ class BSPDungeonGenerator {
    * @param {Function<Coordinates, Unit>} enemyUnitSupplier
    */
   generateDungeon(width, height, numEnemies, enemyUnitSupplier) {
+    const { Tiles } = jwb.types;
     const section = this._generateSection(width, height);
     const { tiles } = section;
     const enemyLocations = this._pickEnemyLocations(tiles, numEnemies);
     const playerLocation = this._pickPlayerLocation(tiles, enemyLocations);
+    const stairsLocation = this._pickStairsLocation(tiles);
+    tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
     return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, [])
   }
 
