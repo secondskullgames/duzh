@@ -22,6 +22,6 @@
     FLOOR: new Tile('FLOOR', '.', false),
     WALL: new Tile('WALL', '#', true),
     NONE: new Tile('NONE', ' ', true),
-    STAIRS_UP: new Tile('STAIRS_DOWN', '>', false)
+    STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', false)
   };
 }

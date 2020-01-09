@@ -1,33 +1,16 @@
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
  */
-//Math.random = () => 0.5;
 
-class MapSection {
-  /**
-   * @type int
-   */
-  width;
-  /**
-   * @type int
-   */
-  height;
-  /**
-   * @type {Rect[]}
-   */
-  rooms;
-  /**
-   * @type Tile[][]
-   */
-  tiles;
-
-  constructor(width, height, rooms, tiles) {
-    this.width = width;
-    this.height = height;
-    this.rooms = rooms;
-    this.tiles = tiles;
-  }
-}
+/**
+ * @typedef MapSection
+ * {{
+ *   width: int,
+ *   height: int,
+ *   rooms: Rect[],
+ *   tiles: Tile[][]
+ * }}
+ */
 
 class BSPDungeonGenerator {
   /**
@@ -96,7 +79,7 @@ class BSPDungeonGenerator {
      * rightWidth = 7           = right - splitX
      */
     if (splitDirections.length > 0) {
-      const direction = splitDirections[this._randInt(0, splitDirections.length - 1)];
+      const direction = this._randChoice(splitDirections);
       if (direction === 'HORIZONTAL') {
         const splitX = this._getSplitPoint(width);
         const leftWidth = splitX;
@@ -113,7 +96,13 @@ class BSPDungeonGenerator {
         // relative to this section's coordinates
         const rightRooms = rightSection.rooms
           .map(room => ({ ...room, left: room.left + splitX }));
-        return new MapSection(width, height, [...leftSection.rooms, ...rightRooms], tiles);
+
+        return {
+          width,
+          height,
+          rooms: [...leftSection.rooms, ...rightRooms],
+          tiles
+        };
       } else {
         const splitY = this._getSplitPoint(height);
         const topHeight = splitY;
@@ -124,7 +113,12 @@ class BSPDungeonGenerator {
         this._joinSectionsVertically(tiles, topSection, bottomSection);
         const bottomRooms = bottomSection.rooms
           .map(room => ({ ...room, top: room.top + splitY }));
-        return new MapSection(width, height, [...topSection.rooms, ...bottomRooms], tiles);
+        return {
+          width,
+          height,
+          rooms: [...topSection.rooms, ...bottomRooms],
+          tiles
+        };
       }
     } else {
       // Base case: return a single section
@@ -146,7 +140,7 @@ class BSPDungeonGenerator {
     const { Tiles } = window.jwb.types;
     const roomWidth = this._randInt(this.minRoomDimension, width);
     const roomHeight = this._randInt(this.minRoomDimension, height);
-    const room = this._generateRoom(roomWidth, roomHeight);
+    const roomTiles = this._generateRoom(roomWidth, roomHeight);
 
     const roomLeft = this._randInt(0, width - roomWidth);
     const roomTop = this._randInt(0, height - roomHeight);
@@ -159,16 +153,16 @@ class BSPDungeonGenerator {
       for (let x = 0; x < width; x++) {
         const roomX = x - roomLeft;
 
-        if (roomX >= 0 && roomX < room[0].length && roomY >= 0 && roomY < room.length) {
-          tiles[y][x] = room[roomY][roomX];
+        if (roomX >= 0 && roomX < roomTiles[0].length && roomY >= 0 && roomY < roomTiles.length) {
+          tiles[y][x] = roomTiles[roomY][roomX];
         } else {
           tiles[y][x] = Tiles.NONE;
         }
       }
     }
 
-    const roomRect = { left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight};
-    return new MapSection(width, height, [roomRect], tiles);
+    const rooms = [{ left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight }];
+    return { width, height, rooms, tiles };
   }
 
   /**
@@ -341,7 +335,23 @@ class BSPDungeonGenerator {
         }
       }
     }
-    return candidateLocations[this._randInt(0, candidateLocations.length - 1)];
+    return this._randChoice(candidateLocations);
+  }
+
+  _pickStairsLocation(tiles) {
+    const { Tiles } = window.jwb.types;
+    /**
+     * @type {{ x: int, y: int }[]}
+     */
+    const candidateLocations = [];
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x] === Tiles.FLOOR) {
+          candidateLocations.push({ x, y });
+        }
+      }
+    }
+    return this._randChoice(candidateLocations);
   }
 
   _logSections(name, ...sections) {
