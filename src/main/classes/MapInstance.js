@@ -25,8 +25,8 @@ class MapInstance {
     this.width = width;
     this.height = height;
     this.tiles = tiles;
-    this.items = items;
     this.units = units;
+    this.items = items;
   }
 
   /**
@@ -48,7 +48,7 @@ class MapInstance {
    * @returns {MapItem|null}
    */
   getItem(x, y) {
-    return this.items.filter(i => i.x === i && i.y === y)[0] || null;
+    return this.items.filter(i => i.x === x && i.y === y)[0] || null;
   }
 
   /**
@@ -66,5 +66,10 @@ class MapInstance {
       throw `(${x}, ${y}) is not on the map`;
     }
     return this.getUnit(x, y) || this.getTile(x, y).isBlocking;
+  }
+
+  removeItem({ x, y }) {
+    const index = this.items.findIndex(i => (i.x === x && i.y === y));
+    this.items.splice(index, 1);
   }
 }

@@ -12,37 +12,35 @@
  * }}
  */
 
-class BSPDungeonGenerator {
-  /**
-   * @type int
-   */
-  minSectionDimension;
-  /**
-   * Including walls
-   * @type int
-   */
-  minRoomDimension;
-
-  constructor(minSectionDimension, minRoomDimension) {
-    this.minSectionDimension = minSectionDimension;
-    this.minRoomDimension = minRoomDimension;
-  }
+/**
+ * @param {int} minSectionDimension
+ * @param {int} minRoomDimension
+ * @constructor
+ */
+const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
+  const { MapUtils, RandomUtils } = window.jwb.utils;
+  const { pickUnoccupiedLocations } = MapUtils;
+  const { randInt, randChoice } = RandomUtils;
 
   /**
    * @param {int} width
    * @param {int} height
    * @param {int} numEnemies
    * @param {Function<Coordinates, Unit>} enemyUnitSupplier
+   * @param {int} numItems
+   * @param {Function<Coordinates, Item>} itemSupplier
+   * @return MapSupplier
    */
-  generateDungeon(width, height, numEnemies, enemyUnitSupplier) {
+  function generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
     const { Tiles } = jwb.types;
-    const section = this._generateSection(width, height);
+    const section = _generateSection(width, height);
     const { tiles } = section;
-    const enemyLocations = this._pickEnemyLocations(tiles, numEnemies);
-    const playerLocation = this._pickPlayerLocation(tiles, enemyLocations);
-    const stairsLocation = this._pickStairsLocation(tiles);
+    const [stairsLocation] = pickUnoccupiedLocations(tiles, [], 1);
+    const [playerLocation] = pickUnoccupiedLocations(tiles, [stairsLocation], 1);
+    const enemyLocations = pickUnoccupiedLocations(tiles, [stairsLocation, playerLocation], numEnemies);
+    const itemLocations = pickUnoccupiedLocations(tiles, [stairsLocation, playerLocation, ...enemyLocations], numItems);
     tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-    return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, [])
+    return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
   }
 
   /**
@@ -55,10 +53,10 @@ class BSPDungeonGenerator {
    * @return {MapSection}
    * @private
    */
-  _generateSection(width, height) {
+  function _generateSection(width, height) {
     // First, make sure the area is large enough to support two sections; if not, we're done
-    const canSplitHorizontally = (width >= (2 * this.minSectionDimension));
-    const canSplitVertically = (height >= (2 * this.minSectionDimension));
+    const canSplitHorizontally = (width >= (2 * minSectionDimension));
+    const canSplitVertically = (height >= (2 * minSectionDimension));
 
     const splitDirections = [
       ...(canSplitHorizontally ? ['HORIZONTAL'] : []),
@@ -82,19 +80,19 @@ class BSPDungeonGenerator {
      * rightWidth = 7           = right - splitX
      */
     if (splitDirections.length > 0) {
-      const direction = this._randChoice(splitDirections);
+      const direction = randChoice(splitDirections);
       if (direction === 'HORIZONTAL') {
-        const splitX = this._getSplitPoint(width);
+        const splitX = _getSplitPoint(width);
         const leftWidth = splitX;
         const rightWidth = width - splitX;
-        const leftSection = this._generateSection(leftWidth, height);
-        const rightSection = this._generateSection(rightWidth, height);
+        const leftSection = _generateSection(leftWidth, height);
+        const rightSection = _generateSection(rightWidth, height);
 
         const tiles = [];
         for (let y = 0; y < leftSection.tiles.length; y++) {
           tiles[y] = [...leftSection.tiles[y], ...rightSection.tiles[y]];
         }
-        this._joinSectionsHorizontally(tiles, leftSection, rightSection);
+        _joinSectionsHorizontally(tiles, leftSection, rightSection);
         // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
         // relative to this section's coordinates
         const rightRooms = rightSection.rooms
@@ -107,13 +105,13 @@ class BSPDungeonGenerator {
           tiles
         };
       } else {
-        const splitY = this._getSplitPoint(height);
+        const splitY = _getSplitPoint(height);
         const topHeight = splitY;
         const bottomHeight = height - splitY;
-        const topSection = this._generateSection(width, topHeight);
-        const bottomSection = this._generateSection(width, bottomHeight);
-        const tiles =  [...topSection.tiles, ...bottomSection.tiles];
-        this._joinSectionsVertically(tiles, topSection, bottomSection);
+        const topSection = _generateSection(width, topHeight);
+        const bottomSection = _generateSection(width, bottomHeight);
+        const tiles = [...topSection.tiles, ...bottomSection.tiles];
+        _joinSectionsVertically(tiles, topSection, bottomSection);
         const bottomRooms = bottomSection.rooms
           .map(room => ({ ...room, top: room.top + splitY }));
         return {
@@ -125,7 +123,7 @@ class BSPDungeonGenerator {
       }
     } else {
       // Base case: return a single section
-      return this._generateSingleSection(width, height);
+      return _generateSingleSection(width, height);
     }
   }
 
@@ -139,14 +137,14 @@ class BSPDungeonGenerator {
    * @return {MapSection}
    * @private
    */
-  _generateSingleSection(width, height) {
+  function  _generateSingleSection(width, height) {
     const { Tiles } = window.jwb.types;
-    const roomWidth = this._randInt(this.minRoomDimension, width);
-    const roomHeight = this._randInt(this.minRoomDimension, height);
-    const roomTiles = this._generateRoom(roomWidth, roomHeight);
+    const roomWidth = randInt(minRoomDimension, width);
+    const roomHeight = randInt(minRoomDimension, height);
+    const roomTiles = _generateRoom(roomWidth, roomHeight);
 
-    const roomLeft = this._randInt(0, width - roomWidth);
-    const roomTop = this._randInt(0, height - roomHeight);
+    const roomLeft = randInt(0, width - roomWidth);
+    const roomTop = randInt(0, height - roomHeight);
     const tiles = [];
     // x, y are relative to the section's origin
     // roomX, roomY are relative to the room's origin
@@ -174,7 +172,7 @@ class BSPDungeonGenerator {
    * @return {Tile[][]}
    * @private
    */
-  _generateRoom(width, height) {
+  function _generateRoom(width, height) {
     const { Tiles } = window.jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
@@ -195,23 +193,10 @@ class BSPDungeonGenerator {
    * @returns {int} the min X/Y coordinate of the *second* room
    * @private
    */
-  _getSplitPoint(dimension) {
-    const minSplitPoint = this.minSectionDimension;
-    const maxSplitPoint = dimension - this.minSectionDimension;
-    return this._randInt(minSplitPoint, maxSplitPoint);
-  }
-
-  /**
-   * @param {int} min
-   * @param {int} max inclusive
-   * @private
-   */
-  _randInt(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-  }
-
-  _randChoice(list) {
-    return list[this._randInt(0, list.length - 1)];
+  function _getSplitPoint(dimension) {
+    const minSplitPoint = minSectionDimension;
+    const maxSplitPoint = dimension - minSectionDimension;
+    return randInt(minSplitPoint, maxSplitPoint);
   }
 
   /**
@@ -222,9 +207,10 @@ class BSPDungeonGenerator {
    * @param {MapSection} leftSection
    * @param {MapSection} rightSection
    */
-  _joinSectionsHorizontally(tiles, leftSection, rightSection) {
-    this._logSections('HORIZONTAL', leftSection, rightSection);
+  function _joinSectionsHorizontally(tiles, leftSection, rightSection) {
+    _logSections('HORIZONTAL', leftSection, rightSection);
     const { Tiles } = window.jwb.types;
+    const { randChoice } = window.jwb.utils.RandomUtils;
     /**
      * @type {{ y: int, leftRoom: Rect, rightRoom: Rect}[]}
      */
@@ -249,7 +235,7 @@ class BSPDungeonGenerator {
       })
       .filter(obj => !!obj);
 
-    const { y, leftRoom, rightRoom } = this._randChoice(candidates);
+    const { y, leftRoom, rightRoom } = randChoice(candidates);
 
     for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
       tiles[y][x] = Tiles.FLOOR;
@@ -264,8 +250,8 @@ class BSPDungeonGenerator {
    * @param {MapSection} topSection
    * @param {MapSection} bottomSection
    */
-  _joinSectionsVertically(tiles, topSection, bottomSection) {
-    this._logSections('VERTICAL', topSection, bottomSection);
+  function _joinSectionsVertically(tiles, topSection, bottomSection) {
+    _logSections('VERTICAL', topSection, bottomSection);
     const { Tiles } = window.jwb.types;
 
     /**
@@ -292,56 +278,14 @@ class BSPDungeonGenerator {
       })
       .filter(obj => !!obj);
 
-    const { x, topRoom, bottomRoom } = this._randChoice(candidates);
+    const { x, topRoom, bottomRoom } = randChoice(candidates);
 
     for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
       tiles[y][x] = Tiles.FLOOR;
     }
   }
 
-  _pickEnemyLocations(tiles, n) {
-    const { Tiles } = window.jwb.types;
-    /**
-     * @type {{ x: int, y: int }[]}
-     */
-    const floorTileLocations = [];
-    const enemyLocations = [];
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === Tiles.FLOOR) {
-          floorTileLocations.push({ x, y });
-        }
-      }
-    }
-
-    for (let i = 0; i < n; i++) {
-      const index = this._randInt(0, floorTileLocations.length - 1);
-      const { x, y } = floorTileLocations[index];
-      enemyLocations.push({ x, y});
-      floorTileLocations.splice(index, 1);
-    }
-    return enemyLocations;
-  }
-
-  _pickPlayerLocation(tiles, enemyLocations) {
-    const { Tiles } = window.jwb.types;
-    /**
-     * @type {{ x: int, y: int }[]}
-     */
-    const candidateLocations = [];
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === Tiles.FLOOR) {
-          if (enemyLocations.findIndex(loc => loc.x === x && loc.y === y) === -1) {
-            candidateLocations.push({ x, y });
-          }
-        }
-      }
-    }
-    return this._randChoice(candidateLocations);
-  }
-
-  _pickStairsLocation(tiles) {
+  function _pickStairsLocation(tiles) {
     const { Tiles } = window.jwb.types;
     /**
      * @type {{ x: int, y: int }[]}
@@ -354,14 +298,16 @@ class BSPDungeonGenerator {
         }
       }
     }
-    return this._randChoice(candidateLocations);
+    return randChoice(candidateLocations);
   }
 
-  _logSections(name, ...sections) {
+  function _logSections(name, ...sections) {
     console.log(`Sections for ${name}:`);
     sections.forEach(section => console.log(section.tiles
       .map(row => row.map(tile => tile.char).join(''))
       .join('\n')));
     console.log();
   }
-}
+
+  return { generateDungeon };
+};

@@ -1,6 +1,4 @@
 {
-  window.jwb = window.jwb || {};
-
   const FIXED_MAPS = [
     _mapFromAscii(`
                 ###########
@@ -36,8 +34,10 @@
   /**
    * @param {int} width
    * @param {int} height
+   * @param {int} numEnemies
+   * @param {int} numItems
    */
-  function randomMap(width, height, numEnemies) {
+  function randomMap(width, height, numEnemies, numItems) {
     /**
      * @type {Function<Coordinates, Unit>}
      */
@@ -47,7 +47,13 @@
       return u;
     };
 
-    return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier);
+    const itemSupplier = ({ x, y }) => new MapItem(
+      x,
+      y,
+      new InventoryItem(() => { console.log('USED ITEM LOL'); })
+    );
+
+    return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**
@@ -104,5 +110,6 @@
     );
   }
 
-  window.jwb.mapFactory = { randomMap, FIXED_MAPS };
+  window.jwb = window.jwb || {};
+  window.jwb.MapFactory = { randomMap, FIXED_MAPS };
 }

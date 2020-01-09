@@ -1,10 +1,10 @@
 {
-  const { mapFactory } = window.jwb;
+  const { MapFactory } = window.jwb;
 
   window.jwb.state = new GameState(new Unit(4, 10, 'player', 100), [
-    mapFactory.randomMap(40, 26, 5),
-    mapFactory.FIXED_MAPS[0],
-    mapFactory.FIXED_MAPS[1]
+    MapFactory.randomMap(40, 26, 5, 5),
+    MapFactory.FIXED_MAPS[0],
+    MapFactory.FIXED_MAPS[1]
   ]);
   window.jwb.state.loadMap(0);
 

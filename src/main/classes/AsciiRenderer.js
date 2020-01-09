@@ -1,5 +1,5 @@
 {
-  class Renderer {
+  class AsciiRenderer {
     render() {
       const { map } = window.jwb.state;
       const container = document.getElementById('container');
@@ -34,7 +34,7 @@
     }
 
     _getStatusLine() {
-      const {playerUnit} = window.jwb.state;
+      const { playerUnit } = window.jwb.state;
       return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}`;
     }
 
@@ -42,7 +42,7 @@
      * @param {string[]} lines
      */
      _addActionLines(lines) {
-      const {messages} = window.jwb.state;
+      const { messages } = window.jwb.state;
       for (let i = 0; i < messages.length; i++) {
         lines[i] = messages.pop();
       }
@@ -50,5 +50,5 @@
   }
 
   window.jwb = window.jwb || {};
-  window.jwb.renderer = new Renderer();
+  window.jwb.renderer = new AsciiRenderer();
 }

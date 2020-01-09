@@ -4,6 +4,7 @@ class Unit {
   name;
   currentHP;
   maxHP;
+  items = [];
 
   constructor(x, y, name, maxHP) {
     this.x = x;
@@ -17,4 +18,11 @@ class Unit {
    * Instances can override this with their own AI
    */
   update() {}
+
+  /**
+   * @param {MapItem} item
+   */
+  pickupItem(item) {
+    this.items.push(item);
+  }
 }

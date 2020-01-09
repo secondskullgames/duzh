@@ -2,14 +2,32 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/MapInstance.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapInstance.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/MapItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapItem.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/MapSupplier.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapSupplier.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/Renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/AsciiRenderer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/Unit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Unit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/input.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/mapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/MapFactory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.html" beforeDir="false" afterPath="$PROJECT_DIR$/test.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -31,16 +49,17 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="C:/lib/nodejs/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.JavaScript" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\utils" />
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes\dungeons" />
-      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js" />
     </key>
   </component>
@@ -106,7 +125,7 @@
       <option name="presentableId" value="Default" />
       <updated>1578164031213</updated>
       <workItem from="1578164032503" duration="17701000" />
-      <workItem from="1578238210486" duration="36619000" />
+      <workItem from="1578238210486" duration="42908000" />
     </task>
     <servers />
   </component>
@@ -125,5 +144,17 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/main/classes/InventoryItem.js</url>
+          <line>8</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

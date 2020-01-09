@@ -1,8 +1,6 @@
 {
   function keyHandler(key) {
     const { renderer } = window.jwb;
-    const { units } = window.jwb.state.map;
-
     switch (key) {
       case 'w':
       case 'a':
@@ -10,16 +8,17 @@
       case 'd':
         _handleMovement(key);
         break;
-      case '>':
-        _handleStairsDown();
-        break;
-      case ' ':
-      case '.':
+      case ' ': // spacebar
         // Do nothing, but other units will update
         break;
+      case 'Enter':
+        _handleEnter();
+        return;
       default:
         return;
     }
+
+    const { units } = window.jwb.state.map;
 
     units.forEach(u => u.update());
     renderer.render();
@@ -50,8 +49,17 @@
     playerUnit.update = () => tryMove(playerUnit, playerUnit.x + dx, playerUnit.y + dy);
   }
 
-  function _handleStairsDown() {
-    window.jwb.state.loadMap(window.jwb.state.mapIndex + 1);
+  function _handleEnter() {
+    const { Tiles } = window.jwb.types;
+    const { loadMap, map, mapIndex, playerUnit } = window.jwb.state;
+    const { x, y } = playerUnit;
+    const item = map.getItem(x, y);
+    if (!!item) {
+      playerUnit.pickupItem(item);
+      map.removeItem({ x, y });
+    } else if (map.getTile(x, y) === Tiles.STAIRS_DOWN) {
+      loadMap(mapIndex + 1);
+    }
   }
 
   function attachEvents() {
