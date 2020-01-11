@@ -1,5 +1,9 @@
 class GameState {
   /**
+   * @type 'GAME' | 'INVENTORY'
+   */
+  screen;
+  /**
    * @type Unit
    */
   playerUnit;
@@ -24,6 +28,7 @@ class GameState {
     this.playerUnit = playerUnit;
     this.mapSuppliers = mapSuppliers;
     this.messages = [];
+    this.screen = 'GAME';
   }
 
   /**

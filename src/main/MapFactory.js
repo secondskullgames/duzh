@@ -50,7 +50,7 @@
     const itemSupplier = ({ x, y }) => new MapItem(
       x,
       y,
-      new InventoryItem(() => { console.log('USED ITEM LOL'); })
+      () => new InventoryItem('test', 'test', () => { console.log('USED ITEM LOL'); })
     );
 
     return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);

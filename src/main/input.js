@@ -1,12 +1,12 @@
 {
-  function keyHandler(key) {
+  function keyHandler(e) {
     const { renderer } = window.jwb;
-    switch (key) {
+    switch (e.key) {
       case 'w':
       case 'a':
       case 's':
       case 'd':
-        _handleMovement(key);
+        _handleArrowKey(e.key);
         break;
       case ' ': // spacebar
         // Do nothing, but other units will update
@@ -14,6 +14,10 @@
       case 'Enter':
         _handleEnter();
         return;
+      case 'Tab':
+        _handleTab();
+        e.preventDefault();
+        break;
       default:
         return;
     }
@@ -24,7 +28,7 @@
     renderer.render();
   }
 
-  function _handleMovement(key) {
+  function _handleArrowKey(key) {
     const { playerUnit } = window.jwb.state;
     const { tryMove } = window.jwb.utils.unitBehavior;
 
@@ -51,19 +55,32 @@
 
   function _handleEnter() {
     const { Tiles } = window.jwb.types;
-    const { loadMap, map, mapIndex, playerUnit } = window.jwb.state;
+    const { map, mapIndex, playerUnit } = window.jwb.state;
     const { x, y } = playerUnit;
     const item = map.getItem(x, y);
     if (!!item) {
       playerUnit.pickupItem(item);
       map.removeItem({ x, y });
     } else if (map.getTile(x, y) === Tiles.STAIRS_DOWN) {
-      loadMap(mapIndex + 1);
+      window.jwb.state.loadMap(mapIndex + 1);
+    }
+  }
+
+  function _handleTab() {
+    console.log('tab');
+
+    switch (window.jwb.state.screen) {
+      case 'INVENTORY':
+        window.jwb.state.screen = 'GAME';
+        break;
+      default:
+        window.jwb.state.screen = 'INVENTORY';
+        break;
     }
   }
 
   function attachEvents() {
-    window.onkeydown = e => keyHandler(e.key);
+    window.onkeydown = keyHandler;
   }
 
   window.jwb.input = {

@@ -1,28 +1,29 @@
-class Unit {
-  x;
-  y;
-  name;
-  currentHP;
-  maxHP;
-  items = [];
-
-  constructor(x, y, name, maxHP) {
-    this.x = x;
-    this.y = y;
-    this.name = name;
-    this.currentHP = maxHP;
-    this.maxHP = maxHP;
-  }
+function Unit(x, y, name, maxHP) {
+  let currentHP = maxHP;
+  /**
+   * @type {Object<String, InventoryItem[]>}
+   */
+  const inventory = {};
 
   /**
-   * Instances can override this with their own AI
+   * @param {MapItem} mapItem
    */
-  update() {}
-
-  /**
-   * @param {MapItem} item
-   */
-  pickupItem(item) {
-    this.items.push(item);
+  function pickupItem(mapItem) {
+    const inventoryItem = mapItem.getInventoryItem();
+    const { category } = inventoryItem;
+    this.inventory[category] = this.inventory[category] || [];
+    this.inventory[category].push(inventoryItem);
   }
+
+  return {
+    class: 'Unit',
+    x,
+    y,
+    name,
+    currentHP,
+    maxHP,
+    inventory,
+    update: () => {},
+    pickupItem
+  };
 }

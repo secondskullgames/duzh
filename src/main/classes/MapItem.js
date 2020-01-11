@@ -1,21 +1,20 @@
-class MapItem {
-  x;
-  y;
-  /**
-   * @type {Function<void, InventoryItem>}
-   */
-  itemSupplier;
-
-  constructor(x, y, itemSupplier) {
-    this.x = x;
-    this.y = y;
-    this.itemSupplier = itemSupplier;
-  }
-
+/**
+ * @param {int} x
+ * @param {int} y
+ * @param {Function<void, InventoryItem>} itemSupplier
+ */
+function MapItem(x, y, itemSupplier) {
   /**
    * @return {InventoryItem}
    */
-  getInventoryItem() {
-    return this.itemSupplier();
+  function getInventoryItem() {
+    return itemSupplier();
   }
+
+  return {
+    class: 'MapItem',
+    x,
+    y,
+    getInventoryItem
+  };
 }

@@ -1,20 +1,13 @@
-class Tile {
-  /**
-   * @type string
-   */
-  name;
-  /**
-   * @type string
-   */
-  char;
-  /**
-   * @type boolean
-   */
-  isBlocking;
-
-  constructor(name, char, isBlocking) {
-    this.name = name;
-    this.char = char;
-    this.isBlocking = isBlocking;
-  }
+/**
+ * @param {string} name
+ * @param {string} char
+ * @param {boolean} isBlocking
+ */
+function Tile(name, char, isBlocking) {
+  return {
+    class: 'Tile',
+    name,
+    char,
+    isBlocking
+  };
 }
