@@ -80,6 +80,7 @@
           case 'a': {
             keyIndex = (keyIndex + inventoryKeys.length - 1) % inventoryKeys.length;
             state.inventoryCategory = inventoryKeys[keyIndex];
+            state.inventoryIndex = 0;
             break;
           }
           case 's':
@@ -88,6 +89,7 @@
           case 'd': {
             keyIndex = (keyIndex + 1) % inventoryKeys.length;
             state.inventoryCategory = inventoryKeys[keyIndex];
+            state.inventoryIndex = 0;
             break;
           }
         }

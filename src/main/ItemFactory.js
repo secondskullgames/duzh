@@ -6,7 +6,9 @@
   function createPotion(hpRestored) {
     const { ItemCategory } = window.jwb.types;
     return new InventoryItem('Potion', ItemCategory.POTION, (item, unit) => {
+      const prevHP = unit.currentHP;
       unit.currentHP = Math.min(unit.currentHP + hpRestored, unit.maxHP);
+      jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.currentHP - prevHP)} HP.`);
     });
   }
 

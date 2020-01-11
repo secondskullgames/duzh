@@ -10,6 +10,7 @@
     inventory[category] = inventory[category] || [];
     inventory[category].push(inventoryItem);
     jwb.state.inventoryIndex = jwb.state.inventoryIndex || 0;
+    jwb.state.messages.push(`Picked up a ${inventoryItem.name}.`);
   }
 
   /**

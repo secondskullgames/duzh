@@ -64,6 +64,7 @@
         lines.push(line);
       }
       lines.push(_getStatusLine());
+      _addActionLines(lines);
       container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
