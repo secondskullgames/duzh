@@ -23,12 +23,22 @@ class GameState {
    * @type string[]
    */
   messages;
+  /**
+   * @type {ItemCategory}
+   */
+  inventoryCategory;
+  /**
+   * @type {int}
+   */
+  inventoryIndex;
 
   constructor(playerUnit, mapSuppliers) {
     this.playerUnit = playerUnit;
     this.mapSuppliers = mapSuppliers;
     this.messages = [];
     this.screen = 'GAME';
+    this.inventoryCategory = null;
+    this.inventoryIndex = 0;
   }
 
   /**

@@ -1,9 +1,13 @@
+/**
+ * @constructor
+ */
 function Unit(x, y, name, maxHP) {
   let currentHP = maxHP;
   /**
    * @type {Object<String, InventoryItem[]>}
    */
   const inventory = {};
+  Object.keys(window.jwb.types.ItemCategory).forEach(category => { inventory[category] = []; });
 
   /**
    * @param {MapItem} mapItem
@@ -11,19 +15,17 @@ function Unit(x, y, name, maxHP) {
   function pickupItem(mapItem) {
     const inventoryItem = mapItem.getInventoryItem();
     const { category } = inventoryItem;
-    this.inventory[category] = this.inventory[category] || [];
-    this.inventory[category].push(inventoryItem);
+    inventory[category] = inventory[category] || [];
+    inventory[category].push(inventoryItem);
   }
 
-  return {
-    class: 'Unit',
-    x,
-    y,
-    name,
-    currentHP,
-    maxHP,
-    inventory,
-    update: () => {},
-    pickupItem
-  };
+  this.class = 'Unit';
+  this.x = x;
+  this.y = y;
+  this.name = name;
+  this.currentHP = currentHP;
+  this.maxHP = maxHP;
+  this.inventory = inventory;
+  this.update = () => {};
+  this.pickupItem = pickupItem;
 }

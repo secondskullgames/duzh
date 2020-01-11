@@ -20,8 +20,13 @@
 
   window.jwb.types.Tiles = {
     FLOOR: new Tile('FLOOR', '.', false),
-    WALL: new Tile('WALL', '#', true),
+    WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', true),
     NONE: new Tile('NONE', ' ', true),
     STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', false)
+  };
+
+  window.jwb.types.ItemCategory = {
+    POTION: 'POTION',
+    WEAPON: 'WEAPON'
   };
 }

@@ -38,6 +38,7 @@
    * @param {int} numItems
    */
   function randomMap(width, height, numEnemies, numItems) {
+    const { RandomUtils } = window.jwb.utils;
     /**
      * @type {Function<Coordinates, Unit>}
      */
@@ -47,11 +48,24 @@
       return u;
     };
 
-    const itemSupplier = ({ x, y }) => new MapItem(
-      x,
-      y,
-      () => new InventoryItem('test', 'test', () => { console.log('USED ITEM LOL'); })
-    );
+    const itemSupplier = ({ x, y }) => {
+      switch (RandomUtils.randInt(0, 1)) {
+        case 0:
+          return new MapItem(
+            x,
+            y,
+            'P',
+            () => window.jwb.ItemFactory.createPotion(20)
+          );
+        case 1:
+          return new MapItem(
+            x,
+            y,
+            'S',
+            window.jwb.ItemFactory.createSword
+          );
+      }
+    };
 
     return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }

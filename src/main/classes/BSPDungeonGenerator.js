@@ -285,22 +285,6 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
     }
   }
 
-  function _pickStairsLocation(tiles) {
-    const { Tiles } = window.jwb.types;
-    /**
-     * @type {{ x: int, y: int }[]}
-     */
-    const candidateLocations = [];
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === Tiles.FLOOR) {
-          candidateLocations.push({ x, y });
-        }
-      }
-    }
-    return randChoice(candidateLocations);
-  }
-
   function _logSections(name, ...sections) {
     console.log(`Sections for ${name}:`);
     sections.forEach(section => console.log(section.tiles

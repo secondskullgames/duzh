@@ -36,24 +36,33 @@
     }
 
     function _renderInventoryScreen() {
-      const { inventory } = window.jwb.state.playerUnit;
+      const { state } = window.jwb;
+      const { playerUnit, inventoryCategory, inventoryIndex } = state;
+      const { inventory } = playerUnit;
 
       const container = document.getElementById('container');
-      const lines = ['', '', '']; // extra room for messages
+
       const inventoryLines = [];
 
-      Object.entries(inventory).forEach(([category, items]) => {
-        inventoryLines.push(`CATEGORY: ${category}`);
-        items.forEach(item => inventoryLines.push(`  ${item.name}`));
-      });
+      if (inventoryCategory) {
+        const items = inventory[inventoryCategory];
+        inventoryLines.push(inventoryCategory);
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (i === inventoryIndex) {
+            inventoryLines.push(`<span style="color: #f00">${item.name}</span>`);
+          } else {
+            inventoryLines.push(item.name);
+          }
+        }
+      }
 
-      for (let y = 0; y < HEIGHT; y++) {
+      const lines = ['INVENTORY', ''];
+
+      for (let y = 0; y < HEIGHT - 2; y++) {
         let line = (y < inventoryLines.length) ? inventoryLines[y] : '';
         lines.push(line);
       }
-      lines.push('', '', '');
-      lines.push(_getStatusLine());
-      _addActionLines(lines);
       container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
@@ -64,9 +73,9 @@
     function _renderElement(element) {
       switch (element.class) {
         case 'Unit':
-          return `<span style="color: ${(element.name === 'player') ? '#fff' : '#f00'}">@</span>`;
+          return `<span style="color: ${(element.name === 'player') ? '#1cf' : '#f00'}">@</span>`;
         case 'MapItem':
-          return '$';
+          return element.char;
         case 'Tile':
           return element.char;
       }
