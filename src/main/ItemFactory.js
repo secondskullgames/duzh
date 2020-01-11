@@ -14,8 +14,8 @@
 
   function createSword(damage) {
     const { ItemCategory, EquipmentCategory, Stats } = window.jwb.types;
-    return new InventoryItem('Sword of Suck', ItemCategory.WEAPON, (item, unit) => {
-      const equippedSword = new EquippedItem('Sword of Suck', EquipmentCategory.WEAPON, item, { [Stats.DAMAGE]: 10 });
+    return new InventoryItem('Short Sword', ItemCategory.WEAPON, (item, unit) => {
+      const equippedSword = new EquippedItem('Short Sword', EquipmentCategory.WEAPON, item, { [Stats.DAMAGE]: 10 });
       unit.equipment[EquipmentCategory.WEAPON] = equippedSword;
     });
   }

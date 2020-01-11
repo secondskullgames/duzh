@@ -32,6 +32,9 @@
    * @param {int} index
    */
   function loadMap(index) {
+    if (index >= jwb.state.mapSuppliers.length) {
+      alert('YOU WIN!');
+    }
     jwb.state.mapIndex = index;
     jwb.state.map = jwb.state.mapSuppliers[index].get();
   }

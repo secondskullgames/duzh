@@ -85,8 +85,8 @@
     }
 
     function _getStatusLine() {
-      const { playerUnit } = window.jwb.state;
-      return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}    Damage: ${playerUnit.getDamage()}`;
+      const { playerUnit, mapIndex } = window.jwb.state;
+      return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}    Damage: ${playerUnit.getDamage()}    Level: ${mapIndex + 1}`;
     }
 
     /**
