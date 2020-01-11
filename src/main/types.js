@@ -29,4 +29,14 @@
     POTION: 'POTION',
     WEAPON: 'WEAPON'
   };
+
+  window.jwb.types.EquipmentCategory = {
+    WEAPON: 'WEAPON',
+    ARMOR: 'ARMOR'
+  };
+
+  window.jwb.types.Stats = {
+    DAMAGE: 'DAMAGE',
+    HP: 'HP'
+  };
 }

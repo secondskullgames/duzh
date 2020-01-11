@@ -1,7 +1,7 @@
 /**
  * @param {string} name
  * @param {ItemCategory} category
- * @param {Function<Unit, void>} onUse
+ * @param {Function<InventoryItem, Unit, void>} onUse
  *
  * @constructor
  */
@@ -9,5 +9,8 @@ function InventoryItem(name, category, onUse) {
   this.class = 'InventoryItem';
   this.name = name;
   this.category = category;
-  this.use = onUse.bind(this);
+  /**
+   * @type {Function<Unit, void>}
+   */
+  this.use = onUse.bind(null, this);
 }

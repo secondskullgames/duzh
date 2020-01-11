@@ -28,8 +28,9 @@
     } else {
       const otherUnit = map.getUnit(x, y);
       if (!!otherUnit) {
-        otherUnit.currentHP = Math.max(otherUnit.currentHP - 10, 0);
-        messages.push(`${unit.name} hit ${otherUnit.name} for ${10} damage!`);
+        const damage = unit.getDamage();
+        otherUnit.currentHP = Math.max(otherUnit.currentHP - damage, 0);
+        messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
         if (otherUnit.currentHP === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
         }

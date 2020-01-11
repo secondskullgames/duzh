@@ -96,30 +96,30 @@
   }
 
   function _handleEnter() {
-    const { state } = window.jwb;
+    const { state, actions } = jwb;
     const { playerUnit, screen } = state;
     const { inventory } = playerUnit;
+    const { pickupItem, useItem, loadMap} = actions;
 
     switch (screen) {
       case 'GAME': {
-        const { Tiles } = window.jwb.types;
+        const { Tiles } = jwb.types;
         const { map, mapIndex } = state;
         const { x, y } = playerUnit;
         const item = map.getItem(x, y);
         if (!!item) {
-          playerUnit.pickupItem(item);
+          pickupItem(playerUnit, item);
           map.removeItem({ x, y });
         } else if (map.getTile(x, y) === Tiles.STAIRS_DOWN) {
-          state.loadMap(mapIndex + 1);
+          loadMap(mapIndex + 1);
         }
         break;
       }
       case 'INVENTORY': {
         const { inventoryCategory, inventoryIndex } = state;
         const items = inventory[inventoryCategory];
-        const item = items[inventoryIndex];
-        item.use(playerUnit);
-        items.splice(item, 1);
+        const item = items[inventoryIndex] || null;
+        useItem(playerUnit, item);
         break;
       }
     }
@@ -127,7 +127,7 @@
   }
 
   function _handleTab() {
-    const { state } = window.jwb;
+    const { state } = jwb;
     const { playerUnit } = state;
 
     switch (state.screen) {
@@ -146,7 +146,9 @@
     window.onkeydown = keyHandler;
   }
 
-  window.jwb.input = {
+  jwb = jwb || {};
+
+  jwb.input = {
     attachEvents,
     simulateKeyPress: keyHandler
   };

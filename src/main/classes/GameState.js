@@ -40,12 +40,4 @@ class GameState {
     this.inventoryCategory = null;
     this.inventoryIndex = 0;
   }
-
-  /**
-   * @param {int} index
-   */
-  loadMap(index) {
-    this.mapIndex = index;
-    this.map = this.mapSuppliers[index].get();
-  }
 }

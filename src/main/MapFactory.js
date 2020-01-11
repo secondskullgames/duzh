@@ -43,31 +43,31 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const u = new Unit(x, y, 'enemy', 50);
+      const u = new Unit(x, y, 'enemy', 10, 50);
       u.update = () => tryMoveRandomly(u);
       return u;
     };
 
     const itemSupplier = ({ x, y }) => {
-      switch (RandomUtils.randInt(0, 1)) {
+      switch (RandomUtils.randInt(0, 3)) {
         case 0:
+          return new MapItem(
+            x,
+            y,
+            'S',
+            () => window.jwb.ItemFactory.createSword(5)
+          );
+        default:
           return new MapItem(
             x,
             y,
             'P',
             () => window.jwb.ItemFactory.createPotion(20)
           );
-        case 1:
-          return new MapItem(
-            x,
-            y,
-            'S',
-            window.jwb.ItemFactory.createSword
-          );
       }
     };
 
-    return new BSPDungeonGenerator(8, 6).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new BSPDungeonGenerator(6, 2).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**

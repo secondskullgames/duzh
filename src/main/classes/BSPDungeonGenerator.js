@@ -13,11 +13,11 @@
  */
 
 /**
- * @param {int} minSectionDimension
  * @param {int} minRoomDimension
+ * @param {int} minRoomPadding
  * @constructor
  */
-const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
+const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
   const { MapUtils, RandomUtils } = window.jwb.utils;
   const { pickUnoccupiedLocations } = MapUtils;
   const { randInt, randChoice } = RandomUtils;
@@ -55,6 +55,7 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
    */
   function _generateSection(width, height) {
     // First, make sure the area is large enough to support two sections; if not, we're done
+    const minSectionDimension = minRoomDimension + 2 * minRoomPadding;
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
     const canSplitVertically = (height >= (2 * minSectionDimension));
 
@@ -139,12 +140,14 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
    */
   function  _generateSingleSection(width, height) {
     const { Tiles } = window.jwb.types;
-    const roomWidth = randInt(minRoomDimension, width);
-    const roomHeight = randInt(minRoomDimension, height);
+    const maxRoomWidth = width - (2 * minRoomPadding);
+    const maxRoomHeight = height - (2 * minRoomPadding);
+    const roomWidth = randInt(minRoomDimension, maxRoomWidth);
+    const roomHeight = randInt(minRoomDimension, maxRoomHeight);
     const roomTiles = _generateRoom(roomWidth, roomHeight);
 
-    const roomLeft = randInt(0, width - roomWidth);
-    const roomTop = randInt(0, height - roomHeight);
+    const roomLeft = randInt(minRoomPadding, width - roomWidth - minRoomPadding);
+    const roomTop = randInt(minRoomPadding, height - roomHeight - minRoomPadding);
     const tiles = [];
     // x, y are relative to the section's origin
     // roomX, roomY are relative to the room's origin
@@ -194,6 +197,7 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
    * @private
    */
   function _getSplitPoint(dimension) {
+    const minSectionDimension = minRoomDimension + 2 * minRoomPadding;
     const minSplitPoint = minSectionDimension;
     const maxSplitPoint = dimension - minSectionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
@@ -208,7 +212,7 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
    * @param {MapSection} rightSection
    */
   function _joinSectionsHorizontally(tiles, leftSection, rightSection) {
-    _logSections('HORIZONTAL', leftSection, rightSection);
+    //_logSections('HORIZONTAL', leftSection, rightSection);
     const { Tiles } = window.jwb.types;
     const { randChoice } = window.jwb.utils.RandomUtils;
     /**
@@ -251,7 +255,7 @@ const BSPDungeonGenerator = function(minSectionDimension, minRoomDimension) {
    * @param {MapSection} bottomSection
    */
   function _joinSectionsVertically(tiles, topSection, bottomSection) {
-    _logSections('VERTICAL', topSection, bottomSection);
+    //_logSections('VERTICAL', topSection, bottomSection);
     const { Tiles } = window.jwb.types;
 
     /**

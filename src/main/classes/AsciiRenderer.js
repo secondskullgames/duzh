@@ -59,10 +59,11 @@
 
       const lines = ['INVENTORY', ''];
 
-      for (let y = 0; y < HEIGHT - 2; y++) {
+      for (let y = 0; y < HEIGHT - 3; y++) {
         let line = (y < inventoryLines.length) ? inventoryLines[y] : '';
         lines.push(line);
       }
+      lines.push(_getStatusLine());
       container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
@@ -73,7 +74,7 @@
     function _renderElement(element) {
       switch (element.class) {
         case 'Unit':
-          return `<span style="color: ${(element.name === 'player') ? '#1cf' : '#f00'}">@</span>`;
+          return `<span style="color: ${(element.name === 'player') ? '#0cf' : '#f00'}">@</span>`;
         case 'MapItem':
           return element.char;
         case 'Tile':
@@ -84,7 +85,7 @@
 
     function _getStatusLine() {
       const { playerUnit } = window.jwb.state;
-      return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}`;
+      return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}    Damage: ${playerUnit.getDamage()}`;
     }
 
     /**
