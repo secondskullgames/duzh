@@ -3,24 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/ItemFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ItemFactory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/MapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/MapFactory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/actions.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/AsciiRenderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/AsciiRenderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/EquippedItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/EquippedItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/GameState.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/GameState.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/MapInstance.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapInstance.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/MapItem.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapItem.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/MapSupplier.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/MapSupplier.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/Tile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Tile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/Unit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Unit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/input.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/types.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/unitBehavior.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/unitBehavior.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/utils/MapUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/utils/MapUtils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/utils/RandomUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/utils/RandomUtils.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,7 +38,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1578782078909" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/classes" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -64,15 +51,16 @@
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.JavaScript" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes" />
+      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\utils" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src\main\classes\dungeons" />
       <recent name="C:\Users\Jack\IdeaProjects\roguelike-js" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Jack\IdeaProjects\roguelike-js\src" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -150,6 +138,7 @@
       <workItem from="1578238210486" duration="42908000" />
       <workItem from="1578607344495" duration="2426000" />
       <workItem from="1578672968538" duration="22386000" />
+      <workItem from="1578807381899" duration="1178000" />
     </task>
     <servers />
   </component>

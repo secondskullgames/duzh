@@ -1,12 +1,28 @@
 {
-  const WIDTH = 80;
-  const HEIGHT = 32;
+  const TILE_WIDTH = 32;
+  const TILE_HEIGHT = 24;
+
+  const WIDTH = 40; // 20; // in tiles
+  const HEIGHT = 24; // 16; // in tiles
 
   /**
    * @constructor
    */
-  function AsciiRenderer() {
+  function SpriteRenderer() {
     const container = document.getElementById('container');
+    const canvas = _createCanvas();
+    container.appendChild(canvas);
+    canvas.width = WIDTH * TILE_WIDTH;
+    canvas.height = HEIGHT * TILE_HEIGHT;
+    const context = canvas.getContext('2d');
+
+    /**
+     * @returns {HTMLCanvasElement}
+     * @private
+     */
+    function _createCanvas() {
+      return document.createElement('canvas');
+    }
 
     function render() {
       const { screen } = jwb.state;
@@ -23,27 +39,25 @@
     function _renderGameScreen() {
       const { map } = jwb.state;
 
-      const container = document.getElementById('container');
-      const lines = ['', '', '']; // extra room for messages
-      const mapHeight = HEIGHT - 7;
-      for (let y = 0; y < mapHeight; y++) {
-        let line = '';
+      for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
-          const element = map.getUnit(x, y) || map.getItem(x, y) || map.getTile(x, y);
-          line += _renderElement(element);
+          if (map.contains(x, y)) {
+            [map.getTile(x, y), map.getItem(x, y), map.getUnit(x, y)]
+              .filter(element => !!element)
+              .forEach(element => {
+                _renderElement(element, { x, y })
+              });
+          }
         }
-        lines.push(line);
       }
-      lines.push('', '', '');
-      lines.push(_getStatusLine());
-      _addActionLines(lines);
-      container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
     function _renderInventoryScreen() {
       const { state } = jwb;
       const { playerUnit, inventoryCategory, inventoryIndex } = state;
       const { inventory } = playerUnit;
+
+      const container = document.getElementById('container');
 
       const inventoryLines = [];
 
@@ -73,18 +87,32 @@
 
     /**
      * @param {Unit | MapItem | Tile} element
+     * @param {Coordinates} {x, y}
      * @private
      */
-    function _renderElement(element) {
+    function _renderElement(element, { x, y }) {
+      const { Tiles } = jwb.types;
       switch (element.class) {
         case 'Unit':
-          return `<span style="color: ${(element.name === 'player') ? '#0cf' : '#f00'}">@</span>`;
+          context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
+          context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+          break;
         case 'MapItem':
-          return element.char;
+          context.fillStyle = '#0f0';
+          context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+          break;
         case 'Tile':
-          return element.char;
+          switch (element.name) {
+            case Tiles.FLOOR.name:
+              context.fillStyle = '#000';
+              context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+              break;
+            default:
+              context.fillStyle = '#888';
+              context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+              break;
+          }
       }
-      return ' ';
     }
 
     function _getStatusLine() {
@@ -106,5 +134,5 @@
   }
 
   window.jwb = window.jwb || {};
-  jwb.AsciiRenderer = AsciiRenderer;
+  jwb.SpriteRenderer = SpriteRenderer;
 }

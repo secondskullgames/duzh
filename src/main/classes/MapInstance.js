@@ -27,7 +27,10 @@
      */
     this.getTile = function (x, y) {
       const { Tiles } = jwb.types;
-      return (this.tiles[y] || [])[x] || Tiles.NONE;
+      if (x < this.width && y < this.height) {
+        return (this.tiles[y] || [])[x] || Tiles.NONE;
+      }
+      throw `Illegal coordinates ${x}, ${y}`;
     };
 
     /**
