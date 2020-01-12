@@ -10,6 +10,7 @@
    */
   function SpriteRenderer() {
     const container = document.getElementById('container');
+    container.innerHTML = '';
     const canvas = _createCanvas();
     container.appendChild(canvas);
     canvas.width = WIDTH * TILE_WIDTH;
@@ -37,12 +38,48 @@
     }
 
     function _renderGameScreen() {
-      const { map } = jwb.state;
 
+      _renderTiles();
+      _renderItems();
+      _renderUnits();
+    }
+
+    function _renderTiles() {
+      const { map } = jwb.state;
       for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
           if (map.contains(x, y)) {
-            [map.getTile(x, y), map.getItem(x, y), map.getUnit(x, y)]
+            [map.getTile(x, y)]
+              .filter(element => !!element)
+              .forEach(element => {
+                _renderElement(element, { x, y })
+              });
+          }
+        }
+      }
+    }
+
+    function _renderItems() {
+      const { map } = jwb.state;
+      for (let y = 0; y < HEIGHT; y++) {
+        for (let x = 0; x < WIDTH; x++) {
+          if (map.contains(x, y)) {
+            [map.getItem(x, y)]
+              .filter(element => !!element)
+              .forEach(element => {
+                _renderElement(element, { x, y })
+              });
+          }
+        }
+      }
+    }
+
+    function _renderUnits() {
+      const { map } = jwb.state;
+      for (let y = 0; y < HEIGHT; y++) {
+        for (let x = 0; x < WIDTH; x++) {
+          if (map.contains(x, y)) {
+            [map.getUnit(x, y)]
               .filter(element => !!element)
               .forEach(element => {
                 _renderElement(element, { x, y })
@@ -96,7 +133,8 @@
       switch (element.class) {
         case 'Unit':
           if (element.sprite && element.sprite.image) {
-            context.drawImage(element.sprite.image, pixel.x, pixel.y);
+            // context.drawImage(element.sprite.image, pixel.x, pixel.y);
+            _drawImage(element.sprite, pixel);
           } else {
             context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
             context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
@@ -118,6 +156,10 @@
               break;
           }
       }
+    }
+
+    function _drawImage(sprite, pixel) {
+      context.drawImage(sprite.image, pixel.x + sprite.dx, pixel.y + sprite.dy);
     }
 
     function _getStatusLine() {

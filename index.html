@@ -3,6 +3,7 @@
   <head>
     <script src="src/main/utils/RandomUtils.js"></script>
     <script src="src/main/utils/MapUtils.js"></script>
+    <script src="src/main/utils/ImageUtils.js"></script>
     <script src="src/main/classes/Tile.js"></script>
     <script src="src/main/classes/Sprite.js"></script>
     <script src="src/main/classes/MapSupplier.js"></script>
@@ -21,11 +22,14 @@
     <script src="src/main/unitBehavior.js"></script>
     <script src="src/main/ItemFactory.js"></script>
     <script src="src/main/MapFactory.js"></script>
+    <script src="src/main/SpriteFactory.js"></script>
     <script src="src/main/main.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <pre id="container"></pre>
+    <div id="container"></div>
+    <button onclick="window.jwb.renderer = new AsciiRenderer(); window.jwb.renderer.render()">Ascii</button>
+    <button onclick="window.jwb.renderer = new SpriteRenderer(); window.jwb.renderer.render()">Sprites</button>
     <!--
       <br />
       <span style="display: inline-block; width: 40px;"></span>

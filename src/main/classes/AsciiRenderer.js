@@ -7,6 +7,9 @@
    */
   function AsciiRenderer() {
     const container = document.getElementById('container');
+    container.innerHTML = '';
+    const pre = document.createElement('pre');
+    container.appendChild(pre);
 
     function render() {
       const { screen } = jwb.state;
@@ -23,21 +26,24 @@
     function _renderGameScreen() {
       const { map } = jwb.state;
 
-      const container = document.getElementById('container');
       const lines = ['', '', '']; // extra room for messages
       const mapHeight = HEIGHT - 7;
       for (let y = 0; y < mapHeight; y++) {
         let line = '';
         for (let x = 0; x < WIDTH; x++) {
-          const element = map.getUnit(x, y) || map.getItem(x, y) || map.getTile(x, y);
-          line += _renderElement(element);
+          if (map.contains(x, y)) {
+            const element = map.getUnit(x, y) || map.getItem(x, y) || map.getTile(x, y);
+            line += _renderElement(element);
+          } else {
+            line += ' ';
+          }
         }
         lines.push(line);
       }
       lines.push('', '', '');
       lines.push(_getStatusLine());
       _addActionLines(lines);
-      container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+      pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
     function _renderInventoryScreen() {
@@ -68,7 +74,7 @@
       }
       lines.push(_getStatusLine());
       _addActionLines(lines);
-      container.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+      pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
     /**

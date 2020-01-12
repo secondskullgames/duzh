@@ -38,14 +38,13 @@
    * @param {int} numItems
    */
   function randomMap(width, height, numEnemies, numItems) {
+    const { SpriteFactory } = jwb;
     const { RandomUtils } = jwb.utils;
-    const { Sprite } = jwb;
     /**
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const sprite = new Sprite('player_attacking_E_1');
-      const u = new Unit(sprite, x, y, 'enemy', 10, 50);
+      const u = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
       u.update = () => tryMoveRandomly(u);
       return u;
     };
@@ -110,7 +109,8 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const u = new Unit(x, y, 'enemy', 10, 50);
+      const { SpriteFactory } = jwb;
+      const u = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
       u.update = () => tryMoveRandomly(u);
       return u;
     };

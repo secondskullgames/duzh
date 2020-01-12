@@ -1,8 +1,8 @@
 {
   window.onload = () => {
-    const { MapFactory, SpriteRenderer } = jwb;
+    const { MapFactory, SpriteFactory, SpriteRenderer } = jwb;
 
-    jwb.state = new GameState(new Unit(new Sprite('player_attacking_E_1'), 4, 10, 'player', 10, 100), [
+    jwb.state = new GameState(new Unit(SpriteFactory.getPlayerSprite(), 4, 10, 'player', 10, 100), [
       MapFactory.randomMap(40, 24, 5, 10),
       MapFactory.randomMap(40, 24, 7, 9),
       MapFactory.randomMap(40, 24, 9, 8),
