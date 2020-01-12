@@ -44,8 +44,9 @@
     this.class = 'Unit';
     /**
      * @type {Sprite | null}
+     * @private
      */
-    this.sprite = sprite;
+    this._sprite = sprite;
     /**
      * @type {int}
      */
@@ -83,8 +84,12 @@
     /**
      * @type {Function<void, int>}
      */
-    this.getDamage = function () {
+    this.getDamage = function() {
       return getDamage(this);
+    };
+
+    this.getSprite = function() {
+      return this._sprite;
     }
   }
 

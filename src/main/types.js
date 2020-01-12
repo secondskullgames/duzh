@@ -15,28 +15,30 @@
  */
 
 {
-  jwb = jwb || {};
-  jwb.types = jwb.types || [];
+  window.jwb = window.jwb || {};
+  jwb.types = {
+    Tiles: {
+      FLOOR: new Tile('FLOOR', '.', () => jwb.SpriteFactory.getFloorSprite(), false),
+      FLOOR_HALL: new Tile('FLOOR_HALL', '.', () => jwb.SpriteFactory.getHallFloorSprite(), false),
+      TOP_WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.getTopWallSprite(), true),
+      WALL: new Tile('WALL', ' ', () => null, true),
+      NONE: new Tile('NONE', ' ', null, true),
+      STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', null, false)
+    },
 
-  jwb.types.Tiles = {
-    FLOOR: new Tile('FLOOR', '.', false),
-    WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', true),
-    NONE: new Tile('NONE', ' ', true),
-    STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', false)
-  };
+    ItemCategory: {
+      POTION: 'POTION',
+      WEAPON: 'WEAPON'
+    },
 
-  jwb.types.ItemCategory = {
-    POTION: 'POTION',
-    WEAPON: 'WEAPON'
-  };
+    EquipmentCategory: {
+      WEAPON: 'WEAPON',
+      ARMOR: 'ARMOR'
+    },
 
-  jwb.types.EquipmentCategory = {
-    WEAPON: 'WEAPON',
-    ARMOR: 'ARMOR'
-  };
-
-  jwb.types.Stats = {
-    DAMAGE: 'DAMAGE',
-    HP: 'HP'
+    Stats: {
+      DAMAGE: 'DAMAGE',
+      HP: 'HP'
+    }
   };
 }

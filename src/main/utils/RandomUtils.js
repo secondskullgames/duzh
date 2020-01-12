@@ -18,4 +18,5 @@
     randInt,
     randChoice
   };
+  console.log('loaded utils');
 }

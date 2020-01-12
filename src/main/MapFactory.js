@@ -56,6 +56,7 @@
             x,
             y,
             'S',
+            jwb.SpriteFactory.getSwordMapSprite(),
             () => jwb.ItemFactory.createSword(5)
           );
         default:
@@ -63,6 +64,7 @@
             x,
             y,
             'P',
+            jwb.SpriteFactory.getPotionMapSprite(),
             () => jwb.ItemFactory.createPotion(20)
           );
       }

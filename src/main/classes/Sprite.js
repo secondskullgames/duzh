@@ -3,11 +3,11 @@
    * @param {string} filename
    * @param {int} dx
    * @param {int} dy
+   * @param {string} transparentColor in hex format, e.g. #ffffff
    * @constructor
    */
-  function Sprite(filename, { dx, dy }) {
+  function Sprite(filename, { dx, dy }, transparentColor) {
     const { applyTransparentColor } = jwb.utils.ImageUtils;
-    const TRANSPARENT_COLOR = '#ffffff'; // TODO don't hardcode this
 
     /**
      * @type {Promise<ImageBitmap>}
@@ -23,7 +23,7 @@
         context.drawImage(img, 0, 0);
 
         const imageData = context.getImageData(0, 0, img.width, img.height);
-        const transparentImageData = applyTransparentColor(imageData);
+        const transparentImageData = applyTransparentColor(imageData, transparentColor);
 
         // clean up
         img.parentElement.removeChild(img);
@@ -36,8 +36,9 @@
           });
       });
 
-      img.src = `png/${filename}.png`;
       img.style.display = 'none';
+      img.onerror = () => { throw `fux`; };
+      img.src = `png/${filename}.png`;
       document.body.appendChild(canvas);
       document.body.appendChild(img);
     });

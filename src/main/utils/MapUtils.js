@@ -9,7 +9,7 @@
     const unoccupiedLocations = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === Tiles.FLOOR) {
+        if (tiles[y][x] === Tiles.FLOOR || tiles[y][x] === Tiles.FLOOR_HALL) {
           if (occupiedLocations.filter(loc => (loc.x === x && loc.y === y)).length === 0) {
             unoccupiedLocations.push({ x, y });
           }

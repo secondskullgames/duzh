@@ -2,11 +2,12 @@
  * @param {int} x
  * @param {int} y
  * @param {string} char
+ * @param {Sprite} sprite
  * @param {Function<void, InventoryItem>} itemSupplier
  *
  * @constructor
  */
-function MapItem(x, y, char, itemSupplier) {
+function MapItem(x, y, char, sprite, itemSupplier) {
   /**
    * @return {InventoryItem}
    */
@@ -19,4 +20,5 @@ function MapItem(x, y, char, itemSupplier) {
   this.y = y;
   this.char = char;
   this.getInventoryItem = getInventoryItem;
+  this.getSprite = () => sprite;
 }

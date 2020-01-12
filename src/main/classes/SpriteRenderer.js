@@ -1,6 +1,6 @@
 {
   const TILE_WIDTH = 32;
-  const TILE_HEIGHT = 32;
+  const TILE_HEIGHT = 24;
 
   const WIDTH = 40; // 20; // in tiles
   const HEIGHT = 24; // 16; // in tiles
@@ -57,7 +57,7 @@
       }
 
       const promises = elements.filter(element => !!element)
-        .map(element => element.sprite)
+        .map(element => element.getSprite())
         .filter(sprite => !!sprite)
         .map(sprite => sprite.whenReady);
 
@@ -151,34 +151,48 @@
       const { Tiles } = jwb.types;
       const pixel = { x: x * TILE_WIDTH, y: y * TILE_HEIGHT };
       switch (element.class) {
-        case 'Unit':
-          if (element.sprite && element.sprite.image) {
-            // context.drawImage(element.sprite.image, pixel.x, pixel.y);
-            _drawImage(element.sprite, pixel);
+        case 'Unit': {
+          const sprite = element.getSprite();
+          if (sprite) {
+            _drawSprite(sprite, pixel);
           } else {
+            // TODO TEMP CODE
             context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
             context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
           }
           break;
+        }
         case 'MapItem':
-          context.fillStyle = '#0f0';
-          context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-          break;
-        case 'Tile':
-          switch (element.name) {
-            case Tiles.FLOOR.name:
-              context.fillStyle = '#000';
-              context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-              break;
-            default:
-              context.fillStyle = '#888';
-              context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-              break;
+          const sprite = element.getSprite();
+          if (sprite) {
+            _drawSprite(sprite, pixel);
+          } else {
+            // TODO TEMP CODE
+            context.fillStyle = '#0f0';
+            context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
           }
+          break;
+        case 'Tile': {
+          const sprite = element.getSprite();
+          if (sprite) {
+            _drawSprite(sprite, pixel);
+          } else {
+            // TODO TEMP CODE
+            switch (element.name) {
+              case 'STAIRS_DOWN':
+                context.fillStyle = '#00f';
+                break;
+              default:
+                context.fillStyle = '#000';
+            }
+            context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
+          }
+          break;
+        }
       }
     }
 
-    function _drawImage(sprite, pixel) {
+    function _drawSprite(sprite, pixel) {
       context.drawImage(sprite.image, pixel.x + sprite.dx, pixel.y + sprite.dy);
     }
 
