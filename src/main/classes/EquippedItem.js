@@ -3,6 +3,7 @@
  * @param {EquipmentCategory} category
  * @param {InventoryItem} inventoryItem
  * @param {Object<string, *>} stats
+ * @constructor
  */
 function EquippedItem(name, category, inventoryItem, stats) {
   this.class = 'EquippedItem';

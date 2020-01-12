@@ -38,7 +38,7 @@
    * @param {int} numItems
    */
   function randomMap(width, height, numEnemies, numItems) {
-    const { RandomUtils } = window.jwb.utils;
+    const { RandomUtils } = jwb.utils;
     /**
      * @type {Function<Coordinates, Unit>}
      */
@@ -55,14 +55,14 @@
             x,
             y,
             'S',
-            () => window.jwb.ItemFactory.createSword(5)
+            () => jwb.ItemFactory.createSword(5)
           );
         default:
           return new MapItem(
             x,
             y,
             'P',
-            () => window.jwb.ItemFactory.createPotion(20)
+            () => jwb.ItemFactory.createPotion(20)
           );
       }
     };
@@ -75,7 +75,7 @@
    * @private
    */
   function _mapFromAscii(ascii) {
-    const { Tiles } = window.jwb.types;
+    const { Tiles } = jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
     const tiles = [];
@@ -108,7 +108,7 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const u = new Unit(x, y, 'enemy', 50);
+      const u = new Unit(x, y, 'enemy', 10, 50);
       u.update = () => tryMoveRandomly(u);
       return u;
     };
@@ -124,6 +124,6 @@
     );
   }
 
-  window.jwb = window.jwb || {};
-  window.jwb.MapFactory = { randomMap, FIXED_MAPS };
+  jwb = jwb || {};
+  jwb.MapFactory = { randomMap, FIXED_MAPS };
 }

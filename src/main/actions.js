@@ -34,9 +34,10 @@
   function loadMap(index) {
     if (index >= jwb.state.mapSuppliers.length) {
       alert('YOU WIN!');
+    } else {
+      jwb.state.mapIndex = index;
+      jwb.state.map = jwb.state.mapSuppliers[index].get();
     }
-    jwb.state.mapIndex = index;
-    jwb.state.map = jwb.state.mapSuppliers[index].get();
   }
 
   jwb.actions = {

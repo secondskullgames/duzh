@@ -11,7 +11,7 @@ function MapItem(x, y, char, itemSupplier) {
    * @return {InventoryItem}
    */
   function getInventoryItem() {
-    return itemSupplier();
+    return itemSupplier.call(null);
   }
 
   this.class = 'MapItem';

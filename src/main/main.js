@@ -1,5 +1,5 @@
 {
-  const { MapFactory } = window.jwb;
+  const { MapFactory } = jwb;
 
   jwb.state = new GameState(new Unit(4, 10, 'player', 10, 100), [
     MapFactory.randomMap(40, 24, 5, 10),
@@ -9,6 +9,9 @@
     MapFactory.randomMap(40, 24, 13, 6),
     MapFactory.randomMap(40, 24, 15, 5)
   ]);
+
+  jwb.renderer = new AsciiRenderer();
+
   jwb.actions.loadMap(0);
 
   window.onload = () => {

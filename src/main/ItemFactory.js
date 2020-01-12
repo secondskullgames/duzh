@@ -4,7 +4,7 @@
    * @return InventoryItem
    */
   function createPotion(hpRestored) {
-    const { ItemCategory } = window.jwb.types;
+    const { ItemCategory } = jwb.types;
     return new InventoryItem('Potion', ItemCategory.POTION, (item, unit) => {
       const prevHP = unit.currentHP;
       unit.currentHP = Math.min(unit.currentHP + hpRestored, unit.maxHP);
@@ -13,14 +13,14 @@
   }
 
   function createSword(damage) {
-    const { ItemCategory, EquipmentCategory, Stats } = window.jwb.types;
+    const { ItemCategory, EquipmentCategory, Stats } = types;
     return new InventoryItem('Short Sword', ItemCategory.WEAPON, (item, unit) => {
       const equippedSword = new EquippedItem('Short Sword', EquipmentCategory.WEAPON, item, { [Stats.DAMAGE]: 10 });
       unit.equipment[EquipmentCategory.WEAPON] = equippedSword;
     });
   }
 
-  window.jwb.ItemFactory = {
+  jwb.ItemFactory = {
     createPotion,
     createSword
   };

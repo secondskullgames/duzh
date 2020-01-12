@@ -1,54 +1,46 @@
-class MapSupplier {
+/**
+ * @constructor
+ */
+function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
   /**
    * @type int
    */
-  width;
+  this.width = width;
   /**
    * @type int
    */
-  height;
+  this.height = height;
   /**
    * [y][x]
    * @type Tile[][]
    */
-  tiles;
+  this.tiles = tiles;
   /**
    * @type Coordinates
    */
-  playerUnitLocation;
+  this.playerUnitLocation = playerUnitLocation;
   /**
    * @type Coordinates[]
    */
-  enemyUnitLocations;
+  this.enemyUnitLocations = enemyUnitLocations;
   /**
    * @type {Function<void, Unit>}
    */
-  enemyUnitSupplier;
+  this.enemyUnitSupplier = enemyUnitSupplier;
   /**
    * @type Coordinates[]
    */
-  itemLocations;
+  this.itemLocations = itemLocations;
   /**
    * @type {Function<Coordinates, MapItem>}
    */
-  itemSupplier;
-
-  constructor(width, height, tiles, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
-    this.width = width;
-    this.height = height;
-    this.tiles = tiles;
-    this.playerUnitLocation = playerUnitLocation;
-    this.enemyUnitLocations = enemyUnitLocations;
-    this.enemyUnitSupplier = enemyUnitSupplier;
-    this.itemLocations = itemLocations;
-    this.itemSupplier = itemSupplier;
-  }
+  this.itemSupplier = itemSupplier;
 
   /**
    * @returns {MapInstance}
    */
-  get() {
-    const { playerUnit } = window.jwb.state;
+  this.get = function() {
+    const { playerUnit } = jwb.state;
     const units = [playerUnit];
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     units.push(...this.enemyUnitLocations.map(({ x, y }) => this.enemyUnitSupplier({ x, y })));

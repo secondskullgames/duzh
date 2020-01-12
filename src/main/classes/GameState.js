@@ -1,43 +1,42 @@
-class GameState {
+{
   /**
-   * @type 'GAME' | 'INVENTORY'
+   * @constructor
    */
-  screen;
-  /**
-   * @type Unit
-   */
-  playerUnit;
-  /**
-   * @type MapSupplier[]
-   */
-  mapSuppliers;
-  /**
-   * @type int|null
-   */
-  mapIndex;
-  /**
-   * @type MapInstance|null
-   */
-  map;
-  /**
-   * @type string[]
-   */
-  messages;
-  /**
-   * @type {ItemCategory}
-   */
-  inventoryCategory;
-  /**
-   * @type {int}
-   */
-  inventoryIndex;
-
-  constructor(playerUnit, mapSuppliers) {
-    this.playerUnit = playerUnit;
-    this.mapSuppliers = mapSuppliers;
-    this.messages = [];
+  function GameState(playerUnit, mapSuppliers) {
+    /**
+     * @type 'GAME' | 'INVENTORY'
+     */
     this.screen = 'GAME';
+    /**
+     * @type Unit
+     */
+    this.playerUnit = playerUnit;
+    /**
+     * @type MapSupplier[]
+     */
+    this.mapSuppliers = mapSuppliers;
+    /**
+     * @type int|null
+     */
+    this.mapIndex = 0;
+    /**
+     * @type MapInstance|null
+     */
+    this.map = null;
+    /**
+     * @type string[]
+     */
+    this.messages = [];
+    /**
+     * @type {ItemCategory}
+     */
     this.inventoryCategory = null;
+    /**
+     * @type {int}
+     */
     this.inventoryIndex = 0;
   }
+
+  window.jwb = window.jwb || {};
+  jwb.GameState = GameState;
 }

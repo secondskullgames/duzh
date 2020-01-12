@@ -17,8 +17,8 @@
  * @param {int} minRoomPadding
  * @constructor
  */
-const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
-  const { MapUtils, RandomUtils } = window.jwb.utils;
+function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
+  const { MapUtils, RandomUtils } = jwb.utils;
   const { pickUnoccupiedLocations } = MapUtils;
   const { randInt, randChoice } = RandomUtils;
 
@@ -139,7 +139,7 @@ const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
    * @private
    */
   function  _generateSingleSection(width, height) {
-    const { Tiles } = window.jwb.types;
+    const { Tiles } = jwb.types;
     const maxRoomWidth = width - (2 * minRoomPadding);
     const maxRoomHeight = height - (2 * minRoomPadding);
     const roomWidth = randInt(minRoomDimension, maxRoomWidth);
@@ -176,7 +176,7 @@ const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
    * @private
    */
   function _generateRoom(width, height) {
-    const { Tiles } = window.jwb.types;
+    const { Tiles } = jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
       tiles[y] = [];
@@ -213,8 +213,8 @@ const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
    */
   function _joinSectionsHorizontally(tiles, leftSection, rightSection) {
     //_logSections('HORIZONTAL', leftSection, rightSection);
-    const { Tiles } = window.jwb.types;
-    const { randChoice } = window.jwb.utils.RandomUtils;
+    const { Tiles } = jwb.types;
+    const { randChoice } = jwb.utils.RandomUtils;
     /**
      * @type {{ y: int, leftRoom: Rect, rightRoom: Rect}[]}
      */
@@ -256,7 +256,8 @@ const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
    */
   function _joinSectionsVertically(tiles, topSection, bottomSection) {
     //_logSections('VERTICAL', topSection, bottomSection);
-    const { Tiles } = window.jwb.types;
+    const { Tiles } = jwb.types;
+    const { randChoice } = jwb.utils.RandomUtils;
 
     /**
      * @type {{ x: int, topRoom: Rect, bottomRoom: Rect}[]}
@@ -297,5 +298,7 @@ const BSPDungeonGenerator = function(minRoomDimension, minRoomPadding) {
     console.log();
   }
 
-  return { generateDungeon };
-};
+  return {
+    generateDungeon
+  };
+}

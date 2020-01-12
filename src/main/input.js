@@ -25,11 +25,10 @@
    * @param {boolean} update
    */
   function _render(update) {
-    const { state, renderer } = window.jwb;
-    const { screen } = state;
+    const { state, renderer } = jwb;
 
     if (update) {
-      const { units } = window.jwb.state.map;
+      const { units } = state.map;
 
       units.forEach(u => u.update());
     }
@@ -38,9 +37,9 @@
   }
 
   function _handleArrowKey(key) {
-    const { state } = window.jwb;
+    const { state } = jwb;
     const { playerUnit, screen } = state;
-    const { tryMove } = window.jwb.utils.unitBehavior;
+    const { tryMove } = jwb.utils.unitBehavior;
     const { inventory } = playerUnit;
 
     switch (screen) {

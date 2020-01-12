@@ -1,10 +1,13 @@
+/**
+ * @constructor
+ */
 {
   function AsciiRenderer() {
     const WIDTH = 80;
     const HEIGHT = 32;
 
     function render() {
-      const { screen } = window.jwb.state;
+      const { screen } = jwb.state;
       switch (screen) {
         case 'GAME':
           return _renderGameScreen();
@@ -16,7 +19,7 @@
     }
 
     function _renderGameScreen() {
-      const { map } = window.jwb.state;
+      const { map } = jwb.state;
 
       const container = document.getElementById('container');
       const lines = ['', '', '']; // extra room for messages
@@ -36,7 +39,7 @@
     }
 
     function _renderInventoryScreen() {
-      const { state } = window.jwb;
+      const { state } = jwb;
       const { playerUnit, inventoryCategory, inventoryIndex } = state;
       const { inventory } = playerUnit;
 
@@ -85,7 +88,7 @@
     }
 
     function _getStatusLine() {
-      const { playerUnit, mapIndex } = window.jwb.state;
+      const { playerUnit, mapIndex } = jwb.state;
       return `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}    Damage: ${playerUnit.getDamage()}    Level: ${mapIndex + 1}`;
     }
 
@@ -93,7 +96,7 @@
      * @param {string[]} lines
      */
      function _addActionLines(lines) {
-      const { messages } = window.jwb.state;
+      const { messages } = jwb.state;
       for (let i = 0; i < messages.length; i++) {
         lines[i] = messages.pop();
       }
@@ -103,5 +106,5 @@
   }
 
   window.jwb = window.jwb || {};
-  window.jwb.renderer = new AsciiRenderer();
+  jwb.AsciiRenderer = AsciiRenderer;
 }

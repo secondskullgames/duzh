@@ -1,8 +1,8 @@
 {
-  const { RandomUtils } = window.jwb.utils;
-  const { randInt } = RandomUtils;
   function pickUnoccupiedLocations(tiles, occupiedLocations, numToChoose) {
-    const { Tiles } = window.jwb.types;
+    const { Tiles } = jwb.types;
+    const { RandomUtils } = jwb.utils;
+    const { randInt } = RandomUtils;
     /**
      * @type {{ x: int, y: int }[]}
      */
@@ -31,8 +31,8 @@
   }
 
   window.jwb = window.jwb || {};
-  window.jwb.utils = window.jwb.utils || {};
-  window.jwb.utils.MapUtils = {
+  jwb.utils = jwb.utils || {};
+  jwb.utils.MapUtils = {
     pickUnoccupiedLocations
   };
 }

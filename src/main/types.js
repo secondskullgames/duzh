@@ -15,27 +15,27 @@
  */
 
 {
-  window.jwb = window.jwb || {};
-  window.jwb.types = window.jwb.types || [];
+  jwb = jwb || {};
+  jwb.types = jwb.types || [];
 
-  window.jwb.types.Tiles = {
+  jwb.types.Tiles = {
     FLOOR: new Tile('FLOOR', '.', false),
     WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', true),
     NONE: new Tile('NONE', ' ', true),
     STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', false)
   };
 
-  window.jwb.types.ItemCategory = {
+  jwb.types.ItemCategory = {
     POTION: 'POTION',
     WEAPON: 'WEAPON'
   };
 
-  window.jwb.types.EquipmentCategory = {
+  jwb.types.EquipmentCategory = {
     WEAPON: 'WEAPON',
     ARMOR: 'ARMOR'
   };
 
-  window.jwb.types.Stats = {
+  jwb.types.Stats = {
     DAMAGE: 'DAMAGE',
     HP: 'HP'
   };

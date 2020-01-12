@@ -3,7 +3,7 @@
    * @param {Unit} unit
    */
   function tryMoveRandomly(unit) {
-    const { map } = window.jwb.state;
+    const { map } = jwb.state;
     /** @type {{ x: int, y: int }[]} */
     const tiles = [];
     for (let [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) {
@@ -22,7 +22,7 @@
   }
 
   function tryMove(unit, x, y) {
-    const { map, messages } = window.jwb.state;
+    const { map, messages } = jwb.state;
     if (map.contains(x, y) && !map.isBlocked(x, y)) {
       [unit.x, unit.y] = [x, y];
     } else {
@@ -38,7 +38,7 @@
     }
   }
 
-  window.jwb = window.jwb || {};
-  window.jwb.utils = window.jwb.utils || {};
-  window.jwb.utils.unitBehavior = { tryMove, tryMoveRandomly };
+  jwb = jwb || {};
+  jwb.utils = jwb.utils || {};
+  jwb.utils.unitBehavior = { tryMove, tryMoveRandomly };
 }
