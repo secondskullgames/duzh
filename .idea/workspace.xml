@@ -3,12 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/MapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/MapFactory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/classes/AsciiRenderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/AsciiRenderer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/SpriteFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/SpriteFactory.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/Sprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Sprite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/SpriteRenderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/SpriteRenderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -140,7 +137,7 @@
       <workItem from="1578238210486" duration="42908000" />
       <workItem from="1578607344495" duration="2426000" />
       <workItem from="1578672968538" duration="22386000" />
-      <workItem from="1578807381899" duration="6700000" />
+      <workItem from="1578807381899" duration="7953000" />
     </task>
     <servers />
   </component>

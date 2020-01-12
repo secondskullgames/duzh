@@ -1,6 +1,6 @@
 {
   function getPlayerSprite() {
-    return new Sprite('player_attacking_E_1', { dx: 0, dy: -24 });
+    return new Sprite('player_standing_SE_1', { dx: -4, dy: -16 });
   }
 
   const SpriteFactory = {

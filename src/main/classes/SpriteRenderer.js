@@ -1,6 +1,6 @@
 {
   const TILE_WIDTH = 32;
-  const TILE_HEIGHT = 24;
+  const TILE_HEIGHT = 32;
 
   const WIDTH = 40; // 20; // in tiles
   const HEIGHT = 24; // 16; // in tiles
@@ -38,10 +38,30 @@
     }
 
     function _renderGameScreen() {
+      _waitForSprites()
+        .then(() => {
+          _renderTiles();
+          _renderItems();
+          _renderUnits();
+        });
+    }
 
-      _renderTiles();
-      _renderItems();
-      _renderUnits();
+    function _waitForSprites() {
+      const { map } = jwb.state;
+      const elements = [];
+
+      for (let y = 0; y < HEIGHT; y++) {
+        for (let x = 0; x < WIDTH; x++) {
+          elements.push(map.getTile(x, y), map.getItem(x, y), map.getUnit(x, y));
+        }
+      }
+
+      const promises = elements.filter(element => !!element)
+        .map(element => element.sprite)
+        .filter(sprite => !!sprite)
+        .map(sprite => sprite.whenReady);
+
+      return Promise.all(promises);
     }
 
     function _renderTiles() {
