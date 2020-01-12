@@ -1,5 +1,6 @@
 {
   /**
+   * @param {Sprite} sprite
    * @param {int} x
    * @param {int} y
    * @param {string} name
@@ -7,7 +8,7 @@
    * @param {int} maxHP
    * @constructor
    */
-  function Unit(x, y, name, damage, maxHP) {
+  function Unit(sprite, x, y, name, damage, maxHP) {
     /**
      * @type int
      */
@@ -41,6 +42,10 @@
      * @type {string}
      */
     this.class = 'Unit';
+    /**
+     * @type {Sprite | null}
+     */
+    this.sprite = sprite;
     /**
      * @type {int}
      */

@@ -92,24 +92,29 @@
      */
     function _renderElement(element, { x, y }) {
       const { Tiles } = jwb.types;
+      const pixel = { x: x * TILE_WIDTH, y: y * TILE_HEIGHT };
       switch (element.class) {
         case 'Unit':
-          context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
-          context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+          if (element.sprite && element.sprite.image) {
+            context.drawImage(element.sprite.image, pixel.x, pixel.y);
+          } else {
+            context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
+            context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
+          }
           break;
         case 'MapItem':
           context.fillStyle = '#0f0';
-          context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+          context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
           break;
         case 'Tile':
           switch (element.name) {
             case Tiles.FLOOR.name:
               context.fillStyle = '#000';
-              context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+              context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
               break;
             default:
               context.fillStyle = '#888';
-              context.fillRect(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
+              context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
               break;
           }
       }
@@ -130,7 +135,7 @@
       }
     }
 
-    return { render };
+    this.render = render.bind(this);
   }
 
   window.jwb = window.jwb || {};
