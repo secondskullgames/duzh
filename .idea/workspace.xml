@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/MapFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/MapFactory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/SpriteFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/SpriteFactory.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/classes/Sprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Sprite.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/input.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/input.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/types.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/unitBehavior.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/unitBehavior.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -55,11 +48,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/classes/Sprite.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
+            <state relative-caret-position="547">
+              <caret line="48" column="37" lean-forward="true" selection-start-line="48" selection-start-column="37" selection-end-line="48" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -91,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/unitBehavior.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="40" column="32" selection-start-line="40" selection-start-column="32" selection-end-line="40" selection-end-column="32" />
+            <state relative-caret-position="120">
+              <caret line="8" column="61" selection-start-line="8" selection-start-column="61" selection-end-line="8" selection-end-column="61" />
             </state>
           </provider>
         </entry>
@@ -135,11 +128,11 @@
       <list>
         <option value="$PROJECT_DIR$/src/main/main.js" />
         <option value="$PROJECT_DIR$/src/main/MapFactory.js" />
-        <option value="$PROJECT_DIR$/src/main/classes/Sprite.js" />
         <option value="$PROJECT_DIR$/src/main/types.js" />
         <option value="$PROJECT_DIR$/src/main/SpriteFactory.js" />
         <option value="$PROJECT_DIR$/src/main/input.js" />
         <option value="$PROJECT_DIR$/src/main/unitBehavior.js" />
+        <option value="$PROJECT_DIR$/src/main/classes/Sprite.js" />
       </list>
     </option>
   </component>
@@ -316,7 +309,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2845000" />
+    <option name="totallyTimeSpent" value="3166000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="957" extended-state="6" />
@@ -439,13 +432,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/classes/Sprite.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/MapFactory.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -497,8 +483,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/unitBehavior.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" column="32" selection-start-line="40" selection-start-column="32" selection-end-line="40" selection-end-column="32" />
+        <state relative-caret-position="120">
+          <caret line="8" column="61" selection-start-line="8" selection-start-column="61" selection-end-line="8" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/classes/Sprite.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="547">
+          <caret line="48" column="37" lean-forward="true" selection-start-line="48" selection-start-column="37" selection-end-line="48" selection-end-column="37" />
         </state>
       </provider>
     </entry>

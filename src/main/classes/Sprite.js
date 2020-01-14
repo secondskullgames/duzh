@@ -43,6 +43,7 @@
       img.onerror = (e) => {
         throw new Error(`Failed to load image ${img.src}`);
       };
+      img.style.display = 'none';
       img.src = `png/${filename}.png`;
       document.body.appendChild(canvas);
       document.body.appendChild(img);
