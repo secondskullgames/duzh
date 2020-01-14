@@ -44,7 +44,7 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const enemyUnit = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
+      const enemyUnit = new Unit(SpriteFactory.PLAYER(), x, y, 'enemy', 10, 50);
       enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
       return enemyUnit;
     };
@@ -56,7 +56,7 @@
             x,
             y,
             'S',
-            jwb.SpriteFactory.getSwordMapSprite(),
+            jwb.SpriteFactory.MAP_SWORD(),
             () => jwb.ItemFactory.createSword(5)
           );
         default:
@@ -64,7 +64,7 @@
             x,
             y,
             'P',
-            jwb.SpriteFactory.getPotionMapSprite(),
+            jwb.SpriteFactory.MAP_POTION(),
             () => jwb.ItemFactory.createPotion(20)
           );
       }
@@ -112,7 +112,7 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const enemyUnit = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
+      const enemyUnit = new Unit(SpriteFactory.PLAYER(), x, y, 'enemy', 10, 50);
       enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
       return enemyUnit;
     };

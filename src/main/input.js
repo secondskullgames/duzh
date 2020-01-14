@@ -5,6 +5,10 @@
       case 'a':
       case 's':
       case 'd':
+      case 'ArrowUp':
+      case 'ArrowLeft':
+      case 'ArrowDown':
+      case 'ArrowRight':
         _handleArrowKey(e.key);
         break;
       case ' ': // spacebar
@@ -47,15 +51,19 @@
         let [dx, dy] = [];
         switch (key) {
           case 'w':
+          case 'ArrowUp':
             [dx, dy] = [0, -1];
             break;
           case 'a':
+          case 'ArrowLeft':
             [dx, dy] = [-1, 0];
             break;
           case 's':
+          case 'ArrowDown':
             [dx, dy] = [0, 1];
             break;
           case 'd':
+          case 'ArrowRight':
             [dx, dy] = [1, 0];
             break;
           default:

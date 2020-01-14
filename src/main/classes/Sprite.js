@@ -16,6 +16,9 @@
       const canvas = document.createElement('canvas');
       canvas.style.display = 'none';
 
+      /**
+       * @type {HTMLImageElement}
+       */
       const img = document.createElement('img');
 
       img.addEventListener('load', () => {
@@ -36,8 +39,10 @@
           });
       });
 
-      img.style.display = 'none';
-      img.onerror = () => { throw `fux`; };
+      //img.style.display = 'none';
+      img.onerror = (e) => {
+        throw new Error(`Failed to load image ${img.src}`);
+      };
       img.src = `png/${filename}.png`;
       document.body.appendChild(canvas);
       document.body.appendChild(img);

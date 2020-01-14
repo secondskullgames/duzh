@@ -26,7 +26,7 @@
   }
 
   function tryMove(unit, x, y) {
-    const { map, messages } = jwb.state;
+    const { map, messages, playerUnit } = jwb.state;
     if (map.contains(x, y) && !map.isBlocked(x, y)) {
       [unit.x, unit.y] = [x, y];
     } else {
@@ -37,6 +37,9 @@
         messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
         if (otherUnit.currentHP === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
+          if (otherUnit === playerUnit) {
+            alert('Game Over!');
+          }
         }
       }
     }

@@ -18,12 +18,12 @@
   window.jwb = window.jwb || {};
   jwb.types = {
     Tiles: {
-      FLOOR: new Tile('FLOOR', '.', () => jwb.SpriteFactory.getFloorSprite(), false),
-      FLOOR_HALL: new Tile('FLOOR_HALL', '.', () => jwb.SpriteFactory.getHallFloorSprite(), false),
-      TOP_WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.getTopWallSprite(), true),
+      FLOOR: new Tile('FLOOR', '.', () => jwb.SpriteFactory.FLOOR(), false),
+      FLOOR_HALL: new Tile('FLOOR_HALL', '.', () => jwb.SpriteFactory.FLOOR_HALL(), false),
+      TOP_WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.WALL_TOP(), true),
       WALL: new Tile('WALL', ' ', () => null, true),
       NONE: new Tile('NONE', ' ', null, true),
-      STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', null, false)
+      STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', () => jwb.SpriteFactory.STAIRS_DOWN(), false)
     },
 
     ItemCategory: {
