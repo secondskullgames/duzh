@@ -31,6 +31,7 @@
     _canvas.width = WIDTH * TILE_WIDTH;
     _canvas.height = HEIGHT * TILE_HEIGHT;
     const _context = _canvas.getContext('2d');
+    _context.imageSmoothingEnabled = false;
     _context.textBaseline = 'middle';
 
     /**

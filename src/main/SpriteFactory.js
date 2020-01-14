@@ -16,7 +16,7 @@
   }
 
   function getSwordMapSprite() {
-    return new Sprite('sword_icon_small', { dx: 0, dy: 0 }, '#ffffff');
+    return new Sprite('sword_icon_small', { dx: 0, dy: -8 }, '#ffffff');
   }
 
   function getPotionMapSprite() {
