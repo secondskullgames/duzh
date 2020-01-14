@@ -1,6 +1,6 @@
 {
   function getPlayerSprite() {
-    return new Sprite('player_standing_SE_1', { dx: -4, dy: -24 }, '#ffffff');
+    return new Sprite('player_standing_SE_1', { dx: -4, dy: -20 }, '#ffffff');
   }
 
   function getTopWallSprite() {
@@ -20,7 +20,7 @@
   }
 
   function getPotionMapSprite() {
-    return new Sprite('potion_small', { dx: 0, dy: 0 }, '#ffffff');
+    return new Sprite('potion_small', { dx: 0, dy: -8 }, '#ffffff');
   }
 
   const SpriteFactory = {

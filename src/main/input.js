@@ -62,9 +62,8 @@
             throw `Invalid key ${key}`;
         }
 
-        playerUnit.update = () => {
-          tryMove(playerUnit, playerUnit.x + dx, playerUnit.y + dy);
-          playerUnit.update = () => {};
+        playerUnit.queuedOrder = u => {
+          tryMove(u, u.x + dx, u.y + dy);
         };
         break;
       case 'INVENTORY':

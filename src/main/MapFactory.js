@@ -44,9 +44,9 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const u = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
-      u.update = () => tryMoveRandomly(u);
-      return u;
+      const enemyUnit = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
+      enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
+      return enemyUnit;
     };
 
     const itemSupplier = ({ x, y }) => {
@@ -78,6 +78,7 @@
    * @private
    */
   function _mapFromAscii(ascii) {
+    const { SpriteFactory } = jwb;
     const { Tiles } = jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
@@ -111,10 +112,9 @@
      * @type {Function<Coordinates, Unit>}
      */
     const enemyUnitSupplier = ({ x, y }) => {
-      const { SpriteFactory } = jwb;
-      const u = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
-      u.update = () => tryMoveRandomly(u);
-      return u;
+      const enemyUnit = new Unit(SpriteFactory.getPlayerSprite(), x, y, 'enemy', 10, 50);
+      enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
+      return enemyUnit;
     };
 
     return new MapSupplier(

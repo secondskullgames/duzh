@@ -75,10 +75,28 @@
      * @type {Object<EquipmentCategory, EquippedItem?>} equipment
      */
     this.equipment = equipment;
+
+    /**
+     * @type {Function<Unit, void> | null}
+     */
+    this.queuedOrder = null;
+    /**
+     * @type {Function<Unit, void> | null}
+     */
+    this.aiHandler = null;
     /**
      * @type {Function<void, void>}
      */
-    this.update = () => { };
+    this.update = () => {
+      if (!!this.queuedOrder) {
+        this.queuedOrder.call(null, this);
+        this.queuedOrder = null;
+      }
+
+      if (!!this.aiHandler) {
+        this.aiHandler.call(null, this);
+      }
+    };
 
     this.damage = damage;
     /**

@@ -42,7 +42,7 @@
       }
       lines.push('', '', '');
       lines.push(_getStatusLine());
-      _addActionLines(lines);
+      _addMessageLines(lines);
       pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
@@ -73,7 +73,7 @@
         lines.push(line);
       }
       lines.push(_getStatusLine());
-      _addActionLines(lines);
+      _addMessageLines(lines);
       pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
     }
 
@@ -101,7 +101,7 @@
     /**
      * @param {string[]} lines
      */
-     function _addActionLines(lines) {
+     function _addMessageLines(lines) {
       const { messages } = jwb.state;
       for (let i = 0; i < messages.length; i++) {
         lines[i] = messages.pop();
