@@ -35,6 +35,10 @@
      * @type {int}
      */
     this.inventoryIndex = 0;
+    /**
+     * @type int
+     */
+    this.turn = 1;
   }
 
   window.jwb = window.jwb || {};

@@ -5,14 +5,11 @@
    * @param {int} y
    * @param {string} name
    * @param {int} damage
-   * @param {int} maxHP
+   * @param {int} hp
+   * @param {int} hpPerTurn
    * @constructor
    */
-  function Unit(sprite, x, y, name, damage, maxHP) {
-    /**
-     * @type int
-     */
-    let currentHP = maxHP;
+  function Unit(sprite, x, y, name, damage, hp, hpPerTurn) {
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
@@ -28,15 +25,6 @@
     Object.keys(jwb.types.EquipmentCategory).forEach(category => {
       inventory[category] = [];
     });
-
-    function getDamage(unit) {
-      const { Stats } = jwb.types;
-      let damage = unit.damage;
-      Object.values(unit.equipment).forEach(equippedItem => {
-        damage += (equippedItem[Stats.DAMAGE] || 0);
-      });
-      return damage;
-    }
 
     /**
      * @type {string}
@@ -62,11 +50,23 @@
     /**
      * @type {int}
      */
-    this.currentHP = currentHP;
+    this.maxHP = hp;
     /**
      * @type {int}
      */
-    this.maxHP = maxHP;
+    this.currentHP = hp;
+    /**
+     * @type {int}
+     */
+    this.hpPerTurn = hpPerTurn;
+    /**
+     * @type {int}
+     */
+    this.hpRemainder = 0;
+    /**
+     * @type {int}
+     */
+    this.damage = damage;
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
@@ -88,6 +88,11 @@
      * @type {Function<void, void>}
      */
     this.update = () => {
+      // regen hp
+      this.hpRemainder += this.hpPerTurn;
+      const deltaHP = Math.floor(this.hpRemainder);
+      this.hpRemainder -= deltaHP;
+      this.currentHP = Math.min(this.currentHP + deltaHP, this.maxHP);
       if (!!this.queuedOrder) {
         this.queuedOrder.call(null, this);
         this.queuedOrder = null;
@@ -98,12 +103,15 @@
       }
     };
 
-    this.damage = damage;
     /**
-     * @type {Function<void, int>}
+     * @return {int}
      */
-    this.getDamage = function() {
-      return getDamage(this);
+    this.getDamage = () => {
+      let damage = this.damage;
+      Object.values(this.equipment).forEach(equippedItem => {
+        damage += (equippedItem.damage || 0);
+      });
+      return damage;
     };
 
     this.getSprite = function() {

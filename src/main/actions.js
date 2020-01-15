@@ -1,5 +1,23 @@
 {
   /**
+   * @param {boolean} update
+   */
+  function render(update) {
+    const { state, renderer } = jwb;
+
+    if (update) {
+      const { units } = state.map;
+
+      units.forEach(u => u.update());
+    }
+
+    renderer.render();
+    if (update) {
+      jwb.state.turn++; // TODO - is there a concern that the renderer will print the wrong value?
+    }
+  }
+
+  /**
    * @param {Unit} unit
    * @param {MapItem} mapItem
    */
@@ -40,7 +58,9 @@
     }
   }
 
+  window.jwb = window.jwb || {};
   jwb.actions = {
+    render,
     pickupItem,
     useItem,
     loadMap

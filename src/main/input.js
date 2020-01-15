@@ -1,5 +1,6 @@
 {
   function keyHandler(e) {
+    const { actions } = jwb;
     switch (e.key) {
       case 'w':
       case 'a':
@@ -12,7 +13,7 @@
         _handleArrowKey(e.key);
         break;
       case ' ': // spacebar
-        _render(true);
+        actions.render(true);
         break;
       case 'Enter':
         _handleEnter();
@@ -25,26 +26,12 @@
     }
   }
 
-  /**
-   * @param {boolean} update
-   */
-  function _render(update) {
-    const { state, renderer } = jwb;
-
-    if (update) {
-      const { units } = state.map;
-
-      units.forEach(u => u.update());
-    }
-
-    renderer.render();
-  }
-
   function _handleArrowKey(key) {
-    const { state } = jwb;
+    const { state, actions } = jwb;
     const { playerUnit, screen } = state;
     const { tryMove } = jwb.utils.unitBehavior;
     const { inventory } = playerUnit;
+    const { render } = actions;
 
     switch (screen) {
       case 'GAME':
@@ -81,18 +68,24 @@
         let keyIndex = inventoryKeys.indexOf(inventoryCategory);
         switch (key) {
           case 'w':
+          case 'ArrowUp':
             state.inventoryIndex = (state.inventoryIndex + items.length - 1) % items.length;
             break;
-          case 'a': {
+          case 'a':
+          case 'ArrowLeft':
+          {
             keyIndex = (keyIndex + inventoryKeys.length - 1) % inventoryKeys.length;
             state.inventoryCategory = inventoryKeys[keyIndex];
             state.inventoryIndex = 0;
             break;
           }
           case 's':
+          case 'ArrowDown':
             state.inventoryIndex = (state.inventoryIndex + 1) % items.length;
             break;
-          case 'd': {
+          case 'd':
+          case 'ArrowRight':
+          {
             keyIndex = (keyIndex + 1) % inventoryKeys.length;
             state.inventoryCategory = inventoryKeys[keyIndex];
             state.inventoryIndex = 0;
@@ -100,14 +93,14 @@
           }
         }
     }
-    _render(screen === 'GAME');
+    render(screen === 'GAME');
   }
 
   function _handleEnter() {
     const { state, actions } = jwb;
     const { playerUnit, screen } = state;
     const { inventory } = playerUnit;
-    const { pickupItem, useItem, loadMap} = actions;
+    const { pickupItem, useItem, loadMap, render } = actions;
 
     switch (screen) {
       case 'GAME': {
@@ -131,12 +124,13 @@
         break;
       }
     }
-    _render(screen === 'GAME');
+    render(screen === 'GAME');
   }
 
   function _handleTab() {
-    const { state } = jwb;
+    const { state, actions } = jwb;
     const { playerUnit } = state;
+    const { render } = actions;
 
     switch (state.screen) {
       case 'INVENTORY':
@@ -147,7 +141,7 @@
         state.inventoryCategory = state.inventoryCategory || Object.keys(playerUnit.inventory)[0] || null;
         break;
     }
-    _render(false);
+    render(false);
   }
 
   function attachEvents() {

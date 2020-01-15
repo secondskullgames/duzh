@@ -36,7 +36,7 @@
       ARMOR: 'ARMOR'
     },
 
-    Stats: {
+    Stat: {
       DAMAGE: 'DAMAGE',
       HP: 'HP'
     }

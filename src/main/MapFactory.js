@@ -38,16 +38,8 @@
    * @param {int} numItems
    */
   function randomMap(width, height, numEnemies, numItems) {
-    const { SpriteFactory } = jwb;
+    const { UnitFactory } = jwb;
     const { RandomUtils } = jwb.utils;
-    /**
-     * @type {Function<Coordinates, Unit>}
-     */
-    const enemyUnitSupplier = ({ x, y }) => {
-      const enemyUnit = new Unit(SpriteFactory.PLAYER(), x, y, 'enemy', 10, 50);
-      enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
-      return enemyUnit;
-    };
 
     const itemSupplier = ({ x, y }) => {
       switch (RandomUtils.randInt(0, 3)) {
@@ -70,7 +62,7 @@
       }
     };
 
-    return new BSPDungeonGenerator(6, 2).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new BSPDungeonGenerator(6, 2).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
   }
 
   /**
@@ -78,7 +70,7 @@
    * @private
    */
   function _mapFromAscii(ascii) {
-    const { SpriteFactory } = jwb;
+    const { UnitFactory } = jwb;
     const { Tiles } = jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
@@ -108,22 +100,13 @@
     const width = tiles.map(row => row.length).reduce((a, b) => Math.max(a, b)) + 1;
     const height = tiles.length;
 
-    /**
-     * @type {Function<Coordinates, Unit>}
-     */
-    const enemyUnitSupplier = ({ x, y }) => {
-      const enemyUnit = new Unit(SpriteFactory.PLAYER(), x, y, 'enemy', 10, 50);
-      enemyUnit.aiHandler = (u) => tryMoveRandomly(u);
-      return enemyUnit;
-    };
-
     return new MapSupplier(
       width,
       height,
       tiles,
       playerUnitLocation,
       enemyUnitLocations,
-      enemyUnitSupplier,
+      ({ x, y }) => UnitFactory.ENEMY({ x, y }),
       []
     );
   }

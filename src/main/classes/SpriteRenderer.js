@@ -42,15 +42,17 @@
       return document.createElement('canvas');
     }
 
+    /**
+     * @return {Promise<void>}
+     */
     function render() {
       const { screen } = jwb.state;
       switch (screen) {
         case 'GAME':
           return _renderGameScreen();
         case 'INVENTORY':
-          _renderGameScreen()
+          return _renderGameScreen()
             .then(() => _renderInventory());
-          break;
         default:
           throw `Invalid screen ${screen}`;
       }
@@ -323,11 +325,12 @@
 
       _drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
 
-      const { mapIndex } = jwb.state;
+      const { mapIndex, turn } = jwb.state;
       _context.textAlign = 'left';
       _context.fillStyle = '#fff';
       const textLeft = left + 4;
-      _context.fillText(`Level ${mapIndex + 1}`, textLeft, top + 8);
+      _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
+      _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
     }
 
     function _drawRect(left, top, width, height) {

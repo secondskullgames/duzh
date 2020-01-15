@@ -2,13 +2,13 @@
  * @param {string} name
  * @param {EquipmentCategory} category
  * @param {InventoryItem} inventoryItem
- * @param {Object<string, *>} stats
+ * @param {int} damage
  * @constructor
  */
-function EquippedItem(name, category, inventoryItem, stats) {
+function EquippedItem(name, category, inventoryItem, damage) {
   this.class = 'EquippedItem';
   this.name = name;
   this.category = category;
   this.inventoryItem = inventoryItem;
-  Object.entries(stats).forEach(([k, v]) => { this[k] = v; });
+  this.damage = damage;
 }

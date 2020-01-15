@@ -6,7 +6,7 @@
     const { map, playerUnit } = jwb.state;
     /** @type {{ x: int, y: int }[]} */
     const tiles = [];
-    for (let [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) {
+    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
       if (map.contains(x, y)) {
         if (!map.isBlocked(x, y)) {
@@ -17,7 +17,7 @@
           }
         }
       }
-    }
+    });
 
     if (tiles.length > 0) {
       const { x, y } = tiles[Math.floor(Math.random() * tiles.length)];
