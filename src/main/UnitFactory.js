@@ -5,7 +5,7 @@
       return new Unit(jwb.SpriteFactory.PLAYER(), x, y, 'player', 10, 100, 0.2)
     },
     ENEMY: ({ x, y }) => {
-      const enemyUnit = new Unit(jwb.SpriteFactory.PLAYER(), x, y, 'enemy', 10, 50, 0.2);
+      const enemyUnit = new Unit(jwb.SpriteFactory.PLAYER(), x, y, 'enemy', 8, 70, 0.2);
       const { WANDER, ATTACK_PLAYER, FLEE_FROM_PLAYER } = jwb.UnitBehaviors;
       const { randChoice } = jwb.utils.RandomUtils;
       enemyUnit.aiHandler = u => {

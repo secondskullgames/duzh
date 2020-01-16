@@ -3,12 +3,12 @@
     const { MapFactory, SpriteFactory, SpriteRenderer, UnitFactory } = jwb;
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
-      MapFactory.randomMap(22, 14, 5, 6),
-      MapFactory.randomMap(22, 14, 6, 5),
-      MapFactory.randomMap(22, 14, 7, 4),
-      MapFactory.randomMap(22, 14, 8, 3),
-      MapFactory.randomMap(22, 14, 9, 2),
-      MapFactory.randomMap(22, 14, 10, 1),
+      MapFactory.randomMap(22, 14, 4, 5),
+      MapFactory.randomMap(22, 14, 5, 5),
+      MapFactory.randomMap(22, 14, 5, 4),
+      MapFactory.randomMap(22, 14, 6, 3),
+      MapFactory.randomMap(22, 14, 6, 2),
+      MapFactory.randomMap(22, 14, 7, 1),
     ]);
 
     //jwb.renderer = new AsciiRenderer();
