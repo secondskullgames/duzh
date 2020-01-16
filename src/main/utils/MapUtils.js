@@ -30,9 +30,21 @@
     return chosenLocations;
   }
 
+  /**
+   * This is implemented as (x distance + y distance), since all movement is just 4-directional
+   * so it legitimately takes twice as long to move diagonally
+   *
+   * @param {Coordinates} first
+   * @param {Coordinates} second
+   */
+  function distance(first, second) {
+    return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
+  }
+
   window.jwb = window.jwb || {};
   jwb.utils = jwb.utils || {};
   jwb.utils.MapUtils = {
-    pickUnoccupiedLocations
+    pickUnoccupiedLocations,
+    distance
   };
 }

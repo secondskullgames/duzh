@@ -1,20 +1,25 @@
 {
-  /**
-   * @param {boolean} update
-   */
-  function render(update) {
-    const { state, renderer } = jwb;
+  function render() {
+    return jwb.renderer.render();
+  }
 
-    if (update) {
-      const { units } = state.map;
+  function update() {
+    const { state } = jwb;
 
-      units.forEach(u => u.update());
-    }
+    state.playerUnit.update();
+    render();
 
-    renderer.render();
-    if (update) {
-      jwb.state.turn++; // TODO - is there a concern that the renderer will print the wrong value?
-    }
+    setTimeout(() => {
+      state.map.units
+        .filter(u => u !== state.playerUnit)
+        .forEach(u => u.update());
+
+      render()
+        .then(() => {
+          state.turn++;
+          state.messages = [];
+        });
+    }, 100);
   }
 
   /**
@@ -58,11 +63,33 @@
     }
   }
 
+  function moveOrAttack(unit, { x, y }) {
+    const { map, messages, playerUnit } = jwb.state;
+    if (map.contains(x, y) && !map.isBlocked(x, y)) {
+      [unit.x, unit.y] = [x, y];
+    } else {
+      const otherUnit = map.getUnit(x, y);
+      if (!!otherUnit) {
+        const damage = unit.getDamage();
+        otherUnit.currentHP = Math.max(otherUnit.currentHP - damage, 0);
+        messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
+        if (otherUnit.currentHP === 0) {
+          map.units = map.units.filter(u => u !== otherUnit);
+          if (otherUnit === playerUnit) {
+            alert('Game Over!');
+          }
+        }
+      }
+    }
+  }
+
   window.jwb = window.jwb || {};
   jwb.actions = {
     render,
+    update,
     pickupItem,
     useItem,
-    loadMap
+    loadMap,
+    moveOrAttack
   };
 }

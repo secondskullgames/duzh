@@ -99,9 +99,7 @@
           if (map.contains(x, y)) {
             [map.getTile(x, y)]
               .filter(element => !!element)
-              .forEach(element => {
-                _renderElement(element, { x, y })
-              });
+              .forEach(element => _renderElement(element, { x, y }));
           }
         }
       }
@@ -198,7 +196,6 @@
       _context.font = '10px sans-serif';
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-        let text;
         if (i === inventoryIndex) {
           _context.fillStyle = '#fc0';
         } else {
@@ -207,6 +204,8 @@
         _context.fillText(items[i].name, x, y);
       }
       _context.fillStyle = '#fff';
+
+      return (resolve => resolve());
     }
 
     /**
@@ -314,7 +313,7 @@
 
       for (let i = 0; i < messages.length; i++) {
         let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-        _context.fillText(messages.pop(), textLeft, y);
+        _context.fillText(messages[i], textLeft, y);
       }
     }
 

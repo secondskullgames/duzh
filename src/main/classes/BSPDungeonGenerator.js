@@ -241,7 +241,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       })
       .filter(obj => !!obj);
 
-    const { y, leftRoom, rightRoom } = randChoice(candidates);
+    const { y, leftRoom, rightRoom } = randChoice(candidates) || {};
 
     for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
       tiles[y][x] = Tiles.FLOOR_HALL;
@@ -285,7 +285,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       })
       .filter(obj => !!obj);
 
-    const { x, topRoom, bottomRoom } = randChoice(candidates);
+    const { x, topRoom, bottomRoom } = randChoice(candidates) || {};
 
     for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
       tiles[y][x] = Tiles.FLOOR_HALL;

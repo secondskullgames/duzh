@@ -9,7 +9,7 @@
   }
 
   function randChoice(list) {
-    return list[randInt(0, list.length - 1)];
+    return list[randInt(0, list.length - 1)] || null;
   }
 
   window.jwb = window.jwb || {};
