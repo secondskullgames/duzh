@@ -251,7 +251,8 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
         tiles[y][x] = Tiles.FLOOR_HALL;
       }
     } else {
-      debugger;
+      console.log('Error connecting horizontally:');
+      _logSections(leftSection, rightSection);
     }
   }
 
@@ -299,7 +300,8 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
         tiles[y][x] = Tiles.FLOOR_HALL;
       }
     } else {
-      debugger;
+      console.log('Error connecting vertically:');
+      _logSections(topSection, bottomSection);
     }
   }
 
