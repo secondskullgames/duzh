@@ -126,7 +126,6 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       }
     } else {
       // Base case: return a single section
-      console.log(`_generateSingleSection(width=${width}, height=${height})`);
       return _generateSingleSection(width, height);
     }
   }
@@ -179,7 +178,6 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    * @private
    */
   function _generateRoom(width, height) {
-    console.log(`room(${width},${height})`);
     const { Tiles } = jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
@@ -218,7 +216,6 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    * @param {MapSection} rightSection
    */
   function _joinSectionsHorizontally(tiles, leftSection, rightSection) {
-    //_logSections('HORIZONTAL', leftSection, rightSection);
     const { Tiles } = jwb.types;
     const { randChoice } = jwb.utils.RandomUtils;
     /**
@@ -265,7 +262,6 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    * @param {MapSection} bottomSection
    */
   function _joinSectionsVertically(tiles, topSection, bottomSection) {
-    //_logSections('VERTICAL', topSection, bottomSection);
     const { Tiles } = jwb.types;
     const { randChoice } = jwb.utils.RandomUtils;
 

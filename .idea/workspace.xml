@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/utils/RandomUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/utils/RandomUtils.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,20 +31,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="708">
-              <caret line="253" column="48" selection-start-line="253" selection-start-column="48" selection-end-line="253" selection-end-column="48" />
+            <state relative-caret-position="339">
+              <caret line="263" column="70" selection-start-line="263" selection-start-column="70" selection-end-line="263" selection-end-column="70" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/classes/SpriteRenderer.js">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/utils/RandomUtils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-11">
-              <caret line="158" lean-forward="true" selection-start-line="158" selection-end-line="158" />
+            <state relative-caret-position="285">
+              <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -129,6 +130,8 @@
       <find>ellipse</find>
       <find>padding</find>
       <find>debugger;</find>
+      <find>console</find>
+      <find>RandomU</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/src/main</dir>
@@ -149,7 +152,6 @@
         <option value="$PROJECT_DIR$/src/main/classes/GameState.js" />
         <option value="$PROJECT_DIR$/src/main/ItemFactory.js" />
         <option value="$PROJECT_DIR$/src/main/unitBehavior.js" />
-        <option value="$PROJECT_DIR$/src/main/utils/RandomUtils.js" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_11.js" />
         <option value="$PROJECT_DIR$/src/main/input.js" />
         <option value="$PROJECT_DIR$/index.html" />
@@ -161,6 +163,7 @@
         <option value="$PROJECT_DIR$/src/main/UnitFactory.js" />
         <option value="$PROJECT_DIR$/src/main/MapFactory.js" />
         <option value="$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js" />
+        <option value="$PROJECT_DIR$/src/main/utils/RandomUtils.js" />
       </list>
     </option>
   </component>
@@ -228,7 +231,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1579154186963" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1579154257225" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="JavaScript" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/png" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -337,7 +340,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22702000" />
+    <option name="totallyTimeSpent" value="22772000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="957" extended-state="6" />
@@ -512,13 +515,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/utils/RandomUtils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/classes/GameState.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -626,8 +622,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/classes/BSPDungeonGenerator.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="708">
-          <caret line="253" column="48" selection-start-line="253" selection-start-column="48" selection-end-line="253" selection-end-column="48" />
+        <state relative-caret-position="339">
+          <caret line="263" column="70" selection-start-line="263" selection-start-column="70" selection-end-line="263" selection-end-column="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/utils/RandomUtils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="4" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
         </state>
       </provider>
     </entry>
