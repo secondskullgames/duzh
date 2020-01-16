@@ -49,7 +49,7 @@
             y,
             'S',
             jwb.SpriteFactory.MAP_SWORD(),
-            () => jwb.ItemFactory.createSword(5)
+            () => jwb.ItemFactory.createSword(6)
           );
         default:
           return new MapItem(
@@ -62,7 +62,7 @@
       }
     };
 
-    return new BSPDungeonGenerator(6, 2).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
+    return new BSPDungeonGenerator(6, 0).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
   }
 
   /**

@@ -94,12 +94,11 @@
 
     function _renderTiles() {
       const { map } = jwb.state;
-      for (let y = 0; y < HEIGHT; y++) {
-        for (let x = 0; x < WIDTH; x++) {
-          if (map.contains(x, y)) {
-            [map.getTile(x, y)]
-              .filter(element => !!element)
-              .forEach(element => _renderElement(element, { x, y }));
+      for (let y = 0; y < map.height; y++) {
+        for (let x = 0; x < map.width; x++) {
+          const tile = map.getTile(x, y);
+          if (!!tile) {
+            _renderElement(tile, { x, y });
           }
         }
       }
@@ -107,15 +106,29 @@
 
     function _renderItems() {
       const { map } = jwb.state;
-      for (let y = 0; y < HEIGHT; y++) {
-        for (let x = 0; x < WIDTH; x++) {
-          if (map.contains(x, y)) {
-            [map.getItem(x, y)]
-              .filter(element => !!element)
-              .forEach(element => {
-                _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-                _renderElement(element, { x, y })
-              });
+      for (let y = 0; y < map.height; y++) {
+        for (let x = 0; x < map.width; x++) {
+          const item = map.getItem(x, y);
+          if (!!item) {
+            _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+            _renderElement(item, { x, y })
+          }
+        }
+      }
+    }
+
+    function _renderUnits() {
+      const { map, playerUnit } = jwb.state;
+      for (let y = 0; y < map.height; y++) {
+        for (let x = 0; x < map.width; x++) {
+          const unit = map.getUnit(x, y);
+          if (!!unit) {
+            if (unit === playerUnit) {
+              _drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+            } else {
+              _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+            }
+            _renderElement(unit, { x, y });
           }
         }
       }
@@ -131,31 +144,12 @@
      */
     function _drawEllipse(x, y, color, width, height) {
       _context.fillStyle = color;
-      const [cx, cy] = [(x + 0.5) * TILE_WIDTH, (y + 0.5) * TILE_HEIGHT];
+      const topLeftPixel = _gridToPixel({ x, y });
+      const [cx, cy] = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2];
       _context.moveTo(cx, cy);
       _context.beginPath();
       _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
       _context.fill();
-    }
-
-    function _renderUnits() {
-      const { map, playerUnit } = jwb.state;
-      for (let y = 0; y < HEIGHT; y++) {
-        for (let x = 0; x < WIDTH; x++) {
-          if (map.contains(x, y)) {
-            [map.getUnit(x, y)]
-              .filter(unit => !!unit)
-              .forEach(unit => {
-                if (unit === playerUnit) {
-                  _drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-                } else {
-                  _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-                }
-                _renderElement(unit, { x, y });
-              });
-          }
-        }
-      }
     }
 
     function _renderInventory() {
@@ -214,8 +208,7 @@
      * @private
      */
     function _renderElement(element, { x, y }) {
-      const { Tiles } = jwb.types;
-      const pixel = { x: x * TILE_WIDTH, y: y * TILE_HEIGHT };
+      const pixel = _gridToPixel({ x, y });
       switch (element.class) {
         case 'Unit': {
           const sprite = element.getSprite();
@@ -332,11 +325,25 @@
       _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
     }
 
+    /**
+     * @private
+     */
     function _drawRect(left, top, width, height) {
       _context.fillStyle = '#000';
       _context.fillRect(left, top, width, height);
       _context.strokeStyle = '#fff';
       _context.strokeRect(left, top, width, height);
+    }
+
+    /**
+     * @private
+     */
+    function _gridToPixel({ x, y }) {
+      const { playerUnit } = jwb.state;
+      return {
+        x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH / 2),
+        y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT / 2)
+      };
     }
 
     this.render = render.bind(this);

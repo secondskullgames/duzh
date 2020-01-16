@@ -13,7 +13,8 @@
  */
 
 /**
- * @param {int} minRoomDimension
+ *
+ * @param {int} minRoomDimension outer width, including wall
  * @param {int} minRoomPadding
  * @constructor
  */
@@ -55,7 +56,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    */
   function _generateSection(width, height) {
     // First, make sure the area is large enough to support two sections; if not, we're done
-    const minSectionDimension = minRoomDimension + 2 * minRoomPadding;
+    const minSectionDimension = minRoomDimension + (2 * minRoomPadding);
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
     const canSplitVertically = (height >= (2 * minSectionDimension));
 
@@ -91,7 +92,8 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
 
         const tiles = [];
         for (let y = 0; y < leftSection.tiles.length; y++) {
-          tiles[y] = [...leftSection.tiles[y], ...rightSection.tiles[y]];
+          const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
+          tiles.push(row);
         }
         _joinSectionsHorizontally(tiles, leftSection, rightSection);
         // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
@@ -124,6 +126,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       }
     } else {
       // Base case: return a single section
+      console.log(`_generateSingleSection(width=${width}, height=${height})`);
       return _generateSingleSection(width, height);
     }
   }
@@ -133,8 +136,8 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    * anywhere in the region at random, and can occupy a variable amount of space in the region
    * (within the specified parameters).
    *
-   * @param {int} width
-   * @param {int} height
+   * @param {int} width section width
+   * @param {int} height section height
    * @return {MapSection}
    * @private
    */
@@ -157,7 +160,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       for (let x = 0; x < width; x++) {
         const roomX = x - roomLeft;
 
-        if (roomX >= 0 && roomX < roomTiles[0].length && roomY >= 0 && roomY < roomTiles.length) {
+        if (roomX >= 0 && roomX < roomWidth && roomY >= 0 && roomY < roomHeight) {
           tiles[y][x] = roomTiles[roomY][roomX];
         } else {
           tiles[y][x] = Tiles.NONE;
@@ -176,6 +179,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
    * @private
    */
   function _generateRoom(width, height) {
+    console.log(`room(${width},${height})`);
     const { Tiles } = jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
@@ -241,10 +245,13 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       })
       .filter(obj => !!obj);
 
-    const { y, leftRoom, rightRoom } = randChoice(candidates) || {};
-
-    for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
-      tiles[y][x] = Tiles.FLOOR_HALL;
+    if (candidates.length > 0) {
+      const { y, leftRoom, rightRoom } = randChoice(candidates) || {};
+      for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
+        tiles[y][x] = Tiles.FLOOR_HALL;
+      }
+    } else {
+      debugger;
     }
   }
 
@@ -285,10 +292,14 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
       })
       .filter(obj => !!obj);
 
-    const { x, topRoom, bottomRoom } = randChoice(candidates) || {};
+    if (candidates.length > 0) {
+      const { x, topRoom, bottomRoom } = randChoice(candidates) || {};
 
-    for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
-      tiles[y][x] = Tiles.FLOOR_HALL;
+      for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
+        tiles[y][x] = Tiles.FLOOR_HALL;
+      }
+    } else {
+      debugger;
     }
   }
 

@@ -83,6 +83,26 @@
     }
   }
 
+  function restartGame() {
+    const { MapFactory, SpriteRenderer, UnitFactory } = jwb;
+
+    jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
+      MapFactory.randomMap(40, 20, 6, 8),
+      MapFactory.randomMap(42, 21, 7, 7),
+      MapFactory.randomMap(44, 22, 8, 6),
+      MapFactory.randomMap(46, 23, 9, 5),
+      MapFactory.randomMap(48, 24, 10, 4),
+      MapFactory.randomMap(50, 25, 11, 3),
+    ]);
+
+    //jwb.renderer = new AsciiRenderer();
+    jwb.renderer = new SpriteRenderer();
+
+    jwb.actions.loadMap(0);
+    jwb.input.attachEvents();
+    jwb.renderer.render();
+  }
+
   window.jwb = window.jwb || {};
   jwb.actions = {
     render,
@@ -90,6 +110,7 @@
     pickupItem,
     useItem,
     loadMap,
-    moveOrAttack
+    moveOrAttack,
+    restartGame
   };
 }
