@@ -1,5 +1,5 @@
 {
-  function pickUnoccupiedLocations(tiles, occupiedLocations, numToChoose) {
+  function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
     const { Tiles } = jwb.types;
     const { RandomUtils } = jwb.utils;
     const { randInt } = RandomUtils;
@@ -9,7 +9,7 @@
     const unoccupiedLocations = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === Tiles.FLOOR || tiles[y][x] === Tiles.FLOOR_HALL) {
+        if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
           if (occupiedLocations.filter(loc => (loc.x === x && loc.y === y)).length === 0) {
             unoccupiedLocations.push({ x, y });
           }

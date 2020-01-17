@@ -341,8 +341,8 @@
     function _gridToPixel({ x, y }) {
       const { playerUnit } = jwb.state;
       return {
-        x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH / 2),
-        y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT / 2)
+        x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
+        y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT)/ 2
       };
     }
 

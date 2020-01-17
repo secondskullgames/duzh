@@ -36,10 +36,10 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
     const { Tiles } = jwb.types;
     const section = _generateSection(width, height);
     const { tiles } = section;
-    const [stairsLocation] = pickUnoccupiedLocations(tiles, [], 1);
-    const [playerLocation] = pickUnoccupiedLocations(tiles, [stairsLocation], 1);
-    const enemyLocations = pickUnoccupiedLocations(tiles, [stairsLocation, playerLocation], numEnemies);
-    const itemLocations = pickUnoccupiedLocations(tiles, [stairsLocation, playerLocation, ...enemyLocations], numItems);
+    const [stairsLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [], 1);
+    const [playerLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1);
+    const enemyLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation], numEnemies);
+    const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation, ...enemyLocations], numItems);
     tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
     return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
   }

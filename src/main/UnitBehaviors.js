@@ -71,7 +71,6 @@
     });
 
     if (tiles.length > 0) {
-      tiles.forEach(tile => console.log(`${tile.x}, ${tile.y} => ${distance(tile, playerUnit)}`));
       const { x, y } = _sortBy(tiles, coordinates => distance(coordinates, playerUnit))[0];
       moveOrAttack(unit, { x, y });
     }
@@ -97,7 +96,6 @@
     });
 
     if (tiles.length > 0) {
-      tiles.forEach(tile => console.log(`${tile.x}, ${tile.y} => ${distance(tile, playerUnit)}`));
       const { x, y } = _sortBy(tiles, coordinates => distance(coordinates, playerUnit))[tiles.length - 1];
       moveOrAttack(unit, { x, y });
     }
