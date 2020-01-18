@@ -22,7 +22,7 @@
           state.turn++;
           state.messages = [];
         });
-    }, 100);
+    }, 0);
   }
 
   /**
@@ -51,9 +51,9 @@
       item.use(unit);
       audio.playSound([[700,100],[1050,100],[1400,100]]);
       const items = unit.inventory[item.category];
-      items.splice(item, 1);
-      if (state.inventoryIndex >= items.length) {
-        state.inventoryIndex--;
+      items.splice(jwb.state.inventoryIndex, 1);
+      if (jwb.state.inventoryIndex >= items.length) {
+        jwb.state.inventoryIndex--;
       }
     }
   }
@@ -76,21 +76,19 @@
     const { map, messages, playerUnit } = jwb.state;
     if (map.contains(x, y) && !map.isBlocked(x, y)) {
       [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        audio.playSound([[60,30],[40,40]]);
-      }
     } else {
       const otherUnit = map.getUnit(x, y);
       if (!!otherUnit) {
         const damage = unit.getDamage();
-        otherUnit.currentHP = Math.max(otherUnit.currentHP - damage, 0);
+        otherUnit.life = Math.max(otherUnit.life - damage, 0);
         messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
-        if (otherUnit.currentHP === 0) {
+        if (otherUnit.life === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
           audio.playSound([[800,40],[600,40],[400,40],[300,40],[200,40]]);
           if (otherUnit === playerUnit) {
             alert('Game Over!');
           }
+          unit.gainExperience(1);
         } else {
           audio.playSound([[800,40],[600,40],[400,40]]);
         }
@@ -102,12 +100,12 @@
     const { MapFactory, SpriteRenderer, UnitFactory } = jwb;
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
-      MapFactory.randomMap(40, 20, 6, 8),
-      MapFactory.randomMap(42, 21, 7, 7),
-      MapFactory.randomMap(44, 22, 8, 6),
-      MapFactory.randomMap(46, 23, 9, 5),
-      MapFactory.randomMap(48, 24, 10, 4),
-      MapFactory.randomMap(50, 25, 11, 3),
+      MapFactory.randomMap(30, 20, 10, 8),
+      MapFactory.randomMap(32, 21, 12, 7),
+      MapFactory.randomMap(34, 22, 14, 6),
+      MapFactory.randomMap(36, 23, 16, 5),
+      MapFactory.randomMap(38, 24, 18, 4),
+      MapFactory.randomMap(30, 25, 20, 3),
     ]);
 
     //jwb.renderer = new AsciiRenderer();

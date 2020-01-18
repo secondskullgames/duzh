@@ -35,6 +35,14 @@
       }
       const array = new Uint8ClampedArray(imageData.data.length);
       const entries = Object.entries(colorMap);
+
+      const srcRGB = {};
+      const destRGB = {};
+      entries.forEach(([srcColor, destColor]) => {
+        srcRGB[srcColor] = hex2rgb(srcColor);
+        destRGB[destColor] = hex2rgb(destColor);
+      });
+
       for (let i = 0; i < imageData.data.length; i += 4) {
         const [r, g, b, a] = imageData.data.slice(i, i + 4);
         array[i] = r;
@@ -43,8 +51,9 @@
         array[i + 3] = a;
         for (let j = 0; j < entries.length; j++) {
           const [srcColor, destColor] = entries[j];
-          const [sr, sg, sb] = hex2rgb(srcColor);
-          const [dr, dg, db] = hex2rgb(destColor);
+          const [sr, sg, sb] = srcRGB[srcColor];
+          const [dr, dg, db] = destRGB[destColor];
+
           if (r === sr && g === sg && b === sb) {
             array[i] = dr;
             array[i + 1] = dg;

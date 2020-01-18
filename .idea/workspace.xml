@@ -2,8 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94d6abd6-426e-4eaf-a52b-e5f053f3ae2d" name="Default Changelist" comment="">
+<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/actions.js" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ItemFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ItemFactory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/UnitFactory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/UnitFactory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/SpriteRenderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/SpriteRenderer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/classes/Unit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/classes/Unit.js" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,6 +21,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+<<<<<<< Updated upstream
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
@@ -105,6 +116,8 @@
       </file>
     </leaf>
   </component>
+=======
+>>>>>>> Stashed changes
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -112,6 +125,7 @@
       </list>
     </option>
   </component>
+<<<<<<< Updated upstream
   <component name="FindInProjectRecents">
     <findStrings>
       <find>SpriteFactory</find>
@@ -178,6 +192,11 @@
       </list>
     </option>
   </component>
+=======
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+>>>>>>> Stashed changes
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1680" />
@@ -186,62 +205,6 @@
   <component name="ProjectId" id="1VyvZv99DSVyHqSO2xrXzO9ZT0l" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="png" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="roguelike-js" type="b2602c69:ProjectViewProjectNode" />
-              <item name="roguelike-js" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -310,6 +273,7 @@
       </method>
     </configuration>
     <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
       <properties />
       <listeners />
@@ -352,6 +316,7 @@
       <workItem from="1578607344495" duration="2426000" />
       <workItem from="1578672968538" duration="22386000" />
       <workItem from="1578807381899" duration="22227000" />
+<<<<<<< Updated upstream
       <workItem from="1579196327224" duration="7384000" />
     </task>
     <servers />
@@ -453,6 +418,13 @@
       <window_info anchor="right" id="SciView" order="16" />
     </layout-to-restore>
   </component>
+=======
+      <workItem from="1579196327224" duration="5043000" />
+      <workItem from="1579368153379" duration="4890000" />
+    </task>
+    <servers />
+  </component>
+>>>>>>> Stashed changes
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
@@ -462,12 +434,6 @@
         <entry key="MAIN">
           <value>
             <State>
-              <option name="RECENTLY_FILTERED_USER_GROUPS">
-                <collection />
-              </option>
-              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
-                <collection />
-              </option>
               <option name="COLUMN_ORDER" />
             </State>
           </value>
@@ -489,6 +455,7 @@
       </map>
     </option>
   </component>
+<<<<<<< Updated upstream
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/main/classes/Tile.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -673,4 +640,6 @@
       </provider>
     </entry>
   </component>
+=======
+>>>>>>> Stashed changes
 </project>

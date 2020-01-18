@@ -1,27 +1,57 @@
 {
   window.jwb = window.jwb || {};
   jwb.UnitFactory = {
-    PLAYER: ({ x, y }) => {
-      return new Unit(jwb.SpriteFactory.PLAYER(), x, y, 'player', 12, 100, 0.2)
-    },
+    PLAYER: ({ x, y }) => new Unit(
+      jwb.SpriteFactory.PLAYER(),
+      jwb.UnitClass.PLAYER,
+      'player',
+      1,
+      { x, y }
+    ),
     ENEMY: ({ x, y }) => {
-      const enemyUnit = new Unit(jwb.SpriteFactory.ENEMY_PLAYER(), x, y, 'enemy', 6, 60, 0.2);
-      const { weightedRandom } = jwb.utils.RandomUtils;
+      const enemyUnit = new Unit(
+        jwb.SpriteFactory.ENEMY_PLAYER(),
+        jwb.UnitClass.ENEMY_HUMAN,
+        'enemy',
+        1,
+        { x, y }
+      );
+
       enemyUnit.aiHandler = u => {
+        const { weightedRandom } = jwb.utils.RandomUtils;
+        const { distance } = jwb.utils.MapUtils;
+        const { playerUnit } = jwb.state;
+
         let behavior;
-        if ((u.currentHP / u.maxHP) >= 0.5) {
-          behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.6,
-            'WANDER': 0.3,
-            'STAY': 0.1
-          });
+        const distanceToPlayer = distance(u, playerUnit);
+
+        if (distanceToPlayer === 1) {
+          if ((u.life / u.maxLife) >= 0.5) {
+            behavior = weightedRandom({
+              'ATTACK_PLAYER': 0.8,
+              'WANDER': 0.2,
+            });
+          } else {
+            behavior = weightedRandom({
+              'ATTACK_PLAYER': 0.8,
+              'WANDER': 0.2,
+            });
+          }
         } else {
-          behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.4,
-            'FLEE_FROM_PLAYER': 0.3,
-            'WANDER': 0.2,
-            'STAY': 0.1
-          });
+          if ((u.life / u.maxLife) >= 0.5) {
+            behavior = weightedRandom({
+              'ATTACK_PLAYER': 0.5,
+              'WANDER': 0.3,
+              'STAY': 0.2
+            });
+          } else {
+            behavior = weightedRandom({
+              'ATTACK_PLAYER': 0.3,
+              'FLEE_FROM_PLAYER': 0.3,
+              'WANDER': 0.2,
+              'STAY': 0.2
+            });
+          }
         }
         return jwb.UnitBehaviors[behavior].call(null, u);
       };

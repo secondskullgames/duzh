@@ -84,10 +84,11 @@
         }
       }
 
-      const promises = elements.filter(element => !!element)
+      const sprites = elements.filter(element => !!element)
         .map(element => element.getSprite())
-        .filter(sprite => !!sprite)
-        .map(sprite => sprite.whenReady);
+        .filter(sprite => !!sprite);
+
+      const promises = sprites.map(sprite => sprite.whenReady);
 
       return Promise.all(promises);
     }
@@ -203,12 +204,31 @@
     }
 
     /**
+     * @param pixel
+     * @returns {boolean}
+     * @private
+     */
+    function _isPixelOnScreen(pixel) {
+      return (
+        (pixel.x >= -TILE_WIDTH) &&
+        (pixel.x <= SCREEN_WIDTH + TILE_WIDTH) &&
+        (pixel.y >= -TILE_HEIGHT) &&
+        (pixel.y <= SCREEN_HEIGHT + TILE_HEIGHT)
+      );
+    }
+
+    /**
      * @param {Unit | MapItem | Tile} element
      * @param {Coordinates} {x, y}
      * @private
      */
     function _renderElement(element, { x, y }) {
       const pixel = _gridToPixel({ x, y });
+
+      if (!_isPixelOnScreen(pixel)) {
+        return;
+      }
+
       switch (element.class) {
         case 'Unit': {
           const sprite = element.getSprite();
@@ -271,13 +291,14 @@
       _drawRect(0, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
 
       const lines = [
-        'Chigz Jupsiz [hardcoded]',
-        'Level 1 [hardcoded]',
-        `HP: ${playerUnit.currentHP}/${playerUnit.maxHP}`,
-        'Food: 50/100 [hardcoded]',
+        playerUnit.name,
+        `Level ${playerUnit.level}`,
+        `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
         `Damage: ${playerUnit.getDamage()}`,
-        'Defense: 11 [hardcoded]'
       ];
+      if (playerUnit.experienceToNextLevel !== null) {
+        lines.push(`Experience: ${playerUnit.experience}/${playerUnit.experienceToNextLevel}`);
+      }
       _context.fillStyle = '#fff';
       _context.textAlign = 'left';
       _context.font = '10px sans-serif';

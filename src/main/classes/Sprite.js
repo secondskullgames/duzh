@@ -8,6 +8,7 @@
    * @constructor
    */
   function Sprite(filename, { dx, dy }, transparentColor, paletteSwaps = {}) {
+    this.loading = false;
     const { applyTransparentColor, replaceColors } = jwb.utils.ImageUtils;
 
     /**

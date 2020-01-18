@@ -1,14 +1,14 @@
 {
   /**
-   * @param {int} hpRestored
+   * @param {int} lifeRestored
    * @return InventoryItem
    */
-  function createPotion(hpRestored) {
+  function createPotion(lifeRestored) {
     const { ItemCategory } = jwb.types;
     return new InventoryItem('Potion', ItemCategory.POTION, (item, unit) => {
-      const prevHP = unit.currentHP;
-      unit.currentHP = Math.min(unit.currentHP + hpRestored, unit.maxHP);
-      jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.currentHP - prevHP)} HP.`);
+      const prevLife = unit.life;
+      unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
+      jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
     });
   }
 

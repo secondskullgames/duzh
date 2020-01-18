@@ -31,7 +31,7 @@ window.jwb = window.jwb || {};
      * @param {boolean} repeating
      */
     this._playMulti = function(freqsAndLengths, repeating) {
-      this.stop();
+      this._stop();
       this._oscillator = this._newOscillator();
       if (freqsAndLengths.length) {
         const startTime = this._context.currentTime;

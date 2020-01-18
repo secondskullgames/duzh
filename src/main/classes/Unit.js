@@ -1,40 +1,35 @@
 {
+  const LIFE_PER_TURN_MULTIPLIER = 0.001;
   /**
    * @param {Sprite} sprite
+   * @param {UnitClass} unitClass
+   * @param {string} name
+   * @param {int} level
    * @param {int} x
    * @param {int} y
-   * @param {string} name
-   * @param {int} damage
-   * @param {int} hp
-   * @param {int} hpPerTurn
    * @constructor
    */
-  function Unit(sprite, x, y, name, damage, hp, hpPerTurn) {
+  function Unit(sprite, unitClass, name, level, { x, y }) {
+    /**
+     * @type {string}
+     */
+    this.class = 'Unit';
+    this.unitClass = unitClass;
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
-    const inventory = {};
+    this.inventory = {};
     Object.keys(jwb.types.ItemCategory).forEach(category => {
-      inventory[category] = [];
+      this.inventory[category] = [];
     });
 
     /**
      * @type {Object<EquipmentCategory, EquippedItem?>}
      */
-    const equipment = {};
+    this.equipment = {};
     Object.keys(jwb.types.EquipmentCategory).forEach(category => {
-      inventory[category] = [];
+      this.equipment[category] = [];
     });
-
-    /**
-     * @type {string}
-     */
-    this.class = 'Unit';
-    /**
-     * @type {Sprite | null}
-     * @private
-     */
-    this._sprite = sprite;
     /**
      * @type {int}
      */
@@ -50,32 +45,32 @@
     /**
      * @type {int}
      */
-    this.maxHP = hp;
+    this.level = level;
     /**
      * @type {int}
      */
-    this.currentHP = hp;
+    this.experience = 0;
     /**
      * @type {int}
      */
-    this.hpPerTurn = hpPerTurn;
+    this.experienceToNextLevel = unitClass.experienceToNextLevel(level);
     /**
      * @type {int}
      */
-    this.hpRemainder = 0;
+    this.maxLife = unitClass.startingLife;
     /**
      * @type {int}
      */
-    this.damage = damage;
+    this.life = unitClass.startingLife;
     /**
-     * @type {Object<ItemCategory, InventoryItem[]>}
+     * @type {int}
      */
-    this.inventory = inventory;
+    this.lifeRemainder = 0;
     /**
-     * @type {Object<EquipmentCategory, EquippedItem?>} equipment
+     * @type {int}
+     * @private
      */
-    this.equipment = equipment;
-
+    this._damage = unitClass.startingDamage;
     /**
      * @type {Function<Unit, void> | null}
      */
@@ -84,15 +79,21 @@
      * @type {Function<Unit, void> | null}
      */
     this.aiHandler = null;
+
+    this._regenLife = function () {
+      const lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
+      this.lifeRemainder += lifePerTurn;
+      const deltaLife = Math.floor(this.lifeRemainder);
+      this.lifeRemainder -= deltaLife;
+      this.life = Math.min(this.life + deltaLife, this.maxLife);
+    };
+
     /**
      * @type {Function<void, void>}
      */
     this.update = () => {
-      // regen hp
-      this.hpRemainder += this.hpPerTurn;
-      const deltaHP = Math.floor(this.hpRemainder);
-      this.hpRemainder -= deltaHP;
-      this.currentHP = Math.min(this.currentHP + deltaHP, this.maxHP);
+      this._regenLife();
+
       if (!!this.queuedOrder) {
         this.queuedOrder.call(null, this);
         this.queuedOrder = null;
@@ -107,16 +108,38 @@
      * @return {int}
      */
     this.getDamage = () => {
-      let damage = this.damage;
+      let damage = this._damage;
       Object.values(this.equipment).forEach(equippedItem => {
         damage += (equippedItem.damage || 0);
       });
       return damage;
     };
 
-    this.getSprite = function() {
-      return this._sprite;
-    }
+    this.getSprite = () => {
+      return sprite;
+    };
+
+    /**
+     * @private
+     */
+    this._levelUp = () => {
+      const { experienceToNextLevel } = this;
+      this.level++;
+      this.experience -= experienceToNextLevel;
+      const lifePerLevel = this.unitClass.lifePerLevel(this.level);
+      this.maxLife += lifePerLevel;
+      this.life += lifePerLevel;
+      this._damage += this.unitClass.damagePerLevel(this.level);
+      this.experienceToNextLevel = this.unitClass.experienceToNextLevel(this.level);
+    };
+
+    this.gainExperience = (experience) => {
+      this.experience += experience;
+      const { experienceToNextLevel } = this;
+      if (experienceToNextLevel !== null && this.experience >= experienceToNextLevel) {
+        this._levelUp();
+      }
+    };
   }
 
   jwb.Unit = Unit;
