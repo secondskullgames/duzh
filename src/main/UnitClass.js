@@ -19,7 +19,7 @@
       startingDamage: 10,
       lifePerLevel: level => 10,
       damagePerLevel: level => 2,
-      experienceToNextLevel: currentLevel  => (currentLevel < 10) ? 2 * currentLevel + 2: null
+      experienceToNextLevel: currentLevel  => (currentLevel < 10) ? 2 * currentLevel + 4: null
     },
     /**
      * @type UnitClass
