@@ -4,15 +4,16 @@
    * @param {int} dx
    * @param {int} dy
    * @param {string} transparentColor in hex format, e.g. #ffffff
+   * @param {Object<string,string> | undefined} paletteSwaps (hex => hex)
    * @constructor
    */
-  function Sprite(filename, { dx, dy }, transparentColor) {
-    const { applyTransparentColor } = jwb.utils.ImageUtils;
+  function Sprite(filename, { dx, dy }, transparentColor, paletteSwaps = {}) {
+    const { applyTransparentColor, replaceColors } = jwb.utils.ImageUtils;
 
     /**
      * @type {Promise<ImageBitmap>}
      */
-    const _imagePromise = new Promise((resolve, reject) => {
+    const _imagePromise = new Promise(resolve => {
       const canvas = document.createElement('canvas');
       canvas.style.display = 'none';
 
@@ -26,24 +27,25 @@
         context.drawImage(img, 0, 0);
 
         const imageData = context.getImageData(0, 0, img.width, img.height);
-        const transparentImageData = applyTransparentColor(imageData, transparentColor);
+        applyTransparentColor(imageData, transparentColor)
+          .then(transparentImageData => replaceColors(transparentImageData, paletteSwaps))
+          .then(swappedImageData => {
+            // clean up
+            img.parentElement.removeChild(img);
+            canvas.parentElement.removeChild(canvas);
 
-        // clean up
-        img.parentElement.removeChild(img);
-        canvas.parentElement.removeChild(canvas);
-
-        return createImageBitmap(transparentImageData)
-          .then(imageBitmap => {
-            this.image = imageBitmap;
-            resolve(imageBitmap);
+            return createImageBitmap(swappedImageData)
+              .then(imageBitmap => {
+                this.image = imageBitmap;
+                resolve(imageBitmap);
+              });
           });
       });
 
-      //img.style.display = 'none';
+      img.style.display = 'none';
       img.onerror = (e) => {
         throw new Error(`Failed to load image ${img.src}`);
       };
-      img.style.display = 'none';
       img.src = `png/${filename}.png`;
       document.body.appendChild(canvas);
       document.body.appendChild(img);
