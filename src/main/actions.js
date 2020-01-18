@@ -1,4 +1,7 @@
 {
+  /**
+   * @return Promise<void>
+   */
   function render() {
     return jwb.renderer.render();
   }
@@ -27,13 +30,15 @@
    * @param {MapItem} mapItem
    */
   function pickupItem(unit, mapItem) {
+    const { state, audio, Sounds } = jwb;
     const inventoryItem = mapItem.getInventoryItem();
     const { category } = inventoryItem;
     const { inventory } = unit;
     inventory[category] = inventory[category] || [];
     inventory[category].push(inventoryItem);
-    jwb.state.inventoryIndex = jwb.state.inventoryIndex || 0;
-    jwb.state.messages.push(`Picked up a ${inventoryItem.name}.`);
+    state.inventoryIndex = state.inventoryIndex || 0;
+    state.messages.push(`Picked up a ${inventoryItem.name}.`);
+    audio.playSound(Sounds.PICK_UP_ITEM);
   }
 
   /**
@@ -41,12 +46,14 @@
    * @param {InventoryItem || null} item
    */
   function useItem(unit, item) {
+    const { audio, state } = jwb;
     if (!!item) {
       item.use(unit);
+      audio.playSound([[700,100],[1050,100],[1400,100]]);
       const items = unit.inventory[item.category];
       items.splice(item, 1);
-      if (jwb.state.inventoryIndex >= items.length) {
-        jwb.state.inventoryIndex--;
+      if (state.inventoryIndex >= items.length) {
+        state.inventoryIndex--;
       }
     }
   }
@@ -55,18 +62,23 @@
    * @param {int} index
    */
   function loadMap(index) {
-    if (index >= jwb.state.mapSuppliers.length) {
+    const { state } = jwb;
+    if (index >= state.mapSuppliers.length) {
       alert('YOU WIN!');
     } else {
-      jwb.state.mapIndex = index;
-      jwb.state.map = jwb.state.mapSuppliers[index].get();
+      state.mapIndex = index;
+      state.map = state.mapSuppliers[index].get();
     }
   }
 
   function moveOrAttack(unit, { x, y }) {
+    const { audio } = jwb;
     const { map, messages, playerUnit } = jwb.state;
     if (map.contains(x, y) && !map.isBlocked(x, y)) {
       [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        audio.playSound([[60,30],[40,40]]);
+      }
     } else {
       const otherUnit = map.getUnit(x, y);
       if (!!otherUnit) {
@@ -75,9 +87,12 @@
         messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
         if (otherUnit.currentHP === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
+          audio.playSound([[800,40],[600,40],[400,40],[300,40],[200,40]]);
           if (otherUnit === playerUnit) {
             alert('Game Over!');
           }
+        } else {
+          audio.playSound([[800,40],[600,40],[400,40]]);
         }
       }
     }
@@ -97,6 +112,7 @@
 
     //jwb.renderer = new AsciiRenderer();
     jwb.renderer = new SpriteRenderer();
+    jwb.audio = new jwb.SoundPlayer();
 
     jwb.actions.loadMap(0);
     jwb.input.attachEvents();
