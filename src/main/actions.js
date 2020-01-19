@@ -46,14 +46,14 @@
    * @param {InventoryItem || null} item
    */
   function useItem(unit, item) {
-    const { audio, state } = jwb;
+    const { audio, state, Sounds } = jwb;
     if (!!item) {
       item.use(unit);
-      audio.playSound([[700,100],[1050,100],[1400,100]]);
+      audio.playSound(Sounds.USE_ITEM);
       const items = unit.inventory[item.category];
-      items.splice(jwb.state.inventoryIndex, 1);
-      if (jwb.state.inventoryIndex >= items.length) {
-        jwb.state.inventoryIndex--;
+      items.splice(state.inventoryIndex, 1);
+      if (state.inventoryIndex >= items.length) {
+        state.inventoryIndex--;
       }
     }
   }
@@ -72,10 +72,14 @@
   }
 
   function moveOrAttack(unit, { x, y }) {
-    const { audio } = jwb;
+    const { audio, Sounds } = jwb;
+    const { playSound } = audio;
     const { map, messages, playerUnit } = jwb.state;
     if (map.contains(x, y) && !map.isBlocked(x, y)) {
       [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        playSound(Sounds.FOOTSTEP);
+      }
     } else {
       const otherUnit = map.getUnit(x, y);
       if (!!otherUnit) {
@@ -84,20 +88,27 @@
         messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
         if (otherUnit.life === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
-          audio.playSound([[800,40],[600,40],[400,40],[300,40],[200,40]]);
           if (otherUnit === playerUnit) {
             alert('Game Over!');
+            audio.playSound(Sounds.PLAYER_DIES);
+          } else {
+            audio.playSound(Sounds.ENEMY_DIES);
           }
           unit.gainExperience(1);
         } else {
-          audio.playSound([[800,40],[600,40],[400,40]]);
+          if (unit === playerUnit) {
+            playSound(Sounds.PLAYER_HITS_ENEMY);
+          } else {
+            playSound(Sounds.ENEMY_HITS_PLAYER);
+          }
         }
       }
     }
   }
 
   function restartGame() {
-    const { MapFactory, SpriteRenderer, UnitFactory } = jwb;
+    const { MapFactory, SpriteRenderer, UnitFactory, Music } = jwb;
+    const { randChoice } = jwb.utils.RandomUtils;
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
       MapFactory.randomMap(30, 20, 10, 8),
@@ -110,11 +121,11 @@
 
     //jwb.renderer = new AsciiRenderer();
     jwb.renderer = new SpriteRenderer();
-    jwb.audio = new jwb.SoundPlayer();
 
     jwb.actions.loadMap(0);
     jwb.input.attachEvents();
     jwb.renderer.render();
+    jwb.Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
   }
 
   window.jwb = window.jwb || {};
