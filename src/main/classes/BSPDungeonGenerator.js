@@ -15,13 +15,14 @@
 /**
  *
  * @param {int} minRoomDimension outer width, including wall
+ * @param {int} maxRoomDimension outer width, including wall
  * @param {int} minRoomPadding
  * @constructor
  */
-function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
+function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
   const { MapUtils, RandomUtils } = jwb.utils;
   const { pickUnoccupiedLocations } = MapUtils;
-  const { randInt, randChoice } = RandomUtils;
+  const { randInt, randChoice, weightedRandom } = RandomUtils;
 
   /**
    * @param {int} width
@@ -60,9 +61,13 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
     const canSplitVertically = (height >= (2 * minSectionDimension));
 
+    const mustSplitHorizontally = width > (maxRoomDimension + 2 * minRoomPadding);
+    const mustSplitVertically = height > (maxRoomDimension + 2 * minRoomPadding);
+
     const splitDirections = [
       ...(canSplitHorizontally ? ['HORIZONTAL'] : []),
-      ...(canSplitVertically ? ['VERTICAL'] : [])
+      ...(canSplitVertically ? ['VERTICAL'] : []),
+      ...((!mustSplitHorizontally && !mustSplitVertically) ? [null] : [])
     ];
 
     /*
@@ -107,7 +112,7 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
           rooms: [...leftSection.rooms, ...rightRooms],
           tiles
         };
-      } else {
+      } else if (direction === 'VERTICAL') {
         const splitY = _getSplitPoint(height);
         const topHeight = splitY;
         const bottomHeight = height - splitY;
@@ -124,10 +129,10 @@ function BSPDungeonGenerator(minRoomDimension, minRoomPadding) {
           tiles
         };
       }
-    } else {
-      // Base case: return a single section
-      return _generateSingleSection(width, height);
     }
+
+    // Base case: return a single section
+    return _generateSingleSection(width, height);
   }
 
   /**

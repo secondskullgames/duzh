@@ -229,50 +229,9 @@
         return;
       }
 
-      switch (element.class) {
-        case 'Unit': {
-          const sprite = element.getSprite();
-          if (sprite) {
-            _drawSprite(sprite, pixel);
-          } else {
-            // TODO TEMP CODE
-            _context.fillStyle = (element === jwb.state.playerUnit ? '#00f' : '#f00');
-            _context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-          }
-          break;
-        }
-        case 'MapItem':
-          const sprite = element.getSprite();
-          if (sprite) {
-            _drawSprite(sprite, pixel);
-          } else {
-            // TODO TEMP CODE
-            _context.fillStyle = '#0f0';
-            _context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-          }
-          break;
-        case 'Tile': {
-          const sprite = element.getSprite();
-          if (sprite) {
-            _drawSprite(sprite, pixel);
-          } else {
-            // TODO TEMP CODE
-            switch (element.name) {
-              case 'STAIRS_DOWN':
-                _context.fillStyle = '#000';
-                _context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-                _context.fillStyle = '#fff';
-                _context.font = '20px Monospace';
-                _context.textAlign = 'center';
-                _context.fillText('>', pixel.x + TILE_WIDTH / 2, pixel.y + TILE_HEIGHT / 2);
-                break;
-              default:
-                _context.fillStyle = '#000';
-                _context.fillRect(pixel.x, pixel.y, TILE_WIDTH, TILE_HEIGHT);
-            }
-          }
-          break;
-        }
+      const sprite = element.getSprite();
+      if (!!sprite) {
+        _drawSprite(element.getSprite(), pixel);
       }
     }
 

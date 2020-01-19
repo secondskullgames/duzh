@@ -62,7 +62,7 @@
       }
     };
 
-    return new BSPDungeonGenerator(6, 0).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
+    return new BSPDungeonGenerator(6, 10, 0).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
   }
 
   /**
