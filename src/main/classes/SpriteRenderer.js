@@ -3,7 +3,7 @@
   const TILE_HEIGHT = 24;
 
   const WIDTH = 20; // in tiles
-  const HEIGHT = 16; // in tiles
+  const HEIGHT = 20; // in tiles
 
   const SCREEN_WIDTH = WIDTH * TILE_WIDTH;
   const SCREEN_HEIGHT = HEIGHT * TILE_HEIGHT;
