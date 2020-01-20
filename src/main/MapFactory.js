@@ -57,7 +57,7 @@
             y,
             'P',
             jwb.SpriteFactory.MAP_POTION(),
-            () => jwb.ItemFactory.createPotion(20)
+            () => jwb.ItemFactory.createPotion(50)
           );
       }
     };

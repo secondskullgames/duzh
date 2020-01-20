@@ -3,18 +3,19 @@
 
   /**
    * @typedef {Object} UnitClass
+   * @property {Function} sprite
    * @property {int} startingDamage
    * @property {int} startingLife
-   * @property {Function} experienceToNextLevel (int => int)
-   * @property {Function} damagePerLevel (int => int)
    * @property {Function} lifePerLevel (int => int)
+   * @property {Function} damagePerLevel (int => int)
+   * @property {Function} experienceToNextLevel (int => int)
    */
-
   jwb.UnitClass = {
     /**
      * @type UnitClass
      */
     PLAYER: {
+      sprite: () => jwb.SpriteFactory.PLAYER_GREEN_BROWN(),
       startingLife: 100,
       startingDamage: 10,
       lifePerLevel: level => 10,
@@ -25,10 +26,11 @@
      * @type UnitClass
      */
     ENEMY_HUMAN: {
+      sprite: () => jwb.SpriteFactory.PLAYER_RED(),
       startingLife: 50,
       startingDamage: 5,
       lifePerLevel: () => 5,
-      damagePerLevel: () => 1,
+      damagePerLevel: () => 2,
       experienceToNextLevel: () => null
     }
   };

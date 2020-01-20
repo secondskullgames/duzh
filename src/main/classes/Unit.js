@@ -1,7 +1,6 @@
 {
-  const LIFE_PER_TURN_MULTIPLIER = 0.001;
+  const LIFE_PER_TURN_MULTIPLIER = 0.002;
   /**
-   * @param {Sprite} sprite
    * @param {UnitClass} unitClass
    * @param {string} name
    * @param {int} level
@@ -9,12 +8,17 @@
    * @param {int} y
    * @constructor
    */
-  function Unit(sprite, unitClass, name, level, { x, y }) {
+  function Unit(unitClass, name, level, { x, y }) {
     /**
      * @type {string}
      */
     this.class = 'Unit';
     this.unitClass = unitClass;
+    /**
+     * @type {Sprite}
+     * @private
+     */
+    this._sprite = unitClass.sprite();
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
@@ -116,7 +120,7 @@
     };
 
     this.getSprite = () => {
-      return sprite;
+      return this._sprite;
     };
 
     /**

@@ -2,7 +2,6 @@
   window.jwb = window.jwb || {};
   jwb.UnitFactory = {
     PLAYER: ({ x, y }) => new Unit(
-      jwb.SpriteFactory.PLAYER(),
       jwb.UnitClass.PLAYER,
       'player',
       1,
@@ -10,7 +9,6 @@
     ),
     ENEMY: ({ x, y }) => {
       const enemyUnit = new Unit(
-        jwb.SpriteFactory.ENEMY_PLAYER(),
         jwb.UnitClass.ENEMY_HUMAN,
         'enemy',
         1,
@@ -33,16 +31,17 @@
             });
           } else {
             behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.8,
+              'ATTACK_PLAYER': 0.4,
               'WANDER': 0.2,
+              'FLEE_FROM_PLAYER': 0.4
             });
           }
         } else {
           if ((u.life / u.maxLife) >= 0.5) {
             behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.5,
-              'WANDER': 0.3,
-              'STAY': 0.2
+              'ATTACK_PLAYER': 0.6,
+              'WANDER': 0.1,
+              'STAY': 0.3
             });
           } else {
             behavior = weightedRandom({

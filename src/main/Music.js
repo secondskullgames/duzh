@@ -100,8 +100,8 @@
         setTimeout(() => {
           const figures = [
             bass.map(transpose_8vb),
-            ...(!!lead ? [lead] : [])];
-          console.log(figures);
+            ...(!!lead ? [lead] : [])
+          ];
           figures.forEach(figure => jwb.audio.playMusic(figure));
         }, ((numRepeats * i) + j) * suite.length);
       }

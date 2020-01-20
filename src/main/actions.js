@@ -111,12 +111,12 @@
     const { randChoice } = jwb.utils.RandomUtils;
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
-      MapFactory.randomMap(30, 20, 10, 8),
-      MapFactory.randomMap(32, 21, 11, 8),
-      MapFactory.randomMap(34, 22, 12, 7),
-      MapFactory.randomMap(36, 23, 13, 7),
-      MapFactory.randomMap(38, 24, 14, 6),
-      MapFactory.randomMap(30, 25, 15, 6),
+      MapFactory.randomMap(30, 20, 10, 4),
+      MapFactory.randomMap(32, 21, 11, 4),
+      MapFactory.randomMap(34, 22, 12, 4),
+      MapFactory.randomMap(36, 23, 13, 3),
+      MapFactory.randomMap(38, 24, 14, 3),
+      MapFactory.randomMap(30, 25, 15, 3),
     ]);
 
     //jwb.renderer = new AsciiRenderer();
