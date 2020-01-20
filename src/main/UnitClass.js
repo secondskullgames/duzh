@@ -15,7 +15,7 @@
      * @type UnitClass
      */
     PLAYER: {
-      sprite: () => jwb.SpriteFactory.PLAYER_GREEN_BROWN(),
+      sprite: paletteSwaps => jwb.SpriteFactory.PLAYER(paletteSwaps),
       startingLife: 100,
       startingDamage: 10,
       lifePerLevel: level => 10,
@@ -26,7 +26,7 @@
      * @type UnitClass
      */
     ENEMY_HUMAN: {
-      sprite: () => jwb.SpriteFactory.PLAYER_RED(),
+      sprite: paletteSwaps => jwb.SpriteFactory.PLAYER(paletteSwaps),
       startingLife: 50,
       startingDamage: 5,
       lifePerLevel: () => 5,

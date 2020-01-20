@@ -62,7 +62,12 @@
       }
     };
 
-    return new BSPDungeonGenerator(6, 10, 0).generateDungeon(width, height, numEnemies, ({ x, y }) => UnitFactory.ENEMY({ x, y }), numItems, itemSupplier);
+    const enemyUnitSupplier = ({ x, y }) => {
+      return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
+        .call(null, { x, y });
+    };
+
+    return new BSPDungeonGenerator(6, 10, 0).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**

@@ -36,15 +36,25 @@
    *
    * @param {Coordinates} first
    * @param {Coordinates} second
+   * @private
    */
-  function distance(first, second) {
+  function _distance_simple(first, second) {
     return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
+  }
+
+  /**
+   * @private
+   */
+  function _distance_civ(first, second) {
+    const dx = Math.abs(first.x - second.x);
+    const dy = Math.abs(first.y - second.y);
+    return Math.max(dx, dy) + Math.min(dx, dy)/2;
   }
 
   window.jwb = window.jwb || {};
   jwb.utils = jwb.utils || {};
   jwb.utils.MapUtils = {
     pickUnoccupiedLocations,
-    distance
+    distance: _distance_civ
   };
 }

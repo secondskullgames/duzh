@@ -1,14 +1,15 @@
 {
-  const LIFE_PER_TURN_MULTIPLIER = 0.002;
+  const LIFE_PER_TURN_MULTIPLIER = 0.005;
   /**
    * @param {UnitClass} unitClass
    * @param {string} name
    * @param {int} level
    * @param {int} x
    * @param {int} y
+   * @param {Object<string, string>} paletteSwaps
    * @constructor
    */
-  function Unit(unitClass, name, level, { x, y }) {
+  function Unit(unitClass, name, level, { x, y }, paletteSwaps = {}) {
     /**
      * @type {string}
      */
@@ -18,7 +19,7 @@
      * @type {Sprite}
      * @private
      */
-    this._sprite = unitClass.sprite();
+    this._sprite = unitClass.sprite(paletteSwaps);
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
@@ -135,6 +136,7 @@
       this.life += lifePerLevel;
       this._damage += this.unitClass.damagePerLevel(this.level);
       this.experienceToNextLevel = this.unitClass.experienceToNextLevel(this.level);
+      jwb.audio.playSound(jwb.Sounds.LEVEL_UP);
     };
 
     this.gainExperience = (experience) => {

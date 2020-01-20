@@ -31,7 +31,7 @@
    * @param {Unit} unit
    */
   function wander(unit) {
-    const { map, playerUnit } = jwb.state;
+    const { map } = jwb.state;
     const { RandomUtils } = jwb.utils;
     const { moveOrAttack } = jwb.actions;
     /** @type {{ x: int, y: int }[]} */
