@@ -67,7 +67,7 @@
         .call(null, { x, y });
     };
 
-    return new BSPDungeonGenerator(6, 10, 0).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new BSPDungeonGenerator(7, 14, 0).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**

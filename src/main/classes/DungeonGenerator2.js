@@ -3,14 +3,24 @@
  */
 
 /**
- * @typedef MapSection
- * {{
- *   width: int,
- *   height: int,
- *   rooms: Rect[],
- *   tiles: Tile[][]
- * }}
+ * @typedef {Object} Room
+ * @property {int} left
+ * @property {int} top
+ * @property {int} width
+ * @property {int} height
+ * @property {Coordinates[]} exits
  */
+
+/**
+ * @typedef {Object} MapSection
+ * @property {int} width
+ * @property {int} height
+ * @property {Room[]} rooms
+ * @property {Tile[][]} tiles
+ */
+
+const minExits = 1;
+const maxExits = 4;
 
 /**
  * @param {int} minRoomDimension outer width, including wall
@@ -18,10 +28,11 @@
  * @param {int} minRoomPadding
  * @constructor
  */
-function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
+function DungeonGenerator2(minRoomDimension, maxRoomDimension, minRoomPadding) {
+
   const { MapUtils, RandomUtils } = jwb.utils;
   const { pickUnoccupiedLocations } = MapUtils;
-  const { randInt, randChoice, weightedRandom } = RandomUtils;
+  const { randInt, randChoice } = RandomUtils;
 
   /**
    * @param {int} width
@@ -35,6 +46,7 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
   function generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
     const { Tiles } = jwb.types;
     const section = _generateSection(width, height);
+    _joinSection(section);
     const { tiles } = section;
     const [stairsLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [], 1);
     const [playerLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1);
@@ -99,7 +111,6 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
           const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
           tiles.push(row);
         }
-        _joinSectionsHorizontally(tiles, leftSection, rightSection);
         // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
         // relative to this section's coordinates
         const rightRooms = rightSection.rooms
@@ -118,7 +129,6 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
         const topSection = _generateSection(width, topHeight);
         const bottomSection = _generateSection(width, bottomHeight);
         const tiles = [...topSection.tiles, ...bottomSection.tiles];
-        _joinSectionsVertically(tiles, topSection, bottomSection);
         const bottomRooms = bottomSection.rooms
           .map(room => ({ ...room, top: room.top + splitY }));
         return {
@@ -144,13 +154,13 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
    * @return {MapSection}
    * @private
    */
-  function  _generateSingleSection(width, height) {
+  function _generateSingleSection(width, height) {
     const { Tiles } = jwb.types;
     const maxRoomWidth = width - (2 * minRoomPadding);
     const maxRoomHeight = height - (2 * minRoomPadding);
     const roomWidth = randInt(minRoomDimension, maxRoomWidth);
     const roomHeight = randInt(minRoomDimension, maxRoomHeight);
-    const roomTiles = _generateRoom(roomWidth, roomHeight);
+    const roomTiles = _generateRoomTiles(roomWidth, roomHeight);
 
     const roomLeft = randInt(minRoomPadding, width - roomWidth - minRoomPadding);
     const roomTop = randInt(minRoomPadding, height - roomHeight - minRoomPadding);
@@ -171,8 +181,17 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
       }
     }
 
-    const rooms = [{ left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight }];
-    return { width, height, rooms, tiles };
+    /**
+     * @type Room
+     */
+    const room = {
+      left: roomLeft,
+      top: roomTop,
+      width: roomWidth,
+      height: roomHeight,
+      exits: []
+    };
+    return { width, height, rooms: [room], tiles };
   }
 
   /**
@@ -181,7 +200,7 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
    * @return {Tile[][]}
    * @private
    */
-  function _generateRoom(width, height) {
+  function _generateRoomTiles(width, height) {
     const { Tiles } = jwb.types;
     const tiles = [];
     for (let y = 0; y < height; y++) {
@@ -212,95 +231,47 @@ function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding)
   }
 
   /**
-   * TODO this does not account for the case where there's no straight line between the two rooms.
-   * Deal with this with multi-part paths in the future.
-   *
-   * @param {Tiles[][]} tiles The tiles of both leftSection and rightSection
-   * @param {MapSection} leftSection
-   * @param {MapSection} rightSection
+   * @param {MapSection} section
+   * @private
    */
-  function _joinSectionsHorizontally(tiles, leftSection, rightSection) {
-    const { Tiles } = jwb.types;
-    const { randChoice } = jwb.utils.RandomUtils;
-    /**
-     * @type {{ y: int, leftRoom: Rect, rightRoom: Rect}[]}
-     */
-    const candidates = tiles
-      .map((_, y) => {
-        const leftRooms = leftSection.rooms
-          .filter(room => (y >= room.top && y <= (room.top + room.height - 1)));
-        const rightRooms = rightSection.rooms
-          .filter(room => (y >= room.top && y <= (room.top + room.height - 1)));
+  function _joinSection(section) {
+    const { randChoice, randInt } = jwb.utils.RandomUtils;
 
-        const leftRoom = leftRooms.sort((a, b) => (b.left - a.left))[0]; // find the *max* left coordinate
-        const rightRoom = rightRooms.sort((a, b) => (a.left - b.left))[0]; // find the *min* left coordinate
+    while (!_roomsHaveEnoughExits(section)) {
+      const availableRooms = [...section.rooms];
+      let index = randInt(0, availableRooms.length);
+      const first = availableRooms[index];
+      availableRooms.splice(index, 1);
+      index = randInt(0, availableRooms.length);
+      const second = availableRooms[index];
 
-        if (leftRoom && (y > leftRoom.top) && (y < (leftRoom.top + leftRoom.height - 1))) {
-          if (rightRoom && (y > rightRoom.top) && (y < (rightRoom.top + rightRoom.height - 1))) {
-            return { y, leftRoom, rightRoom };
-          }
-        }
-
-        return null;
-      })
-      .filter(obj => !!obj);
-
-    if (candidates.length > 0) {
-      const { y, leftRoom, rightRoom } = randChoice(candidates) || {};
-      for (let x = leftRoom.left + leftRoom.width - 1; x <= rightRoom.left + leftSection.width; x++) {
-        tiles[y][x] = Tiles.FLOOR_HALL;
+      if (_canJoinRooms(first, second)) {
+        _joinRooms(first, second);
       }
-    } else {
-      console.log('Error connecting horizontally:');
-      _logSections(leftSection, rightSection);
     }
   }
 
   /**
-   * TODO this does not account for the case where there's no straight line between the two rooms.
-   * Deal with this with multi-part paths in the future.
-   *
-   * @param {Tile[][]} tiles The tiles of both topSection and bottomSection
-   * @param {MapSection} topSection
-   * @param {MapSection} bottomSection
+   * @param {Room} first
+   * @param {Room} second
+   * @private
    */
-  function _joinSectionsVertically(tiles, topSection, bottomSection) {
-    const { Tiles } = jwb.types;
-    const { randChoice } = jwb.utils.RandomUtils;
+  function _canJoinRooms(first, second) {
+    return (first.exits.length < maxExits) && (second.exits.length < maxExits);
+  }
 
-    /**
-     * @type {{ x: int, topRoom: Rect, bottomRoom: Rect}[]}
-     */
-    const candidates = tiles[0]
-      .map((_, x) => {
-        const topRooms = topSection.rooms
-          .filter(room => (x >= room.left && x <= (room.left + room.width - 1)));
-        const bottomRooms = bottomSection.rooms
-          .filter(room => (x >= room.left && x <= (room.left + room.width - 1)));
+  function _joinRooms(first, second) {
+    const firstExit = _chooseExit(first);
+    const secondExit = _chooseExit(second);
+    _joinExits(firstExit, secondExit);
+  }
 
-        const topRoom = topRooms.sort((a, b) => (b.top - a.top))[0]; // find the *max* top coordinate
-        const bottomRoom = bottomRooms.sort((a, b) => (a.top - b.top))[0]; // find the *min* top coordinate
-
-        if (topRoom && (x > topRoom.left) && (x < (topRoom.left + topRoom.width - 1))) {
-          if (bottomRoom && (x > bottomRoom.left) && (x < (bottomRoom.left + bottomRoom.width - 1))) {
-            return { x, topRoom, bottomRoom };
-          }
-        }
-
-        return null;
-      })
-      .filter(obj => !!obj);
-
-    if (candidates.length > 0) {
-      const { x, topRoom, bottomRoom } = randChoice(candidates) || {};
-
-      for (let y = topRoom.top + topRoom.height - 1; y <= bottomRoom.top + topSection.height; y++) {
-        tiles[y][x] = Tiles.FLOOR_HALL;
-      }
-    } else {
-      console.log('Error connecting vertically:');
-      _logSections(topSection, bottomSection);
-    }
+  /**
+   * @param {MapSection} section
+   * @private
+   */
+  function _roomsHaveEnoughExits(section) {
+    return section.rooms.all(room => room.exits.length >= minExits);
   }
 
   function _logSections(name, ...sections) {

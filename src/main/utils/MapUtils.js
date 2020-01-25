@@ -31,6 +31,17 @@
   }
 
   /**
+   * @param {Rect} rect
+   * @param {Coordinates} coordinates
+   */
+  function contains(rect, coordinates) {
+    return coordinates.x >= rect.left
+      && coordinates.x < (rect.left + rect.width)
+      && coordinates.y >= rect.top
+      && coordinates.y < (rect.top + rect.height);
+  }
+
+  /**
    * This is implemented as (x distance + y distance), since all movement is just 4-directional
    * so it legitimately takes twice as long to move diagonally
    *
@@ -38,7 +49,7 @@
    * @param {Coordinates} second
    * @private
    */
-  function _distance_simple(first, second) {
+  function manhattanDistance(first, second) {
     return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
   }
 
@@ -55,6 +66,8 @@
   jwb.utils = jwb.utils || {};
   jwb.utils.MapUtils = {
     pickUnoccupiedLocations,
-    distance: _distance_civ
+    distance: _distance_civ,
+    manhattanDistance,
+    contains
   };
 }
