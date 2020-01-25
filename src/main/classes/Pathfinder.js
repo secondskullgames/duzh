@@ -79,7 +79,6 @@
           throw 'fuck, out of open tiles';
         }
         const bestNode = open.sort((a, b) => (f(a, start, goal) - f(b, start, goal)))[0];
-        console.log(bestNode);
         if (_equals(bestNode, goal)) {
           // Done!
           const path = _traverseParents(bestNode);
@@ -88,8 +87,7 @@
         } else {
           open.splice(open.indexOf(bestNode), 1);
           closed.push(bestNode);
-          _findNeighbors(bestNode, rect).forEach(neighbor => {
-            console.log(`n: ${JSON.stringify(neighbor)}`);
+          _findNeighbors(bestNode, rect, blockedTiles).forEach(neighbor => {
             if (closed.some(coordinates => _equals(coordinates, neighbor))) {
               // already been seen, don't need to look at it*
             } else if (open.some(coordinates => _equals(coordinates, neighbor))) {
@@ -113,7 +111,7 @@
      */
     function _traverseParents(node) {
       const path = [];
-      for (let currentNode = node; !!currentNode.parent; currentNode = currentNode.parent) {
+      for (let currentNode = node; !!currentNode; currentNode = currentNode.parent) {
         const coordinates = { x: currentNode.x, y: currentNode.y };
         path.splice(0, 0, coordinates); // add it at the beginning of the list
       }
@@ -123,14 +121,16 @@
     /**
      * @param {Coordinates!} tile
      * @param {Rect!} rect
+     * @param {Coordinates[]!} blockedTiles
      * @return {Coordinates[]!}
      * @private
      */
-    function _findNeighbors(tile, rect) {
+    function _findNeighbors(tile, rect, blockedTiles) {
       const { contains } = jwb.utils.MapUtils;
       return [[0, -1], [1, 0], [0, 1], [-1, 0]]
         .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
-        .filter(({ x, y }) => contains(rect, { x, y }));
+        .filter(({ x, y }) => contains(rect, { x, y }))
+        .filter(({ x, y }) => !blockedTiles.some(blocked => x === blocked.x && y === blocked.y));
     }
   }
 
