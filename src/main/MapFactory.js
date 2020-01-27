@@ -1,7 +1,7 @@
 {
   const MIN_ROOM_DIMENSION = 6;
   const MAX_ROOM_DIMENSION = 12;
-  const MIN_ROOM_PADDING = 2;
+  const MIN_ROOM_PADDING = 1;
 
   const FIXED_MAPS = [
     _mapFromAscii(`
@@ -67,8 +67,8 @@
     };
 
     const enemyUnitSupplier = ({ x, y }) => {
-      //return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
-      return UnitFactory.FULL_AGGRO
+      return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
+      //return UnitFactory.FULL_AGGRO
         .call(null, { x, y });
     };
 

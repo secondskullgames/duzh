@@ -106,7 +106,9 @@
 
     if (path.length > 1) {
       const { x, y } = path[1]; // first tile is the unit's own tile
-      moveOrAttack(unit, { x, y });
+      if (map.getUnit(x, y) !== playerUnit) {
+        moveOrAttack(unit, { x, y });
+      }
     }
   }
 
