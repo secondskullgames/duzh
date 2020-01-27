@@ -67,7 +67,14 @@
     this.removeItem = ({ x, y }) => {
       const index = this.items.findIndex(i => (i.x === x && i.y === y));
       this.items.splice(index, 1);
-    }
+    };
+
+    this.getRect = () => ({
+      left: 0,
+      top: 0,
+      width: this.width,
+      height: this.height
+    });
   }
 
   window.jwb = window.jwb || {};

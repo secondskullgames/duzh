@@ -3,15 +3,16 @@
    * @typedef Node
    * @property {int!} x
    * @property {int!} y
-   * @property {Node | null} parent
+   * @property {?Node} parent
    * @property {int!} cost
    */
 
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
+   * @param {Function} blockedTileDetector
    * @constructor
    */
-  function Pathfinder() {
+  function Pathfinder(blockedTileDetector) {
     /**
      * @return the exact cost of the path from {@code start} to {@code coordinates}
      * @param {Node!} node
@@ -57,10 +58,9 @@
      * @param {Coordinates!} start
      * @param {Coordinates!} goal
      * @param {Rect!} rect
-     * @param {Coordinates[]!} blockedTiles
      * @return {Coordinates[]!}
      */
-    this.findPath = (start, goal, rect, blockedTiles) => {
+    this.findPath = (start, goal, rect) => {
       // http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
 
       /**
@@ -76,7 +76,8 @@
 
       while (true) {
         if (open.length === 0) {
-          throw 'fuck, out of open tiles';
+          console.error('fuck, out of open tiles');
+          return [];
         }
         const bestNode = open.sort((a, b) => (f(a, start, goal) - f(b, start, goal)))[0];
         if (_equals(bestNode, goal)) {
@@ -87,7 +88,7 @@
         } else {
           open.splice(open.indexOf(bestNode), 1);
           closed.push(bestNode);
-          _findNeighbors(bestNode, rect, blockedTiles).forEach(neighbor => {
+          _findNeighbors(bestNode, rect).forEach(neighbor => {
             if (closed.some(coordinates => _equals(coordinates, neighbor))) {
               // already been seen, don't need to look at it*
             } else if (open.some(coordinates => _equals(coordinates, neighbor))) {
@@ -121,16 +122,15 @@
     /**
      * @param {Coordinates!} tile
      * @param {Rect!} rect
-     * @param {Coordinates[]!} blockedTiles
      * @return {Coordinates[]!}
      * @private
      */
-    function _findNeighbors(tile, rect, blockedTiles) {
+    function _findNeighbors(tile, rect) {
       const { contains } = jwb.utils.MapUtils;
       return [[0, -1], [1, 0], [0, 1], [-1, 0]]
         .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
         .filter(({ x, y }) => contains(rect, { x, y }))
-        .filter(({ x, y }) => !blockedTiles.some(blocked => x === blocked.x && y === blocked.y));
+        .filter(({ x, y }) => !blockedTileDetector({ x, y }));
     }
   }
 

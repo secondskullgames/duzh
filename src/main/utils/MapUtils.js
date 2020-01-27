@@ -31,6 +31,14 @@
   }
 
   /**
+   * @param {Coordinates} first
+   * @param {Coordinates} second
+   */
+  function coordinatesEquals(first, second) {
+    return (first.x === second.x && first.y === second.y);
+  }
+
+  /**
    * @param {Rect} rect
    * @param {Coordinates} coordinates
    */
@@ -68,6 +76,7 @@
     pickUnoccupiedLocations,
     distance: _distance_civ,
     manhattanDistance,
-    contains
+    contains,
+    coordinatesEquals
   };
 }

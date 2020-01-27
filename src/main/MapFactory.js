@@ -1,4 +1,8 @@
 {
+  const MIN_ROOM_DIMENSION = 6;
+  const MAX_ROOM_DIMENSION = 12;
+  const MIN_ROOM_PADDING = 2;
+
   const FIXED_MAPS = [
     _mapFromAscii(`
                 ###########
@@ -38,7 +42,7 @@
    * @param {int} numItems
    */
   function randomMap(width, height, numEnemies, numItems) {
-    const { UnitFactory } = jwb;
+    const { UnitFactory, BSPDungeonGenerator, DungeonGenerator2 } = jwb;
     const { RandomUtils } = jwb.utils;
 
     const itemSupplier = ({ x, y }) => {
@@ -63,11 +67,13 @@
     };
 
     const enemyUnitSupplier = ({ x, y }) => {
-      return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
+      //return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
+      return UnitFactory.FULL_AGGRO
         .call(null, { x, y });
     };
 
-    return new BSPDungeonGenerator(7, 14, 0).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    //return new BSPDungeonGenerator(7, 14, 0).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new DungeonGenerator2(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**

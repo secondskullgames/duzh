@@ -51,11 +51,15 @@
     }
   }
 
-  function attackPlayerUnit(unit) {
+  /**
+   * @param {Unit} unit
+   * @private
+   */
+  function _attackPlayerUnit_simple(unit) {
     const { map, playerUnit } = jwb.state;
     const { distance } = jwb.utils.MapUtils;
     const { moveOrAttack } = jwb.actions;
-    /** @type {{ x: int, y: int }[]} */
+    /** @type Coordinates[] */
     const tiles = [];
     [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
@@ -72,6 +76,36 @@
 
     if (tiles.length > 0) {
       const { x, y } = _sortBy(tiles, coordinates => distance(coordinates, playerUnit))[0];
+      moveOrAttack(unit, { x, y });
+    }
+  }
+
+  /**
+   * @param {Unit} unit
+   * @private
+   */
+  function _attackPlayerUnit_withPath(unit) {
+    const { map, playerUnit } = jwb.state;
+    const { moveOrAttack } = jwb.actions;
+
+    const mapRect = { left: 0, top: 0, width: map.width, height: map.height };
+
+    const blockedTileDetector = ({ x, y }) => {
+      if (!jwb.state.map.getTile(x, y).isBlocking) {
+        return false;
+      } else if (jwb.utils.MapUtils.coordinatesEquals({ x, y }, playerUnit)) {
+        return false;
+      }
+      return true;
+    };
+
+    /**
+     * @type {!Coordinates[]}
+     */
+    const path = new jwb.Pathfinder(blockedTileDetector).findPath(unit, playerUnit, mapRect);
+
+    if (path.length > 1) {
+      const { x, y } = path[1]; // first tile is the unit's own tile
       moveOrAttack(unit, { x, y });
     }
   }
@@ -108,7 +142,7 @@
   jwb = jwb || {};
   jwb.UnitBehaviors = {
     WANDER: wander,
-    ATTACK_PLAYER: attackPlayerUnit,
+    ATTACK_PLAYER: _attackPlayerUnit_withPath, // _attackPlayerUnit_simple,
     FLEE_FROM_PLAYER: fleeFromPlayerUnit,
     STAY: () => {}
   }

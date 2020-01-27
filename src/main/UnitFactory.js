@@ -124,6 +124,30 @@
         return jwb.UnitBehaviors[behavior].call(null, u);
       };
       return enemyUnit;
+    },
+
+    FULL_AGGRO: ({ x, y }) => {
+      const enemyUnit = new Unit(
+        jwb.UnitClass.ENEMY_HUMAN,
+        'enemy_red',
+        1,
+        { x, y },
+        {
+          '#800080': '#c00000', // Shirt
+          '#ff00ff': '#cc0000', // Upper Sleeves
+          '#000080': '#c00000', // Lower sleeves
+          '#00ffff': '#ffc0c0', // Hands
+          '#000000': '#c00000', // Belt
+          '#808080': '#800000', // Skirt
+          '#c0c0c0': '#800000', // Legs
+          '#008000': '#000000', // Socks
+          '#00ff00': '#000000', // Shoes
+          '#ff8040': '#ffc0c0'  // Face
+        }
+      );
+
+      enemyUnit.aiHandler = u => jwb.UnitBehaviors.ATTACK_PLAYER.call(null, u);
+      return enemyUnit;
     }
-  }
+  };
 }
