@@ -76,14 +76,14 @@
 
       while (true) {
         if (open.length === 0) {
-          console.error('fuck, out of open tiles');
+          //console.error('fuck, out of open tiles');
           return [];
         }
         const bestNode = open.sort((a, b) => (f(a, start, goal) - f(b, start, goal)))[0];
         if (_equals(bestNode, goal)) {
           // Done!
           const path = _traverseParents(bestNode);
-          console.log(`path = ${JSON.stringify(path)}`);
+          //console.log(`path = ${JSON.stringify(path)}`);
           return path;
         } else {
           open.splice(open.indexOf(bestNode), 1);

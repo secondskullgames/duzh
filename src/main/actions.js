@@ -10,19 +10,18 @@
     const { state } = jwb;
 
     state.playerUnit.update();
-    render();
+    render()
+      .then(() => {
+        state.map.units
+          .filter(u => u !== state.playerUnit)
+          .forEach(u => u.update());
 
-    setTimeout(() => {
-      state.map.units
-        .filter(u => u !== state.playerUnit)
-        .forEach(u => u.update());
-
-      render()
-        .then(() => {
-          state.turn++;
-          state.messages = [];
-        });
-    }, 0);
+        render()
+          .then(() => {
+            state.turn++;
+            state.messages = [];
+          });
+      });
   }
 
   /**

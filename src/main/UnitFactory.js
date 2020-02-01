@@ -51,31 +51,27 @@
         if (distanceToPlayer === 1) {
           if ((u.life / u.maxLife) >= 0.5) {
             behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.8,
-              'WANDER': 0.2,
+              'ATTACK_PLAYER': 0.75,
+              'WANDER': 0.25,
             });
           } else {
             behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.4,
-              'WANDER': 0.2,
-              'FLEE_FROM_PLAYER': 0.4
+              'ATTACK_PLAYER': 0.25,
+              'WANDER': 0.5,
+              'FLEE_FROM_PLAYER': 0.25
             });
           }
+        } else if (distanceToPlayer >= 4) {
+          behavior = weightedRandom({
+            'WANDER': 0.25,
+            'STAY': 0.75
+          });
         } else {
-          if ((u.life / u.maxLife) >= 0.5) {
-            behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.3,
-              'WANDER': 0.2,
-              'STAY': 0.5
-            });
-          } else {
-            behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.2,
-              'WANDER': 0.2,
-              'FLEE_FROM_PLAYER': 0.3,
-              'STAY': 0.3
-            });
-          }
+          behavior = weightedRandom({
+            'ATTACK_PLAYER': 0.5,
+            'WANDER': 0.25,
+            'STAY': 0.25
+          });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);
       };
@@ -110,15 +106,16 @@
         const distanceToPlayer = distance(u, playerUnit);
 
         if (distanceToPlayer === 1) {
+          behavior = 'ATTACK_PLAYER';
+        } else if (distanceToPlayer >= 7) {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.9,
-            'WANDER': 0.1,
+            'WANDER': 0.5,
+            'STAY': 0.5
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.8,
-            'WANDER': 0.1,
-            'STAY': 0.1
+            'ATTACK_PLAYER': 0.75,
+            'WANDER': 0.25
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);

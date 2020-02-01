@@ -87,13 +87,14 @@
   function _attackPlayerUnit_withPath(unit) {
     const { map, playerUnit } = jwb.state;
     const { moveOrAttack } = jwb.actions;
+    const { coordinatesEquals } = jwb.utils.MapUtils;
 
     const mapRect = { left: 0, top: 0, width: map.width, height: map.height };
 
     const blockedTileDetector = ({ x, y }) => {
       if (!jwb.state.map.getTile(x, y).isBlocking) {
         return false;
-      } else if (jwb.utils.MapUtils.coordinatesEquals({ x, y }, playerUnit)) {
+      } else if (coordinatesEquals({ x, y }, playerUnit)) {
         return false;
       }
       return true;
@@ -106,7 +107,7 @@
 
     if (path.length > 1) {
       const { x, y } = path[1]; // first tile is the unit's own tile
-      if (map.getUnit(x, y) !== playerUnit) {
+      if (map.getUnit(x, y) !== unit) {
         moveOrAttack(unit, { x, y });
       }
     }

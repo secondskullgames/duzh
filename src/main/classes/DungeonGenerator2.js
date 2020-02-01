@@ -247,35 +247,15 @@
 
         if (candidatePairs.length > 0) {
           const [connectedRoom, unconnectedRoom] = randChoice(candidatePairs);
-          _joinRooms(connectedRoom, unconnectedRoom, section);
-          unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
-          connectedRooms.push(unconnectedRoom);
+          if (_joinRooms(connectedRoom, unconnectedRoom, section)) {
+            unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
+            connectedRooms.push(unconnectedRoom);
+          }
         } else {
           console.log('No candidate pairs');
           break;
         }
       }
-
-      /*
-      while (!_roomsHaveEnoughExits(section)) {
-        if (section.rooms.length < 2) {
-          console.log('Error: not enough rooms to connect');
-          return;
-        }
-        const availableRooms = [...section.rooms];
-        let index = randInt(0, availableRooms.length - 1);
-        const first = availableRooms[index];
-        availableRooms.splice(index, 1);
-        index = randInt(0, availableRooms.length - 1);
-        const second = availableRooms[index];
-
-        if (_canJoinRooms(first, second)) {
-          _joinRooms(first, second, section);
-        } else {
-          console.log('break!');
-          return;
-        }
-      }*/
     }
 
     /**
@@ -291,14 +271,18 @@
      * @param {!Room} first
      * @param {!Room} second
      * @param {!MapSection} section
+     * @return {boolean}
      * @private
      */
     function _joinRooms(first, second, section) {
       const firstExit = _chooseExit(first);
       const secondExit = _chooseExit(second);
-      _joinExits(firstExit, secondExit, section);
-      first.exits.push(firstExit);
-      second.exits.push(secondExit);
+      if (_joinExits(firstExit, secondExit, section)) {
+        first.exits.push(firstExit);
+        second.exits.push(secondExit);
+        return true;
+      }
+      return false;
     }
 
     /**
@@ -349,6 +333,7 @@
      * @param {Coordinates} firstExit
      * @param {Coordinates} secondExit
      * @param {MapSection} section
+     * @return {boolean}
      * @private
      */
     function _joinExits(firstExit, secondExit, section) {
@@ -356,6 +341,17 @@
 
       const blockedTileDetector = ({ x, y }) => {
         if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
+          // special case to prevent drawing paths next to the top wall of rooms
+          if (section.rooms.some(room => {
+            // is (x, y) directly above the top wall?
+            return (room.top === y + 1) && (room.left <= x) && (room.left + room.width > x);
+          })) {
+            if ((firstExit.x === x) && (firstExit.y === y + 1)) {
+              return false;
+            }
+            // exception for the one tile directly next to the exit
+            return true;
+          }
           return false;
         } else if (section.tiles[y][x] === Tiles.FLOOR) {
           return true;
@@ -365,15 +361,15 @@
           return true;
         }
         return true;
-        //return false;
       };
 
-      //const blockedTileDetector = () => false;
       const mapRect = { left: 0, top: 0, width: section.width, height: section.height };
       const path = new jwb.Pathfinder(blockedTileDetector).findPath(firstExit, secondExit, mapRect);
       path.forEach(({ x, y }) => {
         section.tiles[y][x] = Tiles.FLOOR_HALL;
       });
+
+      return (path.length > 0);
     }
 
     /**
