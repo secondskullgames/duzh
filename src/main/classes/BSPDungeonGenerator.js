@@ -179,7 +179,7 @@
         tiles[y] = [];
         for (let x = 0; x < width; x++) {
           if (x > 0 && x < (width - 1) && y === 0) {
-            tiles[y][x] = Tiles.TOP_WALL;
+            tiles[y][x] = Tiles.WALL_TOP;
           } else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
             tiles[y][x] = Tiles.WALL;
           } else {

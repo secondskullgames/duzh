@@ -189,7 +189,7 @@
         tiles[y] = [];
         for (let x = 0; x < width; x++) {
           if (x > 0 && x < (width - 1) && y === 0) {
-            tiles[y][x] = Tiles.TOP_WALL;
+            tiles[y][x] = Tiles.WALL_TOP;
           } else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
             tiles[y][x] = Tiles.WALL;
           } else {
@@ -254,7 +254,7 @@
      * @param {!Room} first
      * @param {!Room} second
      * @param {!MapSection} section
-     * @return {boolean}
+     * @return {!boolean}
      * @private
      */
     function _joinRooms(first, second, section) {
@@ -309,6 +309,8 @@
             x: room.left,
             y: randInt(room.top + 1, room.top + room.height - 2),
           };
+        default:
+          throw `Unknown side ${side}`;
       }
     }
 
@@ -321,19 +323,21 @@
      */
     function _joinExits(firstExit, secondExit, section) {
       const { Tiles } = jwb.types;
+      const { coordinatesEquals } = jwb.utils.MapUtils;
 
       const blockedTileDetector = ({ x, y }) => {
         if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
-          // special case to prevent drawing paths next to the top wall of rooms
-          if (section.rooms.some(room => {
-            // is (x, y) directly above the top wall?
-            return (room.top === y + 1) && (room.left <= x) && (room.left + room.width > x);
-          })) {
-            if ((firstExit.x === x) && (firstExit.y === y + 1)) {
+          // special case to prevent drawing paths right above walls
+          if (y < section.height - 1) {
+            // exception if the tile is directly above an exit
+            if ([firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + 1 }))) {
               return false;
             }
-            // exception for the one tile directly next to the exit
-            return true;
+
+            const tileBelow = section.tiles[y + 1][x];
+            if (tileBelow === Tiles.WALL_HALL || tileBelow === Tiles.WALL_TOP) {
+              return true;
+            }
           }
           return false;
         } else if (section.tiles[y][x] === Tiles.FLOOR) {
@@ -350,6 +354,15 @@
       const path = new jwb.Pathfinder(blockedTileDetector).findPath(firstExit, secondExit, mapRect);
       path.forEach(({ x, y }) => {
         section.tiles[y][x] = Tiles.FLOOR_HALL;
+      });
+
+      // add walls above corridor tiles if possible
+      path.forEach(({ x, y }) => {
+        if (y > 0) {
+          if (section.tiles[y - 1][x] === Tiles.NONE || section.tiles[y - 1][x] === Tiles.WALL) {
+            section.tiles[y - 1][x] = Tiles.WALL_HALL;
+          }
+        }
       });
 
       return (path.length > 0);

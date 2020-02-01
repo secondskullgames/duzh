@@ -35,7 +35,8 @@
     Tiles: {
       FLOOR: new Tile('FLOOR', '.', () => jwb.SpriteFactory.FLOOR(), false),
       FLOOR_HALL: new Tile('FLOOR_HALL', '.', () => jwb.SpriteFactory.FLOOR_HALL(), false),
-      TOP_WALL: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.WALL_TOP(), true),
+      WALL_TOP: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.WALL_TOP(), true),
+      WALL_HALL: new Tile('WALL', '<span style="color: #aaa">#</span>', () => jwb.SpriteFactory.WALL_HALL(), true),
       WALL: new Tile('WALL', ' ', () => null, true),
       NONE: new Tile('NONE', ' ', null, true),
       STAIRS_DOWN: new Tile('STAIRS_DOWN', '>', () => jwb.SpriteFactory.STAIRS_DOWN(), false)
