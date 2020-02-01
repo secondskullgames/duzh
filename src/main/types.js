@@ -1,17 +1,24 @@
 /**
- * @typedef Coordinates {{
- *   x: int,
- *   y: int
- * }}
+ * @typedef Coordinates
+ * @property {int} x
+ * @property {int} y
  */
 
 /**
- * @typedef Rect {{
- *   left: int,
- *   top: int,
- *   width: int,
- *   height: int
- * }}
+ * @typedef {Object} Rect
+ * @property {int} left
+ * @property {int} top
+ * @property {int} width
+ * @property {int} height
+ */
+
+/**
+ * @typedef {Object} Room
+ * @property {int} left
+ * @property {int} top
+ * @property {int} width
+ * @property {int} height
+ * @property {Coordinates[]} exits
  */
 
 /**

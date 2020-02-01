@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
+function MapSupplier(width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
   /**
    * @type int
    */
@@ -16,6 +16,10 @@ function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocation
    */
   this.tiles = tiles;
   /**
+   * @type Room[]
+   */
+  this.rooms = rooms;
+  /**
    * @type Coordinates
    */
   this.playerUnitLocation = playerUnitLocation;
@@ -24,7 +28,7 @@ function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocation
    */
   this.enemyUnitLocations = enemyUnitLocations;
   /**
-   * @type {Function<void, Unit>}
+   * @type {Function} (void -> unit)
    */
   this.enemyUnitSupplier = enemyUnitSupplier;
   /**
@@ -32,7 +36,7 @@ function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocation
    */
   this.itemLocations = itemLocations;
   /**
-   * @type {Function<Coordinates, MapItem>}
+   * @type {Function} (coordinates -> MapItem)
    */
   this.itemSupplier = itemSupplier;
 
@@ -49,6 +53,7 @@ function MapSupplier(width, height, tiles, playerUnitLocation, enemyUnitLocation
       this.width,
       this.height,
       this.tiles,
+      this.rooms,
       units,
       items
     )

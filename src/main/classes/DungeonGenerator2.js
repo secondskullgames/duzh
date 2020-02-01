@@ -2,15 +2,6 @@
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
  */
 
-/**
- * @typedef {Object} Room
- * @property {int} left
- * @property {int} top
- * @property {int} width
- * @property {int} height
- * @property {Coordinates[]} exits
- */
-
 {
   const minExits = 1;
   const maxExits = 4;
@@ -45,7 +36,7 @@
       const enemyLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation], numEnemies);
       const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation, ...enemyLocations], numItems);
       tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-      return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
+      return new MapSupplier(width, height, tiles, section.rooms, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
     }
 
     /**
@@ -164,7 +155,6 @@
         const roomY = y - roomTop;
         for (let x = 0; x < width; x++) {
           const roomX = x - roomLeft;
-
           if (roomX >= 0 && roomX < roomWidth && roomY >= 0 && roomY < roomHeight) {
             tiles[y][x] = roomTiles[roomY][roomX];
           } else {

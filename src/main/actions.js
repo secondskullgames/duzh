@@ -110,6 +110,9 @@
     const { randChoice } = jwb.utils.RandomUtils;
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
+      // test
+      MapFactory.randomMap(20, 10, 3, 1),
+
       MapFactory.randomMap(30, 20, 8, 4),
       MapFactory.randomMap(32, 21, 9, 4),
       MapFactory.randomMap(34, 22, 10, 4),
@@ -118,13 +121,44 @@
       MapFactory.randomMap(30, 25, 13, 3)
     ]);
 
-    //jwb.renderer = new AsciiRenderer();
     jwb.renderer = new SpriteRenderer();
 
     jwb.actions.loadMap(0);
     jwb.input.attachEvents();
     jwb.renderer.render();
     jwb.Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+  }
+
+  /**
+   * Add any tiles the player can currently see to the map's revealed tiles list.
+   * @return void
+   */
+  function revealTiles() {
+    const { map, playerUnit } = jwb.state;
+    const { revealedTiles } = map;
+    const { contains, coordinatesEquals } = jwb.utils.MapUtils;
+
+    map.rooms.forEach(room => {
+      if (contains(room, playerUnit)) {
+        for (let y = room.top; y < room.top + room.height; y++) {
+          for (let x = room.left; x < room.left + room.width; x++) {
+            if (!revealedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+              revealedTiles.push({ x, y });
+            }
+          }
+        }
+      }
+    });
+
+    const radius = 2;
+
+    for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
+      for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
+        if (!revealedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+          revealedTiles.push({ x, y });
+        }
+      }
+    }
   }
 
   window.jwb = window.jwb || {};
@@ -135,6 +169,7 @@
     useItem,
     loadMap,
     moveOrAttack,
-    restartGame
+    restartGame,
+    revealTiles
   };
 }

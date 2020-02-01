@@ -59,6 +59,8 @@
     }
 
     function _renderGameScreen() {
+      const { revealTiles } = jwb.actions;
+      revealTiles();
       return _waitForSprites()
         .then(() => {
           _context.fillStyle = '#000';
@@ -97,9 +99,11 @@
       const { map } = jwb.state;
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
-          const tile = map.getTile(x, y);
-          if (!!tile) {
-            _renderElement(tile, { x, y });
+          if (_isTileRevealed({ x, y })) {
+            const tile = map.getTile(x, y);
+            if (!!tile) {
+              _renderElement(tile, { x, y });
+            }
           }
         }
       }
@@ -109,10 +113,12 @@
       const { map } = jwb.state;
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
-          const item = map.getItem(x, y);
-          if (!!item) {
-            _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-            _renderElement(item, { x, y })
+          if (_isTileRevealed({ x, y })) {
+            const item = map.getItem(x, y);
+            if (!!item) {
+              _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+              _renderElement(item, { x, y })
+            }
           }
         }
       }
@@ -122,14 +128,16 @@
       const { map, playerUnit } = jwb.state;
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
-          const unit = map.getUnit(x, y);
-          if (!!unit) {
-            if (unit === playerUnit) {
-              _drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-            } else {
-              _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+          if (_isTileRevealed({ x, y })) {
+            const unit = map.getUnit(x, y);
+            if (!!unit) {
+              if (unit === playerUnit) {
+                _drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+              } else {
+                _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+              }
+              _renderElement(unit, { x, y });
             }
-            _renderElement(unit, { x, y });
           }
         }
       }
@@ -204,22 +212,34 @@
     }
 
     /**
-     * @param pixel
+     * @param {int} x
+     * @param {int} y
      * @returns {boolean}
      * @private
      */
-    function _isPixelOnScreen(pixel) {
+    function _isPixelOnScreen({ x, y}) {
       return (
-        (pixel.x >= -TILE_WIDTH) &&
-        (pixel.x <= SCREEN_WIDTH + TILE_WIDTH) &&
-        (pixel.y >= -TILE_HEIGHT) &&
-        (pixel.y <= SCREEN_HEIGHT + TILE_HEIGHT)
+        (x >= -TILE_WIDTH) &&
+        (x <= SCREEN_WIDTH + TILE_WIDTH) &&
+        (y >= -TILE_HEIGHT) &&
+        (y <= SCREEN_HEIGHT + TILE_HEIGHT)
       );
     }
 
     /**
+     * @param {int} x
+     * @param {int} y
+     * @private
+     */
+    function _isTileRevealed({ x, y }) {
+      const { coordinatesEquals } = jwb.utils.MapUtils;
+      return jwb.state.map.revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
+    }
+
+    /**
      * @param {Unit | MapItem | Tile} element
-     * @param {Coordinates} {x, y}
+     * @param {int} x
+     * @param {int} y
      * @private
      */
     function _renderElement(element, { x, y }) {

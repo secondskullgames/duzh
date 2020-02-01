@@ -1,5 +1,5 @@
 {
-  function MapInstance(width, height, tiles, units, items) {
+  function MapInstance(width, height, tiles, rooms, units, items) {
     /**
      * @type int
      */
@@ -14,6 +14,10 @@
      */
     this.tiles = tiles;
     /**
+     * @type {Room[]}
+     */
+    this.rooms = rooms;
+    /**
      * @type Unit[]
      */
     this.units = units;
@@ -21,6 +25,11 @@
      * @type MapItem[]
      */
     this.items = items;
+    /**
+     * @type {Coordinates[]}
+     * @type {Array}
+     */
+    this.revealedTiles = [];
 
     /**
      * @return Tile

@@ -1,6 +1,5 @@
 {
   function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
-    const { Tiles } = jwb.types;
     const { RandomUtils } = jwb.utils;
     const { randInt } = RandomUtils;
     /**
