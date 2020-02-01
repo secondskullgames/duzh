@@ -11,13 +11,6 @@
  * @property {Coordinates[]} exits
  */
 
-/**
- * @typedef {Object} MapSection
- * @property {int} width
- * @property {int} height
- * @property {Room[]} rooms
- * @property {Tile[][]} tiles
- */
 {
   const minExits = 1;
   const maxExits = 4;

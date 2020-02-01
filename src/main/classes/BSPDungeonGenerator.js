@@ -2,16 +2,6 @@
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
  */
 
-/**
- * @typedef MapSection
- * {{
- *   width: int,
- *   height: int,
- *   rooms: Rect[],
- *   tiles: Tile[][]
- * }}
- */
-
 {
   /**
    * @param {int} minRoomDimension outer width, including wall

@@ -50,10 +50,7 @@
 
         if (distanceToPlayer === 1) {
           if ((u.life / u.maxLife) >= 0.5) {
-            behavior = weightedRandom({
-              'ATTACK_PLAYER': 0.75,
-              'WANDER': 0.25,
-            });
+            behavior = 'ATTACK_PLAYER';
           } else {
             behavior = weightedRandom({
               'ATTACK_PLAYER': 0.25,
@@ -61,16 +58,16 @@
               'FLEE_FROM_PLAYER': 0.25
             });
           }
-        } else if (distanceToPlayer >= 4) {
+        } else if (distanceToPlayer >= 5) {
           behavior = weightedRandom({
-            'WANDER': 0.25,
-            'STAY': 0.75
+            'WANDER': 0.1,
+            'ATTACK_PLAYER': 0.2,
+            'STAY': 0.6
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.5,
-            'WANDER': 0.25,
-            'STAY': 0.25
+            'ATTACK_PLAYER': 0.9,
+            'STAY': 0.1
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);
@@ -107,15 +104,16 @@
 
         if (distanceToPlayer === 1) {
           behavior = 'ATTACK_PLAYER';
-        } else if (distanceToPlayer >= 7) {
+        } else if (distanceToPlayer >= 8) {
           behavior = weightedRandom({
             'WANDER': 0.5,
-            'STAY': 0.5
+            'STAY': 0.25,
+            'ATTACK_PLAYER': 0.25
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.75,
-            'WANDER': 0.25
+            'ATTACK_PLAYER': 0.9,
+            'STAY': 0.1
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);

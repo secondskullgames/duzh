@@ -14,6 +14,14 @@
  * }}
  */
 
+/**
+ * @typedef {Object} MapSection
+ * @property {int} width
+ * @property {int} height
+ * @property {Room[]} rooms
+ * @property {Tile[][]} tiles
+ */
+
 {
   window.jwb = window.jwb || {};
   jwb.types = {
