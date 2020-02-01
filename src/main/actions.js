@@ -111,7 +111,7 @@
 
     jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
       // test
-      MapFactory.randomMap(20, 10, 3, 1),
+      //MapFactory.randomMap(20, 10, 3, 1),
 
       MapFactory.randomMap(30, 20, 8, 4),
       MapFactory.randomMap(32, 21, 9, 4),
