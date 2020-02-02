@@ -43,7 +43,7 @@
    * @param {!int} numItems
    */
   function randomMap(level, width, height, numEnemies, numItems) {
-    const { UnitFactory, DungeonGenerator2 } = jwb;
+    const { UnitFactory, DungeonGenerator } = jwb;
     const { RandomUtils } = jwb.utils;
 
     const itemSupplier = ({ x, y }) => {
@@ -72,7 +72,7 @@
         .call(null, { x, y }, level);
     };
 
-    return new DungeonGenerator2(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new DungeonGenerator(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**

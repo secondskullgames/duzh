@@ -12,7 +12,7 @@
    * @param {!int} minRoomPadding
    * @constructor
    */
-  function DungeonGenerator2(minRoomDimension, maxRoomDimension, minRoomPadding) {
+  function DungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
     const { MapUtils, RandomUtils } = jwb.utils;
     const { pickUnoccupiedLocations } = MapUtils;
     const { randInt, randChoice } = RandomUtils;
@@ -391,5 +391,5 @@
   }
 
   window.jwb = window.jwb || {};
-  jwb.DungeonGenerator2 = DungeonGenerator2;
+  jwb.DungeonGenerator = DungeonGenerator;
 }

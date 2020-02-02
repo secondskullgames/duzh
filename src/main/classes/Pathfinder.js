@@ -33,7 +33,10 @@
      * @return {!int}
      */
     function h(coordinates, goal) {
-      const { manhattanDistance } = jwb.utils.MapUtils;
+      const { manhattanDistance, distance } = jwb.utils.MapUtils;
+      // civ distance
+      //return distance(coordinates, goal);
+
       return manhattanDistance(coordinates, goal);
     }
 
@@ -105,7 +108,7 @@
           /**
            * @type {!Node}
            */
-          const chosenNode = randChoice(bestNodes).node;
+          const { node: chosenNode, cost: chosenNodeCost } = randChoice(bestNodes);
           open.splice(open.indexOf(chosenNode), 1);
           closed.push(chosenNode);
           _findNeighbors(chosenNode, rect).forEach(neighbor => {
@@ -117,7 +120,8 @@
               open.push({
                 x: neighbor.x,
                 y: neighbor.y,
-                cost: chosenNode.cost + 1, // assumes the movement cost is always 1
+                //cost: chosenNode.cost + 1, // assumes the movement cost is always 1
+                cost: chosenNodeCost + 1, // assumes the movement cost is always 1
                 parent: chosenNode
               });
             }
