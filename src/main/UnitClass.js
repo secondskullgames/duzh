@@ -29,7 +29,7 @@
     ENEMY_HUMAN: {
       sprite: paletteSwaps => jwb.SpriteFactory.PLAYER(paletteSwaps),
       startingLife: 60,
-      startingDamage: 5,
+      startingDamage: 6,
       lifePerLevel: () => 10,
       damagePerLevel: () => 2,
       experienceToNextLevel: () => null

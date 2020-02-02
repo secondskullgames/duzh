@@ -12,7 +12,7 @@
   /**
    * @template {T}
    * @param {!T[]} list
-   * @return {T} (null if `list` is empty
+   * @return {T} null if `list` is empty
    * @private
    */
   function randChoice(list) {
