@@ -1,6 +1,10 @@
 {
+  /**
+   * @param {!KeyboardEvent} e
+   */
   function keyHandler(e) {
     const { update, render } = jwb.actions;
+
     switch (e.key) {
       case 'w':
       case 'a':
@@ -27,6 +31,10 @@
     }
   }
 
+  /**
+   * @param key
+   * @private
+   */
   function _handleArrowKey(key) {
     const { state, actions, utils } = jwb;
     const { playerUnit, screen } = state;

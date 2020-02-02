@@ -26,21 +26,13 @@
   function SpriteRenderer() {
     const _container = document.getElementById('container');
     _container.innerHTML = '';
-    const _canvas = _createCanvas();
+    const _canvas = document.createElement('canvas');
     _container.appendChild(_canvas);
     _canvas.width = WIDTH * TILE_WIDTH;
     _canvas.height = HEIGHT * TILE_HEIGHT;
     const _context = _canvas.getContext('2d');
     _context.imageSmoothingEnabled = false;
     _context.textBaseline = 'middle';
-
-    /**
-     * @returns {HTMLCanvasElement}
-     * @private
-     */
-    function _createCanvas() {
-      return document.createElement('canvas');
-    }
 
     /**
      * @return {Promise<void>}
@@ -144,11 +136,11 @@
     }
 
     /**
-     * @param x tile x coordinate
-     * @param y tile y coordinate
-     * @param color
-     * @param width
-     * @param height
+     * @param {!int} x tile x coordinate
+     * @param {!int} y tile y coordinate
+     * @param {!string} color (in hex form)
+     * @param {!int} width
+     * @param {!int} height
      * @private
      */
     function _drawEllipse(x, y, color, width, height) {
@@ -212,9 +204,9 @@
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
-     * @returns {boolean}
+     * @param {!int} x
+     * @param {!int} y
+     * @returns {!boolean}
      * @private
      */
     function _isPixelOnScreen({ x, y}) {
@@ -227,8 +219,8 @@
     }
 
     /**
-     * @param {int} x
-     * @param {int} y
+     * @param {!int} x
+     * @param {!int} y
      * @private
      */
     function _isTileRevealed({ x, y }) {
@@ -237,9 +229,9 @@
     }
 
     /**
-     * @param {Unit | MapItem | Tile} element
-     * @param {int} x
-     * @param {int} y
+     * @param {!(Unit | MapItem | Tile)} element
+     * @param {!int} x
+     * @param {!int} y
      * @private
      */
     function _renderElement(element, { x, y }) {
@@ -255,8 +247,14 @@
       }
     }
 
-    function _drawSprite(sprite, pixel) {
-      _context.drawImage(sprite.image, pixel.x + sprite.dx, pixel.y + sprite.dy);
+    /**
+     * @param {!Sprite} sprite
+     * @param {!int} x
+     * @param {!int} y
+     * @private
+     */
+    function _drawSprite(sprite, { x, y }) {
+      _context.drawImage(sprite.image, x + sprite.dx, y + sprite.dy);
     }
 
     /**

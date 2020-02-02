@@ -113,12 +113,12 @@
       // test
       //MapFactory.randomMap(20, 10, 3, 1),
 
-      MapFactory.randomMap(1, 30, 20, 8, 4),
-      MapFactory.randomMap(2, 32, 21, 9, 4),
-      MapFactory.randomMap(3, 34, 22, 10, 4),
-      MapFactory.randomMap(4, 36, 23, 11, 3),
-      MapFactory.randomMap(5, 38, 24, 12, 3),
-      MapFactory.randomMap(6, 30, 25, 13, 3)
+      MapFactory.randomMap(1, 30, 20, 7, 4),
+      MapFactory.randomMap(2, 32, 21, 8, 4),
+      MapFactory.randomMap(3, 34, 22, 9, 4),
+      MapFactory.randomMap(4, 36, 23, 10, 3),
+      MapFactory.randomMap(5, 38, 24, 11, 3),
+      MapFactory.randomMap(6, 30, 25, 12, 3)
     ]);
 
     jwb.renderer = new SpriteRenderer();

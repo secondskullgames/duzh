@@ -108,6 +108,7 @@
         tiles[y][x] = tile;
       }
     }
+
     const width = tiles.map(row => row.length).reduce((a, b) => Math.max(a, b)) + 1;
     const height = tiles.length;
 
@@ -116,10 +117,12 @@
       width,
       height,
       tiles,
+      [], // TODO
       playerUnitLocation,
       enemyUnitLocations,
       ({ x, y }) => UnitFactory.ENEMY_BLUE({ x, y }, level),
-      []
+      [],
+      () => { throw 'unsupported'; }
     );
   }
 

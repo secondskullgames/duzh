@@ -1,14 +1,16 @@
 {
+  const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
   /**
-   * @param {Unit} unit
+   * @param {!Unit} unit
    */
   function wanderAndAttack(unit) {
     const { map, playerUnit } = jwb.state;
     const { RandomUtils } = jwb.utils;
     const { moveOrAttack } = jwb.actions;
+
     /** @type {{ x: int, y: int }[]} */
     const tiles = [];
-    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
+    CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
       if (map.contains(x, y)) {
         if (!map.isBlocked(x, y)) {
@@ -28,15 +30,16 @@
   }
 
   /**
-   * @param {Unit} unit
+   * @param {!Unit} unit
    */
   function wander(unit) {
     const { map } = jwb.state;
     const { RandomUtils } = jwb.utils;
     const { moveOrAttack } = jwb.actions;
+
     /** @type {{ x: int, y: int }[]} */
     const tiles = [];
-    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
+    CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
       if (map.contains(x, y)) {
         if (!map.isBlocked(x, y)) {
@@ -52,16 +55,17 @@
   }
 
   /**
-   * @param {Unit} unit
+   * @param {!Unit} unit
    * @private
    */
   function _attackPlayerUnit_simple(unit) {
     const { map, playerUnit } = jwb.state;
     const { distance } = jwb.utils.MapUtils;
     const { moveOrAttack } = jwb.actions;
+
     /** @type Coordinates[] */
     const tiles = [];
-    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
+    CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
       if (map.contains(x, y)) {
         if (!map.isBlocked(x, y)) {
@@ -114,13 +118,17 @@
     }
   }
 
+  /**
+   * @param {!Unit} unit
+   */
   function fleeFromPlayerUnit(unit) {
     const { map, playerUnit } = jwb.state;
     const { distance } = jwb.utils.MapUtils;
     const { moveOrAttack } = jwb.actions;
-    /** @type {{ x: int, y: int }[]} */
+
+    /** @type {!Coordinates[]} */
     const tiles = [];
-    [[0, -1], [1, 0], [0, 1], [-1, 0]].forEach(([dx, dy]) => {
+    CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
       const [x, y] = [unit.x + dx, unit.y + dy];
       if (map.contains(x, y)) {
         if (!map.isBlocked(x, y)) {

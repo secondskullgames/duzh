@@ -1,9 +1,9 @@
 {
   /**
-   * @param {string} filename
-   * @param {int} dx
-   * @param {int} dy
-   * @param {string} transparentColor in hex format, e.g. #ffffff
+   * @param {!string} filename
+   * @param {!int} dx
+   * @param {!int} dy
+   * @param {!string} transparentColor in hex format, e.g. #ffffff
    * @param {Object<string,string> | undefined} paletteSwaps (hex => hex)
    * @constructor
    */
@@ -53,10 +53,12 @@
     });
 
     /**
-     * @type {int} dx
-     * @type {int} dy
+     * @type {!int}
      */
     this.dx = dx;
+    /**
+     * @type {!int}
+     */
     this.dy = dy;
 
     /**
@@ -65,7 +67,7 @@
     this.image = null;
 
     /**
-     * @type {Promise<void>}
+     * @type {!Promise<void>}
      */
     this.whenReady = _imagePromise.then(() => {});
   }

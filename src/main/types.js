@@ -1,7 +1,7 @@
 /**
  * @typedef Coordinates
- * @property {int} x
- * @property {int} y
+ * @property {!int} x
+ * @property {!int} y
  */
 
 /**
@@ -14,19 +14,19 @@
 
 /**
  * @typedef {Object} Room
- * @property {int} left
- * @property {int} top
- * @property {int} width
- * @property {int} height
- * @property {Coordinates[]} exits
+ * @property {!number} left
+ * @property {!number} top
+ * @property {!number} width
+ * @property {!number} height
+ * @property {!Coordinates[]} exits
  */
 
 /**
  * @typedef {Object} MapSection
- * @property {int} width
- * @property {int} height
- * @property {Room[]} rooms
- * @property {Tile[][]} tiles
+ * @property {!int} width
+ * @property {!int} height
+ * @property {!Room[]} rooms
+ * @property {!Tile[][]} tiles
  */
 
 {

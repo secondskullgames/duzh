@@ -1,24 +1,35 @@
 /**
- * @param {int} x
- * @param {int} y
- * @param {string} char
- * @param {Sprite} sprite
- * @param {Function<void, InventoryItem>} itemSupplier
+ * @param {!int} x
+ * @param {!int} y
+ * @param {!string} char
+ * @param {!Sprite} sprite
+ * @param {!function(): !InventoryItem} itemSupplier
  *
  * @constructor
  */
 function MapItem(x, y, char, sprite, itemSupplier) {
   /**
-   * @return {InventoryItem}
+   * @type {!string}
    */
-  function getInventoryItem() {
-    return itemSupplier.call(null);
-  }
-
   this.class = 'MapItem';
+  /**
+   * @type {!int}
+   */
   this.x = x;
+  /**
+   * @type {!int}
+   */
   this.y = y;
+  /**
+   * @type {!string}
+   */
   this.char = char;
-  this.getInventoryItem = getInventoryItem;
+  /**
+   * @type {!function(): !InventoryItem}
+   */
+  this.getInventoryItem = itemSupplier;
+  /**
+   * @returns {!Sprite}
+   */
   this.getSprite = () => sprite;
 }

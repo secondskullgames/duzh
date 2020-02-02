@@ -131,20 +131,32 @@
      * anywhere in the region at random, and can occupy a variable amount of space in the region
      * (within the specified parameters).
      *
-     * @param {int} width section width
-     * @param {int} height section height
-     * @return {MapSection}
+     * @param {!int} width section width
+     * @param {!int} height section height
+     * @return {!MapSection}
      * @private
      */
     function _generateSingleSection(width, height) {
       const { Tiles } = jwb.types;
       const maxRoomWidth = width - (2 * minRoomPadding);
       const maxRoomHeight = height - (2 * minRoomPadding);
+      /**
+       * @type {!int}
+       */
       const roomWidth = randInt(minRoomDimension, maxRoomWidth);
+      /**
+       * @type {!int}
+       */
       const roomHeight = randInt(minRoomDimension, maxRoomHeight);
       const roomTiles = _generateRoom(roomWidth, roomHeight);
 
+      /**
+       * @type {!int}
+       */
       const roomLeft = randInt(minRoomPadding, width - roomWidth - minRoomPadding);
+      /**
+       * @type {!int}
+       */
       const roomTop = randInt(minRoomPadding, height - roomHeight - minRoomPadding);
       const tiles = [];
       // x, y are relative to the section's origin
@@ -163,8 +175,11 @@
         }
       }
 
-      const rooms = [{ left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight }];
-      return { width, height, rooms, tiles };
+      /**
+       * @type {!Room}
+       */
+      const room = { left: roomLeft, top: roomTop, width: roomWidth, height: roomHeight, exits: [] };
+      return { width, height, rooms: [room], tiles };
     }
 
     /**

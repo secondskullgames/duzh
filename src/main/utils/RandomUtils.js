@@ -1,13 +1,20 @@
 {
   /**
-   * @param {int} min
-   * @param {int} max inclusive
+   * @param {!int} min
+   * @param {!int} max inclusive
+   * @return {!int}
    * @private
    */
   function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+  /**
+   * @template {T}
+   * @param {!T[]} list
+   * @return {T} (null if `list` is empty
+   * @private
+   */
   function randChoice(list) {
     return list[randInt(0, list.length - 1)] || null;
   }
