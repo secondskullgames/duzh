@@ -319,7 +319,8 @@
     }
 
     return {
-      generateDungeon
+      generateDungeon,
+      _getSplitPoint
     };
   }
 
