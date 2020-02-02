@@ -1,10 +1,17 @@
 {
   window.jwb = window.jwb || {};
   jwb.UnitFactory = {
-    PLAYER: ({ x, y }) => new Unit(
+    /**
+     * @param {!int} x
+     * @param {!int} y
+     * @param {!int} level
+     * @returns {!Unit}
+     * @constructor
+     */
+    PLAYER: ({ x, y }, level) => new Unit(
       jwb.UnitClass.PLAYER,
       'player',
-      1,
+      level,
       { x, y },
       // Green/brown colors
       {
@@ -20,11 +27,19 @@
         '#ff8040': '#ffc0c0'  // Face
       }
     ),
-    ENEMY_BLUE: ({ x, y }) => {
+
+    /**
+     * @param {!int} x
+     * @param {!int} y
+     * @param {!int} level
+     * @returns {!Unit}
+     * @constructor
+     */
+    ENEMY_BLUE: ({ x, y }, level) => {
       const enemyUnit = new Unit(
         jwb.UnitClass.ENEMY_HUMAN,
         'enemy_blue',
-        1,
+        level,
         { x, y },
         {
           '#800080': '#0000c0', // Shirt
@@ -74,11 +89,19 @@
       };
       return enemyUnit;
     },
-    ENEMY_RED: ({ x, y }) => {
+
+    /**
+     * @param {!int} x
+     * @param {!int} y
+     * @param {!int} level
+     * @returns {!Unit}
+     * @constructor
+     */
+    ENEMY_RED: ({ x, y }, level) => {
       const enemyUnit = new Unit(
         jwb.UnitClass.ENEMY_HUMAN,
         'enemy_red',
-        1,
+        level,
         { x, y },
         {
           '#800080': '#c00000', // Shirt
@@ -121,11 +144,18 @@
       return enemyUnit;
     },
 
-    FULL_AGGRO: ({ x, y }) => {
+    /**
+     * @param {!int} x
+     * @param {!int} y
+     * @param {!int} level
+     * @returns {!Unit}
+     * @constructor
+     */
+    FULL_AGGRO: ({ x, y }, level) => {
       const enemyUnit = new Unit(
         jwb.UnitClass.ENEMY_HUMAN,
         'enemy_red',
-        1,
+        level,
         { x, y },
         {
           '#800080': '#c00000', // Shirt

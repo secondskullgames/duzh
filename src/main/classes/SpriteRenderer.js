@@ -260,7 +260,7 @@
     }
 
     /**
-     * @return the bottom-left area of the screen, showing information about the player
+     * Renders the bottom-left area of the screen, showing information about the player
      * @private
      */
     function _renderPlayerInfo() {

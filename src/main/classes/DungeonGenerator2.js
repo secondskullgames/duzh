@@ -7,9 +7,9 @@
   const maxExits = 4;
 
   /**
-   * @param {int} minRoomDimension outer width, including wall
-   * @param {int} maxRoomDimension outer width, including wall
-   * @param {int} minRoomPadding
+   * @param {!int} minRoomDimension outer width, including wall
+   * @param {!int} maxRoomDimension outer width, including wall
+   * @param {!int} minRoomPadding
    * @constructor
    */
   function DungeonGenerator2(minRoomDimension, maxRoomDimension, minRoomPadding) {
@@ -18,15 +18,16 @@
     const { randInt, randChoice } = RandomUtils;
 
     /**
-     * @param {int} width
-     * @param {int} height
-     * @param {int} numEnemies
-     * @param {Function<Coordinates, Unit>} enemyUnitSupplier
-     * @param {int} numItems
-     * @param {Function<Coordinates, Item>} itemSupplier
+     * @param {!int} level
+     * @param {!int} width
+     * @param {!int} height
+     * @param {!int} numEnemies
+     * @param {!Function} enemyUnitSupplier (Coordinates -> Unit)
+     * @param {!int} numItems
+     * @param {!Function} itemSupplier (Coordinates -> Item)
      * @return MapSupplier
      */
-    function generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
+    function generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
       const { Tiles } = jwb.types;
       const section = _generateSection(width, height);
       _joinSection(section);
@@ -36,7 +37,7 @@
       const enemyLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation], numEnemies);
       const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation, ...enemyLocations], numItems);
       tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-      return new MapSupplier(width, height, tiles, section.rooms, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
+      return new MapSupplier(level, width, height, tiles, section.rooms, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
     }
 
     /**
@@ -44,9 +45,9 @@
      * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
      * not large enough to form two sub-regions, just return a single section.
      *
-     * @param {int} width
-     * @param {int} height
-     * @return {MapSection}
+     * @param {!int} width
+     * @param {!int} height
+     * @return {!MapSection}
      * @private
      */
     function _generateSection(width, height) {
@@ -132,9 +133,9 @@
      * anywhere in the region at random, and can occupy a variable amount of space in the region
      * (within the specified parameters).
      *
-     * @param {int} width section width
-     * @param {int} height section height
-     * @return {MapSection}
+     * @param {!int} width section width
+     * @param {!int} height section height
+     * @return {!MapSection}
      * @private
      */
     function _generateSingleSection(width, height) {
@@ -177,9 +178,9 @@
     }
 
     /**
-     * @param {int} width
-     * @param {int} height
-     * @return {Tile[][]}
+     * @param {!int} width
+     * @param {!int} height
+     * @return {!Tile[][]}
      * @private
      */
     function _generateRoomTiles(width, height) {
@@ -201,8 +202,8 @@
     }
 
     /**
-     * @param {int} dimension width or height
-     * @returns {int} the min X/Y coordinate of the *second* room
+     * @param {!int} dimension width or height
+     * @returns {!int} the min X/Y coordinate of the *second* room
      * @private
      */
     function _getSplitPoint(dimension) {
@@ -213,7 +214,7 @@
     }
 
     /**
-     * @param {MapSection} section
+     * @param {!MapSection} section
      * @private
      */
     function _joinSection(section) {

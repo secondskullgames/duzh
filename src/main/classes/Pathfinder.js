@@ -35,13 +35,13 @@
     }
 
     /**
-     * @param {Coordinates!} coordinates
+     * @param {Node!} node
      * @param {Coordinates!} start
      * @param {Coordinates!} goal
      * @return {int!}
      */
-    function f(coordinates, start, goal) {
-      return g(coordinates, start) + h(coordinates, goal);
+    function f(node, start, goal) {
+      return g(node, start) + h(node, goal);
     }
 
     /**

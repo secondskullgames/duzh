@@ -1,7 +1,7 @@
 {
-  const MIN_ROOM_DIMENSION = 6;
-  const MAX_ROOM_DIMENSION = 12;
-  const MIN_ROOM_PADDING = 1;
+  const MIN_ROOM_DIMENSION = 7;
+  const MAX_ROOM_DIMENSION = 11;
+  const MIN_ROOM_PADDING = 2;
 
   const FIXED_MAPS = [
     _mapFromAscii(`
@@ -20,7 +20,7 @@
 #...........#                  #.....U....#
 #......U....#                  ############
 #############
-`),
+`, 1),
     _mapFromAscii(`
 ###########################################
 #.........................................#
@@ -32,16 +32,17 @@
 #...........#                  #..........#
 #...........#                  ############
 #############
-`)
+`, 2)
   ];
 
   /**
-   * @param {int} width
-   * @param {int} height
-   * @param {int} numEnemies
-   * @param {int} numItems
+   * @param {!int} level
+   * @param {!int} width
+   * @param {!int} height
+   * @param {!int} numEnemies
+   * @param {!int} numItems
    */
-  function randomMap(width, height, numEnemies, numItems) {
+  function randomMap(level, width, height, numEnemies, numItems) {
     const { UnitFactory, DungeonGenerator2 } = jwb;
     const { RandomUtils } = jwb.utils;
 
@@ -68,17 +69,18 @@
 
     const enemyUnitSupplier = ({ x, y }) => {
       return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
-        .call(null, { x, y });
+        .call(null, { x, y }, level);
     };
 
-    return new DungeonGenerator2(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
+    return new DungeonGenerator2(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
   }
 
   /**
    * @param {string} ascii
+   * @param {int} level
    * @private
    */
-  function _mapFromAscii(ascii) {
+  function _mapFromAscii(ascii, level) {
     const { UnitFactory } = jwb;
     const { Tiles } = jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
@@ -110,12 +112,13 @@
     const height = tiles.length;
 
     return new MapSupplier(
+      level,
       width,
       height,
       tiles,
       playerUnitLocation,
       enemyUnitLocations,
-      ({ x, y }) => UnitFactory.ENEMY({ x, y }),
+      ({ x, y }) => UnitFactory.ENEMY_BLUE({ x, y }, level),
       []
     );
   }

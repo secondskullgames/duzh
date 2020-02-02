@@ -81,7 +81,7 @@
   }
 
   /**
-   * @param {Unit} unit
+   * @param {!Unit} unit
    * @private
    */
   function _attackPlayerUnit_withPath(unit) {
@@ -107,7 +107,8 @@
 
     if (path.length > 1) {
       const { x, y } = path[1]; // first tile is the unit's own tile
-      if (map.getUnit(x, y) !== unit) {
+      const unitAtPoint = map.getUnit( x, y );
+      if (!unitAtPoint || unitAtPoint === playerUnit) {
         moveOrAttack(unit, { x, y });
       }
     }

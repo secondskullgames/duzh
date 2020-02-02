@@ -1,7 +1,11 @@
 /**
  * @constructor
  */
-function MapSupplier(width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
+function MapSupplier(level, width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
+  /**
+   * @type int
+   */
+  this.level = level;
   /**
    * @type int
    */
@@ -47,8 +51,8 @@ function MapSupplier(width, height, tiles, rooms, playerUnitLocation, enemyUnitL
     const { playerUnit } = jwb.state;
     const units = [playerUnit];
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
-    units.push(...this.enemyUnitLocations.map(({ x, y }) => this.enemyUnitSupplier({ x, y })));
-    const items = this.itemLocations.map(({ x, y }) => this.itemSupplier({ x, y }));
+    units.push(...this.enemyUnitLocations.map(({ x, y }) => this.enemyUnitSupplier({ x, y }, level)));
+    const items = this.itemLocations.map(({ x, y }) => this.itemSupplier({ x, y }, level));
     return new MapInstance(
       this.width,
       this.height,

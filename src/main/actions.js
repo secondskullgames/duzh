@@ -84,7 +84,7 @@
       if (!!otherUnit) {
         const damage = unit.getDamage();
         otherUnit.life = Math.max(otherUnit.life - damage, 0);
-        messages.push(`${unit.name} hit ${otherUnit.name} for ${damage} damage!`);
+        messages.push(`${unit.name} (${unit.level}) hit ${otherUnit.name} (${otherUnit.level}) for ${damage} damage!`);
         if (otherUnit.life === 0) {
           map.units = map.units.filter(u => u !== otherUnit);
           if (otherUnit === playerUnit) {
@@ -109,16 +109,16 @@
     const { MapFactory, SpriteRenderer, UnitFactory, Music } = jwb;
     const { randChoice } = jwb.utils.RandomUtils;
 
-    jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }), [
+    jwb.state = new GameState(UnitFactory.PLAYER({ x: 0, y: 0 }, 1), [
       // test
       //MapFactory.randomMap(20, 10, 3, 1),
 
-      MapFactory.randomMap(30, 20, 8, 4),
-      MapFactory.randomMap(32, 21, 9, 4),
-      MapFactory.randomMap(34, 22, 10, 4),
-      MapFactory.randomMap(36, 23, 11, 3),
-      MapFactory.randomMap(38, 24, 12, 3),
-      MapFactory.randomMap(30, 25, 13, 3)
+      MapFactory.randomMap(1, 30, 20, 8, 4),
+      MapFactory.randomMap(2, 32, 21, 9, 4),
+      MapFactory.randomMap(3, 34, 22, 10, 4),
+      MapFactory.randomMap(4, 36, 23, 11, 3),
+      MapFactory.randomMap(5, 38, 24, 12, 3),
+      MapFactory.randomMap(6, 30, 25, 13, 3)
     ]);
 
     jwb.renderer = new SpriteRenderer();

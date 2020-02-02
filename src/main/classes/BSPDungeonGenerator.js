@@ -12,9 +12,10 @@
   function BSPDungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
     const { MapUtils, RandomUtils } = jwb.utils;
     const { pickUnoccupiedLocations } = MapUtils;
-    const { randInt, randChoice, weightedRandom } = RandomUtils;
+    const { randInt, randChoice } = RandomUtils;
 
     /**
+     * @param {int} level
      * @param {int} width
      * @param {int} height
      * @param {int} numEnemies
@@ -23,7 +24,7 @@
      * @param {Function<Coordinates, Item>} itemSupplier
      * @return MapSupplier
      */
-    function generateDungeon(width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
+    function generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
       const { Tiles } = jwb.types;
       const section = _generateSection(width, height);
       const { tiles } = section;
@@ -32,7 +33,7 @@
       const enemyLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation], numEnemies);
       const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation, playerLocation, ...enemyLocations], numItems);
       tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-      return new MapSupplier(width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
+      return new MapSupplier(level, width, height, tiles, playerLocation, enemyLocations, enemyUnitSupplier, itemLocations, itemSupplier)
     }
 
     /**
