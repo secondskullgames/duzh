@@ -135,8 +135,9 @@
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.9,
-            'STAY': 0.1
+            'ATTACK_PLAYER': 0.6,
+            'WANDER': 0.2,
+            'STAY': 0.2
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);

@@ -20,6 +20,29 @@
   }
 
   /**
+   * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
+   *
+   * @template <T>
+   * @param {T[]} list
+   * @returns {void}
+   */
+  function shuffle(list) {
+    let n = list.length;
+
+    // While there remain elements to shuffle...
+    while (n > 0) {
+      // Pick a remaining element...
+      const i = randInt(0, n - 1);
+
+      // And swap it with the current element.
+      const tmp = list[i];
+      list[n] = list[i];
+      list[i] = tmp;
+      n--;
+    }
+  }
+
+  /**
    * @template {T}
    * @param {Object<T, number>} probabilityMap
    * @return T
@@ -45,6 +68,7 @@
   jwb.utils.RandomUtils = {
     randInt,
     randChoice,
-    weightedRandom
+    weightedRandom,
+    shuffle
   };
 }

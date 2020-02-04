@@ -35,9 +35,9 @@
     function h(coordinates, goal) {
       const { manhattanDistance, distance } = jwb.utils.MapUtils;
       // civ distance
-      //return distance(coordinates, goal);
+      return distance(coordinates, goal);
 
-      return manhattanDistance(coordinates, goal);
+      //return manhattanDistance(coordinates, goal);
     }
 
     /**

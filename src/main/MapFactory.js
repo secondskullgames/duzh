@@ -1,7 +1,7 @@
 {
   const MIN_ROOM_DIMENSION = 7;
   const MAX_ROOM_DIMENSION = 11;
-  const MIN_ROOM_PADDING = 2;
+  const MIN_ROOM_PADDING = 1;
 
   const FIXED_MAPS = [
     _mapFromAscii(`
@@ -86,6 +86,9 @@
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
     const tiles = [];
+    /**
+     * @type {?Coordinates}
+     */
     let playerUnitLocation = null;
     const enemyUnitLocations = [];
     for (let y = 0; y < lines.length; y++) {
@@ -122,7 +125,9 @@
       enemyUnitLocations,
       ({ x, y }) => UnitFactory.ENEMY_BLUE({ x, y }, level),
       [],
-      () => { throw 'unsupported'; }
+      () => {
+        throw 'unsupported';
+      }
     );
   }
 

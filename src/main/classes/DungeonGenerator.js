@@ -1,12 +1,10 @@
-/**
- * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
- */
-
 {
   const minExits = 1;
   const maxExits = 4;
 
   /**
+   * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
+   *
    * @param {!int} minRoomDimension outer width, including wall
    * @param {!int} maxRoomDimension outer width, including wall
    * @param {!int} minRoomPadding
@@ -218,7 +216,7 @@
      * @private
      */
     function _joinSection(section) {
-      const { randInt, randChoice } = jwb.utils.RandomUtils;
+      const { randChoice, shuffle } = jwb.utils.RandomUtils;
 
       const unconnectedRooms = [...section.rooms];
       const connectedRooms = [];
@@ -236,8 +234,23 @@
             connectedRooms.push(unconnectedRoom);
           }
         } else {
-          console.log('No candidate pairs');
+          console.error('No candidate pairs');
           break;
+        }
+      }
+
+      // add some extra connections for fun
+
+      const candidatePairs = connectedRooms
+        .flatMap(first => connectedRooms.map(second => [first, second]))
+        .filter(([first, second]) => _canJoinRooms(first, second));
+
+      if (candidatePairs.length > 0) {
+        for (let i = 0; i < candidatePairs.length; i++) {
+          const [first, second ] = candidatePairs[i];
+          if (_canJoinRooms(first, second)) {
+            _joinRooms(first, second, section); // don't care if it worked
+          }
         }
       }
     }
@@ -248,7 +261,7 @@
      * @private
      */
     function _canJoinRooms(first, second) {
-      return (first.exits.length < maxExits) && (second.exits.length < maxExits);
+      return (first !== second) && (first.exits.length < maxExits) && (second.exits.length < maxExits);
     }
 
     /**
@@ -335,8 +348,15 @@
               return false;
             }
 
-            const tileBelow = section.tiles[y + 1][x];
-            if (tileBelow === Tiles.WALL_HALL || tileBelow === Tiles.WALL_TOP) {
+            if ([-2, -1, 1, 2].some(dy => {
+              if (y + dy >= 0 && y + dy < section.height) {
+                const tile = section.tiles[y + dy][x];
+                if (tile === Tiles.WALL_HALL || tile === Tiles.WALL_TOP || tile === Tiles.FLOOR) {
+                  return true;
+                }
+              }
+              return false;
+            })) {
               return true;
             }
           }
