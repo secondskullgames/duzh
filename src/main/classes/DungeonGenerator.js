@@ -1,6 +1,5 @@
 {
-  const minExits = 1;
-  const maxExits = 4;
+  const MAX_EXITS = 2;
 
   /**
    * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
@@ -216,7 +215,8 @@
      * @private
      */
     function _joinSection(section) {
-      const { randChoice, shuffle } = jwb.utils.RandomUtils;
+      const { shuffle } = jwb.utils.RandomUtils;
+      const { Tiles } = jwb.types;
 
       const unconnectedRooms = [...section.rooms];
       const connectedRooms = [];
@@ -226,30 +226,47 @@
         const candidatePairs = connectedRooms
           .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => [connectedRoom, unconnectedRoom]))
           .filter(([connectedRoom, unconnectedRoom]) => _canJoinRooms(connectedRoom, unconnectedRoom));
+        shuffle(candidatePairs);
 
-        if (candidatePairs.length > 0) {
-          const [connectedRoom, unconnectedRoom] = randChoice(candidatePairs);
+        let joinedAnyRooms = false;
+        for (let [connectedRoom, unconnectedRoom] of candidatePairs) {
           if (_joinRooms(connectedRoom, unconnectedRoom, section)) {
             unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
             connectedRooms.push(unconnectedRoom);
+            joinedAnyRooms = true;
+            break;
           }
-        } else {
-          console.error('No candidate pairs');
+        }
+
+        if (!joinedAnyRooms) {
+          console.error('Couldn\'t connect rooms!');
           break;
         }
       }
 
       // add some extra connections for fun
-
       const candidatePairs = connectedRooms
         .flatMap(first => connectedRooms.map(second => [first, second]))
         .filter(([first, second]) => _canJoinRooms(first, second));
+      shuffle(candidatePairs);
 
       if (candidatePairs.length > 0) {
-        for (let i = 0; i < candidatePairs.length; i++) {
-          const [first, second ] = candidatePairs[i];
+        for (let [first, second] of candidatePairs) {
           if (_canJoinRooms(first, second)) {
             _joinRooms(first, second, section); // don't care if it worked
+          }
+        }
+      }
+
+      // add walls above corridor tiles if possible
+      for (let y = 0; y < section.height; y++) {
+        for (let x = 0; x < section.width; x++) {
+          if (y > 0) {
+            if (section.tiles[y][x] === Tiles.FLOOR_HALL) {
+              if (section.tiles[y - 1][x] === Tiles.NONE || section.tiles[y - 1][x] === Tiles.WALL) {
+                section.tiles[y - 1][x] = Tiles.WALL_HALL;
+              }
+            }
           }
         }
       }
@@ -261,7 +278,7 @@
      * @private
      */
     function _canJoinRooms(first, second) {
-      return (first !== second) && (first.exits.length < maxExits) && (second.exits.length < maxExits);
+      return (first !== second) && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
     }
 
     /**
@@ -272,24 +289,31 @@
      * @private
      */
     function _joinRooms(first, second, section) {
-      const firstExit = _chooseExit(first);
-      const secondExit = _chooseExit(second);
-      if (_joinExits(firstExit, secondExit, section)) {
-        first.exits.push(firstExit);
-        second.exits.push(secondExit);
-        return true;
+      const { shuffle } = jwb.utils.RandomUtils;
+      const firstExitCandidates = _getExitCandidates(first);
+      const secondExitCandidates = _getExitCandidates(second);
+      shuffle(firstExitCandidates);
+      shuffle(secondExitCandidates);
+
+      for (let firstExit of firstExitCandidates) {
+        for (let secondExit of secondExitCandidates) {
+          if (_joinExits(firstExit, secondExit, section)) {
+            first.exits.push(firstExit);
+            second.exits.push(secondExit);
+            return true;
+          }
+        }
       }
+
       return false;
     }
 
     /**
      * @param {!Room} room
-     * @return {!Coordinates}
+     * @return {!Coordinates[]}
      * @private
      */
-    function _chooseExit(room) {
-      const { randInt, randChoice } = jwb.utils.RandomUtils;
-
+    function _getExitCandidates(room) {
       const eligibleSides = [
         ...(!room.exits.some(exit => exit.y === room.top) ? ['TOP'] : []),
         ...(!room.exits.some(exit => exit.x === room.left + room.width - 1) ? ['RIGHT'] : []),
@@ -301,38 +325,42 @@
         throw 'Error: out of eligible sides';
       }
 
-      const side = randChoice(eligibleSides);
-      switch (side) {
-        case 'TOP':
-          return {
-            x: randInt(room.left + 1, room.left + room.width - 2),
-            y: room.top,
-          };
-        case 'RIGHT':
-          return {
-            x: room.left + room.width - 1,
-            y: randInt(room.top + 1, room.top + room.height - 2),
-          };
-        case 'BOTTOM':
-          return {
-            x: randInt(room.left + 1, room.left + room.width - 2),
-            y: room.top + room.height - 1,
-          };
-        case 'LEFT':
-          return {
-            x: room.left,
-            y: randInt(room.top + 1, room.top + room.height - 2),
-          };
-        default:
-          throw `Unknown side ${side}`;
-      }
+      const candidates = [];
+      eligibleSides.forEach(side => {
+        switch (side) {
+          case 'TOP':
+            for (let x = room.left + 1; x < room.left + room.width - 1; x++) {
+              candidates.push({ x, y: room.top });
+            }
+            break;
+          case 'RIGHT':
+            for (let y = room.top + 1; y < room.top + room.height - 1; y++) {
+              candidates.push({ x: room.left + room.width - 1, y });
+            }
+            break;
+          case 'BOTTOM':
+            for (let x = room.left + 1; x < room.left + room.width - 1; x++) {
+              candidates.push({ x, y: room.top + room.height - 1 });
+            }
+            break;
+          case 'LEFT':
+            for (let y = room.top + 1; y < room.top + room.height - 1; y++) {
+              candidates.push({ x: room.left, y });
+            }
+            break;
+          default:
+            throw `Unknown side ${side}`;
+        }
+      });
+
+      return candidates;
     }
 
     /**
-     * @param {Coordinates} firstExit
-     * @param {Coordinates} secondExit
-     * @param {MapSection} section
-     * @return {boolean}
+     * @param {!Coordinates} firstExit
+     * @param {!Coordinates} secondExit
+     * @param {!MapSection} section
+     * @return {!boolean}
      * @private
      */
     function _joinExits(firstExit, secondExit, section) {
@@ -340,34 +368,35 @@
       const { coordinatesEquals } = jwb.utils.MapUtils;
 
       const blockedTileDetector = ({ x, y }) => {
-        if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
-          // special case to prevent drawing paths right above walls
-          if (y < section.height - 1) {
-            // exception if the tile is directly above an exit
-            if ([firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + 1 }))) {
-              return false;
-            }
+        // can't draw a path through an existing room or a wall
+        const blockedTileTypes = [Tiles.FLOOR, Tiles.WALL, Tiles.WALL_HALL, Tiles.WALL_TOP];
 
-            if ([-2, -1, 1, 2].some(dy => {
-              if (y + dy >= 0 && y + dy < section.height) {
-                const tile = section.tiles[y + dy][x];
-                if (tile === Tiles.WALL_HALL || tile === Tiles.WALL_TOP || tile === Tiles.FLOOR) {
-                  return true;
-                }
+        if ([firstExit, secondExit].some(exit => coordinatesEquals({ x, y }, exit))) {
+          return false;
+        } else if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
+          // skip the check if we're within 2 tiles of an exit
+          const isNextToExit = [-2, -1, 1, 2].some(dy => (
+            [firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + dy }))
+          ));
+
+          if (isNextToExit) {
+            return false;
+          }
+
+          // can't draw tiles near walls
+          for (let dy of [-2, -1, 1, 2]) {
+            if ((y + dy >= 0) && (y + dy < section.height)) {
+              const tile = section.tiles[y + dy][x];
+              if (blockedTileTypes.indexOf(tile) > -1) {
+                return true;
               }
-              return false;
-            })) {
-              return true;
             }
           }
           return false;
-        } else if (section.tiles[y][x] === Tiles.FLOOR) {
-          return true;
-        } else if ((x === firstExit.x && y === firstExit.y) || (x === secondExit.x && y === secondExit.y)) {
-          return false;
-        } else if (section.tiles[y][x] === Tiles.WALL) {
+        } else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
           return true;
         }
+        // how'd we get here?
         return true;
       };
 
@@ -377,24 +406,7 @@
         section.tiles[y][x] = Tiles.FLOOR_HALL;
       });
 
-      // add walls above corridor tiles if possible
-      path.forEach(({ x, y }) => {
-        if (y > 0) {
-          if (section.tiles[y - 1][x] === Tiles.NONE || section.tiles[y - 1][x] === Tiles.WALL) {
-            section.tiles[y - 1][x] = Tiles.WALL_HALL;
-          }
-        }
-      });
-
       return (path.length > 0);
-    }
-
-    /**
-     * @param {MapSection} section
-     * @private
-     */
-    function _roomsHaveEnoughExits(section) {
-      return section.rooms.every(room => room.exits.length >= minExits);
     }
 
     function _logSections(name, ...sections) {

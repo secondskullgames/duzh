@@ -64,7 +64,7 @@
         const distanceToPlayer = distance(u, playerUnit);
 
         if (distanceToPlayer === 1) {
-          if ((u.life / u.maxLife) >= 0.5) {
+          if ((u.life / u.maxLife) >= 0.4) {
             behavior = 'ATTACK_PLAYER';
           } else {
             behavior = weightedRandom({
@@ -81,8 +81,9 @@
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.9,
-            'STAY': 0.1
+            'ATTACK_PLAYER': 0.6,
+            'WANDER': 0.2,
+            'STAY': 0.2
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);
@@ -135,9 +136,8 @@
           });
         } else {
           behavior = weightedRandom({
-            'ATTACK_PLAYER': 0.6,
-            'WANDER': 0.2,
-            'STAY': 0.2
+            'ATTACK_PLAYER': 0.9,
+            'STAY': 0.1
           });
         }
         return jwb.UnitBehaviors[behavior].call(null, u);

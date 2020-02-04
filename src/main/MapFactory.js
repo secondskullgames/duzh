@@ -1,7 +1,7 @@
 {
   const MIN_ROOM_DIMENSION = 7;
-  const MAX_ROOM_DIMENSION = 11;
-  const MIN_ROOM_PADDING = 1;
+  const MAX_ROOM_DIMENSION = 10;
+  const MIN_ROOM_PADDING = 2;
 
   const FIXED_MAPS = [
     _mapFromAscii(`

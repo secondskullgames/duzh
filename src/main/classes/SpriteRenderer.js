@@ -5,8 +5,8 @@
   const WIDTH = 20; // in tiles
   const HEIGHT = 20; // in tiles
 
-  const SCREEN_WIDTH = WIDTH * TILE_WIDTH;
-  const SCREEN_HEIGHT = HEIGHT * TILE_HEIGHT;
+  const SCREEN_WIDTH = 640;
+  const SCREEN_HEIGHT = 480;
 
   const BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
   const BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
@@ -225,6 +225,9 @@
      */
     function _isTileRevealed({ x, y }) {
       const { coordinatesEquals } = jwb.utils.MapUtils;
+      if (jwb.DEBUG) {
+        return true;
+      }
       return jwb.state.map.revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
     }
 

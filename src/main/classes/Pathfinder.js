@@ -51,16 +51,6 @@
     }
 
     /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @return {!boolean}
-     * @private
-     */
-    function _equals(first, second) {
-      return (first.x === second.x) && (first.y === second.y);
-    }
-
-    /**
      * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
      *
      * @param {!Coordinates} start
@@ -84,7 +74,6 @@
 
       while (true) {
         if (open.length === 0) {
-          //console.error('fuck, out of open tiles');
           return [];
         }
 
@@ -95,7 +84,7 @@
           .sort((a, b) => b[1] - a[1]);
 
         const bestNode = nodeCosts[0].node;
-        if (_equals(bestNode, goal)) {
+        if (coordinatesEquals(bestNode, goal)) {
           // Done!
           const path = _traverseParents(bestNode);
           //console.log(`path = ${JSON.stringify(path)}`);
@@ -112,15 +101,14 @@
           open.splice(open.indexOf(chosenNode), 1);
           closed.push(chosenNode);
           _findNeighbors(chosenNode, rect).forEach(neighbor => {
-            if (closed.some(coordinates => _equals(coordinates, neighbor))) {
+            if (closed.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
               // already been seen, don't need to look at it*
-            } else if (open.some(coordinates => _equals(coordinates, neighbor))) {
+            } else if (open.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
               // don't need to look at it now, will look later?
             } else {
               open.push({
                 x: neighbor.x,
                 y: neighbor.y,
-                //cost: chosenNode.cost + 1, // assumes the movement cost is always 1
                 cost: chosenNodeCost + 1, // assumes the movement cost is always 1
                 parent: chosenNode
               });
