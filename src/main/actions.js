@@ -16,7 +16,7 @@
           .filter(u => u !== state.playerUnit)
           .forEach(u => u.update());
 
-        render()
+        jwb.actions.render()
           .then(() => {
             state.turn++;
             state.messages = [];
@@ -113,12 +113,12 @@
       // test
       //MapFactory.randomMap(20, 10, 3, 1),
 
-      MapFactory.randomMap(1, 30, 22, 6, 4),
-      MapFactory.randomMap(2, 32, 23, 7, 4),
-      MapFactory.randomMap(3, 34, 24, 8, 3),
-      MapFactory.randomMap(4, 36, 25, 9, 3),
-      MapFactory.randomMap(5, 38, 26, 10, 3),
-      MapFactory.randomMap(6, 30, 27, 11, 3)
+      MapFactory.randomMap(1, 30, 22, 5, 4),
+      MapFactory.randomMap(2, 32, 23, 6, 4),
+      MapFactory.randomMap(3, 34, 24, 7, 3),
+      MapFactory.randomMap(4, 36, 25, 8, 3),
+      MapFactory.randomMap(5, 38, 26, 9, 3),
+      MapFactory.randomMap(6, 30, 27, 10, 3)
     ]);
 
     jwb.renderer = new SpriteRenderer();
@@ -161,6 +161,12 @@
     }
   }
 
+  function debug() {
+    jwb.DEBUG = true;
+    jwb.renderer = new AsciiRenderer();
+    render();
+  }
+
   window.jwb = window.jwb || {};
   jwb.actions = {
     render,
@@ -170,6 +176,7 @@
     loadMap,
     moveOrAttack,
     restartGame,
-    revealTiles
+    revealTiles,
+    debug
   };
 }

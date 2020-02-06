@@ -142,7 +142,7 @@
     this.gainExperience = (experience) => {
       this.experience += experience;
       const { experienceToNextLevel } = this;
-      if (experienceToNextLevel !== null && this.experience >= experienceToNextLevel) {
+      while (experienceToNextLevel !== null && this.experience >= experienceToNextLevel) {
         this._levelUp();
       }
     };

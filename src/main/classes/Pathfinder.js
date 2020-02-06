@@ -13,38 +13,36 @@
    * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
    *
    * @param {!function(!Coordinates): !boolean} blockedTileDetector
+   * @param {!function(!Coordinates, !Coordinates): !number} tileCostCalculator
    * @constructor
    */
-  function Pathfinder(blockedTileDetector) {
+  function Pathfinder(blockedTileDetector, tileCostCalculator) {
     /**
-     * @return {!int} the exact cost of the path from `start` to `coordinates`
      * @param {!Node} node
      * @param {!Coordinates} start
-     * @return {!int}
+     * @return {!int} the exact cost of the path from `start` to `coordinates`
      */
     function g(node, start) {
       return node.cost;
     }
 
     /**
-     * @return {!int} the heuristic estimated cost from `coordinates` to `goal`
      * @param {!Coordinates} coordinates
      * @param {!Coordinates} goal
-     * @return {!int}
+     * @return {!int} the heuristic estimated cost from `coordinates` to `goal`
      */
     function h(coordinates, goal) {
-      const { manhattanDistance, distance } = jwb.utils.MapUtils;
-      // civ distance
-      return distance(coordinates, goal);
+      const { manhattanDistance, civDistance } = jwb.utils.MapUtils;
+      return civDistance(coordinates, goal);
 
-      //return manhattanDistance(coordinates, goal);
+      // return manhattanDistance(coordinates, goal);
     }
 
     /**
      * @param {!Node} node
      * @param {!Coordinates} start
      * @param {!Coordinates} goal
-     * @return {!int}
+     * @return {!int} an estimate of the best cost from `start` to `goal` combining both `g` and `h`
      */
     function f(node, start, goal) {
       return g(node, start) + h(node, goal);
@@ -78,6 +76,7 @@
         }
 
         /**
+         * node -> estimated cost (f)
          * @type {{node: !Node, cost: !int}[]}
          */
         const nodeCosts = open.map(node => ({ node, cost: f(node, start, goal) }))
@@ -106,10 +105,11 @@
             } else if (open.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
               // don't need to look at it now, will look later?
             } else {
+              const movementCost = tileCostCalculator(chosenNode, neighbor);
               open.push({
                 x: neighbor.x,
                 y: neighbor.y,
-                cost: chosenNodeCost + 1, // assumes the movement cost is always 1
+                cost: chosenNodeCost + movementCost,
                 parent: chosenNode
               });
             }

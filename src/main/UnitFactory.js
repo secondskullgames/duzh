@@ -57,11 +57,11 @@
 
       enemyUnit.aiHandler = u => {
         const { weightedRandom } = jwb.utils.RandomUtils;
-        const { distance } = jwb.utils.MapUtils;
+        const { hypotenuse } = jwb.utils.MapUtils;
         const { playerUnit } = jwb.state;
 
         let behavior;
-        const distanceToPlayer = distance(u, playerUnit);
+        const distanceToPlayer = hypotenuse(u, playerUnit);
 
         if (distanceToPlayer === 1) {
           if ((u.life / u.maxLife) >= 0.4) {
@@ -120,11 +120,11 @@
 
       enemyUnit.aiHandler = u => {
         const { weightedRandom } = jwb.utils.RandomUtils;
-        const { distance } = jwb.utils.MapUtils;
+        const { manhattanDistance } = jwb.utils.MapUtils;
         const { playerUnit } = jwb.state;
 
         let behavior;
-        const distanceToPlayer = distance(u, playerUnit);
+        const distanceToPlayer = manhattanDistance(u, playerUnit);
 
         if (distanceToPlayer === 1) {
           behavior = 'ATTACK_PLAYER';
