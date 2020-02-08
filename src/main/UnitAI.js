@@ -25,8 +25,8 @@
       });
     } else {
       behavior = weightedRandom({
-        'ATTACK_PLAYER': 0.5,
-        'WANDER': 0.3,
+        'ATTACK_PLAYER': 0.6,
+        'WANDER': 0.2,
         'STAY': 0.2
       });
     }
@@ -43,7 +43,7 @@
 
     if (distanceToPlayer === 1) {
       behavior = 'ATTACK_PLAYER';
-    } else if (distanceToPlayer >= 8) {
+    } else if (distanceToPlayer >= 6) {
       behavior = weightedRandom({
         'WANDER': 0.4,
         'STAY': 0.4,

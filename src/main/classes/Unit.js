@@ -110,9 +110,11 @@
      */
     this.getDamage = () => {
       let damage = this._damage;
-      Object.values(this.equipment).forEach(equippedItem => {
-        damage += (equippedItem.damage || 0);
-      });
+      Object.values(this.equipment)
+        .flatMap(list => list)
+        .forEach(equippedItem => {
+          damage += (equippedItem.damage || 0);
+        });
       return damage;
     };
 

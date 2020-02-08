@@ -1,5 +1,5 @@
 {
   window.jwb = window.jwb || {};
-  jwb.DEBUG = true; // TODO
+  jwb.DEBUG = false;
   window.onload = () => jwb.actions.restartGame();
 }

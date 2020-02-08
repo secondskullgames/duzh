@@ -15,10 +15,15 @@
   }
 
   function createSword(damage) {
-    const { ItemCategory, EquipmentCategory, Stats } = jwb.types;
+    const { ItemCategory, EquipmentCategory } = jwb.types;
     return new InventoryItem('Short Sword', ItemCategory.WEAPON, (item, unit) => {
       const equippedSword = new EquippedItem('Short Sword', EquipmentCategory.WEAPON, item, damage);
-      unit.equipment[EquipmentCategory.WEAPON].push(equippedSword);
+      const currentWeapons = [...unit.equipment[EquipmentCategory.WEAPON]];
+      unit.equipment[EquipmentCategory.WEAPON] = [equippedSword];
+      currentWeapons.forEach(weapon => {
+        const { inventoryItem } = weapon;
+        unit.inventory[inventoryItem.category].push(inventoryItem);
+      })
     });
   }
 
