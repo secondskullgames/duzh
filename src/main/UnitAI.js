@@ -1,11 +1,11 @@
 {
   const HUMAN_CAUTIOUS = unit => {
     const { weightedRandom } = jwb.utils.RandomUtils;
-    const { distance } = jwb.utils.MapUtils;
+    const { manhattanDistance } = jwb.utils.MapUtils;
     const { playerUnit } = jwb.state;
 
     let behavior;
-    const distanceToPlayer = distance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit, playerUnit);
 
     if (distanceToPlayer === 1) {
       if ((unit.life / unit.maxLife) >= 0.4) {
@@ -35,11 +35,11 @@
 
   const HUMAN_AGGRESSIVE = unit => {
     const { weightedRandom } = jwb.utils.RandomUtils;
-    const { distance } = jwb.utils.MapUtils;
+    const { manhattanDistance } = jwb.utils.MapUtils;
     const { playerUnit } = jwb.state;
 
     let behavior;
-    const distanceToPlayer = distance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit, playerUnit);
 
     if (distanceToPlayer === 1) {
       behavior = 'ATTACK_PLAYER';
