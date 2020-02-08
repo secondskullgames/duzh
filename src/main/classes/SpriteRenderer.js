@@ -13,10 +13,10 @@
   const BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;
   const BOTTOM_BAR_HEIGHT = 2 * TILE_HEIGHT;
 
-  const INVENTORY_LEFT = 4 * TILE_WIDTH;
+  const INVENTORY_LEFT = 2 * TILE_WIDTH;
   const INVENTORY_TOP = 2 * TILE_HEIGHT;
-  const INVENTORY_WIDTH = 12 * TILE_WIDTH;
-  const INVENTORY_HEIGHT = 8 * TILE_HEIGHT;
+  const INVENTORY_WIDTH = 16 * TILE_WIDTH;
+  const INVENTORY_HEIGHT = 12 * TILE_HEIGHT;
 
   const LINE_HEIGHT = 16;
 
@@ -35,7 +35,7 @@
     _context.textBaseline = 'middle';
 
     /**
-     * @return {Promise<void>}
+     * @return {!Promise<void>}
      */
     function render() {
       const { screen } = jwb.state;
@@ -66,6 +66,10 @@
         });
     }
 
+    /**
+     * @returns {!Promise<*>}
+     * @private
+     */
     function _waitForSprites() {
       const { map } = jwb.state;
       const elements = [];
@@ -101,38 +105,50 @@
       }
     }
 
+    /**
+     * @return {!Promise<*>}
+     * @private
+     */
     function _renderItems() {
       const { map } = jwb.state;
+      const promises = [];
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
           if (_isTileRevealed({ x, y })) {
             const item = map.getItem(x, y);
             if (!!item) {
-              _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
-              _renderElement(item, { x, y })
+              promises.push(_drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+              promises.push(_renderElement(item, { x, y }));
             }
           }
         }
       }
+      return Promise.all(promises);
     }
 
+    /**
+     * @return {!Promise<*>}
+     * @private
+     */
     function _renderUnits() {
       const { map, playerUnit } = jwb.state;
+      const promises = [];
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
           if (_isTileRevealed({ x, y })) {
             const unit = map.getUnit(x, y);
             if (!!unit) {
               if (unit === playerUnit) {
-                _drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+                promises.push(_drawEllipse(x, y, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
               } else {
-                _drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8);
+                promises.push(_drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
               }
-              _renderElement(unit, { x, y });
+              promises.push(_renderElement(unit, { x, y }));
             }
           }
         }
       }
+      return Promise.all(promises);
     }
 
     /**
@@ -141,6 +157,7 @@
      * @param {!string} color (in hex form)
      * @param {!int} width
      * @param {!int} height
+     * @return {!Promise<*>}
      * @private
      */
     function _drawEllipse(x, y, color, width, height) {
@@ -151,44 +168,70 @@
       _context.beginPath();
       _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
       _context.fill();
+      return (resolve) => (resolve());
     }
 
+    /**
+     * @returns {!Promise<void>}
+     * @private
+     */
     function _renderInventory() {
-      const { state } = jwb;
-      const { playerUnit, inventoryCategory, inventoryIndex } = state;
+      const { playerUnit, inventoryCategory, inventoryIndex } = jwb.state;
       const { inventory } = playerUnit;
 
       _drawRect(INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
-      // draw title
+      // draw equipment
+
+      const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
+      const inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
+
+      // draw titles
       _context.fillStyle = '#fff';
       _context.textAlign = 'center';
       _context.font = '20px Monospace';
-      _context.fillText('INVENTORY', _canvas.width / 2, INVENTORY_TOP + 12);
+      _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
+      _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
 
-      // draw categories
-      _context.textAlign = 'center';
+      // draw equipment items
+      // for now, just display them all in one list
 
-      const categories = Object.keys(inventory);
+      _context.font = '10px sans-serif';
+      _context.textAlign = 'left';
+
+      let y = INVENTORY_TOP + 64;
+      Object.entries(playerUnit.equipment).forEach(([slot, equipmentList]) => {
+        equipmentList.forEach(equipment => {
+          _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
+          y += LINE_HEIGHT;
+        });
+      });
+
+      // draw inventory categories
+      const inventoryCategories = Object.keys(inventory);
       const categoryWidth = 60;
       const xOffset = 4;
 
       _context.font = '14px Monospace';
+      _context.textAlign = 'center';
 
-      for (let i = 0; i < categories.length; i++) {
-        const x = INVENTORY_LEFT + i * categoryWidth + (categoryWidth / 2) + xOffset;
-        _context.fillText(categories[i], x, INVENTORY_TOP + 40);
-        if (categories[i] === inventoryCategory) {
+      for (let i = 0; i < inventoryCategories.length; i++) {
+        const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+        _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
+        if (inventoryCategories[i] === inventoryCategory) {
           _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
         }
       }
 
-      _context.textAlign = 'left';
+      // draw inventory items
+
 
       const items = inventory[inventoryCategory];
-      const x = INVENTORY_LEFT + 8;
+      const x = inventoryLeft + 8;
 
       _context.font = '10px sans-serif';
+      _context.textAlign = 'left';
+
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         if (i === inventoryIndex) {
