@@ -1,7 +1,7 @@
 {
   const MIN_ROOM_DIMENSION = 7;
   const MAX_ROOM_DIMENSION = 10;
-  const MIN_ROOM_PADDING = 2;
+  const MIN_ROOM_PADDING = 3;
 
   const FIXED_MAPS = [
     _mapFromAscii(`
@@ -67,9 +67,13 @@
       }
     };
 
-    const enemyUnitSupplier = ({ x, y }) => {
-      return RandomUtils.randChoice([UnitFactory.ENEMY_BLUE, UnitFactory.ENEMY_RED])
-        .call(null, { x, y }, level);
+    const enemyUnitSupplier = ({ x, y }, level) => {
+      const candidates = jwb.UnitClass.getEnemyClasses()
+        .filter(unitClass => unitClass.minLevel <= level)
+        .filter(unitClass => unitClass.maxLevel >= level);
+
+      const unitClass = RandomUtils.randChoice(candidates);
+      return new Unit(unitClass, unitClass.name, level, { x, y });
     };
 
     return new DungeonGenerator(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
@@ -81,7 +85,7 @@
    * @private
    */
   function _mapFromAscii(ascii, level) {
-    const { UnitFactory } = jwb;
+    const { UnitClass } = jwb;
     const { Tiles } = jwb.types;
     const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
@@ -123,7 +127,7 @@
       [], // TODO
       playerUnitLocation,
       enemyUnitLocations,
-      ({ x, y }) => UnitFactory.ENEMY_BLUE({ x, y }, level),
+      ({ x, y }) => new Unit(UnitClass.ENEMY_HUMAN_BLUE, 'enemy_blue', level, { x, y }),
       [],
       () => {
         throw 'unsupported';

@@ -1,15 +1,15 @@
 {
   const LIFE_PER_TURN_MULTIPLIER = 0.005;
   /**
-   * @param {UnitClass} unitClass
-   * @param {string} name
-   * @param {int} level
-   * @param {int} x
-   * @param {int} y
-   * @param {Object<string, string>} paletteSwaps
+   * @param {!UnitClass} unitClass
+   * @param {!string} name
+   * @param {!int} level
+   * @param {!int} x
+   * @param {!int} y
+   * @param {!Object<string, string>} paletteSwaps
    * @constructor
    */
-  function Unit(unitClass, name, level, { x, y }, paletteSwaps = {}) {
+  function Unit(unitClass, name, level, { x, y }) {
     /**
      * @type {string}
      */
@@ -19,7 +19,7 @@
      * @type {Sprite}
      * @private
      */
-    this._sprite = unitClass.sprite(paletteSwaps);
+    this._sprite = unitClass.sprite(unitClass.paletteSwaps);
     /**
      * @type {Object<ItemCategory, InventoryItem[]>}
      */
@@ -58,10 +58,6 @@
     /**
      * @type {int}
      */
-    this.experienceToNextLevel = unitClass.experienceToNextLevel(level);
-    /**
-     * @type {int}
-     */
     this.maxLife = unitClass.startingLife;
     /**
      * @type {int}
@@ -77,13 +73,13 @@
      */
     this._damage = unitClass.startingDamage;
     /**
-     * @type {Function<Unit, void> | null}
+     * @type {function(!Unit: void) | null}
      */
     this.queuedOrder = null;
     /**
-     * @type {Function<Unit, void> | null}
+     * @type {function(!Unit: void) | null}
      */
-    this.aiHandler = null;
+    this.aiHandler = unitClass.aiHandler ? unitClass.aiHandler() : null;
 
     this._regenLife = function () {
       const lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
@@ -94,7 +90,7 @@
     };
 
     /**
-     * @type {Function<void, void>}
+     * @type {!function(): void}
      */
     this.update = () => {
       this._regenLife();
@@ -110,7 +106,7 @@
     };
 
     /**
-     * @return {int}
+     * @return {!int}
      */
     this.getDamage = () => {
       let damage = this._damage;
@@ -128,24 +124,33 @@
      * @private
      */
     this._levelUp = () => {
-      const { experienceToNextLevel } = this;
       this.level++;
-      this.experience -= experienceToNextLevel;
       const lifePerLevel = this.unitClass.lifePerLevel(this.level);
       this.maxLife += lifePerLevel;
       this.life += lifePerLevel;
       this._damage += this.unitClass.damagePerLevel(this.level);
-      this.experienceToNextLevel = this.unitClass.experienceToNextLevel(this.level);
       jwb.audio.playSound(jwb.Sounds.LEVEL_UP);
     };
 
     this.gainExperience = (experience) => {
       this.experience += experience;
-      const { experienceToNextLevel } = this;
-      if (experienceToNextLevel !== null && this.experience >= experienceToNextLevel) {
+      const experienceToNextLevel = this.experienceToNextLevel();
+      if (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
+        this.experience -= experienceToNextLevel;
         this._levelUp();
       }
     };
+
+    /**
+     * @returns {int | null}
+     * @private
+     */
+    this.experienceToNextLevel = () => {
+      if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
+        return unitClass.experienceToNextLevel(this.level);
+      }
+      return null;
+    }
   }
 
   jwb.Unit = Unit;

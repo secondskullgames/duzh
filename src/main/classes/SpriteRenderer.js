@@ -276,8 +276,9 @@
         `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
         `Damage: ${playerUnit.getDamage()}`,
       ];
-      if (playerUnit.experienceToNextLevel !== null) {
-        lines.push(`Experience: ${playerUnit.experience}/${playerUnit.experienceToNextLevel}`);
+      const experienceToNextLevel = playerUnit.experienceToNextLevel(playerUnit.level);
+      if (experienceToNextLevel !== null) {
+        lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
       }
       _context.fillStyle = '#fff';
       _context.textAlign = 'left';
