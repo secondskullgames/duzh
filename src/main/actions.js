@@ -16,7 +16,7 @@
           .filter(u => u !== state.playerUnit)
           .forEach(u => u.update());
 
-        render()
+        jwb.actions.render()
           .then(() => {
             state.turn++;
             state.messages = [];
@@ -162,6 +162,12 @@
     }
   }
 
+  function debug() {
+    jwb.DEBUG = true;
+    jwb.renderer = new AsciiRenderer();
+    render();
+  }
+
   window.jwb = window.jwb || {};
   jwb.actions = {
     render,
@@ -171,6 +177,7 @@
     loadMap,
     moveOrAttack,
     restartGame,
-    revealTiles
+    revealTiles,
+    debug
   };
 }

@@ -61,9 +61,22 @@
   }
 
   /**
+   * @param {Coordinates} first
+   * @param {Coordinates} second
    * @private
    */
-  function _distance_civ(first, second) {
+  function hypotenuse(first, second) {
+    const dx = second.x - first.x;
+    const dy = second.y - first.y;
+    return (dx * dx) + (dy * dy);
+  }
+
+  /**
+   * @param {Coordinates} first
+   * @param {Coordinates} second
+   * @private
+   */
+  function civDistance(first, second) {
     const dx = Math.abs(first.x - second.x);
     const dy = Math.abs(first.y - second.y);
     return Math.max(dx, dy) + Math.min(dx, dy)/2;
@@ -73,8 +86,9 @@
   jwb.utils = jwb.utils || {};
   jwb.utils.MapUtils = {
     pickUnoccupiedLocations,
-    distance: _distance_civ,
+    civDistance,
     manhattanDistance,
+    hypotenuse,
     contains,
     coordinatesEquals
   };

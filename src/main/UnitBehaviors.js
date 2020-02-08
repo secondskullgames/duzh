@@ -60,7 +60,7 @@
    */
   function _attackPlayerUnit_simple(unit) {
     const { map, playerUnit } = jwb.state;
-    const { distance } = jwb.utils.MapUtils;
+    const { manhattanDistance } = jwb.utils.MapUtils;
     const { moveOrAttack } = jwb.actions;
 
     /** @type Coordinates[] */
@@ -79,7 +79,7 @@
     });
 
     if (tiles.length > 0) {
-      const { x, y } = _sortBy(tiles, coordinates => distance(coordinates, playerUnit))[0];
+      const { x, y } = _sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[0];
       moveOrAttack(unit, { x, y });
     }
   }
@@ -107,7 +107,7 @@
     /**
      * @type {!Coordinates[]}
      */
-    const path = new jwb.Pathfinder(blockedTileDetector).findPath(unit, playerUnit, mapRect);
+    const path = new jwb.Pathfinder(blockedTileDetector, () => 1).findPath(unit, playerUnit, mapRect);
 
     if (path.length > 1) {
       const { x, y } = path[1]; // first tile is the unit's own tile
@@ -123,7 +123,7 @@
    */
   function fleeFromPlayerUnit(unit) {
     const { map, playerUnit } = jwb.state;
-    const { distance } = jwb.utils.MapUtils;
+    const { manhattanDistance } = jwb.utils.MapUtils;
     const { moveOrAttack } = jwb.actions;
 
     /** @type {!Coordinates[]} */
@@ -142,7 +142,7 @@
     });
 
     if (tiles.length > 0) {
-      const { x, y } = _sortBy(tiles, coordinates => distance(coordinates, playerUnit))[tiles.length - 1];
+      const { x, y } = _sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[tiles.length - 1];
       moveOrAttack(unit, { x, y });
     }
   }
