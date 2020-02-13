@@ -4,15 +4,15 @@
    */
   function GameState(playerUnit, mapSuppliers) {
     /**
-     * @type 'GAME' | 'INVENTORY'
+     * @type {!('GAME' | 'INVENTORY')}
      */
     this.screen = 'GAME';
     /**
-     * @type Unit
+     * @type !Unit
      */
     this.playerUnit = playerUnit;
     /**
-     * @type MapSupplier[]
+     * @type !MapSupplier[]
      */
     this.mapSuppliers = mapSuppliers;
     /**
@@ -24,11 +24,11 @@
      */
     this.map = null;
     /**
-     * @type string[]
+     * @type {!string[]}
      */
     this.messages = [];
     /**
-     * @type {ItemCategory}
+     * @type {?ItemCategory}
      */
     this.inventoryCategory = null;
     /**
@@ -36,7 +36,7 @@
      */
     this.inventoryIndex = 0;
     /**
-     * @type int
+     * @type {int}
      */
     this.turn = 1;
   }

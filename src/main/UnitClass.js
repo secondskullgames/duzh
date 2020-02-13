@@ -59,7 +59,7 @@
       '#00ff00': '#000000', // Shoes
       '#ff8040': '#ffc0c0'  // Face
     },
-    startingLife: 80,
+    startingLife: 75,
     startingDamage: 4,
     minLevel: 1,
     maxLevel: 3,
@@ -86,8 +86,8 @@
       '#00ff00': '#000000', // Shoes
       '#ff8040': '#ffc0c0'  // Face
     },
-    startingLife: 60,
-    startingDamage: 6,
+    startingLife: 55,
+    startingDamage: 5,
     minLevel: 1,
     maxLevel: 5,
     lifePerLevel: () => 8,
@@ -115,7 +115,7 @@
       '#008080': '#ff0000', // Eyes
       '#c08040': '#c0c0c0', // Hair
     },
-    startingLife: 130,
+    startingLife: 90,
     startingDamage: 8,
     minLevel: 3,
     maxLevel: 9,

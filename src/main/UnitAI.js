@@ -1,4 +1,11 @@
 {
+  /**
+   * @typedef UnitAI {!function(!unit): void}
+   */
+
+  /**
+   * @type {!UnitAI}
+   */
   const HUMAN_CAUTIOUS = unit => {
     const { weightedRandom } = jwb.utils.RandomUtils;
     const { manhattanDistance } = jwb.utils.MapUtils;
@@ -33,6 +40,9 @@
     return jwb.UnitBehaviors[behavior].call(null, unit);
   };
 
+  /**
+   * @type {!UnitAI}
+   */
   const HUMAN_AGGRESSIVE = unit => {
     const { weightedRandom } = jwb.utils.RandomUtils;
     const { manhattanDistance } = jwb.utils.MapUtils;
@@ -58,6 +68,9 @@
     return jwb.UnitBehaviors[behavior].call(null, unit);
   };
 
+  /**
+   * @type {!UnitAI}
+   */
   const FULL_AGGRO = unit => jwb.UnitBehaviors.ATTACK_PLAYER.call(null, unit);
 
   window.jwb = window.jwb || {};

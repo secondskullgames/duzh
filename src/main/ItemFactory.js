@@ -1,7 +1,7 @@
 {
   /**
-   * @param {int} lifeRestored
-   * @return InventoryItem
+   * @param {!int} lifeRestored
+   * @return !InventoryItem
    */
   function createPotion(lifeRestored) {
     const { ItemCategory } = jwb.types;
@@ -14,6 +14,10 @@
     return new InventoryItem('Potion', ItemCategory.POTION, onUse);
   }
 
+  /**
+   * @param {!int} damage
+   * @return !InventoryItem
+   */
   function createSword(damage) {
     const { ItemCategory, EquipmentCategory } = jwb.types;
     return new InventoryItem('Short Sword', ItemCategory.WEAPON, (item, unit) => {

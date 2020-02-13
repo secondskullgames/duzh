@@ -58,36 +58,6 @@
    * @param {!Unit} unit
    * @private
    */
-  function _attackPlayerUnit_simple(unit) {
-    const { map, playerUnit } = jwb.state;
-    const { manhattanDistance } = jwb.utils.MapUtils;
-    const { moveOrAttack } = jwb.actions;
-
-    /** @type Coordinates[] */
-    const tiles = [];
-    CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
-      const [x, y] = [unit.x + dx, unit.y + dy];
-      if (map.contains(x, y)) {
-        if (!map.isBlocked(x, y)) {
-          tiles.push({ x, y });
-        } else if (map.getUnit(x, y)) {
-          if (map.getUnit(x, y) === playerUnit) {
-            tiles.push({ x, y });
-          }
-        }
-      }
-    });
-
-    if (tiles.length > 0) {
-      const { x, y } = _sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[0];
-      moveOrAttack(unit, { x, y });
-    }
-  }
-
-  /**
-   * @param {!Unit} unit
-   * @private
-   */
   function _attackPlayerUnit_withPath(unit) {
     const { map, playerUnit } = jwb.state;
     const { moveOrAttack } = jwb.actions;
@@ -154,7 +124,7 @@
   jwb = jwb || {};
   jwb.UnitBehaviors = {
     WANDER: wander,
-    ATTACK_PLAYER: _attackPlayerUnit_withPath, // _attackPlayerUnit_simple,
+    ATTACK_PLAYER: _attackPlayerUnit_withPath,
     FLEE_FROM_PLAYER: fleeFromPlayerUnit,
     STAY: () => {}
   }
