@@ -50,6 +50,9 @@
       }
     }
 
+    /**
+     * @return {!Promise<void>}
+     */
     function _renderGameScreen() {
       const { revealTiles } = jwb.actions;
       revealTiles();
@@ -57,12 +60,14 @@
         .then(() => {
           _context.fillStyle = '#000';
           _context.fillRect(0, 0, _canvas.width, _canvas.height);
-          _renderTiles();
-          _renderItems();
-          _renderUnits();
-          _renderPlayerInfo();
-          _renderBottomBar();
-          _renderMessages();
+          return Promise.all([
+            _renderTiles(),
+            _renderItems(),
+            _renderUnits(),
+            _renderPlayerInfo(),
+            _renderBottomBar(),
+            _renderMessages()
+          ]);
         });
     }
 
@@ -91,18 +96,25 @@
       return Promise.all(promises);
     }
 
+    /**
+     * @returns {!Promise<*>}
+     * @private
+     */
     function _renderTiles() {
-      const { map } = jwb.state;
-      for (let y = 0; y < map.height; y++) {
-        for (let x = 0; x < map.width; x++) {
-          if (_isTileRevealed({ x, y })) {
-            const tile = map.getTile(x, y);
-            if (!!tile) {
-              _renderElement(tile, { x, y });
+      return new Promise(resolve => {
+        const { map } = jwb.state;
+        for (let y = 0; y < map.height; y++) {
+          for (let x = 0; x < map.width; x++) {
+            if (_isTileRevealed({ x, y })) {
+              const tile = map.getTile(x, y);
+              if (!!tile) {
+                _renderElement(tile, { x, y });
+              }
             }
           }
         }
-      }
+        resolve();
+      });
     }
 
     /**
@@ -157,7 +169,7 @@
      * @param {!string} color (in hex form)
      * @param {!int} width
      * @param {!int} height
-     * @return {!Promise<*>}
+     * @return {!Promise<void>}
      * @private
      */
     function _drawEllipse(x, y, color, width, height) {
@@ -168,11 +180,11 @@
       _context.beginPath();
       _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
       _context.fill();
-      return (resolve) => (resolve());
+      return new Promise(resolve => { resolve(); });
     }
 
     /**
-     * @returns {!Promise<void>}
+     * @return {!Promise<void>}
      * @private
      */
     function _renderInventory() {
@@ -225,7 +237,6 @@
 
       // draw inventory items
 
-
       const items = inventory[inventoryCategory];
       const x = inventoryLeft + 8;
 
@@ -243,7 +254,7 @@
       }
       _context.fillStyle = '#fff';
 
-      return (resolve => resolve());
+      return new Promise(resolve => { resolve(); });
     }
 
     /**
@@ -305,69 +316,87 @@
 
     /**
      * Renders the bottom-left area of the screen, showing information about the player
+     * @return {!Promise<void>}
      * @private
      */
     function _renderPlayerInfo() {
-      const { playerUnit } = jwb.state;
+      return new Promise(resolve => {
+        const { playerUnit } = jwb.state;
 
-      const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      _drawRect(0, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+        const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+        _drawRect(0, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
 
-      const lines = [
-        playerUnit.name,
-        `Level ${playerUnit.level}`,
-        `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
-        `Damage: ${playerUnit.getDamage()}`,
-      ];
-      const experienceToNextLevel = playerUnit.experienceToNextLevel(playerUnit.level);
-      if (experienceToNextLevel !== null) {
-        lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-      }
-      _context.fillStyle = '#fff';
-      _context.textAlign = 'left';
-      _context.font = '10px sans-serif';
+        const lines = [
+          playerUnit.name,
+          `Level ${playerUnit.level}`,
+          `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
+          `Damage: ${playerUnit.getDamage()}`,
+        ];
+        const experienceToNextLevel = playerUnit.experienceToNextLevel(playerUnit.level);
+        if (experienceToNextLevel !== null) {
+          lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+        }
+        _context.fillStyle = '#fff';
+        _context.textAlign = 'left';
+        _context.font = '10px sans-serif';
 
-      const left = 4;
-      for (let i = 0; i < lines.length; i++) {
-        let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-        _context.fillText(lines[i], left, y);
-      }
+        const left = 4;
+        for (let i = 0; i < lines.length; i++) {
+          let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+          _context.fillText(lines[i], left, y);
+        }
+        resolve();
+      });
     }
 
+    /**
+    * @return {!Promise<void>}
+    * @private
+    */
     function _renderMessages() {
-      const { messages } = jwb.state;
-      _context.fillStyle = '#000';
-      _context.strokeStyle = '#fff';
+      return new Promise(resolve => {
+        const { messages } = jwb.state;
+        _context.fillStyle = '#000';
+        _context.strokeStyle = '#fff';
 
-      const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-      const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      _drawRect(left, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+        const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
+        const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+        _drawRect(left, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
 
-      _context.fillStyle = '#fff';
-      _context.textAlign = 'left';
-      _context.font = '10px sans-serif';
+        _context.fillStyle = '#fff';
+        _context.textAlign = 'left';
+        _context.font = '10px sans-serif';
 
-      const textLeft = left + 4;
+        const textLeft = left + 4;
 
-      for (let i = 0; i < messages.length; i++) {
-        let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-        _context.fillText(messages[i], textLeft, y);
-      }
+        for (let i = 0; i < messages.length; i++) {
+          let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+          _context.fillText(messages[i], textLeft, y);
+        }
+        resolve();
+      });
     }
 
+    /**
+     * @return {!Promise<void>}
+     * @private
+     */
     function _renderBottomBar() {
-      const left = BOTTOM_PANEL_WIDTH;
-      const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-      const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+      return new Promise(resolve => {
+        const left = BOTTOM_PANEL_WIDTH;
+        const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+        const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
 
-      _drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+        _drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
 
-      const { mapIndex, turn } = jwb.state;
-      _context.textAlign = 'left';
-      _context.fillStyle = '#fff';
-      const textLeft = left + 4;
-      _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
-      _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
+        const { mapIndex, turn } = jwb.state;
+        _context.textAlign = 'left';
+        _context.fillStyle = '#fff';
+        const textLeft = left + 4;
+        _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
+        _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
+        resolve();
+      });
     }
 
     /**

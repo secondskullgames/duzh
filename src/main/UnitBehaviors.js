@@ -3,6 +3,7 @@
 
   /**
    * @param {!Unit} unit
+   * @return {!Promise<void>}
    */
   function wanderAndAttack(unit) {
     const { map, playerUnit } = jwb.state;
@@ -26,12 +27,14 @@
 
     if (tiles.length > 0) {
       const { x, y } = RandomUtils.randChoice(tiles);
-      moveOrAttack(unit, { x, y });
+      return moveOrAttack(unit, { x, y });
     }
+    return new Promise(resolve => { resolve(); });
   }
 
   /**
    * @param {!Unit} unit
+   * @return {!Promise<void>}
    */
   function wander(unit) {
     const { map } = jwb.state;
@@ -51,12 +54,14 @@
 
     if (tiles.length > 0) {
       const { x, y } = RandomUtils.randChoice(tiles);
-      moveOrAttack(unit, { x, y });
+      return moveOrAttack(unit, { x, y });
     }
+    return new Promise(resolve => { resolve(); });
   }
 
   /**
    * @param {!Unit} unit
+   * @return {!Promise<void>}
    * @private
    */
   function _attackPlayerUnit_withPath(unit) {
@@ -84,13 +89,15 @@
       const { x, y } = path[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit( x, y );
       if (!unitAtPoint || unitAtPoint === playerUnit) {
-        moveOrAttack(unit, { x, y });
+        return moveOrAttack(unit, { x, y });
       }
     }
+    return new Promise(resolve => { resolve(); });
   }
 
   /**
    * @param {!Unit} unit
+   * @return {!Promise<void>}
    */
   function fleeFromPlayerUnit(unit) {
     const { map, playerUnit } = jwb.state;
@@ -114,8 +121,9 @@
 
     if (tiles.length > 0) {
       const { x, y } = _sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[tiles.length - 1];
-      moveOrAttack(unit, { x, y });
+      return moveOrAttack(unit, { x, y });
     }
+    return new Promise(resolve => { resolve(); });
   }
 
   function _sortBy(list, mapFunction) {
@@ -127,6 +135,6 @@
     WANDER: wander,
     ATTACK_PLAYER: _attackPlayerUnit_withPath,
     FLEE_FROM_PLAYER: fleeFromPlayerUnit,
-    STAY: () => {}
+    STAY: () => new Promise(resolve => { resolve(); })
   }
 }

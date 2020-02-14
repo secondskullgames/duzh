@@ -69,7 +69,7 @@
     /**
      * @type {!Promise<void>}
      */
-    this.whenReady = _imagePromise.then(() => {});
+    this.whenReady = _imagePromise.then(() => new Promise(resolve => { resolve(); }));
   }
 
   window.jwb = window.jwb || {};

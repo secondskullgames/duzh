@@ -1,6 +1,7 @@
 {
   /**
    * @param {!KeyboardEvent} e
+   * @return {!Promise<void>}
    */
   function keyHandler(e) {
     const { update, render } = jwb.actions;
@@ -14,29 +15,27 @@
       case 'ArrowLeft':
       case 'ArrowDown':
       case 'ArrowRight':
-        _handleArrowKey(e.key);
-        break;
+        return _handleArrowKey(e.key);
       case ' ': // spacebar
-        update();
-        render();
-        break;
+        return update()
+          .then(() => render());
       case 'Enter':
-        _handleEnter();
-        return;
+        return _handleEnter();
       case 'Tab':
-        _handleTab();
         e.preventDefault();
-        break;
+        return _handleTab();
       default:
     }
+    return new Promise(resolve => { resolve(); });
   }
 
   /**
-   * @param key
+   * @param {!string} key
+   * @return {!Promise<void>}
    * @private
    */
   function _handleArrowKey(key) {
-    const { state, actions, utils } = jwb;
+    const { state, actions } = jwb;
     const { playerUnit, screen } = state;
     const { inventory } = playerUnit;
     const { render, update, moveOrAttack } = actions;
@@ -65,13 +64,9 @@
             throw `Invalid key ${key}`;
         }
 
-        playerUnit.queuedOrder = u => {
-          moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
-        };
+        playerUnit.queuedOrder = u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
 
-        update();
-        render();
-        break;
+        return update();
       case 'INVENTORY':
         const { inventoryCategory } = state;
         const items = inventory[inventoryCategory];
@@ -103,10 +98,16 @@
             break;
           }
         }
-        render();
+        return render();
+      default:
+        throw `fux`;
     }
   }
 
+  /**
+   * @return {!Promise<void>}
+   * @private
+   */
   function _handleEnter() {
     const { state, actions } = jwb;
     const { playerUnit, screen } = state;
@@ -125,21 +126,23 @@
         } else if (map.getTile(x, y) === Tiles.STAIRS_DOWN) {
           loadMap(mapIndex + 1);
         }
-        update();
-        render();
-        break;
+        return update();
       }
       case 'INVENTORY': {
         const { inventoryCategory, inventoryIndex } = state;
         const items = inventory[inventoryCategory];
         const item = items[inventoryIndex] || null;
         useItem(playerUnit, item);
-        render();
-        break;
+        return render();
       }
+      default:
+        throw `fux`;
     }
   }
 
+  /**
+   * @return {!Promise<void>}
+   */
   function _handleTab() {
     const { state, actions } = jwb;
     const { playerUnit } = state;
@@ -154,7 +157,7 @@
         state.inventoryCategory = state.inventoryCategory || Object.keys(playerUnit.inventory)[0] || null;
         break;
     }
-    render();
+    return render();
   }
 
   function attachEvents() {

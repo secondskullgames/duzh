@@ -73,11 +73,11 @@
      */
     this._damage = unitClass.startingDamage;
     /**
-     * @type {function(!Unit: void) | null}
+     * @type {(function(!Unit): !Promise<void>) | null}
      */
     this.queuedOrder = null;
     /**
-     * @type {function(!Unit: void) | null}
+     * @type {(function(!Unit): !Promise<void>) | null}
      */
     this.aiHandler = unitClass.aiHandler ? unitClass.aiHandler() : null;
 
@@ -90,19 +90,28 @@
     };
 
     /**
-     * @type {!function(): void}
+     * @return {!Promise<void>}
      */
     this.update = () => {
-      this._regenLife();
+      return new Promise(resolve => resolve())
+        .then(() => {
+          this._regenLife();
+        })
+        .then(() => {
+          if (!!this.queuedOrder) {
+            const { queuedOrder } = this;
+            this.queuedOrder = null;
+            return queuedOrder(this);
+          }
+          return new Promise(resolve => { resolve(); });
+        })
+        .then(() => {
+          if (!!this.aiHandler) {
+            return this.aiHandler(this);
+          }
 
-      if (!!this.queuedOrder) {
-        this.queuedOrder.call(null, this);
-        this.queuedOrder = null;
-      }
-
-      if (!!this.aiHandler) {
-        this.aiHandler.call(null, this);
-      }
+          return new Promise(resolve => { resolve(); });
+      });
     };
 
     /**
@@ -162,6 +171,7 @@
     this.takeDamage = (damage, sourceUnit = undefined) => {
       const { map, playerUnit } = jwb.state;
       const { Sounds, audio } = jwb;
+
       this.life = Math.max(this.life - damage, 0);
       if (this.life === 0) {
         map.units = map.units.filter(u => u !== this);

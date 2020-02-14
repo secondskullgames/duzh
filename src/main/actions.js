@@ -1,22 +1,32 @@
 {
   /**
-   * @return Promise<void>
+   * @return {!Promise<void>}
    */
   function render() {
-    return jwb.renderer.render();
+    return new Promise(resolve => {
+      resolve(jwb.renderer.render());
+    });
   }
 
+  /**
+   * @return {!Promise<void>}
+   */
   function update() {
     const { state } = jwb;
+    const { playerUnit, map } = jwb.state;
 
-    state.playerUnit.update();
-    render()
+    return playerUnit.update()
+      .then(() => render())
       .then(() => {
-        state.map.units
-          .filter(u => u !== state.playerUnit)
-          .forEach(u => u.update());
+        /**
+         * @type {!(function(): Promise<*>)[]}
+         */
+        const unitPromises = map.units
+          .filter(u => u !== playerUnit)
+          .map(u => (() => u.update()));
 
-        jwb.actions.render()
+        return _chainPromises(unitPromises)
+          .then(() => render())
           .then(() => {
             state.turn++;
             state.messages = [];
@@ -25,8 +35,20 @@
   }
 
   /**
-   * @param {Unit} unit
-   * @param {MapItem} mapItem
+   * @param {?(function(): Promise<*>)} first
+   * @param {!(function(): Promise<*>)[]} rest
+   * @private
+   */
+  function _chainPromises([first, ...rest]) {
+    if (!!first) {
+      return first().then(() => _chainPromises(rest));
+    }
+    return new Promise(resolve => { resolve(); });
+  }
+
+  /**
+   * @param {!Unit} unit
+   * @param {!MapItem} mapItem
    */
   function pickupItem(unit, mapItem) {
     const { state, audio, Sounds } = jwb;
@@ -41,8 +63,8 @@
   }
 
   /**
-   * @param {Unit} unit
-   * @param {InventoryItem || null} item
+   * @param {!Unit} unit
+   * @param {InventoryItem | null} item
    */
   function useItem(unit, item) {
     const { state } = jwb;
@@ -57,7 +79,7 @@
   }
 
   /**
-   * @param {int} index
+   * @param {!int} index
    */
   function loadMap(index) {
     const { state } = jwb;
@@ -69,23 +91,31 @@
     }
   }
 
+  /**
+   * @return {!Promise<void>}
+   */
   function moveOrAttack(unit, { x, y }) {
     const { audio, Sounds } = jwb;
     const { playSound } = audio;
     const { map, messages, playerUnit } = jwb.state;
-    if (map.contains(x, y) && !map.isBlocked(x, y)) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        playSound(Sounds.FOOTSTEP);
+
+    return new Promise(resolve => {
+      if (map.contains(x, y) && !map.isBlocked(x, y)) {
+        [unit.x, unit.y] = [x, y];
+        if (unit === playerUnit) {
+          playSound(Sounds.FOOTSTEP);
+        }
+        resolve();
+      } else {
+        const targetUnit = map.getUnit(x, y);
+        if (!!targetUnit) {
+          const damage = unit.getDamage();
+          messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
+          targetUnit.takeDamage(damage, unit);
+        }
+        setTimeout(() => resolve(), 250);
       }
-    } else {
-      const targetUnit = map.getUnit(x, y);
-      if (!!targetUnit) {
-        const damage = unit.getDamage();
-        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        targetUnit.takeDamage(damage, unit);
-      }
-    }
+    });
   }
 
   function restartGame() {
@@ -119,14 +149,14 @@
    */
   function revealTiles() {
     const { map, playerUnit } = jwb.state;
-    const { revealedTiles } = map;
+    const { isRevealed, revealedTiles } = map;
     const { contains, coordinatesEquals } = jwb.utils.MapUtils;
 
     map.rooms.forEach(room => {
       if (contains(room, playerUnit)) {
         for (let y = room.top; y < room.top + room.height; y++) {
           for (let x = room.left; x < room.left + room.width; x++) {
-            if (!revealedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+            if (!isRevealed({ x, y })) {
               revealedTiles.push({ x, y });
             }
           }
@@ -138,7 +168,7 @@
 
     for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
       for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-        if (!revealedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+        if (!isRevealed({ x, y })) {
           revealedTiles.push({ x, y });
         }
       }

@@ -232,8 +232,6 @@
         }
       }
 
-      console.log('unconnected: ' + unconnectedRooms.length);
-
       // add some extra connections for fun
       const candidatePairs = connectedRooms
         .flatMap(first => connectedRooms.map(second => [first, second]))
