@@ -47,7 +47,7 @@
     const { RandomUtils } = jwb.utils;
 
     const itemSupplier = ({ x, y }) => {
-      switch (RandomUtils.randInt(0, 3)) {
+      switch (RandomUtils.randInt(0, 4)) {
         case 0:
           return new MapItem(
             x,
@@ -55,6 +55,14 @@
             'S',
             jwb.SpriteFactory.MAP_SWORD(),
             () => jwb.ItemFactory.createSword(6)
+          );
+        case 1:
+          return new MapItem(
+            x,
+            y,
+            'K',
+            jwb.SpriteFactory.MAP_SCROLL(),
+            () => jwb.ItemFactory.createScrollOfFloorFire(200)
           );
         default:
           return new MapItem(

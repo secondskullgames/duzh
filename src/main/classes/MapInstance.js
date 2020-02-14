@@ -1,33 +1,32 @@
 {
   function MapInstance(width, height, tiles, rooms, units, items) {
     /**
-     * @type int
+     * @type {!int}
      */
     this.width = width;
     /**
-     * @type int
+     * @type {!int}
      */
     this.height = height;
     /**
      * [y][x]
-     * @type Tile[][]
+     * @type {!Tile[][]}
      */
     this.tiles = tiles;
     /**
-     * @type {Room[]}
+     * @type {!Room[]}
      */
     this.rooms = rooms;
     /**
-     * @type Unit[]
+     * @type {!Unit[]}
      */
     this.units = units;
     /**
-     * @type MapItem[]
+     * @type {!MapItem[]}
      */
     this.items = items;
     /**
-     * @type {Coordinates[]}
-     * @type {Array}
+     * @type {!Coordinates[]}
      */
     this.revealedTiles = [];
 

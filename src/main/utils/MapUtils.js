@@ -30,16 +30,18 @@
   }
 
   /**
-   * @param {Coordinates} first
-   * @param {Coordinates} second
+   * @param {!Coordinates} first
+   * @param {!Coordinates} second
+   * @return {!boolean}
    */
   function coordinatesEquals(first, second) {
     return (first.x === second.x && first.y === second.y);
   }
 
   /**
-   * @param {Rect} rect
-   * @param {Coordinates} coordinates
+   * @param {!Rect} rect
+   * @param {!Coordinates} coordinates
+   * @return {!boolean}
    */
   function contains(rect, coordinates) {
     return coordinates.x >= rect.left
@@ -52,8 +54,9 @@
    * This is implemented as (x distance + y distance), since all movement is just 4-directional
    * so it legitimately takes twice as long to move diagonally
    *
-   * @param {Coordinates} first
-   * @param {Coordinates} second
+   * @param {!Coordinates} first
+   * @param {!Coordinates} second
+   * @return {!int}
    * @private
    */
   function manhattanDistance(first, second) {
@@ -61,25 +64,38 @@
   }
 
   /**
-   * @param {Coordinates} first
-   * @param {Coordinates} second
+   * @param {!Coordinates} first
+   * @param {!Coordinates} second
+   * @return {!number}
    * @private
    */
   function hypotenuse(first, second) {
     const dx = second.x - first.x;
     const dy = second.y - first.y;
-    return (dx * dx) + (dy * dy);
+    return ((dx * dx) + (dy * dy)) ** 0.5;
   }
 
   /**
-   * @param {Coordinates} first
-   * @param {Coordinates} second
+   * @param {!Coordinates} first
+   * @param {!Coordinates} second
+   * @return {!int}
    * @private
    */
   function civDistance(first, second) {
     const dx = Math.abs(first.x - second.x);
     const dy = Math.abs(first.y - second.y);
     return Math.max(dx, dy) + Math.min(dx, dy)/2;
+  }
+
+  /**
+   * @param {!Coordinates} first
+   * @param {!Coordinates} second
+   * @returns {!boolean}
+   */
+  function isAdjacent(first, second) {
+    const dx = Math.abs(first.x - second.x);
+    const dy = Math.abs(first.y - second.y);
+    return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
   }
 
   window.jwb = window.jwb || {};
@@ -90,6 +106,7 @@
     manhattanDistance,
     hypotenuse,
     contains,
-    coordinatesEquals
+    coordinatesEquals,
+    isAdjacent
   };
 }

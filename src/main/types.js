@@ -44,6 +44,7 @@
 
     ItemCategory: {
       POTION: 'POTION',
+      SCROLL: 'SCROLL',
       WEAPON: 'WEAPON'
     },
 

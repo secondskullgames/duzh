@@ -145,14 +145,44 @@
 
     /**
      * @returns {int | null}
-     * @private
      */
     this.experienceToNextLevel = () => {
       if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
         return unitClass.experienceToNextLevel(this.level);
       }
       return null;
-    }
+    };
+
+    /**
+     * @param {!int} damage
+     * @param {?Unit} sourceUnit
+     *
+     * @return void
+     */
+    this.takeDamage = (damage, sourceUnit = undefined) => {
+      const { map, playerUnit } = jwb.state;
+      const { Sounds, audio } = jwb;
+      this.life = Math.max(this.life - damage, 0);
+      if (this.life === 0) {
+        map.units = map.units.filter(u => u !== this);
+        if (this === playerUnit) {
+          alert('Game Over!');
+          audio.playSound(Sounds.PLAYER_DIES);
+        } else {
+          audio.playSound(Sounds.ENEMY_DIES);
+        }
+
+        if (sourceUnit) {
+          sourceUnit.gainExperience(1);
+        }
+      } else {
+        if (this === playerUnit) {
+          audio.playSound(Sounds.PLAYER_HITS_ENEMY);
+        } else {
+          audio.playSound(Sounds.ENEMY_HITS_PLAYER);
+        }
+      }
+    };
   }
 
   jwb.Unit = Unit;

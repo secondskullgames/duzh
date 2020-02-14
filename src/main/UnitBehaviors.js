@@ -1,5 +1,6 @@
 {
   const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+
   /**
    * @param {!Unit} unit
    */

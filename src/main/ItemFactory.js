@@ -5,8 +5,9 @@
    */
   function createPotion(lifeRestored) {
     const { ItemCategory } = jwb.types;
-    const { InventoryItem } = jwb;
+    const { InventoryItem, audio, Sounds } = jwb;
     const onUse = (item, unit) => {
+      audio.playSound(Sounds.USE_POTION);
       const prevLife = unit.life;
       unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
       jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
@@ -31,8 +32,22 @@
     });
   }
 
+  function createScrollOfFloorFire(damage) {
+    const { ItemCategory } = jwb.types;
+    const { InventoryItem } = jwb;
+    const { map } = jwb.state;
+    const { isAdjacent } = jwb.utils.MapUtils;
+
+    const onUse = (item, unit) => {
+      const adjacentUnits = map.units.filter(u => isAdjacent(u, unit));
+      adjacentUnits.forEach(u => u.takeDamage(damage, unit));
+    };
+    return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
+  }
+
   jwb.ItemFactory = {
     createPotion,
-    createSword
+    createSword,
+    createScrollOfFloorFire
   };
 }

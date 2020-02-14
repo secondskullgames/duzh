@@ -45,10 +45,9 @@
    * @param {InventoryItem || null} item
    */
   function useItem(unit, item) {
-    const { audio, state, Sounds } = jwb;
+    const { state } = jwb;
     if (!!item) {
       item.use(unit);
-      audio.playSound(Sounds.USE_ITEM);
       const items = unit.inventory[item.category];
       items.splice(state.inventoryIndex, 1);
       if (state.inventoryIndex >= items.length) {
@@ -80,27 +79,11 @@
         playSound(Sounds.FOOTSTEP);
       }
     } else {
-      const otherUnit = map.getUnit(x, y);
-      if (!!otherUnit) {
+      const targetUnit = map.getUnit(x, y);
+      if (!!targetUnit) {
         const damage = unit.getDamage();
-        otherUnit.life = Math.max(otherUnit.life - damage, 0);
-        messages.push(`${unit.name} (${unit.level}) hit ${otherUnit.name} (${otherUnit.level}) for ${damage} damage!`);
-        if (otherUnit.life === 0) {
-          map.units = map.units.filter(u => u !== otherUnit);
-          if (otherUnit === playerUnit) {
-            alert('Game Over!');
-            audio.playSound(Sounds.PLAYER_DIES);
-          } else {
-            audio.playSound(Sounds.ENEMY_DIES);
-          }
-          unit.gainExperience(1);
-        } else {
-          if (unit === playerUnit) {
-            playSound(Sounds.PLAYER_HITS_ENEMY);
-          } else {
-            playSound(Sounds.ENEMY_HITS_PLAYER);
-          }
-        }
+        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
+        targetUnit.takeDamage(damage, unit);
       }
     }
   }
