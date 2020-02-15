@@ -83,8 +83,6 @@
       width: this.width,
       height: this.height
     });
-
-    this.isRevealed = ({ x, y }) => this.revealedTiles.some(tile => coordinatesEquals(tile, { x, y }));
   }
 
   window.jwb = window.jwb || {};

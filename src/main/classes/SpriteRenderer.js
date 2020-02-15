@@ -103,9 +103,10 @@
     function _renderTiles() {
       return new Promise(resolve => {
         const { map } = jwb.state;
+        const { isTileRevealed } = jwb.utils.MapUtils;
         for (let y = 0; y < map.height; y++) {
           for (let x = 0; x < map.width; x++) {
-            if (_isTileRevealed({ x, y })) {
+            if (isTileRevealed({ x, y })) {
               const tile = map.getTile(x, y);
               if (!!tile) {
                 _renderElement(tile, { x, y });
@@ -123,10 +124,11 @@
      */
     function _renderItems() {
       const { map } = jwb.state;
+      const { isTileRevealed } = jwb.utils.MapUtils;
       const promises = [];
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
-          if (_isTileRevealed({ x, y })) {
+          if (isTileRevealed({ x, y })) {
             const item = map.getItem(x, y);
             if (!!item) {
               promises.push(_drawEllipse(x, y, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
@@ -144,10 +146,12 @@
      */
     function _renderUnits() {
       const { map, playerUnit } = jwb.state;
+      const { isTileRevealed } = jwb.utils.MapUtils;
+
       const promises = [];
       for (let y = 0; y < map.height; y++) {
         for (let x = 0; x < map.width; x++) {
-          if (_isTileRevealed({ x, y })) {
+          if (isTileRevealed({ x, y })) {
             const unit = map.getUnit(x, y);
             if (!!unit) {
               if (unit === playerUnit) {
@@ -263,26 +267,13 @@
      * @returns {!boolean}
      * @private
      */
-    function _isPixelOnScreen({ x, y}) {
+    function _isPixelOnScreen({ x, y }) {
       return (
         (x >= -TILE_WIDTH) &&
         (x <= SCREEN_WIDTH + TILE_WIDTH) &&
         (y >= -TILE_HEIGHT) &&
         (y <= SCREEN_HEIGHT + TILE_HEIGHT)
       );
-    }
-
-    /**
-     * @param {!int} x
-     * @param {!int} y
-     * @private
-     */
-    function _isTileRevealed({ x, y }) {
-      const { coordinatesEquals } = jwb.utils.MapUtils;
-      if (jwb.DEBUG) {
-        return true;
-      }
-      return jwb.state.map.revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
     }
 
     /**

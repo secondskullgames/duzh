@@ -19,11 +19,16 @@
       .then(() => render())
       .then(() => {
         /**
-         * @type {!(function(): Promise<*>)[]}
+         * @type {!function(Promise<void>)[]}
          */
         const unitPromises = map.units
           .filter(u => u !== playerUnit)
-          .map(u => (() => u.update()));
+          .map(u => {
+            return () => (new Promise(resolve => {
+              resolve();
+            })
+              .then(() => u.update()));
+          });
 
         return _chainPromises(unitPromises)
           .then(() => render())
@@ -149,14 +154,14 @@
    */
   function revealTiles() {
     const { map, playerUnit } = jwb.state;
-    const { isRevealed, revealedTiles } = map;
-    const { contains, coordinatesEquals } = jwb.utils.MapUtils;
+    const { revealedTiles } = map;
+    const { contains, isTileRevealed } = jwb.utils.MapUtils;
 
     map.rooms.forEach(room => {
       if (contains(room, playerUnit)) {
         for (let y = room.top; y < room.top + room.height; y++) {
           for (let x = room.left; x < room.left + room.width; x++) {
-            if (!isRevealed({ x, y })) {
+            if (!isTileRevealed({ x, y })) {
               revealedTiles.push({ x, y });
             }
           }
@@ -168,7 +173,7 @@
 
     for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
       for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-        if (!isRevealed({ x, y })) {
+        if (!isTileRevealed({ x, y })) {
           revealedTiles.push({ x, y });
         }
       }

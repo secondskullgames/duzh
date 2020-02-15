@@ -12,7 +12,7 @@
     const { applyTransparentColor, replaceColors } = jwb.utils.ImageUtils;
 
     /**
-     * @type {Promise<ImageBitmap>}
+     * @type {!Promise<!ImageBitmap>}
      */
     const _imagePromise = new Promise(resolve => {
       const canvas = document.createElement('canvas');

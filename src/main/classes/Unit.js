@@ -16,7 +16,7 @@
     this.class = 'Unit';
     this.unitClass = unitClass;
     /**
-     * @type {Sprite}
+     * @type {!Sprite}
      * @private
      */
     this._sprite = unitClass.sprite(unitClass.paletteSwaps);

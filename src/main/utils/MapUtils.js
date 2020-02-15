@@ -98,6 +98,18 @@
     return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
   }
 
+  /**
+   * @param {!int} x
+   * @param {!int} y
+   */
+  function isTileRevealed({ x, y }) {
+    const { coordinatesEquals } = jwb.utils.MapUtils;
+    if (jwb.DEBUG) {
+      return true;
+    }
+    return jwb.state.map.revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
+  }
+
   window.jwb = window.jwb || {};
   jwb.utils = jwb.utils || {};
   jwb.utils.MapUtils = {
@@ -107,6 +119,7 @@
     hypotenuse,
     contains,
     coordinatesEquals,
-    isAdjacent
+    isAdjacent,
+    isTileRevealed
   };
 }

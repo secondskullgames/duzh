@@ -2,7 +2,7 @@
   /**
    * @param {!string} name
    * @param {!string} char
-   * @param {!function(): ?Sprite} spriteSupplier This is lazy-loaded so that we can avoid dependency issues (see types.js)
+   * @param {?(function(): ?Sprite)} spriteSupplier This is lazy-loaded so that we can avoid dependency issues (see types.js)
    * @param {!boolean} isBlocking
    */
   function Tile(name, char, spriteSupplier, isBlocking) {
