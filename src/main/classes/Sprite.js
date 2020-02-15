@@ -9,48 +9,18 @@
    */
   function Sprite(filename, { dx, dy }, transparentColor, paletteSwaps = {}) {
     this.loading = false;
-    const { applyTransparentColor, replaceColors } = jwb.utils.ImageUtils;
+
+    const { loadImage, applyTransparentColor, replaceColors } = jwb.utils.ImageUtils;
 
     /**
-     * @type {!Promise<!ImageBitmap>}
+     * @type {!Promise<void>}
+     * @private
      */
-    const _imagePromise = new Promise(resolve => {
-      const canvas = document.createElement('canvas');
-      canvas.style.display = 'none';
-
-      /**
-       * @type {HTMLImageElement}
-       */
-      const img = document.createElement('img');
-
-      img.addEventListener('load', () => {
-        const context = canvas.getContext('2d');
-        context.drawImage(img, 0, 0);
-
-        const imageData = context.getImageData(0, 0, img.width, img.height);
-        applyTransparentColor(imageData, transparentColor)
-          .then(transparentImageData => replaceColors(transparentImageData, paletteSwaps))
-          .then(swappedImageData => {
-            // clean up
-            img.parentElement.removeChild(img);
-            canvas.parentElement.removeChild(canvas);
-
-            return createImageBitmap(swappedImageData)
-              .then(imageBitmap => {
-                this.image = imageBitmap;
-                resolve(imageBitmap);
-              });
-          });
-      });
-
-      img.style.display = 'none';
-      img.onerror = (e) => {
-        throw new Error(`Failed to load image ${img.src}`);
-      };
-      img.src = `png/${filename}.png`;
-      document.body.appendChild(canvas);
-      document.body.appendChild(img);
-    });
+    const _imagePromise = loadImage(filename)
+      .then(imageData => applyTransparentColor(imageData, transparentColor))
+      .then(imageData => replaceColors(imageData, paletteSwaps))
+      .then(imageData => createImageBitmap(imageData))
+      .then(imageBitmap => { this.image = imageBitmap; });
 
     /**
      * @type {!int}

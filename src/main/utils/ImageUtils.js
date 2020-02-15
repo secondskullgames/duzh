@@ -1,4 +1,40 @@
 {
+
+  /**
+   * @param {!string} filename
+   * @return {!Promise<!ImageBitmap>}
+   * @private
+   */
+  function loadImage(filename) {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      canvas.style.display = 'none';
+
+      /**
+       * @type {HTMLImageElement}
+       */
+      const img = document.createElement('img');
+
+      img.addEventListener('load', () => {
+        const context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+
+        const imageData = context.getImageData(0, 0, img.width, img.height);
+        img.parentElement.removeChild(img);
+        canvas.parentElement.removeChild(canvas);
+        resolve(imageData);
+      });
+
+      img.style.display = 'none';
+      img.onerror = () => {
+        reject(`Failed to load image ${img.src}`);
+      };
+      img.src = `png/${filename}.png`;
+      document.body.appendChild(canvas);
+      document.body.appendChild(img);
+    });
+  }
+
   /**
    * @param {ImageData} imageData
    * @param {string} transparentColor e.g. '#ff0000'
@@ -24,9 +60,9 @@
   }
 
     /**
-   * @param {ImageData} imageData
-   * @param {Object<string, string>?} colorMap A map of (hex => hex)
-   * @return Promise<ImageData>
+   * @param {!ImageData} imageData
+   * @param {?Object<string, string>} colorMap A map of (hex => hex)
+   * @return !Promise<!ImageData>
    */
   function replaceColors(imageData, colorMap) {
     return new Promise(resolve => {
@@ -82,6 +118,7 @@
   window.jwb = window.jwb || {};
   jwb.utils = jwb.utils || {};
   jwb.utils.ImageUtils = {
+    loadImage,
     applyTransparentColor,
     replaceColors,
     hex2rgb
