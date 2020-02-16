@@ -1,37 +1,14 @@
-<html>
+<html lang="">
   <meta charset="UTF-8">
   <head>
-    <script src="src/main/utils/RandomUtils.js"></script>
-    <script src="src/main/utils/MapUtils.js"></script>
-    <script src="src/main/utils/ImageUtils.js"></script>
-    <script src="src/main/classes/Tile.js"></script>
-    <script src="src/main/classes/Sprite.js"></script>
-    <script src="src/main/classes/MapSupplier.js"></script>
-    <script src="src/main/classes/MapInstance.js"></script>
-    <script src="src/main/classes/MapItem.js"></script>
-    <script src="src/main/classes/Unit.js"></script>
-    <script src="src/main/classes/DungeonGenerator.js"></script>
-    <script src="src/main/classes/AsciiRenderer.js"></script>
-    <script src="src/main/classes/SpriteRenderer.js"></script>
-    <script src="src/main/classes/GameState.js"></script>
-    <script src="src/main/classes/InventoryItem.js"></script>
-    <script src="src/main/classes/EquippedItem.js"></script>
-    <script src="src/main/classes/SoundPlayer.js"></script>
-    <script src="src/main/classes/Pathfinder.js"></script>
-    <script src="src/main/Sounds.js"></script>
-    <script src="src/main/audio.js"></script>
-    <script src="src/main/Music.js"></script>
-    <script src="src/main/types.js"></script>
-    <script src="src/main/actions.js"></script>
-    <script src="src/main/input.js"></script>
-    <script src="src/main/UnitBehaviors.js"></script>
-    <script src="src/main/UnitAI.js"></script>
-    <script src="src/main/ItemFactory.js"></script>
-    <script src="src/main/MapFactory.js"></script>
-    <script src="src/main/SpriteFactory.js"></script>
-    <script src="src/main/UnitClass.js"></script>
-    <script src="src/main/main.js"></script>
+    <script src="lib/require.js"></script>
+    <script src="build/roguelike.js"></script>
+    <script>
+      require(['main']);
+      require(['actions'], actions => actions.restartGame());
+    </script>
     <link rel="stylesheet" href="style.css" />
+    <title></title>
   </head>
   <body>
     <div id="container"></div>
