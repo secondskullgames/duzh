@@ -93,6 +93,12 @@ enum EquipmentCategory {
   ARMOR = 'ARMOR'
 }
 
+enum GameScreen
+{
+  GAME = 'GAME',
+  INVENTORY = 'INVENTORY'
+}
+
 export {
   Coordinates,
   Rect,
@@ -103,5 +109,6 @@ export {
   Sample,
   ItemCategory,
   EquipmentCategory,
-  Tiles,
+  GameScreen,
+  Tiles
 };

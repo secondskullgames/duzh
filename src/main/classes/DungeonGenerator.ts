@@ -4,22 +4,23 @@ import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from '../utils
 import MapSupplier from './MapSupplier';
 import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 import Pathfinder from './Pathfinder';
+import MapItem from './MapItem';
 
 const MAX_EXITS = 3;
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
- *
- * @param {!int} minRoomDimension outer width, including wall
- * @param {!int} maxRoomDimension outer width, including wall
- * @param {!int} minRoomPadding
- * @constructor
  */
 class DungeonGenerator {
-  private minRoomDimension: number;
-  private maxRoomDimension: number;
-  private minRoomPadding: number;
-  constructor(minRoomDimension, maxRoomDimension, minRoomPadding) {
+  private readonly minRoomDimension: number;
+  private readonly maxRoomDimension: number;
+  private readonly minRoomPadding: number;
+  /**
+   * @param minRoomDimension outer width, including wall
+   * @param maxRoomDimension outer width, including wall
+   * @param minRoomPadding minimum padding between each room and its containing section
+   */
+  constructor(minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
     this.minRoomPadding = minRoomPadding;
@@ -34,7 +35,15 @@ class DungeonGenerator {
    * @param {!Function} itemSupplier (Coordinates -> Item)
    * @return MapSupplier
    */
-  generateDungeon(level, width, height, numEnemies, enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit, numItems, itemSupplier): MapSupplier {
+  generateDungeon(
+    level: number,
+    width: number,
+    height: number,
+    numEnemies: number,
+    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit,
+    numItems: number,
+    itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
+  ): MapSupplier {
     const section = this._generateSection(width, height);
     this._joinSection(section);
     const { tiles } = section;
@@ -43,6 +52,7 @@ class DungeonGenerator {
     const playerUnitLocation = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1)[0];
     const enemyUnitLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
     const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
+
     return {
       level,
       width,

@@ -1,5 +1,6 @@
 
 import { loadImage, applyTransparentColor, replaceColors } from '../utils/ImageUtils';
+import { PaletteSwaps } from '../types';
 
 class Sprite {
   loading: boolean;
@@ -7,15 +8,8 @@ class Sprite {
   dx: number;
   dy: number;
   private readonly _imagePromise: Promise<void>;
-  /**
-   * @param {!string} filename
-   * @param {!int} dx
-   * @param {!int} dy
-   * @param {!string} transparentColor in hex format, e.g. #ffffff
-   * @param {Object<string,string> | undefined} paletteSwaps (hex => hex)
-   * @constructor
-   */
-  constructor(filename, { dx, dy }, transparentColor, paletteSwaps = {}) {
+
+  constructor(filename, { dx, dy }, transparentColor: string, paletteSwaps: PaletteSwaps = {}) {
     this.loading = false;
     this.image = null;
     this.dx = dx;

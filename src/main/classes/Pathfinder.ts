@@ -126,13 +126,7 @@ class Pathfinder {
     }
   }
 
-  /**
-   * @param {!Coordinates} tile
-   * @param {!Rect} rect
-   * @return {!Coordinates[]}
-   * @private
-   */
-  _findNeighbors(tile, rect) {
+  private _findNeighbors(tile: Coordinates, rect): Coordinates[] {
     return CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
       .filter(({ x, y }) => contains(rect, { x, y }))

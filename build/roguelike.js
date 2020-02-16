@@ -142,14 +142,6 @@ define("classes/Sprite", ["require", "exports", "utils/ImageUtils"], function (r
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sprite = /** @class */ (function () {
-        /**
-         * @param {!string} filename
-         * @param {!int} dx
-         * @param {!int} dy
-         * @param {!string} transparentColor in hex format, e.g. #ffffff
-         * @param {Object<string,string> | undefined} paletteSwaps (hex => hex)
-         * @constructor
-         */
         function Sprite(filename, _a, transparentColor, paletteSwaps) {
             var _this = this;
             var dx = _a.dx, dy = _a.dy;
@@ -182,7 +174,7 @@ define("SpriteFactory", ["require", "exports", "classes/Sprite"], function (requ
         FLOOR_HALL: function () { return new Sprite_1.default('tile_floor_hall', { dx: 0, dy: 0 }, '#ffffff'); },
         MAP_SWORD: function () { return new Sprite_1.default('sword_icon_small', { dx: 0, dy: -8 }, '#ffffff'); },
         MAP_POTION: function () { return new Sprite_1.default('potion_small', { dx: 0, dy: -8 }, '#ffffff'); },
-        MAP_SCROLL: function () { return new Sprite_1.default('scroll_icon', { dx: 0, dy: -8 }, '#000000'); },
+        MAP_SCROLL: function () { return new Sprite_1.default('scroll_icon', { dx: 0, dy: -8 }, '#ffffff'); },
         STAIRS_DOWN: function () { return new Sprite_1.default('stairs_down2', { dx: 0, dy: 0 }, '#ffffff'); }
     };
 });
@@ -953,7 +945,6 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 .map(function (element) { return element.sprite; })
                 .filter(function (sprite) { return !!sprite; });
             var promises = sprites.map(function (sprite) { return sprite.whenReady(); });
-            console.log(promises);
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderTiles = function () {
@@ -1102,17 +1093,8 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 this._drawSprite(sprite, pixel);
             }
         };
-        /**
-         * @param {!Sprite} sprite
-         * @param {!int} x
-         * @param {!int} y
-         * @private
-         */
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
             var x = _a.x, y = _a.y;
-            if (!sprite || !sprite.image || !(sprite.image instanceof ImageBitmap)) {
-                console.log(sprite);
-            }
             this._context.drawImage(sprite.image, x + sprite.dx, y + sprite.dy);
         };
         /**
@@ -2006,9 +1988,6 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds"], funct
                 this._levelUp();
             }
         };
-        /**
-         * @returns {int | null}
-         */
         Unit.prototype.experienceToNextLevel = function () {
             var unitClass = this.unitClass;
             if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {

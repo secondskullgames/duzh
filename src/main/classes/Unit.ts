@@ -114,10 +114,7 @@ class Unit {
     }
   }
 
-  /**
-   * @returns {int | null}
-   */
-  experienceToNextLevel() {
+  experienceToNextLevel(): (number | null) {
     const { unitClass } = this;
     if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
       return unitClass.experienceToNextLevel(this.level);

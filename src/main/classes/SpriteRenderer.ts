@@ -353,7 +353,7 @@ class SpriteRenderer {
     _context.strokeRect(left, top, width, height);
   }
 
-  private _gridToPixel({ x, y }) {
+  private _gridToPixel({ x, y }: Coordinates): Coordinates {
     const { playerUnit } = jwb.state;
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
