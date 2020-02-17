@@ -221,6 +221,7 @@ define("classes/Sprite", ["require", "exports"], function (require, exports) {
         function Sprite(imageMap, key, _a) {
             var dx = _a.dx, dy = _a.dy;
             this._imageMap = imageMap;
+            this.defaultKey = key;
             this.key = key;
             this.dx = dx;
             this.dy = dy;
@@ -236,7 +237,7 @@ define("classes/Sprite", ["require", "exports"], function (require, exports) {
         };
         Sprite.prototype.setImage = function (key) {
             this.key = key;
-            this.getImage();
+            return this.getImage();
         };
         return Sprite;
     }());
@@ -846,21 +847,19 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderTiles = function () {
-            var _this = this;
-            return new Promise(function (resolve) {
-                var map = jwb.state.map;
-                for (var y = 0; y < map.height; y++) {
-                    for (var x = 0; x < map.width; x++) {
-                        if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
-                            var tile = map.getTile({ x: x, y: y });
-                            if (!!tile) {
-                                _this._renderElement(tile, { x: x, y: y });
-                            }
+            var promises = [];
+            var map = jwb.state.map;
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
+                        var tile = map.getTile({ x: x, y: y });
+                        if (!!tile) {
+                            promises.push(this._renderElement(tile, { x: x, y: y }));
                         }
                     }
                 }
-                resolve();
-            });
+            }
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderItems = function () {
             var map = jwb.state.map;
@@ -1928,10 +1927,6 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
             return renderer.render();
         }
     }
-    /**
-     * Execute every entity's `update` method, with appropriate calls to `renderer.render()` when necessary
-     * (will always call `renderer.render()` as the last step
-     */
     function update() {
         var state = jwb.state;
         var _a = jwb.state, playerUnit = _a.playerUnit, map = _a.map;
@@ -2355,20 +2350,22 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playAnimation(sprite, keys, delay) {
-        var currentKey = sprite.key;
         var renderer = jwb.renderer;
         var promises = [];
         keys.forEach(function (key) {
             promises.push(function () { return new Promise(function (resolve) {
-                sprite.setImage(key);
-                setTimeout(function () {
-                    renderer.render()
-                        .then(function () { return resolve(); });
-                }, delay);
+                sprite.setImage(key)
+                    .then(function () { return renderer.render(); })
+                    .then(function () {
+                    setTimeout(function () { resolve(); }, delay);
+                });
             }); });
         });
         return PromiseUtils_4.chainPromises(promises)
-            .then(function () { return sprite.setImage(currentKey); })
+            .then(function () {
+            console.log("default: " + sprite.defaultKey);
+        })
+            .then(function () { return sprite.setImage(sprite.defaultKey); })
             .then(function () { return renderer.render(); });
     }
     exports.playAnimation = playAnimation;
@@ -2473,8 +2470,8 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             var promises = [];
             if (this.sprite instanceof PlayerSprite_2.default) {
                 var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
-                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED, PlayerSpriteKeys.STANDING, PlayerSpriteKeys.STANDING_DAMAGED];
-                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 50); });
+                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 100); });
             }
             promises.push(function () { return new Promise(function (resolve) {
                 _this.life = Math.max(_this.life - damage, 0);

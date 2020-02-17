@@ -4,10 +4,12 @@ class Sprite {
   dx: number;
   dy: number;
   key: string;
+  readonly defaultKey: string;
   private readonly _imageMap: { [key: string]: ImageLoader };
 
   constructor(imageMap: { [filename: string]: ImageLoader }, key: string, { dx, dy }) {
     this._imageMap = imageMap;
+    this.defaultKey = key;
     this.key = key;
     this.dx = dx;
     this.dy = dy;
@@ -23,9 +25,9 @@ class Sprite {
     return imageLoader.image;
   }
 
-  setImage(key: string) {
+  setImage(key: string): Promise<any> {
     this.key = key;
-    this.getImage();
+    return this.getImage();
   }
 }
 

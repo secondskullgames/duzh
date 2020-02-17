@@ -2,20 +2,22 @@ import Sprite from '../classes/Sprite';
 import { chainPromises } from './PromiseUtils';
 
 function playAnimation(sprite: Sprite, keys: string[], delay: number) {
-  const currentKey = sprite.key;
-  const renderer = jwb.renderer;
-  const promises = [];
+  const { renderer } = jwb;
+  const promises: (() => Promise<any>)[] = [];
   keys.forEach(key => {
     promises.push(() => new Promise(resolve => {
-      sprite.setImage(key);
-      setTimeout(() => {
-        renderer.render()
-          .then(() => resolve());
-      }, delay);
+      sprite.setImage(key)
+        .then(() => renderer.render())
+        .then(() => {
+          setTimeout(() => { resolve(); }, delay);
+        });
     }));
   });
   return chainPromises(promises)
-    .then(() => sprite.setImage(currentKey))
+    .then(() => {
+      console.log(`default: ${sprite.defaultKey}`);
+    })
+    .then(() => sprite.setImage(sprite.defaultKey))
     .then(() => renderer.render());
 }
 

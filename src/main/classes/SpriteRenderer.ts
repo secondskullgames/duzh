@@ -97,20 +97,19 @@ class SpriteRenderer {
   }
 
   private _renderTiles(): Promise<any> {
-    return new Promise(resolve => {
-      const { map } = jwb.state;
-      for (let y = 0; y < map.height; y++) {
-        for (let x = 0; x < map.width; x++) {
-          if (isTileRevealed({ x, y })) {
-            const tile = map.getTile({ x, y });
-            if (!!tile) {
-              this._renderElement(tile, { x, y });
-            }
+    const promises: Promise<any>[] = [];
+    const { map } = jwb.state;
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (isTileRevealed({ x, y })) {
+          const tile = map.getTile({ x, y });
+          if (!!tile) {
+            promises.push(this._renderElement(tile, { x, y }));
           }
         }
       }
-      resolve();
-    });
+    }
+    return Promise.all(promises);
   }
 
   private _renderItems(): Promise<any> {

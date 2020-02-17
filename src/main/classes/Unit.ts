@@ -130,8 +130,8 @@ class Unit {
     const promises: (() => Promise<any>)[] = [];
     if (this.sprite instanceof PlayerSprite) {
       const PlayerSpriteKeys = PlayerSprite.SpriteKeys;
-      const sequence = [PlayerSpriteKeys.STANDING_DAMAGED, PlayerSpriteKeys.STANDING, PlayerSpriteKeys.STANDING_DAMAGED];
-      promises.push(() => playAnimation(this.sprite, sequence, 50));
+      const sequence = [PlayerSpriteKeys.STANDING_DAMAGED];
+      promises.push(() => playAnimation(this.sprite, sequence, 100));
     }
 
     promises.push(() => new Promise(resolve => {
