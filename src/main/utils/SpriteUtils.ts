@@ -14,9 +14,6 @@ function playAnimation(sprite: Sprite, keys: string[], delay: number) {
     }));
   });
   return chainPromises(promises)
-    .then(() => {
-      console.log(`default: ${sprite.defaultKey}`);
-    })
     .then(() => sprite.setImage(sprite.defaultKey))
     .then(() => renderer.render());
 }
