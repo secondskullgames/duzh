@@ -71,9 +71,7 @@ class SpriteRenderer {
           () => this._renderTiles(),
           () => this._renderItems(),
           () => this._renderUnits(),
-          () => this._renderPlayerInfo(),
-          () => this._renderBottomBar(),
-          () => this._renderMessages()
+          () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
         ]);
       });
   }
@@ -354,11 +352,14 @@ class SpriteRenderer {
     _context.strokeRect(left, top, width, height);
   }
 
+  /**
+   * @return the top left pixel
+   */
   private _gridToPixel({ x, y }: Coordinates): Coordinates {
     const { playerUnit } = jwb.state;
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT)/ 2
+      y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
     };
   }
 }

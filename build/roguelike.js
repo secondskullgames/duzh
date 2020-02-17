@@ -411,21 +411,12 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
         return Math.max(dx, dy) + Math.min(dx, dy) / 2;
     }
     exports.civDistance = civDistance;
-    /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @returns {!boolean}
-     */
     function isAdjacent(first, second) {
         var dx = Math.abs(first.x - second.x);
         var dy = Math.abs(first.y - second.y);
         return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
     }
     exports.isAdjacent = isAdjacent;
-    /**
-     * @param {!int} x
-     * @param {!int} y
-     */
     function isTileRevealed(_a) {
         var x = _a.x, y = _a.y;
         if (jwb.DEBUG) {
@@ -611,6 +602,19 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
         var dx = _a.dx, dy = _a.dy;
         return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
+    function _stringify(p) {
+        return JSON.stringify(p);
+    }
+    function _memoize(fn) {
+        var cache = {};
+        return function (input) {
+            var key = _stringify(input);
+            if (!cache[key]) {
+                cache[key] = fn(input);
+            }
+            return cache[key];
+        };
+    }
     var SpriteFactory = {
         PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
         WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
@@ -622,7 +626,18 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
         MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
         STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); }
     };
-    exports.default = SpriteFactory;
+    var MemoizedSpriteFactory = {};
+    Object.entries(SpriteFactory).forEach(function (_a) {
+        var name = _a[0], supplier = _a[1];
+        if (name === 'PLAYER') { // TODO hack hack hack hack hack
+            MemoizedSpriteFactory[name] = supplier;
+        }
+        else {
+            MemoizedSpriteFactory[name] = _memoize(supplier);
+        }
+    });
+    // export default SpriteFactory;
+    exports.default = MemoizedSpriteFactory;
 });
 define("types/Tiles", ["require", "exports", "SpriteFactory"], function (require, exports, SpriteFactory_1) {
     "use strict";
@@ -2557,7 +2572,7 @@ define("classes/InventoryItem", ["require", "exports"], function (require, expor
     }());
     exports.default = InventoryItem;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/MapUtils", "utils/PromiseUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, MapUtils_7, PromiseUtils_8) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/PromiseUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, PromiseUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2596,7 +2611,13 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
         var map = jwb.state.map;
         var onUse = function (item, unit) {
             var promises = [];
-            var adjacentUnits = map.units.filter(function (u) { return MapUtils_7.isAdjacent(u, unit); });
+            var adjacentUnits = map.units.filter(function (u) {
+                var dx = unit.x - u.x;
+                var dy = unit.y - u.y;
+                return ([-1, 0, 1].indexOf(dx) > -1)
+                    && ([-1, 0, 1].indexOf(dy) > -1)
+                    && !(dx === 0 && dy === 0);
+            });
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
@@ -2620,6 +2641,7 @@ define("main", ["require", "exports", "actions"], function (require, exports, ac
     // @ts-ignore
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_4.restartGame(); };
+    jwb.DEBUG = true;
 });
 define("classes/AsciiRenderer", ["require", "exports"], function (require, exports) {
     "use strict";

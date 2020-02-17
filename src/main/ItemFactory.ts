@@ -49,7 +49,13 @@ function createScrollOfFloorFire(damage): InventoryItem {
   const onUse: ItemProc = (item, unit): Promise<void> => {
     const promises = [];
 
-    const adjacentUnits = map.units.filter(u => isAdjacent(u, unit));
+    const adjacentUnits = map.units.filter(u => {
+      const dx = unit.x - u.x;
+      const dy = unit.y - u.y;
+      return ([-1,0,1].indexOf(dx) > -1)
+        && ([-1,0,1].indexOf(dy) > -1)
+        && !(dx === 0 && dy === 0);
+    });
     adjacentUnits.forEach(u => {
       promises.push(() => u.takeDamage(damage, unit));
     });
