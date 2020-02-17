@@ -95,6 +95,32 @@ function replaceColors(imageData: ImageData, colorMap: PaletteSwaps): Promise<Im
 }
 
 /**
+ * Replace all non-transparent colors with the specified `color`.
+ */
+function replaceAll(imageData: ImageData, color: string): Promise<ImageData> {
+  return new Promise(resolve => {
+    const [dr, dg, db] = hex2rgb(color);
+    const array = new Uint8ClampedArray(imageData.data.length);
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      // @ts-ignore
+      const [r, g, b, a] = imageData.data.slice(i, i + 4);
+      array[i] = r;
+      array[i + 1] = g;
+      array[i + 2] = b;
+      array[i + 3] = a;
+
+      if (a > 0) {
+        array[i] = dr;
+        array[i + 1] = dg;
+        array[i + 2] = db;
+      }
+    }
+    resolve(new ImageData(array, imageData.width, imageData.height));
+  });
+}
+
+/**
  * @param {string} hex e.g. '#ff0000'
  * @return {[int, int, int]} [r,g,b]
  */
@@ -111,5 +137,6 @@ export {
   loadImage,
   applyTransparentColor,
   replaceColors,
+  replaceAll,
   hex2rgb
 };

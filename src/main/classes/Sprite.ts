@@ -1,22 +1,31 @@
-
-import { loadImage, applyTransparentColor, replaceColors } from '../utils/ImageUtils';
-import { PaletteSwaps } from '../types';
+import ImageLoader from './ImageLoader';
 
 class Sprite {
-  readonly dx: number;
-  readonly dy: number;
+  dx: number;
+  dy: number;
+  key: string;
+  private readonly _imageMap: { [key: string]: ImageLoader };
 
-  image: Promise<ImageBitmap> | null;
-
-  constructor(filename, { dx, dy }, transparentColor: string, paletteSwaps: PaletteSwaps = {}) {
-    this.image = null;
+  constructor(imageMap: { [filename: string]: ImageLoader }, key: string, { dx, dy }) {
+    this._imageMap = imageMap;
+    this.key = key;
     this.dx = dx;
     this.dy = dy;
+    this.getImage();
+  }
 
-    this.image = loadImage(filename)
-      .then(imageData => applyTransparentColor(imageData, transparentColor))
-      .then(imageData => replaceColors(imageData, paletteSwaps))
-      .then(imageData => createImageBitmap(imageData));
+  getImage(): Promise<ImageBitmap> {
+    const imageLoader = this._imageMap[this.key];
+    if (!imageLoader) {
+      throw `Invalid sprite key ${this.key}`;
+    }
+    imageLoader.load();
+    return imageLoader.image;
+  }
+
+  setImage(key: string) {
+    this.key = key;
+    this.getImage();
   }
 }
 

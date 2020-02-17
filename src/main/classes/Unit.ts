@@ -6,7 +6,9 @@ import UnitClass from './UnitClass';
 import { playSound } from '../audio';
 import Sounds from '../Sounds';
 import { UnitAI } from '../UnitAI';
-import { resolvedPromise } from '../utils/PromiseUtils';
+import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
+import PlayerSprite from './PlayerSprite';
+import { playAnimation } from '../utils/SpriteUtils';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -122,29 +124,41 @@ class Unit {
     return null;
   }
 
-  takeDamage(damage: number, sourceUnit: Unit = undefined) {
+  takeDamage(damage: number, sourceUnit: Unit = undefined): Promise<any> {
     const { map, playerUnit } = jwb.state;
 
-    this.life = Math.max(this.life - damage, 0);
-    if (this.life === 0) {
-      map.units = map.units.filter(u => u !== this);
-      if (this === playerUnit) {
-        alert('Game Over!');
-        playSound(Sounds.PLAYER_DIES);
-      } else {
-        playSound(Sounds.ENEMY_DIES);
-      }
-
-      if (sourceUnit) {
-        sourceUnit.gainExperience(1);
-      }
-    } else {
-      if (this === playerUnit) {
-        playSound(Sounds.PLAYER_HITS_ENEMY);
-      } else {
-        playSound(Sounds.ENEMY_HITS_PLAYER);
-      }
+    const promises: (() => Promise<any>)[] = [];
+    if (this.sprite instanceof PlayerSprite) {
+      const PlayerSpriteKeys = PlayerSprite.SpriteKeys;
+      const sequence = [PlayerSpriteKeys.STANDING_DAMAGED, PlayerSpriteKeys.STANDING, PlayerSpriteKeys.STANDING_DAMAGED];
+      promises.push(() => playAnimation(this.sprite, sequence, 50));
     }
+
+    promises.push(() => new Promise(resolve => {
+      this.life = Math.max(this.life - damage, 0);
+      if (this.life === 0) {
+        map.units = map.units.filter(u => u !== this);
+        if (this === playerUnit) {
+          alert('Game Over!');
+          playSound(Sounds.PLAYER_DIES);
+        } else {
+          playSound(Sounds.ENEMY_DIES);
+        }
+
+        if (sourceUnit) {
+          sourceUnit.gainExperience(1);
+        }
+      } else {
+        if (this === playerUnit) {
+          playSound(Sounds.PLAYER_HITS_ENEMY);
+        } else {
+          playSound(Sounds.ENEMY_HITS_PLAYER);
+        }
+      }
+      resolve();
+    }));
+
+    return chainPromises(promises);
   };
 }
 

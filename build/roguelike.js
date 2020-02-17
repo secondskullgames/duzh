@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -124,6 +137,30 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
     }
     exports.replaceColors = replaceColors;
     /**
+     * Replace all non-transparent colors with the specified `color`.
+     */
+    function replaceAll(imageData, color) {
+        return new Promise(function (resolve) {
+            var _a = hex2rgb(color), dr = _a[0], dg = _a[1], db = _a[2];
+            var array = new Uint8ClampedArray(imageData.data.length);
+            for (var i = 0; i < imageData.data.length; i += 4) {
+                // @ts-ignore
+                var _b = imageData.data.slice(i, i + 4), r = _b[0], g = _b[1], b = _b[2], a = _b[3];
+                array[i] = r;
+                array[i + 1] = g;
+                array[i + 2] = b;
+                array[i + 3] = a;
+                if (a > 0) {
+                    array[i] = dr;
+                    array[i + 1] = dg;
+                    array[i + 2] = db;
+                }
+            }
+            resolve(new ImageData(array, imageData.width, imageData.height));
+        });
+    }
+    exports.replaceAll = replaceAll;
+    /**
      * @param {string} hex e.g. '#ff0000'
      * @return {[int, int, int]} [r,g,b]
      */
@@ -137,25 +174,69 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
     }
     exports.hex2rgb = hex2rgb;
 });
-define("classes/Sprite", ["require", "exports", "utils/ImageUtils"], function (require, exports, ImageUtils_1) {
+define("utils/PromiseUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function resolvedPromise(value) {
+        return new Promise(function (resolve) { return resolve(value); });
+    }
+    exports.resolvedPromise = resolvedPromise;
+    function chainPromises(_a, input) {
+        var first = _a[0], rest = _a.slice(1);
+        if (!!first) {
+            return first(input).then(function (output) { return chainPromises(rest, output); });
+        }
+        return resolvedPromise(input);
+    }
+    exports.chainPromises = chainPromises;
+});
+define("classes/ImageLoader", ["require", "exports", "utils/ImageUtils", "utils/PromiseUtils"], function (require, exports, ImageUtils_1, PromiseUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ImageLoader = /** @class */ (function () {
+        function ImageLoader(filename, transparentColor, paletteSwaps, effects) {
+            if (paletteSwaps === void 0) { paletteSwaps = {}; }
+            if (effects === void 0) { effects = []; }
+            this.image = null;
+            this.image = null;
+            this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
+                .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
+                .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
+                .then(function (imageData) { return PromiseUtils_1.chainPromises(effects, imageData); })
+                .then(function (imageData) { return createImageBitmap(imageData); }); };
+        }
+        ImageLoader.prototype.load = function () {
+            if (!this.image) {
+                this.image = this._imageSupplier();
+            }
+        };
+        return ImageLoader;
+    }());
+    exports.default = ImageLoader;
+});
+define("classes/Sprite", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sprite = /** @class */ (function () {
-        function Sprite(filename, _a, transparentColor, paletteSwaps) {
-            var _this = this;
+        function Sprite(imageMap, key, _a) {
             var dx = _a.dx, dy = _a.dy;
-            if (paletteSwaps === void 0) { paletteSwaps = {}; }
-            this.image = null;
+            this._imageMap = imageMap;
+            this.key = key;
             this.dx = dx;
             this.dy = dy;
-            this._imagePromise = ImageUtils_1.loadImage(filename)
-                .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
-                .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
-                .then(function (imageData) { return createImageBitmap(imageData); })
-                .then(function (imageBitmap) { _this.image = imageBitmap; });
+            this.getImage();
         }
-        Sprite.prototype.whenReady = function () {
-            return this._imagePromise;
+        Sprite.prototype.getImage = function () {
+            var imageLoader = this._imageMap[this.key];
+            if (!imageLoader) {
+                throw "Invalid sprite key " + this.key;
+            }
+            imageLoader.load();
+            return imageLoader.image;
+        };
+        Sprite.prototype.setImage = function (key) {
+            this.key = key;
+            this.getImage();
         };
         return Sprite;
     }());
@@ -498,20 +579,49 @@ define("classes/MapItem", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("SpriteFactory", ["require", "exports", "classes/Sprite"], function (require, exports, Sprite_1) {
+define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "utils/ImageUtils", "classes/Sprite"], function (require, exports, ImageLoader_1, ImageUtils_2, Sprite_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = {
-        PLAYER: function (paletteSwaps) { return new Sprite_1.default('player_standing_SE_1', { dx: -4, dy: -20 }, '#ffffff', paletteSwaps); },
-        WALL_TOP: function () { return new Sprite_1.default('tile_wall', { dx: 0, dy: 0 }, '#ffffff'); },
-        WALL_HALL: function () { return new Sprite_1.default('tile_wall_hall', { dx: 0, dy: 0 }, '#ffffff'); },
-        FLOOR: function () { return new Sprite_1.default('tile_floor', { dx: 0, dy: 0 }, '#ffffff'); },
-        FLOOR_HALL: function () { return new Sprite_1.default('tile_floor_hall', { dx: 0, dy: 0 }, '#ffffff'); },
-        MAP_SWORD: function () { return new Sprite_1.default('sword_icon_small', { dx: 0, dy: -8 }, '#ffffff'); },
-        MAP_POTION: function () { return new Sprite_1.default('potion_small', { dx: 0, dy: -8 }, '#ffffff'); },
-        MAP_SCROLL: function () { return new Sprite_1.default('scroll_icon', { dx: 0, dy: 0 }, '#ffffff'); },
-        STAIRS_DOWN: function () { return new Sprite_1.default('stairs_down2', { dx: 0, dy: 0 }, '#ffffff'); }
+    var SpriteKeys;
+    (function (SpriteKeys) {
+        SpriteKeys["STANDING"] = "STANDING";
+        SpriteKeys["STANDING_DAMAGED"] = "STANDING_DAMAGED";
+    })(SpriteKeys || (SpriteKeys = {}));
+    var PlayerSprite = /** @class */ (function (_super) {
+        __extends(PlayerSprite, _super);
+        function PlayerSprite(paletteSwaps) {
+            var _a;
+            return _super.call(this, (_a = {},
+                _a[SpriteKeys.STANDING] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps),
+                _a[SpriteKeys.STANDING_DAMAGED] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, '#ffffff'); }]),
+                _a), SpriteKeys.STANDING, { dx: -4, dy: -20 }) || this;
+        }
+        PlayerSprite.SpriteKeys = SpriteKeys;
+        return PlayerSprite;
+    }(Sprite_1.default));
+    exports.default = PlayerSprite;
+});
+define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DEFAULT_SPRITE_KEY = 'default';
+    function _staticSprite(imageLoader, _a) {
+        var _b;
+        var dx = _a.dx, dy = _a.dy;
+        return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
+    }
+    var SpriteFactory = {
+        PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
+        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('sword_icon_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('potion_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); }
     };
+    exports.default = SpriteFactory;
 });
 define("types/Tiles", ["require", "exports", "SpriteFactory"], function (require, exports, SpriteFactory_1) {
     "use strict";
@@ -658,7 +768,7 @@ define("classes/GameState", ["require", "exports", "types"], function (require, 
     }());
     exports.default = GameState;
 });
-define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions"], function (require, exports, MapUtils_2, actions_1) {
+define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions", "utils/PromiseUtils"], function (require, exports, MapUtils_2, actions_1, PromiseUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -709,13 +819,13 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 .then(function () {
                 _this._context.fillStyle = '#000';
                 _this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-                return Promise.all([
-                    _this._renderTiles(),
-                    _this._renderItems(),
-                    _this._renderUnits(),
-                    _this._renderPlayerInfo(),
-                    _this._renderBottomBar(),
-                    _this._renderMessages()
+                return PromiseUtils_2.chainPromises([
+                    function () { return _this._renderTiles(); },
+                    function () { return _this._renderItems(); },
+                    function () { return _this._renderUnits(); },
+                    function () { return _this._renderPlayerInfo(); },
+                    function () { return _this._renderBottomBar(); },
+                    function () { return _this._renderMessages(); }
                 ]);
             });
         };
@@ -732,7 +842,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var sprites = elements.filter(function (element) { return !!element; })
                 .map(function (element) { return element.sprite; })
                 .filter(function (sprite) { return !!sprite; });
-            var promises = sprites.map(function (sprite) { return sprite.whenReady(); });
+            var promises = sprites.map(function (sprite) { return sprite.getImage(); });
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderTiles = function () {
@@ -861,7 +971,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 _context.fillText(items[i].name, x, y_1);
             }
             _context.fillStyle = '#fff';
-            return new Promise(function (resolve) { resolve(); });
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -873,17 +983,19 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         SpriteRenderer.prototype._renderElement = function (element, _a) {
             var x = _a.x, y = _a.y;
             var pixel = this._gridToPixel({ x: x, y: y });
-            if (!this._isPixelOnScreen(pixel)) {
-                return;
+            if (this._isPixelOnScreen(pixel)) {
+                var sprite = element.sprite;
+                if (!!sprite) {
+                    return this._drawSprite(sprite, pixel);
+                }
             }
-            var sprite = element.sprite;
-            if (!!sprite) {
-                this._drawSprite(sprite, pixel);
-            }
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
+            var _this = this;
             var x = _a.x, y = _a.y;
-            this._context.drawImage(sprite.image, x + sprite.dx, y + sprite.dy);
+            return sprite.getImage()
+                .then(function (image) { return _this._context.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
         /**
          * Renders the bottom-left area of the screen, showing information about the player
@@ -938,21 +1050,18 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             });
         };
         SpriteRenderer.prototype._renderBottomBar = function () {
-            var _this = this;
             var _context = this._context;
-            return new Promise(function (resolve) {
-                var left = BOTTOM_PANEL_WIDTH;
-                var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-                var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
-                _this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
-                var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
-                _context.textAlign = 'left';
-                _context.fillStyle = '#fff';
-                var textLeft = left + 4;
-                _context.fillText("Level: " + (mapIndex + 1), textLeft, top + 8);
-                _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-                resolve();
-            });
+            var left = BOTTOM_PANEL_WIDTH;
+            var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+            var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+            this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
+            _context.textAlign = 'left';
+            _context.fillStyle = '#fff';
+            var textLeft = left + 4;
+            _context.fillText("Level: " + (mapIndex + 1), textLeft, top + 8);
+            _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (left, top, width, height) {
             var _context = this._context;
@@ -1805,23 +1914,7 @@ define("utils/ItemUtils", ["require", "exports", "audio", "Sounds"], function (r
     }
     exports.useItem = useItem;
 });
-define("utils/PromiseUtils", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function resolvedPromise(value) {
-        return new Promise(function (resolve) { return resolve(value); });
-    }
-    exports.resolvedPromise = resolvedPromise;
-    function chainPromises(_a) {
-        var first = _a[0], rest = _a.slice(1);
-        if (!!first) {
-            return first().then(function () { return chainPromises(rest); });
-        }
-        return resolvedPromise();
-    }
-    exports.chainPromises = chainPromises;
-});
-define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_1) {
+define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playTurn(playerUnitOrder, doUpdate) {
@@ -1850,7 +1943,7 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
                 unitPromises.push(function () { return u.update(); });
             }
         });
-        return PromiseUtils_1.chainPromises(unitPromises)
+        return PromiseUtils_3.chainPromises(unitPromises)
             .then(function () {
             state.turn++;
             state.messages = [];
@@ -2031,9 +2124,12 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
                 if (!!targetUnit) {
                     var damage = unit.getDamage();
                     messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
-                    targetUnit.takeDamage(damage, unit);
+                    targetUnit.takeDamage(damage, unit)
+                        .then(function () { return resolve(); });
                 }
-                setTimeout(function () { return resolve(); }, 250);
+                else {
+                    resolve();
+                }
             }
         });
     }
@@ -2255,11 +2351,29 @@ define("classes/UnitClass", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("classes/Entity", ["require", "exports"], function (require, exports) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    function playAnimation(sprite, keys, delay) {
+        var currentKey = sprite.key;
+        var renderer = jwb.renderer;
+        var promises = [];
+        keys.forEach(function (key) {
+            promises.push(function () { return new Promise(function (resolve) {
+                sprite.setImage(key);
+                setTimeout(function () {
+                    renderer.render()
+                        .then(function () { return resolve(); });
+                }, delay);
+            }); });
+        });
+        return PromiseUtils_4.chainPromises(promises)
+            .then(function () { return sprite.setImage(currentKey); })
+            .then(function () { return renderer.render(); });
+    }
+    exports.playAnimation = playAnimation;
 });
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_2) {
+define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_5, PlayerSprite_2, SpriteUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -2314,7 +2428,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_2.resolvedPromise();
+                return PromiseUtils_5.resolvedPromise();
             })
                 .then(function () {
                 return jwb.renderer.render();
@@ -2356,33 +2470,40 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             var _this = this;
             if (sourceUnit === void 0) { sourceUnit = undefined; }
             var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-            this.life = Math.max(this.life - damage, 0);
-            if (this.life === 0) {
-                map.units = map.units.filter(function (u) { return u !== _this; });
-                if (this === playerUnit) {
-                    alert('Game Over!');
-                    audio_4.playSound(Sounds_3.default.PLAYER_DIES);
+            var promises = [];
+            if (this.sprite instanceof PlayerSprite_2.default) {
+                var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
+                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED, PlayerSpriteKeys.STANDING, PlayerSpriteKeys.STANDING_DAMAGED];
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 50); });
+            }
+            promises.push(function () { return new Promise(function (resolve) {
+                _this.life = Math.max(_this.life - damage, 0);
+                if (_this.life === 0) {
+                    map.units = map.units.filter(function (u) { return u !== _this; });
+                    if (_this === playerUnit) {
+                        alert('Game Over!');
+                        audio_4.playSound(Sounds_3.default.PLAYER_DIES);
+                    }
+                    else {
+                        audio_4.playSound(Sounds_3.default.ENEMY_DIES);
+                    }
+                    if (sourceUnit) {
+                        sourceUnit.gainExperience(1);
+                    }
                 }
                 else {
-                    audio_4.playSound(Sounds_3.default.ENEMY_DIES);
+                    if (_this === playerUnit) {
+                        audio_4.playSound(Sounds_3.default.PLAYER_HITS_ENEMY);
+                    }
+                    else {
+                        audio_4.playSound(Sounds_3.default.ENEMY_HITS_PLAYER);
+                    }
                 }
-                if (sourceUnit) {
-                    sourceUnit.gainExperience(1);
-                }
-            }
-            else {
-                if (this === playerUnit) {
-                    audio_4.playSound(Sounds_3.default.PLAYER_HITS_ENEMY);
-                }
-                else {
-                    audio_4.playSound(Sounds_3.default.ENEMY_HITS_PLAYER);
-                }
-            }
+                resolve();
+            }); });
+            return PromiseUtils_5.chainPromises(promises);
         };
         ;
-        Unit.prototype.getImage = function () {
-            return this.sprite.image;
-        };
         return Unit;
     }());
     exports.default = Unit;

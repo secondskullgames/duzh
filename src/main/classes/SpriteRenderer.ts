@@ -4,6 +4,7 @@ import MapItem from './MapItem';
 import { Coordinates, Tile } from '../types';
 import { revealTiles } from '../actions';
 import Sprite from './Sprite';
+import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -27,9 +28,9 @@ const INVENTORY_HEIGHT = 12 * TILE_HEIGHT;
 const LINE_HEIGHT = 16;
 
 class SpriteRenderer {
-  private _container: HTMLElement;
-  private _canvas: HTMLCanvasElement;
-  private _context: CanvasRenderingContext2D;
+  private readonly _container: HTMLElement;
+  private readonly _canvas: HTMLCanvasElement;
+  private readonly _context: CanvasRenderingContext2D;
 
   constructor() {
     this._container = document.getElementById('container');
@@ -64,13 +65,13 @@ class SpriteRenderer {
       .then(() => {
         this._context.fillStyle = '#000';
         this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-        return Promise.all([
-          this._renderTiles(),
-          this._renderItems(),
-          this._renderUnits(),
-          this._renderPlayerInfo(),
-          this._renderBottomBar(),
-          this._renderMessages()
+        return chainPromises([
+          () => this._renderTiles(),
+          () => this._renderItems(),
+          () => this._renderUnits(),
+          () => this._renderPlayerInfo(),
+          () => this._renderBottomBar(),
+          () => this._renderMessages()
         ]);
       });
   }
@@ -91,7 +92,7 @@ class SpriteRenderer {
       .map(element => element.sprite)
       .filter(sprite => !!sprite);
 
-    const promises = sprites.map(sprite => sprite.image);
+    const promises = sprites.map(sprite => sprite.getImage());
     return Promise.all(promises);
   }
 
@@ -236,7 +237,7 @@ class SpriteRenderer {
     }
     _context.fillStyle = '#fff';
 
-    return new Promise(resolve => { resolve(); });
+    return resolvedPromise();
   }
 
   private _isPixelOnScreen({ x, y }): boolean {
@@ -248,21 +249,21 @@ class SpriteRenderer {
     );
   }
 
-  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): void {
+  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): Promise<any> {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
-    if (!this._isPixelOnScreen(pixel)) {
-      return;
+    if (this._isPixelOnScreen(pixel)) {
+      const { sprite } = element;
+      if (!!sprite) {
+        return this._drawSprite(sprite, pixel);
+      }
     }
-
-    const { sprite } = element;
-    if (!!sprite) {
-      this._drawSprite(sprite, pixel);
-    }
+    return resolvedPromise();
   }
 
-  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): void {
-    sprite.image.then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
+  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
+    return sprite.getImage()
+      .then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
   /**
@@ -327,21 +328,20 @@ class SpriteRenderer {
   private _renderBottomBar(): Promise<void> {
     const { _context } = this;
 
-    return new Promise(resolve => {
-      const left = BOTTOM_PANEL_WIDTH;
-      const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-      const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+    const left = BOTTOM_PANEL_WIDTH;
+    const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+    const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
 
-      this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+    this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
 
-      const { mapIndex, turn } = jwb.state;
-      _context.textAlign = 'left';
-      _context.fillStyle = '#fff';
-      const textLeft = left + 4;
-      _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
-      _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
-      resolve();
-    });
+    const { mapIndex, turn } = jwb.state;
+    _context.textAlign = 'left';
+    _context.fillStyle = '#fff';
+    const textLeft = left + 4;
+    _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
+    _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
+
+    return resolvedPromise();
   }
 
   private _drawRect(left, top, width, height) {
