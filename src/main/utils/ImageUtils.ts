@@ -56,7 +56,6 @@ function applyTransparentColor(imageData: ImageData, transparentColor: string): 
 }
 
 function replaceColors(imageData: ImageData, colorMap: PaletteSwaps): Promise<ImageData> {
-  console.log(colorMap);
   return new Promise(resolve => {
     if (!colorMap) {
       resolve(imageData);

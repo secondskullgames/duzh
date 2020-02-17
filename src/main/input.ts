@@ -1,11 +1,9 @@
-import { loadMap, moveOrAttack, pickupItem, render, update, useItem } from './actions';
-import { ItemCategory, Tiles } from './types';
+import { loadMap, moveOrAttack } from './actions';
+import { pickupItem, useItem } from './utils/ItemUtils';
+import { GameScreen, ItemCategory, Tiles } from './types';
+import TurnHandler from './classes/TurnHandler';
 
-/**
- * @param {!KeyboardEvent} e
- * @return {!Promise<void>}
- */
-function keyHandler(e) {
+function keyHandler(e: KeyboardEvent): Promise<void> {
   switch (e.key) {
     case 'w':
     case 'a':
@@ -17,8 +15,7 @@ function keyHandler(e) {
     case 'ArrowRight':
       return _handleArrowKey(e.key);
     case ' ': // spacebar
-      return update()
-        .then(() => render());
+      return TurnHandler.playTurn(null, true);
     case 'Enter':
       return _handleEnter();
     case 'Tab':
@@ -29,18 +26,13 @@ function keyHandler(e) {
   return new Promise(resolve => { resolve(); });
 }
 
-/**
- * @param {!string} key
- * @return {!Promise<void>}
- * @private
- */
-function _handleArrowKey(key) {
+function _handleArrowKey(key): Promise<void> {
   const { state } = jwb;
   const { playerUnit, screen } = state;
   const { inventory } = playerUnit;
 
   switch (screen) {
-    case 'GAME':
+    case GameScreen.GAME:
       let [dx, dy] = [null, null];
       switch (key) {
         case 'w':
@@ -64,9 +56,11 @@ function _handleArrowKey(key) {
       }
 
       playerUnit.queuedOrder = u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
-
-      return update();
-    case 'INVENTORY':
+      return TurnHandler.playTurn(
+        u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy }),
+        true
+      );
+    case GameScreen.INVENTORY:
       const { inventoryCategory } = state;
       const items = inventory[inventoryCategory];
       const inventoryKeys = <ItemCategory[]>Object.keys(inventory);
@@ -97,7 +91,7 @@ function _handleArrowKey(key) {
           break;
         }
       }
-      return render();
+      return TurnHandler.playTurn(null, false);
     default:
       throw `fux`;
   }
@@ -109,7 +103,7 @@ function _handleEnter(): Promise<void> {
   const { inventory } = playerUnit;
 
   switch (screen) {
-    case 'GAME': {
+    case GameScreen.GAME: {
       const { map, mapIndex } = state;
       const { x, y } = playerUnit;
       const item = map.getItem({ x, y });
@@ -119,14 +113,14 @@ function _handleEnter(): Promise<void> {
       } else if (map.getTile({ x, y }) === Tiles.STAIRS_DOWN) {
         loadMap(mapIndex + 1);
       }
-      return update();
+      return TurnHandler.playTurn(null, true);
     }
-    case 'INVENTORY': {
+    case GameScreen.INVENTORY: {
       const { inventoryCategory, inventoryIndex } = state;
       const items = inventory[inventoryCategory];
       const item = items[inventoryIndex] || null;
       useItem(playerUnit, item);
-      return render();
+      return TurnHandler.playTurn(null, false);
     }
     default:
       throw `fux`;
@@ -138,15 +132,15 @@ function _handleTab(): Promise<void> {
   const { playerUnit } = state;
 
   switch (state.screen) {
-    case 'INVENTORY':
-      state.screen = 'GAME';
+    case GameScreen.INVENTORY:
+      state.screen = GameScreen.GAME;
       break;
     default:
-      state.screen = 'INVENTORY';
+      state.screen = GameScreen.INVENTORY;
       state.inventoryCategory = state.inventoryCategory || <any>Object.keys(playerUnit.inventory)[0] || null;
       break;
   }
-  return render();
+  return TurnHandler.playTurn(null, false);
 }
 
 function attachEvents() {

@@ -1,4 +1,5 @@
 import { ItemCategory } from '../types';
+import Unit from './Unit';
 
 class InventoryItem {
   readonly name: string;
@@ -6,16 +7,13 @@ class InventoryItem {
   private readonly _onUse: (InventoryItem) => void;
 
   constructor(name, category, onUse) {
-    /**
-     * @type {!string}
-     */
     this.name = name;
     this.category = category;
     this._onUse = onUse;
   }
 
-  use() {
-    this._onUse.call(null, this);
+  use(unit: Unit) {
+    this._onUse.call(null, this, unit);
   }
 }
 

@@ -6,8 +6,10 @@ import UnitClass from './UnitClass';
 import { playSound } from '../audio';
 import Sounds from '../Sounds';
 import { UnitAI } from '../UnitAI';
+import { resolvedPromise } from '../utils/PromiseUtils';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
+
 class Unit {
   readonly class: string;
   readonly unitClass: UnitClass;
@@ -62,25 +64,26 @@ class Unit {
   };
 
   update(): Promise<void> {
-    return new Promise(resolve => resolve())
-      .then(() => {
-        this._regenLife();
-      })
-      .then(() => {
-        if (!!this.queuedOrder) {
-          const { queuedOrder } = this;
-          this.queuedOrder = null;
-          return queuedOrder(this);
-        }
-        return new Promise(resolve => { resolve(); });
-      })
+    return new Promise(resolve => {
+      this._regenLife();
+      if (!!this.queuedOrder) {
+        const { queuedOrder } = this;
+        this.queuedOrder = null;
+        return queuedOrder(this)
+          .then(() => resolve());
+      }
+      return resolve();
+    })
       .then(() => {
         if (!!this.aiHandler) {
           return this.aiHandler(this);
         }
 
-        return new Promise(resolve => { resolve(); });
-    });
+        return resolvedPromise();
+      })
+      .then(() => {
+        return jwb.renderer.render();
+      });
   }
 
   getDamage(): number {
@@ -93,9 +96,6 @@ class Unit {
     return damage;
   }
 
-  /**
-   * @private
-   */
   private _levelUp() {
     this.level++;
     const lifePerLevel = this.unitClass.lifePerLevel(this.level);
@@ -122,13 +122,7 @@ class Unit {
     return null;
   }
 
-  /**
-   * @param {!int} damage
-   * @param {?Unit} sourceUnit
-   *
-   * @return void
-   */
-  takeDamage(damage, sourceUnit = undefined) {
+  takeDamage(damage: number, sourceUnit: Unit = undefined) {
     const { map, playerUnit } = jwb.state;
 
     this.life = Math.max(this.life - damage, 0);

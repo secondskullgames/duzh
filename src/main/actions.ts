@@ -1,6 +1,3 @@
-/**
- * @return {!Promise<void>}
- */
 import Sounds from './Sounds';
 import GameState from './classes/GameState';
 import Unit from './classes/Unit';
@@ -8,89 +5,14 @@ import SpriteRenderer from './classes/SpriteRenderer';
 import { randChoice } from './utils/RandomUtils';
 import MapFactory from './MapFactory';
 import UnitClasses from './UnitClasses';
-import MapSupplier, { createMap } from './classes/MapSupplier';
 import Music from './Music';
 import { playSound } from './audio';
 import { contains, isTileRevealed } from './utils/MapUtils';
 import { attachEvents } from './input';
-import MapItem from './classes/MapItem';
+import { createMap } from './classes/MapSupplier';
+import { Coordinates } from './types';
 
-function render(): Promise<void> {
-  return new Promise(resolve => {
-    resolve(jwb.renderer.render());
-  });
-}
-
-/**
- * @return {!Promise<void>}
- */
-function update() {
-  const { state } = jwb;
-  const { playerUnit, map } = jwb.state;
-
-  return playerUnit.update()
-    .then(() => render())
-    .then(() => {
-      /**
-       * @type {!function(Promise<void>)[]}
-       */
-      const unitPromises = map.units
-        .filter(u => u !== playerUnit)
-        .map(u => {
-          return () => (new Promise(resolve => {
-            resolve();
-          })
-            .then(() => u.update()));
-        });
-
-      return _chainPromises(unitPromises)
-        .then(() => render())
-        .then(() => {
-          state.turn++;
-          state.messages = [];
-        });
-    });
-}
-
-function _chainPromises([first, ...rest]: (() => Promise<any>)[]) {
-  if (!!first) {
-    return first().then(() => _chainPromises(rest));
-  }
-  return new Promise(resolve => { resolve(); });
-}
-
-function pickupItem(unit: Unit, mapItem: MapItem) {
-  const { state } = jwb;
-  const inventoryItem = mapItem.inventoryItem();
-  const { category } = inventoryItem;
-  const { inventory } = unit;
-  inventory[category] = inventory[category] || [];
-  inventory[category].push(inventoryItem);
-  state.inventoryIndex = state.inventoryIndex || 0;
-  state.messages.push(`Picked up a ${inventoryItem.name}.`);
-  playSound(Sounds.PICK_UP_ITEM);
-}
-
-/**
- * @param {!Unit} unit
- * @param {InventoryItem | null} item
- */
-function useItem(unit, item) {
-  const { state } = jwb;
-  if (!!item) {
-    item.use(unit);
-    const items = unit.inventory[item.category];
-    items.splice(state.inventoryIndex, 1);
-    if (state.inventoryIndex >= items.length) {
-      state.inventoryIndex--;
-    }
-  }
-}
-
-/**
- * @param {!int} index
- */
-function loadMap(index) {
+function loadMap(index: number) {
   const { state } = jwb;
   if (index >= state.mapSuppliers.length) {
     alert('YOU WIN!');
@@ -100,7 +22,7 @@ function loadMap(index) {
   }
 }
 
-function moveOrAttack(unit, { x, y }): Promise<void> {
+function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
   const { map, messages, playerUnit } = jwb.state;
 
   return new Promise(resolve => {
@@ -146,9 +68,8 @@ function restartGame() {
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
- * @return void
  */
-function revealTiles() {
+function revealTiles(): void {
   const { map, playerUnit } = jwb.state;
 
   map.rooms.forEach(room => {
@@ -175,10 +96,6 @@ function revealTiles() {
 }
 
 export {
-  render,
-  update,
-  pickupItem,
-  useItem,
   loadMap,
   moveOrAttack,
   restartGame,

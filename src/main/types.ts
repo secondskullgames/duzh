@@ -1,5 +1,7 @@
 import SpriteFactory from './SpriteFactory';
 import Sprite from "./classes/Sprite";
+import InventoryItem from './classes/InventoryItem';
+import Unit from './classes/Unit';
 
 interface Coordinates {
   x: number,
@@ -93,11 +95,12 @@ enum EquipmentCategory {
   ARMOR = 'ARMOR'
 }
 
-enum GameScreen
-{
+enum GameScreen{
   GAME = 'GAME',
   INVENTORY = 'INVENTORY'
 }
+
+type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
 export {
   Coordinates,
@@ -110,5 +113,6 @@ export {
   ItemCategory,
   EquipmentCategory,
   GameScreen,
-  Tiles
+  Tiles,
+  ItemProc
 };
