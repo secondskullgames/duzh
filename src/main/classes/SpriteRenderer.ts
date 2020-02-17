@@ -46,9 +46,11 @@ class SpriteRenderer {
 
   render(): Promise<any> {
     const { screen } = jwb.state;
+    const t1 = new Date().getTime();
     switch (screen) {
       case 'GAME':
-        return this._renderGameScreen();
+        return this._renderGameScreen()
+          .then(() => console.log(`render time: ${new Date().getTime() - t1}`));
       case 'INVENTORY':
         return this._renderGameScreen()
           .then(() => this._renderInventory());

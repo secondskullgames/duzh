@@ -802,9 +802,11 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         SpriteRenderer.prototype.render = function () {
             var _this = this;
             var screen = jwb.state.screen;
+            var t1 = new Date().getTime();
             switch (screen) {
                 case 'GAME':
-                    return this._renderGameScreen();
+                    return this._renderGameScreen()
+                        .then(function () { return console.log("render time: " + (new Date().getTime() - t1)); });
                 case 'INVENTORY':
                     return this._renderGameScreen()
                         .then(function () { return _this._renderInventory(); });
@@ -1885,7 +1887,7 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
         playSuite: playSuite
     };
 });
-define("utils/ItemUtils", ["require", "exports", "audio", "Sounds"], function (require, exports, audio_2, Sounds_1) {
+define("utils/ItemUtils", ["require", "exports", "audio", "Sounds", "utils/PromiseUtils"], function (require, exports, audio_2, Sounds_1, PromiseUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function pickupItem(unit, mapItem) {
@@ -1903,17 +1905,20 @@ define("utils/ItemUtils", ["require", "exports", "audio", "Sounds"], function (r
     function useItem(unit, item) {
         var state = jwb.state;
         if (!!item) {
-            item.use(unit);
-            var items = unit.inventory[item.category];
-            items.splice(state.inventoryIndex, 1);
-            if (state.inventoryIndex >= items.length) {
-                state.inventoryIndex--;
-            }
+            return item.use(unit)
+                .then(function () {
+                var items = unit.inventory[item.category];
+                items.splice(state.inventoryIndex, 1);
+                if (state.inventoryIndex >= items.length) {
+                    state.inventoryIndex--;
+                }
+            });
         }
+        return PromiseUtils_3.resolvedPromise();
     }
     exports.useItem = useItem;
 });
-define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_3) {
+define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playTurn(playerUnitOrder, doUpdate) {
@@ -1938,7 +1943,8 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
                 unitPromises.push(function () { return u.update(); });
             }
         });
-        return PromiseUtils_3.chainPromises(unitPromises)
+        return PromiseUtils_4.chainPromises(unitPromises)
+            .then(function () { return jwb.renderer.render(); })
             .then(function () {
             state.turn++;
             state.messages = [];
@@ -1948,7 +1954,7 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_4) {
+define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BUSY = false;
@@ -1979,7 +1985,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 return _handleTab();
             default:
         }
-        return PromiseUtils_4.resolvedPromise();
+        return PromiseUtils_5.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(key) {
@@ -2070,8 +2076,9 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 var inventoryCategory = state.inventoryCategory, inventoryIndex = state.inventoryIndex;
                 var items = inventory[inventoryCategory];
                 var item = items[inventoryIndex] || null;
-                ItemUtils_1.useItem(playerUnit, item);
-                return TurnHandler_1.default.playTurn(null, false);
+                state.screen = types_2.GameScreen.GAME;
+                return ItemUtils_1.useItem(playerUnit, item)
+                    .then(function () { return TurnHandler_1.default.playTurn(null, false); });
             }
             default:
                 throw "fux";
@@ -2354,7 +2361,7 @@ define("classes/UnitClass", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_5) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playAnimation(sprite, keys, delay) {
@@ -2369,16 +2376,13 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
                 });
             }); });
         });
-        return PromiseUtils_5.chainPromises(promises)
-            .then(function () {
-            console.log("default: " + sprite.defaultKey);
-        })
+        return PromiseUtils_6.chainPromises(promises)
             .then(function () { return sprite.setImage(sprite.defaultKey); })
             .then(function () { return renderer.render(); });
     }
     exports.playAnimation = playAnimation;
 });
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_6, PlayerSprite_2, SpriteUtils_1) {
+define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_7, PlayerSprite_2, SpriteUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -2433,10 +2437,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_6.resolvedPromise();
-            })
-                .then(function () {
-                return jwb.renderer.render();
+                return PromiseUtils_7.resolvedPromise();
             });
         };
         Unit.prototype.getDamage = function () {
@@ -2479,7 +2480,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             if (this.sprite instanceof PlayerSprite_2.default) {
                 var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
                 var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
-                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 200); });
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 150); });
             }
             promises.push(function () { return new Promise(function (resolve) {
                 _this.life = Math.max(_this.life - damage, 0);
@@ -2506,7 +2507,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 }
                 resolve();
             }); });
-            return PromiseUtils_6.chainPromises(promises);
+            return PromiseUtils_7.chainPromises(promises);
         };
         ;
         return Unit;
@@ -2550,13 +2551,13 @@ define("classes/InventoryItem", ["require", "exports"], function (require, expor
             this._onUse = onUse;
         }
         InventoryItem.prototype.use = function (unit) {
-            this._onUse.call(null, this, unit);
+            return this._onUse.call(null, this, unit);
         };
         return InventoryItem;
     }());
     exports.default = InventoryItem;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/MapUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, MapUtils_7) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/MapUtils", "utils/PromiseUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, MapUtils_7, PromiseUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2594,11 +2595,12 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
     function createScrollOfFloorFire(damage) {
         var map = jwb.state.map;
         var onUse = function (item, unit) {
-            return new Promise(function (resolve) {
-                var adjacentUnits = map.units.filter(function (u) { return MapUtils_7.isAdjacent(u, unit); });
-                adjacentUnits.forEach(function (u) { return u.takeDamage(damage, unit); });
-                resolve();
+            var promises = [];
+            var adjacentUnits = map.units.filter(function (u) { return MapUtils_7.isAdjacent(u, unit); });
+            adjacentUnits.forEach(function (u) {
+                promises.push(function () { return u.takeDamage(damage, unit); });
             });
+            return PromiseUtils_8.chainPromises(promises);
         };
         return new InventoryItem_1.default('Scroll of Floor Fire', types_4.ItemCategory.SCROLL, onUse);
     }

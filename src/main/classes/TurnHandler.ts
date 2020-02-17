@@ -28,6 +28,7 @@ function update(): Promise<void> {
   });
 
   return chainPromises(unitPromises)
+    .then(() => jwb.renderer.render())
     .then(() => {
       state.turn++;
       state.messages = [];

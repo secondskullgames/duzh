@@ -83,9 +83,9 @@ class Unit {
 
         return resolvedPromise();
       })
-      .then(() => {
+      /*.then(() => {
         return jwb.renderer.render();
-      });
+      })*/;
   }
 
   getDamage(): number {
@@ -131,7 +131,7 @@ class Unit {
     if (this.sprite instanceof PlayerSprite) {
       const PlayerSpriteKeys = PlayerSprite.SpriteKeys;
       const sequence = [PlayerSpriteKeys.STANDING_DAMAGED];
-      promises.push(() => playAnimation(this.sprite, sequence, 200));
+      promises.push(() => playAnimation(this.sprite, sequence, 150));
     }
 
     promises.push(() => new Promise(resolve => {

@@ -48,8 +48,6 @@ enum GameScreen{
   INVENTORY = 'INVENTORY'
 }
 
-type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
-
 type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 
 export {
@@ -63,6 +61,5 @@ export {
   ItemCategory,
   EquipmentCategory,
   GameScreen,
-  ItemProc,
   SpriteSupplier
 };

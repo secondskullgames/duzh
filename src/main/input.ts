@@ -131,8 +131,9 @@ function _handleEnter(): Promise<void> {
       const { inventoryCategory, inventoryIndex } = state;
       const items = inventory[inventoryCategory];
       const item = items[inventoryIndex] || null;
-      useItem(playerUnit, item);
-      return TurnHandler.playTurn(null, false);
+      state.screen = GameScreen.GAME;
+      return useItem(playerUnit, item)
+        .then(() => TurnHandler.playTurn(null, false));
     }
     default:
       throw `fux`;
