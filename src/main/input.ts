@@ -1,7 +1,8 @@
 import { loadMap, moveOrAttack } from './actions';
 import { pickupItem, useItem } from './utils/ItemUtils';
-import { GameScreen, ItemCategory, Tiles } from './types';
+import { GameScreen, ItemCategory } from './types';
 import TurnHandler from './classes/TurnHandler';
+import Tiles from './types/Tiles';
 
 function keyHandler(e: KeyboardEvent): Promise<void> {
   switch (e.key) {

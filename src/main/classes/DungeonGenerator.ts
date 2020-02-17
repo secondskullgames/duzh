@@ -1,10 +1,11 @@
 import Unit from './Unit';
-import { Coordinates, MapSection, Room, Tile, Tiles } from '../types';
+import { Coordinates, MapSection, Room, Tile } from '../types';
 import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from '../utils/MapUtils';
 import MapSupplier from './MapSupplier';
 import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 import Pathfinder from './Pathfinder';
 import MapItem from './MapItem';
+import Tiles from '../types/Tiles';
 
 const MAX_EXITS = 3;
 
@@ -25,16 +26,7 @@ class DungeonGenerator {
     this.maxRoomDimension = maxRoomDimension;
     this.minRoomPadding = minRoomPadding;
   }
-  /**
-   * @param {!int} level
-   * @param {!int} width
-   * @param {!int} height
-   * @param {!int} numEnemies
-   * @param {!Function} enemyUnitSupplier (Coordinates -> Unit)
-   * @param {!int} numItems
-   * @param {!Function} itemSupplier (Coordinates -> Item)
-   * @return MapSupplier
-   */
+
   generateDungeon(
     level: number,
     width: number,
@@ -206,16 +198,13 @@ class DungeonGenerator {
    * @private
    */
   private _joinSection(section) {
-    const unconnectedRooms = [...section.rooms];
-    const connectedRooms = [];
+    const unconnectedRooms: Room[] = [...section.rooms];
+    const connectedRooms: Room[] = [];
     connectedRooms.push(unconnectedRooms.pop());
 
     while (unconnectedRooms.length > 0) {
-      /**
-       * @type {[!Room, !Room]}
-       */
-      const candidatePairs = connectedRooms
-        .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => [connectedRoom, unconnectedRoom]))
+      const candidatePairs: [Room, Room][] = connectedRooms
+        .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => <[Room, Room]>[connectedRoom, unconnectedRoom]))
         .filter(([connectedRoom, unconnectedRoom]) => this._canJoinRooms(connectedRoom, unconnectedRoom))
         .sort((first, second) => this._roomDistance(first[0], first[1]) - this._roomDistance(second[0], second[1]));
 

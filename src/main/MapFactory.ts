@@ -1,12 +1,11 @@
 import { randChoice, randInt } from './utils/RandomUtils';
 import SpriteFactory from './SpriteFactory';
 import Unit from './classes/Unit';
-import MapSupplier, { createMap } from './classes/MapSupplier';
+import MapSupplier from './classes/MapSupplier';
 import MapItem from './classes/MapItem';
 import ItemFactory from './ItemFactory';
 import UnitClasses from './UnitClasses';
-import { Tiles } from './types';
-import UnitClass from './classes/UnitClass';
+import Tiles from './types/Tiles';
 import DungeonGenerator from './classes/DungeonGenerator';
 
 const MIN_ROOM_DIMENSION = 6;

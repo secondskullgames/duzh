@@ -1,6 +1,7 @@
-import { Coordinates, Rect, Room, Tile, Tiles } from '../types';
+import { Coordinates, Rect, Room, Tile } from '../types';
 import Unit from './Unit';
 import MapItem from './MapItem';
+import Tiles from '../types/Tiles';
 
 class MapInstance {
   width: number;

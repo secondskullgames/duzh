@@ -91,7 +91,7 @@ class SpriteRenderer {
       .map(element => element.sprite)
       .filter(sprite => !!sprite);
 
-    const promises = sprites.map(sprite => sprite.whenReady());
+    const promises = sprites.map(sprite => sprite.image);
     return Promise.all(promises);
   }
 
@@ -248,7 +248,7 @@ class SpriteRenderer {
     );
   }
 
-  _renderElement(element: (Unit | MapItem | Tile), { x, y }): void {
+  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): void {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
     if (!this._isPixelOnScreen(pixel)) {
@@ -261,8 +261,8 @@ class SpriteRenderer {
     }
   }
 
-  private _drawSprite(sprite: Sprite, { x, y }: Coordinates) {
-    this._context.drawImage(sprite.image, x + sprite.dx, y + sprite.dy);
+  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): void {
+    sprite.image.then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
   /**
