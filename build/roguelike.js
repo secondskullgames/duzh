@@ -1948,9 +1948,17 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4) {
+define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var BUSY = false;
+    function keyHandlerWrapper(e) {
+        if (!BUSY) {
+            BUSY = true;
+            keyHandler(e)
+                .then(function () { BUSY = false; });
+        }
+    }
     function keyHandler(e) {
         switch (e.key) {
             case 'w':
@@ -1971,7 +1979,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 return _handleTab();
             default:
         }
-        return new Promise(function (resolve) { resolve(); });
+        return PromiseUtils_4.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(key) {
@@ -2084,7 +2092,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
         return TurnHandler_1.default.playTurn(null, false);
     }
     function attachEvents() {
-        window.onkeydown = keyHandler;
+        window.onkeydown = keyHandlerWrapper;
     }
     exports.attachEvents = attachEvents;
 });
@@ -2346,7 +2354,7 @@ define("classes/UnitClass", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playAnimation(sprite, keys, delay) {
@@ -2361,7 +2369,7 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
                 });
             }); });
         });
-        return PromiseUtils_4.chainPromises(promises)
+        return PromiseUtils_5.chainPromises(promises)
             .then(function () {
             console.log("default: " + sprite.defaultKey);
         })
@@ -2370,7 +2378,7 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
     }
     exports.playAnimation = playAnimation;
 });
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_5, PlayerSprite_2, SpriteUtils_1) {
+define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_6, PlayerSprite_2, SpriteUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -2425,7 +2433,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_5.resolvedPromise();
+                return PromiseUtils_6.resolvedPromise();
             })
                 .then(function () {
                 return jwb.renderer.render();
@@ -2471,7 +2479,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             if (this.sprite instanceof PlayerSprite_2.default) {
                 var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
                 var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
-                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 100); });
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 200); });
             }
             promises.push(function () { return new Promise(function (resolve) {
                 _this.life = Math.max(_this.life - damage, 0);
@@ -2498,7 +2506,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 }
                 resolve();
             }); });
-            return PromiseUtils_5.chainPromises(promises);
+            return PromiseUtils_6.chainPromises(promises);
         };
         ;
         return Unit;

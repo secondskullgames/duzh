@@ -3,6 +3,17 @@ import { pickupItem, useItem } from './utils/ItemUtils';
 import { GameScreen, ItemCategory } from './types';
 import TurnHandler from './classes/TurnHandler';
 import Tiles from './types/Tiles';
+import { resolvedPromise } from './utils/PromiseUtils';
+
+let BUSY = false;
+
+function keyHandlerWrapper(e: KeyboardEvent) {
+  if (!BUSY) {
+    BUSY = true;
+    keyHandler(e)
+      .then(() => { BUSY = false; });
+  }
+}
 
 function keyHandler(e: KeyboardEvent): Promise<void> {
   switch (e.key) {
@@ -24,7 +35,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
       return _handleTab();
     default:
   }
-  return new Promise(resolve => { resolve(); });
+  return resolvedPromise();
 }
 
 function _handleArrowKey(key): Promise<void> {
@@ -145,7 +156,7 @@ function _handleTab(): Promise<void> {
 }
 
 function attachEvents() {
-  window.onkeydown = keyHandler;
+  window.onkeydown = keyHandlerWrapper;
 }
 
 export {

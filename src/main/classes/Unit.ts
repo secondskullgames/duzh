@@ -131,7 +131,7 @@ class Unit {
     if (this.sprite instanceof PlayerSprite) {
       const PlayerSpriteKeys = PlayerSprite.SpriteKeys;
       const sequence = [PlayerSpriteKeys.STANDING_DAMAGED];
-      promises.push(() => playAnimation(this.sprite, sequence, 100));
+      promises.push(() => playAnimation(this.sprite, sequence, 200));
     }
 
     promises.push(() => new Promise(resolve => {
