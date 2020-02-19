@@ -65,7 +65,8 @@ function restartGame() {
   loadMap(0);
   attachEvents();
   jwb.renderer.render();
-  Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+  //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+  Music.playSuite(Music.SUITE_3);
 }
 
 /**

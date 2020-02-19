@@ -4,6 +4,8 @@ import { GameScreen, ItemCategory } from './types';
 import TurnHandler from './classes/TurnHandler';
 import Tiles from './types/Tiles';
 import { resolvedPromise } from './utils/PromiseUtils';
+import Sounds from './Sounds';
+import { playSound } from './audio';
 
 let BUSY = false;
 
@@ -123,6 +125,7 @@ function _handleEnter(): Promise<void> {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }) === Tiles.STAIRS_DOWN) {
+        playSound(Sounds.DESCEND_STAIRS);
         loadMap(mapIndex + 1);
       }
       return TurnHandler.playTurn(null, true);

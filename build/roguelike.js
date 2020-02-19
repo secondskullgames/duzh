@@ -33,19 +33,17 @@ define("Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sounds = {
-        //PLAYER_HITS_ENEMY: [[175,10],[325,5],[150,10],[300,15],[175,10],[325,5],[150,10],[300,5]],
         PLAYER_HITS_ENEMY: [[175, 5], [0, 5], [150, 5], [0, 5], [300, 5], [0, 5], [125, 5], [0, 5], [350, 5], [0, 10], [100, 5], [0, 10], [350, 5], [0, 10], [125, 5], [0, 10], [300, 5], [0, 15], [150, 5], [0, 15], [175, 5], [0, 20], [150, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        //ENEMY_HITS_PLAYER: [[175,5],[325,10],[150,5],[300,10],[175,5],[325,10],[150,5],[300,10]],
         ENEMY_HITS_PLAYER: [[100, 5], [0, 5], [125, 5], [0, 5], [300, 5], [0, 5], [150, 5], [0, 5], [350, 5], [0, 10], [175, 5], [0, 10], [350, 5], [0, 10], [150, 5], [0, 10], [300, 5], [0, 15], [125, 5], [0, 15], [175, 5], [0, 20], [100, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        PLAYER_DIES: [[100, 2000]],
-        ENEMY_DIES: [[40, 20], [80, 20], [160, 20], [80, 20], [40, 20]],
-        LEVEL_UP: [[1000, 50], [1500, 50], [2000, 50], [2500, 50], [3000, 100]],
-        //DEFLECTED_HIT: [[75,10],[175,15],[75,15],[175,10]],
+        ENEMY_DIES: [[20, 20], [0, 10], [30, 20], [0, 10], [25, 20], [0, 10], [25, 20], [0, 5], [40, 20], [0, 5], [35, 20], [0, 5], [45, 20], [0, 5], [25, 20], [0, 10], [35, 20], [0, 10], [25, 20], [0, 10], [30, 20], [0, 20], [40, 10], [0, 20], [35, 10], [0, 20], [45, 10], [0, 20], [25, 5], [0, 30], [35, 5], [0, 30], [20, 5], [0, 30], [30, 5]],
+        PLAYER_DIES: [[30, 20], [0, 10], [40, 20], [0, 10], [25, 20], [0, 10], [35, 20], [0, 5], [80, 20], [0, 5], [45, 20], [0, 5], [115, 20], [0, 5], [35, 20], [0, 10], [75, 20], [0, 10], [25, 20], [0, 10], [60, 20], [0, 20], [50, 10], [0, 20], [65, 10], [0, 20], [55, 10], [0, 20], [35, 5], [0, 30], [45, 5], [0, 30], [30, 5], [0, 30], [40, 5]],
+        LEVEL_UP: [[1000, 50], [800, 50], [600, 50], [400, 50], [200, 100], [100, 100], [50, 150], [150, 150], [250, 200], [500, 500]],
         DEFLECTED_HIT: [[400, 10], [0, 10], [500, 15], [0, 5], [400, 10], [0, 5], [400, 10], [0, 10], [100, 10], [0, 15], [200, 5]],
-        PICK_UP_ITEM: [[100, 50], [200, 50], [300, 50], [500, 50]],
+        PICK_UP_ITEM: [[50, 50], [0, 5], [100, 50], [0, 10], [200, 50], [0, 20], [400, 50]],
         USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
         OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
-        FOOTSTEP: [[10, 10], [0, 10], [50, 10], [0, 10], [10, 10], [0, 10], [50, 10], [0, 10], [10, 10]]
+        FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
+        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
     };
     exports.default = Sounds;
 });
@@ -242,6 +240,33 @@ define("classes/Sprite", ["require", "exports"], function (require, exports) {
         return Sprite;
     }());
     exports.default = Sprite;
+});
+define("types/Tile", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
+define("types", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ItemCategory;
+    (function (ItemCategory) {
+        ItemCategory["POTION"] = "POTION";
+        ItemCategory["SCROLL"] = "SCROLL";
+        ItemCategory["WEAPON"] = "WEAPON";
+    })(ItemCategory || (ItemCategory = {}));
+    exports.ItemCategory = ItemCategory;
+    var EquipmentCategory;
+    (function (EquipmentCategory) {
+        EquipmentCategory["WEAPON"] = "WEAPON";
+        EquipmentCategory["ARMOR"] = "ARMOR";
+    })(EquipmentCategory || (EquipmentCategory = {}));
+    exports.EquipmentCategory = EquipmentCategory;
+    var GameScreen;
+    (function (GameScreen) {
+        GameScreen["GAME"] = "GAME";
+        GameScreen["INVENTORY"] = "INVENTORY";
+    })(GameScreen || (GameScreen = {}));
+    exports.GameScreen = GameScreen;
 });
 define("classes/EquippedItem", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -1737,7 +1762,7 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
 define("audio", ["require", "exports", "classes/SoundPlayer"], function (require, exports, SoundPlayer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.08); };
+    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.05); };
     var _getSoundPlayer = function () { return new SoundPlayer_1.default(4, 0.15); };
     // TODO very hacky memoizing
     var MUSIC = null;
@@ -1831,7 +1856,37 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
             }
         };
     })();
-    var suites = { SUITE_1: SUITE_1, SUITE_2: SUITE_2 };
+    var SUITE_3 = (function () {
+        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
+            .map(transpose_8va);
+        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
+        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
+            .map(transpose_8va);
+        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
+        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
+            .map(transpose_8va);
+        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
+        return {
+            length: 6400,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
     var currentSuite = null;
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
@@ -1862,6 +1917,7 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
     exports.default = {
         SUITE_1: SUITE_1,
         SUITE_2: SUITE_2,
+        SUITE_3: SUITE_3,
         currentSuite: currentSuite,
         playSuite: playSuite
     };
@@ -1933,7 +1989,7 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_5) {
+define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils", "Sounds", "audio"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_5, Sounds_2, audio_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BUSY = false;
@@ -2047,6 +2103,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                     map.removeItem({ x: x, y: y });
                 }
                 else if (map.getTile({ x: x, y: y }) === Tiles_4.default.STAIRS_DOWN) {
+                    audio_3.playSound(Sounds_2.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null, true);
@@ -2082,7 +2139,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
     }
     exports.attachEvents = attachEvents;
 });
-define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "utils/RandomUtils", "MapFactory", "UnitClasses", "Music", "audio", "utils/MapUtils", "input", "classes/MapSupplier"], function (require, exports, Sounds_2, GameState_1, Unit_2, SpriteRenderer_1, RandomUtils_6, MapFactory_1, UnitClasses_2, Music_1, audio_3, MapUtils_4, input_1, MapSupplier_1) {
+define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "audio", "utils/MapUtils", "input", "classes/MapSupplier"], function (require, exports, Sounds_3, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, audio_4, MapUtils_4, input_1, MapSupplier_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2104,7 +2161,7 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
             if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
                 _a = [x, y], unit.x = _a[0], unit.y = _a[1];
                 if (unit === playerUnit) {
-                    audio_3.playSound(Sounds_2.default.FOOTSTEP);
+                    audio_4.playSound(Sounds_3.default.FOOTSTEP);
                 }
                 resolve();
             }
@@ -2139,7 +2196,8 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
         loadMap(0);
         input_1.attachEvents();
         jwb.renderer.render();
-        Music_1.default.playSuite(RandomUtils_6.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2]));
+        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+        Music_1.default.playSuite(Music_1.default.SUITE_3);
     }
     exports.restartGame = restartGame;
     /**
@@ -2169,7 +2227,7 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
     }
     exports.revealTiles = revealTiles;
 });
-define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "actions"], function (require, exports, MapUtils_5, Pathfinder_2, RandomUtils_7, actions_3) {
+define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "actions"], function (require, exports, MapUtils_5, Pathfinder_2, RandomUtils_6, actions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -2191,7 +2249,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _b = RandomUtils_7.randChoice(tiles), x = _b.x, y = _b.y;
+            var _b = RandomUtils_6.randChoice(tiles), x = _b.x, y = _b.y;
             return actions_3.moveOrAttack(unit, { x: x, y: y });
         }
         return new Promise(function (resolve) { resolve(); });
@@ -2210,7 +2268,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_7.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_6.randChoice(tiles), x = _a.x, y = _a.y;
             return actions_3.moveOrAttack(unit, { x: x, y: y });
         }
         return new Promise(function (resolve) { resolve(); });
@@ -2274,7 +2332,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
         STAY: function () { return new Promise(function (resolve) { resolve(); }); }
     };
 });
-define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_6, RandomUtils_8, UnitBehaviors_1) {
+define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_6, RandomUtils_7, UnitBehaviors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var HUMAN_CAUTIOUS = function (unit) {
@@ -2286,7 +2344,7 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
                 behavior = 'ATTACK_PLAYER';
             }
             else {
-                behavior = RandomUtils_8.weightedRandom({
+                behavior = RandomUtils_7.weightedRandom({
                     'ATTACK_PLAYER': 0.2,
                     'WANDER': 0.5,
                     'FLEE_FROM_PLAYER': 0.3
@@ -2294,14 +2352,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             }
         }
         else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'WANDER': 0.3,
                 'ATTACK_PLAYER': 0.1,
                 'STAY': 0.6
             });
         }
         else {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'ATTACK_PLAYER': 0.6,
                 'WANDER': 0.2,
                 'STAY': 0.2
@@ -2318,14 +2376,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             behavior = 'ATTACK_PLAYER';
         }
         else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'WANDER': 0.4,
                 'STAY': 0.4,
                 'ATTACK_PLAYER': 0.2
             });
         }
         else {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'ATTACK_PLAYER': 0.9,
                 'STAY': 0.1
             });
@@ -2361,7 +2419,7 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
     }
     exports.playAnimation = playAnimation;
 });
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_7, PlayerSprite_2, SpriteUtils_1) {
+define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_5, Sounds_4, PromiseUtils_7, PlayerSprite_2, SpriteUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -2434,7 +2492,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             this.maxLife += lifePerLevel;
             this.life += lifePerLevel;
             this._damage += this.unitClass.damagePerLevel(this.level);
-            audio_4.playSound(Sounds_3.default.LEVEL_UP);
+            audio_5.playSound(Sounds_4.default.LEVEL_UP);
         };
         Unit.prototype.gainExperience = function (experience) {
             this.experience += experience;
@@ -2467,10 +2525,10 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                     map.units = map.units.filter(function (u) { return u !== _this; });
                     if (_this === playerUnit) {
                         alert('Game Over!');
-                        audio_4.playSound(Sounds_3.default.PLAYER_DIES);
+                        audio_5.playSound(Sounds_4.default.PLAYER_DIES);
                     }
                     else {
-                        audio_4.playSound(Sounds_3.default.ENEMY_DIES);
+                        audio_5.playSound(Sounds_4.default.ENEMY_DIES);
                     }
                     if (sourceUnit) {
                         sourceUnit.gainExperience(1);
@@ -2478,10 +2536,10 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 }
                 else {
                     if (_this === playerUnit) {
-                        audio_4.playSound(Sounds_3.default.PLAYER_HITS_ENEMY);
+                        audio_5.playSound(Sounds_4.default.PLAYER_HITS_ENEMY);
                     }
                     else {
-                        audio_4.playSound(Sounds_3.default.ENEMY_HITS_PLAYER);
+                        audio_5.playSound(Sounds_4.default.ENEMY_HITS_PLAYER);
                     }
                 }
                 resolve();
@@ -2492,33 +2550,6 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
         return Unit;
     }());
     exports.default = Unit;
-});
-define("types/Tile", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
-define("types", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ItemCategory;
-    (function (ItemCategory) {
-        ItemCategory["POTION"] = "POTION";
-        ItemCategory["SCROLL"] = "SCROLL";
-        ItemCategory["WEAPON"] = "WEAPON";
-    })(ItemCategory || (ItemCategory = {}));
-    exports.ItemCategory = ItemCategory;
-    var EquipmentCategory;
-    (function (EquipmentCategory) {
-        EquipmentCategory["WEAPON"] = "WEAPON";
-        EquipmentCategory["ARMOR"] = "ARMOR";
-    })(EquipmentCategory || (EquipmentCategory = {}));
-    exports.EquipmentCategory = EquipmentCategory;
-    var GameScreen;
-    (function (GameScreen) {
-        GameScreen["GAME"] = "GAME";
-        GameScreen["INVENTORY"] = "INVENTORY";
-    })(GameScreen || (GameScreen = {}));
-    exports.GameScreen = GameScreen;
 });
 define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -2536,13 +2567,13 @@ define("classes/InventoryItem", ["require", "exports"], function (require, expor
     }());
     exports.default = InventoryItem;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/PromiseUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, PromiseUtils_8) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/PromiseUtils"], function (require, exports, Sounds_5, InventoryItem_1, types_4, audio_6, PromiseUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
         var onUse = function (item, unit) {
             return new Promise(function (resolve) {
-                audio_5.playSound(Sounds_4.default.USE_POTION);
+                audio_6.playSound(Sounds_5.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
                 jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
