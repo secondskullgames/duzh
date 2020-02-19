@@ -261,31 +261,18 @@ define("utils/RandomUtils", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
-     * @param {!int} min
-     * @param {!int} max inclusive
-     * @return {!int}
-     * @private
+     * @param max inclusive
      */
     function randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
     exports.randInt = randInt;
-    /**
-     * @template {T}
-     * @param {!T[]} list
-     * @return {T} null if `list` is empty
-     * @private
-     */
     function randChoice(list) {
         return list[randInt(0, list.length - 1)] || null;
     }
     exports.randChoice = randChoice;
     /**
      * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
-     *
-     * @template <T>
-     * @param {T[]} list
-     * @returns {void}
      */
     function shuffle(list) {
         var n = list.length;
@@ -602,19 +589,6 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
         var dx = _a.dx, dy = _a.dy;
         return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
-    function _stringify(p) {
-        return JSON.stringify(p);
-    }
-    function _memoize(fn) {
-        var cache = {};
-        return function (input) {
-            var key = _stringify(input);
-            if (!cache[key]) {
-                cache[key] = fn(input);
-            }
-            return cache[key];
-        };
-    }
     var SpriteFactory = {
         PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
         WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
@@ -626,18 +600,7 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
         MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
         STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); }
     };
-    var MemoizedSpriteFactory = {};
-    Object.entries(SpriteFactory).forEach(function (_a) {
-        var name = _a[0], supplier = _a[1];
-        if (name === 'PLAYER') { // TODO hack hack hack hack hack
-            MemoizedSpriteFactory[name] = supplier;
-        }
-        else {
-            MemoizedSpriteFactory[name] = _memoize(supplier);
-        }
-    });
-    // export default SpriteFactory;
-    exports.default = MemoizedSpriteFactory;
+    exports.default = SpriteFactory;
 });
 define("types/Tiles", ["require", "exports", "SpriteFactory"], function (require, exports, SpriteFactory_1) {
     "use strict";
@@ -833,7 +796,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var _this = this;
             var _canvas = this._canvas;
             actions_1.revealTiles();
-            return this._waitForSprites()
+            return PromiseUtils_2.resolvedPromise() //this._waitForSprites()
                 .then(function () {
                 _this._context.fillStyle = '#000';
                 _this._context.fillRect(0, 0, _canvas.width, _canvas.height);
@@ -841,9 +804,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                     function () { return _this._renderTiles(); },
                     function () { return _this._renderItems(); },
                     function () { return _this._renderUnits(); },
-                    function () { return _this._renderPlayerInfo(); },
-                    function () { return _this._renderBottomBar(); },
-                    function () { return _this._renderMessages(); }
+                    function () { return Promise.all([_this._renderPlayerInfo(), _this._renderBottomBar(), _this._renderMessages()]); }
                 ]);
             });
         };
@@ -1086,6 +1047,9 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             _context.strokeStyle = '#fff';
             _context.strokeRect(left, top, width, height);
         };
+        /**
+         * @return the top left pixel
+         */
         SpriteRenderer.prototype._gridToPixel = function (_a) {
             var x = _a.x, y = _a.y;
             var playerUnit = jwb.state.playerUnit;
@@ -2641,7 +2605,6 @@ define("main", ["require", "exports", "actions"], function (require, exports, ac
     // @ts-ignore
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_4.restartGame(); };
-    jwb.DEBUG = true;
 });
 define("classes/AsciiRenderer", ["require", "exports"], function (require, exports) {
     "use strict";

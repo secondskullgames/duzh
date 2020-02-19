@@ -1,5 +1,3 @@
-import InventoryItem from './classes/InventoryItem';
-import Unit from './classes/Unit';
 import Tile from './types/Tile';
 import Sprite from './classes/Sprite';
 
@@ -43,7 +41,7 @@ enum EquipmentCategory {
   ARMOR = 'ARMOR'
 }
 
-enum GameScreen{
+enum GameScreen {
   GAME = 'GAME',
   INVENTORY = 'INVENTORY'
 }

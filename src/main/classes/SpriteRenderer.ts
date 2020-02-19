@@ -63,7 +63,7 @@ class SpriteRenderer {
     const { _canvas } = this;
 
     revealTiles();
-    return this._waitForSprites()
+    return resolvedPromise()//this._waitForSprites()
       .then(() => {
         this._context.fillStyle = '#000';
         this._context.fillRect(0, 0, _canvas.width, _canvas.height);
