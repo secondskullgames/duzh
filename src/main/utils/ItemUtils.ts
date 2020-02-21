@@ -3,6 +3,7 @@ import MapItem from '../classes/MapItem';
 import InventoryItem from '../classes/InventoryItem';
 import { playSound } from '../audio';
 import Sounds from '../Sounds';
+import { resolvedPromise } from './PromiseUtils';
 
 function pickupItem(unit: Unit, mapItem: MapItem) {
   const { state } = jwb;
@@ -16,16 +17,19 @@ function pickupItem(unit: Unit, mapItem: MapItem) {
   playSound(Sounds.PICK_UP_ITEM);
 }
 
-function useItem(unit: Unit, item: (InventoryItem | null)) {
+function useItem(unit: Unit, item: (InventoryItem | null)): Promise<any> {
   const { state } = jwb;
   if (!!item) {
-    item.use(unit);
-    const items = unit.inventory[item.category];
-    items.splice(state.inventoryIndex, 1);
-    if (state.inventoryIndex >= items.length) {
-      state.inventoryIndex--;
-    }
+    return item.use(unit)
+      .then(() => {
+        const items = unit.inventory[item.category];
+        items.splice(state.inventoryIndex, 1);
+        if (state.inventoryIndex >= items.length) {
+          state.inventoryIndex--;
+        }
+      });
   }
+  return resolvedPromise();
 }
 
 export {

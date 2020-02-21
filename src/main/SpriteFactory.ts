@@ -1,13 +1,24 @@
+import ImageLoader from './classes/ImageLoader';
 import Sprite from './classes/Sprite';
+import { SpriteSupplier } from './types';
+import PlayerSprite from './classes/PlayerSprite';
 
-export default {
-  PLAYER: paletteSwaps => new Sprite('player_standing_SE_1', { dx: -4, dy: -20 }, '#ffffff', paletteSwaps),
-  WALL_TOP: () => new Sprite('tile_wall', { dx: 0, dy: 0 }, '#ffffff'),
-  WALL_HALL: () => new Sprite('tile_wall_hall', { dx: 0, dy: 0 }, '#ffffff'),
-  FLOOR: () => new Sprite('tile_floor', { dx: 0, dy: 0 }, '#ffffff'),
-  FLOOR_HALL: () => new Sprite('tile_floor_hall', { dx: 0, dy: 0 }, '#ffffff'),
-  MAP_SWORD: () => new Sprite('sword_icon_small', { dx: 0, dy: -8 }, '#ffffff'),
-  MAP_POTION: () => new Sprite('potion_small', { dx: 0, dy: -8 }, '#ffffff'),
-  MAP_SCROLL: () => new Sprite('scroll_icon', { dx: 0, dy: 0 }, '#ffffff'),
-  STAIRS_DOWN: () => new Sprite('stairs_down2', { dx: 0, dy: 0 }, '#ffffff')
+const DEFAULT_SPRITE_KEY = 'default';
+
+function _staticSprite(imageLoader: ImageLoader, { dx, dy }): Sprite {
+  return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
+}
+
+const SpriteFactory: { [name: string]: SpriteSupplier } = {
+  PLAYER: paletteSwaps => new PlayerSprite(paletteSwaps),
+  WALL_TOP: paletteSwaps => _staticSprite(new ImageLoader('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }),
+  WALL_HALL: paletteSwaps => _staticSprite(new ImageLoader('tile_wall_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }),
+  FLOOR: paletteSwaps => _staticSprite(new ImageLoader('tile_floor', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }),
+  FLOOR_HALL: paletteSwaps => _staticSprite(new ImageLoader('tile_floor_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }),
+  MAP_SWORD: paletteSwaps => _staticSprite(new ImageLoader('sword_icon_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }),
+  MAP_POTION: paletteSwaps => _staticSprite(new ImageLoader('potion_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }),
+  MAP_SCROLL: paletteSwaps => _staticSprite(new ImageLoader('scroll_icon', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }),
+  STAIRS_DOWN: paletteSwaps => _staticSprite(new ImageLoader('stairs_down2', '#ffffff', paletteSwaps), { dx: 0, dy: 0 })
 };
+
+export default SpriteFactory;

@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -20,19 +33,17 @@ define("Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sounds = {
-        //PLAYER_HITS_ENEMY: [[175,10],[325,5],[150,10],[300,15],[175,10],[325,5],[150,10],[300,5]],
         PLAYER_HITS_ENEMY: [[175, 5], [0, 5], [150, 5], [0, 5], [300, 5], [0, 5], [125, 5], [0, 5], [350, 5], [0, 10], [100, 5], [0, 10], [350, 5], [0, 10], [125, 5], [0, 10], [300, 5], [0, 15], [150, 5], [0, 15], [175, 5], [0, 20], [150, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        //ENEMY_HITS_PLAYER: [[175,5],[325,10],[150,5],[300,10],[175,5],[325,10],[150,5],[300,10]],
         ENEMY_HITS_PLAYER: [[100, 5], [0, 5], [125, 5], [0, 5], [300, 5], [0, 5], [150, 5], [0, 5], [350, 5], [0, 10], [175, 5], [0, 10], [350, 5], [0, 10], [150, 5], [0, 10], [300, 5], [0, 15], [125, 5], [0, 15], [175, 5], [0, 20], [100, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        PLAYER_DIES: [[100, 2000]],
-        ENEMY_DIES: [[40, 20], [80, 20], [160, 20], [80, 20], [40, 20]],
-        LEVEL_UP: [[1000, 50], [1500, 50], [2000, 50], [2500, 50], [3000, 100]],
-        //DEFLECTED_HIT: [[75,10],[175,15],[75,15],[175,10]],
+        ENEMY_DIES: [[20, 20], [0, 10], [30, 20], [0, 10], [25, 20], [0, 10], [25, 20], [0, 5], [40, 20], [0, 5], [35, 20], [0, 5], [45, 20], [0, 5], [25, 20], [0, 10], [35, 20], [0, 10], [25, 20], [0, 10], [30, 20], [0, 20], [40, 10], [0, 20], [35, 10], [0, 20], [45, 10], [0, 20], [25, 5], [0, 30], [35, 5], [0, 30], [20, 5], [0, 30], [30, 5]],
+        PLAYER_DIES: [[30, 20], [0, 10], [40, 20], [0, 10], [25, 20], [0, 10], [35, 20], [0, 5], [80, 20], [0, 5], [45, 20], [0, 5], [115, 20], [0, 5], [35, 20], [0, 10], [75, 20], [0, 10], [25, 20], [0, 10], [60, 20], [0, 20], [50, 10], [0, 20], [65, 10], [0, 20], [55, 10], [0, 20], [35, 5], [0, 30], [45, 5], [0, 30], [30, 5], [0, 30], [40, 5]],
+        LEVEL_UP: [[1000, 50], [800, 50], [600, 50], [400, 50], [200, 100], [100, 100], [50, 150], [150, 150], [250, 200], [500, 500]],
         DEFLECTED_HIT: [[400, 10], [0, 10], [500, 15], [0, 5], [400, 10], [0, 5], [400, 10], [0, 10], [100, 10], [0, 15], [200, 5]],
-        PICK_UP_ITEM: [[100, 50], [200, 50], [300, 50], [500, 50]],
+        PICK_UP_ITEM: [[50, 50], [0, 5], [100, 50], [0, 10], [200, 50], [0, 20], [400, 50]],
         USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
         OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
-        FOOTSTEP: [[10, 10], [0, 10], [50, 10], [0, 10], [10, 10], [0, 10], [50, 10], [0, 10], [10, 10]]
+        FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
+        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
     };
     exports.default = Sounds;
 });
@@ -124,6 +135,30 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
     }
     exports.replaceColors = replaceColors;
     /**
+     * Replace all non-transparent colors with the specified `color`.
+     */
+    function replaceAll(imageData, color) {
+        return new Promise(function (resolve) {
+            var _a = hex2rgb(color), dr = _a[0], dg = _a[1], db = _a[2];
+            var array = new Uint8ClampedArray(imageData.data.length);
+            for (var i = 0; i < imageData.data.length; i += 4) {
+                // @ts-ignore
+                var _b = imageData.data.slice(i, i + 4), r = _b[0], g = _b[1], b = _b[2], a = _b[3];
+                array[i] = r;
+                array[i + 1] = g;
+                array[i + 2] = b;
+                array[i + 3] = a;
+                if (a > 0) {
+                    array[i] = dr;
+                    array[i + 1] = dg;
+                    array[i + 2] = db;
+                }
+            }
+            resolve(new ImageData(array, imageData.width, imageData.height));
+        });
+    }
+    exports.replaceAll = replaceAll;
+    /**
      * @param {string} hex e.g. '#ff0000'
      * @return {[int, int, int]} [r,g,b]
      */
@@ -137,29 +172,101 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
     }
     exports.hex2rgb = hex2rgb;
 });
-define("classes/Sprite", ["require", "exports", "utils/ImageUtils"], function (require, exports, ImageUtils_1) {
+define("utils/PromiseUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function resolvedPromise(value) {
+        return new Promise(function (resolve) { return resolve(value); });
+    }
+    exports.resolvedPromise = resolvedPromise;
+    function chainPromises(_a, input) {
+        var first = _a[0], rest = _a.slice(1);
+        if (!!first) {
+            return first(input).then(function (output) { return chainPromises(rest, output); });
+        }
+        return resolvedPromise(input);
+    }
+    exports.chainPromises = chainPromises;
+});
+define("classes/ImageLoader", ["require", "exports", "utils/ImageUtils", "utils/PromiseUtils"], function (require, exports, ImageUtils_1, PromiseUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ImageLoader = /** @class */ (function () {
+        function ImageLoader(filename, transparentColor, paletteSwaps, effects) {
+            if (paletteSwaps === void 0) { paletteSwaps = {}; }
+            if (effects === void 0) { effects = []; }
+            this.image = null;
+            this.image = null;
+            this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
+                .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
+                .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
+                .then(function (imageData) { return PromiseUtils_1.chainPromises(effects, imageData); })
+                .then(function (imageData) { return createImageBitmap(imageData); }); };
+        }
+        ImageLoader.prototype.load = function () {
+            if (!this.image) {
+                this.image = this._imageSupplier();
+            }
+        };
+        return ImageLoader;
+    }());
+    exports.default = ImageLoader;
+});
+define("classes/Sprite", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sprite = /** @class */ (function () {
-        function Sprite(filename, _a, transparentColor, paletteSwaps) {
-            var _this = this;
+        function Sprite(imageMap, key, _a) {
             var dx = _a.dx, dy = _a.dy;
-            if (paletteSwaps === void 0) { paletteSwaps = {}; }
-            this.image = null;
+            this._imageMap = imageMap;
+            this.defaultKey = key;
+            this.key = key;
             this.dx = dx;
             this.dy = dy;
-            this._imagePromise = ImageUtils_1.loadImage(filename)
-                .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
-                .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
-                .then(function (imageData) { return createImageBitmap(imageData); })
-                .then(function (imageBitmap) { _this.image = imageBitmap; });
+            this.getImage();
         }
-        Sprite.prototype.whenReady = function () {
-            return this._imagePromise;
+        Sprite.prototype.getImage = function () {
+            var imageLoader = this._imageMap[this.key];
+            if (!imageLoader) {
+                throw "Invalid sprite key " + this.key;
+            }
+            imageLoader.load();
+            return imageLoader.image;
+        };
+        Sprite.prototype.setImage = function (key) {
+            this.key = key;
+            return this.getImage();
         };
         return Sprite;
     }());
     exports.default = Sprite;
+});
+define("types/Tile", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
+define("types", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ItemCategory;
+    (function (ItemCategory) {
+        ItemCategory["POTION"] = "POTION";
+        ItemCategory["SCROLL"] = "SCROLL";
+        ItemCategory["WEAPON"] = "WEAPON";
+    })(ItemCategory || (ItemCategory = {}));
+    exports.ItemCategory = ItemCategory;
+    var EquipmentCategory;
+    (function (EquipmentCategory) {
+        EquipmentCategory["WEAPON"] = "WEAPON";
+        EquipmentCategory["ARMOR"] = "ARMOR";
+    })(EquipmentCategory || (EquipmentCategory = {}));
+    exports.EquipmentCategory = EquipmentCategory;
+    var GameScreen;
+    (function (GameScreen) {
+        GameScreen["GAME"] = "GAME";
+        GameScreen["INVENTORY"] = "INVENTORY";
+    })(GameScreen || (GameScreen = {}));
+    exports.GameScreen = GameScreen;
 });
 define("classes/EquippedItem", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -179,31 +286,18 @@ define("utils/RandomUtils", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
-     * @param {!int} min
-     * @param {!int} max inclusive
-     * @return {!int}
-     * @private
+     * @param max inclusive
      */
     function randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
     exports.randInt = randInt;
-    /**
-     * @template {T}
-     * @param {!T[]} list
-     * @return {T} null if `list` is empty
-     * @private
-     */
     function randChoice(list) {
         return list[randInt(0, list.length - 1)] || null;
     }
     exports.randChoice = randChoice;
     /**
      * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
-     *
-     * @template <T>
-     * @param {T[]} list
-     * @returns {void}
      */
     function shuffle(list) {
         var n = list.length;
@@ -329,21 +423,12 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
         return Math.max(dx, dy) + Math.min(dx, dy) / 2;
     }
     exports.civDistance = civDistance;
-    /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @returns {!boolean}
-     */
     function isAdjacent(first, second) {
         var dx = Math.abs(first.x - second.x);
         var dy = Math.abs(first.y - second.y);
         return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
     }
     exports.isAdjacent = isAdjacent;
-    /**
-     * @param {!int} x
-     * @param {!int} y
-     */
     function isTileRevealed(_a) {
         var x = _a.x, y = _a.y;
         if (jwb.DEBUG) {
@@ -498,20 +583,49 @@ define("classes/MapItem", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("SpriteFactory", ["require", "exports", "classes/Sprite"], function (require, exports, Sprite_1) {
+define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "utils/ImageUtils", "classes/Sprite"], function (require, exports, ImageLoader_1, ImageUtils_2, Sprite_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.default = {
-        PLAYER: function (paletteSwaps) { return new Sprite_1.default('player_standing_SE_1', { dx: -4, dy: -20 }, '#ffffff', paletteSwaps); },
-        WALL_TOP: function () { return new Sprite_1.default('tile_wall', { dx: 0, dy: 0 }, '#ffffff'); },
-        WALL_HALL: function () { return new Sprite_1.default('tile_wall_hall', { dx: 0, dy: 0 }, '#ffffff'); },
-        FLOOR: function () { return new Sprite_1.default('tile_floor', { dx: 0, dy: 0 }, '#ffffff'); },
-        FLOOR_HALL: function () { return new Sprite_1.default('tile_floor_hall', { dx: 0, dy: 0 }, '#ffffff'); },
-        MAP_SWORD: function () { return new Sprite_1.default('sword_icon_small', { dx: 0, dy: -8 }, '#ffffff'); },
-        MAP_POTION: function () { return new Sprite_1.default('potion_small', { dx: 0, dy: -8 }, '#ffffff'); },
-        MAP_SCROLL: function () { return new Sprite_1.default('scroll_icon', { dx: 0, dy: 0 }, '#ffffff'); },
-        STAIRS_DOWN: function () { return new Sprite_1.default('stairs_down2', { dx: 0, dy: 0 }, '#ffffff'); }
+    var SpriteKeys;
+    (function (SpriteKeys) {
+        SpriteKeys["STANDING"] = "STANDING";
+        SpriteKeys["STANDING_DAMAGED"] = "STANDING_DAMAGED";
+    })(SpriteKeys || (SpriteKeys = {}));
+    var PlayerSprite = /** @class */ (function (_super) {
+        __extends(PlayerSprite, _super);
+        function PlayerSprite(paletteSwaps) {
+            var _a;
+            return _super.call(this, (_a = {},
+                _a[SpriteKeys.STANDING] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps),
+                _a[SpriteKeys.STANDING_DAMAGED] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, '#ffffff'); }]),
+                _a), SpriteKeys.STANDING, { dx: -4, dy: -20 }) || this;
+        }
+        PlayerSprite.SpriteKeys = SpriteKeys;
+        return PlayerSprite;
+    }(Sprite_1.default));
+    exports.default = PlayerSprite;
+});
+define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DEFAULT_SPRITE_KEY = 'default';
+    function _staticSprite(imageLoader, _a) {
+        var _b;
+        var dx = _a.dx, dy = _a.dy;
+        return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
+    }
+    var SpriteFactory = {
+        PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
+        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('sword_icon_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('potion_small', '#ffffff', paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
+        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); }
     };
+    exports.default = SpriteFactory;
 });
 define("types/Tiles", ["require", "exports", "SpriteFactory"], function (require, exports, SpriteFactory_1) {
     "use strict";
@@ -658,7 +772,7 @@ define("classes/GameState", ["require", "exports", "types"], function (require, 
     }());
     exports.default = GameState;
 });
-define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions"], function (require, exports, MapUtils_2, actions_1) {
+define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions", "utils/PromiseUtils"], function (require, exports, MapUtils_2, actions_1, PromiseUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -691,9 +805,11 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         SpriteRenderer.prototype.render = function () {
             var _this = this;
             var screen = jwb.state.screen;
+            var t1 = new Date().getTime();
             switch (screen) {
                 case 'GAME':
-                    return this._renderGameScreen();
+                    return this._renderGameScreen()
+                        .then(function () { return console.log("render time: " + (new Date().getTime() - t1)); });
                 case 'INVENTORY':
                     return this._renderGameScreen()
                         .then(function () { return _this._renderInventory(); });
@@ -705,17 +821,15 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var _this = this;
             var _canvas = this._canvas;
             actions_1.revealTiles();
-            return this._waitForSprites()
+            return PromiseUtils_2.resolvedPromise() //this._waitForSprites()
                 .then(function () {
                 _this._context.fillStyle = '#000';
                 _this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-                return Promise.all([
-                    _this._renderTiles(),
-                    _this._renderItems(),
-                    _this._renderUnits(),
-                    _this._renderPlayerInfo(),
-                    _this._renderBottomBar(),
-                    _this._renderMessages()
+                return PromiseUtils_2.chainPromises([
+                    function () { return _this._renderTiles(); },
+                    function () { return _this._renderItems(); },
+                    function () { return _this._renderUnits(); },
+                    function () { return Promise.all([_this._renderPlayerInfo(), _this._renderBottomBar(), _this._renderMessages()]); }
                 ]);
             });
         };
@@ -732,25 +846,23 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var sprites = elements.filter(function (element) { return !!element; })
                 .map(function (element) { return element.sprite; })
                 .filter(function (sprite) { return !!sprite; });
-            var promises = sprites.map(function (sprite) { return sprite.whenReady(); });
+            var promises = sprites.map(function (sprite) { return sprite.getImage(); });
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderTiles = function () {
-            var _this = this;
-            return new Promise(function (resolve) {
-                var map = jwb.state.map;
-                for (var y = 0; y < map.height; y++) {
-                    for (var x = 0; x < map.width; x++) {
-                        if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
-                            var tile = map.getTile({ x: x, y: y });
-                            if (!!tile) {
-                                _this._renderElement(tile, { x: x, y: y });
-                            }
+            var promises = [];
+            var map = jwb.state.map;
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
+                        var tile = map.getTile({ x: x, y: y });
+                        if (!!tile) {
+                            promises.push(this._renderElement(tile, { x: x, y: y }));
                         }
                     }
                 }
-                resolve();
-            });
+            }
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderItems = function () {
             var map = jwb.state.map;
@@ -861,7 +973,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 _context.fillText(items[i].name, x, y_1);
             }
             _context.fillStyle = '#fff';
-            return new Promise(function (resolve) { resolve(); });
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -873,17 +985,19 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         SpriteRenderer.prototype._renderElement = function (element, _a) {
             var x = _a.x, y = _a.y;
             var pixel = this._gridToPixel({ x: x, y: y });
-            if (!this._isPixelOnScreen(pixel)) {
-                return;
+            if (this._isPixelOnScreen(pixel)) {
+                var sprite = element.sprite;
+                if (!!sprite) {
+                    return this._drawSprite(sprite, pixel);
+                }
             }
-            var sprite = element.sprite;
-            if (!!sprite) {
-                this._drawSprite(sprite, pixel);
-            }
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
+            var _this = this;
             var x = _a.x, y = _a.y;
-            this._context.drawImage(sprite.image, x + sprite.dx, y + sprite.dy);
+            return sprite.getImage()
+                .then(function (image) { return _this._context.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
         /**
          * Renders the bottom-left area of the screen, showing information about the player
@@ -938,21 +1052,18 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             });
         };
         SpriteRenderer.prototype._renderBottomBar = function () {
-            var _this = this;
             var _context = this._context;
-            return new Promise(function (resolve) {
-                var left = BOTTOM_PANEL_WIDTH;
-                var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-                var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
-                _this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
-                var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
-                _context.textAlign = 'left';
-                _context.fillStyle = '#fff';
-                var textLeft = left + 4;
-                _context.fillText("Level: " + (mapIndex + 1), textLeft, top + 8);
-                _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-                resolve();
-            });
+            var left = BOTTOM_PANEL_WIDTH;
+            var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+            var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+            this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
+            _context.textAlign = 'left';
+            _context.fillStyle = '#fff';
+            var textLeft = left + 4;
+            _context.fillText("Level: " + (mapIndex + 1), textLeft, top + 8);
+            _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
+            return PromiseUtils_2.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (left, top, width, height) {
             var _context = this._context;
@@ -961,6 +1072,9 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             _context.strokeStyle = '#fff';
             _context.strokeRect(left, top, width, height);
         };
+        /**
+         * @return the top left pixel
+         */
         SpriteRenderer.prototype._gridToPixel = function (_a) {
             var x = _a.x, y = _a.y;
             var playerUnit = jwb.state.playerUnit;
@@ -1648,7 +1762,7 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
 define("audio", ["require", "exports", "classes/SoundPlayer"], function (require, exports, SoundPlayer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.08); };
+    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.05); };
     var _getSoundPlayer = function () { return new SoundPlayer_1.default(4, 0.15); };
     // TODO very hacky memoizing
     var MUSIC = null;
@@ -1742,7 +1856,37 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
             }
         };
     })();
-    var suites = { SUITE_1: SUITE_1, SUITE_2: SUITE_2 };
+    var SUITE_3 = (function () {
+        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
+            .map(transpose_8va);
+        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
+        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
+            .map(transpose_8va);
+        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
+        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
+            .map(transpose_8va);
+        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
+        return {
+            length: 6400,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
     var currentSuite = null;
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
@@ -1773,11 +1917,12 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
     exports.default = {
         SUITE_1: SUITE_1,
         SUITE_2: SUITE_2,
+        SUITE_3: SUITE_3,
         currentSuite: currentSuite,
         playSuite: playSuite
     };
 });
-define("utils/ItemUtils", ["require", "exports", "audio", "Sounds"], function (require, exports, audio_2, Sounds_1) {
+define("utils/ItemUtils", ["require", "exports", "audio", "Sounds", "utils/PromiseUtils"], function (require, exports, audio_2, Sounds_1, PromiseUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function pickupItem(unit, mapItem) {
@@ -1795,33 +1940,20 @@ define("utils/ItemUtils", ["require", "exports", "audio", "Sounds"], function (r
     function useItem(unit, item) {
         var state = jwb.state;
         if (!!item) {
-            item.use(unit);
-            var items = unit.inventory[item.category];
-            items.splice(state.inventoryIndex, 1);
-            if (state.inventoryIndex >= items.length) {
-                state.inventoryIndex--;
-            }
+            return item.use(unit)
+                .then(function () {
+                var items = unit.inventory[item.category];
+                items.splice(state.inventoryIndex, 1);
+                if (state.inventoryIndex >= items.length) {
+                    state.inventoryIndex--;
+                }
+            });
         }
+        return PromiseUtils_3.resolvedPromise();
     }
     exports.useItem = useItem;
 });
-define("utils/PromiseUtils", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function resolvedPromise(value) {
-        return new Promise(function (resolve) { return resolve(value); });
-    }
-    exports.resolvedPromise = resolvedPromise;
-    function chainPromises(_a) {
-        var first = _a[0], rest = _a.slice(1);
-        if (!!first) {
-            return first().then(function () { return chainPromises(rest); });
-        }
-        return resolvedPromise();
-    }
-    exports.chainPromises = chainPromises;
-});
-define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_1) {
+define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playTurn(playerUnitOrder, doUpdate) {
@@ -1835,10 +1967,6 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
             return renderer.render();
         }
     }
-    /**
-     * Execute every entity's `update` method, with appropriate calls to `renderer.render()` when necessary
-     * (will always call `renderer.render()` as the last step
-     */
     function update() {
         var state = jwb.state;
         var _a = jwb.state, playerUnit = _a.playerUnit, map = _a.map;
@@ -1850,7 +1978,8 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
                 unitPromises.push(function () { return u.update(); });
             }
         });
-        return PromiseUtils_1.chainPromises(unitPromises)
+        return PromiseUtils_4.chainPromises(unitPromises)
+            .then(function () { return jwb.renderer.render(); })
             .then(function () {
             state.turn++;
             state.messages = [];
@@ -1860,9 +1989,17 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4) {
+define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils", "Sounds", "audio"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_5, Sounds_2, audio_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var BUSY = false;
+    function keyHandlerWrapper(e) {
+        if (!BUSY) {
+            BUSY = true;
+            keyHandler(e)
+                .then(function () { BUSY = false; });
+        }
+    }
     function keyHandler(e) {
         switch (e.key) {
             case 'w':
@@ -1883,7 +2020,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 return _handleTab();
             default:
         }
-        return new Promise(function (resolve) { resolve(); });
+        return PromiseUtils_5.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(key) {
@@ -1966,6 +2103,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                     map.removeItem({ x: x, y: y });
                 }
                 else if (map.getTile({ x: x, y: y }) === Tiles_4.default.STAIRS_DOWN) {
+                    audio_3.playSound(Sounds_2.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null, true);
@@ -1974,8 +2112,9 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 var inventoryCategory = state.inventoryCategory, inventoryIndex = state.inventoryIndex;
                 var items = inventory[inventoryCategory];
                 var item = items[inventoryIndex] || null;
-                ItemUtils_1.useItem(playerUnit, item);
-                return TurnHandler_1.default.playTurn(null, false);
+                state.screen = types_2.GameScreen.GAME;
+                return ItemUtils_1.useItem(playerUnit, item)
+                    .then(function () { return TurnHandler_1.default.playTurn(null, false); });
             }
             default:
                 throw "fux";
@@ -1996,11 +2135,11 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
         return TurnHandler_1.default.playTurn(null, false);
     }
     function attachEvents() {
-        window.onkeydown = keyHandler;
+        window.onkeydown = keyHandlerWrapper;
     }
     exports.attachEvents = attachEvents;
 });
-define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "utils/RandomUtils", "MapFactory", "UnitClasses", "Music", "audio", "utils/MapUtils", "input", "classes/MapSupplier"], function (require, exports, Sounds_2, GameState_1, Unit_2, SpriteRenderer_1, RandomUtils_6, MapFactory_1, UnitClasses_2, Music_1, audio_3, MapUtils_4, input_1, MapSupplier_1) {
+define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "audio", "utils/MapUtils", "input", "classes/MapSupplier"], function (require, exports, Sounds_3, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, audio_4, MapUtils_4, input_1, MapSupplier_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2022,7 +2161,7 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
             if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
                 _a = [x, y], unit.x = _a[0], unit.y = _a[1];
                 if (unit === playerUnit) {
-                    audio_3.playSound(Sounds_2.default.FOOTSTEP);
+                    audio_4.playSound(Sounds_3.default.FOOTSTEP);
                 }
                 resolve();
             }
@@ -2031,9 +2170,12 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
                 if (!!targetUnit) {
                     var damage = unit.getDamage();
                     messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
-                    targetUnit.takeDamage(damage, unit);
+                    targetUnit.takeDamage(damage, unit)
+                        .then(function () { return resolve(); });
                 }
-                setTimeout(function () { return resolve(); }, 250);
+                else {
+                    resolve();
+                }
             }
         });
     }
@@ -2054,7 +2196,8 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
         loadMap(0);
         input_1.attachEvents();
         jwb.renderer.render();
-        Music_1.default.playSuite(RandomUtils_6.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2]));
+        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+        Music_1.default.playSuite(Music_1.default.SUITE_3);
     }
     exports.restartGame = restartGame;
     /**
@@ -2084,7 +2227,7 @@ define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes
     }
     exports.revealTiles = revealTiles;
 });
-define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "actions"], function (require, exports, MapUtils_5, Pathfinder_2, RandomUtils_7, actions_3) {
+define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "actions"], function (require, exports, MapUtils_5, Pathfinder_2, RandomUtils_6, actions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -2106,7 +2249,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _b = RandomUtils_7.randChoice(tiles), x = _b.x, y = _b.y;
+            var _b = RandomUtils_6.randChoice(tiles), x = _b.x, y = _b.y;
             return actions_3.moveOrAttack(unit, { x: x, y: y });
         }
         return new Promise(function (resolve) { resolve(); });
@@ -2125,7 +2268,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_7.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_6.randChoice(tiles), x = _a.x, y = _a.y;
             return actions_3.moveOrAttack(unit, { x: x, y: y });
         }
         return new Promise(function (resolve) { resolve(); });
@@ -2189,7 +2332,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
         STAY: function () { return new Promise(function (resolve) { resolve(); }); }
     };
 });
-define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_6, RandomUtils_8, UnitBehaviors_1) {
+define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_6, RandomUtils_7, UnitBehaviors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var HUMAN_CAUTIOUS = function (unit) {
@@ -2201,7 +2344,7 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
                 behavior = 'ATTACK_PLAYER';
             }
             else {
-                behavior = RandomUtils_8.weightedRandom({
+                behavior = RandomUtils_7.weightedRandom({
                     'ATTACK_PLAYER': 0.2,
                     'WANDER': 0.5,
                     'FLEE_FROM_PLAYER': 0.3
@@ -2209,14 +2352,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             }
         }
         else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'WANDER': 0.3,
                 'ATTACK_PLAYER': 0.1,
                 'STAY': 0.6
             });
         }
         else {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'ATTACK_PLAYER': 0.6,
                 'WANDER': 0.2,
                 'STAY': 0.2
@@ -2233,14 +2376,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             behavior = 'ATTACK_PLAYER';
         }
         else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'WANDER': 0.4,
                 'STAY': 0.4,
                 'ATTACK_PLAYER': 0.2
             });
         }
         else {
-            behavior = RandomUtils_8.weightedRandom({
+            behavior = RandomUtils_7.weightedRandom({
                 'ATTACK_PLAYER': 0.9,
                 'STAY': 0.1
             });
@@ -2255,11 +2398,28 @@ define("classes/UnitClass", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("classes/Entity", ["require", "exports"], function (require, exports) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    function playAnimation(sprite, keys, delay) {
+        var renderer = jwb.renderer;
+        var promises = [];
+        keys.forEach(function (key) {
+            promises.push(function () { return new Promise(function (resolve) {
+                sprite.setImage(key)
+                    .then(function () { return renderer.render(); })
+                    .then(function () {
+                    setTimeout(function () { resolve(); }, delay);
+                });
+            }); });
+        });
+        return PromiseUtils_6.chainPromises(promises)
+            .then(function () { return sprite.setImage(sprite.defaultKey); })
+            .then(function () { return renderer.render(); });
+    }
+    exports.playAnimation = playAnimation;
 });
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils"], function (require, exports, types_3, audio_4, Sounds_3, PromiseUtils_2) {
+define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_5, Sounds_4, PromiseUtils_7, PlayerSprite_2, SpriteUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -2314,10 +2474,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_2.resolvedPromise();
-            })
-                .then(function () {
-                return jwb.renderer.render();
+                return PromiseUtils_7.resolvedPromise();
             });
         };
         Unit.prototype.getDamage = function () {
@@ -2335,7 +2492,7 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             this.maxLife += lifePerLevel;
             this.life += lifePerLevel;
             this._damage += this.unitClass.damagePerLevel(this.level);
-            audio_4.playSound(Sounds_3.default.LEVEL_UP);
+            audio_5.playSound(Sounds_4.default.LEVEL_UP);
         };
         Unit.prototype.gainExperience = function (experience) {
             this.experience += experience;
@@ -2356,63 +2513,43 @@ define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils
             var _this = this;
             if (sourceUnit === void 0) { sourceUnit = undefined; }
             var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-            this.life = Math.max(this.life - damage, 0);
-            if (this.life === 0) {
-                map.units = map.units.filter(function (u) { return u !== _this; });
-                if (this === playerUnit) {
-                    alert('Game Over!');
-                    audio_4.playSound(Sounds_3.default.PLAYER_DIES);
+            var promises = [];
+            if (this.sprite instanceof PlayerSprite_2.default) {
+                var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
+                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 150); });
+            }
+            promises.push(function () { return new Promise(function (resolve) {
+                _this.life = Math.max(_this.life - damage, 0);
+                if (_this.life === 0) {
+                    map.units = map.units.filter(function (u) { return u !== _this; });
+                    if (_this === playerUnit) {
+                        alert('Game Over!');
+                        audio_5.playSound(Sounds_4.default.PLAYER_DIES);
+                    }
+                    else {
+                        audio_5.playSound(Sounds_4.default.ENEMY_DIES);
+                    }
+                    if (sourceUnit) {
+                        sourceUnit.gainExperience(1);
+                    }
                 }
                 else {
-                    audio_4.playSound(Sounds_3.default.ENEMY_DIES);
+                    if (_this === playerUnit) {
+                        audio_5.playSound(Sounds_4.default.PLAYER_HITS_ENEMY);
+                    }
+                    else {
+                        audio_5.playSound(Sounds_4.default.ENEMY_HITS_PLAYER);
+                    }
                 }
-                if (sourceUnit) {
-                    sourceUnit.gainExperience(1);
-                }
-            }
-            else {
-                if (this === playerUnit) {
-                    audio_4.playSound(Sounds_3.default.PLAYER_HITS_ENEMY);
-                }
-                else {
-                    audio_4.playSound(Sounds_3.default.ENEMY_HITS_PLAYER);
-                }
-            }
+                resolve();
+            }); });
+            return PromiseUtils_7.chainPromises(promises);
         };
         ;
-        Unit.prototype.getImage = function () {
-            return this.sprite.image;
-        };
         return Unit;
     }());
     exports.default = Unit;
-});
-define("types/Tile", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
-define("types", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ItemCategory;
-    (function (ItemCategory) {
-        ItemCategory["POTION"] = "POTION";
-        ItemCategory["SCROLL"] = "SCROLL";
-        ItemCategory["WEAPON"] = "WEAPON";
-    })(ItemCategory || (ItemCategory = {}));
-    exports.ItemCategory = ItemCategory;
-    var EquipmentCategory;
-    (function (EquipmentCategory) {
-        EquipmentCategory["WEAPON"] = "WEAPON";
-        EquipmentCategory["ARMOR"] = "ARMOR";
-    })(EquipmentCategory || (EquipmentCategory = {}));
-    exports.EquipmentCategory = EquipmentCategory;
-    var GameScreen;
-    (function (GameScreen) {
-        GameScreen["GAME"] = "GAME";
-        GameScreen["INVENTORY"] = "INVENTORY";
-    })(GameScreen || (GameScreen = {}));
-    exports.GameScreen = GameScreen;
 });
 define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -2424,19 +2561,19 @@ define("classes/InventoryItem", ["require", "exports"], function (require, expor
             this._onUse = onUse;
         }
         InventoryItem.prototype.use = function (unit) {
-            this._onUse.call(null, this, unit);
+            return this._onUse.call(null, this, unit);
         };
         return InventoryItem;
     }());
     exports.default = InventoryItem;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/MapUtils"], function (require, exports, Sounds_4, InventoryItem_1, types_4, audio_5, MapUtils_7) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/PromiseUtils"], function (require, exports, Sounds_5, InventoryItem_1, types_4, audio_6, PromiseUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
         var onUse = function (item, unit) {
             return new Promise(function (resolve) {
-                audio_5.playSound(Sounds_4.default.USE_POTION);
+                audio_6.playSound(Sounds_5.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
                 jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
@@ -2468,11 +2605,18 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
     function createScrollOfFloorFire(damage) {
         var map = jwb.state.map;
         var onUse = function (item, unit) {
-            return new Promise(function (resolve) {
-                var adjacentUnits = map.units.filter(function (u) { return MapUtils_7.isAdjacent(u, unit); });
-                adjacentUnits.forEach(function (u) { return u.takeDamage(damage, unit); });
-                resolve();
+            var promises = [];
+            var adjacentUnits = map.units.filter(function (u) {
+                var dx = unit.x - u.x;
+                var dy = unit.y - u.y;
+                return ([-1, 0, 1].indexOf(dx) > -1)
+                    && ([-1, 0, 1].indexOf(dy) > -1)
+                    && !(dx === 0 && dy === 0);
             });
+            adjacentUnits.forEach(function (u) {
+                promises.push(function () { return u.takeDamage(damage, unit); });
+            });
+            return PromiseUtils_8.chainPromises(promises);
         };
         return new InventoryItem_1.default('Scroll of Floor Fire', types_4.ItemCategory.SCROLL, onUse);
     }

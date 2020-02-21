@@ -1,13 +1,16 @@
 import Sounds from './Sounds';
 import InventoryItem from './classes/InventoryItem';
-import { EquipmentCategory, ItemCategory, ItemProc } from './types';
+import { EquipmentCategory, ItemCategory } from './types';
 import { playSound } from './audio';
 import EquippedItem from './classes/EquippedItem';
 import { isAdjacent } from './utils/MapUtils';
 import Unit from './classes/Unit';
+import { chainPromises } from './utils/PromiseUtils';
+
+type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
 function createPotion(lifeRestored): InventoryItem {
-  const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
+  const onUse: ItemProc = (item: InventoryItem, unit: Unit): Promise<void> => {
     return new Promise(resolve => {
       playSound(Sounds.USE_POTION);
       const prevLife = unit.life;
@@ -20,7 +23,7 @@ function createPotion(lifeRestored): InventoryItem {
 }
 
 function createSword(damage): InventoryItem {
-  const onUse: ItemProc = (item, unit) => {
+  const onUse: ItemProc = (item, unit): Promise<void> => {
     return new Promise(resolve => {
       const equippedSword: EquippedItem = {
         name: 'Short Sword',
@@ -43,12 +46,20 @@ function createSword(damage): InventoryItem {
 function createScrollOfFloorFire(damage): InventoryItem {
   const { map } = jwb.state;
 
-  const onUse: ItemProc = (item, unit) => {
-    return new Promise(resolve => {
-      const adjacentUnits = map.units.filter(u => isAdjacent(u, unit));
-      adjacentUnits.forEach(u => u.takeDamage(damage, unit));
-      resolve();
+  const onUse: ItemProc = (item, unit): Promise<void> => {
+    const promises = [];
+
+    const adjacentUnits = map.units.filter(u => {
+      const dx = unit.x - u.x;
+      const dy = unit.y - u.y;
+      return ([-1,0,1].indexOf(dx) > -1)
+        && ([-1,0,1].indexOf(dy) > -1)
+        && !(dx === 0 && dy === 0);
     });
+    adjacentUnits.forEach(u => {
+      promises.push(() => u.takeDamage(damage, unit));
+    });
+    return chainPromises(promises);
   };
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
 }

@@ -14,10 +14,6 @@ function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null, doUpd
   }
 }
 
-/**
- * Execute every entity's `update` method, with appropriate calls to `renderer.render()` when necessary
- * (will always call `renderer.render()` as the last step
- */
 function update(): Promise<void> {
   const { state } = jwb;
   const { playerUnit, map } = jwb.state;
@@ -32,6 +28,7 @@ function update(): Promise<void> {
   });
 
   return chainPromises(unitPromises)
+    .then(() => jwb.renderer.render())
     .then(() => {
       state.turn++;
       state.messages = [];

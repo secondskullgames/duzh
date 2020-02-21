@@ -3,6 +3,19 @@ import { pickupItem, useItem } from './utils/ItemUtils';
 import { GameScreen, ItemCategory } from './types';
 import TurnHandler from './classes/TurnHandler';
 import Tiles from './types/Tiles';
+import { resolvedPromise } from './utils/PromiseUtils';
+import Sounds from './Sounds';
+import { playSound } from './audio';
+
+let BUSY = false;
+
+function keyHandlerWrapper(e: KeyboardEvent) {
+  if (!BUSY) {
+    BUSY = true;
+    keyHandler(e)
+      .then(() => { BUSY = false; });
+  }
+}
 
 function keyHandler(e: KeyboardEvent): Promise<void> {
   switch (e.key) {
@@ -24,7 +37,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
       return _handleTab();
     default:
   }
-  return new Promise(resolve => { resolve(); });
+  return resolvedPromise();
 }
 
 function _handleArrowKey(key): Promise<void> {
@@ -112,6 +125,7 @@ function _handleEnter(): Promise<void> {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }) === Tiles.STAIRS_DOWN) {
+        playSound(Sounds.DESCEND_STAIRS);
         loadMap(mapIndex + 1);
       }
       return TurnHandler.playTurn(null, true);
@@ -120,8 +134,9 @@ function _handleEnter(): Promise<void> {
       const { inventoryCategory, inventoryIndex } = state;
       const items = inventory[inventoryCategory];
       const item = items[inventoryIndex] || null;
-      useItem(playerUnit, item);
-      return TurnHandler.playTurn(null, false);
+      state.screen = GameScreen.GAME;
+      return useItem(playerUnit, item)
+        .then(() => TurnHandler.playTurn(null, false));
     }
     default:
       throw `fux`;
@@ -145,7 +160,7 @@ function _handleTab(): Promise<void> {
 }
 
 function attachEvents() {
-  window.onkeydown = keyHandler;
+  window.onkeydown = keyHandlerWrapper;
 }
 
 export {

@@ -1,6 +1,5 @@
-import InventoryItem from './classes/InventoryItem';
-import Unit from './classes/Unit';
 import Tile from './types/Tile';
+import Sprite from './classes/Sprite';
 
 interface Coordinates {
   x: number,
@@ -42,12 +41,12 @@ enum EquipmentCategory {
   ARMOR = 'ARMOR'
 }
 
-enum GameScreen{
+enum GameScreen {
   GAME = 'GAME',
   INVENTORY = 'INVENTORY'
 }
 
-type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
+type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 
 export {
   Coordinates,
@@ -60,5 +59,5 @@ export {
   ItemCategory,
   EquipmentCategory,
   GameScreen,
-  ItemProc
+  SpriteSupplier
 };

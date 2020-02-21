@@ -87,22 +87,13 @@ function civDistance(first, second) {
   return Math.max(dx, dy) + Math.min(dx, dy)/2;
 }
 
-/**
- * @param {!Coordinates} first
- * @param {!Coordinates} second
- * @returns {!boolean}
- */
-function isAdjacent(first, second) {
+function isAdjacent(first: Coordinates, second: Coordinates) {
   const dx = Math.abs(first.x - second.x);
   const dy = Math.abs(first.y - second.y);
   return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
 }
 
-/**
- * @param {!int} x
- * @param {!int} y
- */
-function isTileRevealed({ x, y }) {
+function isTileRevealed({ x, y }: Coordinates) {
   if (jwb.DEBUG) {
     return true;
   }

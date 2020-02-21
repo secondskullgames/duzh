@@ -1,7 +1,7 @@
 import { Sample } from './types';
 import SoundPlayer from './classes/SoundPlayer';
 
-const _getMusicPlayer = () => new SoundPlayer(4, 0.08);
+const _getMusicPlayer = () => new SoundPlayer(4, 0.05);
 const _getSoundPlayer = () => new SoundPlayer(4, 0.15);
 
 // TODO very hacky memoizing

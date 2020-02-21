@@ -1,31 +1,18 @@
 /**
- * @param {!int} min
- * @param {!int} max inclusive
- * @return {!int}
- * @private
+ * @param max inclusive
  */
-function randInt(min, max) {
+function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-/**
- * @template {T}
- * @param {!T[]} list
- * @return {T} null if `list` is empty
- * @private
- */
-function randChoice(list) {
+function randChoice<T>(list: T[]): (T | null) {
   return list[randInt(0, list.length - 1)] || null;
 }
 
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
- *
- * @template <T>
- * @param {T[]} list
- * @returns {void}
  */
-function shuffle(list) {
+function shuffle<T>(list: T[]): void {
   let n = list.length;
 
   // While there remain elements to shuffle...

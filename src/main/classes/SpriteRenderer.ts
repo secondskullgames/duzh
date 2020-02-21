@@ -4,6 +4,7 @@ import MapItem from './MapItem';
 import { Coordinates, Tile } from '../types';
 import { revealTiles } from '../actions';
 import Sprite from './Sprite';
+import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -27,9 +28,9 @@ const INVENTORY_HEIGHT = 12 * TILE_HEIGHT;
 const LINE_HEIGHT = 16;
 
 class SpriteRenderer {
-  private _container: HTMLElement;
-  private _canvas: HTMLCanvasElement;
-  private _context: CanvasRenderingContext2D;
+  private readonly _container: HTMLElement;
+  private readonly _canvas: HTMLCanvasElement;
+  private readonly _context: CanvasRenderingContext2D;
 
   constructor() {
     this._container = document.getElementById('container');
@@ -45,9 +46,11 @@ class SpriteRenderer {
 
   render(): Promise<any> {
     const { screen } = jwb.state;
+    const t1 = new Date().getTime();
     switch (screen) {
       case 'GAME':
-        return this._renderGameScreen();
+        return this._renderGameScreen()
+          .then(() => console.log(`render time: ${new Date().getTime() - t1}`));
       case 'INVENTORY':
         return this._renderGameScreen()
           .then(() => this._renderInventory());
@@ -60,17 +63,15 @@ class SpriteRenderer {
     const { _canvas } = this;
 
     revealTiles();
-    return this._waitForSprites()
+    return resolvedPromise()//this._waitForSprites()
       .then(() => {
         this._context.fillStyle = '#000';
         this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-        return Promise.all([
-          this._renderTiles(),
-          this._renderItems(),
-          this._renderUnits(),
-          this._renderPlayerInfo(),
-          this._renderBottomBar(),
-          this._renderMessages()
+        return chainPromises([
+          () => this._renderTiles(),
+          () => this._renderItems(),
+          () => this._renderUnits(),
+          () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
         ]);
       });
   }
@@ -91,25 +92,24 @@ class SpriteRenderer {
       .map(element => element.sprite)
       .filter(sprite => !!sprite);
 
-    const promises = sprites.map(sprite => sprite.image);
+    const promises = sprites.map(sprite => sprite.getImage());
     return Promise.all(promises);
   }
 
   private _renderTiles(): Promise<any> {
-    return new Promise(resolve => {
-      const { map } = jwb.state;
-      for (let y = 0; y < map.height; y++) {
-        for (let x = 0; x < map.width; x++) {
-          if (isTileRevealed({ x, y })) {
-            const tile = map.getTile({ x, y });
-            if (!!tile) {
-              this._renderElement(tile, { x, y });
-            }
+    const promises: Promise<any>[] = [];
+    const { map } = jwb.state;
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (isTileRevealed({ x, y })) {
+          const tile = map.getTile({ x, y });
+          if (!!tile) {
+            promises.push(this._renderElement(tile, { x, y }));
           }
         }
       }
-      resolve();
-    });
+    }
+    return Promise.all(promises);
   }
 
   private _renderItems(): Promise<any> {
@@ -236,7 +236,7 @@ class SpriteRenderer {
     }
     _context.fillStyle = '#fff';
 
-    return new Promise(resolve => { resolve(); });
+    return resolvedPromise();
   }
 
   private _isPixelOnScreen({ x, y }): boolean {
@@ -248,21 +248,21 @@ class SpriteRenderer {
     );
   }
 
-  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): void {
+  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): Promise<any> {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
-    if (!this._isPixelOnScreen(pixel)) {
-      return;
+    if (this._isPixelOnScreen(pixel)) {
+      const { sprite } = element;
+      if (!!sprite) {
+        return this._drawSprite(sprite, pixel);
+      }
     }
-
-    const { sprite } = element;
-    if (!!sprite) {
-      this._drawSprite(sprite, pixel);
-    }
+    return resolvedPromise();
   }
 
-  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): void {
-    sprite.image.then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
+  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
+    return sprite.getImage()
+      .then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
   /**
@@ -327,21 +327,20 @@ class SpriteRenderer {
   private _renderBottomBar(): Promise<void> {
     const { _context } = this;
 
-    return new Promise(resolve => {
-      const left = BOTTOM_PANEL_WIDTH;
-      const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-      const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+    const left = BOTTOM_PANEL_WIDTH;
+    const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+    const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
 
-      this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+    this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
 
-      const { mapIndex, turn } = jwb.state;
-      _context.textAlign = 'left';
-      _context.fillStyle = '#fff';
-      const textLeft = left + 4;
-      _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
-      _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
-      resolve();
-    });
+    const { mapIndex, turn } = jwb.state;
+    _context.textAlign = 'left';
+    _context.fillStyle = '#fff';
+    const textLeft = left + 4;
+    _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
+    _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
+
+    return resolvedPromise();
   }
 
   private _drawRect(left, top, width, height) {
@@ -353,11 +352,14 @@ class SpriteRenderer {
     _context.strokeRect(left, top, width, height);
   }
 
+  /**
+   * @return the top left pixel
+   */
   private _gridToPixel({ x, y }: Coordinates): Coordinates {
     const { playerUnit } = jwb.state;
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT)/ 2
+      y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
     };
   }
 }

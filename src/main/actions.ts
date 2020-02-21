@@ -37,9 +37,11 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
       if (!!targetUnit) {
         const damage = unit.getDamage();
         messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        targetUnit.takeDamage(damage, unit);
+        targetUnit.takeDamage(damage, unit)
+          .then(() => resolve());
+      } else {
+        resolve();
       }
-      setTimeout(() => resolve(), 250);
     }
   });
 }
@@ -63,7 +65,8 @@ function restartGame() {
   loadMap(0);
   attachEvents();
   jwb.renderer.render();
-  Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+  //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+  Music.playSuite(Music.SUITE_3);
 }
 
 /**

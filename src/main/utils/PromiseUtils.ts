@@ -2,11 +2,13 @@ function resolvedPromise(value?: any): Promise<any> {
   return new Promise(resolve => resolve(value));
 }
 
-function chainPromises([first, ...rest]: (() => Promise<any>)[]) {
+type PromiseSupplier<T> = (t: T) => Promise<T>
+
+function chainPromises<T>([first, ...rest]: PromiseSupplier<T>[], input?: T): Promise<any> {
   if (!!first) {
-    return first().then(() => chainPromises(rest));
+    return first(input).then(output => chainPromises(rest, output));
   }
-  return resolvedPromise();
+  return resolvedPromise(input);
 }
 
 export {
