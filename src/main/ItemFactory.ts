@@ -1,7 +1,7 @@
 import Sounds from './Sounds';
 import InventoryItem from './classes/InventoryItem';
 import { EquipmentCategory, ItemCategory } from './types';
-import { playSound } from './audio';
+import { playSound } from './utils/AudioUtils';
 import EquippedItem from './classes/EquippedItem';
 import { isAdjacent } from './utils/MapUtils';
 import Unit from './classes/Unit';
@@ -47,7 +47,7 @@ function createScrollOfFloorFire(damage): InventoryItem {
   const { map } = jwb.state;
 
   const onUse: ItemProc = (item, unit): Promise<void> => {
-    const promises = [];
+    const promises: (() => Promise<any>)[] = [];
 
     const adjacentUnits = map.units.filter(u => {
       const dx = unit.x - u.x;
@@ -56,6 +56,7 @@ function createScrollOfFloorFire(damage): InventoryItem {
         && ([-1,0,1].indexOf(dy) > -1)
         && !(dx === 0 && dy === 0);
     });
+    console.log(`casting floor fire on ${adjacentUnits}`);
     adjacentUnits.forEach(u => {
       promises.push(() => u.takeDamage(damage, unit));
     });

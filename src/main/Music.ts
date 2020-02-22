@@ -1,5 +1,5 @@
 import { randChoice } from './utils/RandomUtils';
-import { playMusic } from './audio';
+import { playMusic } from './utils/AudioUtils';
 import { Sample } from './types';
 
 function transpose_8va([freq, ms]: Sample): Sample {

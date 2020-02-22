@@ -1,4 +1,3 @@
-import Sounds from './Sounds';
 import GameState from './classes/GameState';
 import Unit from './classes/Unit';
 import SpriteRenderer from './classes/SpriteRenderer';
@@ -6,11 +5,9 @@ import { randChoice } from './utils/RandomUtils';
 import MapFactory from './MapFactory';
 import UnitClasses from './UnitClasses';
 import Music from './Music';
-import { playSound } from './audio';
 import { contains, isTileRevealed } from './utils/MapUtils';
-import { attachEvents } from './input';
+import { attachEvents } from './InputHandler';
 import { createMap } from './classes/MapSupplier';
-import { Coordinates } from './types';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -20,30 +17,6 @@ function loadMap(index: number) {
     state.mapIndex = index;
     state.map = createMap(state.mapSuppliers[index]);
   }
-}
-
-function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
-  const { map, messages, playerUnit } = jwb.state;
-
-  return new Promise(resolve => {
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        playSound(Sounds.FOOTSTEP);
-      }
-      resolve();
-    } else {
-      const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
-        const damage = unit.getDamage();
-        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        targetUnit.takeDamage(damage, unit)
-          .then(() => resolve());
-      } else {
-        resolve();
-      }
-    }
-  });
 }
 
 function restartGame() {
@@ -100,7 +73,6 @@ function revealTiles(): void {
 
 export {
   loadMap,
-  moveOrAttack,
   restartGame,
   revealTiles
 };

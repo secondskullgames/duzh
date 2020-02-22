@@ -1,7 +1,7 @@
 import Unit from '../classes/Unit';
 import MapItem from '../classes/MapItem';
 import InventoryItem from '../classes/InventoryItem';
-import { playSound } from '../audio';
+import { playSound } from './AudioUtils';
 import Sounds from '../Sounds';
 import { resolvedPromise } from './PromiseUtils';
 

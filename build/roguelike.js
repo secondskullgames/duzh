@@ -11,6 +11,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -22,31 +29,6 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-define("Sounds", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Sounds = {
-        PLAYER_HITS_ENEMY: [[175, 5], [0, 5], [150, 5], [0, 5], [300, 5], [0, 5], [125, 5], [0, 5], [350, 5], [0, 10], [100, 5], [0, 10], [350, 5], [0, 10], [125, 5], [0, 10], [300, 5], [0, 15], [150, 5], [0, 15], [175, 5], [0, 20], [150, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        ENEMY_HITS_PLAYER: [[100, 5], [0, 5], [125, 5], [0, 5], [300, 5], [0, 5], [150, 5], [0, 5], [350, 5], [0, 10], [175, 5], [0, 10], [350, 5], [0, 10], [150, 5], [0, 10], [300, 5], [0, 15], [125, 5], [0, 15], [175, 5], [0, 20], [100, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-        ENEMY_DIES: [[20, 20], [0, 10], [30, 20], [0, 10], [25, 20], [0, 10], [25, 20], [0, 5], [40, 20], [0, 5], [35, 20], [0, 5], [45, 20], [0, 5], [25, 20], [0, 10], [35, 20], [0, 10], [25, 20], [0, 10], [30, 20], [0, 20], [40, 10], [0, 20], [35, 10], [0, 20], [45, 10], [0, 20], [25, 5], [0, 30], [35, 5], [0, 30], [20, 5], [0, 30], [30, 5]],
-        PLAYER_DIES: [[30, 20], [0, 10], [40, 20], [0, 10], [25, 20], [0, 10], [35, 20], [0, 5], [80, 20], [0, 5], [45, 20], [0, 5], [115, 20], [0, 5], [35, 20], [0, 10], [75, 20], [0, 10], [25, 20], [0, 10], [60, 20], [0, 20], [50, 10], [0, 20], [65, 10], [0, 20], [55, 10], [0, 20], [35, 5], [0, 30], [45, 5], [0, 30], [30, 5], [0, 30], [40, 5]],
-        LEVEL_UP: [[1000, 50], [800, 50], [600, 50], [400, 50], [200, 100], [100, 100], [50, 150], [150, 150], [250, 200], [500, 500]],
-        DEFLECTED_HIT: [[400, 10], [0, 10], [500, 15], [0, 5], [400, 10], [0, 5], [400, 10], [0, 10], [100, 10], [0, 15], [200, 5]],
-        PICK_UP_ITEM: [[50, 50], [0, 5], [100, 50], [0, 10], [200, 50], [0, 20], [400, 50]],
-        USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
-        OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
-        FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
-        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
-    };
-    exports.default = Sounds;
-});
 define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -267,6 +249,22 @@ define("types", ["require", "exports"], function (require, exports) {
         GameScreen["INVENTORY"] = "INVENTORY";
     })(GameScreen || (GameScreen = {}));
     exports.GameScreen = GameScreen;
+});
+define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var InventoryItem = /** @class */ (function () {
+        function InventoryItem(name, category, onUse) {
+            this.name = name;
+            this.category = category;
+            this._onUse = onUse;
+        }
+        InventoryItem.prototype.use = function (unit) {
+            return this._onUse.call(null, this, unit);
+        };
+        return InventoryItem;
+    }());
+    exports.default = InventoryItem;
 });
 define("classes/EquippedItem", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -579,7 +577,348 @@ define("classes/Pathfinder", ["require", "exports", "utils/MapUtils", "utils/Ran
     }());
     exports.default = Pathfinder;
 });
-define("classes/MapItem", ["require", "exports"], function (require, exports) {
+define("classes/SoundPlayer", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SoundPlayer = /** @class */ (function () {
+        function SoundPlayer(maxPolyphony, gain) {
+            this._context = new AudioContext();
+            this._gainNode = this._context.createGain();
+            this._gainNode.gain.value = gain * 0.2; // 0.15 is already VERY loud
+            this._gainNode.connect(this._context.destination);
+            this._oscillators = [];
+        }
+        SoundPlayer.prototype._newOscillator = function () {
+            var oscillatorNode = this._context.createOscillator();
+            oscillatorNode.type = 'square';
+            oscillatorNode.connect(this._gainNode);
+            return {
+                node: oscillatorNode,
+                started: false,
+                stopped: false,
+                isRepeating: false
+            };
+        };
+        ;
+        SoundPlayer.prototype.stop = function () {
+            try {
+                this._oscillators.forEach(function (oscillator) {
+                    if (oscillator && oscillator.started) {
+                        oscillator.node.stop(0);
+                        oscillator.stopped = true;
+                    }
+                });
+                this._oscillators = [];
+            }
+            catch (e) {
+                console.error(e);
+            }
+        };
+        ;
+        /**
+         * @param samples An array of [freq, ms]
+         * @param repeating
+         */
+        SoundPlayer.prototype.playSound = function (samples, repeating) {
+            var _this = this;
+            if (repeating === void 0) { repeating = false; }
+            var oscillator = this._newOscillator();
+            this._oscillators.push(oscillator);
+            if (samples.length) {
+                var startTime = this._context.currentTime;
+                var nextStartTime = startTime;
+                for (var i = 0; i < samples.length; i++) {
+                    var _a = samples[i], freq = _a[0], ms = _a[1];
+                    oscillator.node.frequency.setValueAtTime(freq, nextStartTime);
+                    nextStartTime += ms / 1000;
+                }
+                var runtime = samples.map(function (_a) {
+                    var freq = _a[0], ms = _a[1];
+                    return ms;
+                }).reduce(function (a, b) { return a + b; });
+                oscillator.node.start();
+                oscillator.started = true;
+                if (repeating) {
+                    oscillator.isRepeating = true;
+                }
+                oscillator.node.onended = function () {
+                    if (oscillator.isRepeating && !oscillator.stopped) {
+                        _this.playSound(samples, true);
+                    }
+                    else {
+                        _this._oscillators.splice(_this._oscillators.indexOf(oscillator, 1));
+                    }
+                };
+                oscillator.node.stop(startTime + runtime / 1000);
+            }
+        };
+        ;
+        return SoundPlayer;
+    }());
+    exports.default = SoundPlayer;
+});
+define("utils/AudioUtils", ["require", "exports", "classes/SoundPlayer"], function (require, exports, SoundPlayer_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.08); };
+    var _getSoundPlayer = function () { return new SoundPlayer_1.default(4, 0.16); };
+    // TODO very hacky memoizing
+    var MUSIC = null;
+    var SFX = null;
+    function playSound(samples) {
+        if (!SFX) {
+            SFX = _getSoundPlayer();
+        }
+        SFX.playSound(samples, false);
+    }
+    exports.playSound = playSound;
+    function playMusic(samples) {
+        if (!MUSIC) {
+            MUSIC = _getMusicPlayer();
+        }
+        MUSIC.playSound(samples, false);
+    }
+    exports.playMusic = playMusic;
+});
+define("Sounds", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Sounds = {
+        PLAYER_HITS_ENEMY: [[175, 5], [0, 5], [150, 5], [0, 5], [300, 5], [0, 5], [125, 5], [0, 5], [350, 5], [0, 10], [100, 5], [0, 10], [350, 5], [0, 10], [125, 5], [0, 10], [300, 5], [0, 15], [150, 5], [0, 15], [175, 5], [0, 20], [150, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
+        ENEMY_HITS_PLAYER: [[100, 5], [0, 5], [125, 5], [0, 5], [300, 5], [0, 5], [150, 5], [0, 5], [350, 5], [0, 10], [175, 5], [0, 10], [350, 5], [0, 10], [150, 5], [0, 10], [300, 5], [0, 15], [125, 5], [0, 15], [175, 5], [0, 20], [100, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
+        ENEMY_DIES: [[20, 20], [0, 10], [30, 20], [0, 10], [25, 20], [0, 10], [25, 20], [0, 5], [40, 20], [0, 5], [35, 20], [0, 5], [45, 20], [0, 5], [25, 20], [0, 10], [35, 20], [0, 10], [25, 20], [0, 10], [30, 20], [0, 20], [40, 10], [0, 20], [35, 10], [0, 20], [45, 10], [0, 20], [25, 5], [0, 30], [35, 5], [0, 30], [20, 5], [0, 30], [30, 5]],
+        PLAYER_DIES: [[30, 20], [0, 10], [40, 20], [0, 10], [25, 20], [0, 10], [35, 20], [0, 5], [80, 20], [0, 5], [45, 20], [0, 5], [115, 20], [0, 5], [35, 20], [0, 10], [75, 20], [0, 10], [25, 20], [0, 10], [60, 20], [0, 20], [50, 10], [0, 20], [65, 10], [0, 20], [55, 10], [0, 20], [35, 5], [0, 30], [45, 5], [0, 30], [30, 5], [0, 30], [40, 5]],
+        LEVEL_UP: [[1000, 50], [800, 50], [600, 50], [400, 50], [200, 100], [100, 100], [50, 150], [150, 150], [250, 200], [500, 500]],
+        DEFLECTED_HIT: [[400, 10], [0, 10], [500, 15], [0, 5], [400, 10], [0, 5], [400, 10], [0, 10], [100, 10], [0, 15], [200, 5]],
+        PICK_UP_ITEM: [[50, 50], [0, 5], [100, 50], [0, 10], [200, 50], [0, 20], [400, 50]],
+        USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
+        OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
+        FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
+        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
+    };
+    exports.default = Sounds;
+});
+define("utils/UnitUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], function (require, exports, AudioUtils_1, Sounds_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function moveOrAttack(unit, _a) {
+        var x = _a.x, y = _a.y;
+        var _b = jwb.state, map = _b.map, messages = _b.messages, playerUnit = _b.playerUnit;
+        return new Promise(function (resolve) {
+            var _a;
+            if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                if (unit === playerUnit) {
+                    AudioUtils_1.playSound(Sounds_1.default.FOOTSTEP);
+                }
+                resolve();
+            }
+            else {
+                var targetUnit = map.getUnit({ x: x, y: y });
+                if (!!targetUnit) {
+                    var damage = unit.getDamage();
+                    messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
+                    targetUnit.takeDamage(damage, unit)
+                        .then(function () { return resolve(); });
+                }
+                else {
+                    resolve();
+                }
+            }
+        });
+    }
+    exports.moveOrAttack = moveOrAttack;
+    function fireProjectile(unit, _a) {
+        var dx = _a.dx, dy = _a.dy;
+        return new Promise(function (resolve) {
+            var _a = jwb.state, map = _a.map, messages = _a.messages;
+            var x = unit.x, y = unit.y;
+            do {
+                x += dx;
+                y += dy;
+            } while (!map.isBlocked({ x: x, y: y }));
+            var targetUnit = map.getUnit({ x: x, y: y });
+            if (!!targetUnit) {
+                var damage = unit.getDamage();
+                messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
+                targetUnit.takeDamage(damage, unit)
+                    .then(function () { return resolve(); });
+            }
+            else {
+                resolve();
+            }
+        });
+    }
+    exports.fireProjectile = fireProjectile;
+});
+define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "utils/UnitUtils"], function (require, exports, MapUtils_2, Pathfinder_1, RandomUtils_3, UnitUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    function wanderAndAttack(unit) {
+        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
+        var tiles = [];
+        CARDINAL_DIRECTIONS.forEach(function (_a) {
+            var dx = _a[0], dy = _a[1];
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+                else if (map.getUnit({ x: x, y: y })) {
+                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
+                        tiles.push({ x: x, y: y });
+                    }
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var _b = RandomUtils_3.randChoice(tiles), x = _b.x, y = _b.y;
+            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        }
+        return new Promise(function (resolve) { resolve(); });
+    }
+    function wander(unit) {
+        var map = jwb.state.map;
+        /** @type {{ x: int, y: int }[]} */
+        var tiles = [];
+        CARDINAL_DIRECTIONS.forEach(function (_a) {
+            var dx = _a[0], dy = _a[1];
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
+            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        }
+        return new Promise(function (resolve) { resolve(); });
+    }
+    function _attackPlayerUnit_withPath(unit) {
+        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
+        var mapRect = { left: 0, top: 0, width: map.width, height: map.height };
+        var blockedTileDetector = function (_a) {
+            var x = _a.x, y = _a.y;
+            if (!jwb.state.map.getTile({ x: x, y: y }).isBlocking) {
+                return false;
+            }
+            else if (MapUtils_2.coordinatesEquals({ x: x, y: y }, playerUnit)) {
+                return false;
+            }
+            return true;
+        };
+        /**
+         * @type {!Coordinates[]}
+         */
+        var path = new Pathfinder_1.default(blockedTileDetector, function () { return 1; }).findPath(unit, playerUnit, mapRect);
+        if (path.length > 1) {
+            var _b = path[1], x = _b.x, y = _b.y; // first tile is the unit's own tile
+            var unitAtPoint = map.getUnit({ x: x, y: y });
+            if (!unitAtPoint || unitAtPoint === playerUnit) {
+                return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+            }
+        }
+        return new Promise(function (resolve) { resolve(); });
+    }
+    function fleeFromPlayerUnit(unit) {
+        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
+        var tiles = [];
+        CARDINAL_DIRECTIONS.forEach(function (_a) {
+            var dx = _a[0], dy = _a[1];
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+                else if (map.getUnit({ x: x, y: y })) {
+                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
+                        tiles.push({ x: x, y: y });
+                    }
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var _b = _sortBy(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); })[tiles.length - 1], x = _b.x, y = _b.y;
+            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        }
+        return new Promise(function (resolve) { resolve(); });
+    }
+    function _sortBy(list, mapFunction) {
+        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
+    }
+    exports.default = {
+        WANDER: wander,
+        ATTACK_PLAYER: _attackPlayerUnit_withPath,
+        FLEE_FROM_PLAYER: fleeFromPlayerUnit,
+        STAY: function () { return new Promise(function (resolve) { resolve(); }); }
+    };
+});
+define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_3, RandomUtils_4, UnitBehaviors_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var HUMAN_CAUTIOUS = function (unit) {
+        var playerUnit = jwb.state.playerUnit;
+        var behavior;
+        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
+        if (distanceToPlayer === 1) {
+            if ((unit.life / unit.maxLife) >= 0.4) {
+                behavior = 'ATTACK_PLAYER';
+            }
+            else {
+                behavior = RandomUtils_4.weightedRandom({
+                    'ATTACK_PLAYER': 0.2,
+                    'WANDER': 0.5,
+                    'FLEE_FROM_PLAYER': 0.3
+                });
+            }
+        }
+        else if (distanceToPlayer >= 5) {
+            behavior = RandomUtils_4.weightedRandom({
+                'WANDER': 0.3,
+                'ATTACK_PLAYER': 0.1,
+                'STAY': 0.6
+            });
+        }
+        else {
+            behavior = RandomUtils_4.weightedRandom({
+                'ATTACK_PLAYER': 0.6,
+                'WANDER': 0.2,
+                'STAY': 0.2
+            });
+        }
+        return UnitBehaviors_1.default[behavior].call(null, unit);
+    };
+    exports.HUMAN_CAUTIOUS = HUMAN_CAUTIOUS;
+    var HUMAN_AGGRESSIVE = function (unit) {
+        var playerUnit = jwb.state.playerUnit;
+        var behavior;
+        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
+        if (distanceToPlayer === 1) {
+            behavior = 'ATTACK_PLAYER';
+        }
+        else if (distanceToPlayer >= 6) {
+            behavior = RandomUtils_4.weightedRandom({
+                'WANDER': 0.4,
+                'STAY': 0.4,
+                'ATTACK_PLAYER': 0.2
+            });
+        }
+        else {
+            behavior = RandomUtils_4.weightedRandom({
+                'ATTACK_PLAYER': 0.9,
+                'STAY': 0.1
+            });
+        }
+        return UnitBehaviors_1.default[behavior].call(null, unit);
+    };
+    exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
+    var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER.call(null, unit); };
+    exports.FULL_AGGRO = FULL_AGGRO;
+});
+define("classes/UnitClass", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
@@ -605,7 +944,164 @@ define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "ut
     }(Sprite_1.default));
     exports.default = PlayerSprite;
 });
-define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_1) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function playAnimation(sprite, keys, delay) {
+        var renderer = jwb.renderer;
+        var promises = [];
+        keys.forEach(function (key) {
+            promises.push(function () { return new Promise(function (resolve) {
+                sprite.setImage(key)
+                    .then(function () { return renderer.render(); })
+                    .then(function () {
+                    setTimeout(function () { resolve(); }, delay);
+                });
+            }); });
+        });
+        return PromiseUtils_2.chainPromises(promises)
+            .then(function () { return sprite.setImage(sprite.defaultKey); })
+            .then(function () { return renderer.render(); });
+    }
+    exports.playAnimation = playAnimation;
+});
+define("classes/Unit", ["require", "exports", "types", "utils/AudioUtils", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_1, AudioUtils_2, Sounds_2, PromiseUtils_3, PlayerSprite_1, SpriteUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var LIFE_PER_TURN_MULTIPLIER = 0.005;
+    var Unit = /** @class */ (function () {
+        function Unit(unitClass, name, level, _a) {
+            var _this = this;
+            var x = _a.x, y = _a.y;
+            this.class = 'Unit';
+            this.unitClass = unitClass;
+            this.sprite = unitClass.sprite(unitClass);
+            this.inventory = {};
+            Object.keys(types_1.ItemCategory).forEach(function (category) {
+                _this.inventory[category] = [];
+            });
+            this.equipment = {};
+            Object.keys(types_1.EquipmentCategory).forEach(function (category) {
+                _this.equipment[category] = [];
+            });
+            this.x = x;
+            this.y = y;
+            this.name = name;
+            this.level = level;
+            this.experience = 0;
+            this.maxLife = unitClass.startingLife;
+            this.life = unitClass.startingLife;
+            this.lifeRemainder = 0;
+            this._damage = unitClass.startingDamage;
+            this.queuedOrder = null;
+            this.aiHandler = unitClass.aiHandler;
+        }
+        Unit.prototype._regenLife = function () {
+            var lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
+            this.lifeRemainder += lifePerTurn;
+            var deltaLife = Math.floor(this.lifeRemainder);
+            this.lifeRemainder -= deltaLife;
+            this.life = Math.min(this.life + deltaLife, this.maxLife);
+        };
+        ;
+        Unit.prototype.update = function () {
+            var _this = this;
+            return new Promise(function (resolve) {
+                _this._regenLife();
+                if (!!_this.queuedOrder) {
+                    var queuedOrder = _this.queuedOrder;
+                    _this.queuedOrder = null;
+                    return queuedOrder(_this)
+                        .then(function () { return resolve(); });
+                }
+                return resolve();
+            })
+                .then(function () {
+                if (!!_this.aiHandler) {
+                    return _this.aiHandler(_this);
+                }
+                return PromiseUtils_3.resolvedPromise();
+            });
+        };
+        Unit.prototype.getDamage = function () {
+            var damage = this._damage;
+            Object.values(this.equipment)
+                .flatMap(function (list) { return list; })
+                .forEach(function (equippedItem) {
+                damage += (equippedItem.damage || 0);
+            });
+            return damage;
+        };
+        Unit.prototype._levelUp = function () {
+            this.level++;
+            var lifePerLevel = this.unitClass.lifePerLevel(this.level);
+            this.maxLife += lifePerLevel;
+            this.life += lifePerLevel;
+            this._damage += this.unitClass.damagePerLevel(this.level);
+            AudioUtils_2.playSound(Sounds_2.default.LEVEL_UP);
+        };
+        Unit.prototype.gainExperience = function (experience) {
+            this.experience += experience;
+            var experienceToNextLevel = this.experienceToNextLevel();
+            while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
+                this.experience -= experienceToNextLevel;
+                this._levelUp();
+            }
+        };
+        Unit.prototype.experienceToNextLevel = function () {
+            var unitClass = this.unitClass;
+            if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
+                return unitClass.experienceToNextLevel(this.level);
+            }
+            return null;
+        };
+        Unit.prototype.takeDamage = function (damage, sourceUnit) {
+            var _this = this;
+            if (sourceUnit === void 0) { sourceUnit = undefined; }
+            var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
+            var promises = [];
+            if (this.sprite instanceof PlayerSprite_1.default) {
+                var PlayerSpriteKeys = PlayerSprite_1.default.SpriteKeys;
+                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
+                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 150); });
+            }
+            promises.push(function () { return new Promise(function (resolve) {
+                _this.life = Math.max(_this.life - damage, 0);
+                if (_this.life === 0) {
+                    map.units = map.units.filter(function (u) { return u !== _this; });
+                    if (_this === playerUnit) {
+                        alert('Game Over!');
+                        AudioUtils_2.playSound(Sounds_2.default.PLAYER_DIES);
+                    }
+                    else {
+                        AudioUtils_2.playSound(Sounds_2.default.ENEMY_DIES);
+                    }
+                    if (sourceUnit) {
+                        sourceUnit.gainExperience(1);
+                    }
+                }
+                else {
+                    if (_this === playerUnit) {
+                        AudioUtils_2.playSound(Sounds_2.default.PLAYER_HITS_ENEMY);
+                    }
+                    else {
+                        AudioUtils_2.playSound(Sounds_2.default.ENEMY_HITS_PLAYER);
+                    }
+                }
+                resolve();
+            }); });
+            return PromiseUtils_3.chainPromises(promises);
+        };
+        ;
+        return Unit;
+    }());
+    exports.default = Unit;
+});
+define("classes/MapItem", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
+define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DEFAULT_SPRITE_KEY = 'default';
@@ -615,7 +1111,7 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
         return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
     var SpriteFactory = {
-        PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
+        PLAYER: function (paletteSwaps) { return new PlayerSprite_2.default(paletteSwaps); },
         WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
         WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall_hall', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
         FLOOR: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor', '#ffffff', paletteSwaps), { dx: 0, dy: 0 }); },
@@ -753,12 +1249,12 @@ define("classes/MapSupplier", ["require", "exports", "classes/MapInstance"], fun
     }
     exports.createMap = createMap;
 });
-define("classes/GameState", ["require", "exports", "types"], function (require, exports, types_1) {
+define("classes/GameState", ["require", "exports", "types"], function (require, exports, types_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_1.GameScreen.GAME;
+            this.screen = types_2.GameScreen.GAME;
             this.playerUnit = playerUnit;
             this.mapSuppliers = mapSuppliers;
             this.mapIndex = 0;
@@ -772,7 +1268,7 @@ define("classes/GameState", ["require", "exports", "types"], function (require, 
     }());
     exports.default = GameState;
 });
-define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions", "utils/PromiseUtils"], function (require, exports, MapUtils_2, actions_1, PromiseUtils_2) {
+define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions", "utils/PromiseUtils"], function (require, exports, MapUtils_4, actions_1, PromiseUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -821,11 +1317,11 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var _this = this;
             var _canvas = this._canvas;
             actions_1.revealTiles();
-            return PromiseUtils_2.resolvedPromise() //this._waitForSprites()
+            return PromiseUtils_4.resolvedPromise() //this._waitForSprites()
                 .then(function () {
                 _this._context.fillStyle = '#000';
                 _this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-                return PromiseUtils_2.chainPromises([
+                return PromiseUtils_4.chainPromises([
                     function () { return _this._renderTiles(); },
                     function () { return _this._renderItems(); },
                     function () { return _this._renderUnits(); },
@@ -854,7 +1350,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var map = jwb.state.map;
             for (var y = 0; y < map.height; y++) {
                 for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var tile = map.getTile({ x: x, y: y });
                         if (!!tile) {
                             promises.push(this._renderElement(tile, { x: x, y: y }));
@@ -869,7 +1365,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var promises = [];
             for (var y = 0; y < map.height; y++) {
                 for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var item = map.getItem({ x: x, y: y });
                         if (!!item) {
                             promises.push(this._drawEllipse({ x: x, y: y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
@@ -885,7 +1381,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var promises = [];
             for (var y = 0; y < map.height; y++) {
                 for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var unit = map.getUnit({ x: x, y: y });
                         if (!!unit) {
                             if (unit === playerUnit) {
@@ -973,7 +1469,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 _context.fillText(items[i].name, x, y_1);
             }
             _context.fillStyle = '#fff';
-            return PromiseUtils_2.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -991,7 +1487,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                     return this._drawSprite(sprite, pixel);
                 }
             }
-            return PromiseUtils_2.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
             var _this = this;
@@ -1063,7 +1559,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var textLeft = left + 4;
             _context.fillText("Level: " + (mapIndex + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_2.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (left, top, width, height) {
             var _context = this._context;
@@ -1086,6 +1582,65 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         return SpriteRenderer;
     }());
     exports.default = SpriteRenderer;
+});
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "utils/AudioUtils", "utils/PromiseUtils"], function (require, exports, Sounds_3, InventoryItem_1, types_3, AudioUtils_3, PromiseUtils_5) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function createPotion(lifeRestored) {
+        var onUse = function (item, unit) {
+            return new Promise(function (resolve) {
+                AudioUtils_3.playSound(Sounds_3.default.USE_POTION);
+                var prevLife = unit.life;
+                unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
+                jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
+                resolve();
+            });
+        };
+        return new InventoryItem_1.default('Potion', types_3.ItemCategory.POTION, onUse);
+    }
+    function createSword(damage) {
+        var onUse = function (item, unit) {
+            return new Promise(function (resolve) {
+                var equippedSword = {
+                    name: 'Short Sword',
+                    category: types_3.EquipmentCategory.WEAPON,
+                    inventoryItem: item,
+                    damage: damage
+                };
+                var currentWeapons = __spreadArrays(unit.equipment[types_3.EquipmentCategory.WEAPON]);
+                unit.equipment[types_3.EquipmentCategory.WEAPON] = [equippedSword];
+                currentWeapons.forEach(function (weapon) {
+                    var inventoryItem = weapon.inventoryItem;
+                    unit.inventory[inventoryItem.category].push(inventoryItem);
+                });
+                resolve();
+            });
+        };
+        return new InventoryItem_1.default('Short Sword', types_3.ItemCategory.WEAPON, onUse);
+    }
+    function createScrollOfFloorFire(damage) {
+        var map = jwb.state.map;
+        var onUse = function (item, unit) {
+            var promises = [];
+            var adjacentUnits = map.units.filter(function (u) {
+                var dx = unit.x - u.x;
+                var dy = unit.y - u.y;
+                return ([-1, 0, 1].indexOf(dx) > -1)
+                    && ([-1, 0, 1].indexOf(dy) > -1)
+                    && !(dx === 0 && dy === 0);
+            });
+            adjacentUnits.forEach(function (u) {
+                promises.push(function () { return u.takeDamage(damage, unit); });
+            });
+            return PromiseUtils_5.chainPromises(promises);
+        };
+        return new InventoryItem_1.default('Scroll of Floor Fire', types_3.ItemCategory.SCROLL, onUse);
+    }
+    exports.default = {
+        createPotion: createPotion,
+        createSword: createSword,
+        createScrollOfFloorFire: createScrollOfFloorFire
+    };
 });
 define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI"], function (require, exports, SpriteFactory_2, UnitAI_1) {
     "use strict";
@@ -1214,7 +1769,7 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI"], functio
         getEnemyClasses: getEnemyClasses
     };
 });
-define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "classes/Pathfinder", "types/Tiles"], function (require, exports, MapUtils_3, RandomUtils_3, Pathfinder_1, Tiles_2) {
+define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "classes/Pathfinder", "types/Tiles"], function (require, exports, MapUtils_5, RandomUtils_5, Pathfinder_2, Tiles_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MAX_EXITS = 3;
@@ -1236,11 +1791,11 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var section = this._generateSection(width, height);
             this._joinSection(section);
             var tiles = section.tiles;
-            var stairsLocation = MapUtils_3.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [], 1)[0];
+            var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [], 1)[0];
             tiles[stairsLocation.y][stairsLocation.x] = Tiles_2.default.STAIRS_DOWN;
-            var playerUnitLocation = MapUtils_3.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR, Tiles_2.default.FLOOR_HALL], [stairsLocation], 1)[0];
-            var enemyUnitLocations = MapUtils_3.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
-            var itemLocations = MapUtils_3.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
+            var playerUnitLocation = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR, Tiles_2.default.FLOOR_HALL], [stairsLocation], 1)[0];
+            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
+            var itemLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
             return {
                 level: level,
                 width: width,
@@ -1266,7 +1821,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var canSplitVertically = (height >= (2 * minSectionDimension));
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []));
             if (splitDirections.length > 0) {
-                var direction = RandomUtils_3.randChoice(splitDirections);
+                var direction = RandomUtils_5.randChoice(splitDirections);
                 if (direction === 'HORIZONTAL') {
                     var splitX_1 = this._getSplitPoint(width);
                     var leftWidth = splitX_1;
@@ -1318,11 +1873,11 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var maxRoomWidth = width - (2 * this.minRoomPadding);
             var maxRoomHeight = height - (2 * this.minRoomPadding);
             console.assert(maxRoomWidth >= this.minRoomDimension && maxRoomHeight >= this.minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_3.randInt(this.minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_3.randInt(this.minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_5.randInt(this.minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_5.randInt(this.minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_3.randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
-            var roomTop = RandomUtils_3.randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
+            var roomLeft = RandomUtils_5.randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
+            var roomTop = RandomUtils_5.randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -1375,7 +1930,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_3.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_5.randInt(minSplitPoint, maxSplitPoint);
         };
         /**
          * @param {!MapSection} section
@@ -1416,7 +1971,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                 var first = _a[0], second = _a[1];
                 return _this._canJoinRooms(first, second);
             });
-            RandomUtils_3.shuffle(candidatePairs);
+            RandomUtils_5.shuffle(candidatePairs);
             if (candidatePairs.length > 0) {
                 for (var _b = 0, candidatePairs_2 = candidatePairs; _b < candidatePairs_2.length; _b++) {
                     var _c = candidatePairs_2[_b], first = _c[0], second = _c[1];
@@ -1441,7 +1996,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
         DungeonGenerator.prototype._roomDistance = function (first, second) {
             var firstCenter = { x: first.left + first.width / 2, y: first.top + first.height / 2 };
             var secondCenter = { x: second.left + second.width / 2, y: second.top + second.height / 2 };
-            return MapUtils_3.hypotenuse(firstCenter, secondCenter);
+            return MapUtils_5.hypotenuse(firstCenter, secondCenter);
         };
         DungeonGenerator.prototype._canJoinRooms = function (first, second) {
             return (first !== second) && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
@@ -1449,8 +2004,8 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
         DungeonGenerator.prototype._joinRooms = function (first, second, section) {
             var firstExitCandidates = this._getExitCandidates(first);
             var secondExitCandidates = this._getExitCandidates(second);
-            RandomUtils_3.shuffle(firstExitCandidates);
-            RandomUtils_3.shuffle(secondExitCandidates);
+            RandomUtils_5.shuffle(firstExitCandidates);
+            RandomUtils_5.shuffle(secondExitCandidates);
             for (var _i = 0, firstExitCandidates_1 = firstExitCandidates; _i < firstExitCandidates_1.length; _i++) {
                 var firstExit = firstExitCandidates_1[_i];
                 for (var _a = 0, secondExitCandidates_1 = secondExitCandidates; _a < secondExitCandidates_1.length; _a++) {
@@ -1503,12 +2058,12 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                 var x = _a.x, y = _a.y;
                 // can't draw a path through an existing room or a wall
                 var blockedTileTypes = [Tiles_2.default.FLOOR, Tiles_2.default.WALL, Tiles_2.default.WALL_HALL, Tiles_2.default.WALL_TOP];
-                if ([firstExit, secondExit].some(function (exit) { return MapUtils_3.coordinatesEquals({ x: x, y: y }, exit); })) {
+                if ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals({ x: x, y: y }, exit); })) {
                     return false;
                 }
                 else if (section.tiles[y][x] === Tiles_2.default.NONE || section.tiles[y][x] === Tiles_2.default.FLOOR_HALL) {
                     // skip the check if we're within 2 tiles of an exit
-                    var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_3.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
+                    var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
                     if (isNextToExit) {
                         return false;
                     }
@@ -1540,7 +2095,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                 width: section.width,
                 height: section.height
             };
-            var path = new Pathfinder_1.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
+            var path = new Pathfinder_2.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
                 section.tiles[y][x] = Tiles_2.default.FLOOR_HALL;
@@ -1562,7 +2117,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
     }());
     exports.default = DungeonGenerator;
 });
-define("MapFactory", ["require", "exports", "utils/RandomUtils", "SpriteFactory", "classes/Unit", "ItemFactory", "UnitClasses", "types/Tiles", "classes/DungeonGenerator"], function (require, exports, RandomUtils_4, SpriteFactory_3, Unit_1, ItemFactory_1, UnitClasses_1, Tiles_3, DungeonGenerator_1) {
+define("MapFactory", ["require", "exports", "utils/RandomUtils", "SpriteFactory", "classes/Unit", "ItemFactory", "UnitClasses", "types/Tiles", "classes/DungeonGenerator"], function (require, exports, RandomUtils_6, SpriteFactory_3, Unit_1, ItemFactory_1, UnitClasses_1, Tiles_3, DungeonGenerator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MIN_ROOM_DIMENSION = 6;
@@ -1582,7 +2137,7 @@ define("MapFactory", ["require", "exports", "utils/RandomUtils", "SpriteFactory"
     function randomMap(level, width, height, numEnemies, numItems) {
         var itemSupplier = function (_a) {
             var x = _a.x, y = _a.y;
-            switch (RandomUtils_4.randInt(0, 4)) {
+            switch (RandomUtils_6.randInt(0, 4)) {
                 case 0:
                     return {
                         x: x,
@@ -1614,7 +2169,7 @@ define("MapFactory", ["require", "exports", "utils/RandomUtils", "SpriteFactory"
             var candidates = UnitClasses_1.default.getEnemyClasses()
                 .filter(function (unitClass) { return unitClass.minLevel <= level; })
                 .filter(function (unitClass) { return unitClass.maxLevel >= level; });
-            var unitClass = RandomUtils_4.randChoice(candidates);
+            var unitClass = RandomUtils_6.randChoice(candidates);
             return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
         };
         return new DungeonGenerator_1.default(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING).generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier);
@@ -1679,110 +2234,7 @@ define("MapFactory", ["require", "exports", "utils/RandomUtils", "SpriteFactory"
     }
     exports.default = { randomMap: randomMap, FIXED_MAPS: FIXED_MAPS };
 });
-define("classes/SoundPlayer", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var SoundPlayer = /** @class */ (function () {
-        function SoundPlayer(maxPolyphony, gain) {
-            this._context = new AudioContext();
-            this._gainNode = this._context.createGain();
-            this._gainNode.gain.value = gain * 0.2; // 0.15 is already VERY loud
-            this._gainNode.connect(this._context.destination);
-            this._oscillators = [];
-        }
-        SoundPlayer.prototype._newOscillator = function () {
-            var oscillatorNode = this._context.createOscillator();
-            oscillatorNode.type = 'square';
-            oscillatorNode.connect(this._gainNode);
-            return {
-                node: oscillatorNode,
-                started: false,
-                stopped: false,
-                isRepeating: false
-            };
-        };
-        ;
-        SoundPlayer.prototype.stop = function () {
-            try {
-                this._oscillators.forEach(function (oscillator) {
-                    if (oscillator && oscillator.started) {
-                        oscillator.node.stop(0);
-                        oscillator.stopped = true;
-                    }
-                });
-                this._oscillators = [];
-            }
-            catch (e) {
-                console.error(e);
-            }
-        };
-        ;
-        /**
-         * @param samples An array of [freq, ms]
-         * @param repeating
-         */
-        SoundPlayer.prototype.playSound = function (samples, repeating) {
-            var _this = this;
-            if (repeating === void 0) { repeating = false; }
-            var oscillator = this._newOscillator();
-            this._oscillators.push(oscillator);
-            if (samples.length) {
-                var startTime = this._context.currentTime;
-                var nextStartTime = startTime;
-                for (var i = 0; i < samples.length; i++) {
-                    var _a = samples[i], freq = _a[0], ms = _a[1];
-                    oscillator.node.frequency.setValueAtTime(freq, nextStartTime);
-                    nextStartTime += ms / 1000;
-                }
-                var runtime = samples.map(function (_a) {
-                    var freq = _a[0], ms = _a[1];
-                    return ms;
-                }).reduce(function (a, b) { return a + b; });
-                oscillator.node.start();
-                oscillator.started = true;
-                if (repeating) {
-                    oscillator.isRepeating = true;
-                }
-                oscillator.node.onended = function () {
-                    if (oscillator.isRepeating && !oscillator.stopped) {
-                        _this.playSound(samples, true);
-                    }
-                    else {
-                        _this._oscillators.splice(_this._oscillators.indexOf(oscillator, 1));
-                    }
-                };
-                oscillator.node.stop(startTime + runtime / 1000);
-            }
-        };
-        ;
-        return SoundPlayer;
-    }());
-    exports.default = SoundPlayer;
-});
-define("audio", ["require", "exports", "classes/SoundPlayer"], function (require, exports, SoundPlayer_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.05); };
-    var _getSoundPlayer = function () { return new SoundPlayer_1.default(4, 0.15); };
-    // TODO very hacky memoizing
-    var MUSIC = null;
-    var SFX = null;
-    function playSound(samples) {
-        if (!SFX) {
-            SFX = _getSoundPlayer();
-        }
-        SFX.playSound(samples, false);
-    }
-    exports.playSound = playSound;
-    function playMusic(samples) {
-        if (!MUSIC) {
-            MUSIC = _getMusicPlayer();
-        }
-        MUSIC.playSound(samples, false);
-    }
-    exports.playMusic = playMusic;
-});
-define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (require, exports, RandomUtils_5, audio_1) {
+define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"], function (require, exports, RandomUtils_7, AudioUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function transpose_8va(_a) {
@@ -1893,11 +2345,11 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
         var numRepeats = 4;
         var _loop_5 = function (i) {
             var section = sections[i];
-            var bass = RandomUtils_5.randChoice(section.bass);
+            var bass = RandomUtils_7.randChoice(section.bass);
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_5.randChoice(section.lead);
+                    lead = RandomUtils_7.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
@@ -1905,7 +2357,7 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
                     var figures = __spreadArrays([
                         bass.map(transpose_8vb)
                     ], (!!lead ? [lead] : []));
-                    figures.forEach(function (figure) { return audio_1.playMusic(figure); });
+                    figures.forEach(function (figure) { return AudioUtils_4.playMusic(figure); });
                 }, ((numRepeats * i) + j) * suite.length);
             }
         };
@@ -1922,38 +2374,68 @@ define("Music", ["require", "exports", "utils/RandomUtils", "audio"], function (
         playSuite: playSuite
     };
 });
-define("utils/ItemUtils", ["require", "exports", "audio", "Sounds", "utils/PromiseUtils"], function (require, exports, audio_2, Sounds_1, PromiseUtils_3) {
+define("actions", ["require", "exports", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "utils/MapUtils", "InputHandler", "classes/MapSupplier"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, InputHandler_1, MapSupplier_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function pickupItem(unit, mapItem) {
+    function loadMap(index) {
         var state = jwb.state;
-        var inventoryItem = mapItem.inventoryItem();
-        var category = inventoryItem.category;
-        var inventory = unit.inventory;
-        inventory[category] = inventory[category] || [];
-        inventory[category].push(inventoryItem);
-        state.inventoryIndex = state.inventoryIndex || 0;
-        state.messages.push("Picked up a " + inventoryItem.name + ".");
-        audio_2.playSound(Sounds_1.default.PICK_UP_ITEM);
-    }
-    exports.pickupItem = pickupItem;
-    function useItem(unit, item) {
-        var state = jwb.state;
-        if (!!item) {
-            return item.use(unit)
-                .then(function () {
-                var items = unit.inventory[item.category];
-                items.splice(state.inventoryIndex, 1);
-                if (state.inventoryIndex >= items.length) {
-                    state.inventoryIndex--;
-                }
-            });
+        if (index >= state.mapSuppliers.length) {
+            alert('YOU WIN!');
         }
-        return PromiseUtils_3.resolvedPromise();
+        else {
+            state.mapIndex = index;
+            state.map = MapSupplier_1.createMap(state.mapSuppliers[index]);
+        }
     }
-    exports.useItem = useItem;
+    exports.loadMap = loadMap;
+    function restartGame() {
+        var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
+        jwb.state = new GameState_1.default(playerUnit, [
+            // test
+            //MapFactory.randomMap(20, 10, 3, 1),
+            MapFactory_1.default.randomMap(1, 30, 22, 5, 4),
+            MapFactory_1.default.randomMap(2, 32, 23, 6, 4),
+            MapFactory_1.default.randomMap(3, 34, 24, 7, 3),
+            MapFactory_1.default.randomMap(4, 36, 25, 8, 3),
+            MapFactory_1.default.randomMap(5, 38, 26, 9, 3),
+            MapFactory_1.default.randomMap(6, 30, 27, 10, 3)
+        ]);
+        jwb.renderer = new SpriteRenderer_1.default();
+        loadMap(0);
+        InputHandler_1.attachEvents();
+        jwb.renderer.render();
+        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
+        Music_1.default.playSuite(Music_1.default.SUITE_3);
+    }
+    exports.restartGame = restartGame;
+    /**
+     * Add any tiles the player can currently see to the map's revealed tiles list.
+     */
+    function revealTiles() {
+        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
+        map.rooms.forEach(function (room) {
+            if (MapUtils_6.contains(room, playerUnit)) {
+                for (var y = room.top; y < room.top + room.height; y++) {
+                    for (var x = room.left; x < room.left + room.width; x++) {
+                        if (!MapUtils_6.isTileRevealed({ x: x, y: y })) {
+                            map.revealedTiles.push({ x: x, y: y });
+                        }
+                    }
+                }
+            }
+        });
+        var radius = 2;
+        for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
+            for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
+                if (!MapUtils_6.isTileRevealed({ x: x, y: y })) {
+                    map.revealedTiles.push({ x: x, y: y });
+                }
+            }
+        }
+    }
+    exports.revealTiles = revealTiles;
 });
-define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
+define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playTurn(playerUnitOrder, doUpdate) {
@@ -1978,7 +2460,7 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
                 unitPromises.push(function () { return u.update(); });
             }
         });
-        return PromiseUtils_4.chainPromises(unitPromises)
+        return PromiseUtils_6.chainPromises(unitPromises)
             .then(function () { return jwb.renderer.render(); })
             .then(function () {
             state.turn++;
@@ -1989,7 +2471,38 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "classes/TurnHandler", "types/Tiles", "utils/PromiseUtils", "Sounds", "audio"], function (require, exports, actions_2, ItemUtils_1, types_2, TurnHandler_1, Tiles_4, PromiseUtils_5, Sounds_2, audio_3) {
+define("utils/ItemUtils", ["require", "exports", "utils/AudioUtils", "Sounds", "utils/PromiseUtils"], function (require, exports, AudioUtils_5, Sounds_4, PromiseUtils_7) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function pickupItem(unit, mapItem) {
+        var state = jwb.state;
+        var inventoryItem = mapItem.inventoryItem();
+        var category = inventoryItem.category;
+        var inventory = unit.inventory;
+        inventory[category] = inventory[category] || [];
+        inventory[category].push(inventoryItem);
+        state.inventoryIndex = state.inventoryIndex || 0;
+        state.messages.push("Picked up a " + inventoryItem.name + ".");
+        AudioUtils_5.playSound(Sounds_4.default.PICK_UP_ITEM);
+    }
+    exports.pickupItem = pickupItem;
+    function useItem(unit, item) {
+        var state = jwb.state;
+        if (!!item) {
+            return item.use(unit)
+                .then(function () {
+                var items = unit.inventory[item.category];
+                items.splice(state.inventoryIndex, 1);
+                if (state.inventoryIndex >= items.length) {
+                    state.inventoryIndex--;
+                }
+            });
+        }
+        return PromiseUtils_7.resolvedPromise();
+    }
+    exports.useItem = useItem;
+});
+define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnHandler", "types/Tiles", "Sounds", "utils/ItemUtils", "utils/PromiseUtils", "utils/UnitUtils", "utils/AudioUtils"], function (require, exports, actions_2, types_4, TurnHandler_1, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BUSY = false;
@@ -2006,11 +2519,15 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
             case 'a':
             case 's':
             case 'd':
+            case 'W':
+            case 'A':
+            case 'S':
+            case 'D':
             case 'ArrowUp':
             case 'ArrowLeft':
             case 'ArrowDown':
             case 'ArrowRight':
-                return _handleArrowKey(e.key);
+                return _handleArrowKey(e.key, e.shiftKey);
             case ' ': // spacebar
                 return TurnHandler_1.default.playTurn(null, true);
             case 'Enter':
@@ -2020,45 +2537,56 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                 return _handleTab();
             default:
         }
-        return PromiseUtils_5.resolvedPromise();
+        return PromiseUtils_8.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
-    function _handleArrowKey(key) {
+    function _handleArrowKey(key, shiftKey) {
         var _a, _b, _c, _d;
-        var state = jwb.state;
-        var playerUnit = state.playerUnit, screen = state.screen;
-        var inventory = playerUnit.inventory;
+        var _e = jwb.state, playerUnit = _e.playerUnit, screen = _e.screen;
+        // ignore caps lock
+        var normalizedKey = (shiftKey ? key.toUpperCase() : key.toLowerCase());
         switch (screen) {
-            case types_2.GameScreen.GAME:
-                var _e = [null, null], dx_1 = _e[0], dy_1 = _e[1];
+            case types_4.GameScreen.GAME:
+                var _f = [null, null], dx_1 = _f[0], dy_1 = _f[1];
                 switch (key) {
                     case 'w':
+                    case 'W':
                     case 'ArrowUp':
                         _a = [0, -1], dx_1 = _a[0], dy_1 = _a[1];
                         break;
                     case 'a':
+                    case 'A':
                     case 'ArrowLeft':
                         _b = [-1, 0], dx_1 = _b[0], dy_1 = _b[1];
                         break;
                     case 's':
+                    case 'S':
                     case 'ArrowDown':
                         _c = [0, 1], dx_1 = _c[0], dy_1 = _c[1];
                         break;
                     case 'd':
+                    case 'D':
                     case 'ArrowRight':
                         _d = [1, 0], dx_1 = _d[0], dy_1 = _d[1];
                         break;
                     default:
                         throw "Invalid key " + key;
                 }
-                playerUnit.queuedOrder = function (u) { return actions_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
-                return TurnHandler_1.default.playTurn(function (u) { return actions_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); }, true);
-            case types_2.GameScreen.INVENTORY:
+                var queuedOrder = void 0;
+                if (['W', 'A', 'S', 'D'].indexOf(normalizedKey) > -1) {
+                    queuedOrder = function (u) { return UnitUtils_2.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
+                }
+                else {
+                    queuedOrder = function (u) { return UnitUtils_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
+                }
+                return TurnHandler_1.default.playTurn(queuedOrder, true);
+            case types_4.GameScreen.INVENTORY:
+                var state = jwb.state;
                 var inventoryCategory = state.inventoryCategory;
-                var items = inventory[inventoryCategory];
-                var inventoryKeys = Object.keys(inventory);
+                var items = playerUnit.inventory[inventoryCategory];
+                var inventoryKeys = Object.keys(playerUnit.inventory);
                 var keyIndex = inventoryKeys.indexOf(inventoryCategory);
-                switch (key) {
+                switch (normalizedKey) {
                     case 'w':
                     case 'ArrowUp':
                         state.inventoryIndex = (state.inventoryIndex + items.length - 1) % items.length;
@@ -2094,7 +2622,7 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
         var playerUnit = state.playerUnit, screen = state.screen;
         var inventory = playerUnit.inventory;
         switch (screen) {
-            case types_2.GameScreen.GAME: {
+            case types_4.GameScreen.GAME: {
                 var map = state.map, mapIndex = state.mapIndex;
                 var x = playerUnit.x, y = playerUnit.y;
                 var item = map.getItem({ x: x, y: y });
@@ -2103,16 +2631,16 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
                     map.removeItem({ x: x, y: y });
                 }
                 else if (map.getTile({ x: x, y: y }) === Tiles_4.default.STAIRS_DOWN) {
-                    audio_3.playSound(Sounds_2.default.DESCEND_STAIRS);
+                    AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null, true);
             }
-            case types_2.GameScreen.INVENTORY: {
+            case types_4.GameScreen.INVENTORY: {
                 var inventoryCategory = state.inventoryCategory, inventoryIndex = state.inventoryIndex;
                 var items = inventory[inventoryCategory];
                 var item = items[inventoryIndex] || null;
-                state.screen = types_2.GameScreen.GAME;
+                state.screen = types_4.GameScreen.GAME;
                 return ItemUtils_1.useItem(playerUnit, item)
                     .then(function () { return TurnHandler_1.default.playTurn(null, false); });
             }
@@ -2124,11 +2652,11 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_2.GameScreen.INVENTORY:
-                state.screen = types_2.GameScreen.GAME;
+            case types_4.GameScreen.INVENTORY:
+                state.screen = types_4.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_2.GameScreen.INVENTORY;
+                state.screen = types_4.GameScreen.INVENTORY;
                 state.inventoryCategory = state.inventoryCategory || Object.keys(playerUnit.inventory)[0] || null;
                 break;
         }
@@ -2139,503 +2667,16 @@ define("input", ["require", "exports", "actions", "utils/ItemUtils", "types", "c
     }
     exports.attachEvents = attachEvents;
 });
-define("actions", ["require", "exports", "Sounds", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "audio", "utils/MapUtils", "input", "classes/MapSupplier"], function (require, exports, Sounds_3, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, audio_4, MapUtils_4, input_1, MapSupplier_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function loadMap(index) {
-        var state = jwb.state;
-        if (index >= state.mapSuppliers.length) {
-            alert('YOU WIN!');
-        }
-        else {
-            state.mapIndex = index;
-            state.map = MapSupplier_1.createMap(state.mapSuppliers[index]);
-        }
-    }
-    exports.loadMap = loadMap;
-    function moveOrAttack(unit, _a) {
-        var x = _a.x, y = _a.y;
-        var _b = jwb.state, map = _b.map, messages = _b.messages, playerUnit = _b.playerUnit;
-        return new Promise(function (resolve) {
-            var _a;
-            if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
-                _a = [x, y], unit.x = _a[0], unit.y = _a[1];
-                if (unit === playerUnit) {
-                    audio_4.playSound(Sounds_3.default.FOOTSTEP);
-                }
-                resolve();
-            }
-            else {
-                var targetUnit = map.getUnit({ x: x, y: y });
-                if (!!targetUnit) {
-                    var damage = unit.getDamage();
-                    messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
-                    targetUnit.takeDamage(damage, unit)
-                        .then(function () { return resolve(); });
-                }
-                else {
-                    resolve();
-                }
-            }
-        });
-    }
-    exports.moveOrAttack = moveOrAttack;
-    function restartGame() {
-        var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
-        jwb.state = new GameState_1.default(playerUnit, [
-            // test
-            //MapFactory.randomMap(20, 10, 3, 1),
-            MapFactory_1.default.randomMap(1, 30, 22, 5, 4),
-            MapFactory_1.default.randomMap(2, 32, 23, 6, 4),
-            MapFactory_1.default.randomMap(3, 34, 24, 7, 3),
-            MapFactory_1.default.randomMap(4, 36, 25, 8, 3),
-            MapFactory_1.default.randomMap(5, 38, 26, 9, 3),
-            MapFactory_1.default.randomMap(6, 30, 27, 10, 3)
-        ]);
-        jwb.renderer = new SpriteRenderer_1.default();
-        loadMap(0);
-        input_1.attachEvents();
-        jwb.renderer.render();
-        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
-        Music_1.default.playSuite(Music_1.default.SUITE_3);
-    }
-    exports.restartGame = restartGame;
-    /**
-     * Add any tiles the player can currently see to the map's revealed tiles list.
-     */
-    function revealTiles() {
-        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-        map.rooms.forEach(function (room) {
-            if (MapUtils_4.contains(room, playerUnit)) {
-                for (var y = room.top; y < room.top + room.height; y++) {
-                    for (var x = room.left; x < room.left + room.width; x++) {
-                        if (!MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                            map.revealedTiles.push({ x: x, y: y });
-                        }
-                    }
-                }
-            }
-        });
-        var radius = 2;
-        for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
-            for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-                if (!MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                    map.revealedTiles.push({ x: x, y: y });
-                }
-            }
-        }
-    }
-    exports.revealTiles = revealTiles;
-});
-define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "actions"], function (require, exports, MapUtils_5, Pathfinder_2, RandomUtils_6, actions_3) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-    function wanderAndAttack(unit) {
-        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-        var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-                else if (map.getUnit({ x: x, y: y })) {
-                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
-                        tiles.push({ x: x, y: y });
-                    }
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var _b = RandomUtils_6.randChoice(tiles), x = _b.x, y = _b.y;
-            return actions_3.moveOrAttack(unit, { x: x, y: y });
-        }
-        return new Promise(function (resolve) { resolve(); });
-    }
-    function wander(unit) {
-        var map = jwb.state.map;
-        /** @type {{ x: int, y: int }[]} */
-        var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var _a = RandomUtils_6.randChoice(tiles), x = _a.x, y = _a.y;
-            return actions_3.moveOrAttack(unit, { x: x, y: y });
-        }
-        return new Promise(function (resolve) { resolve(); });
-    }
-    function _attackPlayerUnit_withPath(unit) {
-        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-        var mapRect = { left: 0, top: 0, width: map.width, height: map.height };
-        var blockedTileDetector = function (_a) {
-            var x = _a.x, y = _a.y;
-            if (!jwb.state.map.getTile({ x: x, y: y }).isBlocking) {
-                return false;
-            }
-            else if (MapUtils_5.coordinatesEquals({ x: x, y: y }, playerUnit)) {
-                return false;
-            }
-            return true;
-        };
-        /**
-         * @type {!Coordinates[]}
-         */
-        var path = new Pathfinder_2.default(blockedTileDetector, function () { return 1; }).findPath(unit, playerUnit, mapRect);
-        if (path.length > 1) {
-            var _b = path[1], x = _b.x, y = _b.y; // first tile is the unit's own tile
-            var unitAtPoint = map.getUnit({ x: x, y: y });
-            if (!unitAtPoint || unitAtPoint === playerUnit) {
-                return actions_3.moveOrAttack(unit, { x: x, y: y });
-            }
-        }
-        return new Promise(function (resolve) { resolve(); });
-    }
-    function fleeFromPlayerUnit(unit) {
-        var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-        var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-                else if (map.getUnit({ x: x, y: y })) {
-                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
-                        tiles.push({ x: x, y: y });
-                    }
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var _b = _sortBy(tiles, function (coordinates) { return MapUtils_5.manhattanDistance(coordinates, playerUnit); })[tiles.length - 1], x = _b.x, y = _b.y;
-            return actions_3.moveOrAttack(unit, { x: x, y: y });
-        }
-        return new Promise(function (resolve) { resolve(); });
-    }
-    function _sortBy(list, mapFunction) {
-        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
-    }
-    exports.default = {
-        WANDER: wander,
-        ATTACK_PLAYER: _attackPlayerUnit_withPath,
-        FLEE_FROM_PLAYER: fleeFromPlayerUnit,
-        STAY: function () { return new Promise(function (resolve) { resolve(); }); }
-    };
-});
-define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_6, RandomUtils_7, UnitBehaviors_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var HUMAN_CAUTIOUS = function (unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var behavior;
-        var distanceToPlayer = MapUtils_6.manhattanDistance(unit, playerUnit);
-        if (distanceToPlayer === 1) {
-            if ((unit.life / unit.maxLife) >= 0.4) {
-                behavior = 'ATTACK_PLAYER';
-            }
-            else {
-                behavior = RandomUtils_7.weightedRandom({
-                    'ATTACK_PLAYER': 0.2,
-                    'WANDER': 0.5,
-                    'FLEE_FROM_PLAYER': 0.3
-                });
-            }
-        }
-        else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_7.weightedRandom({
-                'WANDER': 0.3,
-                'ATTACK_PLAYER': 0.1,
-                'STAY': 0.6
-            });
-        }
-        else {
-            behavior = RandomUtils_7.weightedRandom({
-                'ATTACK_PLAYER': 0.6,
-                'WANDER': 0.2,
-                'STAY': 0.2
-            });
-        }
-        return UnitBehaviors_1.default[behavior].call(null, unit);
-    };
-    exports.HUMAN_CAUTIOUS = HUMAN_CAUTIOUS;
-    var HUMAN_AGGRESSIVE = function (unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var behavior;
-        var distanceToPlayer = MapUtils_6.manhattanDistance(unit, playerUnit);
-        if (distanceToPlayer === 1) {
-            behavior = 'ATTACK_PLAYER';
-        }
-        else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_7.weightedRandom({
-                'WANDER': 0.4,
-                'STAY': 0.4,
-                'ATTACK_PLAYER': 0.2
-            });
-        }
-        else {
-            behavior = RandomUtils_7.weightedRandom({
-                'ATTACK_PLAYER': 0.9,
-                'STAY': 0.1
-            });
-        }
-        return UnitBehaviors_1.default[behavior].call(null, unit);
-    };
-    exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
-    var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER.call(null, unit); };
-    exports.FULL_AGGRO = FULL_AGGRO;
-});
-define("classes/UnitClass", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
-define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function playAnimation(sprite, keys, delay) {
-        var renderer = jwb.renderer;
-        var promises = [];
-        keys.forEach(function (key) {
-            promises.push(function () { return new Promise(function (resolve) {
-                sprite.setImage(key)
-                    .then(function () { return renderer.render(); })
-                    .then(function () {
-                    setTimeout(function () { resolve(); }, delay);
-                });
-            }); });
-        });
-        return PromiseUtils_6.chainPromises(promises)
-            .then(function () { return sprite.setImage(sprite.defaultKey); })
-            .then(function () { return renderer.render(); });
-    }
-    exports.playAnimation = playAnimation;
-});
-define("classes/Unit", ["require", "exports", "types", "audio", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_3, audio_5, Sounds_4, PromiseUtils_7, PlayerSprite_2, SpriteUtils_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var LIFE_PER_TURN_MULTIPLIER = 0.005;
-    var Unit = /** @class */ (function () {
-        function Unit(unitClass, name, level, _a) {
-            var _this = this;
-            var x = _a.x, y = _a.y;
-            this.class = 'Unit';
-            this.unitClass = unitClass;
-            this.sprite = unitClass.sprite(unitClass);
-            this.inventory = {};
-            Object.keys(types_3.ItemCategory).forEach(function (category) {
-                _this.inventory[category] = [];
-            });
-            this.equipment = {};
-            Object.keys(types_3.EquipmentCategory).forEach(function (category) {
-                _this.equipment[category] = [];
-            });
-            this.x = x;
-            this.y = y;
-            this.name = name;
-            this.level = level;
-            this.experience = 0;
-            this.maxLife = unitClass.startingLife;
-            this.life = unitClass.startingLife;
-            this.lifeRemainder = 0;
-            this._damage = unitClass.startingDamage;
-            this.queuedOrder = null;
-            this.aiHandler = unitClass.aiHandler;
-        }
-        Unit.prototype._regenLife = function () {
-            var lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
-            this.lifeRemainder += lifePerTurn;
-            var deltaLife = Math.floor(this.lifeRemainder);
-            this.lifeRemainder -= deltaLife;
-            this.life = Math.min(this.life + deltaLife, this.maxLife);
-        };
-        ;
-        Unit.prototype.update = function () {
-            var _this = this;
-            return new Promise(function (resolve) {
-                _this._regenLife();
-                if (!!_this.queuedOrder) {
-                    var queuedOrder = _this.queuedOrder;
-                    _this.queuedOrder = null;
-                    return queuedOrder(_this)
-                        .then(function () { return resolve(); });
-                }
-                return resolve();
-            })
-                .then(function () {
-                if (!!_this.aiHandler) {
-                    return _this.aiHandler(_this);
-                }
-                return PromiseUtils_7.resolvedPromise();
-            });
-        };
-        Unit.prototype.getDamage = function () {
-            var damage = this._damage;
-            Object.values(this.equipment)
-                .flatMap(function (list) { return list; })
-                .forEach(function (equippedItem) {
-                damage += (equippedItem.damage || 0);
-            });
-            return damage;
-        };
-        Unit.prototype._levelUp = function () {
-            this.level++;
-            var lifePerLevel = this.unitClass.lifePerLevel(this.level);
-            this.maxLife += lifePerLevel;
-            this.life += lifePerLevel;
-            this._damage += this.unitClass.damagePerLevel(this.level);
-            audio_5.playSound(Sounds_4.default.LEVEL_UP);
-        };
-        Unit.prototype.gainExperience = function (experience) {
-            this.experience += experience;
-            var experienceToNextLevel = this.experienceToNextLevel();
-            while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
-                this.experience -= experienceToNextLevel;
-                this._levelUp();
-            }
-        };
-        Unit.prototype.experienceToNextLevel = function () {
-            var unitClass = this.unitClass;
-            if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
-                return unitClass.experienceToNextLevel(this.level);
-            }
-            return null;
-        };
-        Unit.prototype.takeDamage = function (damage, sourceUnit) {
-            var _this = this;
-            if (sourceUnit === void 0) { sourceUnit = undefined; }
-            var _a = jwb.state, map = _a.map, playerUnit = _a.playerUnit;
-            var promises = [];
-            if (this.sprite instanceof PlayerSprite_2.default) {
-                var PlayerSpriteKeys = PlayerSprite_2.default.SpriteKeys;
-                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
-                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 150); });
-            }
-            promises.push(function () { return new Promise(function (resolve) {
-                _this.life = Math.max(_this.life - damage, 0);
-                if (_this.life === 0) {
-                    map.units = map.units.filter(function (u) { return u !== _this; });
-                    if (_this === playerUnit) {
-                        alert('Game Over!');
-                        audio_5.playSound(Sounds_4.default.PLAYER_DIES);
-                    }
-                    else {
-                        audio_5.playSound(Sounds_4.default.ENEMY_DIES);
-                    }
-                    if (sourceUnit) {
-                        sourceUnit.gainExperience(1);
-                    }
-                }
-                else {
-                    if (_this === playerUnit) {
-                        audio_5.playSound(Sounds_4.default.PLAYER_HITS_ENEMY);
-                    }
-                    else {
-                        audio_5.playSound(Sounds_4.default.ENEMY_HITS_PLAYER);
-                    }
-                }
-                resolve();
-            }); });
-            return PromiseUtils_7.chainPromises(promises);
-        };
-        ;
-        return Unit;
-    }());
-    exports.default = Unit;
-});
-define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var InventoryItem = /** @class */ (function () {
-        function InventoryItem(name, category, onUse) {
-            this.name = name;
-            this.category = category;
-            this._onUse = onUse;
-        }
-        InventoryItem.prototype.use = function (unit) {
-            return this._onUse.call(null, this, unit);
-        };
-        return InventoryItem;
-    }());
-    exports.default = InventoryItem;
-});
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "audio", "utils/PromiseUtils"], function (require, exports, Sounds_5, InventoryItem_1, types_4, audio_6, PromiseUtils_8) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function createPotion(lifeRestored) {
-        var onUse = function (item, unit) {
-            return new Promise(function (resolve) {
-                audio_6.playSound(Sounds_5.default.USE_POTION);
-                var prevLife = unit.life;
-                unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-                jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
-                resolve();
-            });
-        };
-        return new InventoryItem_1.default('Potion', types_4.ItemCategory.POTION, onUse);
-    }
-    function createSword(damage) {
-        var onUse = function (item, unit) {
-            return new Promise(function (resolve) {
-                var equippedSword = {
-                    name: 'Short Sword',
-                    category: types_4.EquipmentCategory.WEAPON,
-                    inventoryItem: item,
-                    damage: damage
-                };
-                var currentWeapons = __spreadArrays(unit.equipment[types_4.EquipmentCategory.WEAPON]);
-                unit.equipment[types_4.EquipmentCategory.WEAPON] = [equippedSword];
-                currentWeapons.forEach(function (weapon) {
-                    var inventoryItem = weapon.inventoryItem;
-                    unit.inventory[inventoryItem.category].push(inventoryItem);
-                });
-                resolve();
-            });
-        };
-        return new InventoryItem_1.default('Short Sword', types_4.ItemCategory.WEAPON, onUse);
-    }
-    function createScrollOfFloorFire(damage) {
-        var map = jwb.state.map;
-        var onUse = function (item, unit) {
-            var promises = [];
-            var adjacentUnits = map.units.filter(function (u) {
-                var dx = unit.x - u.x;
-                var dy = unit.y - u.y;
-                return ([-1, 0, 1].indexOf(dx) > -1)
-                    && ([-1, 0, 1].indexOf(dy) > -1)
-                    && !(dx === 0 && dy === 0);
-            });
-            adjacentUnits.forEach(function (u) {
-                promises.push(function () { return u.takeDamage(damage, unit); });
-            });
-            return PromiseUtils_8.chainPromises(promises);
-        };
-        return new InventoryItem_1.default('Scroll of Floor Fire', types_4.ItemCategory.SCROLL, onUse);
-    }
-    exports.default = {
-        createPotion: createPotion,
-        createSword: createSword,
-        createScrollOfFloorFire: createScrollOfFloorFire
-    };
-});
 define("globals", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("main", ["require", "exports", "actions"], function (require, exports, actions_4) {
+define("main", ["require", "exports", "actions"], function (require, exports, actions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // @ts-ignore
     window.jwb = window.jwb || {};
-    window.onload = function () { return actions_4.restartGame(); };
+    window.onload = function () { return actions_3.restartGame(); };
 });
 define("classes/AsciiRenderer", ["require", "exports"], function (require, exports) {
     "use strict";

@@ -1,8 +1,8 @@
-import { Sample } from './types';
-import SoundPlayer from './classes/SoundPlayer';
+import { Sample } from '../types';
+import SoundPlayer from '../classes/SoundPlayer';
 
-const _getMusicPlayer = () => new SoundPlayer(4, 0.05);
-const _getSoundPlayer = () => new SoundPlayer(4, 0.15);
+const _getMusicPlayer = () => new SoundPlayer(4, 0.08);
+const _getSoundPlayer = () => new SoundPlayer(4, 0.16);
 
 // TODO very hacky memoizing
 let MUSIC: SoundPlayer = null;

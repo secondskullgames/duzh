@@ -3,7 +3,7 @@ import Sprite from "./Sprite";
 import EquippedItem from './EquippedItem';
 import InventoryItem from './InventoryItem';
 import UnitClass from './UnitClass';
-import { playSound } from '../audio';
+import { playSound } from '../utils/AudioUtils';
 import Sounds from '../Sounds';
 import { UnitAI } from '../UnitAI';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';

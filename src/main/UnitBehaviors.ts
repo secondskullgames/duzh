@@ -2,8 +2,8 @@ import { coordinatesEquals, manhattanDistance } from './utils/MapUtils';
 import Pathfinder from './classes/Pathfinder';
 import Unit from './classes/Unit';
 import { randChoice } from './utils/RandomUtils';
-import { moveOrAttack } from './actions';
 import { Coordinates } from './types';
+import { moveOrAttack } from './utils/UnitUtils';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 

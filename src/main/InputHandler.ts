@@ -1,11 +1,12 @@
-import { loadMap, moveOrAttack } from './actions';
-import { pickupItem, useItem } from './utils/ItemUtils';
+import { loadMap} from './actions';
 import { GameScreen, ItemCategory } from './types';
 import TurnHandler from './classes/TurnHandler';
 import Tiles from './types/Tiles';
-import { resolvedPromise } from './utils/PromiseUtils';
 import Sounds from './Sounds';
-import { playSound } from './audio';
+import { pickupItem, useItem } from './utils/ItemUtils';
+import { resolvedPromise } from './utils/PromiseUtils';
+import { fireProjectile, moveOrAttack } from './utils/UnitUtils';
+import { playSound } from './utils/AudioUtils';
 
 let BUSY = false;
 
@@ -23,11 +24,15 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
     case 'a':
     case 's':
     case 'd':
+    case 'W':
+    case 'A':
+    case 'S':
+    case 'D':
     case 'ArrowUp':
     case 'ArrowLeft':
     case 'ArrowDown':
     case 'ArrowRight':
-      return _handleArrowKey(e.key);
+      return _handleArrowKey(e.key, e.shiftKey);
     case ' ': // spacebar
       return TurnHandler.playTurn(null, true);
     case 'Enter':
@@ -40,28 +45,33 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
   return resolvedPromise();
 }
 
-function _handleArrowKey(key): Promise<void> {
-  const { state } = jwb;
-  const { playerUnit, screen } = state;
-  const { inventory } = playerUnit;
+function _handleArrowKey(key: string, shiftKey: boolean): Promise<void> {
+  const { playerUnit, screen } = jwb.state;
+
+  // ignore caps lock
+  const normalizedKey = (shiftKey ? key.toUpperCase() : key.toLowerCase());
 
   switch (screen) {
     case GameScreen.GAME:
       let [dx, dy] = [null, null];
       switch (key) {
         case 'w':
+        case 'W':
         case 'ArrowUp':
           [dx, dy] = [0, -1];
           break;
         case 'a':
+        case 'A':
         case 'ArrowLeft':
           [dx, dy] = [-1, 0];
           break;
         case 's':
+        case 'S':
         case 'ArrowDown':
           [dx, dy] = [0, 1];
           break;
         case 'd':
+        case 'D':
         case 'ArrowRight':
           [dx, dy] = [1, 0];
           break;
@@ -69,17 +79,24 @@ function _handleArrowKey(key): Promise<void> {
           throw `Invalid key ${key}`;
       }
 
-      playerUnit.queuedOrder = u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
+      let queuedOrder;
+      if (['W','A','S','D'].indexOf(normalizedKey) > -1) {
+        queuedOrder = u => fireProjectile(u, { dx, dy });
+      } else {
+        queuedOrder = u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
+      }
       return TurnHandler.playTurn(
-        u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy }),
+        queuedOrder,
         true
       );
     case GameScreen.INVENTORY:
+      const { state } = jwb;
       const { inventoryCategory } = state;
-      const items = inventory[inventoryCategory];
-      const inventoryKeys = <ItemCategory[]>Object.keys(inventory);
+      const items = playerUnit.inventory[inventoryCategory];
+      const inventoryKeys = <ItemCategory[]>Object.keys(playerUnit.inventory);
       let keyIndex = inventoryKeys.indexOf(inventoryCategory);
-      switch (key) {
+
+      switch (normalizedKey) {
         case 'w':
         case 'ArrowUp':
           state.inventoryIndex = (state.inventoryIndex + items.length - 1) % items.length;
