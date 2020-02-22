@@ -1,12 +1,8 @@
-import Sprite from './Sprite';
 import InventoryItem from './InventoryItem';
+import Entity from '../types/Entity';
 
-interface MapItem {
-  x: number;
-  y: number;
-  char: string;
-  sprite: Sprite;
-  inventoryItem: () => InventoryItem
+interface MapItem extends Entity {
+  inventoryItem?: () => InventoryItem
 }
 
 export default MapItem;

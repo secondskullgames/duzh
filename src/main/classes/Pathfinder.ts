@@ -49,28 +49,20 @@ class Pathfinder {
   private readonly tileCostCalculator: (first: Coordinates, second: Coordinates) => number;
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
-   *
-   * @param {!function(!Coordinates): !boolean} blockedTileDetector
-   * @param {!function(!Coordinates, !Coordinates): !number} tileCostCalculator
    */
-  constructor(blockedTileDetector, tileCostCalculator) {
+  constructor(
+    blockedTileDetector: ({ x, y }: Coordinates) => boolean,
+    tileCostCalculator: (first: Coordinates, second: Coordinates) => number
+  ) {
     this.blockedTileDetector = blockedTileDetector;
     this.tileCostCalculator = tileCostCalculator;
   }
 
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
-   *
-   * @param {!Coordinates} start
-   * @param {!Coordinates} goal
-   * @param {!Rect} rect
-   * @return {!Coordinates[]}
    */
   findPath(start: Coordinates, goal: Coordinates, rect: Rect): Coordinates[] {
-    /**
-     * @type {!Node[]}
-     */
-    const open = [
+    const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
     /**
@@ -83,28 +75,20 @@ class Pathfinder {
         return [];
       }
 
-      /**
-       * node -> estimated cost (f)
-       * @type {{node: !Node, cost: !int}[]}
-       */
-      const nodeCosts = open.map(node => ({ node, cost: f(node, start, goal) }))
+      type NodeWithCost = { node: Node, cost: number };
+
+      const nodeCosts: NodeWithCost[] = open.map(node => ({ node, cost: f(node, start, goal) }))
         .sort((a, b) => b[1] - a[1]);
 
       const bestNode = nodeCosts[0].node;
       if (coordinatesEquals(bestNode, goal)) {
         // Done!
-        const path = traverseParents(bestNode);
+        const path: Coordinates[] = traverseParents(bestNode);
         //console.log(`path = ${JSON.stringify(path)}`);
         return path;
       } else {
-        /**
-         * @type {{node: !Node, cost: !int}[]}
-         */
-        const bestNodes = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
-        /**
-         * @type {!Node}
-         */
-        const { node: chosenNode, cost: chosenNodeCost } = randChoice(bestNodes);
+        const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
+        const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
         closed.push(chosenNode);
         this._findNeighbors(chosenNode, rect).forEach(neighbor => {

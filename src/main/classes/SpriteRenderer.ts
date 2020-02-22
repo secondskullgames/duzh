@@ -60,40 +60,16 @@ class SpriteRenderer {
   }
 
   private _renderGameScreen(): Promise<any> {
-    const { _canvas } = this;
-
     revealTiles();
-    return resolvedPromise()//this._waitForSprites()
-      .then(() => {
-        this._context.fillStyle = '#000';
-        this._context.fillRect(0, 0, _canvas.width, _canvas.height);
-        return chainPromises([
-          () => this._renderTiles(),
-          () => this._renderItems(),
-          () => this._renderUnits(),
-          () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
-        ]);
-      });
-  }
+    this._context.fillStyle = '#000';
+    this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
-  private _waitForSprites(): Promise<any> {
-    const { map } = jwb.state;
-    const elements: (Unit|MapItem|Tile)[] = [];
-
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        if (map.contains({ x, y })) {
-          elements.push(map.getTile({ x, y }), map.getItem({ x, y }), map.getUnit({ x, y }));
-        }
-      }
-    }
-
-    const sprites = elements.filter(element => !!element)
-      .map(element => element.sprite)
-      .filter(sprite => !!sprite);
-
-    const promises = sprites.map(sprite => sprite.getImage());
-    return Promise.all(promises);
+    return chainPromises([
+      () => this._renderTiles(),
+      () => this._renderItems(),
+      () => this._renderUnits(),
+      () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
+    ]);
   }
 
   private _renderTiles(): Promise<any> {

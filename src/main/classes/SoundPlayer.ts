@@ -1,3 +1,5 @@
+import { Sample } from '../types';
+
 type CustomOscillator = {
   node: OscillatorNode,
   isRepeating: boolean,
@@ -11,18 +13,24 @@ class SoundPlayer {
   private _oscillators: CustomOscillator[];
 
   constructor (maxPolyphony, gain) {
+    const t1 = new Date().getTime();
     this._context = new AudioContext();
     this._gainNode = this._context.createGain();
-    this._gainNode.gain.value = gain * 0.2; // 0.15 is already VERY loud
+    this._gainNode.gain.value = gain * 0.1; // sounds can be VERY loud
     this._gainNode.connect(this._context.destination);
+    const t2 = new Date().getTime();
+    console.log(`Created SoundPlayer in ${t2 - t1} ms`);
 
     this._oscillators = [];
   }
 
   private _newOscillator(): CustomOscillator {
+    const t1 = new Date().getTime();
     const oscillatorNode = this._context.createOscillator();
     oscillatorNode.type = 'square';
     oscillatorNode.connect(this._gainNode);
+    const t2 = new Date().getTime();
+    console.log(`Created CustomOscillator in ${t2 - t1} ms`);
     return {
       node: oscillatorNode,
       started: false,
@@ -45,14 +53,11 @@ class SoundPlayer {
     }
   };
 
-  /**
-   * @param samples An array of [freq, ms]
-   * @param repeating
-   */
-  playSound(samples: [number, number][], repeating: boolean = false) {
+  playSound(samples: Sample[], repeating: boolean = false) {
     const oscillator = this._newOscillator();
     this._oscillators.push(oscillator);
     if (samples.length) {
+      const t1 = new Date().getTime();
       const startTime = this._context.currentTime;
       let nextStartTime = startTime;
       for (let i = 0; i < samples.length; i++) {
@@ -63,6 +68,8 @@ class SoundPlayer {
       const runtime = samples.map(([freq, ms]) => ms).reduce((a, b) => a + b);
       oscillator.node.start();
       oscillator.started = true;
+      const t2 = new Date().getTime();
+      console.log(`Started samples in ${t2 - t1} ms`);
 
       if (repeating) {
         oscillator.isRepeating = true;

@@ -3,9 +3,11 @@ import InventoryItem from './classes/InventoryItem';
 import { EquipmentCategory, ItemCategory } from './types';
 import { playSound } from './utils/AudioUtils';
 import EquippedItem from './classes/EquippedItem';
-import { isAdjacent } from './utils/MapUtils';
 import Unit from './classes/Unit';
 import { chainPromises } from './utils/PromiseUtils';
+import MapItem from './classes/MapItem';
+import { randInt } from './utils/RandomUtils';
+import SpriteFactory from './SpriteFactory';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -65,8 +67,38 @@ function createScrollOfFloorFire(damage): InventoryItem {
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
 }
 
+function createRandomItem({ x, y }): MapItem {
+  switch (randInt(0, 4)) {
+    case 0:
+      return {
+        x,
+        y,
+        char: 'S',
+        sprite: SpriteFactory.MAP_SWORD(),
+        inventoryItem: () => createSword(6)
+      };
+    case 1:
+      return {
+        x,
+        y,
+        char: 'K',
+        sprite: SpriteFactory.MAP_SCROLL(),
+        inventoryItem: () => createScrollOfFloorFire(200)
+      };
+    default:
+      return {
+        x,
+        y,
+        char: 'P',
+        sprite: SpriteFactory.MAP_POTION(),
+        inventoryItem: () => createPotion(50)
+      };
+  }
+}
+
 export default {
   createPotion,
   createSword,
-  createScrollOfFloorFire
+  createScrollOfFloorFire,
+  createRandomItem
 };

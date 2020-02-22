@@ -14,7 +14,7 @@ class GameState {
   inventoryIndex: number;
   turn: number;
 
-  constructor(playerUnit, mapSuppliers) {
+  constructor(playerUnit: Unit, mapSuppliers: MapSupplier[]) {
     this.screen = GameScreen.GAME;
     this.playerUnit = playerUnit;
     this.mapSuppliers = mapSuppliers;

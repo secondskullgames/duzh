@@ -36,12 +36,29 @@ class DungeonGenerator {
     numItems: number,
     itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
   ): MapSupplier {
-    const section = this._generateSection(width, height);
-    this._joinSection(section);
+    // Create a section with dimensions (width, height - 1) and then shift it down by one tile.
+    // This is so we have room to add a WALL_TOP tile in the top slot if necessary
+    const section = (() => {
+      const section = this._generateSection(width, height - 1);
+      this._joinSection(section);
+
+      return {
+        width,
+        height,
+        rooms: section.rooms.map(room => ({
+          left: room.left,
+          top: room.top + 1,
+          width: room.width,
+          height: room.height,
+          exits: room.exits.map(({ x, y }) => ({ x, y: y + 1 }))
+        })),
+        tiles: [[], ...section.tiles]
+      };
+    })();
     const { tiles } = section;
     const [stairsLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [], 1);
     tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-    const playerUnitLocation = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1)[0];
+    const [playerUnitLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1);
     const enemyUnitLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
     const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
 
@@ -182,22 +199,18 @@ class DungeonGenerator {
   }
 
   /**
-   * @param {!int} dimension width or height
-   * @returns {!int} the min X/Y coordinate of the *second* room
+   * @param dimension width or height
+   * @returns the min X/Y coordinate of the *second* room
    * @private
    */
-  private _getSplitPoint(dimension): number {
+  private _getSplitPoint(dimension: number): number {
     const minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
     const minSplitPoint = minSectionDimension;
     const maxSplitPoint = dimension - minSectionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
   }
 
-  /**
-   * @param {!MapSection} section
-   * @private
-   */
-  private _joinSection(section) {
+  private _joinSection(section: MapSection) {
     const unconnectedRooms: Room[] = [...section.rooms];
     const connectedRooms: Room[] = [];
     connectedRooms.push(unconnectedRooms.pop());

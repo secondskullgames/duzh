@@ -9,12 +9,14 @@ import { UnitAI } from '../UnitAI';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import PlayerSprite from './PlayerSprite';
 import { playAnimation } from '../utils/SpriteUtils';
+import Entity from '../types/Entity';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
-class Unit {
+class Unit implements Entity {
   readonly class: string;
   readonly unitClass: UnitClass;
+  readonly char = '@';
   readonly sprite: Sprite;
   inventory: { [category in ItemCategory]?: InventoryItem[] };
   equipment: { [category in EquipmentCategory]?: EquippedItem[] };
