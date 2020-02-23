@@ -2651,7 +2651,8 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                         throw "Invalid key " + key;
                 }
                 var queuedOrder = void 0;
-                if (['W', 'A', 'S', 'D'].indexOf(normalizedKey) > -1) {
+                if ((['W', 'A', 'S', 'D'].indexOf(normalizedKey) > -1) ||
+                    ((['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(key) > -1) && shiftKey)) {
                     queuedOrder = function (u) { return UnitUtils_2.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
                 }
                 else {

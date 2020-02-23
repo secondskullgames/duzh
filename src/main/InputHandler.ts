@@ -80,7 +80,10 @@ function _handleArrowKey(key: string, shiftKey: boolean): Promise<void> {
       }
 
       let queuedOrder;
-      if (['W','A','S','D'].indexOf(normalizedKey) > -1) {
+      if (
+        (['W','A','S','D'].indexOf(normalizedKey) > -1) ||
+        ((['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(key) > -1) && shiftKey)
+      ) {
         queuedOrder = u => fireProjectile(u, { dx, dy });
       } else {
         queuedOrder = u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
