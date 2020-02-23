@@ -7,7 +7,7 @@ import { resolvedPromise } from './PromiseUtils';
 
 function pickupItem(unit: Unit, mapItem: MapItem) {
   const { state } = jwb;
-  const inventoryItem = mapItem.inventoryItem();
+  const inventoryItem = mapItem.getInventoryItem();
   const { category } = inventoryItem;
   const { inventory } = unit;
   inventory[category] = inventory[category] || [];

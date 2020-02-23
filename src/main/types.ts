@@ -1,5 +1,8 @@
 import Tile from './types/Tile';
 import Sprite from './classes/Sprite';
+import Colors from './types/Colors';
+import Entity from './types/Entity';
+import InventoryItem from './classes/InventoryItem';
 
 interface Coordinates {
   x: number,
@@ -24,8 +27,8 @@ interface MapSection {
   tiles: Tile[][]
 }
 
-interface PaletteSwaps {
-  [src: string]: string
+type PaletteSwaps = {
+  [src in Colors]?: Colors
 }
 
 type Sample = [number, number];

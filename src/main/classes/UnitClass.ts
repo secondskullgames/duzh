@@ -1,5 +1,4 @@
-import { PaletteSwaps } from '../types';
-import Sprite from './Sprite';
+import { PaletteSwaps, SpriteSupplier } from '../types';
 import { UnitAI } from '../UnitAI';
 
 interface UnitClass {
@@ -13,7 +12,7 @@ interface UnitClass {
   readonly damagePerLevel: (level: number) => number;
   readonly experienceToNextLevel?: (level: number) => (number | null);
   readonly aiHandler?: UnitAI;
-  readonly sprite: (unitClass: UnitClass) => Sprite;
+  readonly sprite: SpriteSupplier;
 }
 
 export default UnitClass;

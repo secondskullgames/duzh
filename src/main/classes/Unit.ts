@@ -35,7 +35,7 @@ class Unit implements Entity {
   constructor(unitClass: UnitClass, name, level, { x, y }) {
     this.class = 'Unit';
     this.unitClass = unitClass;
-    this.sprite = unitClass.sprite(unitClass);
+    this.sprite = unitClass.sprite(unitClass.paletteSwaps);
     this.inventory = {};
     Object.keys(ItemCategory).forEach(category => {
       this.inventory[category] = [];

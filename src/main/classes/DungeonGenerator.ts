@@ -4,8 +4,8 @@ import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from '../utils
 import MapSupplier from './MapSupplier';
 import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 import Pathfinder from './Pathfinder';
-import MapItem from './MapItem';
 import Tiles from '../types/Tiles';
+import MapItem from './MapItem';
 
 const MAX_EXITS = 3;
 
