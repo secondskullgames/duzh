@@ -1,6 +1,6 @@
 import Sounds from './Sounds';
 import InventoryItem from './classes/InventoryItem';
-import { EquipmentCategory, ItemCategory, Coordinates } from './types';
+import { ItemCategory, Coordinates } from './types';
 import { playSound } from './utils/AudioUtils';
 import EquippedItem from './classes/EquippedItem';
 import Unit from './classes/Unit';
@@ -12,7 +12,7 @@ import MapItem from './classes/MapItem';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
-function createPotion(lifeRestored): InventoryItem {
+function createPotion(lifeRestored: number): InventoryItem {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit): Promise<void> => {
     return new Promise(resolve => {
       playSound(Sounds.USE_POTION);
@@ -33,18 +33,12 @@ function _equipEquipment(equipmentClass: EquipmentClass, item: InventoryItem, un
       inventoryItem: item,
       damage: equipmentClass.damage
     };
-    const currentWeapons = [...unit.equipment[EquipmentCategory.WEAPON] || []];
-    unit.equipment[EquipmentCategory.WEAPON] = [equippedItem];
-    currentWeapons.forEach(weapon => {
-      const { inventoryItem } = weapon;
-      // @ts-ignore
-      unit.inventory[inventoryItem.category].push(inventoryItem);
-    });
+    unit.equipment.add(equippedItem);
     resolve();
   });
 }
 
-function createScrollOfFloorFire(damage): InventoryItem {
+function createScrollOfFloorFire(damage: number): InventoryItem {
   const onUse: ItemProc = (item, unit): Promise<void> => {
     const map = jwb.state.getMap();
     const promises: (() => Promise<any>)[] = [];
@@ -57,7 +51,6 @@ function createScrollOfFloorFire(damage): InventoryItem {
         && !(dx === 0 && dy === 0);
     });
 
-    console.log(`casting floor fire on ${JSON.stringify(adjacentUnits)}`);
     adjacentUnits.forEach(u => {
       promises.push(() => u.takeDamage(damage, unit));
     });

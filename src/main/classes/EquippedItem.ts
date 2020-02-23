@@ -7,7 +7,7 @@ class EquippedItem {
   inventoryItem: InventoryItem;
   damage: number;
 
-  constructor(name, category, inventoryItem, damage) {
+  constructor(name: string, category: EquipmentCategory, inventoryItem: InventoryItem, damage: number) {
     this.name = name;
     this.category = category;
     this.inventoryItem = inventoryItem;

@@ -4,9 +4,9 @@ import Unit from './Unit';
 class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
-  private readonly _onUse: (Unit) => Promise<any>;
+  private readonly _onUse: (unit: Unit) => Promise<any>;
 
-  constructor(name, category, onUse: (item: InventoryItem, unit: Unit) => Promise<void>) {
+  constructor(name: string, category: ItemCategory, onUse: (item: InventoryItem, unit: Unit) => Promise<void>) {
     this.name = name;
     this.category = category;
     this._onUse = (unit: Unit) => onUse(this, unit);

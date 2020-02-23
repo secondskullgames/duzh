@@ -8,7 +8,7 @@ class ImageLoader {
   readonly _imageSupplier: () => Promise<ImageBitmap>;
   image: Promise<ImageBitmap> | null;
 
-  constructor(filename, transparentColor: string, paletteSwaps: PaletteSwaps = {}, effects: ImageDataFunc[] = []) {
+  constructor(filename: string, transparentColor: string, paletteSwaps: PaletteSwaps = {}, effects: ImageDataFunc[] = []) {
     this.image = null;
     this.image = null;
     this._imageSupplier = () => loadImage(filename)

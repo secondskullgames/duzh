@@ -130,7 +130,7 @@ function playSuite(suite: Suite) {
   for (let i = 0; i < sections.length; i++) {
     let section = sections[i];
     const bass = (!!section.bass) ? randChoice(section.bass) : null;
-    let lead;
+    let lead: Figure | null;
     if (!!section.lead) {
       do {
         lead = randChoice(section.lead);

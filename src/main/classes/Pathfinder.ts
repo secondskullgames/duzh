@@ -75,7 +75,7 @@ class Pathfinder {
       type NodeWithCost = { node: Node, cost: number };
 
       const nodeCosts: NodeWithCost[] = open.map(node => ({ node, cost: f(node, start, goal) }))
-        .sort((a, b) => b[1] - a[1]);
+        .sort((a, b) => a.cost - b.cost);
 
       const bestNode = nodeCosts[0].node;
       if (coordinatesEquals(bestNode, goal)) {
@@ -107,7 +107,7 @@ class Pathfinder {
     }
   }
 
-  private _findNeighbors(tile: Coordinates, rect): Coordinates[] {
+  private _findNeighbors(tile: Coordinates, rect: Rect): Coordinates[] {
     return CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
       .filter(({ x, y }) => contains(rect, { x, y }))

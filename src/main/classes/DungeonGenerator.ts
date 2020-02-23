@@ -81,7 +81,7 @@ class DungeonGenerator {
    * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
    * not large enough to form two sub-regions, just return a single section.
    */
-  private _generateSection(width, height): MapSection {
+  private _generateSection(width: number, height: number): MapSection {
     // First, make sure the area is large enough to support two sections; if not, we're done
     const minSectionDimension = this.minRoomDimension + (2 * this.minRoomPadding);
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
@@ -145,7 +145,7 @@ class DungeonGenerator {
    * anywhere in the region at random, and can occupy a variable amount of space in the region
    * (within the specified parameters).
    */
-  private _generateSingleSection(width, height): MapSection {
+  private _generateSingleSection(width: number, height: number): MapSection {
     const maxRoomWidth = width - (2 * this.minRoomPadding);
     const maxRoomHeight = height - (2 * this.minRoomPadding);
     console.assert(maxRoomWidth >= this.minRoomDimension && maxRoomHeight >= this.minRoomDimension, 'calculate room dimensions failed');
@@ -181,7 +181,7 @@ class DungeonGenerator {
     return { width, height, rooms: [room], tiles };
   }
 
-  private _generateRoomTiles(width, height): Tile[][] {
+  private _generateRoomTiles(width: number, height: number): Tile[][] {
     const tiles: Tile[][] = [];
     for (let y = 0; y < height; y++) {
       tiles[y] = [];
@@ -341,7 +341,7 @@ class DungeonGenerator {
   }
 
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
-    const blockedTileDetector = ({ x, y }) => {
+    const blockedTileDetector = ({ x, y }: Coordinates) => {
       // can't draw a path through an existing room or a wall
       const blockedTileTypes = [Tiles.FLOOR, Tiles.WALL, Tiles.WALL_HALL, Tiles.WALL_TOP];
 
@@ -393,7 +393,7 @@ class DungeonGenerator {
     return (path.length > 0);
   }
 
-  private _logSections(name, ...sections: MapSection[]) {
+  private _logSections(name: string, ...sections: MapSection[]) {
     console.log(`Sections for ${name}:`);
     sections.forEach(section => console.log(
       section.tiles

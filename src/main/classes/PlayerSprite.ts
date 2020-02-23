@@ -1,6 +1,8 @@
 import ImageLoader from './ImageLoader';
 import { replaceAll } from '../utils/ImageUtils';
 import Sprite from './Sprite';
+import { PaletteSwaps } from '../types';
+import Colors from '../types/Colors';
 
 enum SpriteKeys {
   STANDING = 'STANDING',
@@ -10,10 +12,10 @@ enum SpriteKeys {
 class PlayerSprite extends Sprite {
   static SpriteKeys = SpriteKeys;
 
-  constructor(paletteSwaps) {
+  constructor(paletteSwaps?: PaletteSwaps) {
     super({
-      [SpriteKeys.STANDING]: new ImageLoader('player_standing_SE_1', '#ffffff', paletteSwaps),
-      [SpriteKeys.STANDING_DAMAGED]: new ImageLoader('player_standing_SE_1', '#ffffff', paletteSwaps, [img => replaceAll(img, '#ffffff')])
+      [SpriteKeys.STANDING]: new ImageLoader('player_standing_SE_1', Colors.WHITE, paletteSwaps),
+      [SpriteKeys.STANDING_DAMAGED]: new ImageLoader('player_standing_SE_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
     }, SpriteKeys.STANDING, { dx: -4, dy: -20 })
   }
 }

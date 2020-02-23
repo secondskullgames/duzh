@@ -7,7 +7,7 @@ class Sprite {
   readonly defaultKey: string;
   private readonly _imageMap: { [key: string]: ImageLoader };
 
-  constructor(imageMap: { [filename: string]: ImageLoader }, key: string, { dx, dy }) {
+  constructor(imageMap: { [filename: string]: ImageLoader }, key: string, { dx, dy }: { dx: number, dy: number }) {
     this._imageMap = imageMap;
     this.defaultKey = key;
     this.key = key;

@@ -28,16 +28,19 @@ function shuffle<T>(list: T[]): void {
   }
 }
 
-function weightedRandom(probabilityMap: { [key: string]: number }): string {
-  const total = Object.values(probabilityMap).reduce((a, b) => a + b);
+function weightedRandom<T>(
+  probabilities: { [key: string]: number },
+  mappedObjects: { [key: string]: T }
+): T {
+  const total = Object.values(probabilities).reduce((a, b) => a + b);
   const rand = Math.random() * total;
   let counter = 0;
-  const entries = Object.entries(probabilityMap);
+  const entries = Object.entries(probabilities);
   for (let i = 0; i < entries.length; i++) {
     const [key, value] = entries[i];
     counter += value;
     if (counter > rand) {
-      return key;
+      return mappedObjects[key];
     }
   }
 

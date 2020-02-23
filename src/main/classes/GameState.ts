@@ -1,4 +1,4 @@
-import { ItemCategory, GameScreen } from '../types';
+import { GameScreen } from '../types';
 import Unit from './Unit';
 import MapSupplier from './MapSupplier';
 import MapInstance from './MapInstance';
@@ -10,8 +10,6 @@ class GameState {
   mapIndex: number | null;
   private _map: MapInstance | null;
   messages: string[];
-  inventoryCategory: ItemCategory | null;
-  inventoryIndex: number;
   turn: number;
 
   constructor(playerUnit: Unit, mapSuppliers: MapSupplier[]) {
@@ -21,8 +19,6 @@ class GameState {
     this.mapIndex = 0;
     this._map = null;
     this.messages = [];
-    this.inventoryCategory = null;
-    this.inventoryIndex = 0;
     this.turn = 1;
   }
 

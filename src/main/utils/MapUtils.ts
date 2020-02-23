@@ -1,7 +1,12 @@
 import { randInt } from './RandomUtils';
-import { Coordinates } from '../types';
+import { Coordinates, Rect, Tile } from '../types';
 
-function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose): Coordinates[] {
+function pickUnoccupiedLocations(
+  tiles: Tile[][],
+  allowedTileTypes: Tile[],
+  occupiedLocations: Coordinates[],
+  numToChoose: number
+): Coordinates[] {
   const unoccupiedLocations: Coordinates[] = [];
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
@@ -26,65 +31,34 @@ function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, num
   return chosenLocations;
 }
 
-/**
- * @param {!Coordinates} first
- * @param {!Coordinates} second
- * @return {!boolean}
- */
-function coordinatesEquals(first, second) {
+function coordinatesEquals(first: Coordinates, second: Coordinates): boolean {
   return (first.x === second.x && first.y === second.y);
 }
 
-/**
- * @param {!Rect} rect
- * @param {!Coordinates} coordinates
- * @return {!boolean}
- */
-function contains(rect, coordinates) {
+function contains(rect: Rect, coordinates: Coordinates): boolean {
   return coordinates.x >= rect.left
     && coordinates.x < (rect.left + rect.width)
     && coordinates.y >= rect.top
     && coordinates.y < (rect.top + rect.height);
 }
 
-/**
- * This is implemented as (x distance + y distance), since all movement is just 4-directional
- * so it legitimately takes twice as long to move diagonally
- *
- * @param {!Coordinates} first
- * @param {!Coordinates} second
- * @return {!int}
- * @private
- */
-function manhattanDistance(first, second) {
+function manhattanDistance(first: Coordinates, second: Coordinates): number {
   return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
 }
 
-/**
- * @param {!Coordinates} first
- * @param {!Coordinates} second
- * @return {!number}
- * @private
- */
-function hypotenuse(first, second) {
+function hypotenuse(first: Coordinates, second: Coordinates): number {
   const dx = second.x - first.x;
   const dy = second.y - first.y;
   return ((dx * dx) + (dy * dy)) ** 0.5;
 }
 
-/**
- * @param {!Coordinates} first
- * @param {!Coordinates} second
- * @return {!int}
- * @private
- */
-function civDistance(first, second) {
+function civDistance(first: Coordinates, second: Coordinates): number {
   const dx = Math.abs(first.x - second.x);
   const dy = Math.abs(first.y - second.y);
   return Math.max(dx, dy) + Math.min(dx, dy)/2;
 }
 
-function isAdjacent(first: Coordinates, second: Coordinates) {
+function isAdjacent(first: Coordinates, second: Coordinates): boolean {
   const dx = Math.abs(first.x - second.x);
   const dy = Math.abs(first.y - second.y);
   return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));

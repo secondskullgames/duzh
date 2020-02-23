@@ -1,28 +1,34 @@
+import { resolvedPromise } from '../utils/PromiseUtils';
+import Unit from './Unit';
+import { Entity, Tile } from '../types';
+
 const WIDTH = 80;
 const HEIGHT = 32;
 
-/**
- * @constructor
- */
-function AsciiRenderer() {
-  const container = <any>document.getElementById('container');
-  container.innerHTML = '';
-  const pre = document.createElement('pre');
-  container.appendChild(pre);
+class AsciiRenderer {
+  private readonly _container: HTMLDivElement;
+  private readonly _pre: HTMLPreElement;
 
-  function render() {
+  constructor() {
+    this._container = <any>document.getElementById('container');
+    this._container.innerHTML = '';
+    this._pre = document.createElement('pre');
+    this._container.appendChild(this._pre);
+  }
+
+  render(): Promise<any> {
     const { screen } = jwb.state;
     switch (screen) {
       case 'GAME':
-        return _renderGameScreen();
+        return this._renderGameScreen();
       case 'INVENTORY':
-        return _renderInventoryScreen();
+        return this._renderInventoryScreen();
       default:
         throw `Invalid screen ${screen}`;
     }
   }
 
-  function _renderGameScreen() {
+  private _renderGameScreen(): Promise<any> {
     const map = jwb.state.getMap();
 
     const lines: string[] = ['', '', '']; // extra room for messages
@@ -32,7 +38,7 @@ function AsciiRenderer() {
       for (let x = 0; x < WIDTH; x++) {
         if (map.contains({ x, y })) {
           const element = map.getUnit({ x, y }) || map.getItem({ x, y }) || map.getTile({ x, y });
-          line += _renderElement(element);
+          line += this._renderElement(element);
         } else {
           line += ' ';
         }
@@ -40,28 +46,27 @@ function AsciiRenderer() {
       lines.push(line);
     }
     lines.push('', '', '');
-    lines.push(_getStatusLine());
-    _addMessageLines(lines);
-    pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+    lines.push(this._getStatusLine());
+    this._addMessageLines(lines);
+    this._pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+    return resolvedPromise();
   }
 
-  function _renderInventoryScreen() {
+  private _renderInventoryScreen(): Promise<any> {
     const { state } = jwb;
-    const { playerUnit, inventoryCategory, inventoryIndex } = state;
+    const { playerUnit } = state;
     const { inventory } = playerUnit;
 
     const inventoryLines: string[] = [];
 
-    if (inventoryCategory) {
-      const items = inventory[inventoryCategory] || [];
-      inventoryLines.push(inventoryCategory);
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (i === inventoryIndex) {
-          inventoryLines.push(`<span style="color: #f00">${item.name}</span>`);
-        } else {
-          inventoryLines.push(item.name);
-        }
+    const items = inventory.get(inventory.selectedCategory);
+    inventoryLines.push(inventory.selectedCategory);
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item === inventory.selectedItem) {
+        inventoryLines.push(`<span style="color: #f00">${item.name}</span>`);
+      } else {
+        inventoryLines.push(item.name);
       }
     }
 
@@ -71,43 +76,34 @@ function AsciiRenderer() {
       let line = (y < inventoryLines.length) ? inventoryLines[y] : '';
       lines.push(line);
     }
-    lines.push(_getStatusLine());
-    _addMessageLines(lines);
-    pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+    lines.push(this._getStatusLine());
+    this._addMessageLines(lines);
+    this._pre.innerHTML = lines.map(line => line.padEnd(WIDTH, ' ')).join('\n');
+    return resolvedPromise();
   }
 
-  /**
-   * @param {Unit | MapItem | Tile} element
-   * @private
-   */
-  function _renderElement(element) {
-    switch (element.class) {
-      case 'Unit':
-        return `<span style="color: ${(element.name === 'player') ? '#0cf' : '#f00'}">@</span>`;
-      case 'MapItem':
-        return element.char;
-      case 'Tile':
-        return element.char;
+  private _renderElement(element: Tile | Entity): string {
+    if (element instanceof Unit) {
+      return `<span style="color: ${(element.name === 'player') ? '#0cf' : '#f00'}">@</span>`;
+    } else {
+      return element.char;
     }
-    return ' ';
   }
 
-  function _getStatusLine() {
+  private _getStatusLine(): string {
     const { playerUnit, mapIndex } = jwb.state;
     return `HP: ${playerUnit.life}/${playerUnit.maxLife}    Damage: ${playerUnit.getDamage()}    Level: ${(mapIndex || 0) + 1}`;
   }
 
-  /**
-   * @param {string[]} lines
-   */
-   function _addMessageLines(lines) {
+  private _addMessageLines(lines: string[]): void {
     const { messages } = jwb.state;
     for (let i = 0; i < messages.length; i++) {
-      lines[i] = messages.pop();
+      const message = messages.pop();
+      if (!!message) {
+        lines[i] = message;
+      }
     }
   }
-
-  return { render };
 }
 
 export default AsciiRenderer;

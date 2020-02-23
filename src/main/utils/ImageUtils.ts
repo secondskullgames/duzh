@@ -1,11 +1,8 @@
-/**
- * @param {!string} filename
- * @return {!Promise<!ImageBitmap>}
- * @private
- */
 import { PaletteSwaps } from '../types';
 
-function loadImage(filename): Promise<ImageData> {
+type RGB = [number, number, number];
+
+function loadImage(filename: string): Promise<ImageData> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     canvas.style.display = 'none';
@@ -70,8 +67,8 @@ function replaceColors(imageData: ImageData, colorMap: PaletteSwaps): Promise<Im
     const array = new Uint8ClampedArray(imageData.data.length);
     const entries: [string, string][] = <[any,any][]>Object.entries(colorMap);
 
-    const srcRGB = {};
-    const destRGB = {};
+    const srcRGB: { [hex: string]: RGB } = {};
+    const destRGB: { [hex: string]: RGB } = {};
     entries.forEach(([srcColor, destColor]) => {
       srcRGB[srcColor] = hex2rgb(srcColor);
       destRGB[destColor] = hex2rgb(destColor);
@@ -127,10 +124,7 @@ function replaceAll(imageData: ImageData, color: string): Promise<ImageData> {
   });
 }
 
-/**
- * @return [r,g,b]
- */
-function hex2rgb(hex: string): [number, number, number] {
+function hex2rgb(hex: string): RGB {
   const div = document.createElement('div');
   div.style.backgroundColor = hex;
   // @ts-ignore

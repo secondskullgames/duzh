@@ -28,7 +28,7 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
   });
 }
 
-function fireProjectile(unit: Unit, { dx, dy }): Promise<void> {
+function fireProjectile(unit: Unit, { dx, dy }: { dx: number, dy: number }): Promise<void> {
   return new Promise(resolve => {
     const map = jwb.state.getMap();
     let { x, y } = unit;

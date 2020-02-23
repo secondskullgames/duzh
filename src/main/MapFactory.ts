@@ -3,10 +3,9 @@ import MapSupplier from './classes/MapSupplier';
 import ItemFactory from './ItemFactory';
 import UnitClasses from './UnitClasses';
 import Tiles from './types/Tiles';
-import { Coordinates } from './types';
+import { Coordinates, Tile } from './types';
 import DungeonGenerator from './classes/DungeonGenerator';
 import UnitFactory from './UnitFactory';
-import Tile from './types/Tile';
 
 const MIN_ROOM_DIMENSION = 6;
 const MAX_ROOM_DIMENSION = 9;

@@ -1,4 +1,3 @@
-import Tile from './types/Tile';
 import Sprite from './classes/Sprite';
 import Colors from './types/Colors';
 
@@ -12,6 +11,18 @@ interface Rect {
   top: number,
   width: number,
   height: number
+}
+
+interface Tile {
+  name: string,
+  char: string,
+  sprite: Sprite | null,
+  isBlocking: boolean
+}
+
+interface Entity extends Coordinates {
+  char: string,
+  sprite: Sprite
 }
 
 interface Room extends Rect {
@@ -60,5 +71,6 @@ export {
   ItemCategory,
   EquipmentCategory,
   GameScreen,
-  SpriteSupplier
+  SpriteSupplier,
+  Entity
 };

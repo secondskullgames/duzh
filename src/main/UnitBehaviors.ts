@@ -7,6 +7,8 @@ import { moveOrAttack } from './utils/UnitUtils';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
+type UnitBehavior = (unit: Unit) => Promise<void>;
+
 function wanderAndAttack(unit: Unit): Promise<void> {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
@@ -57,7 +59,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
 
   const mapRect: Rect = map.getRect();
 
-  const blockedTileDetector = ({ x, y }) => {
+  const blockedTileDetector = ({ x, y }: Coordinates) => {
     if (!map.getTile({ x, y }).isBlocking) {
       return false;
     } else if (coordinatesEquals({ x, y }, playerUnit)) {
@@ -66,10 +68,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
     return true;
   };
 
-  /**
-   * @type {!Coordinates[]}
-   */
-  const path = new Pathfinder(blockedTileDetector, () => 1).findPath(unit, playerUnit, mapRect);
+  const path: Coordinates[] = new Pathfinder(blockedTileDetector, () => 1).findPath(unit, playerUnit, mapRect);
 
   if (path.length > 1) {
     const { x, y } = path[1]; // first tile is the unit's own tile
@@ -106,13 +105,16 @@ function fleeFromPlayerUnit(unit: Unit): Promise<void> {
   return new Promise(resolve => { resolve(); });
 }
 
-function _sortBy(list, mapFunction) {
+function _sortBy<T>(list: T[], mapFunction: (t: T) => number) {
   return list.sort((a, b) => mapFunction(a) - mapFunction(b));
 }
 
-export default {
+const UnitBehaviors: { [name: string]: UnitBehavior } = {
   WANDER: wander,
   ATTACK_PLAYER: _attackPlayerUnit_withPath,
   FLEE_FROM_PLAYER: fleeFromPlayerUnit,
   STAY: () => new Promise(resolve => { resolve(); })
 };
+
+export default UnitBehaviors;
+export { UnitBehavior };

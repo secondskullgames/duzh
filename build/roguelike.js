@@ -147,9 +147,6 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
         });
     }
     exports.replaceAll = replaceAll;
-    /**
-     * @return [r,g,b]
-     */
     function hex2rgb(hex) {
         var div = document.createElement('div');
         div.style.backgroundColor = hex;
@@ -231,10 +228,6 @@ define("classes/Sprite", ["require", "exports"], function (require, exports) {
     }());
     exports.default = Sprite;
 });
-define("types/Tile", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
 define("types/Colors", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -248,7 +241,7 @@ define("types/Colors", ["require", "exports"], function (require, exports) {
         Colors["DARK_RED"] = "#800000";
         Colors["RED"] = "#FF0000";
         Colors["DARK_YELLOW"] = "#808000";
-        Colors["YELLOW"] = "#FF0000";
+        Colors["YELLOW"] = "#FFFF00";
         Colors["DARK_GREEN"] = "#008000";
         Colors["GREEN"] = "#00FF00";
         Colors["DARK_TEAL"] = "#004040";
@@ -292,7 +285,7 @@ define("types", ["require", "exports"], function (require, exports) {
     })(GameScreen || (GameScreen = {}));
     exports.GameScreen = GameScreen;
 });
-define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "utils/ImageUtils", "classes/Sprite"], function (require, exports, ImageLoader_1, ImageUtils_2, Sprite_1) {
+define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "utils/ImageUtils", "classes/Sprite", "types/Colors"], function (require, exports, ImageLoader_1, ImageUtils_2, Sprite_1, Colors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteKeys;
@@ -305,8 +298,8 @@ define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "ut
         function PlayerSprite(paletteSwaps) {
             var _a;
             return _super.call(this, (_a = {},
-                _a[SpriteKeys.STANDING] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps),
-                _a[SpriteKeys.STANDING_DAMAGED] = new ImageLoader_1.default('player_standing_SE_1', '#ffffff', paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, '#ffffff'); }]),
+                _a[SpriteKeys.STANDING] = new ImageLoader_1.default('player_standing_SE_1', Colors_1.default.WHITE, paletteSwaps),
+                _a[SpriteKeys.STANDING_DAMAGED] = new ImageLoader_1.default('player_standing_SE_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
                 _a), SpriteKeys.STANDING, { dx: -4, dy: -20 }) || this;
         }
         PlayerSprite.SpriteKeys = SpriteKeys;
@@ -314,7 +307,7 @@ define("classes/PlayerSprite", ["require", "exports", "classes/ImageLoader", "ut
     }(Sprite_1.default));
     exports.default = PlayerSprite;
 });
-define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite", "types/Colors"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_1, Colors_1) {
+define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/Sprite", "classes/PlayerSprite", "types/Colors"], function (require, exports, ImageLoader_2, Sprite_2, PlayerSprite_1, Colors_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DEFAULT_SPRITE_KEY = 'default';
@@ -325,18 +318,18 @@ define("SpriteFactory", ["require", "exports", "classes/ImageLoader", "classes/S
     }
     var SpriteFactory = {
         PLAYER: function (paletteSwaps) { return new PlayerSprite_1.default(paletteSwaps); },
-        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall_hall', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor_hall', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('sword_icon_small', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('potion_small', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', Colors_1.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
+        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_wall_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('tile_floor_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('sword_icon_small', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('potion_small', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('scroll_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageLoader_2.default('stairs_down2', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
     };
     exports.default = SpriteFactory;
 });
-define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "types/Colors"], function (require, exports, types_1, SpriteFactory_1, Colors_2) {
+define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "types/Colors"], function (require, exports, types_1, SpriteFactory_1, Colors_3) {
     "use strict";
     var _a, _b, _c, _d;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -347,9 +340,9 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         equipmentCategory: types_1.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_a = {},
-            _a[Colors_2.default.BLACK] = Colors_2.default.BLACK,
-            _a[Colors_2.default.DARK_GRAY] = Colors_2.default.LIGHT_BROWN,
-            _a[Colors_2.default.LIGHT_GRAY] = Colors_2.default.LIGHT_BROWN,
+            _a[Colors_3.default.BLACK] = Colors_3.default.BLACK,
+            _a[Colors_3.default.DARK_GRAY] = Colors_3.default.LIGHT_BROWN,
+            _a[Colors_3.default.LIGHT_GRAY] = Colors_3.default.LIGHT_BROWN,
             _a),
         damage: 6,
         minLevel: 1,
@@ -362,8 +355,8 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         equipmentCategory: types_1.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_b = {},
-            _b[Colors_2.default.DARK_GRAY] = Colors_2.default.BLACK,
-            _b[Colors_2.default.LIGHT_GRAY] = Colors_2.default.DARK_GRAY,
+            _b[Colors_3.default.DARK_GRAY] = Colors_3.default.BLACK,
+            _b[Colors_3.default.LIGHT_GRAY] = Colors_3.default.DARK_GRAY,
             _b),
         damage: 9,
         minLevel: 2,
@@ -376,8 +369,8 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         equipmentCategory: types_1.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_c = {},
-            _c[Colors_2.default.DARK_GRAY] = Colors_2.default.DARK_GRAY,
-            _c[Colors_2.default.LIGHT_GRAY] = Colors_2.default.LIGHT_GRAY,
+            _c[Colors_3.default.DARK_GRAY] = Colors_3.default.DARK_GRAY,
+            _c[Colors_3.default.LIGHT_GRAY] = Colors_3.default.LIGHT_GRAY,
             _c),
         damage: 12,
         minLevel: 4,
@@ -390,9 +383,9 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         equipmentCategory: types_1.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_d = {},
-            _d[Colors_2.default.DARK_GRAY] = Colors_2.default.YELLOW,
-            _d[Colors_2.default.LIGHT_GRAY] = Colors_2.default.RED,
-            _d[Colors_2.default.BLACK] = Colors_2.default.DARK_RED,
+            _d[Colors_3.default.DARK_GRAY] = Colors_3.default.YELLOW,
+            _d[Colors_3.default.LIGHT_GRAY] = Colors_3.default.RED,
+            _d[Colors_3.default.BLACK] = Colors_3.default.DARK_RED,
             _d),
         damage: 16,
         minLevel: 5,
@@ -407,37 +400,6 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         STEEL_SWORD: STEEL_SWORD,
         getWeaponClasses: getWeaponClasses
     };
-});
-define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var InventoryItem = /** @class */ (function () {
-        function InventoryItem(name, category, onUse) {
-            var _this = this;
-            this.name = name;
-            this.category = category;
-            this._onUse = function (unit) { return onUse(_this, unit); };
-        }
-        InventoryItem.prototype.use = function (unit) {
-            return this._onUse(unit);
-        };
-        return InventoryItem;
-    }());
-    exports.default = InventoryItem;
-});
-define("classes/EquippedItem", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var EquippedItem = /** @class */ (function () {
-        function EquippedItem(name, category, inventoryItem, damage) {
-            this.name = name;
-            this.category = category;
-            this.inventoryItem = inventoryItem;
-            this.damage = damage;
-        }
-        return EquippedItem;
-    }());
-    exports.default = EquippedItem;
 });
 define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -470,16 +432,16 @@ define("utils/RandomUtils", ["require", "exports"], function (require, exports) 
         }
     }
     exports.shuffle = shuffle;
-    function weightedRandom(probabilityMap) {
-        var total = Object.values(probabilityMap).reduce(function (a, b) { return a + b; });
+    function weightedRandom(probabilities, mappedObjects) {
+        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
         var rand = Math.random() * total;
         var counter = 0;
-        var entries = Object.entries(probabilityMap);
+        var entries = Object.entries(probabilities);
         for (var i = 0; i < entries.length; i++) {
             var _a = entries[i], key = _a[0], value = _a[1];
             counter += value;
             if (counter > rand) {
-                return key;
+                return mappedObjects[key];
             }
         }
         throw 'fux';
@@ -519,20 +481,10 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
         return chosenLocations;
     }
     exports.pickUnoccupiedLocations = pickUnoccupiedLocations;
-    /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @return {!boolean}
-     */
     function coordinatesEquals(first, second) {
         return (first.x === second.x && first.y === second.y);
     }
     exports.coordinatesEquals = coordinatesEquals;
-    /**
-     * @param {!Rect} rect
-     * @param {!Coordinates} coordinates
-     * @return {!boolean}
-     */
     function contains(rect, coordinates) {
         return coordinates.x >= rect.left
             && coordinates.x < (rect.left + rect.width)
@@ -540,37 +492,16 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
             && coordinates.y < (rect.top + rect.height);
     }
     exports.contains = contains;
-    /**
-     * This is implemented as (x distance + y distance), since all movement is just 4-directional
-     * so it legitimately takes twice as long to move diagonally
-     *
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @return {!int}
-     * @private
-     */
     function manhattanDistance(first, second) {
         return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
     }
     exports.manhattanDistance = manhattanDistance;
-    /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @return {!number}
-     * @private
-     */
     function hypotenuse(first, second) {
         var dx = second.x - first.x;
         var dy = second.y - first.y;
         return Math.pow(((dx * dx) + (dy * dy)), 0.5);
     }
     exports.hypotenuse = hypotenuse;
-    /**
-     * @param {!Coordinates} first
-     * @param {!Coordinates} second
-     * @return {!int}
-     * @private
-     */
     function civDistance(first, second) {
         var dx = Math.abs(first.x - second.x);
         var dy = Math.abs(first.y - second.y);
@@ -648,7 +579,7 @@ define("classes/Pathfinder", ["require", "exports", "utils/MapUtils", "utils/Ran
                     return { value: [] };
                 }
                 var nodeCosts = open.map(function (node) { return ({ node: node, cost: f(node, start, goal) }); })
-                    .sort(function (a, b) { return b[1] - a[1]; });
+                    .sort(function (a, b) { return a.cost - b.cost; });
                 var bestNode = nodeCosts[0].node;
                 if (MapUtils_1.coordinatesEquals(bestNode, goal)) {
                     // Done!
@@ -714,22 +645,16 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
     Object.defineProperty(exports, "__esModule", { value: true });
     var SoundPlayer = /** @class */ (function () {
         function SoundPlayer(maxPolyphony, gain) {
-            var t1 = new Date().getTime();
             this._context = new AudioContext();
             this._gainNode = this._context.createGain();
             this._gainNode.gain.value = gain * 0.1; // sounds can be VERY loud
             this._gainNode.connect(this._context.destination);
-            var t2 = new Date().getTime();
-            console.log("Created SoundPlayer in " + (t2 - t1) + " ms");
             this._oscillators = [];
         }
         SoundPlayer.prototype._newOscillator = function () {
-            var t1 = new Date().getTime();
             var oscillatorNode = this._context.createOscillator();
             oscillatorNode.type = 'square';
             oscillatorNode.connect(this._gainNode);
-            var t2 = new Date().getTime();
-            console.log("Created CustomOscillator in " + (t2 - t1) + " ms");
             return {
                 node: oscillatorNode,
                 started: false,
@@ -759,7 +684,6 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
             var oscillator = this._newOscillator();
             this._oscillators.push(oscillator);
             if (samples.length) {
-                var t1 = new Date().getTime();
                 var startTime = this._context.currentTime;
                 var nextStartTime = startTime;
                 for (var i = 0; i < samples.length; i++) {
@@ -773,8 +697,6 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
                 }).reduce(function (a, b) { return a + b; });
                 oscillator.node.start();
                 oscillator.started = true;
-                var t2 = new Date().getTime();
-                console.log("Started samples in " + (t2 - t1) + " ms");
                 if (repeating) {
                     oscillator.isRepeating = true;
                 }
@@ -950,9 +872,6 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
             return true;
         };
-        /**
-         * @type {!Coordinates[]}
-         */
         var path = new Pathfinder_1.default(blockedTileDetector, function () { return 1; }).findPath(unit, playerUnit, mapRect);
         if (path.length > 1) {
             var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
@@ -990,30 +909,37 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
     function _sortBy(list, mapFunction) {
         return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
     }
-    exports.default = {
+    var UnitBehaviors = {
         WANDER: wander,
         ATTACK_PLAYER: _attackPlayerUnit_withPath,
         FLEE_FROM_PLAYER: fleeFromPlayerUnit,
         STAY: function () { return new Promise(function (resolve) { resolve(); }); }
     };
+    exports.default = UnitBehaviors;
 });
 define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_3, RandomUtils_4, UnitBehaviors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var behaviorMap = {
+        'ATTACK_PLAYER': UnitBehaviors_1.default.ATTACK_PLAYER,
+        'WANDER': UnitBehaviors_1.default.WANDER,
+        'FLEE_FROM_PLAYER': UnitBehaviors_1.default.FLEE_FROM_PLAYER,
+        'STAY': UnitBehaviors_1.default.STAY
+    };
     var HUMAN_CAUTIOUS = function (unit) {
         var playerUnit = jwb.state.playerUnit;
         var behavior;
         var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
         if (distanceToPlayer === 1) {
             if ((unit.life / unit.maxLife) >= 0.4) {
-                behavior = 'ATTACK_PLAYER';
+                behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
             }
             else {
                 behavior = RandomUtils_4.weightedRandom({
                     'ATTACK_PLAYER': 0.2,
                     'WANDER': 0.5,
                     'FLEE_FROM_PLAYER': 0.3
-                });
+                }, behaviorMap);
             }
         }
         else if (distanceToPlayer >= 5) {
@@ -1021,16 +947,16 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
                 'WANDER': 0.3,
                 'ATTACK_PLAYER': 0.1,
                 'STAY': 0.6
-            });
+            }, behaviorMap);
         }
         else {
             behavior = RandomUtils_4.weightedRandom({
                 'ATTACK_PLAYER': 0.6,
                 'WANDER': 0.2,
                 'STAY': 0.2
-            });
+            }, behaviorMap);
         }
-        return UnitBehaviors_1.default[behavior].call(null, unit);
+        return behavior(unit);
     };
     exports.HUMAN_CAUTIOUS = HUMAN_CAUTIOUS;
     var HUMAN_AGGRESSIVE = function (unit) {
@@ -1038,25 +964,25 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
         var behavior;
         var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
         if (distanceToPlayer === 1) {
-            behavior = 'ATTACK_PLAYER';
+            behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
         }
         else if (distanceToPlayer >= 6) {
             behavior = RandomUtils_4.weightedRandom({
                 'WANDER': 0.4,
                 'STAY': 0.4,
                 'ATTACK_PLAYER': 0.2
-            });
+            }, behaviorMap);
         }
         else {
             behavior = RandomUtils_4.weightedRandom({
                 'ATTACK_PLAYER': 0.9,
                 'STAY': 0.1
-            });
+            }, behaviorMap);
         }
-        return UnitBehaviors_1.default[behavior].call(null, unit);
+        return behavior(unit);
     };
     exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
-    var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER.call(null, unit); };
+    var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER(unit); };
     exports.FULL_AGGRO = FULL_AGGRO;
 });
 define("classes/UnitClass", ["require", "exports"], function (require, exports) {
@@ -1084,30 +1010,148 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
     }
     exports.playAnimation = playAnimation;
 });
-define("types/Entity", ["require", "exports"], function (require, exports) {
+define("classes/InventoryItem", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var InventoryItem = /** @class */ (function () {
+        function InventoryItem(name, category, onUse) {
+            var _this = this;
+            this.name = name;
+            this.category = category;
+            this._onUse = function (unit) { return onUse(_this, unit); };
+        }
+        InventoryItem.prototype.use = function (unit) {
+            return this._onUse(unit);
+        };
+        return InventoryItem;
+    }());
+    exports.default = InventoryItem;
 });
-define("classes/Unit", ["require", "exports", "types", "utils/AudioUtils", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils"], function (require, exports, types_2, AudioUtils_2, Sounds_2, PromiseUtils_3, PlayerSprite_2, SpriteUtils_1) {
+define("classes/InventoryMap", ["require", "exports", "types"], function (require, exports, types_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var categories = Object.values(types_2.ItemCategory);
+    /**
+     * Contains information about all items held by a particular unit, grouped by category,
+     * as well as data about the selected item/category in the inventory menu
+     * (although this is only applicable to the player unit)
+     */
+    var InventoryMap = /** @class */ (function () {
+        function InventoryMap() {
+            // @ts-ignore
+            this._map = {};
+            for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
+                var category = categories_1[_i];
+                // TODO
+                this._map[category] = [];
+            }
+            this.selectedCategory = categories[0];
+            this.selectedItem = null;
+        }
+        InventoryMap.prototype.add = function (item) {
+            this._map[item.category].push(item);
+            if (this.selectedCategory === item.category && this.selectedItem === null) {
+                this.selectedItem = item;
+            }
+        };
+        InventoryMap.prototype.remove = function (item) {
+            var items = this._map[item.category];
+            var index = items.indexOf(item);
+            items.splice(index, 1);
+            if (this.selectedItem === item) {
+                this.selectedItem = items[index % items.length] || null;
+            }
+        };
+        InventoryMap.prototype.get = function (category) {
+            return __spreadArrays(this._map[category]);
+        };
+        InventoryMap.prototype.nextItem = function () {
+            var items = this._map[this.selectedCategory];
+            if (items.length > 0 && this.selectedItem !== null) {
+                var index = items.indexOf(this.selectedItem);
+                this.selectedItem = items[(index + 1) % items.length];
+            }
+        };
+        InventoryMap.prototype.previousItem = function () {
+            var items = this._map[this.selectedCategory];
+            if (items.length > 0 && this.selectedItem !== null) {
+                var index = items.indexOf(this.selectedItem);
+                this.selectedItem = items[(index - 1) % items.length];
+            }
+        };
+        InventoryMap.prototype.nextCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index + 1) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
+        InventoryMap.prototype.previousCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index - 1) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
+        return InventoryMap;
+    }());
+    exports.default = InventoryMap;
+});
+define("classes/EquippedItem", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var EquippedItem = /** @class */ (function () {
+        function EquippedItem(name, category, inventoryItem, damage) {
+            this.name = name;
+            this.category = category;
+            this.inventoryItem = inventoryItem;
+            this.damage = damage;
+        }
+        return EquippedItem;
+    }());
+    exports.default = EquippedItem;
+});
+define("classes/EquipmentMap", ["require", "exports", "types"], function (require, exports, types_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var categories = Object.values(types_3.EquipmentCategory);
+    var EquipmentMap = /** @class */ (function () {
+        function EquipmentMap() {
+            // @ts-ignore
+            this._map = {};
+            for (var _i = 0, categories_2 = categories; _i < categories_2.length; _i++) {
+                var category = categories_2[_i];
+                // TODO
+                this._map[category] = [];
+            }
+        }
+        EquipmentMap.prototype.add = function (item) {
+            this._map[item.category].push(item);
+        };
+        EquipmentMap.prototype.remove = function (item) {
+            var items = this._map[item.category];
+            var index = items.indexOf(item);
+            items.splice(index, 1);
+        };
+        EquipmentMap.prototype.get = function (category) {
+            return __spreadArrays(this._map[category]);
+        };
+        EquipmentMap.prototype.getEntries = function () {
+            return __spreadArrays(Object.entries(this._map));
+        };
+        return EquipmentMap;
+    }());
+    exports.default = EquipmentMap;
+});
+define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils", "classes/InventoryMap", "classes/EquipmentMap"], function (require, exports, AudioUtils_2, Sounds_2, PromiseUtils_3, PlayerSprite_2, SpriteUtils_1, InventoryMap_1, EquipmentMap_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
     var Unit = /** @class */ (function () {
         function Unit(unitClass, name, level, _a) {
-            var _this = this;
             var x = _a.x, y = _a.y;
             this.char = '@';
             this.class = 'Unit';
             this.unitClass = unitClass;
             this.sprite = unitClass.sprite(unitClass.paletteSwaps);
-            this.inventory = {};
-            Object.keys(types_2.ItemCategory).forEach(function (category) {
-                _this.inventory[category] = [];
-            });
-            this.equipment = {};
-            Object.keys(types_2.EquipmentCategory).forEach(function (category) {
-                _this.equipment[category] = [];
-            });
+            this.inventory = new InventoryMap_1.default();
+            this.equipment = new EquipmentMap_1.default();
             this.x = x;
             this.y = y;
             this.name = name;
@@ -1149,10 +1193,11 @@ define("classes/Unit", ["require", "exports", "types", "utils/AudioUtils", "Soun
         };
         Unit.prototype.getDamage = function () {
             var damage = this._damage;
-            Object.values(this.equipment)
-                .flatMap(function (list) { return list || []; })
-                .forEach(function (equippedItem) {
-                damage += (equippedItem.damage || 0);
+            this.equipment.getEntries().forEach(function (_a) {
+                var category = _a[0], items = _a[1];
+                items.forEach(function (item) {
+                    damage += (item.damage || 0);
+                });
             });
             return damage;
         };
@@ -1364,19 +1409,17 @@ define("classes/MapSupplier", ["require", "exports", "classes/MapInstance"], fun
     }
     exports.createMap = createMap;
 });
-define("classes/GameState", ["require", "exports", "types"], function (require, exports, types_3) {
+define("classes/GameState", ["require", "exports", "types"], function (require, exports, types_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_3.GameScreen.GAME;
+            this.screen = types_4.GameScreen.GAME;
             this.playerUnit = playerUnit;
             this.mapSuppliers = mapSuppliers;
             this.mapIndex = 0;
             this._map = null;
             this.messages = [];
-            this.inventoryCategory = null;
-            this.inventoryIndex = 0;
             this.turn = 1;
         }
         GameState.prototype.getMap = function () {
@@ -1392,7 +1435,7 @@ define("classes/GameState", ["require", "exports", "types"], function (require, 
     }());
     exports.default = GameState;
 });
-define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, actions_1, PromiseUtils_4, Colors_3) {
+define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types", "actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_4, Colors_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1425,11 +1468,9 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
         SpriteRenderer.prototype.render = function () {
             var _this = this;
             var screen = jwb.state.screen;
-            var t1 = new Date().getTime();
             switch (screen) {
                 case 'GAME':
-                    return this._renderGameScreen()
-                        .then(function () { return console.log("render time: " + (new Date().getTime() - t1)); });
+                    return this._renderGameScreen();
                 case 'INVENTORY':
                     return this._renderGameScreen()
                         .then(function () { return _this._renderInventory(); });
@@ -1503,8 +1544,6 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             return Promise.all(promises);
         };
         /**
-         * @param x tile x coordinate
-         * @param y tile y coordinate
          * @param color (in hex form)
          */
         SpriteRenderer.prototype._drawEllipse = function (_a, color, width, height) {
@@ -1520,10 +1559,10 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             return new Promise(function (resolve) { resolve(); });
         };
         SpriteRenderer.prototype._renderInventory = function () {
-            var _a = jwb.state, playerUnit = _a.playerUnit, inventoryCategory = _a.inventoryCategory, inventoryIndex = _a.inventoryIndex;
+            var playerUnit = jwb.state.playerUnit;
             var inventory = playerUnit.inventory;
-            var _b = this, _canvas = _b._canvas, _context = _b._context;
-            this._drawRect(INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+            var _a = this, _canvas = _a._canvas, _context = _a._context;
+            this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
             // draw equipment
             var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
             var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
@@ -1538,17 +1577,15 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             _context.font = '10px sans-serif';
             _context.textAlign = 'left';
             var y = INVENTORY_TOP + 64;
-            Object.entries(playerUnit.equipment).forEach(function (_a) {
+            playerUnit.equipment.getEntries().forEach(function (_a) {
                 var slot = _a[0], equipmentList = _a[1];
-                if (!!equipmentList) {
-                    equipmentList.forEach(function (equipment) {
-                        _context.fillText(slot + " - " + equipment.name, equipmentLeft, y);
-                        y += LINE_HEIGHT;
-                    });
-                }
+                equipmentList.forEach(function (equipment) {
+                    _context.fillText(slot + " - " + equipment.name, equipmentLeft, y);
+                    y += LINE_HEIGHT;
+                });
             });
             // draw inventory categories
-            var inventoryCategories = Object.keys(inventory);
+            var inventoryCategories = Object.values(types_5.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
             _context.font = '14px Monospace';
@@ -1556,19 +1593,19 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             for (var i = 0; i < inventoryCategories.length; i++) {
                 var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
                 _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
-                if (inventoryCategories[i] === inventoryCategory) {
+                if (inventoryCategories[i] === inventory.selectedCategory) {
                     _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
                 }
             }
             // draw inventory items
-            if (inventoryCategory) {
-                var items = inventory[inventoryCategory] || [];
+            if (inventory.selectedCategory) {
+                var items = inventory.get(inventory.selectedCategory);
                 var x = inventoryLeft + 8;
                 _context.font = '10px sans-serif';
                 _context.textAlign = 'left';
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-                    if (i === inventoryIndex) {
+                    if (items[i] === inventory.selectedItem) {
                         _context.fillStyle = '#fc0';
                     }
                     else {
@@ -1613,7 +1650,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             return new Promise(function (resolve) {
                 var playerUnit = jwb.state.playerUnit;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect(0, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+                _this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
                 var lines = [
                     playerUnit.name,
                     "Level " + playerUnit.level,
@@ -1644,7 +1681,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
                 _context.strokeStyle = '#fff';
                 var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect(left, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+                _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
                 _context.fillStyle = '#fff';
                 _context.textAlign = 'left';
                 _context.font = '10px sans-serif';
@@ -1661,20 +1698,21 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
             var left = BOTTOM_PANEL_WIDTH;
             var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
             var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
-            this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+            this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
             var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
             _context.textAlign = 'left';
-            _context.fillStyle = Colors_3.default.WHITE;
+            _context.fillStyle = Colors_4.default.WHITE;
             var textLeft = left + 4;
             _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
             return PromiseUtils_4.resolvedPromise();
         };
-        SpriteRenderer.prototype._drawRect = function (left, top, width, height) {
+        SpriteRenderer.prototype._drawRect = function (_a) {
+            var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
             var _context = this._context;
-            _context.fillStyle = Colors_3.default.BLACK;
+            _context.fillStyle = Colors_4.default.BLACK;
             _context.fillRect(left, top, width, height);
-            _context.strokeStyle = Colors_3.default.WHITE;
+            _context.strokeStyle = Colors_4.default.WHITE;
             _context.strokeRect(left, top, width, height);
         };
         /**
@@ -1692,7 +1730,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "actio
     }());
     exports.default = SpriteRenderer;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "utils/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "SpriteFactory", "EquipmentClasses", "classes/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_4, AudioUtils_3, PromiseUtils_5, RandomUtils_5, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "utils/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "SpriteFactory", "EquipmentClasses", "classes/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_6, AudioUtils_3, PromiseUtils_5, RandomUtils_5, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -1705,7 +1743,7 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
                 resolve();
             });
         };
-        return new InventoryItem_1.default('Potion', types_4.ItemCategory.POTION, onUse);
+        return new InventoryItem_1.default('Potion', types_6.ItemCategory.POTION, onUse);
     }
     function _equipEquipment(equipmentClass, item, unit) {
         return new Promise(function (resolve) {
@@ -1715,13 +1753,7 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
                 inventoryItem: item,
                 damage: equipmentClass.damage
             };
-            var currentWeapons = __spreadArrays(unit.equipment[types_4.EquipmentCategory.WEAPON] || []);
-            unit.equipment[types_4.EquipmentCategory.WEAPON] = [equippedItem];
-            currentWeapons.forEach(function (weapon) {
-                var inventoryItem = weapon.inventoryItem;
-                // @ts-ignore
-                unit.inventory[inventoryItem.category].push(inventoryItem);
-            });
+            unit.equipment.add(equippedItem);
             resolve();
         });
     }
@@ -1736,13 +1768,12 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
                     && ([-1, 0, 1].indexOf(dy) > -1)
                     && !(dx === 0 && dy === 0);
             });
-            console.log("casting floor fire on " + JSON.stringify(adjacentUnits));
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
             return PromiseUtils_5.chainPromises(promises);
         };
-        return new InventoryItem_1.default('Scroll of Floor Fire', types_4.ItemCategory.SCROLL, onUse);
+        return new InventoryItem_1.default('Scroll of Floor Fire', types_6.ItemCategory.SCROLL, onUse);
     }
     function _createInventoryWeapon(weaponClass) {
         var onUse = function (item, unit) { return _equipEquipment(weaponClass, item, unit); };
@@ -1787,7 +1818,7 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
         createRandomItem: createRandomItem
     };
 });
-define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/Colors"], function (require, exports, SpriteFactory_4, UnitAI_1, Colors_4) {
+define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/Colors"], function (require, exports, SpriteFactory_4, UnitAI_1, Colors_5) {
     "use strict";
     var _a, _b, _c, _d;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -1796,16 +1827,16 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         sprite: SpriteFactory_4.default.PLAYER,
         // Green/brown colors
         paletteSwaps: (_a = {},
-            _a[Colors_4.default.DARK_PURPLE] = Colors_4.default.DARK_BROWN,
-            _a[Colors_4.default.MAGENTA] = Colors_4.default.DARK_GREEN,
-            _a[Colors_4.default.DARK_BLUE] = Colors_4.default.DARK_GREEN,
-            _a[Colors_4.default.CYAN] = Colors_4.default.LIGHT_PINK,
-            _a[Colors_4.default.BLACK] = Colors_4.default.BLACK,
-            _a[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_BROWN,
-            _a[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_BROWN,
-            _a[Colors_4.default.DARK_GREEN] = Colors_4.default.DARK_BROWN,
-            _a[Colors_4.default.GREEN] = Colors_4.default.DARK_BROWN,
-            _a[Colors_4.default.ORANGE] = Colors_4.default.LIGHT_PINK // Face
+            _a[Colors_5.default.DARK_PURPLE] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.MAGENTA] = Colors_5.default.DARK_GREEN,
+            _a[Colors_5.default.DARK_BLUE] = Colors_5.default.DARK_GREEN,
+            _a[Colors_5.default.CYAN] = Colors_5.default.LIGHT_PINK,
+            _a[Colors_5.default.BLACK] = Colors_5.default.BLACK,
+            _a[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_BROWN,
+            _a[Colors_5.default.DARK_GREEN] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.GREEN] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_PINK // Face
         ,
             _a),
         startingLife: 100,
@@ -1820,16 +1851,16 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         name: 'ENEMY_HUMAN_BLUE',
         sprite: SpriteFactory_4.default.PLAYER,
         paletteSwaps: (_b = {},
-            _b[Colors_4.default.DARK_PURPLE] = Colors_4.default.MEDIUM_BLUE,
-            _b[Colors_4.default.MAGENTA] = Colors_4.default.MEDIUM_BLUE,
-            _b[Colors_4.default.DARK_BLUE] = Colors_4.default.MEDIUM_BLUE,
-            _b[Colors_4.default.CYAN] = Colors_4.default.LIGHT_PINK,
-            _b[Colors_4.default.BLACK] = Colors_4.default.MEDIUM_BLUE,
-            _b[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_BLUE,
-            _b[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARK_BLUE,
-            _b[Colors_4.default.DARK_GREEN] = Colors_4.default.BLACK,
-            _b[Colors_4.default.GREEN] = Colors_4.default.BLACK,
-            _b[Colors_4.default.ORANGE] = Colors_4.default.LIGHT_PINK // Face
+            _b[Colors_5.default.DARK_PURPLE] = Colors_5.default.MEDIUM_BLUE,
+            _b[Colors_5.default.MAGENTA] = Colors_5.default.MEDIUM_BLUE,
+            _b[Colors_5.default.DARK_BLUE] = Colors_5.default.MEDIUM_BLUE,
+            _b[Colors_5.default.CYAN] = Colors_5.default.LIGHT_PINK,
+            _b[Colors_5.default.BLACK] = Colors_5.default.MEDIUM_BLUE,
+            _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_BLUE,
+            _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARK_BLUE,
+            _b[Colors_5.default.DARK_GREEN] = Colors_5.default.BLACK,
+            _b[Colors_5.default.GREEN] = Colors_5.default.BLACK,
+            _b[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_PINK // Face
         ,
             _b),
         startingLife: 75,
@@ -1844,16 +1875,16 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         name: 'ENEMY_HUMAN_RED',
         sprite: SpriteFactory_4.default.PLAYER,
         paletteSwaps: (_c = {},
-            _c[Colors_4.default.DARK_PURPLE] = Colors_4.default.MEDIUM_RED,
-            _c[Colors_4.default.MAGENTA] = Colors_4.default.MEDIUM_RED,
-            _c[Colors_4.default.DARK_BLUE] = Colors_4.default.MEDIUM_RED,
-            _c[Colors_4.default.CYAN] = Colors_4.default.LIGHT_PINK,
-            _c[Colors_4.default.BLACK] = Colors_4.default.MEDIUM_RED,
-            _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_RED,
-            _c[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARK_RED,
-            _c[Colors_4.default.DARK_GREEN] = Colors_4.default.BLACK,
-            _c[Colors_4.default.GREEN] = Colors_4.default.BLACK,
-            _c[Colors_4.default.ORANGE] = Colors_4.default.LIGHT_PINK // Face
+            _c[Colors_5.default.DARK_PURPLE] = Colors_5.default.MEDIUM_RED,
+            _c[Colors_5.default.MAGENTA] = Colors_5.default.MEDIUM_RED,
+            _c[Colors_5.default.DARK_BLUE] = Colors_5.default.MEDIUM_RED,
+            _c[Colors_5.default.CYAN] = Colors_5.default.LIGHT_PINK,
+            _c[Colors_5.default.BLACK] = Colors_5.default.MEDIUM_RED,
+            _c[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_RED,
+            _c[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARK_RED,
+            _c[Colors_5.default.DARK_GREEN] = Colors_5.default.BLACK,
+            _c[Colors_5.default.GREEN] = Colors_5.default.BLACK,
+            _c[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_PINK // Face
         ,
             _c),
         startingLife: 55,
@@ -1868,18 +1899,18 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         name: 'ENEMY_HUMAN_BLACK',
         sprite: SpriteFactory_4.default.PLAYER,
         paletteSwaps: (_d = {},
-            _d[Colors_4.default.DARK_PURPLE] = Colors_4.default.DARKER_GRAY,
-            _d[Colors_4.default.MAGENTA] = Colors_4.default.DARKER_GRAY,
-            _d[Colors_4.default.DARK_BLUE] = Colors_4.default.DARKER_GRAY,
-            _d[Colors_4.default.CYAN] = Colors_4.default.BLACK,
-            _d[Colors_4.default.BLACK] = Colors_4.default.LIGHT_GRAY,
-            _d[Colors_4.default.DARK_GRAY] = Colors_4.default.DARKER_GRAY,
-            _d[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARKER_GRAY,
-            _d[Colors_4.default.DARK_GREEN] = Colors_4.default.BLACK,
-            _d[Colors_4.default.GREEN] = Colors_4.default.BLACK,
-            _d[Colors_4.default.ORANGE] = Colors_4.default.LIGHT_GRAY,
-            _d[Colors_4.default.TEAL] = Colors_4.default.RED,
-            _d[Colors_4.default.LIGHT_BROWN] = Colors_4.default.LIGHT_GRAY // Hair
+            _d[Colors_5.default.DARK_PURPLE] = Colors_5.default.DARKER_GRAY,
+            _d[Colors_5.default.MAGENTA] = Colors_5.default.DARKER_GRAY,
+            _d[Colors_5.default.DARK_BLUE] = Colors_5.default.DARKER_GRAY,
+            _d[Colors_5.default.CYAN] = Colors_5.default.BLACK,
+            _d[Colors_5.default.BLACK] = Colors_5.default.LIGHT_GRAY,
+            _d[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
+            _d[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARKER_GRAY,
+            _d[Colors_5.default.DARK_GREEN] = Colors_5.default.BLACK,
+            _d[Colors_5.default.GREEN] = Colors_5.default.BLACK,
+            _d[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_GRAY,
+            _d[Colors_5.default.TEAL] = Colors_5.default.RED,
+            _d[Colors_5.default.LIGHT_BROWN] = Colors_5.default.LIGHT_GRAY // Hair
         ,
             _d),
         startingLife: 100,
@@ -2589,42 +2620,24 @@ define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], func
         playTurn: playTurn
     };
 });
-define("utils/ItemUtils", ["require", "exports", "utils/AudioUtils", "Sounds", "utils/PromiseUtils"], function (require, exports, AudioUtils_5, Sounds_4, PromiseUtils_7) {
+define("utils/ItemUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], function (require, exports, AudioUtils_5, Sounds_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function pickupItem(unit, mapItem) {
         var state = jwb.state;
         var inventoryItem = mapItem.inventoryItem;
-        var category = inventoryItem.category;
-        var inventory = unit.inventory;
-        inventory[category] = inventory[category] || [];
-        // @ts-ignore
-        inventory[category].push(inventoryItem);
-        state.inventoryIndex = state.inventoryIndex || 0;
+        unit.inventory.add(inventoryItem);
         state.messages.push("Picked up a " + inventoryItem.name + ".");
         AudioUtils_5.playSound(Sounds_4.default.PICK_UP_ITEM);
     }
     exports.pickupItem = pickupItem;
     function useItem(unit, item) {
-        var state = jwb.state;
-        if (!!item) {
-            return item.use(unit)
-                .then(function () {
-                var items = unit.inventory[item.category];
-                if (!items) {
-                    throw 'fux';
-                }
-                items.splice(state.inventoryIndex, 1);
-                if (state.inventoryIndex >= items.length) {
-                    state.inventoryIndex--;
-                }
-            });
-        }
-        return PromiseUtils_7.resolvedPromise();
+        return item.use(unit)
+            .then(function () { return unit.inventory.remove(item); });
     }
     exports.useItem = useItem;
 });
-define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnHandler", "types/Tiles", "Sounds", "utils/ItemUtils", "utils/PromiseUtils", "utils/UnitUtils", "utils/AudioUtils"], function (require, exports, actions_2, types_5, TurnHandler_1, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
+define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnHandler", "types/Tiles", "Sounds", "utils/ItemUtils", "utils/PromiseUtils", "utils/UnitUtils", "utils/AudioUtils"], function (require, exports, actions_2, types_7, TurnHandler_1, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_7, UnitUtils_2, AudioUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -2678,7 +2691,6 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
     }
     function keyHandler(e) {
         var command = _mapToCommand(e);
-        console.log(command);
         switch (command) {
             case KeyCommand.UP:
             case KeyCommand.LEFT:
@@ -2698,16 +2710,16 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                 return _handleTab();
             default:
         }
-        return PromiseUtils_8.resolvedPromise();
+        return PromiseUtils_7.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
         var _a, _b, _c, _d;
         var _e = jwb.state, playerUnit = _e.playerUnit, screen = _e.screen;
         switch (screen) {
-            case types_5.GameScreen.GAME:
-                var dx_1 = null;
-                var dy_1 = null;
+            case types_7.GameScreen.GAME:
+                var dx_1;
+                var dy_1;
                 switch (command) {
                     case KeyCommand.UP:
                     case KeyCommand.SHIFT_UP:
@@ -2740,37 +2752,26 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder, true);
-            case types_5.GameScreen.INVENTORY:
+            case types_7.GameScreen.INVENTORY:
                 var state = jwb.state;
-                var inventoryCategory = state.inventoryCategory;
-                var inventoryKeys = Object.keys(playerUnit.inventory);
-                var items = !!inventoryCategory ? playerUnit.inventory[inventoryCategory] || [] : [];
-                var keyIndex = !!inventoryCategory ? inventoryKeys.indexOf(inventoryCategory) : 0;
+                var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
                     case KeyCommand.SHIFT_UP:
-                        state.inventoryIndex = (state.inventoryIndex + items.length - 1) % items.length;
+                        inventory.previousItem();
                         break;
                     case KeyCommand.DOWN:
                     case KeyCommand.SHIFT_DOWN:
-                        state.inventoryIndex = (state.inventoryIndex + 1) % items.length;
+                        inventory.nextItem();
                         break;
                     case KeyCommand.LEFT:
                     case KeyCommand.SHIFT_LEFT:
-                        {
-                            keyIndex = (keyIndex + inventoryKeys.length - 1) % inventoryKeys.length;
-                            state.inventoryCategory = inventoryKeys[keyIndex];
-                            state.inventoryIndex = 0;
-                            break;
-                        }
+                        inventory.previousCategory();
+                        break;
                     case KeyCommand.RIGHT:
                     case KeyCommand.SHIFT_RIGHT:
-                        {
-                            keyIndex = (keyIndex + 1) % inventoryKeys.length;
-                            state.inventoryCategory = inventoryKeys[keyIndex];
-                            state.inventoryIndex = 0;
-                            break;
-                        }
+                        inventory.nextCategory();
+                        break;
                 }
                 return TurnHandler_1.default.playTurn(null, false);
             default:
@@ -2780,9 +2781,8 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
     function _handleEnter() {
         var state = jwb.state;
         var playerUnit = state.playerUnit, screen = state.screen;
-        var inventory = playerUnit.inventory;
         switch (screen) {
-            case types_5.GameScreen.GAME: {
+            case types_7.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -2800,18 +2800,15 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                 }
                 return TurnHandler_1.default.playTurn(null, true);
             }
-            case types_5.GameScreen.INVENTORY: {
-                var inventoryCategory = state.inventoryCategory, inventoryIndex = state.inventoryIndex;
-                if (inventoryCategory) {
-                    var items = inventory[inventoryCategory];
-                    if (items) {
-                        var item = items[inventoryIndex] || null;
-                        state.screen = types_5.GameScreen.GAME;
-                        return ItemUtils_1.useItem(playerUnit, item)
-                            .then(function () { return TurnHandler_1.default.playTurn(null, false); });
-                    }
+            case types_7.GameScreen.INVENTORY: {
+                var playerUnit_1 = state.playerUnit;
+                var selectedItem = playerUnit_1.inventory.selectedItem;
+                if (!!selectedItem) {
+                    state.screen = types_7.GameScreen.GAME;
+                    return ItemUtils_1.useItem(playerUnit_1, selectedItem)
+                        .then(function () { return TurnHandler_1.default.playTurn(null, false); });
                 }
-                return PromiseUtils_8.resolvedPromise();
+                return PromiseUtils_7.resolvedPromise();
             }
             default:
                 throw "fux";
@@ -2819,14 +2816,12 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
     }
     function _handleTab() {
         var state = jwb.state;
-        var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_5.GameScreen.INVENTORY:
-                state.screen = types_5.GameScreen.GAME;
+            case types_7.GameScreen.INVENTORY:
+                state.screen = types_7.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_5.GameScreen.INVENTORY;
-                state.inventoryCategory = state.inventoryCategory || Object.keys(playerUnit.inventory)[0] || null;
+                state.screen = types_7.GameScreen.INVENTORY;
                 break;
         }
         return TurnHandler_1.default.playTurn(null, false);
@@ -2847,31 +2842,30 @@ define("main", ["require", "exports", "actions"], function (require, exports, ac
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_3.restartGame(); };
 });
-define("classes/AsciiRenderer", ["require", "exports"], function (require, exports) {
+define("classes/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "classes/Unit"], function (require, exports, PromiseUtils_8, Unit_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var WIDTH = 80;
     var HEIGHT = 32;
-    /**
-     * @constructor
-     */
-    function AsciiRenderer() {
-        var container = document.getElementById('container');
-        container.innerHTML = '';
-        var pre = document.createElement('pre');
-        container.appendChild(pre);
-        function render() {
+    var AsciiRenderer = /** @class */ (function () {
+        function AsciiRenderer() {
+            this._container = document.getElementById('container');
+            this._container.innerHTML = '';
+            this._pre = document.createElement('pre');
+            this._container.appendChild(this._pre);
+        }
+        AsciiRenderer.prototype.render = function () {
             var screen = jwb.state.screen;
             switch (screen) {
                 case 'GAME':
-                    return _renderGameScreen();
+                    return this._renderGameScreen();
                 case 'INVENTORY':
-                    return _renderInventoryScreen();
+                    return this._renderInventoryScreen();
                 default:
                     throw "Invalid screen " + screen;
             }
-        }
-        function _renderGameScreen() {
+        };
+        AsciiRenderer.prototype._renderGameScreen = function () {
             var map = jwb.state.getMap();
             var lines = ['', '', '']; // extra room for messages
             var mapHeight = HEIGHT - 7;
@@ -2880,7 +2874,7 @@ define("classes/AsciiRenderer", ["require", "exports"], function (require, expor
                 for (var x = 0; x < WIDTH; x++) {
                     if (map.contains({ x: x, y: y })) {
                         var element = map.getUnit({ x: x, y: y }) || map.getItem({ x: x, y: y }) || map.getTile({ x: x, y: y });
-                        line += _renderElement(element);
+                        line += this._renderElement(element);
                     }
                     else {
                         line += ' ';
@@ -2889,26 +2883,25 @@ define("classes/AsciiRenderer", ["require", "exports"], function (require, expor
                 lines.push(line);
             }
             lines.push('', '', '');
-            lines.push(_getStatusLine());
-            _addMessageLines(lines);
-            pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-        }
-        function _renderInventoryScreen() {
+            lines.push(this._getStatusLine());
+            this._addMessageLines(lines);
+            this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
+            return PromiseUtils_8.resolvedPromise();
+        };
+        AsciiRenderer.prototype._renderInventoryScreen = function () {
             var state = jwb.state;
-            var playerUnit = state.playerUnit, inventoryCategory = state.inventoryCategory, inventoryIndex = state.inventoryIndex;
+            var playerUnit = state.playerUnit;
             var inventory = playerUnit.inventory;
             var inventoryLines = [];
-            if (inventoryCategory) {
-                var items = inventory[inventoryCategory] || [];
-                inventoryLines.push(inventoryCategory);
-                for (var i = 0; i < items.length; i++) {
-                    var item = items[i];
-                    if (i === inventoryIndex) {
-                        inventoryLines.push("<span style=\"color: #f00\">" + item.name + "</span>");
-                    }
-                    else {
-                        inventoryLines.push(item.name);
-                    }
+            var items = inventory.get(inventory.selectedCategory);
+            inventoryLines.push(inventory.selectedCategory);
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item === inventory.selectedItem) {
+                    inventoryLines.push("<span style=\"color: #f00\">" + item.name + "</span>");
+                }
+                else {
+                    inventoryLines.push(item.name);
                 }
             }
             var lines = ['INVENTORY', ''];
@@ -2916,40 +2909,34 @@ define("classes/AsciiRenderer", ["require", "exports"], function (require, expor
                 var line = (y < inventoryLines.length) ? inventoryLines[y] : '';
                 lines.push(line);
             }
-            lines.push(_getStatusLine());
-            _addMessageLines(lines);
-            pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-        }
-        /**
-         * @param {Unit | MapItem | Tile} element
-         * @private
-         */
-        function _renderElement(element) {
-            switch (element.class) {
-                case 'Unit':
-                    return "<span style=\"color: " + ((element.name === 'player') ? '#0cf' : '#f00') + "\">@</span>";
-                case 'MapItem':
-                    return element.char;
-                case 'Tile':
-                    return element.char;
+            lines.push(this._getStatusLine());
+            this._addMessageLines(lines);
+            this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
+            return PromiseUtils_8.resolvedPromise();
+        };
+        AsciiRenderer.prototype._renderElement = function (element) {
+            if (element instanceof Unit_4.default) {
+                return "<span style=\"color: " + ((element.name === 'player') ? '#0cf' : '#f00') + "\">@</span>";
             }
-            return ' ';
-        }
-        function _getStatusLine() {
+            else {
+                return element.char;
+            }
+        };
+        AsciiRenderer.prototype._getStatusLine = function () {
             var _a = jwb.state, playerUnit = _a.playerUnit, mapIndex = _a.mapIndex;
             return "HP: " + playerUnit.life + "/" + playerUnit.maxLife + "    Damage: " + playerUnit.getDamage() + "    Level: " + ((mapIndex || 0) + 1);
-        }
-        /**
-         * @param {string[]} lines
-         */
-        function _addMessageLines(lines) {
+        };
+        AsciiRenderer.prototype._addMessageLines = function (lines) {
             var messages = jwb.state.messages;
             for (var i = 0; i < messages.length; i++) {
-                lines[i] = messages.pop();
+                var message = messages.pop();
+                if (!!message) {
+                    lines[i] = message;
+                }
             }
-        }
-        return { render: render };
-    }
+        };
+        return AsciiRenderer;
+    }());
     exports.default = AsciiRenderer;
 });
 //# sourceMappingURL=roguelike.js.map

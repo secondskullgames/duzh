@@ -7,6 +7,7 @@ import { pickupItem, useItem } from './utils/ItemUtils';
 import { resolvedPromise } from './utils/PromiseUtils';
 import { fireProjectile, moveOrAttack } from './utils/UnitUtils';
 import { playSound } from './utils/AudioUtils';
+import Unit from './classes/Unit';
 
 enum KeyCommand {
   UP = 'UP',
@@ -62,7 +63,6 @@ function keyHandlerWrapper(e: KeyboardEvent) {
 
 function keyHandler(e: KeyboardEvent): Promise<void> {
   const command : (KeyCommand | null) = _mapToCommand(e);
-  console.log(command);
 
   switch (command) {
     case KeyCommand.UP:
@@ -91,8 +91,8 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
 
   switch (screen) {
     case GameScreen.GAME:
-      let dx: Number | null = null;
-      let dy: Number | null = null;
+      let dx: number;
+      let dy: number;
 
       switch (command) {
         case KeyCommand.UP:
@@ -115,15 +115,15 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           throw `Invalid direction command ${command}`;
       }
 
-      const queuedOrder = (() => {
+      const queuedOrder: (unit: Unit) => Promise<void> = (() => {
         switch (command) {
           case KeyCommand.SHIFT_UP:
           case KeyCommand.SHIFT_DOWN:
           case KeyCommand.SHIFT_LEFT:
           case KeyCommand.SHIFT_RIGHT:
-            return u => fireProjectile(u, { dx, dy });
+            return (u: Unit) => fireProjectile(u, { dx, dy });
           default:
-            return u => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
+            return (u: Unit) => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
         }
       })();
       return TurnHandler.playTurn(
@@ -132,36 +132,25 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
       );
     case GameScreen.INVENTORY:
       const { state } = jwb;
-      const { inventoryCategory } = state;
-      const inventoryKeys = <ItemCategory[]>Object.keys(playerUnit.inventory);
-      const items = !!inventoryCategory ? playerUnit.inventory[inventoryCategory] || [] : [];
-      let keyIndex = !!inventoryCategory ? inventoryKeys.indexOf(inventoryCategory) : 0;
+      const { inventory } = state.playerUnit;
 
       switch (command) {
         case KeyCommand.UP:
         case KeyCommand.SHIFT_UP:
-          state.inventoryIndex = (state.inventoryIndex + items.length - 1) % items.length;
+          inventory.previousItem();
           break;
         case KeyCommand.DOWN:
         case KeyCommand.SHIFT_DOWN:
-          state.inventoryIndex = (state.inventoryIndex + 1) % items.length;
+          inventory.nextItem();
           break;
         case KeyCommand.LEFT:
         case KeyCommand.SHIFT_LEFT:
-        {
-          keyIndex = (keyIndex + inventoryKeys.length - 1) % inventoryKeys.length;
-          state.inventoryCategory = inventoryKeys[keyIndex];
-          state.inventoryIndex = 0;
+          inventory.previousCategory();
           break;
-        }
         case KeyCommand.RIGHT:
         case KeyCommand.SHIFT_RIGHT:
-        {
-          keyIndex = (keyIndex + 1) % inventoryKeys.length;
-          state.inventoryCategory = inventoryKeys[keyIndex];
-          state.inventoryIndex = 0;
+          inventory.nextCategory();
           break;
-        }
       }
       return TurnHandler.playTurn(null, false);
     default:
@@ -172,7 +161,6 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
 function _handleEnter(): Promise<void> {
   const { state } = jwb;
   const { playerUnit, screen } = state;
-  const { inventory } = playerUnit;
 
   switch (screen) {
     case GameScreen.GAME: {
@@ -193,15 +181,13 @@ function _handleEnter(): Promise<void> {
       return TurnHandler.playTurn(null, true);
     }
     case GameScreen.INVENTORY: {
-      const { inventoryCategory, inventoryIndex } = state;
-      if (inventoryCategory) {
-        const items = inventory[inventoryCategory];
-        if (items) {
-          const item = items[inventoryIndex] || null;
-          state.screen = GameScreen.GAME;
-          return useItem(playerUnit, item)
-            .then(() => TurnHandler.playTurn(null, false));
-        }
+      const { playerUnit } = state;
+      const { selectedItem } = playerUnit.inventory;
+
+      if (!!selectedItem) {
+        state.screen = GameScreen.GAME;
+        return useItem(playerUnit, selectedItem)
+          .then(() => TurnHandler.playTurn(null, false));
       }
       return resolvedPromise();
     }
@@ -212,7 +198,6 @@ function _handleEnter(): Promise<void> {
 
 function _handleTab(): Promise<void> {
   const { state } = jwb;
-  const { playerUnit } = state;
 
   switch (state.screen) {
     case GameScreen.INVENTORY:
@@ -220,7 +205,6 @@ function _handleTab(): Promise<void> {
       break;
     default:
       state.screen = GameScreen.INVENTORY;
-      state.inventoryCategory = state.inventoryCategory || <any>Object.keys(playerUnit.inventory)[0] || null;
       break;
   }
   return TurnHandler.playTurn(null, false);

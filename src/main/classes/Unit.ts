@@ -1,7 +1,5 @@
-import { EquipmentCategory, ItemCategory } from '../types';
-import Sprite from "./Sprite";
-import EquippedItem from './EquippedItem';
-import InventoryItem from './InventoryItem';
+import { Entity, Coordinates } from '../types';
+import Sprite from './Sprite';
 import UnitClass from './UnitClass';
 import { playSound } from '../utils/AudioUtils';
 import Sounds from '../Sounds';
@@ -9,7 +7,8 @@ import { UnitAI } from '../UnitAI';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import PlayerSprite from './PlayerSprite';
 import { playAnimation } from '../utils/SpriteUtils';
-import Entity from '../types/Entity';
+import InventoryMap from './InventoryMap';
+import EquipmentMap from './EquipmentMap';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -18,8 +17,8 @@ class Unit implements Entity {
   readonly unitClass: UnitClass;
   readonly char = '@';
   readonly sprite: Sprite;
-  inventory: { [category in ItemCategory]?: InventoryItem[] };
-  equipment: { [category in EquipmentCategory]?: EquippedItem[] };
+  inventory: InventoryMap;
+  equipment: EquipmentMap;
   x: number;
   y: number;
   name: string;
@@ -32,19 +31,12 @@ class Unit implements Entity {
   queuedOrder: (() => Promise<void>) | null;
   aiHandler?: UnitAI;
 
-  constructor(unitClass: UnitClass, name, level, { x, y }) {
+  constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
     this.class = 'Unit';
     this.unitClass = unitClass;
     this.sprite = unitClass.sprite(unitClass.paletteSwaps);
-    this.inventory = {};
-    Object.keys(ItemCategory).forEach(category => {
-      this.inventory[category] = [];
-    });
-
-    this.equipment = {};
-    Object.keys(EquipmentCategory).forEach(category => {
-      this.equipment[category] = [];
-    });
+    this.inventory = new InventoryMap();
+    this.equipment = new EquipmentMap();
 
     this.x = x;
     this.y = y;
@@ -84,19 +76,16 @@ class Unit implements Entity {
         }
 
         return resolvedPromise();
-      })
-      /*.then(() => {
-        return jwb.renderer.render();
-      })*/;
+      });
   }
 
   getDamage(): number {
     let damage = this._damage;
-    Object.values(this.equipment)
-      .flatMap(list => list || [])
-      .forEach(equippedItem => {
-        damage += (equippedItem.damage || 0);
+    this.equipment.getEntries().forEach(([category, items]) => {
+      items.forEach(item => {
+        damage += (item.damage || 0);
       });
+    });
     return damage;
   }
 
@@ -109,7 +98,7 @@ class Unit implements Entity {
     playSound(Sounds.LEVEL_UP);
   }
 
-  gainExperience(experience) {
+  gainExperience(experience: number) {
     this.experience += experience;
     const experienceToNextLevel = this.experienceToNextLevel();
     while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {

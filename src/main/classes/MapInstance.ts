@@ -15,7 +15,14 @@ class MapInstance {
   items: MapItem[];
   revealedTiles: Coordinates[];
 
-  constructor(width, height, tiles, rooms, units, items) {
+  constructor(
+    width: number,
+    height: number,
+    tiles: Tile[][],
+    rooms: Room[],
+    units: Unit[],
+    items: MapItem[]
+  ) {
     this.width = width;
     this.height = height;
     this.tiles = tiles;

@@ -6,7 +6,7 @@ import Colors from './types/Colors';
 
 const DEFAULT_SPRITE_KEY = 'default';
 
-function _staticSprite(imageLoader: ImageLoader, { dx, dy }): Sprite {
+function _staticSprite(imageLoader: ImageLoader, { dx, dy }: { dx: number, dy: number }): Sprite {
   return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
 }
 

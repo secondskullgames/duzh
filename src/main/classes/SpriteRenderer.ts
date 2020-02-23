@@ -1,7 +1,5 @@
 import { isTileRevealed } from '../utils/MapUtils';
-import Unit from './Unit';
-import MapItem from './MapItem';
-import { Coordinates, Tile } from '../types';
+import { Coordinates, Entity, ItemCategory, Rect, Tile } from '../types';
 import { revealTiles } from '../actions';
 import Sprite from './Sprite';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
@@ -47,11 +45,9 @@ class SpriteRenderer {
 
   render(): Promise<any> {
     const { screen } = jwb.state;
-    const t1 = new Date().getTime();
     switch (screen) {
       case 'GAME':
-        return this._renderGameScreen()
-          .then(() => console.log(`render time: ${new Date().getTime() - t1}`));
+        return this._renderGameScreen();
       case 'INVENTORY':
         return this._renderGameScreen()
           .then(() => this._renderInventory());
@@ -130,11 +126,9 @@ class SpriteRenderer {
   }
 
   /**
-   * @param x tile x coordinate
-   * @param y tile y coordinate
    * @param color (in hex form)
    */
-  private _drawEllipse({ x, y }, color, width, height): Promise<any> {
+  private _drawEllipse({ x, y }: Coordinates, color: string, width: number, height: number): Promise<any> {
     const { _context } = this;
     _context.fillStyle = color;
     const topLeftPixel = this._gridToPixel({ x, y });
@@ -147,11 +141,11 @@ class SpriteRenderer {
   }
 
   private _renderInventory(): Promise<any> {
-    const { playerUnit, inventoryCategory, inventoryIndex } = jwb.state;
+    const { playerUnit } = jwb.state;
     const { inventory } = playerUnit;
     const { _canvas, _context } = this;
 
-    this._drawRect(INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+    this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
 
     // draw equipment
 
@@ -172,17 +166,15 @@ class SpriteRenderer {
     _context.textAlign = 'left';
 
     let y = INVENTORY_TOP + 64;
-    Object.entries(playerUnit.equipment).forEach(([slot, equipmentList]) => {
-      if (!!equipmentList) {
-        equipmentList.forEach(equipment => {
-          _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
-          y += LINE_HEIGHT;
-        });
-      }
+    playerUnit.equipment.getEntries().forEach(([slot, equipmentList]) => {
+      equipmentList.forEach(equipment => {
+        _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
+        y += LINE_HEIGHT;
+      });
     });
 
     // draw inventory categories
-    const inventoryCategories = Object.keys(inventory);
+    const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
     const categoryWidth = 60;
     const xOffset = 4;
 
@@ -192,15 +184,15 @@ class SpriteRenderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
-      if (inventoryCategories[i] === inventoryCategory) {
+      if (inventoryCategories[i] === inventory.selectedCategory) {
         _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
       }
     }
 
     // draw inventory items
 
-    if (inventoryCategory) {
-      const items = inventory[inventoryCategory] || [];
+    if (inventory.selectedCategory) {
+      const items = inventory.get(inventory.selectedCategory);
       const x = inventoryLeft + 8;
 
       _context.font = '10px sans-serif';
@@ -208,7 +200,7 @@ class SpriteRenderer {
 
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-        if (i === inventoryIndex) {
+        if (items[i] === inventory.selectedItem) {
           _context.fillStyle = '#fc0';
         } else {
           _context.fillStyle = '#fff';
@@ -221,7 +213,7 @@ class SpriteRenderer {
     return resolvedPromise();
   }
 
-  private _isPixelOnScreen({ x, y }): boolean {
+  private _isPixelOnScreen({ x, y }: Coordinates): boolean {
     return (
       (x >= -TILE_WIDTH) &&
       (x <= SCREEN_WIDTH + TILE_WIDTH) &&
@@ -230,7 +222,7 @@ class SpriteRenderer {
     );
   }
 
-  private _renderElement(element: (Unit | MapItem | Tile), { x, y }): Promise<any> {
+  private _renderElement(element: (Entity | Tile), { x, y }: Coordinates): Promise<any> {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
@@ -256,7 +248,7 @@ class SpriteRenderer {
       const { playerUnit } = jwb.state;
 
       const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      this._drawRect(0, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+      this._drawRect({ left: 0, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
       const lines = [
         playerUnit.name,
@@ -290,7 +282,7 @@ class SpriteRenderer {
 
       const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
       const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      this._drawRect(left, top, BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT);
+      this._drawRect({ left, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
       _context.fillStyle = '#fff';
       _context.textAlign = 'left';
@@ -313,7 +305,7 @@ class SpriteRenderer {
     const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
     const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
 
-    this._drawRect(left, top, width, BOTTOM_BAR_HEIGHT);
+    this._drawRect({ left, top, width, height: BOTTOM_BAR_HEIGHT });
 
     const { mapIndex, turn } = jwb.state;
     _context.textAlign = 'left';
@@ -325,7 +317,7 @@ class SpriteRenderer {
     return resolvedPromise();
   }
 
-  private _drawRect(left, top, width, height) {
+  private _drawRect({ left, top, width, height }: Rect) {
     const { _context } = this;
 
     _context.fillStyle = Colors.BLACK;
