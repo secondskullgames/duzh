@@ -7,18 +7,14 @@ class MapItem implements Entity {
   y: number;
   readonly char: string;
   readonly sprite: Sprite;
-  item?: InventoryItem;
+  inventoryItem: InventoryItem;
 
-  constructor({ x, y }, char: string, sprite: Sprite, item?: InventoryItem) {
+  constructor({ x, y }, char: string, sprite: Sprite, inventoryItem: InventoryItem) {
     this.x = x;
     this.y = y;
     this.char = char;
     this.sprite = sprite;
-    this.item = item;
-  }
-
-  getInventoryItem(): InventoryItem {
-    return this.item;
+    this.inventoryItem = inventoryItem;
   }
 }
 

@@ -5,6 +5,7 @@ import { Coordinates, Tile } from '../types';
 import { revealTiles } from '../actions';
 import Sprite from './Sprite';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
+import Colors from '../types/Colors';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -33,13 +34,13 @@ class SpriteRenderer {
   private readonly _context: CanvasRenderingContext2D;
 
   constructor() {
-    this._container = document.getElementById('container');
+    this._container = <any>document.getElementById('container');
     this._container.innerHTML = '';
     this._canvas = document.createElement('canvas');
     this._canvas.width = WIDTH * TILE_WIDTH;
     this._canvas.height = HEIGHT * TILE_HEIGHT;
     this._container.appendChild(this._canvas);
-    this._context = this._canvas.getContext('2d');
+    this._context = <any>this._canvas.getContext('2d');
     this._context.imageSmoothingEnabled = false;
     this._context.textBaseline = 'middle';
   }
@@ -74,7 +75,7 @@ class SpriteRenderer {
 
   private _renderTiles(): Promise<any> {
     const promises: Promise<any>[] = [];
-    const { map } = jwb.state;
+    const map = jwb.state.getMap();
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
@@ -89,8 +90,8 @@ class SpriteRenderer {
   }
 
   private _renderItems(): Promise<any> {
-    const { map } = jwb.state;
-    const promises = [];
+    const map = jwb.state.getMap();
+    const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
@@ -106,9 +107,10 @@ class SpriteRenderer {
   }
 
   private _renderUnits(): Promise<any> {
-    const { map, playerUnit } = jwb.state;
+    const { playerUnit } = jwb.state;
+    const map = jwb.state.getMap();
 
-    const promises = [];
+    const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
@@ -171,10 +173,12 @@ class SpriteRenderer {
 
     let y = INVENTORY_TOP + 64;
     Object.entries(playerUnit.equipment).forEach(([slot, equipmentList]) => {
-      equipmentList.forEach(equipment => {
-        _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
-        y += LINE_HEIGHT;
-      });
+      if (!!equipmentList) {
+        equipmentList.forEach(equipment => {
+          _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
+          y += LINE_HEIGHT;
+        });
+      }
     });
 
     // draw inventory categories
@@ -195,22 +199,24 @@ class SpriteRenderer {
 
     // draw inventory items
 
-    const items = inventory[inventoryCategory];
-    const x = inventoryLeft + 8;
+    if (inventoryCategory) {
+      const items = inventory[inventoryCategory] || [];
+      const x = inventoryLeft + 8;
 
-    _context.font = '10px sans-serif';
-    _context.textAlign = 'left';
+      _context.font = '10px sans-serif';
+      _context.textAlign = 'left';
 
-    for (let i = 0; i < items.length; i++) {
-      const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-      if (i === inventoryIndex) {
-        _context.fillStyle = '#fc0';
-      } else {
-        _context.fillStyle = '#fff';
+      for (let i = 0; i < items.length; i++) {
+        const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+        if (i === inventoryIndex) {
+          _context.fillStyle = '#fc0';
+        } else {
+          _context.fillStyle = '#fff';
+        }
+        _context.fillText(items[i].name, x, y);
       }
-      _context.fillText(items[i].name, x, y);
+      _context.fillStyle = '#fff';
     }
-    _context.fillStyle = '#fff';
 
     return resolvedPromise();
   }
@@ -311,9 +317,9 @@ class SpriteRenderer {
 
     const { mapIndex, turn } = jwb.state;
     _context.textAlign = 'left';
-    _context.fillStyle = '#fff';
+    _context.fillStyle = Colors.WHITE;
     const textLeft = left + 4;
-    _context.fillText(`Level: ${mapIndex + 1}`, textLeft, top + 8);
+    _context.fillText(`Level: ${(mapIndex || 0) + 1}`, textLeft, top + 8);
     _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
 
     return resolvedPromise();
@@ -322,9 +328,9 @@ class SpriteRenderer {
   private _drawRect(left, top, width, height) {
     const { _context } = this;
 
-    _context.fillStyle = '#000';
+    _context.fillStyle = Colors.BLACK;
     _context.fillRect(left, top, width, height);
-    _context.strokeStyle = '#fff';
+    _context.strokeStyle = Colors.WHITE;
     _context.strokeRect(left, top, width, height);
   }
 

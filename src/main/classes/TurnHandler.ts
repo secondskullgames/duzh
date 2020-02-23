@@ -7,7 +7,7 @@ function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null, doUpd
   const { renderer } = jwb;
   const { playerUnit } = jwb.state;
   if (doUpdate) {
-    playerUnit.queuedOrder = playerUnitOrder;
+    playerUnit.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
     return update();
   } else {
     return renderer.render();
@@ -16,7 +16,8 @@ function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null, doUpd
 
 function update(): Promise<void> {
   const { state } = jwb;
-  const { playerUnit, map } = jwb.state;
+  const { playerUnit } = state;
+  const map = state.getMap();
 
   // make sure the player unit's update happens first
   const unitPromises: UpdateProc[] = [];

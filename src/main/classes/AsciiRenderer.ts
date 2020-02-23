@@ -5,7 +5,7 @@ const HEIGHT = 32;
  * @constructor
  */
 function AsciiRenderer() {
-  const container = document.getElementById('container');
+  const container = <any>document.getElementById('container');
   container.innerHTML = '';
   const pre = document.createElement('pre');
   container.appendChild(pre);
@@ -23,7 +23,7 @@ function AsciiRenderer() {
   }
 
   function _renderGameScreen() {
-    const { map } = jwb.state;
+    const map = jwb.state.getMap();
 
     const lines: string[] = ['', '', '']; // extra room for messages
     const mapHeight = HEIGHT - 7;
@@ -50,10 +50,10 @@ function AsciiRenderer() {
     const { playerUnit, inventoryCategory, inventoryIndex } = state;
     const { inventory } = playerUnit;
 
-    const inventoryLines = [];
+    const inventoryLines: string[] = [];
 
     if (inventoryCategory) {
-      const items = inventory[inventoryCategory];
+      const items = inventory[inventoryCategory] || [];
       inventoryLines.push(inventoryCategory);
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
@@ -94,7 +94,7 @@ function AsciiRenderer() {
 
   function _getStatusLine() {
     const { playerUnit, mapIndex } = jwb.state;
-    return `HP: ${playerUnit.life}/${playerUnit.maxLife}    Damage: ${playerUnit.getDamage()}    Level: ${mapIndex + 1}`;
+    return `HP: ${playerUnit.life}/${playerUnit.maxLife}    Damage: ${playerUnit.getDamage()}    Level: ${(mapIndex || 0) + 1}`;
   }
 
   /**

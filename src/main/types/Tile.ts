@@ -3,7 +3,7 @@ import Sprite from '../classes/Sprite';
 interface Tile {
   name: string,
   char: string,
-  sprite: Sprite,
+  sprite: Sprite | null,
   isBlocking: boolean
 }
 

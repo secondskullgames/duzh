@@ -7,10 +7,11 @@ import { resolvedPromise } from './PromiseUtils';
 
 function pickupItem(unit: Unit, mapItem: MapItem) {
   const { state } = jwb;
-  const inventoryItem = mapItem.getInventoryItem();
+  const { inventoryItem } = mapItem;
   const { category } = inventoryItem;
   const { inventory } = unit;
   inventory[category] = inventory[category] || [];
+  // @ts-ignore
   inventory[category].push(inventoryItem);
   state.inventoryIndex = state.inventoryIndex || 0;
   state.messages.push(`Picked up a ${inventoryItem.name}.`);
@@ -23,6 +24,9 @@ function useItem(unit: Unit, item: (InventoryItem | null)): Promise<any> {
     return item.use(unit)
       .then(() => {
         const items = unit.inventory[item.category];
+        if (!items) {
+          throw 'fux';
+        }
         items.splice(state.inventoryIndex, 1);
         if (state.inventoryIndex >= items.length) {
           state.inventoryIndex--;

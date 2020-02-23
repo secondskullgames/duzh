@@ -102,7 +102,7 @@ class DungeonGenerator {
         const rightWidth = width - splitX;
         const rightSection = this._generateSection(rightWidth, height);
 
-        const tiles = [];
+        const tiles: Tile[][] = [];
         for (let y = 0; y < leftSection.tiles.length; y++) {
           const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
           tiles.push(row);
@@ -155,7 +155,7 @@ class DungeonGenerator {
 
     const roomLeft = randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
     const roomTop = randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
-    const tiles = [];
+    const tiles: Tile[][] = [];
     // x, y are relative to the section's origin
     // roomX, roomY are relative to the room's origin
     for (let y = 0; y < height; y++) {
@@ -182,7 +182,7 @@ class DungeonGenerator {
   }
 
   private _generateRoomTiles(width, height): Tile[][] {
-    const tiles = [];
+    const tiles: Tile[][] = [];
     for (let y = 0; y < height; y++) {
       tiles[y] = [];
       for (let x = 0; x < width; x++) {
@@ -213,7 +213,10 @@ class DungeonGenerator {
   private _joinSection(section: MapSection) {
     const unconnectedRooms: Room[] = [...section.rooms];
     const connectedRooms: Room[] = [];
-    connectedRooms.push(unconnectedRooms.pop());
+    const nextRoom = unconnectedRooms.pop();
+    if (!!nextRoom) {
+      connectedRooms.push(nextRoom);
+    }
 
     while (unconnectedRooms.length > 0) {
       const candidatePairs: [Room, Room][] = connectedRooms
@@ -306,7 +309,7 @@ class DungeonGenerator {
       throw 'Error: out of eligible sides';
     }
 
-    const candidates = [];
+    const candidates: Coordinates[] = [];
     eligibleSides.forEach(side => {
       switch (side) {
         case 'TOP':

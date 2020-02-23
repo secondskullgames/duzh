@@ -5,7 +5,7 @@ import { randChoice } from '../utils/RandomUtils';
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
 interface Node extends Coordinates {
-  parent?: Node,
+  parent: Node | null,
   cost: number
 }
 
@@ -33,8 +33,8 @@ function f(node: Node, start: Coordinates, goal: Coordinates): number {
 }
 
 function traverseParents(node: Node): Coordinates[] {
-  const path = [];
-  for (let currentNode = node; !!currentNode; currentNode = currentNode.parent) {
+  const path: Coordinates[] = [];
+  for (let currentNode: (Node | null) = node; !!currentNode; currentNode = currentNode.parent) {
     const coordinates = { x: currentNode.x, y: currentNode.y };
     path.splice(0, 0, coordinates); // add it at the beginning of the list
   }
@@ -65,10 +65,7 @@ class Pathfinder {
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
-    /**
-     * @type {!Coordinates[]}
-     */
-    const closed = [];
+    const closed: Coordinates[] = [];
 
     while (true) {
       if (open.length === 0) {

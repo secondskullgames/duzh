@@ -8,7 +8,7 @@ class GameState {
   playerUnit: Unit;
   mapSuppliers: MapSupplier[];
   mapIndex: number | null;
-  map: MapInstance | null;
+  private _map: MapInstance | null;
   messages: string[];
   inventoryCategory: ItemCategory | null;
   inventoryIndex: number;
@@ -19,11 +19,22 @@ class GameState {
     this.playerUnit = playerUnit;
     this.mapSuppliers = mapSuppliers;
     this.mapIndex = 0;
-    this.map = null;
+    this._map = null;
     this.messages = [];
     this.inventoryCategory = null;
     this.inventoryIndex = 0;
     this.turn = 1;
+  }
+
+  getMap(): MapInstance {
+    if (!this._map) {
+      throw `fux`;
+    }
+    return this._map;
+  }
+
+  setMap(map: MapInstance) {
+    this._map = map;
   }
 }
 

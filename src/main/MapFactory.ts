@@ -6,6 +6,7 @@ import Tiles from './types/Tiles';
 import { Coordinates } from './types';
 import DungeonGenerator from './classes/DungeonGenerator';
 import UnitFactory from './UnitFactory';
+import Tile from './types/Tile';
 
 const MIN_ROOM_DIMENSION = 6;
 const MAX_ROOM_DIMENSION = 9;
@@ -55,9 +56,9 @@ function createRandomMap(level: number, width: number, height: number, numEnemie
 function _mapFromAscii(ascii: string, level: number): MapSupplier {
   const lines = ascii.split('\n').filter(line => !line.match(/^ *$/));
 
-  const tiles = [];
+  const tiles: Tile[][] = [];
   let playerUnitLocation: (Coordinates | null) = null;
-  const enemyUnitLocations = [];
+  const enemyUnitLocations: Coordinates[] = [];
   for (let y = 0; y < lines.length; y++) {
     const line = lines[y];
     for (let x = 0; x < line.length; x++) {
@@ -81,6 +82,10 @@ function _mapFromAscii(ascii: string, level: number): MapSupplier {
 
   const width = tiles.map(row => row.length).reduce((a, b) => Math.max(a, b)) + 1;
   const height = tiles.length;
+
+  if (!playerUnitLocation) {
+    throw 'No player unit location';
+  }
 
   return {
     level,

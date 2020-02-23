@@ -14,14 +14,16 @@ class ImageLoader {
     this._imageSupplier = () => loadImage(filename)
       .then(imageData => applyTransparentColor(imageData, transparentColor))
       .then(imageData => replaceColors(imageData, paletteSwaps))
+      // @ts-ignore
       .then(imageData => chainPromises(effects, imageData))
       .then(imageData => createImageBitmap(imageData));
   }
 
-  load(): void {
+  load(): Promise<ImageBitmap> {
     if (!this.image) {
       this.image = this._imageSupplier();
     }
+    return this.image;
   }
 }
 

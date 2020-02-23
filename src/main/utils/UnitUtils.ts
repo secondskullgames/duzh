@@ -4,7 +4,8 @@ import { playSound } from './AudioUtils';
 import Sounds from '../Sounds';
 
 function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
-  const { map, messages, playerUnit } = jwb.state;
+  const { messages, playerUnit } = jwb.state;
+  const map = jwb.state.getMap();
 
   return new Promise(resolve => {
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -29,7 +30,7 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
 
 function fireProjectile(unit: Unit, { dx, dy }): Promise<void> {
   return new Promise(resolve => {
-    const { map, messages } = jwb.state;
+    const map = jwb.state.getMap();
     let { x, y } = unit;
     do {
       x += dx;
@@ -38,6 +39,7 @@ function fireProjectile(unit: Unit, { dx, dy }): Promise<void> {
 
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
+      const { messages } = jwb.state;
       const damage = unit.getDamage();
       messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
       targetUnit.takeDamage(damage, unit)

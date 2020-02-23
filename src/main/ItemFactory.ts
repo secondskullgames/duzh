@@ -33,10 +33,11 @@ function _equipEquipment(equipmentClass: EquipmentClass, item: InventoryItem, un
       inventoryItem: item,
       damage: equipmentClass.damage
     };
-    const currentWeapons = [...unit.equipment[EquipmentCategory.WEAPON]];
+    const currentWeapons = [...unit.equipment[EquipmentCategory.WEAPON] || []];
     unit.equipment[EquipmentCategory.WEAPON] = [equippedItem];
     currentWeapons.forEach(weapon => {
       const { inventoryItem } = weapon;
+      // @ts-ignore
       unit.inventory[inventoryItem.category].push(inventoryItem);
     });
     resolve();
@@ -45,7 +46,7 @@ function _equipEquipment(equipmentClass: EquipmentClass, item: InventoryItem, un
 
 function createScrollOfFloorFire(damage): InventoryItem {
   const onUse: ItemProc = (item, unit): Promise<void> => {
-    const { map } = jwb.state;
+    const map = jwb.state.getMap();
     const promises: (() => Promise<any>)[] = [];
 
     const adjacentUnits: Unit[] = map.units.filter(u => {

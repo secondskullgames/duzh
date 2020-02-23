@@ -1,8 +1,6 @@
 import Tile from './types/Tile';
 import Sprite from './classes/Sprite';
 import Colors from './types/Colors';
-import Entity from './types/Entity';
-import InventoryItem from './classes/InventoryItem';
 
 interface Coordinates {
   x: number,

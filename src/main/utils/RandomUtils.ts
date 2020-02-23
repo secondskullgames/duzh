@@ -5,8 +5,8 @@ function randInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function randChoice<T>(list: T[]): (T | null) {
-  return list[randInt(0, list.length - 1)] || null;
+function randChoice<T>(list: T[]): T {
+  return list[randInt(0, list.length - 1)];
 }
 
 /**

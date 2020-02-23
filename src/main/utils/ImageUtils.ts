@@ -17,11 +17,18 @@ function loadImage(filename): Promise<ImageData> {
 
     img.addEventListener('load', () => {
       const context = canvas.getContext('2d');
+      if (!context) {
+        throw 'Couldn\'t get rendering context!';
+      }
       context.drawImage(img, 0, 0);
 
       const imageData = context.getImageData(0, 0, img.width, img.height);
-      img.parentElement.removeChild(img);
-      canvas.parentElement.removeChild(canvas);
+      if (img.parentElement) {
+        img.parentElement.removeChild(img);
+      }
+      if (canvas.parentElement) {
+        canvas.parentElement.removeChild(canvas);
+      }
       resolve(imageData);
     });
 
@@ -61,7 +68,7 @@ function replaceColors(imageData: ImageData, colorMap: PaletteSwaps): Promise<Im
       resolve(imageData);
     }
     const array = new Uint8ClampedArray(imageData.data.length);
-    const entries = Object.entries(colorMap);
+    const entries: [string, string][] = <[any,any][]>Object.entries(colorMap);
 
     const srcRGB = {};
     const destRGB = {};
@@ -121,12 +128,12 @@ function replaceAll(imageData: ImageData, color: string): Promise<ImageData> {
 }
 
 /**
- * @param {string} hex e.g. '#ff0000'
- * @return {[int, int, int]} [r,g,b]
+ * @return [r,g,b]
  */
-function hex2rgb(hex) {
+function hex2rgb(hex: string): [number, number, number] {
   const div = document.createElement('div');
   div.style.backgroundColor = hex;
+  // @ts-ignore
   return div.style.backgroundColor
     .split(/[(),]/)
     .map(c => parseInt(c))

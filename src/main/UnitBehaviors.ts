@@ -2,13 +2,14 @@ import { coordinatesEquals, manhattanDistance } from './utils/MapUtils';
 import Pathfinder from './classes/Pathfinder';
 import Unit from './classes/Unit';
 import { randChoice } from './utils/RandomUtils';
-import { Coordinates } from './types';
+import { Coordinates, Rect } from './types';
 import { moveOrAttack } from './utils/UnitUtils';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
 function wanderAndAttack(unit: Unit): Promise<void> {
-  const { map, playerUnit } = jwb.state;
+  const { playerUnit } = jwb.state;
+  const map = jwb.state.getMap();
 
   const tiles: Coordinates[] = [];
   CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
@@ -32,10 +33,8 @@ function wanderAndAttack(unit: Unit): Promise<void> {
 }
 
 function wander(unit: Unit): Promise<void> {
-  const { map } = jwb.state;
-
-  /** @type {{ x: int, y: int }[]} */
-  const tiles = [];
+  const map = jwb.state.getMap();
+  const tiles: Coordinates[] = [];
   CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
@@ -53,12 +52,13 @@ function wander(unit: Unit): Promise<void> {
 }
 
 function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
-  const { map, playerUnit } = jwb.state;
+  const { playerUnit } = jwb.state;
+  const map = jwb.state.getMap();
 
-  const mapRect = { left: 0, top: 0, width: map.width, height: map.height };
+  const mapRect: Rect = map.getRect();
 
   const blockedTileDetector = ({ x, y }) => {
-    if (!jwb.state.map.getTile({ x, y }).isBlocking) {
+    if (!map.getTile({ x, y }).isBlocking) {
       return false;
     } else if (coordinatesEquals({ x, y }, playerUnit)) {
       return false;
@@ -82,7 +82,8 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
 }
 
 function fleeFromPlayerUnit(unit: Unit): Promise<void> {
-  const { map, playerUnit } = jwb.state;
+  const { playerUnit } = jwb.state;
+  const map = jwb.state.getMap();
 
   const tiles: Coordinates[] = [];
   CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {

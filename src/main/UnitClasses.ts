@@ -47,7 +47,7 @@ const ENEMY_HUMAN_BLUE: UnitClass = {
   startingDamage: 4,
   minLevel: 1,
   maxLevel: 3,
-  lifePerLevel: () => 10,
+  lifePerLevel: () => 12,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_CAUTIOUS,
 };
@@ -68,10 +68,10 @@ const ENEMY_HUMAN_RED: UnitClass = {
     [Colors.ORANGE]: Colors.LIGHT_PINK // Face
   },
   startingLife: 55,
-  startingDamage: 5,
+  startingDamage: 6,
   minLevel: 1,
   maxLevel: 5,
-  lifePerLevel: () => 8,
+  lifePerLevel: () => 10,
   damagePerLevel: () => 3,
   aiHandler: HUMAN_AGGRESSIVE
 };
@@ -93,12 +93,12 @@ const ENEMY_HUMAN_BLACK: UnitClass = {
     [Colors.TEAL]: Colors.RED, // Eyes
     [Colors.LIGHT_BROWN]: Colors.LIGHT_GRAY // Hair
   },
-  startingLife: 90,
-  startingDamage: 8,
+  startingLife: 100,
+  startingDamage: 10,
   minLevel: 3,
   maxLevel: 9,
-  lifePerLevel: () => 15,
-  damagePerLevel: () => 3,
+  lifePerLevel: () => 18,
+  damagePerLevel: () => 4,
   aiHandler: HUMAN_AGGRESSIVE
 };
 

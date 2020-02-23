@@ -7,7 +7,7 @@ enum Colors {
   DARK_RED = '#800000',
   RED = '#FF0000',
   DARK_YELLOW = '#808000',
-  YELLOW = '#FF0000',
+  YELLOW = '#FFFF00',
   DARK_GREEN = '#008000',
   GREEN = '#00FF00',
   DARK_TEAL = '#004040',

@@ -2,10 +2,7 @@ import { randInt } from './RandomUtils';
 import { Coordinates } from '../types';
 
 function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose): Coordinates[] {
-  /**
-   * @type {{ x: int, y: int }[]}
-   */
-  const unoccupiedLocations = [];
+  const unoccupiedLocations: Coordinates[] = [];
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
       if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
@@ -16,7 +13,7 @@ function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, num
     }
   }
 
-  const chosenLocations = [];
+  const chosenLocations: Coordinates[] = [];
   for (let i = 0; i < numToChoose; i++) {
     if (unoccupiedLocations.length > 0) {
       const index = randInt(0, unoccupiedLocations.length - 1);
@@ -97,7 +94,8 @@ function isTileRevealed({ x, y }: Coordinates) {
   if (jwb.DEBUG) {
     return true;
   }
-  return jwb.state.map.revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
+
+  return jwb.state.getMap().revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
 }
 
 export {

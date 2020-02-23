@@ -29,7 +29,7 @@ class Unit implements Entity {
   maxLife: number;
   lifeRemainder: number;
   private _damage: number;
-  queuedOrder?: (Unit) => Promise<void>;
+  queuedOrder: (() => Promise<void>) | null;
   aiHandler?: UnitAI;
 
   constructor(unitClass: UnitClass, name, level, { x, y }) {
@@ -73,7 +73,7 @@ class Unit implements Entity {
       if (!!this.queuedOrder) {
         const { queuedOrder } = this;
         this.queuedOrder = null;
-        return queuedOrder(this)
+        return queuedOrder()
           .then(() => resolve());
       }
       return resolve();
@@ -93,7 +93,7 @@ class Unit implements Entity {
   getDamage(): number {
     let damage = this._damage;
     Object.values(this.equipment)
-      .flatMap(list => list)
+      .flatMap(list => list || [])
       .forEach(equippedItem => {
         damage += (equippedItem.damage || 0);
       });
@@ -126,8 +126,9 @@ class Unit implements Entity {
     return null;
   }
 
-  takeDamage(damage: number, sourceUnit: Unit = undefined): Promise<any> {
-    const { map, playerUnit } = jwb.state;
+  takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<any> {
+    const { playerUnit } = jwb.state;
+    const map = jwb.state.getMap();
 
     const promises: (() => Promise<any>)[] = [];
     if (this.sprite instanceof PlayerSprite) {

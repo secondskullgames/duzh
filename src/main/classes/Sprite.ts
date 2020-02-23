@@ -21,8 +21,7 @@ class Sprite {
     if (!imageLoader) {
       throw `Invalid sprite key ${this.key}`;
     }
-    imageLoader.load();
-    return imageLoader.image;
+    return imageLoader.load();
   }
 
   setImage(key: string): Promise<any> {

@@ -1,13 +1,12 @@
 import GameState from './classes/GameState';
 import Unit from './classes/Unit';
 import SpriteRenderer from './classes/SpriteRenderer';
-import { randChoice } from './utils/RandomUtils';
 import MapFactory from './MapFactory';
 import UnitClasses from './UnitClasses';
 import Music from './Music';
 import { contains, isTileRevealed } from './utils/MapUtils';
-import { attachEvents } from './InputHandler';
 import { createMap } from './classes/MapSupplier';
+import { attachEvents } from './InputHandler';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -15,7 +14,7 @@ function loadMap(index: number) {
     alert('YOU WIN!');
   } else {
     state.mapIndex = index;
-    state.map = createMap(state.mapSuppliers[index]);
+    state.setMap(createMap(state.mapSuppliers[index]));
   }
 }
 
@@ -46,7 +45,8 @@ function restartGame() {
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
 function revealTiles(): void {
-  const { map, playerUnit } = jwb.state;
+  const { playerUnit } = jwb.state;
+  const map = jwb.state.getMap();
 
   map.rooms.forEach(room => {
     if (contains(room, playerUnit)) {
