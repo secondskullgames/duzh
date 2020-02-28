@@ -4,6 +4,7 @@ import { revealTiles } from '../actions';
 import Sprite from './Sprite';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import Colors from '../types/Colors';
+import Renderer from './Renderer';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -26,7 +27,7 @@ const INVENTORY_HEIGHT = 12 * TILE_HEIGHT;
 
 const LINE_HEIGHT = 16;
 
-class SpriteRenderer {
+class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
   private readonly _canvas: HTMLCanvasElement;
   private readonly _context: CanvasRenderingContext2D;

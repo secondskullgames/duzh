@@ -13,7 +13,6 @@ import EquipmentMap from './EquipmentMap';
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
 class Unit implements Entity {
-  readonly class: string;
   readonly unitClass: UnitClass;
   readonly char = '@';
   readonly sprite: Sprite;
@@ -32,7 +31,6 @@ class Unit implements Entity {
   aiHandler?: UnitAI;
 
   constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
-    this.class = 'Unit';
     this.unitClass = unitClass;
     this.sprite = unitClass.sprite(unitClass.paletteSwaps);
     this.inventory = new InventoryMap();

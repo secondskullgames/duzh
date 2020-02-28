@@ -9,7 +9,7 @@ const categories: ItemCategory[] = Object.values(ItemCategory);
  * (although this is only applicable to the player unit)
  */
 class InventoryMap {
-  private _map: { [category in ItemCategory]: InventoryItem[] };
+  private readonly _map: { [category in ItemCategory]: InventoryItem[] };
   selectedCategory: ItemCategory;
   selectedItem: InventoryItem | null;
 
@@ -40,6 +40,18 @@ class InventoryMap {
     }
   }
 
+  nextCategory() {
+    const index = categories.indexOf(this.selectedCategory);
+    this.selectedCategory = categories[(index + 1) % categories.length];
+    this.selectedItem = this._map[this.selectedCategory][0] || null;
+  }
+
+  previousCategory() {
+    const index = categories.indexOf(this.selectedCategory);
+    this.selectedCategory = categories[(index - 1) % categories.length];
+    this.selectedItem = this._map[this.selectedCategory][0] || null;
+  }
+
   get(category: ItemCategory): InventoryItem[] {
     return [...this._map[category]];
   }
@@ -58,18 +70,6 @@ class InventoryMap {
       const index = items.indexOf(this.selectedItem);
       this.selectedItem = items[(index - 1) % items.length];
     }
-  }
-
-  nextCategory() {
-    const index = categories.indexOf(this.selectedCategory);
-    this.selectedCategory = categories[(index + 1) % categories.length];
-    this.selectedItem = this._map[this.selectedCategory][0] || null;
-  }
-
-  previousCategory() {
-    const index = categories.indexOf(this.selectedCategory);
-    this.selectedCategory = categories[(index - 1) % categories.length];
-    this.selectedItem = this._map[this.selectedCategory][0] || null;
   }
 }
 

@@ -1,10 +1,10 @@
 import GameState from './classes/GameState';
-import SpriteRenderer from './classes/SpriteRenderer';
+import Renderer from './classes/Renderer';
 
 declare global {
   let jwb: {
     state: GameState,
-    renderer: SpriteRenderer,
+    renderer: Renderer,
     DEBUG: boolean
   }
 }

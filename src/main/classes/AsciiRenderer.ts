@@ -1,11 +1,12 @@
 import { resolvedPromise } from '../utils/PromiseUtils';
 import Unit from './Unit';
 import { Entity, Tile } from '../types';
+import Renderer from './Renderer';
 
 const WIDTH = 80;
 const HEIGHT = 32;
 
-class AsciiRenderer {
+class AsciiRenderer implements Renderer {
   private readonly _container: HTMLDivElement;
   private readonly _pre: HTMLPreElement;
 

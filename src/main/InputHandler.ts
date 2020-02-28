@@ -1,5 +1,5 @@
-import { loadMap} from './actions';
-import { Coordinates, GameScreen, ItemCategory } from './types';
+import { loadMap } from './actions';
+import { Coordinates, GameScreen } from './types';
 import TurnHandler from './classes/TurnHandler';
 import Tiles from './types/Tiles';
 import Sounds from './Sounds';
@@ -27,19 +27,19 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
   switch (e.key) {
     case 'w':
     case 'W':
-    case 'UpArrow':
+    case 'ArrowUp':
       return (e.shiftKey ? KeyCommand.SHIFT_UP : KeyCommand.UP);
     case 's':
     case 'S':
-    case 'DownArrow':
+    case 'ArrowDown':
       return (e.shiftKey ? KeyCommand.SHIFT_DOWN : KeyCommand.DOWN);
     case 'a':
     case 'A':
-    case 'LeftArrow':
+    case 'ArrowLeft':
       return (e.shiftKey ? KeyCommand.SHIFT_LEFT : KeyCommand.LEFT);
     case 'd':
     case 'D':
-    case 'RightArrow':
+    case 'ArrowRight':
       return (e.shiftKey ? KeyCommand.SHIFT_RIGHT : KeyCommand.RIGHT);
     case 'Tab':
       return KeyCommand.TAB;
@@ -87,7 +87,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
 }
 
 function _handleArrowKey(command: KeyCommand): Promise<void> {
-  const { playerUnit, screen } = jwb.state;
+  const { screen } = jwb.state;
 
   switch (screen) {
     case GameScreen.GAME:
@@ -126,10 +126,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
             return (u: Unit) => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
         }
       })();
-      return TurnHandler.playTurn(
-        queuedOrder,
-        true
-      );
+      return TurnHandler.playTurn(queuedOrder, true);
     case GameScreen.INVENTORY:
       const { state } = jwb;
       const { inventory } = state.playerUnit;

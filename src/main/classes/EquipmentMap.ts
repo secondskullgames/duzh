@@ -3,14 +3,16 @@ import EquippedItem from './EquippedItem';
 
 const categories: EquipmentCategory[] = Object.values(EquipmentCategory);
 
+/**
+ * Represent's a unit's equipment, mapped by slot.
+ */
 class EquipmentMap {
-  private _map: { [category in EquipmentCategory]: EquippedItem[] };
+  private readonly _map: { [category in EquipmentCategory]: EquippedItem[] };
 
   constructor() {
     // @ts-ignore
     this._map = {};
     for (const category of categories) {
-      // TODO
       this._map[<EquipmentCategory>category] = [];
     }
   }

@@ -4,13 +4,10 @@ type RGB = [number, number, number];
 
 function loadImage(filename: string): Promise<ImageData> {
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
+    const canvas: HTMLCanvasElement = document.createElement('canvas');
     canvas.style.display = 'none';
 
-    /**
-     * @type {HTMLImageElement}
-     */
-    const img = document.createElement('img');
+    const img: HTMLImageElement = document.createElement('img');
 
     img.addEventListener('load', () => {
       const context = canvas.getContext('2d');

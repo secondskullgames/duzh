@@ -1062,6 +1062,16 @@ define("classes/InventoryMap", ["require", "exports", "types"], function (requir
                 this.selectedItem = items[index % items.length] || null;
             }
         };
+        InventoryMap.prototype.nextCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index + 1) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
+        InventoryMap.prototype.previousCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index - 1) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
         InventoryMap.prototype.get = function (category) {
             return __spreadArrays(this._map[category]);
         };
@@ -1078,16 +1088,6 @@ define("classes/InventoryMap", ["require", "exports", "types"], function (requir
                 var index = items.indexOf(this.selectedItem);
                 this.selectedItem = items[(index - 1) % items.length];
             }
-        };
-        InventoryMap.prototype.nextCategory = function () {
-            var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index + 1) % categories.length];
-            this.selectedItem = this._map[this.selectedCategory][0] || null;
-        };
-        InventoryMap.prototype.previousCategory = function () {
-            var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index - 1) % categories.length];
-            this.selectedItem = this._map[this.selectedCategory][0] || null;
         };
         return InventoryMap;
     }());
@@ -1147,7 +1147,6 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
         function Unit(unitClass, name, level, _a) {
             var x = _a.x, y = _a.y;
             this.char = '@';
-            this.class = 'Unit';
             this.unitClass = unitClass;
             this.sprite = unitClass.sprite(unitClass.paletteSwaps);
             this.inventory = new InventoryMap_1.default();
@@ -2658,19 +2657,19 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
         switch (e.key) {
             case 'w':
             case 'W':
-            case 'UpArrow':
+            case 'ArrowUp':
                 return (e.shiftKey ? KeyCommand.SHIFT_UP : KeyCommand.UP);
             case 's':
             case 'S':
-            case 'DownArrow':
+            case 'ArrowDown':
                 return (e.shiftKey ? KeyCommand.SHIFT_DOWN : KeyCommand.DOWN);
             case 'a':
             case 'A':
-            case 'LeftArrow':
+            case 'ArrowLeft':
                 return (e.shiftKey ? KeyCommand.SHIFT_LEFT : KeyCommand.LEFT);
             case 'd':
             case 'D':
-            case 'RightArrow':
+            case 'ArrowRight':
                 return (e.shiftKey ? KeyCommand.SHIFT_RIGHT : KeyCommand.RIGHT);
             case 'Tab':
                 return KeyCommand.TAB;
@@ -2715,7 +2714,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
         var _a, _b, _c, _d;
-        var _e = jwb.state, playerUnit = _e.playerUnit, screen = _e.screen;
+        var screen = jwb.state.screen;
         switch (screen) {
             case types_7.GameScreen.GAME:
                 var dx_1;
