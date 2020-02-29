@@ -122,8 +122,6 @@ const SUITE_3: Suite = (() => {
   };
 })();
 
-const currentSuite = null;
-
 function playSuite(suite: Suite) {
   const sections = Object.values(suite.sections);
   const numRepeats = 4;
@@ -154,6 +152,5 @@ export default {
   SUITE_1,
   SUITE_2,
   SUITE_3,
-  currentSuite,
   playSuite
 };

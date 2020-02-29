@@ -2568,7 +2568,6 @@ define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"],
             }
         };
     })();
-    var currentSuite = null;
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
@@ -2597,7 +2596,6 @@ define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"],
         SUITE_1: SUITE_1,
         SUITE_2: SUITE_2,
         SUITE_3: SUITE_3,
-        currentSuite: currentSuite,
         playSuite: playSuite
     };
 });

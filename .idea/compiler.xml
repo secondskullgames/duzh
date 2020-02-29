@@ -3,4 +3,9 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8" />
   </component>
+  <component name="TypeScriptCompiler">
+    <option name="showAllErrors" value="true" />
+    <option name="typeScriptServiceDirectory" value="C:/lib/npm/node_modules/node_modules/typescript" />
+    <option name="versionType" value="SERVICE_DIRECTORY" />
+  </component>
 </project>

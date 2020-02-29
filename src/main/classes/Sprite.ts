@@ -1,13 +1,13 @@
-import ImageLoader from './ImageLoader';
+import ImageSupplier from './ImageSupplier';
 
 class Sprite {
   dx: number;
   dy: number;
   key: string;
   readonly defaultKey: string;
-  private readonly _imageMap: { [key: string]: ImageLoader };
+  private readonly _imageMap: { [key: string]: ImageSupplier };
 
-  constructor(imageMap: { [filename: string]: ImageLoader }, key: string, { dx, dy }: { dx: number, dy: number }) {
+  constructor(imageMap: { [filename: string]: ImageSupplier }, key: string, { dx, dy }: { dx: number, dy: number }) {
     this._imageMap = imageMap;
     this.defaultKey = key;
     this.key = key;
@@ -17,11 +17,11 @@ class Sprite {
   }
 
   getImage(): Promise<ImageBitmap> {
-    const imageLoader = this._imageMap[this.key];
-    if (!imageLoader) {
+    const imageSupplier = this._imageMap[this.key];
+    if (!imageSupplier) {
       throw `Invalid sprite key ${this.key}`;
     }
-    return imageLoader.load();
+    return imageSupplier.get();
   }
 
   setImage(key: string): Promise<any> {

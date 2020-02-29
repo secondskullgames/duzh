@@ -4,12 +4,14 @@ import { PaletteSwaps } from '../types';
 
 type ImageDataFunc = (imageData: ImageData) => Promise<ImageData>;
 
-class ImageLoader {
+class ImageSupplier {
   readonly _imageSupplier: () => Promise<ImageBitmap>;
   image: Promise<ImageBitmap> | null;
 
+  /**
+   * @param effects A list of custom transformations to be applied to the image, in order
+   */
   constructor(filename: string, transparentColor: string, paletteSwaps: PaletteSwaps = {}, effects: ImageDataFunc[] = []) {
-    this.image = null;
     this.image = null;
     this._imageSupplier = () => loadImage(filename)
       .then(imageData => applyTransparentColor(imageData, transparentColor))
@@ -19,7 +21,7 @@ class ImageLoader {
       .then(imageData => createImageBitmap(imageData));
   }
 
-  load(): Promise<ImageBitmap> {
+  get(): Promise<ImageBitmap> {
     if (!this.image) {
       this.image = this._imageSupplier();
     }
@@ -27,4 +29,4 @@ class ImageLoader {
   }
 }
 
-export default ImageLoader;
+export default ImageSupplier;

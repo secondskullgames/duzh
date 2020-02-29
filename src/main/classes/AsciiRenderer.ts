@@ -1,6 +1,6 @@
 import { resolvedPromise } from '../utils/PromiseUtils';
 import Unit from './Unit';
-import { Entity, Tile } from '../types';
+import { Entity, GameScreen, Tile } from '../types';
 import Renderer from './Renderer';
 
 const WIDTH = 80;
@@ -11,7 +11,7 @@ class AsciiRenderer implements Renderer {
   private readonly _pre: HTMLPreElement;
 
   constructor() {
-    this._container = <any>document.getElementById('container');
+    this._container = <HTMLDivElement>document.getElementById('container');
     this._container.innerHTML = '';
     this._pre = document.createElement('pre');
     this._container.appendChild(this._pre);
@@ -20,9 +20,9 @@ class AsciiRenderer implements Renderer {
   render(): Promise<any> {
     const { screen } = jwb.state;
     switch (screen) {
-      case 'GAME':
+      case GameScreen.GAME:
         return this._renderGameScreen();
-      case 'INVENTORY':
+      case GameScreen.INVENTORY:
         return this._renderInventoryScreen();
       default:
         throw `Invalid screen ${screen}`;

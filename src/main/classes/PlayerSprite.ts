@@ -1,4 +1,4 @@
-import ImageLoader from './ImageLoader';
+import ImageSupplier from './ImageSupplier';
 import { replaceAll } from '../utils/ImageUtils';
 import Sprite from './Sprite';
 import { PaletteSwaps } from '../types';
@@ -14,8 +14,8 @@ class PlayerSprite extends Sprite {
 
   constructor(paletteSwaps?: PaletteSwaps) {
     super({
-      [SpriteKeys.STANDING]: new ImageLoader('player_standing_SE_1', Colors.WHITE, paletteSwaps),
-      [SpriteKeys.STANDING_DAMAGED]: new ImageLoader('player_standing_SE_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
+      [SpriteKeys.STANDING]: new ImageSupplier('player_standing_SE_1', Colors.WHITE, paletteSwaps),
+      [SpriteKeys.STANDING_DAMAGED]: new ImageSupplier('player_standing_SE_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
     }, SpriteKeys.STANDING, { dx: -4, dy: -20 })
   }
 }

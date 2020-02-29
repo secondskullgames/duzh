@@ -25,9 +25,7 @@ function pickUnoccupiedLocations(
   const chosenLocations: Coordinates[] = [];
   for (let i = 0; i < numToChoose; i++) {
     if (unoccupiedLocations.length > 0) {
-      sortBy(unoccupiedLocations, ({ x, y }) => {
-        return -1 * Math.min(...chosenLocations.map(loc => hypotenuse(loc, { x, y })));
-      });
+      sortBy(unoccupiedLocations, ({ x, y }) => -1 * Math.min(...chosenLocations.map(loc => hypotenuse(loc, { x, y }))));
       const index = 0;
       const { x, y } = unoccupiedLocations[index];
       chosenLocations.push({ x, y });
