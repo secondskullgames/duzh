@@ -4,8 +4,8 @@
     <script src="lib/require.js"></script>
     <script src="build/roguelike.js"></script>
     <script>
-      require(['main']);
-      require(['actions'], actions => actions.restartGame());
+      require(['core/main']);
+      require(['core/actions'], actions => actions.restartGame());
     </script>
     <link rel="stylesheet" href="style.css" />
     <title></title>
@@ -13,7 +13,7 @@
   <body>
     <div id="container"></div>
     <br />
-    <button onclick="require(['actions'], actions => actions.debug());">Debug</button>
+    <button onclick="require(['core/actions'], actions => actions.debug());">Debug</button>
     <!--
     <button onclick="window.jwb.renderer = new AsciiRenderer(); window.jwb.renderer.render()">Ascii</button>
     <button onclick="window.jwb.renderer = new SpriteRenderer(); window.jwb.renderer.render()">Sprites</button>

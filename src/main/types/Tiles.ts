@@ -1,5 +1,5 @@
-import SpriteFactory from '../SpriteFactory';
-import { Tile } from '../types';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import { Tile } from './types';
 
 const Tiles: { [name: string]: Tile } = {
   FLOOR: {
