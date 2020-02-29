@@ -45,8 +45,8 @@ class Unit implements Entity {
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana;
-    this.maxMana = unitClass.startingMana;
+    this.mana = null;//unitClass.startingMana;
+    this.maxMana = null;//unitClass.startingMana;
     this.lifeRemainder = 0;
     this._damage = unitClass.startingDamage;
     this.queuedOrder = null;

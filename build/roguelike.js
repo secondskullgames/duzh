@@ -36,9 +36,6 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
         return new Promise(function (resolve, reject) {
             var canvas = document.createElement('canvas');
             canvas.style.display = 'none';
-            /**
-             * @type {HTMLImageElement}
-             */
             var img = document.createElement('img');
             img.addEventListener('load', function () {
                 var context = canvas.getContext('2d');
@@ -1111,13 +1108,15 @@ define("classes/EquipmentMap", ["require", "exports", "types"], function (requir
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var categories = Object.values(types_3.EquipmentCategory);
+    /**
+     * Represent's a unit's equipment, mapped by slot.
+     */
     var EquipmentMap = /** @class */ (function () {
         function EquipmentMap() {
             // @ts-ignore
             this._map = {};
             for (var _i = 0, categories_2 = categories; _i < categories_2.length; _i++) {
                 var category = categories_2[_i];
-                // TODO
                 this._map[category] = [];
             }
         }
@@ -1156,8 +1155,10 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
             this.name = name;
             this.level = level;
             this.experience = 0;
-            this.maxLife = unitClass.startingLife;
             this.life = unitClass.startingLife;
+            this.maxLife = unitClass.startingLife;
+            this.mana = null; //unitClass.startingMana;
+            this.maxMana = null; //unitClass.startingMana;
             this.lifeRemainder = 0;
             this._damage = unitClass.startingDamage;
             this.queuedOrder = null;
@@ -1433,6 +1434,16 @@ define("classes/GameState", ["require", "exports", "types"], function (require, 
         return GameState;
     }());
     exports.default = GameState;
+});
+define("classes/Renderer", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Renderer = /** @class */ (function () {
+        function Renderer() {
+        }
+        return Renderer;
+    }());
+    exports.default = Renderer;
 });
 define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types", "actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_4, Colors_4) {
     "use strict";
