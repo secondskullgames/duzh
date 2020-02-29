@@ -144,6 +144,11 @@ define("utils/ImageUtils", ["require", "exports"], function (require, exports) {
         });
     }
     exports.replaceAll = replaceAll;
+    /**
+     * Convert a hex string, e.g. '#00c0ff', to its equivalent RGB values, e.g. (0, 192, 255).
+     * This implementation relies on the browser automatically doing this conversion when
+     * an element's `backgroundColor` value is set.
+     */
     function hex2rgb(hex) {
         var div = document.createElement('div');
         div.style.backgroundColor = hex;
@@ -398,62 +403,32 @@ define("EquipmentClasses", ["require", "exports", "types", "SpriteFactory", "typ
         getWeaponClasses: getWeaponClasses
     };
 });
-define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
+define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * @param max inclusive
-     */
-    function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+    function sortBy(list, mapFunction) {
+        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
     }
-    exports.randInt = randInt;
-    function randChoice(list) {
-        return list[randInt(0, list.length - 1)];
+    exports.sortBy = sortBy;
+    function average(list) {
+        var sum = list.reduce(function (a, b) { return a + b; });
+        return sum / list.length;
     }
-    exports.randChoice = randChoice;
-    /**
-     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
-     */
-    function shuffle(list) {
-        var n = list.length;
-        // While there remain elements to shuffle...
-        while (n > 0) {
-            // Pick a remaining element...
-            var i = randInt(0, n - 1);
-            // And swap it with the current element.
-            var tmp = list[i];
-            list[n] = list[i];
-            list[i] = tmp;
-            n--;
-        }
-    }
-    exports.shuffle = shuffle;
-    function weightedRandom(probabilities, mappedObjects) {
-        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
-        var rand = Math.random() * total;
-        var counter = 0;
-        var entries = Object.entries(probabilities);
-        for (var i = 0; i < entries.length; i++) {
-            var _a = entries[i], key = _a[0], value = _a[1];
-            counter += value;
-            if (counter > rand) {
-                return mappedObjects[key];
-            }
-        }
-        throw 'fux';
-    }
-    exports.weightedRandom = weightedRandom;
+    exports.average = average;
 });
-define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (require, exports, RandomUtils_1) {
+define("utils/MapUtils", ["require", "exports", "utils/ArrayUtils"], function (require, exports, ArrayUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
+     *         which do not collide with `occupiedLocations`
+     */
     function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
         var unoccupiedLocations = [];
         var _loop_1 = function (y) {
             var _loop_2 = function (x) {
                 if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
-                    if (occupiedLocations.filter(function (loc) { return (loc.x === x && loc.y === y); }).length === 0) {
+                    if (occupiedLocations.filter(function (loc) { return coordinatesEquals(loc, { x: x, y: y }); }).length === 0) {
                         unoccupiedLocations.push({ x: x, y: y });
                     }
                 }
@@ -468,7 +443,11 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
         var chosenLocations = [];
         for (var i = 0; i < numToChoose; i++) {
             if (unoccupiedLocations.length > 0) {
-                var index = RandomUtils_1.randInt(0, unoccupiedLocations.length - 1);
+                ArrayUtils_1.sortBy(unoccupiedLocations, function (_a) {
+                    var x = _a.x, y = _a.y;
+                    return -1 * Math.min.apply(Math, chosenLocations.map(function (loc) { return hypotenuse(loc, { x: x, y: y }); }));
+                });
+                var index = 0;
                 var _a = unoccupiedLocations[index], x = _a.x, y = _a.y;
                 chosenLocations.push({ x: x, y: y });
                 occupiedLocations.push({ x: x, y: y });
@@ -520,7 +499,54 @@ define("utils/MapUtils", ["require", "exports", "utils/RandomUtils"], function (
     }
     exports.isTileRevealed = isTileRevealed;
 });
-define("classes/Pathfinder", ["require", "exports", "utils/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_1, RandomUtils_2) {
+define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * @param max inclusive
+     */
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    exports.randInt = randInt;
+    function randChoice(list) {
+        return list[randInt(0, list.length - 1)];
+    }
+    exports.randChoice = randChoice;
+    /**
+     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
+     */
+    function shuffle(list) {
+        var n = list.length;
+        // While there remain elements to shuffle...
+        while (n > 0) {
+            // Pick a remaining element...
+            var i = randInt(0, n - 1);
+            // And swap it with the current element.
+            var tmp = list[i];
+            list[n] = list[i];
+            list[i] = tmp;
+            n--;
+        }
+    }
+    exports.shuffle = shuffle;
+    function weightedRandom(probabilities, mappedObjects) {
+        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
+        var rand = Math.random() * total;
+        var counter = 0;
+        var entries = Object.entries(probabilities);
+        for (var i = 0; i < entries.length; i++) {
+            var _a = entries[i], key = _a[0], value = _a[1];
+            counter += value;
+            if (counter > rand) {
+                return mappedObjects[key];
+            }
+        }
+        throw 'fux';
+    }
+    exports.weightedRandom = weightedRandom;
+});
+define("classes/Pathfinder", ["require", "exports", "utils/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_1, RandomUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -588,7 +614,7 @@ define("classes/Pathfinder", ["require", "exports", "utils/MapUtils", "utils/Ran
                         var node = _a.node, cost = _a.cost;
                         return cost === nodeCosts[0].cost;
                     });
-                    var _a = RandomUtils_2.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
+                    var _a = RandomUtils_1.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
                     open.splice(open.indexOf(chosenNode_1), 1);
                     closed.push(chosenNode_1);
                     this_1._findNeighbors(chosenNode_1, rect).forEach(function (neighbor) {
@@ -644,7 +670,7 @@ define("classes/SoundPlayer", ["require", "exports"], function (require, exports
         function SoundPlayer(maxPolyphony, gain) {
             this._context = new AudioContext();
             this._gainNode = this._context.createGain();
-            this._gainNode.gain.value = gain * 0.1; // sounds can be VERY loud
+            this._gainNode.gain.value = gain * 0.15; // sounds can be VERY loud
             this._gainNode.connect(this._context.destination);
             this._oscillators = [];
         }
@@ -797,7 +823,7 @@ define("utils/UnitUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], 
             var targetUnit = map.getUnit({ x: x, y: y });
             if (!!targetUnit) {
                 var messages = jwb.state.messages;
-                var damage = unit.getDamage();
+                var damage = unit.getRangedDamage();
                 messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
                 targetUnit.takeDamage(damage, unit)
                     .then(function () { return resolve(); });
@@ -809,7 +835,7 @@ define("utils/UnitUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], 
     }
     exports.fireProjectile = fireProjectile;
 });
-define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "utils/UnitUtils"], function (require, exports, MapUtils_2, Pathfinder_1, RandomUtils_3, UnitUtils_1) {
+define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfinder", "utils/RandomUtils", "utils/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils"], function (require, exports, MapUtils_2, Pathfinder_1, RandomUtils_2, UnitUtils_1, PromiseUtils_2, ArrayUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -832,10 +858,10 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_2.randChoice(tiles), x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
-        return new Promise(function (resolve) { resolve(); });
+        return PromiseUtils_2.resolvedPromise();
     }
     function wander(unit) {
         var map = jwb.state.getMap();
@@ -850,10 +876,10 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_2.randChoice(tiles), x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
-        return new Promise(function (resolve) { resolve(); });
+        return PromiseUtils_2.resolvedPromise();
     }
     function _attackPlayerUnit_withPath(unit) {
         var playerUnit = jwb.state.playerUnit;
@@ -877,7 +903,7 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
                 return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
             }
         }
-        return new Promise(function (resolve) { resolve(); });
+        return PromiseUtils_2.resolvedPromise();
     }
     function fleeFromPlayerUnit(unit) {
         var playerUnit = jwb.state.playerUnit;
@@ -898,23 +924,20 @@ define("UnitBehaviors", ["require", "exports", "utils/MapUtils", "classes/Pathfi
             }
         });
         if (tiles.length > 0) {
-            var _a = _sortBy(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); })[tiles.length - 1], x = _a.x, y = _a.y;
+            var _a = ArrayUtils_2.sortBy(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); })[tiles.length - 1], x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
-        return new Promise(function (resolve) { resolve(); });
-    }
-    function _sortBy(list, mapFunction) {
-        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
+        return PromiseUtils_2.resolvedPromise();
     }
     var UnitBehaviors = {
         WANDER: wander,
         ATTACK_PLAYER: _attackPlayerUnit_withPath,
         FLEE_FROM_PLAYER: fleeFromPlayerUnit,
-        STAY: function () { return new Promise(function (resolve) { resolve(); }); }
+        STAY: function () { return PromiseUtils_2.resolvedPromise(); }
     };
     exports.default = UnitBehaviors;
 });
-define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_3, RandomUtils_4, UnitBehaviors_1) {
+define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "UnitBehaviors"], function (require, exports, MapUtils_3, RandomUtils_3, UnitBehaviors_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var behaviorMap = {
@@ -932,7 +955,7 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
                 behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
             }
             else {
-                behavior = RandomUtils_4.weightedRandom({
+                behavior = RandomUtils_3.weightedRandom({
                     'ATTACK_PLAYER': 0.2,
                     'WANDER': 0.5,
                     'FLEE_FROM_PLAYER': 0.3
@@ -940,14 +963,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             }
         }
         else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_4.weightedRandom({
+            behavior = RandomUtils_3.weightedRandom({
                 'WANDER': 0.3,
                 'ATTACK_PLAYER': 0.1,
                 'STAY': 0.6
             }, behaviorMap);
         }
         else {
-            behavior = RandomUtils_4.weightedRandom({
+            behavior = RandomUtils_3.weightedRandom({
                 'ATTACK_PLAYER': 0.6,
                 'WANDER': 0.2,
                 'STAY': 0.2
@@ -964,14 +987,14 @@ define("UnitAI", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "
             behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
         }
         else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_4.weightedRandom({
+            behavior = RandomUtils_3.weightedRandom({
                 'WANDER': 0.4,
                 'STAY': 0.4,
                 'ATTACK_PLAYER': 0.2
             }, behaviorMap);
         }
         else {
-            behavior = RandomUtils_4.weightedRandom({
+            behavior = RandomUtils_3.weightedRandom({
                 'ATTACK_PLAYER': 0.9,
                 'STAY': 0.1
             }, behaviorMap);
@@ -986,7 +1009,7 @@ define("classes/UnitClass", ["require", "exports"], function (require, exports) 
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_2) {
+define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playAnimation(sprite, keys, delay) {
@@ -1001,7 +1024,7 @@ define("utils/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], functi
                 });
             }); });
         });
-        return PromiseUtils_2.chainPromises(promises)
+        return PromiseUtils_3.chainPromises(promises)
             .then(function () { return sprite.setImage(sprite.defaultKey); })
             .then(function () { return renderer.render(); });
     }
@@ -1138,7 +1161,7 @@ define("classes/EquipmentMap", ["require", "exports", "types"], function (requir
     }());
     exports.default = EquipmentMap;
 });
-define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils", "classes/InventoryMap", "classes/EquipmentMap"], function (require, exports, AudioUtils_2, Sounds_2, PromiseUtils_3, PlayerSprite_2, SpriteUtils_1, InventoryMap_1, EquipmentMap_1) {
+define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "utils/PromiseUtils", "classes/PlayerSprite", "utils/SpriteUtils", "classes/InventoryMap", "classes/EquipmentMap"], function (require, exports, AudioUtils_2, Sounds_2, PromiseUtils_4, PlayerSprite_2, SpriteUtils_1, InventoryMap_1, EquipmentMap_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1157,8 +1180,8 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
             this.experience = 0;
             this.life = unitClass.startingLife;
             this.maxLife = unitClass.startingLife;
-            this.mana = null; //unitClass.startingMana;
-            this.maxMana = null; //unitClass.startingMana;
+            this.mana = unitClass.startingMana;
+            this.maxMana = unitClass.startingMana;
             this.lifeRemainder = 0;
             this._damage = unitClass.startingDamage;
             this.queuedOrder = null;
@@ -1188,7 +1211,7 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_3.resolvedPromise();
+                return PromiseUtils_4.resolvedPromise();
             });
         };
         Unit.prototype.getDamage = function () {
@@ -1200,6 +1223,19 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
                 });
             });
             return damage;
+        };
+        /**
+         * TODO - this is just based on melee weapon damage
+         */
+        Unit.prototype.getRangedDamage = function () {
+            var damage = this._damage;
+            this.equipment.getEntries().forEach(function (_a) {
+                var category = _a[0], items = _a[1];
+                items.forEach(function (item) {
+                    damage += (item.damage || 0);
+                });
+            });
+            return Math.round(damage / 2);
         };
         Unit.prototype._levelUp = function () {
             this.level++;
@@ -1260,7 +1296,7 @@ define("classes/Unit", ["require", "exports", "utils/AudioUtils", "Sounds", "uti
                 }
                 resolve();
             }); });
-            return PromiseUtils_3.chainPromises(promises);
+            return PromiseUtils_4.chainPromises(promises);
         };
         ;
         return Unit;
@@ -1445,7 +1481,7 @@ define("classes/Renderer", ["require", "exports"], function (require, exports) {
     }());
     exports.default = Renderer;
 });
-define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types", "actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_4, Colors_4) {
+define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types", "actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_5, Colors_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1493,7 +1529,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types
             actions_1.revealTiles();
             this._context.fillStyle = '#000';
             this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-            return PromiseUtils_4.chainPromises([
+            return PromiseUtils_5.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
                 function () { return _this._renderUnits(); },
@@ -1625,7 +1661,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types
                 }
                 _context.fillStyle = '#fff';
             }
-            return PromiseUtils_4.resolvedPromise();
+            return PromiseUtils_5.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -1643,7 +1679,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types
                     return this._drawSprite(sprite, pixel);
                 }
             }
-            return PromiseUtils_4.resolvedPromise();
+            return PromiseUtils_5.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
             var _this = this;
@@ -1715,7 +1751,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types
             var textLeft = left + 4;
             _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_4.resolvedPromise();
+            return PromiseUtils_5.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
@@ -1740,7 +1776,7 @@ define("classes/SpriteRenderer", ["require", "exports", "utils/MapUtils", "types
     }());
     exports.default = SpriteRenderer;
 });
-define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "utils/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "SpriteFactory", "EquipmentClasses", "classes/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_6, AudioUtils_3, PromiseUtils_5, RandomUtils_5, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
+define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", "types", "utils/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "SpriteFactory", "EquipmentClasses", "classes/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_6, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -1781,7 +1817,7 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
-            return PromiseUtils_5.chainPromises(promises);
+            return PromiseUtils_6.chainPromises(promises);
         };
         return new InventoryItem_1.default('Scroll of Floor Fire', types_6.ItemCategory.SCROLL, onUse);
     }
@@ -1799,13 +1835,13 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
         var createMapPotion = function (_a) {
             var x = _a.x, y = _a.y;
             var sprite = SpriteFactory_3.default.MAP_POTION();
-            var inventoryItem = createPotion(50);
+            var inventoryItem = createPotion(40);
             return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
         };
         var createFloorFireScroll = function (_a) {
             var x = _a.x, y = _a.y;
             var sprite = SpriteFactory_3.default.MAP_SCROLL();
-            var inventoryItem = createScrollOfFloorFire(200);
+            var inventoryItem = createScrollOfFloorFire(80);
             return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
         };
         return [createMapPotion, createFloorFireScroll];
@@ -1822,7 +1858,7 @@ define("ItemFactory", ["require", "exports", "Sounds", "classes/InventoryItem", 
     function createRandomItem(_a, level) {
         var x = _a.x, y = _a.y;
         var suppliers = __spreadArrays(_getItemSuppliers(level), _getWeaponSuppliers(level));
-        return RandomUtils_5.randChoice(suppliers)({ x: x, y: y });
+        return RandomUtils_4.randChoice(suppliers)({ x: x, y: y });
     }
     exports.default = {
         createRandomItem: createRandomItem
@@ -1850,10 +1886,12 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         ,
             _a),
         startingLife: 100,
+        startingMana: 100,
         startingDamage: 10,
         minLevel: 1,
         maxLevel: 20,
         lifePerLevel: function (level) { return 10; },
+        manaPerLevel: function (level) { return 0; },
         damagePerLevel: function (level) { return 2; },
         experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 4 : null; },
     };
@@ -1874,10 +1912,12 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         ,
             _b),
         startingLife: 75,
+        startingMana: null,
         startingDamage: 4,
         minLevel: 1,
         maxLevel: 3,
         lifePerLevel: function () { return 12; },
+        manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_CAUTIOUS,
     };
@@ -1898,10 +1938,12 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         ,
             _c),
         startingLife: 55,
+        startingMana: null,
         startingDamage: 6,
         minLevel: 1,
         maxLevel: 5,
         lifePerLevel: function () { return 10; },
+        manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 3; },
         aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
     };
@@ -1924,10 +1966,12 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         ,
             _d),
         startingLife: 100,
+        startingMana: null,
         startingDamage: 10,
         minLevel: 3,
         maxLevel: 9,
         lifePerLevel: function () { return 18; },
+        manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 4; },
         aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
     };
@@ -1942,7 +1986,7 @@ define("UnitClasses", ["require", "exports", "SpriteFactory", "UnitAI", "types/C
         getEnemyClasses: getEnemyClasses
     };
 });
-define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "classes/Pathfinder", "types/Tiles"], function (require, exports, MapUtils_5, RandomUtils_6, Pathfinder_2, Tiles_2) {
+define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "utils/RandomUtils", "classes/Pathfinder", "types/Tiles", "utils/ArrayUtils"], function (require, exports, MapUtils_5, RandomUtils_5, Pathfinder_2, Tiles_2, ArrayUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MAX_EXITS = 3;
@@ -1983,11 +2027,12 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                     tiles: __spreadArrays([[]], section.tiles)
                 };
             })();
+            this._addWalls(section);
             var tiles = section.tiles;
             var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [], 1)[0];
             tiles[stairsLocation.y][stairsLocation.x] = Tiles_2.default.STAIRS_DOWN;
-            var playerUnitLocation = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR, Tiles_2.default.FLOOR_HALL], [stairsLocation], 1)[0];
-            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
+            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [stairsLocation], numEnemies);
+            var playerUnitLocation = this._pickPlayerLocation(tiles, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
             var itemLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
             return {
                 level: level,
@@ -2014,7 +2059,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var canSplitVertically = (height >= (2 * minSectionDimension));
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []));
             if (splitDirections.length > 0) {
-                var direction = RandomUtils_6.randChoice(splitDirections);
+                var direction = RandomUtils_5.randChoice(splitDirections);
                 if (direction === 'HORIZONTAL') {
                     var splitX_1 = this._getSplitPoint(width);
                     var leftWidth = splitX_1;
@@ -2066,11 +2111,11 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             var maxRoomWidth = width - (2 * this.minRoomPadding);
             var maxRoomHeight = height - (2 * this.minRoomPadding);
             console.assert(maxRoomWidth >= this.minRoomDimension && maxRoomHeight >= this.minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_6.randInt(this.minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_6.randInt(this.minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_5.randInt(this.minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_5.randInt(this.minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_6.randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
-            var roomTop = RandomUtils_6.randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
+            var roomLeft = RandomUtils_5.randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
+            var roomTop = RandomUtils_5.randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -2117,13 +2162,12 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
         /**
          * @param dimension width or height
          * @returns the min X/Y coordinate of the *second* room
-         * @private
          */
         DungeonGenerator.prototype._getSplitPoint = function (dimension) {
             var minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_6.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_5.randInt(minSplitPoint, maxSplitPoint);
         };
         DungeonGenerator.prototype._joinSection = function (section) {
             var _this = this;
@@ -2162,8 +2206,8 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                 .filter(function (_a) {
                 var first = _a[0], second = _a[1];
                 return _this._canJoinRooms(first, second);
-            });
-            RandomUtils_6.shuffle(candidatePairs);
+            })
+                .sort(function (first, second) { return _this._roomDistance(first[0], first[1]) - _this._roomDistance(second[0], second[1]); });
             if (candidatePairs.length > 0) {
                 for (var _b = 0, candidatePairs_2 = candidatePairs; _b < candidatePairs_2.length; _b++) {
                     var _c = candidatePairs_2[_b], first = _c[0], second = _c[1];
@@ -2172,7 +2216,11 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
                     }
                 }
             }
-            // add walls above corridor tiles if possible
+        };
+        /**
+         * add walls above corridor tiles if possible
+         */
+        DungeonGenerator.prototype._addWalls = function (section) {
             for (var y = 0; y < section.height; y++) {
                 for (var x = 0; x < section.width; x++) {
                     if (y > 0) {
@@ -2196,8 +2244,8 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
         DungeonGenerator.prototype._joinRooms = function (first, second, section) {
             var firstExitCandidates = this._getExitCandidates(first);
             var secondExitCandidates = this._getExitCandidates(second);
-            RandomUtils_6.shuffle(firstExitCandidates);
-            RandomUtils_6.shuffle(secondExitCandidates);
+            RandomUtils_5.shuffle(firstExitCandidates);
+            RandomUtils_5.shuffle(secondExitCandidates);
             for (var _i = 0, firstExitCandidates_1 = firstExitCandidates; _i < firstExitCandidates_1.length; _i++) {
                 var firstExit = firstExitCandidates_1[_i];
                 for (var _a = 0, secondExitCandidates_1 = secondExitCandidates; _a < secondExitCandidates_1.length; _a++) {
@@ -2294,6 +2342,28 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
             });
             return (path.length > 0);
         };
+        /**
+         * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
+         */
+        DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
+            var candidates = [];
+            var _loop_4 = function (y) {
+                var _loop_5 = function (x) {
+                    if (!tiles[y][x].isBlocking && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
+                        var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
+                        candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
+                    }
+                };
+                for (var x = 0; x < tiles[y].length; x++) {
+                    _loop_5(x);
+                }
+            };
+            for (var y = 0; y < tiles.length; y++) {
+                _loop_4(y);
+            }
+            console.assert(candidates.length > 0);
+            return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
+        };
         DungeonGenerator.prototype._logSections = function (name) {
             var sections = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -2309,7 +2379,7 @@ define("classes/DungeonGenerator", ["require", "exports", "utils/MapUtils", "uti
     }());
     exports.default = DungeonGenerator;
 });
-define("UnitFactory", ["require", "exports", "UnitClasses", "utils/RandomUtils", "classes/Unit"], function (require, exports, UnitClasses_1, RandomUtils_7, Unit_1) {
+define("UnitFactory", ["require", "exports", "UnitClasses", "utils/RandomUtils", "classes/Unit"], function (require, exports, UnitClasses_1, RandomUtils_6, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomEnemy(_a, level) {
@@ -2317,7 +2387,7 @@ define("UnitFactory", ["require", "exports", "UnitClasses", "utils/RandomUtils",
         var candidates = UnitClasses_1.default.getEnemyClasses()
             .filter(function (unitClass) { return level >= unitClass.minLevel; })
             .filter(function (unitClass) { return level <= unitClass.maxLevel; });
-        var unitClass = RandomUtils_7.randChoice(candidates);
+        var unitClass = RandomUtils_6.randChoice(candidates);
         return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
     }
     exports.default = {
@@ -2345,7 +2415,7 @@ define("MapFactory", ["require", "exports", "classes/Unit", "ItemFactory", "Unit
         var enemyUnitLocations = [];
         for (var y = 0; y < lines.length; y++) {
             var line = lines[y];
-            var _loop_4 = function (x) {
+            var _loop_6 = function (x) {
                 var c = line[x];
                 var tile = Object.values(Tiles_3.default).filter(function (t) { return t.char === c; })[0] || null;
                 if (!tile) {
@@ -2365,7 +2435,7 @@ define("MapFactory", ["require", "exports", "classes/Unit", "ItemFactory", "Unit
                 tiles[y][x] = tile;
             };
             for (var x = 0; x < line.length; x++) {
-                _loop_4(x);
+                _loop_6(x);
             }
         }
         var width = tiles.map(function (row) { return row.length; }).reduce(function (a, b) { return Math.max(a, b); }) + 1;
@@ -2393,7 +2463,7 @@ define("MapFactory", ["require", "exports", "classes/Unit", "ItemFactory", "Unit
     }
     exports.default = { randomMap: createRandomMap, FIXED_MAPS: FIXED_MAPS };
 });
-define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"], function (require, exports, RandomUtils_8, AudioUtils_4) {
+define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"], function (require, exports, RandomUtils_7, AudioUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function transpose_8va(_a) {
@@ -2502,13 +2572,13 @@ define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"],
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
-        var _loop_5 = function (i) {
+        var _loop_7 = function (i) {
             var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_8.randChoice(section.bass) : null;
+            var bass = (!!section.bass) ? RandomUtils_7.randChoice(section.bass) : null;
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_8.randChoice(section.lead);
+                    lead = RandomUtils_7.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
@@ -2519,7 +2589,7 @@ define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"],
             }
         };
         for (var i = 0; i < sections.length; i++) {
-            _loop_5(i);
+            _loop_7(i);
         }
         setTimeout(function () { return playSuite(suite); }, sections.length * suite.length * numRepeats);
     }
@@ -2531,7 +2601,44 @@ define("Music", ["require", "exports", "utils/RandomUtils", "utils/AudioUtils"],
         playSuite: playSuite
     };
 });
-define("actions", ["require", "exports", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "utils/MapUtils", "classes/MapSupplier", "InputHandler"], function (require, exports, GameState_1, Unit_3, SpriteRenderer_1, MapFactory_1, UnitClasses_3, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1) {
+define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_7) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function playTurn(playerUnitOrder, doUpdate) {
+        var renderer = jwb.renderer;
+        var playerUnit = jwb.state.playerUnit;
+        if (doUpdate) {
+            playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
+            return update();
+        }
+        else {
+            return renderer.render();
+        }
+    }
+    function update() {
+        var state = jwb.state;
+        var playerUnit = state.playerUnit;
+        var map = state.getMap();
+        // make sure the player unit's update happens first
+        var unitPromises = [];
+        unitPromises.push(function () { return playerUnit.update(); });
+        map.units.forEach(function (u) {
+            if (u !== playerUnit) {
+                unitPromises.push(function () { return u.update(); });
+            }
+        });
+        return PromiseUtils_7.chainPromises(unitPromises)
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () {
+            state.turn++;
+            state.messages = [];
+        });
+    }
+    exports.default = {
+        playTurn: playTurn
+    };
+});
+define("actions", ["require", "exports", "classes/GameState", "classes/Unit", "classes/SpriteRenderer", "MapFactory", "UnitClasses", "Music", "utils/MapUtils", "classes/MapSupplier", "InputHandler", "classes/TurnHandler"], function (require, exports, GameState_1, Unit_3, SpriteRenderer_1, MapFactory_1, UnitClasses_3, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1, TurnHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2592,43 +2699,11 @@ define("actions", ["require", "exports", "classes/GameState", "classes/Unit", "c
         }
     }
     exports.revealTiles = revealTiles;
-});
-define("classes/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function playTurn(playerUnitOrder, doUpdate) {
-        var renderer = jwb.renderer;
-        var playerUnit = jwb.state.playerUnit;
-        if (doUpdate) {
-            playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
-            return update();
-        }
-        else {
-            return renderer.render();
-        }
+    function debug() {
+        jwb.DEBUG = true;
+        TurnHandler_1.default.playTurn(null, false); // render only
     }
-    function update() {
-        var state = jwb.state;
-        var playerUnit = state.playerUnit;
-        var map = state.getMap();
-        // make sure the player unit's update happens first
-        var unitPromises = [];
-        unitPromises.push(function () { return playerUnit.update(); });
-        map.units.forEach(function (u) {
-            if (u !== playerUnit) {
-                unitPromises.push(function () { return u.update(); });
-            }
-        });
-        return PromiseUtils_6.chainPromises(unitPromises)
-            .then(function () { return jwb.renderer.render(); })
-            .then(function () {
-            state.turn++;
-            state.messages = [];
-        });
-    }
-    exports.default = {
-        playTurn: playTurn
-    };
+    exports.debug = debug;
 });
 define("utils/ItemUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], function (require, exports, AudioUtils_5, Sounds_4) {
     "use strict";
@@ -2647,7 +2722,7 @@ define("utils/ItemUtils", ["require", "exports", "utils/AudioUtils", "Sounds"], 
     }
     exports.useItem = useItem;
 });
-define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnHandler", "types/Tiles", "Sounds", "utils/ItemUtils", "utils/PromiseUtils", "utils/UnitUtils", "utils/AudioUtils"], function (require, exports, actions_2, types_7, TurnHandler_1, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_7, UnitUtils_2, AudioUtils_6) {
+define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnHandler", "types/Tiles", "Sounds", "utils/ItemUtils", "utils/PromiseUtils", "utils/UnitUtils", "utils/AudioUtils"], function (require, exports, actions_2, types_7, TurnHandler_2, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -2712,7 +2787,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
             case KeyCommand.SHIFT_RIGHT:
                 return _handleArrowKey(command);
             case KeyCommand.SPACEBAR:
-                return TurnHandler_1.default.playTurn(null, true);
+                return TurnHandler_2.default.playTurn(null, true);
             case KeyCommand.ENTER:
                 return _handleEnter();
             case KeyCommand.TAB:
@@ -2720,7 +2795,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                 return _handleTab();
             default:
         }
-        return PromiseUtils_7.resolvedPromise();
+        return PromiseUtils_8.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
@@ -2761,7 +2836,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                             return function (u) { return UnitUtils_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
                     }
                 })();
-                return TurnHandler_1.default.playTurn(queuedOrder, true);
+                return TurnHandler_2.default.playTurn(queuedOrder, true);
             case types_7.GameScreen.INVENTORY:
                 var state = jwb.state;
                 var inventory = state.playerUnit.inventory;
@@ -2783,7 +2858,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                         inventory.nextCategory();
                         break;
                 }
-                return TurnHandler_1.default.playTurn(null, false);
+                return TurnHandler_2.default.playTurn(null, false);
             default:
                 throw "fux";
         }
@@ -2808,7 +2883,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
-                return TurnHandler_1.default.playTurn(null, true);
+                return TurnHandler_2.default.playTurn(null, true);
             }
             case types_7.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
@@ -2816,9 +2891,9 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                 if (!!selectedItem) {
                     state.screen = types_7.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
-                        .then(function () { return TurnHandler_1.default.playTurn(null, false); });
+                        .then(function () { return TurnHandler_2.default.playTurn(null, false); });
                 }
-                return PromiseUtils_7.resolvedPromise();
+                return PromiseUtils_8.resolvedPromise();
             }
             default:
                 throw "fux";
@@ -2834,7 +2909,7 @@ define("InputHandler", ["require", "exports", "actions", "types", "classes/TurnH
                 state.screen = types_7.GameScreen.INVENTORY;
                 break;
         }
-        return TurnHandler_1.default.playTurn(null, false);
+        return TurnHandler_2.default.playTurn(null, false);
     }
     function attachEvents() {
         window.onkeydown = keyHandlerWrapper;
@@ -2852,7 +2927,7 @@ define("main", ["require", "exports", "actions"], function (require, exports, ac
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_3.restartGame(); };
 });
-define("classes/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "classes/Unit"], function (require, exports, PromiseUtils_8, Unit_4) {
+define("classes/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "classes/Unit"], function (require, exports, PromiseUtils_9, Unit_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var WIDTH = 80;
@@ -2896,7 +2971,7 @@ define("classes/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "cl
             lines.push(this._getStatusLine());
             this._addMessageLines(lines);
             this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_8.resolvedPromise();
+            return PromiseUtils_9.resolvedPromise();
         };
         AsciiRenderer.prototype._renderInventoryScreen = function () {
             var state = jwb.state;
@@ -2922,7 +2997,7 @@ define("classes/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "cl
             lines.push(this._getStatusLine());
             this._addMessageLines(lines);
             this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_8.resolvedPromise();
+            return PromiseUtils_9.resolvedPromise();
         };
         AsciiRenderer.prototype._renderElement = function (element) {
             if (element instanceof Unit_4.default) {

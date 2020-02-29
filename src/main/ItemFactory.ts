@@ -75,13 +75,13 @@ type MapItemSupplier = ({ x, y }: Coordinates) => MapItem;
 function _getItemSuppliers(level: number): MapItemSupplier[] {
   const createMapPotion: MapItemSupplier = ({ x, y }: Coordinates) => {
     const sprite = SpriteFactory.MAP_POTION();
-    const inventoryItem = createPotion(50);
+    const inventoryItem = createPotion(40);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 
   const createFloorFireScroll = ({ x, y }: Coordinates) => {
     const sprite = SpriteFactory.MAP_SCROLL();
-    const inventoryItem = createScrollOfFloorFire(200);
+    const inventoryItem = createScrollOfFloorFire(80);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 

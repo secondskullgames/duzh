@@ -1,6 +1,7 @@
 import SpriteFactory from '../SpriteFactory';
+import { Tile } from '../types';
 
-const Tiles = {
+const Tiles: { [name: string]: Tile } = {
   FLOOR: {
     name: 'FLOOR',
     char: '.',

@@ -45,8 +45,8 @@ class Unit implements Entity {
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
-    this.mana = null;//unitClass.startingMana;
-    this.maxMana = null;//unitClass.startingMana;
+    this.mana = unitClass.startingMana;
+    this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
     this._damage = unitClass.startingDamage;
     this.queuedOrder = null;
@@ -89,6 +89,19 @@ class Unit implements Entity {
       });
     });
     return damage;
+  }
+
+  /**
+   * TODO - this is just based on melee weapon damage
+   */
+  getRangedDamage(): number {
+    let damage = this._damage;
+    this.equipment.getEntries().forEach(([category, items]) => {
+      items.forEach(item => {
+        damage += (item.damage || 0);
+      });
+    });
+    return Math.round(damage / 2);
   }
 
   private _levelUp() {

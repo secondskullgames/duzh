@@ -29,6 +29,7 @@ function createMap(mapSupplier: MapSupplier): MapInstance {
     itemLocations,
     itemSupplier
   } = mapSupplier;
+
   const { playerUnit } = jwb.state;
   const units = [playerUnit];
   [playerUnit.x, playerUnit.y] = [playerUnitLocation.x, playerUnitLocation.y];

@@ -1,6 +1,10 @@
-import { randInt } from './RandomUtils';
 import { Coordinates, Rect, Tile } from '../types';
+import { sortBy } from './ArrayUtils';
 
+/**
+ * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
+ *         which do not collide with `occupiedLocations`
+ */
 function pickUnoccupiedLocations(
   tiles: Tile[][],
   allowedTileTypes: Tile[],
@@ -11,7 +15,7 @@ function pickUnoccupiedLocations(
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
       if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
-        if (occupiedLocations.filter(loc => (loc.x === x && loc.y === y)).length === 0) {
+        if (occupiedLocations.filter(loc => coordinatesEquals(loc, { x, y })).length === 0) {
           unoccupiedLocations.push({ x, y });
         }
       }
@@ -21,7 +25,10 @@ function pickUnoccupiedLocations(
   const chosenLocations: Coordinates[] = [];
   for (let i = 0; i < numToChoose; i++) {
     if (unoccupiedLocations.length > 0) {
-      const index = randInt(0, unoccupiedLocations.length - 1);
+      sortBy(unoccupiedLocations, ({ x, y }) => {
+        return -1 * Math.min(...chosenLocations.map(loc => hypotenuse(loc, { x, y })));
+      });
+      const index = 0;
       const { x, y } = unoccupiedLocations[index];
       chosenLocations.push({ x, y });
       occupiedLocations.push({ x, y });

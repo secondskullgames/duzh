@@ -4,6 +4,8 @@ import Unit from './classes/Unit';
 import { randChoice } from './utils/RandomUtils';
 import { Coordinates, Rect } from './types';
 import { moveOrAttack } from './utils/UnitUtils';
+import { resolvedPromise } from './utils/PromiseUtils';
+import { sortBy } from './utils/ArrayUtils';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 
@@ -31,7 +33,7 @@ function wanderAndAttack(unit: Unit): Promise<void> {
     const { x, y } = randChoice(tiles);
     return moveOrAttack(unit, { x, y });
   }
-  return new Promise(resolve => { resolve(); });
+  return resolvedPromise();
 }
 
 function wander(unit: Unit): Promise<void> {
@@ -50,7 +52,7 @@ function wander(unit: Unit): Promise<void> {
     const { x, y } = randChoice(tiles);
     return moveOrAttack(unit, { x, y });
   }
-  return new Promise(resolve => { resolve(); });
+  return resolvedPromise();
 }
 
 function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
@@ -77,7 +79,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
       return moveOrAttack(unit, { x, y });
     }
   }
-  return new Promise(resolve => { resolve(); });
+  return resolvedPromise();
 }
 
 function fleeFromPlayerUnit(unit: Unit): Promise<void> {
@@ -99,21 +101,17 @@ function fleeFromPlayerUnit(unit: Unit): Promise<void> {
   });
 
   if (tiles.length > 0) {
-    const { x, y } = _sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[tiles.length - 1];
+    const { x, y } = sortBy(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[tiles.length - 1];
     return moveOrAttack(unit, { x, y });
   }
-  return new Promise(resolve => { resolve(); });
-}
-
-function _sortBy<T>(list: T[], mapFunction: (t: T) => number) {
-  return list.sort((a, b) => mapFunction(a) - mapFunction(b));
+  return resolvedPromise();
 }
 
 const UnitBehaviors: { [name: string]: UnitBehavior } = {
   WANDER: wander,
   ATTACK_PLAYER: _attackPlayerUnit_withPath,
   FLEE_FROM_PLAYER: fleeFromPlayerUnit,
-  STAY: () => new Promise(resolve => { resolve(); })
+  STAY: () => resolvedPromise()
 };
 
 export default UnitBehaviors;

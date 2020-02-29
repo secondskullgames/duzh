@@ -20,10 +20,12 @@ const PLAYER: UnitClass = {
     [Colors.ORANGE]: Colors.LIGHT_PINK // Face
   },
   startingLife: 100,
+  startingMana: 100,
   startingDamage: 10,
   minLevel: 1,
   maxLevel: 20,
   lifePerLevel: level => 10,
+  manaPerLevel: level => 0,
   damagePerLevel: level => 2,
   experienceToNextLevel: currentLevel => (currentLevel < 10) ? 2 * currentLevel + 4: null, // 6, 8, 10, 12, 14...
 };
@@ -44,10 +46,12 @@ const ENEMY_HUMAN_BLUE: UnitClass = {
     [Colors.ORANGE]: Colors.LIGHT_PINK // Face
   },
   startingLife: 75,
+  startingMana: null,
   startingDamage: 4,
   minLevel: 1,
   maxLevel: 3,
   lifePerLevel: () => 12,
+  manaPerLevel: () => null,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_CAUTIOUS,
 };
@@ -68,10 +72,12 @@ const ENEMY_HUMAN_RED: UnitClass = {
     [Colors.ORANGE]: Colors.LIGHT_PINK // Face
   },
   startingLife: 55,
+  startingMana: null,
   startingDamage: 6,
   minLevel: 1,
   maxLevel: 5,
   lifePerLevel: () => 10,
+  manaPerLevel: () => null,
   damagePerLevel: () => 3,
   aiHandler: HUMAN_AGGRESSIVE
 };
@@ -94,10 +100,12 @@ const ENEMY_HUMAN_BLACK: UnitClass = {
     [Colors.LIGHT_BROWN]: Colors.LIGHT_GRAY // Hair
   },
   startingLife: 100,
+  startingMana: null,
   startingDamage: 10,
   minLevel: 3,
   maxLevel: 9,
   lifePerLevel: () => 18,
+  manaPerLevel: () => null,
   damagePerLevel: () => 4,
   aiHandler: HUMAN_AGGRESSIVE
 };

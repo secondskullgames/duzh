@@ -6,6 +6,7 @@ import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 import Pathfinder from './Pathfinder';
 import Tiles from '../types/Tiles';
 import MapItem from './MapItem';
+import { average } from '../utils/ArrayUtils';
 
 const MAX_EXITS = 3;
 
@@ -55,11 +56,14 @@ class DungeonGenerator {
         tiles: [[], ...section.tiles]
       };
     })();
+
+    this._addWalls(section);
+
     const { tiles } = section;
     const [stairsLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [], 1);
     tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-    const [playerUnitLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR, Tiles.FLOOR_HALL], [stairsLocation], 1);
-    const enemyUnitLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation], numEnemies);
+    const enemyUnitLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation], numEnemies);
+    const [playerUnitLocation] = this._pickPlayerLocation(tiles, [stairsLocation, ...enemyUnitLocations]);
     const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
 
     return {
@@ -201,7 +205,6 @@ class DungeonGenerator {
   /**
    * @param dimension width or height
    * @returns the min X/Y coordinate of the *second* room
-   * @private
    */
   private _getSplitPoint(dimension: number): number {
     const minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
@@ -243,8 +246,8 @@ class DungeonGenerator {
     // add some extra connections for fun
     const candidatePairs = connectedRooms
       .flatMap(first => connectedRooms.map(second => [first, second]))
-      .filter(([first, second]) => this._canJoinRooms(first, second));
-    shuffle(candidatePairs);
+      .filter(([first, second]) => this._canJoinRooms(first, second))
+      .sort((first, second) => this._roomDistance(first[0], first[1]) - this._roomDistance(second[0], second[1]));
 
     if (candidatePairs.length > 0) {
       for (let [first, second] of candidatePairs) {
@@ -253,8 +256,12 @@ class DungeonGenerator {
         }
       }
     }
+  }
 
-    // add walls above corridor tiles if possible
+  /**
+   * add walls above corridor tiles if possible
+   */
+  private _addWalls(section: MapSection) {
     for (let y = 0; y < section.height; y++) {
       for (let x = 0; x < section.width; x++) {
         if (y > 0) {
@@ -391,6 +398,25 @@ class DungeonGenerator {
     });
 
     return (path.length > 0);
+  }
+
+  /**
+   * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
+   */
+  private _pickPlayerLocation(tiles: Tile[][], blockedTiles: Coordinates[]) {
+    const candidates: [Coordinates, number][] = [];
+
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (!tiles[y][x].isBlocking && !blockedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+          const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
+          candidates.push([{ x, y }, average(tileDistances)]);
+        }
+      }
+    }
+
+    console.assert(candidates.length > 0);
+    return candidates.sort((a, b) => (b[1] - a[1]))[0];
   }
 
   private _logSections(name: string, ...sections: MapSection[]) {

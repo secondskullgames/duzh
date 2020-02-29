@@ -40,7 +40,7 @@ function fireProjectile(unit: Unit, { dx, dy }: { dx: number, dy: number }): Pro
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
       const { messages } = jwb.state;
-      const damage = unit.getDamage();
+      const damage = unit.getRangedDamage();
       messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
       targetUnit.takeDamage(damage, unit)
         .then(() => resolve());

@@ -121,6 +121,11 @@ function replaceAll(imageData: ImageData, color: string): Promise<ImageData> {
   });
 }
 
+/**
+ * Convert a hex string, e.g. '#00c0ff', to its equivalent RGB values, e.g. (0, 192, 255).
+ * This implementation relies on the browser automatically doing this conversion when
+ * an element's `backgroundColor` value is set.
+ */
 function hex2rgb(hex: string): RGB {
   const div = document.createElement('div');
   div.style.backgroundColor = hex;
