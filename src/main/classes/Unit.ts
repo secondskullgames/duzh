@@ -25,6 +25,8 @@ class Unit implements Entity {
   experience: number;
   life: number;
   maxLife: number;
+  mana: number | null;
+  maxMana: number | null;
   lifeRemainder: number;
   private _damage: number;
   queuedOrder: (() => Promise<void>) | null;
@@ -41,8 +43,10 @@ class Unit implements Entity {
     this.name = name;
     this.level = level;
     this.experience = 0;
-    this.maxLife = unitClass.startingLife;
     this.life = unitClass.startingLife;
+    this.maxLife = unitClass.startingLife;
+    this.mana = unitClass.startingMana;
+    this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
     this._damage = unitClass.startingDamage;
     this.queuedOrder = null;
