@@ -1,5 +1,5 @@
 import Unit from './Unit';
-import { Coordinates } from '../types/types';
+import { Coordinates, Direction } from '../types/types';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
 
@@ -29,26 +29,30 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
   });
 }
 
-function fireProjectile(unit: Unit, { dx, dy }: { dx: number, dy: number }): Promise<void> {
-  return new Promise(resolve => {
-    const map = jwb.state.getMap();
-    let { x, y } = unit;
-    do {
-      x += dx;
-      y += dy;
-    } while (!map.isBlocked({ x, y }));
+function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
+  unit.direction = { dx, dy };
 
-    const targetUnit = map.getUnit({ x, y });
-    if (!!targetUnit) {
-      const { messages } = jwb.state;
-      const damage = unit.getRangedDamage();
-      messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-      targetUnit.takeDamage(damage, unit)
-        .then(() => resolve());
-    } else {
-      resolve();
-    }
-  });
+  return unit.sprite.update()
+    .then(() => jwb.renderer.render())
+    .then(() => new Promise(resolve => {
+      const map = jwb.state.getMap();
+      let { x, y } = unit;
+      do {
+        x += dx;
+        y += dy;
+      } while (!map.isBlocked({ x, y }));
+
+      const targetUnit = map.getUnit({ x, y });
+      if (!!targetUnit) {
+        const { messages } = jwb.state;
+        const damage = unit.getRangedDamage();
+        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
+        targetUnit.takeDamage(damage, unit)
+          .then(() => resolve());
+      } else {
+        resolve();
+      }
+    }));
 }
 
 export {

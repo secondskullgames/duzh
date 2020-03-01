@@ -717,7 +717,10 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
     exports.moveOrAttack = moveOrAttack;
     function fireProjectile(unit, _a) {
         var dx = _a.dx, dy = _a.dy;
-        return new Promise(function (resolve) {
+        unit.direction = { dx: dx, dy: dy };
+        return unit.sprite.update()
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () { return new Promise(function (resolve) {
             var map = jwb.state.getMap();
             var x = unit.x, y = unit.y;
             do {
@@ -735,7 +738,7 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
             else {
                 resolve();
             }
-        });
+        }); });
     }
     exports.fireProjectile = fireProjectile;
 });
