@@ -59,7 +59,7 @@ class SpriteRenderer implements Renderer {
 
   private _renderGameScreen(): Promise<any> {
     revealTiles();
-    this._context.fillStyle = '#000';
+    this._context.fillStyle = Colors.BLACK;
     this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
     return chainPromises([
@@ -94,7 +94,7 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (!!item) {
-            promises.push(this._drawEllipse({ x, y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+            promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
             promises.push(this._renderElement(item, { x, y }));
           }
         }
@@ -114,9 +114,9 @@ class SpriteRenderer implements Renderer {
           const unit = map.getUnit({ x, y });
           if (!!unit) {
             if (unit === playerUnit) {
-              promises.push(this._drawEllipse({ x, y }, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+              promises.push(this._drawEllipse({ x, y }, Colors.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
             } else {
-              promises.push(this._drawEllipse({ x, y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+              promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
             }
             promises.push(this._renderElement(unit, { x, y }));
           }
@@ -129,7 +129,7 @@ class SpriteRenderer implements Renderer {
   /**
    * @param color (in hex form)
    */
-  private _drawEllipse({ x, y }: Coordinates, color: string, width: number, height: number): Promise<any> {
+  private _drawEllipse({ x, y }: Coordinates, color: Colors, width: number, height: number): Promise<any> {
     const { _context } = this;
     _context.fillStyle = color;
     const topLeftPixel = this._gridToPixel({ x, y });
@@ -202,13 +202,13 @@ class SpriteRenderer implements Renderer {
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         if (items[i] === inventory.selectedItem) {
-          _context.fillStyle = '#fc0';
+          _context.fillStyle = Colors.YELLOW; //'#fc0';
         } else {
-          _context.fillStyle = '#fff';
+          _context.fillStyle = Colors.WHITE;
         }
         _context.fillText(items[i].name, x, y);
       }
-      _context.fillStyle = '#fff';
+      _context.fillStyle = Colors.WHITE;
     }
 
     return resolvedPromise();
@@ -278,14 +278,14 @@ class SpriteRenderer implements Renderer {
     const { _context } = this;
     return new Promise(resolve => {
       const { messages } = jwb.state;
-      _context.fillStyle = '#000';
-      _context.strokeStyle = '#fff';
+      _context.fillStyle = Colors.BLACK;
+      _context.strokeStyle = Colors.WHITE;
 
       const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
       const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
       this._drawRect({ left, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
-      _context.fillStyle = '#fff';
+      _context.fillStyle = Colors.WHITE;
       _context.textAlign = 'left';
       _context.font = '10px sans-serif';
 

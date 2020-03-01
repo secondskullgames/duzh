@@ -975,7 +975,7 @@ define("items/InventoryMap", ["require", "exports", "types/types"], function (re
         };
         InventoryMap.prototype.previousCategory = function () {
             var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index - 1) % categories.length];
+            this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
             this.selectedItem = this._map[this.selectedCategory][0] || null;
         };
         InventoryMap.prototype.get = function (category) {
@@ -992,7 +992,7 @@ define("items/InventoryMap", ["require", "exports", "types/types"], function (re
             var items = this._map[this.selectedCategory];
             if (items.length > 0 && this.selectedItem !== null) {
                 var index = items.indexOf(this.selectedItem);
-                this.selectedItem = items[(index - 1) % items.length];
+                this.selectedItem = items[(index - 1 + items.length) % items.length];
             }
         };
         return InventoryMap;
@@ -1534,7 +1534,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
         SpriteRenderer.prototype._renderGameScreen = function () {
             var _this = this;
             actions_1.revealTiles();
-            this._context.fillStyle = '#000';
+            this._context.fillStyle = Colors_3.default.BLACK;
             this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
             return PromiseUtils_4.chainPromises([
                 function () { return _this._renderTiles(); },
@@ -1566,7 +1566,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var item = map.getItem({ x: x, y: y });
                         if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             promises.push(this._renderElement(item, { x: x, y: y }));
                         }
                     }
@@ -1584,10 +1584,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                         var unit = map.getUnit({ x: x, y: y });
                         if (!!unit) {
                             if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             promises.push(this._renderElement(unit, { x: x, y: y }));
                         }
@@ -1659,14 +1659,14 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                     if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = '#fc0';
+                        _context.fillStyle = Colors_3.default.YELLOW; //'#fc0';
                     }
                     else {
-                        _context.fillStyle = '#fff';
+                        _context.fillStyle = Colors_3.default.WHITE;
                     }
                     _context.fillText(items[i].name, x, y_1);
                 }
-                _context.fillStyle = '#fff';
+                _context.fillStyle = Colors_3.default.WHITE;
             }
             return PromiseUtils_4.resolvedPromise();
         };
@@ -1730,12 +1730,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var _context = this._context;
             return new Promise(function (resolve) {
                 var messages = jwb.state.messages;
-                _context.fillStyle = '#000';
-                _context.strokeStyle = '#fff';
+                _context.fillStyle = Colors_3.default.BLACK;
+                _context.strokeStyle = Colors_3.default.WHITE;
                 var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = '#fff';
+                _context.fillStyle = Colors_3.default.WHITE;
                 _context.textAlign = 'left';
                 _context.font = '10px sans-serif';
                 var textLeft = left + 4;
@@ -2103,7 +2103,7 @@ define("maps/DungeonGenerator", ["require", "exports", "maps/MapUtils", "utils/R
                             return ({ x: x, y: y + 1 });
                         })
                     }); }),
-                    tiles: __spreadArrays([[]], section.tiles)
+                    tiles: __spreadArrays([_this._emptyRow(width)], section.tiles)
                 };
             })();
             this._addWalls(section);
@@ -2442,6 +2442,13 @@ define("maps/DungeonGenerator", ["require", "exports", "maps/MapUtils", "utils/R
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
+        };
+        DungeonGenerator.prototype._emptyRow = function (width) {
+            var row = [];
+            for (var x = 0; x < width; x++) {
+                row.push(Tiles_2.default.NONE);
+            }
+            return row;
         };
         DungeonGenerator.prototype._logSections = function (name) {
             var sections = [];
