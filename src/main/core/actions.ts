@@ -7,7 +7,6 @@ import Music from '../sounds/Music';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
-import TurnHandler from './TurnHandler';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -74,7 +73,7 @@ function revealTiles(): void {
 
 function debug() {
   jwb.DEBUG = true;
-  TurnHandler.playTurn(null, false); // render only
+  jwb.renderer.render();
 }
 
 export {

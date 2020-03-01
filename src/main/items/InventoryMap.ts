@@ -48,7 +48,7 @@ class InventoryMap {
 
   previousCategory() {
     const index = categories.indexOf(this.selectedCategory);
-    this.selectedCategory = categories[(index - 1) % categories.length];
+    this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
     this.selectedItem = this._map[this.selectedCategory][0] || null;
   }
 
@@ -68,7 +68,7 @@ class InventoryMap {
     const items = this._map[this.selectedCategory];
     if (items.length > 0 && this.selectedItem !== null) {
       const index = items.indexOf(this.selectedItem);
-      this.selectedItem = items[(index - 1) % items.length];
+      this.selectedItem = items[(index - 1 + items.length) % items.length];
     }
   }
 }

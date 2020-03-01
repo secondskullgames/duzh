@@ -53,7 +53,7 @@ class DungeonGenerator {
           height: room.height,
           exits: room.exits.map(({ x, y }) => ({ x, y: y + 1 }))
         })),
-        tiles: [[], ...section.tiles]
+        tiles: [this._emptyRow(width), ...section.tiles]
       };
     })();
 
@@ -417,6 +417,14 @@ class DungeonGenerator {
 
     console.assert(candidates.length > 0);
     return candidates.sort((a, b) => (b[1] - a[1]))[0];
+  }
+
+  private _emptyRow(width: number): Tile[] {
+    const row: Tile[] = [];
+    for (let x = 0; x < width; x++) {
+      row.push(Tiles.NONE);
+    }
+    return row;
   }
 
   private _logSections(name: string, ...sections: MapSection[]) {

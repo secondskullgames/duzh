@@ -1,16 +1,3 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -29,6 +16,19 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 define("graphics/ImageUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -207,11 +207,14 @@ define("graphics/ImageSupplier", ["require", "exports", "graphics/ImageUtils", "
 define("graphics/sprites/Sprite", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * Note: It's expected that a separate Sprite instance will be created
+     * per entity, and frame caching will be handled... somewhere else
+     */
     var Sprite = /** @class */ (function () {
         function Sprite(imageMap, key, _a) {
             var dx = _a.dx, dy = _a.dy;
             this._imageMap = imageMap;
-            this.defaultKey = key;
             this.key = key;
             this.dx = dx;
             this.dy = dy;
@@ -224,8 +227,11 @@ define("graphics/sprites/Sprite", ["require", "exports"], function (require, exp
             }
             return imageSupplier.get();
         };
-        Sprite.prototype.setImage = function (key) {
-            this.key = key;
+        /**
+         * This will be overridden by individual sprites to handle
+         * e.g. unit-specific logic
+         */
+        Sprite.prototype.update = function () {
             return this.getImage();
         };
         return Sprite;
@@ -288,6 +294,13 @@ define("types/types", ["require", "exports"], function (require, exports) {
         GameScreen["INVENTORY"] = "INVENTORY";
     })(GameScreen || (GameScreen = {}));
     exports.GameScreen = GameScreen;
+    var Activity;
+    (function (Activity) {
+        Activity["STANDING"] = "STANDING";
+        Activity["WALKING"] = "WALKING";
+        Activity["DAMAGED"] = "DAMAGED";
+    })(Activity || (Activity = {}));
+    exports.Activity = Activity;
 });
 define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -432,7 +445,7 @@ define("utils/RandomUtils", ["require", "exports"], function (require, exports) 
                 return mappedObjects[key];
             }
         }
-        throw 'fux';
+        throw 'Error in weightedRandom()!';
     }
     exports.weightedRandom = weightedRandom;
 });
@@ -677,6 +690,7 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
         var x = _a.x, y = _a.y;
         var _b = jwb.state, messages = _b.messages, playerUnit = _b.playerUnit;
         var map = jwb.state.getMap();
+        unit.direction = { dx: x - unit.x, dy: y - unit.y };
         return new Promise(function (resolve) {
             var _a;
             if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
@@ -703,7 +717,10 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
     exports.moveOrAttack = moveOrAttack;
     function fireProjectile(unit, _a) {
         var dx = _a.dx, dy = _a.dy;
-        return new Promise(function (resolve) {
+        unit.direction = { dx: dx, dy: dy };
+        return unit.sprite.update()
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () { return new Promise(function (resolve) {
             var map = jwb.state.getMap();
             var x = unit.x, y = unit.y;
             do {
@@ -721,7 +738,7 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
             else {
                 resolve();
             }
-        });
+        }); });
     }
     exports.fireProjectile = fireProjectile;
 });
@@ -899,49 +916,6 @@ define("units/UnitClass", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("graphics/sprites/PlayerSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/ImageUtils", "graphics/sprites/Sprite", "types/Colors"], function (require, exports, ImageSupplier_1, ImageUtils_2, Sprite_1, Colors_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var SpriteKeys;
-    (function (SpriteKeys) {
-        SpriteKeys["STANDING"] = "STANDING";
-        SpriteKeys["STANDING_DAMAGED"] = "STANDING_DAMAGED";
-    })(SpriteKeys || (SpriteKeys = {}));
-    var PlayerSprite = /** @class */ (function (_super) {
-        __extends(PlayerSprite, _super);
-        function PlayerSprite(paletteSwaps) {
-            var _a;
-            return _super.call(this, (_a = {},
-                _a[SpriteKeys.STANDING] = new ImageSupplier_1.default('player_standing_SE_1', Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKeys.STANDING_DAMAGED] = new ImageSupplier_1.default('player_standing_SE_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
-                _a), SpriteKeys.STANDING, { dx: -4, dy: -20 }) || this;
-        }
-        PlayerSprite.SpriteKeys = SpriteKeys;
-        return PlayerSprite;
-    }(Sprite_1.default));
-    exports.default = PlayerSprite;
-});
-define("graphics/sprites/SpriteUtils", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_3) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function playAnimation(sprite, keys, delay) {
-        var renderer = jwb.renderer;
-        var promises = [];
-        keys.forEach(function (key) {
-            promises.push(function () { return new Promise(function (resolve) {
-                sprite.setImage(key)
-                    .then(function () { return renderer.render(); })
-                    .then(function () {
-                    setTimeout(function () { resolve(); }, delay);
-                });
-            }); });
-        });
-        return PromiseUtils_3.chainPromises(promises)
-            .then(function () { return sprite.setImage(sprite.defaultKey); })
-            .then(function () { return renderer.render(); });
-    }
-    exports.playAnimation = playAnimation;
-});
 define("items/InventoryItem", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -1001,7 +975,7 @@ define("items/InventoryMap", ["require", "exports", "types/types"], function (re
         };
         InventoryMap.prototype.previousCategory = function () {
             var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index - 1) % categories.length];
+            this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
             this.selectedItem = this._map[this.selectedCategory][0] || null;
         };
         InventoryMap.prototype.get = function (category) {
@@ -1018,7 +992,7 @@ define("items/InventoryMap", ["require", "exports", "types/types"], function (re
             var items = this._map[this.selectedCategory];
             if (items.length > 0 && this.selectedItem !== null) {
                 var index = items.indexOf(this.selectedItem);
-                this.selectedItem = items[(index - 1) % items.length];
+                this.selectedItem = items[(index - 1 + items.length) % items.length];
             }
         };
         return InventoryMap;
@@ -1073,7 +1047,37 @@ define("items/equipment/EquipmentMap", ["require", "exports", "types/types"], fu
     }());
     exports.default = EquipmentMap;
 });
-define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "graphics/sprites/PlayerSprite", "graphics/sprites/SpriteUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, AudioUtils_2, Sounds_2, PromiseUtils_4, PlayerSprite_1, SpriteUtils_1, InventoryMap_1, EquipmentMap_1) {
+define("types/Directions", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _equals(first, second) {
+        return first.dx === second.dx && first.dy === second.dy;
+    }
+    var Directions = {
+        N: { dx: 0, dy: -1 },
+        E: { dx: 1, dy: 0 },
+        S: { dx: 0, dy: 1 },
+        W: { dx: -1, dy: 0 }
+    };
+    function _directionToString(direction) {
+        if (_equals(direction, Directions.N)) {
+            return 'N';
+        }
+        else if (_equals(direction, Directions.E)) {
+            return 'E';
+        }
+        else if (_equals(direction, Directions.S)) {
+            return 'S';
+        }
+        else if (_equals(direction, Directions.W)) {
+            return 'W';
+        }
+        throw "Invalid direction " + direction;
+    }
+    var Directions2 = __assign(__assign({}, Directions), { toString: _directionToString });
+    exports.default = Directions2;
+});
+define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_3, AudioUtils_2, Sounds_2, PromiseUtils_3, InventoryMap_1, EquipmentMap_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1082,7 +1086,7 @@ define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"
             var x = _a.x, y = _a.y;
             this.char = '@';
             this.unitClass = unitClass;
-            this.sprite = unitClass.sprite(unitClass.paletteSwaps);
+            this.sprite = unitClass.sprite(this, unitClass.paletteSwaps);
             this.inventory = new InventoryMap_1.default();
             this.equipment = new EquipmentMap_1.default();
             this.x = x;
@@ -1098,6 +1102,8 @@ define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"
             this._damage = unitClass.startingDamage;
             this.queuedOrder = null;
             this.aiHandler = unitClass.aiHandler;
+            this.activity = types_3.Activity.STANDING;
+            this.direction = null;
         }
         Unit.prototype._regenLife = function () {
             var lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
@@ -1123,8 +1129,9 @@ define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"
                 if (!!_this.aiHandler) {
                     return _this.aiHandler(_this);
                 }
-                return PromiseUtils_4.resolvedPromise();
-            });
+                return PromiseUtils_3.resolvedPromise();
+            })
+                .then(function () { return _this.sprite.update(); });
         };
         Unit.prototype.getDamage = function () {
             var damage = this._damage;
@@ -1175,14 +1182,25 @@ define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"
         Unit.prototype.takeDamage = function (damage, sourceUnit) {
             var _this = this;
             if (sourceUnit === void 0) { sourceUnit = undefined; }
+            var renderer = jwb.renderer;
             var playerUnit = jwb.state.playerUnit;
             var map = jwb.state.getMap();
             var promises = [];
-            if (this.sprite instanceof PlayerSprite_1.default) {
-                var PlayerSpriteKeys = PlayerSprite_1.default.SpriteKeys;
-                var sequence_1 = [PlayerSpriteKeys.STANDING_DAMAGED];
-                promises.push(function () { return SpriteUtils_1.playAnimation(_this.sprite, sequence_1, 150); });
-            }
+            promises.push(function () {
+                _this.activity = types_3.Activity.DAMAGED;
+                return _this.sprite.update()
+                    .then(function () { return renderer.render(); })
+                    .then(function () { return new Promise(function (resolve) {
+                    setTimeout(function () {
+                        resolve();
+                    }, 150);
+                }); })
+                    .then(function () {
+                    _this.activity = types_3.Activity.STANDING;
+                    return _this.sprite.update();
+                })
+                    .then(function () { return renderer.render(); });
+            });
             promises.push(function () { return new Promise(function (resolve) {
                 _this.life = Math.max(_this.life - damage, 0);
                 if (_this.life === 0) {
@@ -1208,7 +1226,7 @@ define("units/Unit", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"
                 }
                 resolve();
             }); });
-            return PromiseUtils_4.chainPromises(promises);
+            return PromiseUtils_3.chainPromises(promises);
         };
         ;
         return Unit;
@@ -1231,7 +1249,53 @@ define("items/MapItem", ["require", "exports"], function (require, exports) {
     }());
     exports.default = MapItem;
 });
-define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "graphics/sprites/PlayerSprite", "types/Colors"], function (require, exports, ImageSupplier_2, Sprite_2, PlayerSprite_2, Colors_2) {
+define("graphics/sprites/PlayerSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/ImageUtils", "graphics/sprites/Sprite", "types/Colors", "types/Directions"], function (require, exports, ImageSupplier_1, ImageUtils_2, Sprite_1, Colors_1, Directions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SpriteKey;
+    (function (SpriteKey) {
+        SpriteKey["STANDING_N"] = "STANDING_N";
+        SpriteKey["STANDING_E"] = "STANDING_E";
+        SpriteKey["STANDING_S"] = "STANDING_S";
+        SpriteKey["STANDING_W"] = "STANDING_W";
+        SpriteKey["DAMAGED_N"] = "DAMAGED_N";
+        SpriteKey["DAMAGED_E"] = "DAMAGED_E";
+        SpriteKey["DAMAGED_S"] = "DAMAGED_S";
+        SpriteKey["DAMAGED_W"] = "DAMAGED_W";
+    })(SpriteKey || (SpriteKey = {}));
+    var PlayerSprite = /** @class */ (function (_super) {
+        __extends(PlayerSprite, _super);
+        function PlayerSprite(unit, paletteSwaps) {
+            var _a;
+            var _this = this;
+            var imageMap = (_a = {},
+                _a[SpriteKey.STANDING_N] = new ImageSupplier_1.default('player_standing_N_1', Colors_1.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_E] = new ImageSupplier_1.default('player_standing_E_1', Colors_1.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_S] = new ImageSupplier_1.default('player_standing_S_1', Colors_1.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_W] = new ImageSupplier_1.default('player_standing_W_1', Colors_1.default.WHITE, paletteSwaps),
+                _a[SpriteKey.DAMAGED_N] = new ImageSupplier_1.default('player_standing_N_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_E] = new ImageSupplier_1.default('player_standing_E_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_S] = new ImageSupplier_1.default('player_standing_S_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_W] = new ImageSupplier_1.default('player_standing_W_1', Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
+                _a);
+            _this = _super.call(this, imageMap, SpriteKey.STANDING_S, { dx: -4, dy: -20 }) || this;
+            _this._unit = unit;
+            return _this;
+        }
+        PlayerSprite.prototype.update = function () {
+            this.key = this._getKey();
+            return this.getImage();
+        };
+        PlayerSprite.prototype._getKey = function () {
+            var direction = this._unit.direction || Directions_1.default.S;
+            var key = this._unit.activity + "_" + Directions_1.default.toString(direction);
+            return key;
+        };
+        return PlayerSprite;
+    }(Sprite_1.default));
+    exports.default = PlayerSprite;
+});
+define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "graphics/sprites/PlayerSprite", "types/Colors"], function (require, exports, ImageSupplier_2, Sprite_2, PlayerSprite_1, Colors_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DEFAULT_SPRITE_KEY = 'default';
@@ -1240,8 +1304,7 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         var dx = _a.dx, dy = _a.dy;
         return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
-    var SpriteFactory = {
-        PLAYER: function (paletteSwaps) { return new PlayerSprite_2.default(paletteSwaps); },
+    var StaticSprites = {
         WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_wall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
         WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_wall_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
         FLOOR: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_floor', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
@@ -1251,7 +1314,17 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('scroll_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
         STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('stairs_down2', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
     };
-    exports.default = SpriteFactory;
+    exports.default = {
+        WALL_TOP: StaticSprites.WALL_TOP,
+        WALL_HALL: StaticSprites.WALL_HALL,
+        FLOOR: StaticSprites.FLOOR,
+        FLOOR_HALL: StaticSprites.FLOOR_HALL,
+        MAP_SWORD: StaticSprites.MAP_SWORD,
+        MAP_POTION: StaticSprites.MAP_POTION,
+        MAP_SCROLL: StaticSprites.MAP_SCROLL,
+        STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
+        PLAYER: function (unit, paletteSwaps) { return new PlayerSprite_1.default(unit, paletteSwaps); }
+    };
 });
 define("types/Tiles", ["require", "exports", "graphics/sprites/SpriteFactory"], function (require, exports, SpriteFactory_1) {
     "use strict";
@@ -1379,12 +1452,12 @@ define("maps/MapSupplier", ["require", "exports", "maps/MapInstance"], function 
     }
     exports.createMap = createMap;
 });
-define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_3) {
+define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_3.GameScreen.GAME;
+            this.screen = types_4.GameScreen.GAME;
             this.playerUnit = playerUnit;
             this.mapSuppliers = mapSuppliers;
             this.mapIndex = 0;
@@ -1394,7 +1467,7 @@ define("core/GameState", ["require", "exports", "types/types"], function (requir
         }
         GameState.prototype.getMap = function () {
             if (!this._map) {
-                throw "fux";
+                throw 'Tried to retrieve map before map was loaded';
             }
             return this._map;
         };
@@ -1415,7 +1488,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_4, actions_1, PromiseUtils_5, Colors_3) {
+define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_4, Colors_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1461,9 +1534,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
         SpriteRenderer.prototype._renderGameScreen = function () {
             var _this = this;
             actions_1.revealTiles();
-            this._context.fillStyle = '#000';
+            this._context.fillStyle = Colors_3.default.BLACK;
             this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-            return PromiseUtils_5.chainPromises([
+            return PromiseUtils_4.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
                 function () { return _this._renderUnits(); },
@@ -1493,7 +1566,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var item = map.getItem({ x: x, y: y });
                         if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             promises.push(this._renderElement(item, { x: x, y: y }));
                         }
                     }
@@ -1511,10 +1584,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                         var unit = map.getUnit({ x: x, y: y });
                         if (!!unit) {
                             if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, '#0f0', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, '#888', TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             promises.push(this._renderElement(unit, { x: x, y: y }));
                         }
@@ -1565,7 +1638,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 });
             });
             // draw inventory categories
-            var inventoryCategories = Object.values(types_4.ItemCategory);
+            var inventoryCategories = Object.values(types_5.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
             _context.font = '14px Monospace';
@@ -1586,16 +1659,16 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                     if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = '#fc0';
+                        _context.fillStyle = Colors_3.default.YELLOW; //'#fc0';
                     }
                     else {
-                        _context.fillStyle = '#fff';
+                        _context.fillStyle = Colors_3.default.WHITE;
                     }
                     _context.fillText(items[i].name, x, y_1);
                 }
-                _context.fillStyle = '#fff';
+                _context.fillStyle = Colors_3.default.WHITE;
             }
-            return PromiseUtils_5.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -1613,7 +1686,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                     return this._drawSprite(sprite, pixel);
                 }
             }
-            return PromiseUtils_5.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
             var _this = this;
@@ -1657,12 +1730,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var _context = this._context;
             return new Promise(function (resolve) {
                 var messages = jwb.state.messages;
-                _context.fillStyle = '#000';
-                _context.strokeStyle = '#fff';
+                _context.fillStyle = Colors_3.default.BLACK;
+                _context.strokeStyle = Colors_3.default.WHITE;
                 var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = '#fff';
+                _context.fillStyle = Colors_3.default.WHITE;
                 _context.textAlign = 'left';
                 _context.font = '10px sans-serif';
                 var textLeft = left + 4;
@@ -1685,7 +1758,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var textLeft = left + 4;
             _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_5.resolvedPromise();
+            return PromiseUtils_4.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
@@ -1710,15 +1783,15 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     }());
     exports.default = SpriteRenderer;
 });
-define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_5, SpriteFactory_2, Colors_4) {
+define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_6, SpriteFactory_2, Colors_4) {
     "use strict";
     var _a, _b, _c, _d;
     Object.defineProperty(exports, "__esModule", { value: true });
     var BRONZE_SWORD = {
         name: 'Bronze Sword',
         char: 'S',
-        itemCategory: types_5.ItemCategory.WEAPON,
-        equipmentCategory: types_5.EquipmentCategory.WEAPON,
+        itemCategory: types_6.ItemCategory.WEAPON,
+        equipmentCategory: types_6.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_a = {},
             _a[Colors_4.default.BLACK] = Colors_4.default.BLACK,
@@ -1732,8 +1805,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var IRON_SWORD = {
         name: 'Iron Sword',
         char: 'S',
-        itemCategory: types_5.ItemCategory.WEAPON,
-        equipmentCategory: types_5.EquipmentCategory.WEAPON,
+        itemCategory: types_6.ItemCategory.WEAPON,
+        equipmentCategory: types_6.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_b = {},
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
@@ -1746,8 +1819,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var STEEL_SWORD = {
         name: 'Steel Sword',
         char: 'S',
-        itemCategory: types_5.ItemCategory.WEAPON,
-        equipmentCategory: types_5.EquipmentCategory.WEAPON,
+        itemCategory: types_6.ItemCategory.WEAPON,
+        equipmentCategory: types_6.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_c = {},
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
@@ -1760,8 +1833,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var FIRE_SWORD = {
         name: 'Fire Sword',
         char: 'S',
-        itemCategory: types_5.ItemCategory.WEAPON,
-        equipmentCategory: types_5.EquipmentCategory.WEAPON,
+        itemCategory: types_6.ItemCategory.WEAPON,
+        equipmentCategory: types_6.EquipmentCategory.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_d = {},
             _d[Colors_4.default.DARK_GRAY] = Colors_4.default.YELLOW,
@@ -1782,7 +1855,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         getWeaponClasses: getWeaponClasses
     };
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_6, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_7, AudioUtils_3, PromiseUtils_5, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -1795,7 +1868,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                 resolve();
             });
         };
-        return new InventoryItem_1.default('Potion', types_6.ItemCategory.POTION, onUse);
+        return new InventoryItem_1.default('Potion', types_7.ItemCategory.POTION, onUse);
     }
     function _equipEquipment(equipmentClass, item, unit) {
         return new Promise(function (resolve) {
@@ -1823,9 +1896,9 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
-            return PromiseUtils_6.chainPromises(promises);
+            return PromiseUtils_5.chainPromises(promises);
         };
-        return new InventoryItem_1.default('Scroll of Floor Fire', types_6.ItemCategory.SCROLL, onUse);
+        return new InventoryItem_1.default('Scroll of Floor Fire', types_7.ItemCategory.SCROLL, onUse);
     }
     function _createInventoryWeapon(weaponClass) {
         var onUse = function (item, unit) { return _equipEquipment(weaponClass, item, unit); };
@@ -2030,7 +2103,7 @@ define("maps/DungeonGenerator", ["require", "exports", "maps/MapUtils", "utils/R
                             return ({ x: x, y: y + 1 });
                         })
                     }); }),
-                    tiles: __spreadArrays([[]], section.tiles)
+                    tiles: __spreadArrays([_this._emptyRow(width)], section.tiles)
                 };
             })();
             this._addWalls(section);
@@ -2370,6 +2443,13 @@ define("maps/DungeonGenerator", ["require", "exports", "maps/MapUtils", "utils/R
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
         };
+        DungeonGenerator.prototype._emptyRow = function (width) {
+            var row = [];
+            for (var x = 0; x < width; x++) {
+                row.push(Tiles_2.default.NONE);
+            }
+            return row;
+        };
         DungeonGenerator.prototype._logSections = function (name) {
             var sections = [];
             for (var _i = 1; _i < arguments.length; _i++) {
@@ -2605,44 +2685,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_7) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function playTurn(playerUnitOrder, doUpdate) {
-        var renderer = jwb.renderer;
-        var playerUnit = jwb.state.playerUnit;
-        if (doUpdate) {
-            playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
-            return update();
-        }
-        else {
-            return renderer.render();
-        }
-    }
-    function update() {
-        var state = jwb.state;
-        var playerUnit = state.playerUnit;
-        var map = state.getMap();
-        // make sure the player unit's update happens first
-        var unitPromises = [];
-        unitPromises.push(function () { return playerUnit.update(); });
-        map.units.forEach(function (u) {
-            if (u !== playerUnit) {
-                unitPromises.push(function () { return u.update(); });
-            }
-        });
-        return PromiseUtils_7.chainPromises(unitPromises)
-            .then(function () { return jwb.renderer.render(); })
-            .then(function () {
-            state.turn++;
-            state.messages = [];
-        });
-    }
-    exports.default = {
-        playTurn: playTurn
-    };
-});
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "core/TurnHandler"], function (require, exports, GameState_1, Unit_3, SpriteRenderer_1, MapFactory_1, UnitClasses_3, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1, TurnHandler_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler"], function (require, exports, GameState_1, Unit_3, SpriteRenderer_1, MapFactory_1, UnitClasses_3, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2705,9 +2748,40 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     exports.revealTiles = revealTiles;
     function debug() {
         jwb.DEBUG = true;
-        TurnHandler_1.default.playTurn(null, false); // render only
+        jwb.renderer.render();
     }
     exports.debug = debug;
+});
+define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function playTurn(playerUnitOrder) {
+        var playerUnit = jwb.state.playerUnit;
+        playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
+        return _update();
+    }
+    function _update() {
+        var state = jwb.state;
+        var playerUnit = state.playerUnit;
+        var map = state.getMap();
+        // make sure the player unit's update happens first
+        var unitPromises = [];
+        unitPromises.push(function () { return playerUnit.update(); });
+        map.units.forEach(function (u) {
+            if (u !== playerUnit) {
+                unitPromises.push(function () { return u.update(); });
+            }
+        });
+        return PromiseUtils_6.chainPromises(unitPromises)
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () {
+            state.turn++;
+            state.messages = [];
+        });
+    }
+    exports.default = {
+        playTurn: playTurn
+    };
 });
 define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_5, Sounds_4) {
     "use strict";
@@ -2726,7 +2800,7 @@ define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
     }
     exports.useItem = useItem;
 });
-define("core/InputHandler", ["require", "exports", "core/actions", "types/types", "core/TurnHandler", "types/Tiles", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils"], function (require, exports, actions_2, types_7, TurnHandler_2, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
+define("core/InputHandler", ["require", "exports", "core/actions", "types/types", "core/TurnHandler", "types/Tiles", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils"], function (require, exports, actions_2, types_8, TurnHandler_1, Tiles_4, Sounds_5, ItemUtils_1, PromiseUtils_7, UnitUtils_2, AudioUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -2791,7 +2865,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
             case KeyCommand.SHIFT_RIGHT:
                 return _handleArrowKey(command);
             case KeyCommand.SPACEBAR:
-                return TurnHandler_2.default.playTurn(null, true);
+                return TurnHandler_1.default.playTurn(null);
             case KeyCommand.ENTER:
                 return _handleEnter();
             case KeyCommand.TAB:
@@ -2799,14 +2873,14 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                 return _handleTab();
             default:
         }
-        return PromiseUtils_8.resolvedPromise();
+        return PromiseUtils_7.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
         var _a, _b, _c, _d;
-        var screen = jwb.state.screen;
-        switch (screen) {
-            case types_7.GameScreen.GAME:
+        var state = jwb.state;
+        switch (state.screen) {
+            case types_8.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -2840,9 +2914,8 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                             return function (u) { return UnitUtils_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
                     }
                 })();
-                return TurnHandler_2.default.playTurn(queuedOrder, true);
-            case types_7.GameScreen.INVENTORY:
-                var state = jwb.state;
+                return TurnHandler_1.default.playTurn(queuedOrder);
+            case types_8.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -2862,21 +2935,21 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                         inventory.nextCategory();
                         break;
                 }
-                return TurnHandler_2.default.playTurn(null, false);
+                return jwb.renderer.render();
             default:
-                throw "fux";
+                throw "Invalid game screen " + state.screen;
         }
     }
     function _handleEnter() {
         var state = jwb.state;
-        var playerUnit = state.playerUnit, screen = state.screen;
-        switch (screen) {
-            case types_7.GameScreen.GAME: {
+        var playerUnit = state.playerUnit;
+        switch (state.screen) {
+            case types_8.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
                 if (!map || (mapIndex === null)) {
-                    throw "fux";
+                    throw 'Map is not loaded!';
                 }
                 var item = map.getItem({ x: x, y: y });
                 if (!!item) {
@@ -2887,33 +2960,33 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
-                return TurnHandler_2.default.playTurn(null, true);
+                return TurnHandler_1.default.playTurn(null);
             }
-            case types_7.GameScreen.INVENTORY: {
+            case types_8.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_7.GameScreen.GAME;
+                    state.screen = types_8.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
-                        .then(function () { return TurnHandler_2.default.playTurn(null, false); });
+                        .then(function () { return jwb.renderer.render(); });
                 }
-                return PromiseUtils_8.resolvedPromise();
+                return PromiseUtils_7.resolvedPromise();
             }
             default:
-                throw "fux";
+                throw "Unknown game screen: " + state.screen;
         }
     }
     function _handleTab() {
-        var state = jwb.state;
+        var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_7.GameScreen.INVENTORY:
-                state.screen = types_7.GameScreen.GAME;
+            case types_8.GameScreen.INVENTORY:
+                state.screen = types_8.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_7.GameScreen.INVENTORY;
+                state.screen = types_8.GameScreen.INVENTORY;
                 break;
         }
-        return TurnHandler_2.default.playTurn(null, false);
+        return renderer.render();
     }
     function attachEvents() {
         window.onkeydown = keyHandlerWrapper;
@@ -2931,7 +3004,7 @@ define("core/main", ["require", "exports", "core/actions"], function (require, e
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_3.restartGame(); };
 });
-define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "units/Unit", "types/types"], function (require, exports, PromiseUtils_9, Unit_4, types_8) {
+define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "units/Unit", "types/types"], function (require, exports, PromiseUtils_8, Unit_4, types_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var WIDTH = 80;
@@ -2946,9 +3019,9 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
         AsciiRenderer.prototype.render = function () {
             var screen = jwb.state.screen;
             switch (screen) {
-                case types_8.GameScreen.GAME:
+                case types_9.GameScreen.GAME:
                     return this._renderGameScreen();
-                case types_8.GameScreen.INVENTORY:
+                case types_9.GameScreen.INVENTORY:
                     return this._renderInventoryScreen();
                 default:
                     throw "Invalid screen " + screen;
@@ -2975,7 +3048,7 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
             lines.push(this._getStatusLine());
             this._addMessageLines(lines);
             this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_9.resolvedPromise();
+            return PromiseUtils_8.resolvedPromise();
         };
         AsciiRenderer.prototype._renderInventoryScreen = function () {
             var state = jwb.state;
@@ -3001,7 +3074,7 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
             lines.push(this._getStatusLine());
             this._addMessageLines(lines);
             this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_9.resolvedPromise();
+            return PromiseUtils_8.resolvedPromise();
         };
         AsciiRenderer.prototype._renderElement = function (element) {
             if (element instanceof Unit_4.default) {
@@ -3027,5 +3100,18 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
         return AsciiRenderer;
     }());
     exports.default = AsciiRenderer;
+});
+define("graphics/sprites/SpriteClasses", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "graphics/ImageUtils"], function (require, exports, ImageSupplier_3, Colors_6, ImageUtils_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SpriteClasses = {
+        PLAYER: {
+            name: 'PLAYER',
+            imageMap: {
+                STANDING: function (paletteSwaps) { return new ImageSupplier_3.default('player_standing_SE_1', Colors_6.default.WHITE, paletteSwaps); },
+                STANDING_DAMAGED: function (paletteSwaps) { return new ImageSupplier_3.default('player_standing_SE_1', Colors_6.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_3.replaceAll(img, Colors_6.default.WHITE); }]); }
+            }
+        }
+    };
 });
 //# sourceMappingURL=roguelike.js.map

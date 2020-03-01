@@ -6,6 +6,11 @@ interface Coordinates {
   y: number
 }
 
+interface Direction {
+  dx: number,
+  dy: number
+}
+
 interface Rect {
   left: number,
   top: number,
@@ -60,17 +65,25 @@ enum GameScreen {
 
 type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 
+enum Activity {
+  STANDING = 'STANDING',
+  WALKING = 'WALKING',
+  DAMAGED = 'DAMAGED'
+}
+
 export {
+  Activity,
   Coordinates,
-  Rect,
-  MapSection,
-  PaletteSwaps,
-  Tile,
-  Room,
-  Sample,
-  ItemCategory,
+  Direction,
+  Entity,
   EquipmentCategory,
   GameScreen,
+  ItemCategory,
+  MapSection,
+  PaletteSwaps,
+  Rect,
+  Room,
+  Sample,
   SpriteSupplier,
-  Entity
+  Tile
 };

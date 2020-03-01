@@ -3,18 +3,13 @@ import { chainPromises } from '../utils/PromiseUtils';
 
 type UpdateProc = () => Promise<any>;
 
-function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null, doUpdate: boolean): Promise<void> {
-  const { renderer } = jwb;
+function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null): Promise<void> {
   const { playerUnit } = jwb.state;
-  if (doUpdate) {
-    playerUnit.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
-    return update();
-  } else {
-    return renderer.render();
-  }
+  playerUnit.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
+  return _update();
 }
 
-function update(): Promise<void> {
+function _update(): Promise<void> {
   const { state } = jwb;
   const { playerUnit } = state;
   const map = state.getMap();

@@ -1,14 +1,13 @@
-import { Entity, Coordinates } from '../types/types';
+import { Activity, Coordinates, Direction, Entity } from '../types/types';
 import Sprite from '../graphics/sprites/Sprite';
 import UnitClass from './UnitClass';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
 import { UnitAI } from './UnitAI';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
-import PlayerSprite from '../graphics/sprites/PlayerSprite';
-import { playAnimation } from '../graphics/sprites/SpriteUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
+import Directions from '../types/Directions';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -31,10 +30,12 @@ class Unit implements Entity {
   private _damage: number;
   queuedOrder: (() => Promise<void>) | null;
   aiHandler?: UnitAI;
+  activity: Activity;
+  direction: Direction | null;
 
   constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
     this.unitClass = unitClass;
-    this.sprite = unitClass.sprite(unitClass.paletteSwaps);
+    this.sprite = unitClass.sprite(this, unitClass.paletteSwaps);
     this.inventory = new InventoryMap();
     this.equipment = new EquipmentMap();
 
@@ -51,6 +52,8 @@ class Unit implements Entity {
     this._damage = unitClass.startingDamage;
     this.queuedOrder = null;
     this.aiHandler = unitClass.aiHandler;
+    this.activity = Activity.STANDING;
+    this.direction = null;
   }
 
   _regenLife() {
@@ -78,7 +81,8 @@ class Unit implements Entity {
         }
 
         return resolvedPromise();
-      });
+      })
+      .then(() => this.sprite.update());
   }
 
   getDamage(): number {
@@ -131,15 +135,26 @@ class Unit implements Entity {
   }
 
   takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<any> {
+    const { renderer } = jwb;
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
     const promises: (() => Promise<any>)[] = [];
-    if (this.sprite instanceof PlayerSprite) {
-      const PlayerSpriteKeys = PlayerSprite.SpriteKeys;
-      const sequence = [PlayerSpriteKeys.STANDING_DAMAGED];
-      promises.push(() => playAnimation(this.sprite, sequence, 150));
-    }
+    promises.push(() => {
+      this.activity = Activity.DAMAGED;
+      return this.sprite.update()
+        .then(() => renderer.render())
+        .then(() => new Promise<void>(resolve => {
+          setTimeout(() => {
+            resolve();
+          }, 150);
+        }))
+        .then(() => {
+          this.activity = Activity.STANDING;
+          return this.sprite.update();
+        })
+        .then(() => renderer.render())
+    });
 
     promises.push(() => new Promise(resolve => {
       this.life = Math.max(this.life - damage, 0);

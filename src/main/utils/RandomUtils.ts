@@ -44,7 +44,7 @@ function weightedRandom<T>(
     }
   }
 
-  throw 'fux';
+  throw 'Error in weightedRandom()!';
 }
 
 export {

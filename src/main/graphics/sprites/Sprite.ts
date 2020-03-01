@@ -1,15 +1,21 @@
 import ImageSupplier from '../ImageSupplier';
 
+/**
+ * Note: It's expected that a separate Sprite instance will be created
+ * per entity, and frame caching will be handled... somewhere else
+ */
 class Sprite {
   dx: number;
   dy: number;
   key: string;
-  readonly defaultKey: string;
   private readonly _imageMap: { [key: string]: ImageSupplier };
 
-  constructor(imageMap: { [filename: string]: ImageSupplier }, key: string, { dx, dy }: { dx: number, dy: number }) {
+  constructor(
+    imageMap: { [filename: string]: ImageSupplier },
+    key: string,
+    { dx, dy }: { dx: number, dy: number }
+  ) {
     this._imageMap = imageMap;
-    this.defaultKey = key;
     this.key = key;
     this.dx = dx;
     this.dy = dy;
@@ -24,8 +30,11 @@ class Sprite {
     return imageSupplier.get();
   }
 
-  setImage(key: string): Promise<any> {
-    this.key = key;
+  /**
+   * This will be overridden by individual sprites to handle
+   * e.g. unit-specific logic
+   */
+  update(): Promise<any> {
     return this.getImage();
   }
 }
