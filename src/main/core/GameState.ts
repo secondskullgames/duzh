@@ -24,7 +24,7 @@ class GameState {
 
   getMap(): MapInstance {
     if (!this._map) {
-      throw `fux`;
+      throw 'Tried to retrieve map before map was loaded';
     }
     return this._map;
   }

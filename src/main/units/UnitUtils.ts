@@ -6,6 +6,7 @@ import Sounds from '../sounds/Sounds';
 function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
   const { messages, playerUnit } = jwb.state;
   const map = jwb.state.getMap();
+  unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
   return new Promise(resolve => {
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {

@@ -75,7 +75,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
     case KeyCommand.SHIFT_RIGHT:
       return _handleArrowKey(command);
     case KeyCommand.SPACEBAR:
-      return TurnHandler.playTurn(null, true);
+      return TurnHandler.playTurn(null);
     case KeyCommand.ENTER:
       return _handleEnter();
     case KeyCommand.TAB:
@@ -87,9 +87,9 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
 }
 
 function _handleArrowKey(command: KeyCommand): Promise<void> {
-  const { screen } = jwb.state;
+  const { state } = jwb;
 
-  switch (screen) {
+  switch (state.screen) {
     case GameScreen.GAME:
       let dx: number;
       let dy: number;
@@ -126,9 +126,8 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
             return (u: Unit) => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
         }
       })();
-      return TurnHandler.playTurn(queuedOrder, true);
+      return TurnHandler.playTurn(queuedOrder);
     case GameScreen.INVENTORY:
-      const { state } = jwb;
       const { inventory } = state.playerUnit;
 
       switch (command) {
@@ -149,23 +148,23 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           inventory.nextCategory();
           break;
       }
-      return TurnHandler.playTurn(null, false);
+      return jwb.renderer.render();
     default:
-      throw `fux`;
+      throw `Invalid game screen ${state.screen}`;
   }
 }
 
 function _handleEnter(): Promise<void> {
   const { state } = jwb;
-  const { playerUnit, screen } = state;
+  const { playerUnit } = state;
 
-  switch (screen) {
+  switch (state.screen) {
     case GameScreen.GAME: {
       const { mapIndex } = state;
       const map = state.getMap();
       const { x, y }: Coordinates = playerUnit;
       if (!map || (mapIndex === null)) {
-        throw `fux`;
+        throw 'Map is not loaded!';
       }
       const item = map.getItem({ x, y });
       if (!!item) {
@@ -175,7 +174,7 @@ function _handleEnter(): Promise<void> {
         playSound(Sounds.DESCEND_STAIRS);
         loadMap(mapIndex + 1);
       }
-      return TurnHandler.playTurn(null, true);
+      return TurnHandler.playTurn(null);
     }
     case GameScreen.INVENTORY: {
       const { playerUnit } = state;
@@ -184,17 +183,17 @@ function _handleEnter(): Promise<void> {
       if (!!selectedItem) {
         state.screen = GameScreen.GAME;
         return useItem(playerUnit, selectedItem)
-          .then(() => TurnHandler.playTurn(null, false));
+          .then(() => jwb.renderer.render());
       }
       return resolvedPromise();
     }
     default:
-      throw `fux`;
+      throw `Unknown game screen: ${state.screen}`;
   }
 }
 
 function _handleTab(): Promise<void> {
-  const { state } = jwb;
+  const { state, renderer } = jwb;
 
   switch (state.screen) {
     case GameScreen.INVENTORY:
@@ -204,7 +203,7 @@ function _handleTab(): Promise<void> {
       state.screen = GameScreen.INVENTORY;
       break;
   }
-  return TurnHandler.playTurn(null, false);
+  return renderer.render();
 }
 
 function attachEvents() {
