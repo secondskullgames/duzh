@@ -17,19 +17,19 @@ enum SpriteKey {
   DAMAGED_W = 'DAMAGED_W',
 }
 
-class PlayerSprite extends Sprite {
+class GolemSprite extends Sprite {
   private _unit: Unit;
 
   constructor(unit: Unit, paletteSwaps?: PaletteSwaps) {
     const imageMap = {
-      [SpriteKey.STANDING_N]: new ImageSupplier('player_standing_N_1', Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_E]: new ImageSupplier('player_standing_E_1', Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_S]: new ImageSupplier('player_standing_S_1', Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_W]: new ImageSupplier('player_standing_W_1', Colors.WHITE, paletteSwaps),
-      [SpriteKey.DAMAGED_N]: new ImageSupplier('player_standing_N_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_E]: new ImageSupplier('player_standing_E_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_S]: new ImageSupplier('player_standing_S_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_W]: new ImageSupplier('player_standing_W_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
+      [SpriteKey.STANDING_N]: new ImageSupplier('golem_standing_N_1', Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_E]: new ImageSupplier('golem_standing_E_1', Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_S]: new ImageSupplier('golem_standing_S_1', Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_W]: new ImageSupplier('golem_standing_W_1', Colors.WHITE, paletteSwaps),
+      [SpriteKey.DAMAGED_N]: new ImageSupplier('golem_standing_N_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_E]: new ImageSupplier('golem_standing_E_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_S]: new ImageSupplier('golem_standing_S_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_W]: new ImageSupplier('golem_standing_W_1', Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
     };
     super(imageMap, SpriteKey.STANDING_S, { dx: -4, dy: -20 });
     this._unit = unit;
@@ -47,4 +47,4 @@ class PlayerSprite extends Sprite {
   }
 }
 
-export default PlayerSprite;
+export default GolemSprite;

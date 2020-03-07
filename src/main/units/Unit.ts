@@ -7,7 +7,6 @@ import { UnitAI } from './UnitAI';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
-import Directions from '../types/Directions';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -87,10 +86,8 @@ class Unit implements Entity {
 
   getDamage(): number {
     let damage = this._damage;
-    this.equipment.getEntries().forEach(([category, items]) => {
-      items.forEach(item => {
-        damage += (item.damage || 0);
-      });
+    this.equipment.getEntries().forEach(([slot, item]) => {
+      damage += (item.damage || 0);
     });
     return damage;
   }
@@ -100,10 +97,8 @@ class Unit implements Entity {
    */
   getRangedDamage(): number {
     let damage = this._damage;
-    this.equipment.getEntries().forEach(([category, items]) => {
-      items.forEach(item => {
-        damage += (item.damage || 0);
-      });
+    this.equipment.getEntries().forEach(([slot, item]) => {
+      damage += (item.damage || 0);
     });
     return Math.round(damage / 2);
   }

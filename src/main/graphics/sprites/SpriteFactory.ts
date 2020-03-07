@@ -4,8 +4,11 @@ import { PaletteSwaps, SpriteSupplier } from '../../types/types';
 import PlayerSprite from './PlayerSprite';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
+import GolemSprite from './GolemSprite';
 
 const DEFAULT_SPRITE_KEY = 'default';
+
+type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
 
 function _staticSprite(imageLoader: ImageSupplier, { dx, dy }: { dx: number, dy: number }): Sprite {
   return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
@@ -22,6 +25,13 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
   STAIRS_DOWN: (paletteSwaps) => _staticSprite(new ImageSupplier('stairs_down2', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 })
 };
 
+const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
+  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
+  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps)
+};
+
+// the following does not work: { ...StaticSprites, ...UnitSprites }
+// :(
 export default {
   WALL_TOP: StaticSprites.WALL_TOP,
   WALL_HALL: StaticSprites.WALL_HALL,
@@ -31,5 +41,6 @@ export default {
   MAP_POTION: StaticSprites.MAP_POTION,
   MAP_SCROLL: StaticSprites.MAP_SCROLL,
   STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
-  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps)
+  PLAYER: UnitSprites.PLAYER,
+  GOLEM: UnitSprites.GOLEM
 };

@@ -154,7 +154,7 @@ class SpriteRenderer implements Renderer {
     const inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
 
     // draw titles
-    _context.fillStyle = '#fff';
+    _context.fillStyle = Colors.WHITE;
     _context.textAlign = 'center';
     _context.font = '20px Monospace';
     _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
@@ -167,11 +167,9 @@ class SpriteRenderer implements Renderer {
     _context.textAlign = 'left';
 
     let y = INVENTORY_TOP + 64;
-    playerUnit.equipment.getEntries().forEach(([slot, equipmentList]) => {
-      equipmentList.forEach(equipment => {
-        _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
-        y += LINE_HEIGHT;
-      });
+    playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
+      _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
+      y += LINE_HEIGHT;
     });
 
     // draw inventory categories
@@ -202,7 +200,7 @@ class SpriteRenderer implements Renderer {
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         if (items[i] === inventory.selectedItem) {
-          _context.fillStyle = Colors.YELLOW; //'#fc0';
+          _context.fillStyle = Colors.YELLOW;
         } else {
           _context.fillStyle = Colors.WHITE;
         }

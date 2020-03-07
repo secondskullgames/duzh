@@ -53,7 +53,7 @@ enum ItemCategory {
   WEAPON = 'WEAPON'
 }
 
-enum EquipmentCategory {
+enum EquipmentSlot {
   WEAPON = 'WEAPON',
   ARMOR = 'ARMOR'
 }
@@ -76,7 +76,7 @@ export {
   Coordinates,
   Direction,
   Entity,
-  EquipmentCategory,
+  EquipmentSlot,
   GameScreen,
   ItemCategory,
   MapSection,

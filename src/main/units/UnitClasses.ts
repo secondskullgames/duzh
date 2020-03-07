@@ -110,8 +110,26 @@ const ENEMY_HUMAN_BLACK: UnitClass = {
   aiHandler: HUMAN_AGGRESSIVE
 };
 
+const ENEMY_GOLEM: UnitClass = {
+  name: 'ENEMY_GOLEM',
+  sprite: SpriteFactory.GOLEM,
+  paletteSwaps: {
+    [Colors.DARK_GRAY]: Colors.TEAL,
+    [Colors.LIGHT_GRAY]: Colors.TEAL,
+  },
+  startingLife: 150,
+  startingMana: null,
+  startingDamage: 20,
+  minLevel: 5,
+  maxLevel: 9,
+  lifePerLevel: () => 30,
+  manaPerLevel: () => null,
+  damagePerLevel: () => 6,
+  aiHandler: HUMAN_AGGRESSIVE
+};
+
 function getEnemyClasses() {
-  return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK];
+  return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK, ENEMY_GOLEM];
 }
 
 export default {

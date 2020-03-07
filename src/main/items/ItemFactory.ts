@@ -29,7 +29,7 @@ function _equipEquipment(equipmentClass: EquipmentClass, item: InventoryItem, un
   return new Promise(resolve => {
     const equippedItem: EquippedItem = {
       name: equipmentClass.name,
-      category: equipmentClass.equipmentCategory,
+      slot: equipmentClass.equipmentCategory,
       inventoryItem: item,
       damage: equipmentClass.damage
     };

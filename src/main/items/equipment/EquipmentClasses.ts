@@ -1,11 +1,11 @@
-import { EquipmentCategory, ItemCategory, PaletteSwaps, SpriteSupplier } from '../../types/types';
+import { EquipmentSlot, ItemCategory, PaletteSwaps, SpriteSupplier } from '../../types/types';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Colors from '../../types/Colors';
 
 interface EquipmentClass {
   name: string,
   itemCategory: ItemCategory,
-  equipmentCategory: EquipmentCategory,
+  equipmentCategory: EquipmentSlot,
   mapIcon: SpriteSupplier,
   char: string,
   paletteSwaps?: PaletteSwaps,
@@ -18,7 +18,7 @@ const BRONZE_SWORD: EquipmentClass = {
   name: 'Bronze Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.BLACK]: Colors.BLACK,
@@ -34,7 +34,7 @@ const IRON_SWORD: EquipmentClass = {
   name: 'Iron Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.BLACK,
@@ -49,7 +49,7 @@ const STEEL_SWORD: EquipmentClass = {
   name: 'Steel Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
@@ -64,7 +64,7 @@ const FIRE_SWORD: EquipmentClass = {
   name: 'Fire Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.YELLOW,
