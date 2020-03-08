@@ -1,10 +1,11 @@
-import { PaletteSwaps } from '../types/types';
-import { UnitAI } from './UnitAI';
 import Unit from './Unit';
 import Sprite from '../graphics/sprites/Sprite';
+import { PaletteSwaps, UnitType } from '../types/types';
+import { UnitAI } from './UnitAI';
 
 interface UnitClass {
   readonly name: string;
+  readonly type: UnitType;
   readonly paletteSwaps: PaletteSwaps;
   readonly startingLife: number;
   readonly startingMana: number | null;

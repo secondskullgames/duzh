@@ -1,10 +1,11 @@
 import ImageSupplier from '../ImageSupplier';
 import Sprite from './Sprite';
-import { PaletteSwaps, SpriteSupplier } from '../../types/types';
 import PlayerSprite from './PlayerSprite';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
 import GolemSprite from './GolemSprite';
+import GruntSprite from './GruntSprite';
+import { PaletteSwaps, SpriteSupplier } from '../../types/types';
 
 const DEFAULT_SPRITE_KEY = 'default';
 
@@ -27,7 +28,8 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
   PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
-  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps)
+  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps),
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new GruntSprite(unit, paletteSwaps)
 };
 
 // the following does not work: { ...StaticSprites, ...UnitSprites }
@@ -42,5 +44,6 @@ export default {
   MAP_SCROLL: StaticSprites.MAP_SCROLL,
   STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
   PLAYER: UnitSprites.PLAYER,
-  GOLEM: UnitSprites.GOLEM
+  GOLEM: UnitSprites.GOLEM,
+  GRUNT: UnitSprites.GRUNT
 };

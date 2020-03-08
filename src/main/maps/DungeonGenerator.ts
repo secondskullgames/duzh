@@ -1,12 +1,12 @@
 import Unit from '../units/Unit';
-import { Coordinates, MapSection, Room, Tile } from '../types/types';
-import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from './MapUtils';
 import MapSupplier from './MapSupplier';
-import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 import Pathfinder from '../utils/Pathfinder';
 import Tiles from '../types/Tiles';
 import MapItem from '../items/MapItem';
 import { average } from '../utils/ArrayUtils';
+import { Coordinates, MapSection, Room, Tile } from '../types/types';
+import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from './MapUtils';
+import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 
 const MAX_EXITS = 3;
 

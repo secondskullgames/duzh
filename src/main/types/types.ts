@@ -71,6 +71,14 @@ enum Activity {
   DAMAGED = 'DAMAGED'
 }
 
+enum UnitType {
+  HUMAN = 'HUMAN',
+  ELEMENTAL = 'ELEMENTAL',
+  GHOST = 'GHOST',
+  GOLEM = 'GOLEM',
+  WIZARD = 'WIZARD'
+}
+
 export {
   Activity,
   Coordinates,
@@ -85,5 +93,6 @@ export {
   Room,
   Sample,
   SpriteSupplier,
-  Tile
+  Tile,
+  UnitType
 };

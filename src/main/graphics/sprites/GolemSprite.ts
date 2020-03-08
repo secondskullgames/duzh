@@ -1,10 +1,10 @@
 import ImageSupplier from '../ImageSupplier';
-import { replaceAll } from '../ImageUtils';
 import Sprite from './Sprite';
-import { PaletteSwaps } from '../../types/types';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
 import Directions from '../../types/Directions';
+import { PaletteSwaps } from '../../types/types';
+import { replaceAll } from '../ImageUtils';
 
 enum SpriteKey {
   STANDING_N = 'STANDING_N',

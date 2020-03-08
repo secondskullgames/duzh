@@ -24,12 +24,12 @@ function restartGame() {
     // test
     //MapFactory.randomMap(20, 10, 3, 1),
 
-    MapFactory.randomMap(1, 30, 22, 5, 4),
-    MapFactory.randomMap(2, 32, 23, 6, 4),
-    MapFactory.randomMap(3, 34, 24, 7, 3),
-    MapFactory.randomMap(4, 36, 25, 8, 3),
-    MapFactory.randomMap(5, 38, 26, 9, 3),
-    MapFactory.randomMap(6, 30, 27, 10, 3)
+    MapFactory.createRandomMap(1, 30, 22, 5, 4),
+    MapFactory.createRandomMap(2, 32, 23, 6, 4),
+    MapFactory.createRandomMap(3, 34, 24, 7, 3),
+    MapFactory.createRandomMap(4, 36, 25, 8, 3),
+    MapFactory.createRandomMap(5, 38, 26, 9, 3),
+    MapFactory.createRandomMap(6, 30, 27, 10, 3)
   ]);
 
   jwb.renderer = new SpriteRenderer();

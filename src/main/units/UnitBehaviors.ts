@@ -1,4 +1,3 @@
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 import Pathfinder from '../utils/Pathfinder';
 import Unit from './Unit';
 import { randChoice } from '../utils/RandomUtils';
@@ -6,6 +5,7 @@ import { Coordinates, Rect } from '../types/types';
 import { moveOrAttack } from './UnitUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { sortBy, sortByReversed } from '../utils/ArrayUtils';
+import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 

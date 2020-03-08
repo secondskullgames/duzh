@@ -1,10 +1,12 @@
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitClass from './UnitClass';
-import { HUMAN_AGGRESSIVE, HUMAN_CAUTIOUS } from './UnitAI';
 import Colors from '../types/Colors';
+import { UnitType } from '../types/types';
+import { HUMAN_AGGRESSIVE, HUMAN_CAUTIOUS } from './UnitAI';
 
 const PLAYER: UnitClass = {
   name: 'PLAYER',
+  type: UnitType.HUMAN,
   sprite: SpriteFactory.PLAYER,
   // Green/brown colors
   paletteSwaps: {
@@ -32,6 +34,7 @@ const PLAYER: UnitClass = {
 
 const ENEMY_HUMAN_BLUE: UnitClass = {
   name: 'ENEMY_HUMAN_BLUE',
+  type: UnitType.HUMAN,
   sprite: SpriteFactory.PLAYER,
   paletteSwaps: {
     [Colors.DARK_PURPLE]: Colors.MEDIUM_BLUE, // Shirt
@@ -58,6 +61,7 @@ const ENEMY_HUMAN_BLUE: UnitClass = {
 
 const ENEMY_HUMAN_RED: UnitClass = {
   name: 'ENEMY_HUMAN_RED',
+  type: UnitType.HUMAN,
   sprite: SpriteFactory.PLAYER,
   paletteSwaps: {
     [Colors.DARK_PURPLE]: Colors.MEDIUM_RED, // Shirt
@@ -84,6 +88,7 @@ const ENEMY_HUMAN_RED: UnitClass = {
 
 const ENEMY_HUMAN_BLACK: UnitClass = {
   name: 'ENEMY_HUMAN_BLACK',
+  type: UnitType.HUMAN,
   sprite: SpriteFactory.PLAYER,
   paletteSwaps: {
     [Colors.DARK_PURPLE]: Colors.DARKER_GRAY, // Shirt
@@ -112,6 +117,7 @@ const ENEMY_HUMAN_BLACK: UnitClass = {
 
 const ENEMY_GOLEM: UnitClass = {
   name: 'ENEMY_GOLEM',
+  type: UnitType.GOLEM,
   sprite: SpriteFactory.GOLEM,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.TEAL,
@@ -128,8 +134,24 @@ const ENEMY_GOLEM: UnitClass = {
   aiHandler: HUMAN_AGGRESSIVE
 };
 
+const ENEMY_GRUNT: UnitClass = {
+  name: 'ENEMY_GRUNT',
+  type: UnitType.HUMAN,
+  sprite: SpriteFactory.GRUNT,
+  paletteSwaps: {},
+  startingLife: 100,
+  startingMana: null,
+  startingDamage: 10,
+  minLevel: 3,
+  maxLevel: 9,
+  lifePerLevel: () => 18,
+  manaPerLevel: () => null,
+  damagePerLevel: () => 4,
+  aiHandler: HUMAN_AGGRESSIVE
+};
+
 function getEnemyClasses() {
-  return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK, ENEMY_GOLEM];
+  return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK, ENEMY_GRUNT, ENEMY_GOLEM];
 }
 
 export default {
@@ -137,5 +159,7 @@ export default {
   ENEMY_HUMAN_BLUE,
   ENEMY_HUMAN_RED,
   ENEMY_HUMAN_BLACK,
+  ENEMY_GRUNT,
+  ENEMY_GOLEM,
   getEnemyClasses
 };

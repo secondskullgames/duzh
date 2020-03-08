@@ -1,7 +1,7 @@
+import Unit from './Unit';
+import UnitBehaviors, { UnitBehavior } from './UnitBehaviors';
 import { manhattanDistance } from '../maps/MapUtils';
 import { weightedRandom } from '../utils/RandomUtils';
-import UnitBehaviors, { UnitBehavior } from './UnitBehaviors';
-import Unit from './Unit';
 
 type UnitAI = (unit: Unit) => Promise<void>;
 
