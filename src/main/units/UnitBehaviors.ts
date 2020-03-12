@@ -6,17 +6,15 @@ import { moveOrAttack } from './UnitUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { sortBy, sortByReversed } from '../utils/ArrayUtils';
 import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
-
-const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+import Directions from '../types/Directions';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
 function wanderAndAttack(unit: Unit): Promise<void> {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
-
   const tiles: Coordinates[] = [];
-  CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
+  Directions.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -39,7 +37,7 @@ function wanderAndAttack(unit: Unit): Promise<void> {
 function wander(unit: Unit): Promise<void> {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
-  CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
+  Directions.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -87,7 +85,7 @@ function fleeFromPlayerUnit(unit: Unit): Promise<void> {
   const map = jwb.state.getMap();
 
   const tiles: Coordinates[] = [];
-  CARDINAL_DIRECTIONS.forEach(([dx, dy]) => {
+  Directions.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {

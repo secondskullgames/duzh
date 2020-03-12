@@ -19,12 +19,12 @@ function shuffle<T>(list: T[]): void {
   while (n > 0) {
     // Pick a remaining element...
     const i = randInt(0, n - 1);
+    n--;
 
     // And swap it with the current element.
-    const tmp = list[i];
+    const tmp = list[n];
     list[n] = list[i];
     list[i] = tmp;
-    n--;
   }
 }
 

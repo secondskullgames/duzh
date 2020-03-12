@@ -29,5 +29,6 @@ export default {
   E: Directions.E,
   S: Directions.S,
   W: Directions.W,
+  values: () => [Directions.N, Directions.E, Directions.S, Directions.W],
   toString: _directionToString
 };

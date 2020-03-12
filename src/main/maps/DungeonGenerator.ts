@@ -5,10 +5,8 @@ import Tiles from '../types/Tiles';
 import MapItem from '../items/MapItem';
 import { average } from '../utils/ArrayUtils';
 import { Coordinates, MapSection, Room, Tile } from '../types/types';
-import { coordinatesEquals, hypotenuse, pickUnoccupiedLocations } from './MapUtils';
+import { coordinatesEquals, hypotenuse, isAdjacent, pickUnoccupiedLocations } from './MapUtils';
 import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
-
-const MAX_EXITS = 3;
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
@@ -239,21 +237,8 @@ class DungeonGenerator {
 
       if (!joinedAnyRooms) {
         console.error('Couldn\'t connect rooms!');
-        break;
-      }
-    }
-
-    // add some extra connections for fun
-    const candidatePairs = connectedRooms
-      .flatMap(first => connectedRooms.map(second => [first, second]))
-      .filter(([first, second]) => this._canJoinRooms(first, second))
-      .sort((first, second) => this._roomDistance(first[0], first[1]) - this._roomDistance(second[0], second[1]));
-
-    if (candidatePairs.length > 0) {
-      for (let [first, second] of candidatePairs) {
-        if (this._canJoinRooms(first, second)) {
-          this._joinRooms(first, second, section); // don't care if it worked
-        }
+        this._logSections('fux', section);
+        debugger;
       }
     }
   }
@@ -282,7 +267,7 @@ class DungeonGenerator {
   }
 
   private _canJoinRooms(first: Room, second: Room) {
-    return (first !== second) && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
+    return (first !== second); // && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
   }
 
   private _joinRooms(first: Room, second: Room, section: MapSection): boolean {
@@ -305,16 +290,7 @@ class DungeonGenerator {
   }
 
   private _getExitCandidates(room: Room): Coordinates[] {
-    const eligibleSides = [
-      ...(!room.exits.some(exit => exit.y === room.top) ? ['TOP'] : []),
-      ...(!room.exits.some(exit => exit.x === room.left + room.width - 1) ? ['RIGHT'] : []),
-      ...(!room.exits.some(exit => exit.y === room.top + room.height - 1) ? ['BOTTOM'] : []),
-      ...(!room.exits.some(exit => exit.x === room.left) ? ['LEFT'] : [])
-    ];
-
-    if (eligibleSides.length === 0) {
-      throw 'Error: out of eligible sides';
-    }
+    const eligibleSides = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT'];
 
     const candidates: Coordinates[] = [];
     eligibleSides.forEach(side => {
@@ -344,9 +320,12 @@ class DungeonGenerator {
       }
     });
 
-    return candidates;
+    return candidates.filter(({ x, y }) => !room.exits.some(exit => isAdjacent(exit, { x, y })));
   }
 
+  /**
+   * Find a path between the specified exits between rooms.
+   */
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
     const blockedTileDetector = ({ x, y }: Coordinates) => {
       // can't draw a path through an existing room or a wall
@@ -355,7 +334,7 @@ class DungeonGenerator {
       if ([firstExit, secondExit].some(exit => coordinatesEquals({ x, y }, exit))) {
         return false;
       } else if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
-        // skip the check if we're within 2 tiles of an exit
+        // skip the check if we're within 1 tile vertically of an exit
         const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
           [firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + dy }))
         ));
@@ -364,7 +343,7 @@ class DungeonGenerator {
           return false;
         }
 
-        // can't draw tiles near walls
+        // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
         for (let dy of [-2, -1, 1, 2]) {
           if ((y + dy >= 0) && (y + dy < section.height)) {
             const tile = section.tiles[y + dy][x];

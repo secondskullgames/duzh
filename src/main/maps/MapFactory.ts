@@ -3,8 +3,8 @@ import ItemFactory from '../items/ItemFactory';
 import DungeonGenerator from './DungeonGenerator';
 import UnitFactory from '../units/UnitFactory';
 
-const MIN_ROOM_DIMENSION = 6;
-const MAX_ROOM_DIMENSION = 9;
+const MIN_ROOM_DIMENSION = 5;
+const MAX_ROOM_DIMENSION = 8;
 const MIN_ROOM_PADDING = 2;
 
 function createRandomMap(level: number, width: number, height: number, numEnemies: number, numItems: number): MapSupplier {

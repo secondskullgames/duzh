@@ -434,11 +434,11 @@ define("utils/RandomUtils", ["require", "exports"], function (require, exports) 
         while (n > 0) {
             // Pick a remaining element...
             var i = randInt(0, n - 1);
+            n--;
             // And swap it with the current element.
-            var tmp = list[i];
+            var tmp = list[n];
             list[n] = list[i];
             list[i] = tmp;
-            n--;
         }
     }
     exports.shuffle = shuffle;
@@ -751,16 +751,51 @@ define("units/UnitUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
     }
     exports.fireProjectile = fireProjectile;
 });
-define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, Pathfinder_1, RandomUtils_2, UnitUtils_1, PromiseUtils_2, ArrayUtils_2, MapUtils_2) {
+define("types/Directions", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    var Directions = {
+        N: { dx: 0, dy: -1 },
+        E: { dx: 1, dy: 0 },
+        S: { dx: 0, dy: 1 },
+        W: { dx: -1, dy: 0 }
+    };
+    function _equals(first, second) {
+        return first.dx === second.dx && first.dy === second.dy;
+    }
+    function _directionToString(direction) {
+        if (_equals(direction, Directions.N)) {
+            return 'N';
+        }
+        else if (_equals(direction, Directions.E)) {
+            return 'E';
+        }
+        else if (_equals(direction, Directions.S)) {
+            return 'S';
+        }
+        else if (_equals(direction, Directions.W)) {
+            return 'W';
+        }
+        throw "Invalid direction " + direction;
+    }
+    exports.default = {
+        N: Directions.N,
+        E: Directions.E,
+        S: Directions.S,
+        W: Directions.W,
+        values: function () { return [Directions.N, Directions.E, Directions.S, Directions.W]; },
+        toString: _directionToString
+    };
+});
+define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions"], function (require, exports, Pathfinder_1, RandomUtils_2, UnitUtils_1, PromiseUtils_2, ArrayUtils_2, MapUtils_2, Directions_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function wanderAndAttack(unit) {
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
+        Directions_1.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
             var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
             if (map.contains({ x: x, y: y })) {
                 if (!map.isBlocked({ x: x, y: y })) {
@@ -782,8 +817,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
     function wander(unit) {
         var map = jwb.state.getMap();
         var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
+        Directions_1.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
             var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
             if (map.contains({ x: x, y: y })) {
                 if (!map.isBlocked({ x: x, y: y })) {
@@ -825,8 +860,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         var tiles = [];
-        CARDINAL_DIRECTIONS.forEach(function (_a) {
-            var dx = _a[0], dy = _a[1];
+        Directions_1.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
             var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
             if (map.contains({ x: x, y: y })) {
                 if (!map.isBlocked({ x: x, y: y })) {
@@ -1217,42 +1252,7 @@ define("items/MapItem", ["require", "exports"], function (require, exports) {
     }());
     exports.default = MapItem;
 });
-define("types/Directions", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Directions = {
-        N: { dx: 0, dy: -1 },
-        E: { dx: 1, dy: 0 },
-        S: { dx: 0, dy: 1 },
-        W: { dx: -1, dy: 0 }
-    };
-    function _equals(first, second) {
-        return first.dx === second.dx && first.dy === second.dy;
-    }
-    function _directionToString(direction) {
-        if (_equals(direction, Directions.N)) {
-            return 'N';
-        }
-        else if (_equals(direction, Directions.E)) {
-            return 'E';
-        }
-        else if (_equals(direction, Directions.S)) {
-            return 'S';
-        }
-        else if (_equals(direction, Directions.W)) {
-            return 'W';
-        }
-        throw "Invalid direction " + direction;
-    }
-    exports.default = {
-        N: Directions.N,
-        E: Directions.E,
-        S: Directions.S,
-        W: Directions.W,
-        toString: _directionToString
-    };
-});
-define("graphics/sprites/PlayerSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/ImageUtils", "graphics/sprites/Sprite", "types/Colors", "types/Directions"], function (require, exports, ImageSupplier_1, ImageUtils_2, Sprite_1, Colors_1, Directions_1) {
+define("graphics/sprites/PlayerSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/ImageUtils", "graphics/sprites/Sprite", "types/Colors", "types/Directions"], function (require, exports, ImageSupplier_1, ImageUtils_2, Sprite_1, Colors_1, Directions_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteKey;
@@ -1290,15 +1290,15 @@ define("graphics/sprites/PlayerSprite", ["require", "exports", "graphics/ImageSu
             return this.getImage();
         };
         PlayerSprite.prototype._getKey = function () {
-            var direction = this._unit.direction || Directions_1.default.S;
-            var key = this._unit.activity + "_" + Directions_1.default.toString(direction);
+            var direction = this._unit.direction || Directions_2.default.S;
+            var key = this._unit.activity + "_" + Directions_2.default.toString(direction);
             return key;
         };
         return PlayerSprite;
     }(Sprite_1.default));
     exports.default = PlayerSprite;
 });
-define("graphics/sprites/GolemSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_2, Sprite_2, Colors_2, Directions_2, ImageUtils_3) {
+define("graphics/sprites/GolemSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_2, Sprite_2, Colors_2, Directions_3, ImageUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteKey;
@@ -1336,15 +1336,15 @@ define("graphics/sprites/GolemSprite", ["require", "exports", "graphics/ImageSup
             return this.getImage();
         };
         GolemSprite.prototype._getKey = function () {
-            var direction = this._unit.direction || Directions_2.default.S;
-            var key = this._unit.activity + "_" + Directions_2.default.toString(direction);
+            var direction = this._unit.direction || Directions_3.default.S;
+            var key = this._unit.activity + "_" + Directions_3.default.toString(direction);
             return key;
         };
         return GolemSprite;
     }(Sprite_2.default));
     exports.default = GolemSprite;
 });
-define("graphics/sprites/GruntSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_3, Sprite_3, Colors_3, Directions_3, ImageUtils_4) {
+define("graphics/sprites/GruntSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_3, Sprite_3, Colors_3, Directions_4, ImageUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteKey;
@@ -1386,8 +1386,8 @@ define("graphics/sprites/GruntSprite", ["require", "exports", "graphics/ImageSup
             return this.getImage();
         };
         GruntSprite.prototype._getKey = function () {
-            var direction = this._unit.direction || Directions_3.default.S;
-            var key = this._unit.activity + "_" + Directions_3.default.toString(direction);
+            var direction = this._unit.direction || Directions_4.default.S;
+            var key = this._unit.activity + "_" + Directions_4.default.toString(direction);
             return key;
         };
         return GruntSprite;
@@ -2052,7 +2052,6 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
 define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "types/Tiles", "utils/ArrayUtils", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, Pathfinder_2, Tiles_2, ArrayUtils_3, MapUtils_5, RandomUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var MAX_EXITS = 3;
     /**
      * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
      */
@@ -2241,7 +2240,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 connectedRooms.push(nextRoom);
             }
             while (unconnectedRooms.length > 0) {
-                var candidatePairs_3 = connectedRooms
+                var candidatePairs = connectedRooms
                     .flatMap(function (connectedRoom) { return unconnectedRooms.map(function (unconnectedRoom) { return [connectedRoom, unconnectedRoom]; }); })
                     .filter(function (_a) {
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
@@ -2249,7 +2248,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 })
                     .sort(function (first, second) { return _this._roomDistance(first[0], first[1]) - _this._roomDistance(second[0], second[1]); });
                 var joinedAnyRooms = false;
-                for (var _i = 0, candidatePairs_1 = candidatePairs_3; _i < candidatePairs_1.length; _i++) {
+                for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];
                     if (this._joinRooms(connectedRoom, unconnectedRoom, section)) {
                         unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
@@ -2260,23 +2259,8 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 }
                 if (!joinedAnyRooms) {
                     console.error('Couldn\'t connect rooms!');
-                    break;
-                }
-            }
-            // add some extra connections for fun
-            var candidatePairs = connectedRooms
-                .flatMap(function (first) { return connectedRooms.map(function (second) { return [first, second]; }); })
-                .filter(function (_a) {
-                var first = _a[0], second = _a[1];
-                return _this._canJoinRooms(first, second);
-            })
-                .sort(function (first, second) { return _this._roomDistance(first[0], first[1]) - _this._roomDistance(second[0], second[1]); });
-            if (candidatePairs.length > 0) {
-                for (var _b = 0, candidatePairs_2 = candidatePairs; _b < candidatePairs_2.length; _b++) {
-                    var _c = candidatePairs_2[_b], first = _c[0], second = _c[1];
-                    if (this._canJoinRooms(first, second)) {
-                        this._joinRooms(first, second, section); // don't care if it worked
-                    }
+                    this._logSections('fux', section);
+                    debugger;
                 }
             }
         };
@@ -2302,7 +2286,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             return MapUtils_5.hypotenuse(firstCenter, secondCenter);
         };
         DungeonGenerator.prototype._canJoinRooms = function (first, second) {
-            return (first !== second) && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
+            return (first !== second); // && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
         };
         DungeonGenerator.prototype._joinRooms = function (first, second, section) {
             var firstExitCandidates = this._getExitCandidates(first);
@@ -2323,10 +2307,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             return false;
         };
         DungeonGenerator.prototype._getExitCandidates = function (room) {
-            var eligibleSides = __spreadArrays((!room.exits.some(function (exit) { return exit.y === room.top; }) ? ['TOP'] : []), (!room.exits.some(function (exit) { return exit.x === room.left + room.width - 1; }) ? ['RIGHT'] : []), (!room.exits.some(function (exit) { return exit.y === room.top + room.height - 1; }) ? ['BOTTOM'] : []), (!room.exits.some(function (exit) { return exit.x === room.left; }) ? ['LEFT'] : []));
-            if (eligibleSides.length === 0) {
-                throw 'Error: out of eligible sides';
-            }
+            var eligibleSides = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT'];
             var candidates = [];
             eligibleSides.forEach(function (side) {
                 switch (side) {
@@ -2354,7 +2335,10 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                         throw "Unknown side " + side;
                 }
             });
-            return candidates;
+            return candidates.filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                return !room.exits.some(function (exit) { return MapUtils_5.isAdjacent(exit, { x: x, y: y }); });
+            });
         };
         DungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
             var blockedTileDetector = function (_a) {
@@ -2365,12 +2349,12 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                     return false;
                 }
                 else if (section.tiles[y][x] === Tiles_2.default.NONE || section.tiles[y][x] === Tiles_2.default.FLOOR_HALL) {
-                    // skip the check if we're within 2 tiles of an exit
+                    // skip the check if we're within 1 tile vertically of an exit
                     var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
                     if (isNextToExit) {
                         return false;
                     }
-                    // can't draw tiles near walls
+                    // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
                     for (var _i = 0, _b = [-2, -1, 1, 2]; _i < _b.length; _i++) {
                         var dy = _b[_i];
                         if ((y + dy >= 0) && (y + dy < section.height)) {
@@ -2390,7 +2374,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             };
             // prefer reusing floor hall tiles
             var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === Tiles_2.default.FLOOR_HALL) ? 0.01 : 1;
+                return (section.tiles[second.y][second.x] === Tiles_2.default.FLOOR_HALL) ? 0.1 : 1;
             };
             var mapRect = {
                 left: 0,
@@ -2628,8 +2612,8 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
 define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/DungeonGenerator", "units/UnitFactory"], function (require, exports, ItemFactory_1, DungeonGenerator_1, UnitFactory_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var MIN_ROOM_DIMENSION = 6;
-    var MAX_ROOM_DIMENSION = 9;
+    var MIN_ROOM_DIMENSION = 5;
+    var MAX_ROOM_DIMENSION = 8;
     var MIN_ROOM_PADDING = 2;
     function createRandomMap(level, width, height, numEnemies, numItems) {
         var dungeonGenerator = new DungeonGenerator_1.default(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING);
