@@ -1,4 +1,4 @@
-import { civDistance, contains, coordinatesEquals } from '../maps/MapUtils';
+import { civDistance, contains, coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 import { Coordinates, Rect } from '../types/types';
 import { randChoice } from './RandomUtils';
 
@@ -20,9 +20,9 @@ function g(node: Node, start: Coordinates): number {
  * @return the heuristic estimated cost from `coordinates` to `goal`
  */
 function h(coordinates: Coordinates, goal: Coordinates): number {
-  return civDistance(coordinates, goal);
+  // return civDistance(coordinates, goal);
 
-  // return manhattanDistance(coordinates, goal);
+  return manhattanDistance(coordinates, goal);
 }
 
 /**

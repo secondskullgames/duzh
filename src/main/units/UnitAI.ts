@@ -3,6 +3,11 @@ import UnitBehaviors, { UnitBehavior } from './UnitBehaviors';
 import { manhattanDistance } from '../maps/MapUtils';
 import { weightedRandom } from '../utils/RandomUtils';
 
+/**
+ * A UnitAI is anything that an AI-controlled unit can do in a turn.
+ * Specifically, it's a combination of UnitBehavior's, chosen based on
+ * unit state and random variation.
+ */
 type UnitAI = (unit: Unit) => Promise<void>;
 
 const behaviorMap = {
@@ -47,7 +52,7 @@ const HUMAN_CAUTIOUS: UnitAI = unit => {
 const HUMAN_AGGRESSIVE: UnitAI = unit => {
   const { playerUnit } = jwb.state;
 
-  let behavior;
+  let behavior: UnitBehavior;
   const distanceToPlayer = manhattanDistance(unit, playerUnit);
 
   if (distanceToPlayer === 1) {
@@ -69,9 +74,43 @@ const HUMAN_AGGRESSIVE: UnitAI = unit => {
 
 const FULL_AGGRO: UnitAI = unit => UnitBehaviors.ATTACK_PLAYER(unit);
 
+const HUMAN_DETERMINISTIC: UnitAI = unit => {
+  const { playerUnit, turn } = jwb.state;
+
+  const { aiParams } = unit.unitClass;
+  if (!aiParams) {
+    throw 'HUMAN_DETEERMINISTIC behavior requires aiParams!';
+  }
+  const { speed, visionRange, fleeThreshold } = aiParams;
+
+  let behavior: UnitBehavior;
+  const distanceToPlayer = manhattanDistance(unit, playerUnit);
+
+  if (!_canMove(speed)) {
+    behavior = UnitBehaviors.STAY;
+  } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    behavior = UnitBehaviors.FLEE_FROM_PLAYER;
+  } else if (distanceToPlayer <= visionRange) {
+    behavior = UnitBehaviors.ATTACK_PLAYER;
+  } else {
+    behavior = UnitBehaviors.STAY;
+  }
+  return behavior(unit);
+};
+
+function _canMove(speed: number) {
+  // deterministic version
+  // const { turn } = jwb.state;
+  // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
+
+  // random version
+  return Math.random() < speed;
+}
+
 export {
   UnitAI,
   HUMAN_CAUTIOUS,
   HUMAN_AGGRESSIVE,
-  FULL_AGGRO
+  FULL_AGGRO,
+  HUMAN_DETERMINISTIC
 };

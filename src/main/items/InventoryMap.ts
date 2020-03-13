@@ -17,7 +17,6 @@ class InventoryMap {
     // @ts-ignore
     this._map = {};
     for (const category of categories) {
-      // TODO
       this._map[<ItemCategory>category] = [];
     }
     this.selectedCategory = categories[0];

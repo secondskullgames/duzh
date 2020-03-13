@@ -308,6 +308,7 @@ define("types/types", ["require", "exports"], function (require, exports) {
         UnitType["GHOST"] = "GHOST";
         UnitType["GOLEM"] = "GOLEM";
         UnitType["WIZARD"] = "WIZARD";
+        UnitType["ANIMAL"] = "ANIMAL";
     })(UnitType || (UnitType = {}));
     exports.UnitType = UnitType;
 });
@@ -472,8 +473,8 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
      * @return the heuristic estimated cost from `coordinates` to `goal`
      */
     function h(coordinates, goal) {
-        return MapUtils_1.civDistance(coordinates, goal);
-        // return manhattanDistance(coordinates, goal);
+        // return civDistance(coordinates, goal);
+        return MapUtils_1.manhattanDistance(coordinates, goal);
     }
     /**
      * @return an estimate of the best cost from `start` to `goal` combining both `g` and `h`
@@ -790,7 +791,7 @@ define("types/Directions", ["require", "exports"], function (require, exports) {
 define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions"], function (require, exports, Pathfinder_1, RandomUtils_2, UnitUtils_1, PromiseUtils_2, ArrayUtils_2, MapUtils_2, Directions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function wanderAndAttack(unit) {
+    function _wanderAndAttack(unit) {
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         var tiles = [];
@@ -814,7 +815,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         }
         return PromiseUtils_2.resolvedPromise();
     }
-    function wander(unit) {
+    function _wander(unit) {
         var map = jwb.state.getMap();
         var tiles = [];
         Directions_1.default.values().forEach(function (_a) {
@@ -856,7 +857,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         }
         return PromiseUtils_2.resolvedPromise();
     }
-    function fleeFromPlayerUnit(unit) {
+    function _fleeFromPlayerUnit(unit) {
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         var tiles = [];
@@ -881,9 +882,9 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         return PromiseUtils_2.resolvedPromise();
     }
     var UnitBehaviors = {
-        WANDER: wander,
+        WANDER: _wander,
         ATTACK_PLAYER: _attackPlayerUnit_withPath,
-        FLEE_FROM_PLAYER: fleeFromPlayerUnit,
+        FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
         STAY: function () { return PromiseUtils_2.resolvedPromise(); }
     };
     exports.default = UnitBehaviors;
@@ -955,6 +956,37 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
     exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
     var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER(unit); };
     exports.FULL_AGGRO = FULL_AGGRO;
+    var HUMAN_DETERMINISTIC = function (unit) {
+        var _a = jwb.state, playerUnit = _a.playerUnit, turn = _a.turn;
+        var aiParams = unit.unitClass.aiParams;
+        if (!aiParams) {
+            throw 'HUMAN_DETEERMINISTIC behavior requires aiParams!';
+        }
+        var speed = aiParams.speed, visionRange = aiParams.visionRange, fleeThreshold = aiParams.fleeThreshold;
+        var behavior;
+        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
+        if (!_canMove(speed)) {
+            behavior = UnitBehaviors_1.default.STAY;
+        }
+        else if ((unit.life / unit.maxLife) < fleeThreshold) {
+            behavior = UnitBehaviors_1.default.FLEE_FROM_PLAYER;
+        }
+        else if (distanceToPlayer <= visionRange) {
+            behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
+        }
+        else {
+            behavior = UnitBehaviors_1.default.STAY;
+        }
+        return behavior(unit);
+    };
+    exports.HUMAN_DETERMINISTIC = HUMAN_DETERMINISTIC;
+    function _canMove(speed) {
+        // deterministic version
+        // const { turn } = jwb.state;
+        // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
+        // random version
+        return Math.random() < speed;
+    }
 });
 define("units/UnitClass", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -992,7 +1024,6 @@ define("items/InventoryMap", ["require", "exports", "types/types"], function (re
             this._map = {};
             for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
                 var category = categories_1[_i];
-                // TODO
                 this._map[category] = [];
             }
             this.selectedCategory = categories[0];
@@ -1065,7 +1096,6 @@ define("items/equipment/EquipmentMap", ["require", "exports"], function (require
      */
     var EquipmentMap = /** @class */ (function () {
         function EquipmentMap() {
-            // @ts-ignore
             this._map = {};
         }
         EquipmentMap.prototype.add = function (item) {
@@ -1394,29 +1424,127 @@ define("graphics/sprites/GruntSprite", ["require", "exports", "graphics/ImageSup
     }(Sprite_3.default));
     exports.default = GruntSprite;
 });
-define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "graphics/sprites/PlayerSprite", "types/Colors", "graphics/sprites/GolemSprite", "graphics/sprites/GruntSprite"], function (require, exports, ImageSupplier_4, Sprite_4, PlayerSprite_1, Colors_4, GolemSprite_1, GruntSprite_1) {
+define("graphics/sprites/SnakeSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/ImageUtils", "graphics/sprites/Sprite", "types/Colors", "types/Directions"], function (require, exports, ImageSupplier_4, ImageUtils_5, Sprite_4, Colors_4, Directions_5) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SpriteKey;
+    (function (SpriteKey) {
+        SpriteKey["STANDING_N"] = "STANDING_N";
+        SpriteKey["STANDING_E"] = "STANDING_E";
+        SpriteKey["STANDING_S"] = "STANDING_S";
+        SpriteKey["STANDING_W"] = "STANDING_W";
+        SpriteKey["DAMAGED_N"] = "DAMAGED_N";
+        SpriteKey["DAMAGED_E"] = "DAMAGED_E";
+        SpriteKey["DAMAGED_S"] = "DAMAGED_S";
+        SpriteKey["DAMAGED_W"] = "DAMAGED_W";
+    })(SpriteKey || (SpriteKey = {}));
+    var SnakeSprite = /** @class */ (function (_super) {
+        __extends(SnakeSprite, _super);
+        function SnakeSprite(unit, paletteSwaps) {
+            var _a;
+            var _this = this;
+            var imageMap = (_a = {},
+                _a[SpriteKey.STANDING_N] = new ImageSupplier_4.default('snake_N_1', Colors_4.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_E] = new ImageSupplier_4.default('snake_E_1', Colors_4.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_S] = new ImageSupplier_4.default('snake_S_1', Colors_4.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_W] = new ImageSupplier_4.default('snake_W_1', Colors_4.default.WHITE, paletteSwaps),
+                _a[SpriteKey.DAMAGED_N] = new ImageSupplier_4.default('snake_N_1', Colors_4.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_5.replaceAll(img, Colors_4.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_E] = new ImageSupplier_4.default('snake_E_1', Colors_4.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_5.replaceAll(img, Colors_4.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_S] = new ImageSupplier_4.default('snake_S_1', Colors_4.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_5.replaceAll(img, Colors_4.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_W] = new ImageSupplier_4.default('snake_W_1', Colors_4.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_5.replaceAll(img, Colors_4.default.WHITE); }]),
+                _a);
+            _this = _super.call(this, imageMap, SpriteKey.STANDING_S, { dx: 0, dy: 0 }) || this;
+            _this._unit = unit;
+            return _this;
+        }
+        SnakeSprite.prototype.update = function () {
+            this.key = this._getKey();
+            return this.getImage();
+        };
+        SnakeSprite.prototype._getKey = function () {
+            var direction = this._unit.direction || Directions_5.default.S;
+            var key = this._unit.activity + "_" + Directions_5.default.toString(direction);
+            return key;
+        };
+        return SnakeSprite;
+    }(Sprite_4.default));
+    exports.default = SnakeSprite;
+});
+define("graphics/sprites/SoldierSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_5, Sprite_5, Colors_5, Directions_6, ImageUtils_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SpriteKey;
+    (function (SpriteKey) {
+        SpriteKey["STANDING_N"] = "STANDING_N";
+        SpriteKey["STANDING_E"] = "STANDING_E";
+        SpriteKey["STANDING_S"] = "STANDING_S";
+        SpriteKey["STANDING_W"] = "STANDING_W";
+        SpriteKey["DAMAGED_N"] = "DAMAGED_N";
+        SpriteKey["DAMAGED_E"] = "DAMAGED_E";
+        SpriteKey["DAMAGED_S"] = "DAMAGED_S";
+        SpriteKey["DAMAGED_W"] = "DAMAGED_W";
+    })(SpriteKey || (SpriteKey = {}));
+    /**
+     * A pre-composited, pre-palette-swapped human sprite
+     * with a sword, shield, armor and helmet attached.
+     */
+    var SoldierSprite = /** @class */ (function (_super) {
+        __extends(SoldierSprite, _super);
+        function SoldierSprite(unit, paletteSwaps) {
+            var _a;
+            var _this = this;
+            var imageMap = (_a = {},
+                _a[SpriteKey.STANDING_N] = new ImageSupplier_5.default('soldier_standing_N_1', Colors_5.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_E] = new ImageSupplier_5.default('soldier_standing_E_1', Colors_5.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_S] = new ImageSupplier_5.default('soldier_standing_S_1', Colors_5.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_W] = new ImageSupplier_5.default('soldier_standing_W_1', Colors_5.default.WHITE, paletteSwaps),
+                _a[SpriteKey.DAMAGED_N] = new ImageSupplier_5.default('soldier_standing_N_1', Colors_5.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_6.replaceAll(img, Colors_5.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_E] = new ImageSupplier_5.default('soldier_standing_E_1', Colors_5.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_6.replaceAll(img, Colors_5.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_S] = new ImageSupplier_5.default('soldier_standing_S_1', Colors_5.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_6.replaceAll(img, Colors_5.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_W] = new ImageSupplier_5.default('soldier_standing_W_1', Colors_5.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_6.replaceAll(img, Colors_5.default.WHITE); }]),
+                _a);
+            _this = _super.call(this, imageMap, SpriteKey.STANDING_S, { dx: -4, dy: -20 }) || this;
+            _this._unit = unit;
+            return _this;
+        }
+        SoldierSprite.prototype.update = function () {
+            this.key = this._getKey();
+            return this.getImage();
+        };
+        SoldierSprite.prototype._getKey = function () {
+            var direction = this._unit.direction || Directions_6.default.S;
+            var key = this._unit.activity + "_" + Directions_6.default.toString(direction);
+            return key;
+        };
+        return SoldierSprite;
+    }(Sprite_5.default));
+    exports.default = SoldierSprite;
+});
+define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "graphics/sprites/PlayerSprite", "graphics/sprites/GolemSprite", "graphics/sprites/GruntSprite", "graphics/sprites/SnakeSprite", "graphics/sprites/SoldierSprite"], function (require, exports, ImageSupplier_6, Sprite_6, Colors_6, PlayerSprite_1, GolemSprite_1, GruntSprite_1, SnakeSprite_1, SoldierSprite_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DEFAULT_SPRITE_KEY = 'default';
     function _staticSprite(imageLoader, _a) {
         var _b;
         var dx = _a.dx, dy = _a.dy;
-        return new Sprite_4.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
+        return new Sprite_6.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
     var StaticSprites = {
-        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('tile_wall', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('tile_wall_hall', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('tile_floor', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('tile_floor_hall', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('sword_icon_small', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('potion_small', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('scroll_icon', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_4.default('stairs_down2', Colors_4.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
+        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('tile_wall', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('tile_wall_hall', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('tile_floor', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('tile_floor_hall', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('sword_icon_small', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('potion_small', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('scroll_icon', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_6.default('stairs_down2', Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
     };
     var UnitSprites = {
         PLAYER: function (unit, paletteSwaps) { return new PlayerSprite_1.default(unit, paletteSwaps); },
         GOLEM: function (unit, paletteSwaps) { return new GolemSprite_1.default(unit, paletteSwaps); },
-        GRUNT: function (unit, paletteSwaps) { return new GruntSprite_1.default(unit, paletteSwaps); }
+        GRUNT: function (unit, paletteSwaps) { return new GruntSprite_1.default(unit, paletteSwaps); },
+        SNAKE: function (unit, paletteSwaps) { return new SnakeSprite_1.default(unit, paletteSwaps); },
+        SOLDIER: function (unit, paletteSwaps) { return new SoldierSprite_1.default(unit, paletteSwaps); }
     };
     // the following does not work: { ...StaticSprites, ...UnitSprites }
     // :(
@@ -1431,7 +1559,9 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
         PLAYER: UnitSprites.PLAYER,
         GOLEM: UnitSprites.GOLEM,
-        GRUNT: UnitSprites.GRUNT
+        GRUNT: UnitSprites.GRUNT,
+        SNAKE: UnitSprites.SNAKE,
+        SOLDIER: UnitSprites.SOLDIER
     };
 });
 define("types/Tiles", ["require", "exports", "graphics/sprites/SpriteFactory"], function (require, exports, SpriteFactory_1) {
@@ -1596,7 +1726,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_4, actions_1, PromiseUtils_4, Colors_5) {
+define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_4, actions_1, PromiseUtils_4, Colors_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1642,7 +1772,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
         SpriteRenderer.prototype._renderGameScreen = function () {
             var _this = this;
             actions_1.revealTiles();
-            this._context.fillStyle = Colors_5.default.BLACK;
+            this._context.fillStyle = Colors_7.default.BLACK;
             this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
             return PromiseUtils_4.chainPromises([
                 function () { return _this._renderTiles(); },
@@ -1674,7 +1804,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var item = map.getItem({ x: x, y: y });
                         if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_7.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             promises.push(this._renderElement(item, { x: x, y: y }));
                         }
                     }
@@ -1692,10 +1822,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                         var unit = map.getUnit({ x: x, y: y });
                         if (!!unit) {
                             if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_7.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_7.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             promises.push(this._renderElement(unit, { x: x, y: y }));
                         }
@@ -1728,7 +1858,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
             var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
             // draw titles
-            _context.fillStyle = Colors_5.default.WHITE;
+            _context.fillStyle = Colors_7.default.WHITE;
             _context.textAlign = 'center';
             _context.font = '20px Monospace';
             _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
@@ -1765,14 +1895,14 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                     if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = Colors_5.default.YELLOW;
+                        _context.fillStyle = Colors_7.default.YELLOW;
                     }
                     else {
-                        _context.fillStyle = Colors_5.default.WHITE;
+                        _context.fillStyle = Colors_7.default.WHITE;
                     }
                     _context.fillText(items[i].name, x, y_1);
                 }
-                _context.fillStyle = Colors_5.default.WHITE;
+                _context.fillStyle = Colors_7.default.WHITE;
             }
             return PromiseUtils_4.resolvedPromise();
         };
@@ -1836,12 +1966,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var _context = this._context;
             return new Promise(function (resolve) {
                 var messages = jwb.state.messages;
-                _context.fillStyle = Colors_5.default.BLACK;
-                _context.strokeStyle = Colors_5.default.WHITE;
+                _context.fillStyle = Colors_7.default.BLACK;
+                _context.strokeStyle = Colors_7.default.WHITE;
                 var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = Colors_5.default.WHITE;
+                _context.fillStyle = Colors_7.default.WHITE;
                 _context.textAlign = 'left';
                 _context.font = '10px sans-serif';
                 var textLeft = left + 4;
@@ -1860,7 +1990,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
             var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
             _context.textAlign = 'left';
-            _context.fillStyle = Colors_5.default.WHITE;
+            _context.fillStyle = Colors_7.default.WHITE;
             var textLeft = left + 4;
             _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
@@ -1869,9 +1999,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
             var _context = this._context;
-            _context.fillStyle = Colors_5.default.BLACK;
+            _context.fillStyle = Colors_7.default.BLACK;
             _context.fillRect(left, top, width, height);
-            _context.strokeStyle = Colors_5.default.WHITE;
+            _context.strokeStyle = Colors_7.default.WHITE;
             _context.strokeRect(left, top, width, height);
         };
         /**
@@ -1889,7 +2019,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     }());
     exports.default = SpriteRenderer;
 });
-define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_5, SpriteFactory_2, Colors_6) {
+define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_5, SpriteFactory_2, Colors_8) {
     "use strict";
     var _a, _b, _c, _d;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -1900,13 +2030,13 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_5.EquipmentSlot.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_a = {},
-            _a[Colors_6.default.BLACK] = Colors_6.default.BLACK,
-            _a[Colors_6.default.DARK_GRAY] = Colors_6.default.LIGHT_BROWN,
-            _a[Colors_6.default.LIGHT_GRAY] = Colors_6.default.LIGHT_BROWN,
+            _a[Colors_8.default.BLACK] = Colors_8.default.BLACK,
+            _a[Colors_8.default.DARK_GRAY] = Colors_8.default.LIGHT_BROWN,
+            _a[Colors_8.default.LIGHT_GRAY] = Colors_8.default.LIGHT_BROWN,
             _a),
-        damage: 6,
+        damage: 4,
         minLevel: 1,
-        maxLevel: 3
+        maxLevel: 2
     };
     var IRON_SWORD = {
         name: 'Iron Sword',
@@ -1915,11 +2045,11 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_5.EquipmentSlot.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_b = {},
-            _b[Colors_6.default.DARK_GRAY] = Colors_6.default.BLACK,
-            _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARK_GRAY,
+            _b[Colors_8.default.DARK_GRAY] = Colors_8.default.BLACK,
+            _b[Colors_8.default.LIGHT_GRAY] = Colors_8.default.DARK_GRAY,
             _b),
-        damage: 9,
-        minLevel: 2,
+        damage: 7,
+        minLevel: 3,
         maxLevel: 4
     };
     var STEEL_SWORD = {
@@ -1929,10 +2059,10 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_5.EquipmentSlot.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_c = {},
-            _c[Colors_6.default.DARK_GRAY] = Colors_6.default.DARK_GRAY,
-            _c[Colors_6.default.LIGHT_GRAY] = Colors_6.default.LIGHT_GRAY,
+            _c[Colors_8.default.DARK_GRAY] = Colors_8.default.DARK_GRAY,
+            _c[Colors_8.default.LIGHT_GRAY] = Colors_8.default.LIGHT_GRAY,
             _c),
-        damage: 12,
+        damage: 10,
         minLevel: 4,
         maxLevel: 6
     };
@@ -1943,11 +2073,11 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_5.EquipmentSlot.WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_d = {},
-            _d[Colors_6.default.DARK_GRAY] = Colors_6.default.YELLOW,
-            _d[Colors_6.default.LIGHT_GRAY] = Colors_6.default.RED,
-            _d[Colors_6.default.BLACK] = Colors_6.default.DARK_RED,
+            _d[Colors_8.default.DARK_GRAY] = Colors_8.default.YELLOW,
+            _d[Colors_8.default.LIGHT_GRAY] = Colors_8.default.RED,
+            _d[Colors_8.default.BLACK] = Colors_8.default.DARK_RED,
             _d),
-        damage: 16,
+        damage: 14,
         minLevel: 5,
         maxLevel: 6
     };
@@ -2340,6 +2470,9 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 return !room.exits.some(function (exit) { return MapUtils_5.isAdjacent(exit, { x: x, y: y }); });
             });
         };
+        /**
+         * Find a path between the specified exits between rooms.
+         */
         DungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
             var blockedTileDetector = function (_a) {
                 var x = _a.x, y = _a.y;
@@ -2374,7 +2507,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             };
             // prefer reusing floor hall tiles
             var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === Tiles_2.default.FLOOR_HALL) ? 0.1 : 1;
+                return (section.tiles[second.y][second.x] === Tiles_2.default.FLOOR_HALL) ? 0.01 : 1;
             };
             var mapRect = {
                 left: 0,
@@ -2433,9 +2566,9 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
     }());
     exports.default = DungeonGenerator;
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_7, types_7, UnitAI_1) {
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_9, types_7, UnitAI_1) {
     "use strict";
-    var _a, _b, _c, _d, _e;
+    var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
     var PLAYER = {
         name: 'PLAYER',
@@ -2443,16 +2576,16 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         sprite: SpriteFactory_4.default.PLAYER,
         // Green/brown colors
         paletteSwaps: (_a = {},
-            _a[Colors_7.default.DARK_PURPLE] = Colors_7.default.DARK_BROWN,
-            _a[Colors_7.default.MAGENTA] = Colors_7.default.DARK_GREEN,
-            _a[Colors_7.default.DARK_BLUE] = Colors_7.default.DARK_GREEN,
-            _a[Colors_7.default.CYAN] = Colors_7.default.LIGHT_PINK,
-            _a[Colors_7.default.BLACK] = Colors_7.default.BLACK,
-            _a[Colors_7.default.DARK_GRAY] = Colors_7.default.DARK_BROWN,
-            _a[Colors_7.default.LIGHT_GRAY] = Colors_7.default.LIGHT_BROWN,
-            _a[Colors_7.default.DARK_GREEN] = Colors_7.default.DARK_BROWN,
-            _a[Colors_7.default.GREEN] = Colors_7.default.DARK_BROWN,
-            _a[Colors_7.default.ORANGE] = Colors_7.default.LIGHT_PINK // Face
+            _a[Colors_9.default.DARK_PURPLE] = Colors_9.default.DARK_BROWN,
+            _a[Colors_9.default.MAGENTA] = Colors_9.default.DARK_GREEN,
+            _a[Colors_9.default.DARK_BLUE] = Colors_9.default.DARK_GREEN,
+            _a[Colors_9.default.CYAN] = Colors_9.default.LIGHT_PINK,
+            _a[Colors_9.default.BLACK] = Colors_9.default.BLACK,
+            _a[Colors_9.default.DARK_GRAY] = Colors_9.default.DARK_BROWN,
+            _a[Colors_9.default.LIGHT_GRAY] = Colors_9.default.LIGHT_BROWN,
+            _a[Colors_9.default.DARK_GREEN] = Colors_9.default.DARK_BROWN,
+            _a[Colors_9.default.GREEN] = Colors_9.default.DARK_BROWN,
+            _a[Colors_9.default.ORANGE] = Colors_9.default.LIGHT_PINK // Face
         ,
             _a),
         startingLife: 100,
@@ -2462,133 +2595,98 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         maxLevel: 20,
         lifePerLevel: function (level) { return 10; },
         manaPerLevel: function (level) { return 0; },
-        damagePerLevel: function (level) { return 2; },
+        damagePerLevel: function (level) { return 1; },
         experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 4 : null; },
     };
-    var ENEMY_HUMAN_BLUE = {
-        name: 'ENEMY_HUMAN_BLUE',
-        type: types_7.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.PLAYER,
-        paletteSwaps: (_b = {},
-            _b[Colors_7.default.DARK_PURPLE] = Colors_7.default.MEDIUM_BLUE,
-            _b[Colors_7.default.MAGENTA] = Colors_7.default.MEDIUM_BLUE,
-            _b[Colors_7.default.DARK_BLUE] = Colors_7.default.MEDIUM_BLUE,
-            _b[Colors_7.default.CYAN] = Colors_7.default.LIGHT_PINK,
-            _b[Colors_7.default.BLACK] = Colors_7.default.MEDIUM_BLUE,
-            _b[Colors_7.default.DARK_GRAY] = Colors_7.default.DARK_BLUE,
-            _b[Colors_7.default.LIGHT_GRAY] = Colors_7.default.DARK_BLUE,
-            _b[Colors_7.default.DARK_GREEN] = Colors_7.default.BLACK,
-            _b[Colors_7.default.GREEN] = Colors_7.default.BLACK,
-            _b[Colors_7.default.ORANGE] = Colors_7.default.LIGHT_PINK // Face
-        ,
-            _b),
-        startingLife: 75,
+    var ENEMY_SNAKE = {
+        name: 'ENEMY_SNAKE',
+        type: types_7.UnitType.ANIMAL,
+        sprite: SpriteFactory_4.default.SNAKE,
+        paletteSwaps: {},
+        startingLife: 60,
         startingMana: null,
-        startingDamage: 4,
+        startingDamage: 5,
         minLevel: 1,
         maxLevel: 3,
-        lifePerLevel: function () { return 12; },
+        lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
-        aiHandler: UnitAI_1.HUMAN_CAUTIOUS,
-    };
-    var ENEMY_HUMAN_RED = {
-        name: 'ENEMY_HUMAN_RED',
-        type: types_7.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.PLAYER,
-        paletteSwaps: (_c = {},
-            _c[Colors_7.default.DARK_PURPLE] = Colors_7.default.MEDIUM_RED,
-            _c[Colors_7.default.MAGENTA] = Colors_7.default.MEDIUM_RED,
-            _c[Colors_7.default.DARK_BLUE] = Colors_7.default.MEDIUM_RED,
-            _c[Colors_7.default.CYAN] = Colors_7.default.LIGHT_PINK,
-            _c[Colors_7.default.BLACK] = Colors_7.default.MEDIUM_RED,
-            _c[Colors_7.default.DARK_GRAY] = Colors_7.default.DARK_RED,
-            _c[Colors_7.default.LIGHT_GRAY] = Colors_7.default.DARK_RED,
-            _c[Colors_7.default.DARK_GREEN] = Colors_7.default.BLACK,
-            _c[Colors_7.default.GREEN] = Colors_7.default.BLACK,
-            _c[Colors_7.default.ORANGE] = Colors_7.default.LIGHT_PINK // Face
-        ,
-            _c),
-        startingLife: 55,
-        startingMana: null,
-        startingDamage: 6,
-        minLevel: 1,
-        maxLevel: 5,
-        lifePerLevel: function () { return 10; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 3; },
-        aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
-    };
-    var ENEMY_HUMAN_BLACK = {
-        name: 'ENEMY_HUMAN_BLACK',
-        type: types_7.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.PLAYER,
-        paletteSwaps: (_d = {},
-            _d[Colors_7.default.DARK_PURPLE] = Colors_7.default.DARKER_GRAY,
-            _d[Colors_7.default.MAGENTA] = Colors_7.default.DARKER_GRAY,
-            _d[Colors_7.default.DARK_BLUE] = Colors_7.default.DARKER_GRAY,
-            _d[Colors_7.default.CYAN] = Colors_7.default.BLACK,
-            _d[Colors_7.default.BLACK] = Colors_7.default.LIGHT_GRAY,
-            _d[Colors_7.default.DARK_GRAY] = Colors_7.default.DARKER_GRAY,
-            _d[Colors_7.default.LIGHT_GRAY] = Colors_7.default.DARKER_GRAY,
-            _d[Colors_7.default.DARK_GREEN] = Colors_7.default.BLACK,
-            _d[Colors_7.default.GREEN] = Colors_7.default.BLACK,
-            _d[Colors_7.default.ORANGE] = Colors_7.default.LIGHT_GRAY,
-            _d[Colors_7.default.TEAL] = Colors_7.default.RED,
-            _d[Colors_7.default.LIGHT_BROWN] = Colors_7.default.LIGHT_GRAY // Hair
-        ,
-            _d),
-        startingLife: 100,
-        startingMana: null,
-        startingDamage: 10,
-        minLevel: 3,
-        maxLevel: 9,
-        lifePerLevel: function () { return 18; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 4; },
-        aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
-    };
-    var ENEMY_GOLEM = {
-        name: 'ENEMY_GOLEM',
-        type: types_7.UnitType.GOLEM,
-        sprite: SpriteFactory_4.default.GOLEM,
-        paletteSwaps: (_e = {},
-            _e[Colors_7.default.DARK_GRAY] = Colors_7.default.TEAL,
-            _e[Colors_7.default.LIGHT_GRAY] = Colors_7.default.TEAL,
-            _e),
-        startingLife: 150,
-        startingMana: null,
-        startingDamage: 20,
-        minLevel: 5,
-        maxLevel: 9,
-        lifePerLevel: function () { return 30; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 6; },
-        aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
+        // aiHandler: HUMAN_CAUTIOUS,
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.95,
+            visionRange: 12,
+            fleeThreshold: 0.5
+        }
     };
     var ENEMY_GRUNT = {
         name: 'ENEMY_GRUNT',
         type: types_7.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.GRUNT,
         paletteSwaps: {},
-        startingLife: 100,
+        startingLife: 90,
         startingMana: null,
-        startingDamage: 10,
+        startingDamage: 9,
+        minLevel: 1,
+        maxLevel: 4,
+        lifePerLevel: function () { return 15; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 2; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.6,
+            visionRange: 8,
+            fleeThreshold: 0.4
+        }
+    };
+    var ENEMY_SOLDIER = {
+        name: 'ENEMY_SOLDIER',
+        type: types_7.UnitType.HUMAN,
+        sprite: SpriteFactory_4.default.SOLDIER,
+        paletteSwaps: {},
+        startingLife: 120,
+        startingMana: null,
+        startingDamage: 12,
         minLevel: 3,
-        maxLevel: 9,
-        lifePerLevel: function () { return 18; },
+        maxLevel: 6,
+        lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 4; },
-        aiHandler: UnitAI_1.HUMAN_AGGRESSIVE
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.9,
+            visionRange: 10,
+            fleeThreshold: 0.25
+        }
+    };
+    var ENEMY_GOLEM = {
+        name: 'ENEMY_GOLEM',
+        type: types_7.UnitType.GOLEM,
+        sprite: SpriteFactory_4.default.GOLEM,
+        paletteSwaps: (_b = {},
+            _b[Colors_9.default.DARK_GRAY] = Colors_9.default.DARKER_GRAY,
+            _b[Colors_9.default.LIGHT_GRAY] = Colors_9.default.DARKER_GRAY,
+            _b),
+        startingLife: 150,
+        startingMana: null,
+        startingDamage: 30,
+        minLevel: 5,
+        maxLevel: 9,
+        lifePerLevel: function () { return 30; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 5; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.6,
+            visionRange: 12,
+            fleeThreshold: 0
+        }
     };
     function getEnemyClasses() {
-        return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK, ENEMY_GRUNT, ENEMY_GOLEM];
+        return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
     }
     exports.default = {
         PLAYER: PLAYER,
-        ENEMY_HUMAN_BLUE: ENEMY_HUMAN_BLUE,
-        ENEMY_HUMAN_RED: ENEMY_HUMAN_RED,
-        ENEMY_HUMAN_BLACK: ENEMY_HUMAN_BLACK,
         ENEMY_GRUNT: ENEMY_GRUNT,
         ENEMY_GOLEM: ENEMY_GOLEM,
         getEnemyClasses: getEnemyClasses
@@ -2612,8 +2710,9 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
 define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/DungeonGenerator", "units/UnitFactory"], function (require, exports, ItemFactory_1, DungeonGenerator_1, UnitFactory_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var MIN_ROOM_DIMENSION = 5;
-    var MAX_ROOM_DIMENSION = 8;
+    // outer dimensions
+    var MIN_ROOM_DIMENSION = 6;
+    var MAX_ROOM_DIMENSION = 9;
     var MIN_ROOM_PADDING = 2;
     function createRandomMap(level, width, height, numEnemies, numItems) {
         var dungeonGenerator = new DungeonGenerator_1.default(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING);
@@ -3173,15 +3272,15 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
     }());
     exports.default = AsciiRenderer;
 });
-define("graphics/sprites/SpriteClasses", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "graphics/ImageUtils"], function (require, exports, ImageSupplier_5, Colors_8, ImageUtils_5) {
+define("graphics/sprites/SpriteClasses", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "graphics/ImageUtils"], function (require, exports, ImageSupplier_7, Colors_10, ImageUtils_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteClasses = {
         PLAYER: {
             name: 'PLAYER',
             imageMap: {
-                STANDING: function (paletteSwaps) { return new ImageSupplier_5.default('player_standing_SE_1', Colors_8.default.WHITE, paletteSwaps); },
-                STANDING_DAMAGED: function (paletteSwaps) { return new ImageSupplier_5.default('player_standing_SE_1', Colors_8.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_5.replaceAll(img, Colors_8.default.WHITE); }]); }
+                STANDING: function (paletteSwaps) { return new ImageSupplier_7.default('player_standing_SE_1', Colors_10.default.WHITE, paletteSwaps); },
+                STANDING_DAMAGED: function (paletteSwaps) { return new ImageSupplier_7.default('player_standing_SE_1', Colors_10.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_7.replaceAll(img, Colors_10.default.WHITE); }]); }
             }
         }
     };
@@ -3238,7 +3337,7 @@ define("maps/AsciiMaps", ["require", "exports", "units/UnitClasses", "units/Unit
             enemyUnitLocations: enemyUnitLocations,
             enemyUnitSupplier: function (_a) {
                 var x = _a.x, y = _a.y;
-                return new Unit_4.default(UnitClasses_3.default.ENEMY_HUMAN_BLUE, 'enemy_blue', level, { x: x, y: y });
+                return new Unit_4.default(UnitClasses_3.default.ENEMY_GRUNT, 'enemy_grunt', level, { x: x, y: y });
             },
             itemLocations: [],
             itemSupplier: function () {

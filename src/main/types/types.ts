@@ -76,7 +76,8 @@ enum UnitType {
   ELEMENTAL = 'ELEMENTAL',
   GHOST = 'GHOST',
   GOLEM = 'GOLEM',
-  WIZARD = 'WIZARD'
+  WIZARD = 'WIZARD',
+  ANIMAL = 'ANIMAL'
 }
 
 export {

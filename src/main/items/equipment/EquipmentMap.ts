@@ -8,7 +8,6 @@ class EquipmentMap {
   private readonly _map: { [slot in EquipmentSlot]?: EquippedItem };
 
   constructor() {
-    // @ts-ignore
     this._map = {};
   }
 

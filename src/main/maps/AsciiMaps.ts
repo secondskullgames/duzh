@@ -78,7 +78,7 @@ function _mapFromAscii(ascii: string, level: number): MapSupplier {
     rooms: [], // TODO
     playerUnitLocation,
     enemyUnitLocations,
-    enemyUnitSupplier: ({ x, y }) => new Unit(UnitClasses.ENEMY_HUMAN_BLUE, 'enemy_blue', level, { x, y }),
+    enemyUnitSupplier: ({ x, y }) => new Unit(UnitClasses.ENEMY_GRUNT, 'enemy_grunt', level, { x, y }),
     itemLocations: [],
     itemSupplier: () => {
       throw 'unsupported';

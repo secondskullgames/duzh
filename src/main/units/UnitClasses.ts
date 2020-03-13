@@ -2,7 +2,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitClass from './UnitClass';
 import Colors from '../types/Colors';
 import { UnitType } from '../types/types';
-import { HUMAN_AGGRESSIVE, HUMAN_CAUTIOUS } from './UnitAI';
+import { HUMAN_AGGRESSIVE, HUMAN_CAUTIOUS, HUMAN_DETERMINISTIC } from './UnitAI';
 
 const PLAYER: UnitClass = {
   name: 'PLAYER',
@@ -28,110 +28,30 @@ const PLAYER: UnitClass = {
   maxLevel: 20,
   lifePerLevel: level => 10,
   manaPerLevel: level => 0,
-  damagePerLevel: level => 2,
+  damagePerLevel: level => 1,
   experienceToNextLevel: currentLevel => (currentLevel < 10) ? 2 * currentLevel + 4: null, // 6, 8, 10, 12, 14...
 };
 
-const ENEMY_HUMAN_BLUE: UnitClass = {
-  name: 'ENEMY_HUMAN_BLUE',
-  type: UnitType.HUMAN,
-  sprite: SpriteFactory.PLAYER,
-  paletteSwaps: {
-    [Colors.DARK_PURPLE]: Colors.MEDIUM_BLUE, // Shirt
-    [Colors.MAGENTA]: Colors.MEDIUM_BLUE, // Upper Sleeves
-    [Colors.DARK_BLUE]: Colors.MEDIUM_BLUE, // Lower sleeves
-    [Colors.CYAN]: Colors.LIGHT_PINK, // Hands
-    [Colors.BLACK]: Colors.MEDIUM_BLUE, // Belt
-    [Colors.DARK_GRAY]: Colors.DARK_BLUE, // Skirt
-    [Colors.LIGHT_GRAY]: Colors.DARK_BLUE, // Legs
-    [Colors.DARK_GREEN]: Colors.BLACK, // Socks
-    [Colors.GREEN]: Colors.BLACK, // Shoes
-    [Colors.ORANGE]: Colors.LIGHT_PINK // Face
-  },
-  startingLife: 75,
+const ENEMY_SNAKE: UnitClass = {
+  name: 'ENEMY_SNAKE',
+  type: UnitType.ANIMAL,
+  sprite: SpriteFactory.SNAKE,
+  paletteSwaps: {},
+  startingLife: 60,
   startingMana: null,
-  startingDamage: 4,
+  startingDamage: 5,
   minLevel: 1,
   maxLevel: 3,
-  lifePerLevel: () => 12,
+  lifePerLevel: () => 15,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
-  aiHandler: HUMAN_CAUTIOUS,
-};
-
-const ENEMY_HUMAN_RED: UnitClass = {
-  name: 'ENEMY_HUMAN_RED',
-  type: UnitType.HUMAN,
-  sprite: SpriteFactory.PLAYER,
-  paletteSwaps: {
-    [Colors.DARK_PURPLE]: Colors.MEDIUM_RED, // Shirt
-    [Colors.MAGENTA]: Colors.MEDIUM_RED, // Upper Sleeves
-    [Colors.DARK_BLUE]: Colors.MEDIUM_RED, // Lower sleeves
-    [Colors.CYAN]: Colors.LIGHT_PINK, // Hands
-    [Colors.BLACK]: Colors.MEDIUM_RED, // Belt
-    [Colors.DARK_GRAY]: Colors.DARK_RED, // Skirt
-    [Colors.LIGHT_GRAY]: Colors.DARK_RED, // Legs
-    [Colors.DARK_GREEN]: Colors.BLACK, // Socks
-    [Colors.GREEN]: Colors.BLACK, // Shoes
-    [Colors.ORANGE]: Colors.LIGHT_PINK // Face
-  },
-  startingLife: 55,
-  startingMana: null,
-  startingDamage: 6,
-  minLevel: 1,
-  maxLevel: 5,
-  lifePerLevel: () => 10,
-  manaPerLevel: () => null,
-  damagePerLevel: () => 3,
-  aiHandler: HUMAN_AGGRESSIVE
-};
-
-const ENEMY_HUMAN_BLACK: UnitClass = {
-  name: 'ENEMY_HUMAN_BLACK',
-  type: UnitType.HUMAN,
-  sprite: SpriteFactory.PLAYER,
-  paletteSwaps: {
-    [Colors.DARK_PURPLE]: Colors.DARKER_GRAY, // Shirt
-    [Colors.MAGENTA]: Colors.DARKER_GRAY, // Upper Sleeves
-    [Colors.DARK_BLUE]: Colors.DARKER_GRAY, // Lower sleeves
-    [Colors.CYAN]: Colors.BLACK, // Hands
-    [Colors.BLACK]: Colors.LIGHT_GRAY, // Belt
-    [Colors.DARK_GRAY]: Colors.DARKER_GRAY, // Skirt
-    [Colors.LIGHT_GRAY]: Colors.DARKER_GRAY, // Legs
-    [Colors.DARK_GREEN]: Colors.BLACK, // Socks
-    [Colors.GREEN]: Colors.BLACK, // Shoes
-    [Colors.ORANGE]: Colors.LIGHT_GRAY, // Face
-    [Colors.TEAL]: Colors.RED, // Eyes
-    [Colors.LIGHT_BROWN]: Colors.LIGHT_GRAY // Hair
-  },
-  startingLife: 100,
-  startingMana: null,
-  startingDamage: 10,
-  minLevel: 3,
-  maxLevel: 9,
-  lifePerLevel: () => 18,
-  manaPerLevel: () => null,
-  damagePerLevel: () => 4,
-  aiHandler: HUMAN_AGGRESSIVE
-};
-
-const ENEMY_GOLEM: UnitClass = {
-  name: 'ENEMY_GOLEM',
-  type: UnitType.GOLEM,
-  sprite: SpriteFactory.GOLEM,
-  paletteSwaps: {
-    [Colors.DARK_GRAY]: Colors.TEAL,
-    [Colors.LIGHT_GRAY]: Colors.TEAL,
-  },
-  startingLife: 150,
-  startingMana: null,
-  startingDamage: 20,
-  minLevel: 5,
-  maxLevel: 9,
-  lifePerLevel: () => 30,
-  manaPerLevel: () => null,
-  damagePerLevel: () => 6,
-  aiHandler: HUMAN_AGGRESSIVE
+  // aiHandler: HUMAN_CAUTIOUS,
+  aiHandler: HUMAN_DETERMINISTIC,
+  aiParams: {
+    speed: 0.95,
+    visionRange: 12,
+    fleeThreshold: 0.5
+  }
 };
 
 const ENEMY_GRUNT: UnitClass = {
@@ -139,26 +59,73 @@ const ENEMY_GRUNT: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.GRUNT,
   paletteSwaps: {},
-  startingLife: 100,
+  startingLife: 90,
   startingMana: null,
-  startingDamage: 10,
+  startingDamage: 9,
+  minLevel: 1,
+  maxLevel: 4,
+  lifePerLevel: () => 15,
+  manaPerLevel: () => null,
+  damagePerLevel: () => 2,
+  aiHandler: HUMAN_DETERMINISTIC,
+  aiParams: {
+    speed: 0.6,
+    visionRange: 8,
+    fleeThreshold: 0.4
+  }
+};
+
+const ENEMY_SOLDIER: UnitClass = {
+  name: 'ENEMY_SOLDIER',
+  type: UnitType.HUMAN,
+  sprite: SpriteFactory.SOLDIER,
+  paletteSwaps: {},
+  startingLife: 120,
+  startingMana: null,
+  startingDamage: 12,
   minLevel: 3,
-  maxLevel: 9,
-  lifePerLevel: () => 18,
+  maxLevel: 6,
+  lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 4,
-  aiHandler: HUMAN_AGGRESSIVE
+  aiHandler: HUMAN_DETERMINISTIC,
+  aiParams: {
+    speed: 0.9,
+    visionRange: 10,
+    fleeThreshold: 0.25
+  }
+};
+
+const ENEMY_GOLEM: UnitClass = {
+  name: 'ENEMY_GOLEM',
+  type: UnitType.GOLEM,
+  sprite: SpriteFactory.GOLEM,
+  paletteSwaps: {
+    [Colors.DARK_GRAY]: Colors.DARKER_GRAY,
+    [Colors.LIGHT_GRAY]: Colors.DARKER_GRAY,
+  },
+  startingLife: 150,
+  startingMana: null,
+  startingDamage: 30,
+  minLevel: 5,
+  maxLevel: 9,
+  lifePerLevel: () => 30,
+  manaPerLevel: () => null,
+  damagePerLevel: () => 5,
+  aiHandler: HUMAN_DETERMINISTIC,
+  aiParams: {
+    speed: 0.6,
+    visionRange: 12,
+    fleeThreshold: 0
+  }
 };
 
 function getEnemyClasses() {
-  return [ENEMY_HUMAN_BLUE, ENEMY_HUMAN_RED, ENEMY_HUMAN_BLACK, ENEMY_GRUNT, ENEMY_GOLEM];
+  return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
 }
 
 export default {
   PLAYER,
-  ENEMY_HUMAN_BLUE,
-  ENEMY_HUMAN_RED,
-  ENEMY_HUMAN_BLACK,
   ENEMY_GRUNT,
   ENEMY_GOLEM,
   getEnemyClasses

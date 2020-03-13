@@ -1,10 +1,12 @@
 import ImageSupplier from '../ImageSupplier';
 import Sprite from './Sprite';
-import PlayerSprite from './PlayerSprite';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
+import PlayerSprite from './PlayerSprite';
 import GolemSprite from './GolemSprite';
 import GruntSprite from './GruntSprite';
+import SnakeSprite from './SnakeSprite';
+import SoldierSprite from './SoldierSprite';
 import { PaletteSwaps, SpriteSupplier } from '../../types/types';
 
 const DEFAULT_SPRITE_KEY = 'default';
@@ -29,7 +31,9 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
   PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
   GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps),
-  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new GruntSprite(unit, paletteSwaps)
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new GruntSprite(unit, paletteSwaps),
+  SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new SnakeSprite(unit, paletteSwaps),
+  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new SoldierSprite(unit, paletteSwaps)
 };
 
 // the following does not work: { ...StaticSprites, ...UnitSprites }
@@ -45,5 +49,7 @@ export default {
   STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
   PLAYER: UnitSprites.PLAYER,
   GOLEM: UnitSprites.GOLEM,
-  GRUNT: UnitSprites.GRUNT
+  GRUNT: UnitSprites.GRUNT,
+  SNAKE: UnitSprites.SNAKE,
+  SOLDIER: UnitSprites.SOLDIER
 };

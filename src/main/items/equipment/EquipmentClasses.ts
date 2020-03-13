@@ -25,9 +25,9 @@ const BRONZE_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.LIGHT_BROWN,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_BROWN
   },
-  damage: 6,
+  damage: 4,
   minLevel: 1,
-  maxLevel: 3
+  maxLevel: 2
 };
 
 const IRON_SWORD: EquipmentClass = {
@@ -40,8 +40,8 @@ const IRON_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.BLACK,
     [Colors.LIGHT_GRAY]: Colors.DARK_GRAY
   },
-  damage: 9,
-  minLevel: 2,
+  damage: 7,
+  minLevel: 3,
   maxLevel: 4
 };
 
@@ -55,7 +55,7 @@ const STEEL_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_GRAY
   },
-  damage: 12,
+  damage: 10,
   minLevel: 4,
   maxLevel: 6
 };
@@ -71,7 +71,7 @@ const FIRE_SWORD: EquipmentClass = {
     [Colors.LIGHT_GRAY]: Colors.RED,
     [Colors.BLACK]: Colors.DARK_RED
   },
-  damage: 16,
+  damage: 14,
   minLevel: 5,
   maxLevel: 6
 };

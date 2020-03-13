@@ -10,7 +10,7 @@ import Directions from '../types/Directions';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
-function wanderAndAttack(unit: Unit): Promise<void> {
+function _wanderAndAttack(unit: Unit): Promise<void> {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
@@ -34,7 +34,7 @@ function wanderAndAttack(unit: Unit): Promise<void> {
   return resolvedPromise();
 }
 
-function wander(unit: Unit): Promise<void> {
+function _wander(unit: Unit): Promise<void> {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
   Directions.values().forEach(({ dx, dy }) => {
@@ -80,7 +80,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
   return resolvedPromise();
 }
 
-function fleeFromPlayerUnit(unit: Unit): Promise<void> {
+function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
 
@@ -106,9 +106,9 @@ function fleeFromPlayerUnit(unit: Unit): Promise<void> {
 }
 
 const UnitBehaviors: { [name: string]: UnitBehavior } = {
-  WANDER: wander,
+  WANDER: _wander,
   ATTACK_PLAYER: _attackPlayerUnit_withPath,
-  FLEE_FROM_PLAYER: fleeFromPlayerUnit,
+  FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
   STAY: () => resolvedPromise()
 };
 
