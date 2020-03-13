@@ -1,9 +1,11 @@
 import Unit from './Unit';
-import { Coordinates, Direction } from '../types/types';
+import { Activity, Coordinates, Direction } from '../types/types';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
+import { wait } from '../utils/PromiseUtils';
 
 function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
+  const { renderer } = jwb;
   const { messages, playerUnit } = jwb.state;
   const map = jwb.state.getMap();
   unit.direction = { dx: x - unit.x, dy: y - unit.y };
@@ -20,7 +22,15 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
       if (!!targetUnit) {
         const damage = unit.getDamage();
         messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        targetUnit.takeDamage(damage, unit)
+        unit.activity = Activity.ATTACKING;
+        unit.sprite.update()
+          .then(() => renderer.render())
+          .then(() => wait(150))
+          .then(() => {
+            unit.activity = Activity.STANDING;
+            return unit.sprite.update();
+          })
+          .then(() => targetUnit.takeDamage(damage, unit))
           .then(() => resolve());
       } else {
         resolve();

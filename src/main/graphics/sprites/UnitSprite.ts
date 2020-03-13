@@ -11,6 +11,10 @@ enum SpriteKey {
   STANDING_E = 'STANDING_E',
   STANDING_S = 'STANDING_S',
   STANDING_W = 'STANDING_W',
+  ATTACKING_N = 'ATTACKING_N',
+  ATTACKING_E = 'ATTACKING_E',
+  ATTACKING_S = 'ATTACKING_S',
+  ATTACKING_W = 'ATTACKING_W',
   DAMAGED_N = 'DAMAGED_N',
   DAMAGED_E = 'DAMAGED_E',
   DAMAGED_S = 'DAMAGED_S',
@@ -22,14 +26,18 @@ abstract class UnitSprite extends Sprite {
 
   protected constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
     const imageMap = {
-      [SpriteKey.STANDING_N]: new ImageSupplier(`${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_E]: new ImageSupplier(`${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_S]: new ImageSupplier(`${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_W]: new ImageSupplier(`${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.DAMAGED_N]: new ImageSupplier(`${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_E]: new ImageSupplier(`${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_S]: new ImageSupplier(`${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_W]: new ImageSupplier(`${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
+      [SpriteKey.STANDING_N]: new ImageSupplier(`${spriteName}/${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_E]: new ImageSupplier(`${spriteName}/${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_S]: new ImageSupplier(`${spriteName}/${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.STANDING_W]: new ImageSupplier(`${spriteName}/${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.ATTACKING_N]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_N_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.ATTACKING_E]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_E_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.ATTACKING_S]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_S_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.ATTACKING_W]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_W_1`, Colors.WHITE, paletteSwaps),
+      [SpriteKey.DAMAGED_N]: new ImageSupplier(`${spriteName}/${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_E]: new ImageSupplier(`${spriteName}/${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_S]: new ImageSupplier(`${spriteName}/${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
+      [SpriteKey.DAMAGED_W]: new ImageSupplier(`${spriteName}/${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
     };
     super(imageMap, SpriteKey.STANDING_S, spriteOffsets);
     this._unit = unit;

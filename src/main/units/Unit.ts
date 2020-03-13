@@ -4,7 +4,7 @@ import UnitClass from './UnitClass';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
 import { UnitAI } from './UnitAI';
-import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
+import { chainPromises, resolvedPromise, wait } from '../utils/PromiseUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 
@@ -139,11 +139,7 @@ class Unit implements Entity {
       this.activity = Activity.DAMAGED;
       return this.sprite.update()
         .then(() => renderer.render())
-        .then(() => new Promise<void>(resolve => {
-          setTimeout(() => {
-            resolve();
-          }, 150);
-        }))
+        .then(() => wait(150))
         .then(() => {
           this.activity = Activity.STANDING;
           return this.sprite.update();

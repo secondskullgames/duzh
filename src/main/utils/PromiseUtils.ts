@@ -11,7 +11,16 @@ function chainPromises<T>([first, ...rest]: PromiseSupplier<T>[], input?: T): Pr
   return resolvedPromise(input);
 }
 
+function wait(milliseconds: number): Promise<void> {
+  return new Promise<void>(resolve => {
+    setTimeout(() => {
+      resolve();
+    }, milliseconds);
+  });
+}
+
 export {
   chainPromises,
-  resolvedPromise
+  resolvedPromise,
+  wait
 };

@@ -68,6 +68,7 @@ type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 enum Activity {
   STANDING = 'STANDING',
   WALKING = 'WALKING',
+  ATTACKING = 'ATTACKING',
   DAMAGED = 'DAMAGED'
 }
 
