@@ -7,6 +7,7 @@ import Music from '../sounds/Music';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
+import { randChoice } from '../utils/RandomUtils';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -21,15 +22,12 @@ function loadMap(index: number) {
 function restartGame() {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
   jwb.state = new GameState(playerUnit, [
-    // test
-    //MapFactory.randomMap(20, 10, 3, 1),
-
-    MapFactory.createRandomMap(1, 30, 22, 5, 4),
-    MapFactory.createRandomMap(2, 32, 23, 6, 4),
-    MapFactory.createRandomMap(3, 34, 24, 7, 3),
-    MapFactory.createRandomMap(4, 36, 25, 8, 3),
-    MapFactory.createRandomMap(5, 38, 26, 9, 3),
-    MapFactory.createRandomMap(6, 30, 27, 10, 3)
+    MapFactory.createRandomMap(1, 30, 22, 7, 4),
+    MapFactory.createRandomMap(2, 32, 23, 8, 4),
+    MapFactory.createRandomMap(3, 34, 24, 9, 3),
+    MapFactory.createRandomMap(4, 36, 25, 10, 3),
+    MapFactory.createRandomMap(5, 38, 26, 11, 3),
+    MapFactory.createRandomMap(6, 30, 27, 12, 3)
   ]);
 
   jwb.renderer = new SpriteRenderer();
@@ -37,8 +35,7 @@ function restartGame() {
   loadMap(0);
   attachEvents();
   jwb.renderer.render();
-  //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
-  Music.playSuite(Music.SUITE_3);
+  Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
 }
 
 /**

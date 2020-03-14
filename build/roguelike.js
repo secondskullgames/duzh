@@ -57,8 +57,6 @@ define("graphics/ImageUtils", ["require", "exports"], function (require, exports
                 reject("Failed to load image " + img.src);
             };
             img.src = "png/" + filename + ".png";
-            //document.body.appendChild(canvas);
-            //document.body.appendChild(img);
         });
     }
     exports.loadImage = loadImage;
@@ -2746,7 +2744,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1, RandomUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2763,21 +2761,18 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function restartGame() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            // test
-            //MapFactory.randomMap(20, 10, 3, 1),
-            MapFactory_1.default.createRandomMap(1, 30, 22, 5, 4),
-            MapFactory_1.default.createRandomMap(2, 32, 23, 6, 4),
-            MapFactory_1.default.createRandomMap(3, 34, 24, 7, 3),
-            MapFactory_1.default.createRandomMap(4, 36, 25, 8, 3),
-            MapFactory_1.default.createRandomMap(5, 38, 26, 9, 3),
-            MapFactory_1.default.createRandomMap(6, 30, 27, 10, 3)
+            MapFactory_1.default.createRandomMap(1, 30, 22, 7, 4),
+            MapFactory_1.default.createRandomMap(2, 32, 23, 8, 4),
+            MapFactory_1.default.createRandomMap(3, 34, 24, 9, 3),
+            MapFactory_1.default.createRandomMap(4, 36, 25, 10, 3),
+            MapFactory_1.default.createRandomMap(5, 38, 26, 11, 3),
+            MapFactory_1.default.createRandomMap(6, 30, 27, 12, 3)
         ]);
         jwb.renderer = new SpriteRenderer_1.default();
         loadMap(0);
         InputHandler_1.attachEvents();
         jwb.renderer.render();
-        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2]));
-        Music_1.default.playSuite(Music_1.default.SUITE_3);
+        Music_1.default.playSuite(RandomUtils_8.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
     }
     exports.restartGame = restartGame;
     /**

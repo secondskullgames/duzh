@@ -31,8 +31,6 @@ function loadImage(filename: string): Promise<ImageData> {
       reject(`Failed to load image ${img.src}`);
     };
     img.src = `png/${filename}.png`;
-    //document.body.appendChild(canvas);
-    //document.body.appendChild(img);
   });
 }
 
