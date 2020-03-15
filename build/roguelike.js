@@ -192,7 +192,7 @@ define("graphics/ImageSupplier", ["require", "exports", "graphics/ImageUtils", "
         function ImageSupplier(filename, transparentColor, paletteSwaps, effects) {
             if (paletteSwaps === void 0) { paletteSwaps = {}; }
             if (effects === void 0) { effects = []; }
-            this.image = null;
+            this._image = null;
             this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
                 .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
                 .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
@@ -201,10 +201,10 @@ define("graphics/ImageSupplier", ["require", "exports", "graphics/ImageUtils", "
                 .then(function (imageData) { return createImageBitmap(imageData); }); };
         }
         ImageSupplier.prototype.get = function () {
-            if (!this.image) {
-                this.image = this._imageSupplier();
+            if (!this._image) {
+                this._image = this._imageSupplier();
             }
-            return this.image;
+            return this._image;
         };
         return ImageSupplier;
     }());
@@ -330,6 +330,14 @@ define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
         return list.sort(function (a, b) { return mapFunction(b) - mapFunction(a); });
     }
     exports.sortByReversed = sortByReversed;
+    function comparing(mapFunction) {
+        return function (a, b) { return mapFunction(a) - mapFunction(b); };
+    }
+    exports.comparing = comparing;
+    function comparingReversed(mapFunction) {
+        return function (a, b) { return mapFunction(b) - mapFunction(a); };
+    }
+    exports.comparingReversed = comparingReversed;
     function average(list) {
         var sum = list.reduce(function (a, b) { return a + b; });
         return sum / list.length;
@@ -2080,9 +2088,9 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          * @param minRoomPadding minimum padding between each room and its containing section
          */
         function DungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
-            this.minRoomDimension = minRoomDimension;
-            this.maxRoomDimension = maxRoomDimension;
-            this.minRoomPadding = minRoomPadding;
+            this._minRoomDimension = minRoomDimension;
+            this._maxRoomDimension = maxRoomDimension;
+            this._minRoomPadding = minRoomPadding;
         }
         DungeonGenerator.prototype.generateDungeon = function (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
             var _this = this;
@@ -2134,7 +2142,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          */
         DungeonGenerator.prototype._generateSection = function (width, height) {
             // First, make sure the area is large enough to support two sections; if not, we're done
-            var minSectionDimension = this.minRoomDimension + (2 * this.minRoomPadding);
+            var minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
             var canSplitHorizontally = (width >= (2 * minSectionDimension));
             var canSplitVertically = (height >= (2 * minSectionDimension));
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []));
@@ -2188,14 +2196,14 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          * (within the specified parameters).
          */
         DungeonGenerator.prototype._generateSingleSection = function (width, height) {
-            var maxRoomWidth = width - (2 * this.minRoomPadding);
-            var maxRoomHeight = height - (2 * this.minRoomPadding);
-            console.assert(maxRoomWidth >= this.minRoomDimension && maxRoomHeight >= this.minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_5.randInt(this.minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_5.randInt(this.minRoomDimension, maxRoomHeight);
+            var maxRoomWidth = width - (2 * this._minRoomPadding);
+            var maxRoomHeight = height - (2 * this._minRoomPadding);
+            console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
+            var roomWidth = RandomUtils_5.randInt(this._minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_5.randInt(this._minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_5.randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
-            var roomTop = RandomUtils_5.randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
+            var roomLeft = RandomUtils_5.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
+            var roomTop = RandomUtils_5.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -2244,7 +2252,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          * @returns the min X/Y coordinate of the *second* room
          */
         DungeonGenerator.prototype._getSplitPoint = function (dimension) {
-            var minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
+            var minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
             return RandomUtils_5.randInt(minSplitPoint, maxSplitPoint);
@@ -2264,7 +2272,10 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
                     return _this._canJoinRooms(connectedRoom, unconnectedRoom);
                 })
-                    .sort(function (first, second) { return _this._roomDistance(first[0], first[1]) - _this._roomDistance(second[0], second[1]); });
+                    .sort(ArrayUtils_3.comparing(function (_a) {
+                    var first = _a[0], second = _a[1];
+                    return _this._roomDistance(first, second);
+                }));
                 var joinedAnyRooms = false;
                 for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];
@@ -2601,7 +2612,7 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/Dung
     // outer dimensions
     var MIN_ROOM_DIMENSION = 6;
     var MAX_ROOM_DIMENSION = 9;
-    var MIN_ROOM_PADDING = 2;
+    var MIN_ROOM_PADDING = 1;
     function createRandomMap(level, width, height, numEnemies, numItems) {
         var dungeonGenerator = new DungeonGenerator_1.default(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING);
         return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory_1.default.createRandomEnemy, numItems, ItemFactory_1.default.createRandomItem);
@@ -2802,11 +2813,6 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         }
     }
     exports.revealTiles = revealTiles;
-    function debug() {
-        jwb.DEBUG = true;
-        jwb.renderer.render();
-    }
-    exports.debug = debug;
 });
 define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_7) {
     "use strict";
@@ -3048,6 +3054,21 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
         window.onkeydown = keyHandlerWrapper;
     }
     exports.attachEvents = attachEvents;
+});
+define("core/debug", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function revealMap() {
+        jwb.DEBUG = true;
+        jwb.renderer.render();
+    }
+    exports.revealMap = revealMap;
+    function killEnemies() {
+        var map = jwb.state.getMap();
+        map.units = map.units.filter(function (u) { return u === jwb.state.playerUnit; });
+        jwb.renderer.render();
+    }
+    exports.killEnemies = killEnemies;
 });
 define("core/globals", ["require", "exports"], function (require, exports) {
     "use strict";

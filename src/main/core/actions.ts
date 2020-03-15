@@ -68,14 +68,8 @@ function revealTiles(): void {
   }
 }
 
-function debug() {
-  jwb.DEBUG = true;
-  jwb.renderer.render();
-}
-
 export {
   loadMap,
   restartGame,
   revealTiles,
-  debug
 };

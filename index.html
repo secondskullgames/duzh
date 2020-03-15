@@ -13,7 +13,9 @@
   <body>
     <div id="container"></div>
     <br />
-    <button onclick="require(['core/actions'], actions => actions.debug());">Debug</button>
+    <button onclick="require(['core/debug'], debug => debug.revealMap());">Reveal Map</button>
+    <br />
+    <button onclick="require(['core/debug'], debug => debug.killEnemies());">Kill Enemies</button>
     <!--
     <button onclick="window.jwb.renderer = new AsciiRenderer(); window.jwb.renderer.render()">Ascii</button>
     <button onclick="window.jwb.renderer = new SpriteRenderer(); window.jwb.renderer.render()">Sprites</button>
