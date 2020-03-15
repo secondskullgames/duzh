@@ -1628,9 +1628,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     var TILE_WIDTH = 32;
     var TILE_HEIGHT = 24;
     var WIDTH = 20; // in tiles
-    var HEIGHT = 20; // in tiles
+    var HEIGHT = 15; // in tiles
     var SCREEN_WIDTH = 640;
-    var SCREEN_HEIGHT = 480;
+    var SCREEN_HEIGHT = 360;
     var BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
     var BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
     var BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;

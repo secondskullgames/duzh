@@ -10,10 +10,10 @@ const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
 
 const WIDTH = 20; // in tiles
-const HEIGHT = 20; // in tiles
+const HEIGHT = 15; // in tiles
 
 const SCREEN_WIDTH = 640;
-const SCREEN_HEIGHT = 480;
+const SCREEN_HEIGHT = 360;
 
 const BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
 const BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;

@@ -11,12 +11,10 @@
   background-color: black;
 }
 
-@media all and (display-mode: fullscreen) {
+/* leave some room for margins, etc. (most browsers have 8px margins) */
+@media all and (min-width: 1300px) {
   #container canvas {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 1280px;
+    height: 720px;
   }
 }
