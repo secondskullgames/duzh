@@ -6,6 +6,13 @@
   color: white;
   font-size: 20px;
 }
+
 #container canvas {
   image-rendering: crisp-edges;
+}
+
+@media only screen and (min-width: 1280px) {
+  #container canvas {
+    width: 1280px;
+  }
 }
