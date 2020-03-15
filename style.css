@@ -11,7 +11,7 @@
   image-rendering: crisp-edges;
 }
 
-@media only screen and (min-width: 1280px) {
+@media only screen and (min-width: 1280px) and (min-height: 960px) {
   #container canvas {
     width: 1280px;
   }
