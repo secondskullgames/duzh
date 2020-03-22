@@ -2515,7 +2515,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         aiParams: {
             speed: 0.95,
             visionRange: 12,
-            fleeThreshold: 0.5
+            fleeThreshold: 0.2
         }
     };
     var ENEMY_GRUNT = {
@@ -2535,7 +2535,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         aiParams: {
             speed: 0.6,
             visionRange: 8,
-            fleeThreshold: 0.4
+            fleeThreshold: 0.3
         }
     };
     var ENEMY_SOLDIER = {
@@ -2555,7 +2555,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         aiParams: {
             speed: 0.9,
             visionRange: 10,
-            fleeThreshold: 0.25
+            fleeThreshold: 0.2
         }
     };
     var ENEMY_GOLEM = {

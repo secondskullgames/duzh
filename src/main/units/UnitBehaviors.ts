@@ -99,7 +99,8 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   });
 
   if (tiles.length > 0) {
-    const { x, y } = sortByReversed(tiles, coordinates => manhattanDistance(coordinates, playerUnit))[0];
+    const orderedTiles = sortByReversed(tiles, coordinates => manhattanDistance(coordinates, playerUnit));
+    const { x, y } = orderedTiles[0];
     return moveOrAttack(unit, { x, y });
   }
   return resolvedPromise();

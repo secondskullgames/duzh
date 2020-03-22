@@ -7,7 +7,6 @@ import Music from '../sounds/Music';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
-import { randChoice } from '../utils/RandomUtils';
 
 function loadMap(index: number) {
   const { state } = jwb;

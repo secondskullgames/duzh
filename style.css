@@ -11,7 +11,10 @@
   background-color: black;
 }
 
-/* leave some room for margins, etc. (most browsers have 8px margins) */
+/*
+ * Render the canvas at 2x (4x) size if the browser window is big enough,
+ * Leave some room for margins, etc. (most browsers have 8px margins)
+ */
 @media all and (min-width: 1300px) {
   #container canvas {
     width: 1280px;

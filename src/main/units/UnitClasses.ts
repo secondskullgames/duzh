@@ -2,7 +2,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitClass from './UnitClass';
 import Colors from '../types/Colors';
 import { UnitType } from '../types/types';
-import { HUMAN_AGGRESSIVE, HUMAN_CAUTIOUS, HUMAN_DETERMINISTIC } from './UnitAI';
+import { HUMAN_DETERMINISTIC } from './UnitAI';
 
 const PLAYER: UnitClass = {
   name: 'PLAYER',
@@ -45,12 +45,11 @@ const ENEMY_SNAKE: UnitClass = {
   lifePerLevel: () => 15,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
-  // aiHandler: HUMAN_CAUTIOUS,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.95,
     visionRange: 12,
-    fleeThreshold: 0.5
+    fleeThreshold: 0.2
   }
 };
 
@@ -71,7 +70,7 @@ const ENEMY_GRUNT: UnitClass = {
   aiParams: {
     speed: 0.6,
     visionRange: 8,
-    fleeThreshold: 0.4
+    fleeThreshold: 0.3
   }
 };
 
@@ -92,7 +91,7 @@ const ENEMY_SOLDIER: UnitClass = {
   aiParams: {
     speed: 0.9,
     visionRange: 10,
-    fleeThreshold: 0.25
+    fleeThreshold: 0.2
   }
 };
 
