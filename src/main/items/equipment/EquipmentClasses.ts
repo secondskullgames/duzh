@@ -18,7 +18,7 @@ const BRONZE_SWORD: EquipmentClass = {
   name: 'Bronze Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.WEAPON,
+  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.BLACK]: Colors.BLACK,
@@ -34,7 +34,7 @@ const IRON_SWORD: EquipmentClass = {
   name: 'Iron Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.WEAPON,
+  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.BLACK,
@@ -49,7 +49,7 @@ const STEEL_SWORD: EquipmentClass = {
   name: 'Steel Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.WEAPON,
+  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
@@ -64,7 +64,7 @@ const FIRE_SWORD: EquipmentClass = {
   name: 'Fire Sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.WEAPON,
+  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
   mapIcon: SpriteFactory.MAP_SWORD,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.YELLOW,
@@ -76,8 +76,20 @@ const FIRE_SWORD: EquipmentClass = {
   maxLevel: 6
 };
 
+const SHORT_BOW: EquipmentClass = {
+  name: 'Short Bow',
+  char: 'S',
+  itemCategory: ItemCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.RANGED_WEAPON,
+  mapIcon: SpriteFactory.MAP_BOW,
+  paletteSwaps: {},
+  damage: 6,
+  minLevel: 2,
+  maxLevel: 6
+};
+
 function getWeaponClasses() {
-  return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD];
+  return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW];
 }
 
 export default {

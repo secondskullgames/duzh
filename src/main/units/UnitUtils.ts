@@ -1,5 +1,5 @@
 import Unit from './Unit';
-import { Activity, Coordinates, Direction } from '../types/types';
+import { Activity, Coordinates, Direction, EquipmentSlot } from '../types/types';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
 import { wait } from '../utils/PromiseUtils';
@@ -45,6 +45,11 @@ function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
   return unit.sprite.update()
     .then(() => jwb.renderer.render())
     .then(() => new Promise(resolve => {
+      if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+        // change direction and re-render, but don't do anything (don't spend a turn)
+        resolve();
+        return;
+      }
       const map = jwb.state.getMap();
       let { x, y } = unit;
       do {

@@ -22,10 +22,11 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
   WALL_HALL: (paletteSwaps) => _staticSprite(new ImageSupplier('tile_wall_hall', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
   FLOOR: (paletteSwaps) => _staticSprite(new ImageSupplier('tile_floor', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
   FLOOR_HALL: (paletteSwaps) => _staticSprite(new ImageSupplier('tile_floor_hall', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
-  MAP_SWORD: (paletteSwaps) => _staticSprite(new ImageSupplier('sword_icon_small', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
-  MAP_POTION: (paletteSwaps) => _staticSprite(new ImageSupplier('potion_small', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
+  STAIRS_DOWN: (paletteSwaps) => _staticSprite(new ImageSupplier('stairs_down2', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
+  MAP_SWORD: (paletteSwaps) => _staticSprite(new ImageSupplier('sword_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
+  MAP_POTION: (paletteSwaps) => _staticSprite(new ImageSupplier('potion_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
   MAP_SCROLL: (paletteSwaps) => _staticSprite(new ImageSupplier('scroll_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
-  STAIRS_DOWN: (paletteSwaps) => _staticSprite(new ImageSupplier('stairs_down2', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 })
+  MAP_BOW: (paletteSwaps) => _staticSprite(new ImageSupplier('bow_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 })
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
@@ -43,10 +44,11 @@ export default {
   WALL_HALL: StaticSprites.WALL_HALL,
   FLOOR: StaticSprites.FLOOR,
   FLOOR_HALL: StaticSprites.FLOOR_HALL,
+  STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
   MAP_SWORD: StaticSprites.MAP_SWORD,
   MAP_POTION: StaticSprites.MAP_POTION,
   MAP_SCROLL: StaticSprites.MAP_SCROLL,
-  STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
+  MAP_BOW: StaticSprites.MAP_BOW,
   PLAYER: UnitSprites.PLAYER,
   GOLEM: UnitSprites.GOLEM,
   GRUNT: UnitSprites.GRUNT,

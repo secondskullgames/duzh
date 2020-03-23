@@ -1,5 +1,5 @@
 import { loadMap } from './actions';
-import { Coordinates, GameScreen } from '../types/types';
+import { Coordinates, EquipmentSlot, GameScreen } from '../types/types';
 import TurnHandler from './TurnHandler';
 import Tiles from '../types/Tiles';
 import Sounds from '../sounds/Sounds';

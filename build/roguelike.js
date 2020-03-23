@@ -290,7 +290,8 @@ define("types/types", ["require", "exports"], function (require, exports) {
     exports.ItemCategory = ItemCategory;
     var EquipmentSlot;
     (function (EquipmentSlot) {
-        EquipmentSlot["WEAPON"] = "WEAPON";
+        EquipmentSlot["MELEE_WEAPON"] = "MELEE_WEAPON";
+        EquipmentSlot["RANGED_WEAPON"] = "RANGED_WEAPON";
         EquipmentSlot["ARMOR"] = "ARMOR";
     })(EquipmentSlot || (EquipmentSlot = {}));
     exports.EquipmentSlot = EquipmentSlot;
@@ -755,6 +756,11 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
         return unit.sprite.update()
             .then(function () { return jwb.renderer.render(); })
             .then(function () { return new Promise(function (resolve) {
+            if (!unit.equipment.get(types_1.EquipmentSlot.RANGED_WEAPON)) {
+                // change direction and re-render, but don't do anything (don't spend a turn)
+                resolve();
+                return;
+            }
             var map = jwb.state.getMap();
             var x = unit.x, y = unit.y;
             do {
@@ -900,7 +906,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             }
         });
         if (tiles.length > 0) {
-            var _a = ArrayUtils_2.sortByReversed(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); })[0], x = _a.x, y = _a.y;
+            var orderedTiles = ArrayUtils_2.sortByReversed(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); });
+            var _a = orderedTiles[0], x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
         return PromiseUtils_3.resolvedPromise();
@@ -1196,22 +1203,29 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
         };
         Unit.prototype.getDamage = function () {
             var damage = this._damage;
-            this.equipment.getEntries().forEach(function (_a) {
+            this.equipment.getEntries()
+                .filter(function (_a) {
+                var slot = _a[0], item = _a[1];
+                return (slot !== types_3.EquipmentSlot.RANGED_WEAPON);
+            })
+                .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
                 damage += (item.damage || 0);
             });
             return damage;
         };
-        /**
-         * TODO - this is just based on melee weapon damage
-         */
         Unit.prototype.getRangedDamage = function () {
             var damage = this._damage;
-            this.equipment.getEntries().forEach(function (_a) {
+            this.equipment.getEntries()
+                .filter(function (_a) {
+                var slot = _a[0], item = _a[1];
+                return (slot !== types_3.EquipmentSlot.MELEE_WEAPON);
+            })
+                .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
                 damage += (item.damage || 0);
             });
-            return Math.round(damage / 2);
+            return Math.round(damage);
         };
         Unit.prototype._levelUp = function () {
             this.level++;
@@ -1430,10 +1444,11 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_wall_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
         FLOOR: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_floor', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
         FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_floor_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('sword_icon_small', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('potion_small', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('stairs_down2', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('sword_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('potion_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
         MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('scroll_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('stairs_down2', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
+        MAP_BOW: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('bow_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
     };
     var UnitSprites = {
         PLAYER: function (unit, paletteSwaps) { return new PlayerSprite_1.default(unit, paletteSwaps); },
@@ -1449,10 +1464,11 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         WALL_HALL: StaticSprites.WALL_HALL,
         FLOOR: StaticSprites.FLOOR,
         FLOOR_HALL: StaticSprites.FLOOR_HALL,
+        STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
         MAP_SWORD: StaticSprites.MAP_SWORD,
         MAP_POTION: StaticSprites.MAP_POTION,
         MAP_SCROLL: StaticSprites.MAP_SCROLL,
-        STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
+        MAP_BOW: StaticSprites.MAP_BOW,
         PLAYER: UnitSprites.PLAYER,
         GOLEM: UnitSprites.GOLEM,
         GRUNT: UnitSprites.GRUNT,
@@ -1923,7 +1939,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         name: 'Bronze Sword',
         char: 'S',
         itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.WEAPON,
+        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_a = {},
             _a[Colors_4.default.BLACK] = Colors_4.default.BLACK,
@@ -1938,7 +1954,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         name: 'Iron Sword',
         char: 'S',
         itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.WEAPON,
+        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_b = {},
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
@@ -1952,7 +1968,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         name: 'Steel Sword',
         char: 'S',
         itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.WEAPON,
+        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_c = {},
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
@@ -1966,7 +1982,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         name: 'Fire Sword',
         char: 'S',
         itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.WEAPON,
+        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_d = {},
             _d[Colors_4.default.DARK_GRAY] = Colors_4.default.YELLOW,
@@ -1977,8 +1993,19 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         minLevel: 5,
         maxLevel: 6
     };
+    var SHORT_BOW = {
+        name: 'Short Bow',
+        char: 'S',
+        itemCategory: types_6.ItemCategory.WEAPON,
+        equipmentCategory: types_6.EquipmentSlot.RANGED_WEAPON,
+        mapIcon: SpriteFactory_2.default.MAP_BOW,
+        paletteSwaps: {},
+        damage: 6,
+        minLevel: 2,
+        maxLevel: 6
+    };
     function getWeaponClasses() {
-        return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD];
+        return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW];
     }
     exports.default = {
         BRONZE_SWORD: BRONZE_SWORD,
@@ -2510,7 +2537,6 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
-        // aiHandler: HUMAN_CAUTIOUS,
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.95,
@@ -2794,7 +2820,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1, RandomUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2822,8 +2848,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         loadMap(0);
         InputHandler_1.attachEvents();
         jwb.renderer.render();
-        //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
-        Music_1.default.playSuite(Music_1.default.SUITE_4);
+        Music_1.default.playSuite(RandomUtils_8.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
     }
     exports.restartGame = restartGame;
     /**

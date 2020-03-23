@@ -7,6 +7,7 @@ import Music from '../sounds/Music';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
+import { randChoice } from '../utils/RandomUtils';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -34,8 +35,7 @@ function restartGame() {
   loadMap(0);
   attachEvents();
   jwb.renderer.render();
-  //Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
-  Music.playSuite(Music.SUITE_4);
+  Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
 }
 
 /**

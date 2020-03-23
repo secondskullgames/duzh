@@ -54,7 +54,8 @@ enum ItemCategory {
 }
 
 enum EquipmentSlot {
-  WEAPON = 'WEAPON',
+  MELEE_WEAPON = 'MELEE_WEAPON',
+  RANGED_WEAPON = 'RANGED_WEAPON',
   ARMOR = 'ARMOR'
 }
 

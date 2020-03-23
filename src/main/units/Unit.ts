@@ -1,4 +1,4 @@
-import { Activity, Coordinates, Direction, Entity } from '../types/types';
+import { Activity, Coordinates, Direction, Entity, EquipmentSlot } from '../types/types';
 import Sprite from '../graphics/sprites/Sprite';
 import UnitClass from './UnitClass';
 import { playSound } from '../sounds/AudioUtils';
@@ -86,21 +86,22 @@ class Unit implements Entity {
 
   getDamage(): number {
     let damage = this._damage;
-    this.equipment.getEntries().forEach(([slot, item]) => {
-      damage += (item.damage || 0);
-    });
+    this.equipment.getEntries()
+      .filter(([slot, item]) => (slot !== EquipmentSlot.RANGED_WEAPON))
+      .forEach(([slot, item]) => {
+        damage += (item.damage || 0);
+      });
     return damage;
   }
 
-  /**
-   * TODO - this is just based on melee weapon damage
-   */
   getRangedDamage(): number {
     let damage = this._damage;
-    this.equipment.getEntries().forEach(([slot, item]) => {
-      damage += (item.damage || 0);
-    });
-    return Math.round(damage / 2);
+    this.equipment.getEntries()
+      .filter(([slot, item]) => (slot !== EquipmentSlot.MELEE_WEAPON))
+      .forEach(([slot, item]) => {
+        damage += (item.damage || 0);
+      });
+    return Math.round(damage);
   }
 
   private _levelUp() {
