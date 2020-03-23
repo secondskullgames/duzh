@@ -4,7 +4,7 @@ import UnitClass from './UnitClass';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
 import { UnitAI } from './UnitAI';
-import { chainPromises, resolvedPromise, wait } from '../utils/PromiseUtils';
+import { resolvedPromise } from '../utils/PromiseUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 
@@ -135,20 +135,7 @@ class Unit implements Entity {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
-    const promises: (() => Promise<any>)[] = [];
-    promises.push(() => {
-      this.activity = Activity.DAMAGED;
-      return this.sprite.update()
-        .then(() => renderer.render())
-        .then(() => wait(150))
-        .then(() => {
-          this.activity = Activity.STANDING;
-          return this.sprite.update();
-        })
-        .then(() => renderer.render())
-    });
-
-    promises.push(() => new Promise(resolve => {
+    return new Promise(resolve => {
       this.life = Math.max(this.life - damage, 0);
       if (this.life === 0) {
         map.units = map.units.filter(u => u !== this);
@@ -170,9 +157,7 @@ class Unit implements Entity {
         }
       }
       resolve();
-    }));
-
-    return chainPromises(promises);
+    });
   };
 }
 

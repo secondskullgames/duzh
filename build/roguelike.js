@@ -709,12 +709,62 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     };
     exports.default = Sounds;
 });
-define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils"], function (require, exports, types_1, AudioUtils_1, Sounds_1, PromiseUtils_2) {
+define("graphics/animations/Animations", ["require", "exports", "types/types", "utils/PromiseUtils"], function (require, exports, types_1, PromiseUtils_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function playAttackingAnimation(source, target) {
+        return _playAnimation({
+            frames: [
+                [
+                    { unit: source, activity: types_1.Activity.ATTACKING },
+                    { unit: target, activity: types_1.Activity.DAMAGED }
+                ],
+                [
+                    { unit: source, activity: types_1.Activity.STANDING },
+                    { unit: target, activity: types_1.Activity.STANDING }
+                ]
+            ],
+            delay: 150
+        });
+    }
+    exports.playAttackingAnimation = playAttackingAnimation;
+    function _playAnimation(animation) {
+        var delay = animation.delay, frames = animation.frames;
+        var promises = [];
+        var _loop_4 = function (i) {
+            var updatePromise = function () {
+                var updatePromises = [];
+                for (var j = 0; j < frames[i].length; j++) {
+                    var _a = frames[i][j], unit = _a.unit, activity = _a.activity;
+                    unit.activity = activity;
+                    console.log(unit.name + " " + activity + " => update");
+                    updatePromises.push(unit.sprite.update());
+                }
+                return Promise.all(updatePromises);
+            };
+            promises.push(updatePromise);
+            promises.push(function () {
+                console.log("render");
+                return jwb.renderer.render();
+            });
+            if (i < (frames.length - 1)) {
+                promises.push(function () {
+                    console.log("wait");
+                    return PromiseUtils_2.wait(delay);
+                });
+            }
+        };
+        for (var i = 0; i < frames.length; i++) {
+            _loop_4(i);
+        }
+        return PromiseUtils_2.chainPromises(promises);
+    }
+});
+define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "graphics/animations/Animations"], function (require, exports, types_2, AudioUtils_1, Sounds_1, Animations_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function moveOrAttack(unit, _a) {
         var x = _a.x, y = _a.y;
-        var renderer = jwb.renderer;
         var _b = jwb.state, messages = _b.messages, playerUnit = _b.playerUnit;
         var map = jwb.state.getMap();
         unit.direction = { dx: x - unit.x, dy: y - unit.y };
@@ -732,14 +782,7 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
                 if (!!targetUnit_1) {
                     var damage_1 = unit.getDamage();
                     messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit_1.name + " (" + targetUnit_1.level + ") for " + damage_1 + " damage!");
-                    unit.activity = types_1.Activity.ATTACKING;
-                    unit.sprite.update()
-                        .then(function () { return renderer.render(); })
-                        .then(function () { return PromiseUtils_2.wait(150); })
-                        .then(function () {
-                        unit.activity = types_1.Activity.STANDING;
-                        return unit.sprite.update();
-                    })
+                    Animations_1.playAttackingAnimation(unit, targetUnit_1)
                         .then(function () { return targetUnit_1.takeDamage(damage_1, unit); })
                         .then(function () { return resolve(); });
                 }
@@ -756,7 +799,7 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
         return unit.sprite.update()
             .then(function () { return jwb.renderer.render(); })
             .then(function () { return new Promise(function (resolve) {
-            if (!unit.equipment.get(types_1.EquipmentSlot.RANGED_WEAPON)) {
+            if (!unit.equipment.get(types_2.EquipmentSlot.RANGED_WEAPON)) {
                 // change direction and re-render, but don't do anything (don't spend a turn)
                 resolve();
                 return;
@@ -1040,10 +1083,10 @@ define("items/InventoryItem", ["require", "exports"], function (require, exports
     }());
     exports.default = InventoryItem;
 });
-define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_2) {
+define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var categories = Object.values(types_2.ItemCategory);
+    var categories = Object.values(types_3.ItemCategory);
     /**
      * Contains information about all items held by a particular unit, grouped by category,
      * as well as data about the selected item/category in the inventory menu
@@ -1145,7 +1188,7 @@ define("items/equipment/EquipmentMap", ["require", "exports"], function (require
     }());
     exports.default = EquipmentMap;
 });
-define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_3, AudioUtils_2, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1) {
+define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_4, AudioUtils_2, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1170,7 +1213,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this._damage = unitClass.startingDamage;
             this.queuedOrder = null;
             this.aiHandler = unitClass.aiHandler;
-            this.activity = types_3.Activity.STANDING;
+            this.activity = types_4.Activity.STANDING;
             this.direction = null;
         }
         Unit.prototype._regenLife = function () {
@@ -1206,7 +1249,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_3.EquipmentSlot.RANGED_WEAPON);
+                return (slot !== types_4.EquipmentSlot.RANGED_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
@@ -1219,7 +1262,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_3.EquipmentSlot.MELEE_WEAPON);
+                return (slot !== types_4.EquipmentSlot.MELEE_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
@@ -1256,19 +1299,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             var renderer = jwb.renderer;
             var playerUnit = jwb.state.playerUnit;
             var map = jwb.state.getMap();
-            var promises = [];
-            promises.push(function () {
-                _this.activity = types_3.Activity.DAMAGED;
-                return _this.sprite.update()
-                    .then(function () { return renderer.render(); })
-                    .then(function () { return PromiseUtils_4.wait(150); })
-                    .then(function () {
-                    _this.activity = types_3.Activity.STANDING;
-                    return _this.sprite.update();
-                })
-                    .then(function () { return renderer.render(); });
-            });
-            promises.push(function () { return new Promise(function (resolve) {
+            return new Promise(function (resolve) {
                 _this.life = Math.max(_this.life - damage, 0);
                 if (_this.life === 0) {
                     map.units = map.units.filter(function (u) { return u !== _this; });
@@ -1292,8 +1323,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
                     }
                 }
                 resolve();
-            }); });
-            return PromiseUtils_4.chainPromises(promises);
+            });
         };
         ;
         return Unit;
@@ -1602,12 +1632,12 @@ define("maps/MapSupplier", ["require", "exports", "maps/MapInstance"], function 
     }
     exports.createMap = createMap;
 });
-define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_4) {
+define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_4.GameScreen.GAME;
+            this.screen = types_5.GameScreen.GAME;
             this.playerUnit = playerUnit;
             this.mapSuppliers = mapSuppliers;
             this.mapIndex = 0;
@@ -1638,7 +1668,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_5, actions_1, PromiseUtils_5, Colors_3) {
+define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_6, actions_1, PromiseUtils_5, Colors_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1786,7 +1816,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 y += LINE_HEIGHT;
             });
             // draw inventory categories
-            var inventoryCategories = Object.values(types_5.ItemCategory);
+            var inventoryCategories = Object.values(types_6.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
             _context.font = '14px Monospace';
@@ -1931,15 +1961,15 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     }());
     exports.default = SpriteRenderer;
 });
-define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_6, SpriteFactory_2, Colors_4) {
+define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_7, SpriteFactory_2, Colors_4) {
     "use strict";
     var _a, _b, _c, _d;
     Object.defineProperty(exports, "__esModule", { value: true });
     var BRONZE_SWORD = {
         name: 'Bronze Sword',
         char: 'S',
-        itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_a = {},
             _a[Colors_4.default.BLACK] = Colors_4.default.BLACK,
@@ -1953,8 +1983,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var IRON_SWORD = {
         name: 'Iron Sword',
         char: 'S',
-        itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_b = {},
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
@@ -1967,8 +1997,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var STEEL_SWORD = {
         name: 'Steel Sword',
         char: 'S',
-        itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_c = {},
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
@@ -1981,8 +2011,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var FIRE_SWORD = {
         name: 'Fire Sword',
         char: 'S',
-        itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.MELEE_WEAPON,
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_d = {},
             _d[Colors_4.default.DARK_GRAY] = Colors_4.default.YELLOW,
@@ -1996,8 +2026,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var SHORT_BOW = {
         name: 'Short Bow',
         char: 'S',
-        itemCategory: types_6.ItemCategory.WEAPON,
-        equipmentCategory: types_6.EquipmentSlot.RANGED_WEAPON,
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.RANGED_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_BOW,
         paletteSwaps: {},
         damage: 6,
@@ -2014,7 +2044,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         getWeaponClasses: getWeaponClasses
     };
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_7, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_8, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2027,7 +2057,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                 resolve();
             });
         };
-        return new InventoryItem_1.default('Potion', types_7.ItemCategory.POTION, onUse);
+        return new InventoryItem_1.default('Potion', types_8.ItemCategory.POTION, onUse);
     }
     function _equipEquipment(equipmentClass, item, unit) {
         return new Promise(function (resolve) {
@@ -2057,7 +2087,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
             });
             return PromiseUtils_6.chainPromises(promises);
         };
-        return new InventoryItem_1.default('Scroll of Floor Fire', types_7.ItemCategory.SCROLL, onUse);
+        return new InventoryItem_1.default('Scroll of Floor Fire', types_8.ItemCategory.SCROLL, onUse);
     }
     function _createInventoryWeapon(weaponClass) {
         var onUse = function (item, unit) { return _equipEquipment(weaponClass, item, unit); };
@@ -2453,19 +2483,19 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_4 = function (y) {
-                var _loop_5 = function (x) {
+            var _loop_5 = function (y) {
+                var _loop_6 = function (x) {
                     if (!tiles[y][x].isBlocking && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_5(x);
+                    _loop_6(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_4(y);
+                _loop_5(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -2492,13 +2522,13 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
     }());
     exports.default = DungeonGenerator;
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_5, types_8, UnitAI_1) {
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_5, types_9, UnitAI_1) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
     var PLAYER = {
         name: 'PLAYER',
-        type: types_8.UnitType.HUMAN,
+        type: types_9.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.PLAYER,
         // Green/brown colors
         paletteSwaps: (_a = {},
@@ -2526,7 +2556,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_SNAKE = {
         name: 'ENEMY_SNAKE',
-        type: types_8.UnitType.ANIMAL,
+        type: types_9.UnitType.ANIMAL,
         sprite: SpriteFactory_4.default.SNAKE,
         paletteSwaps: {},
         startingLife: 60,
@@ -2546,7 +2576,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_GRUNT = {
         name: 'ENEMY_GRUNT',
-        type: types_8.UnitType.HUMAN,
+        type: types_9.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.GRUNT,
         paletteSwaps: {},
         startingLife: 90,
@@ -2566,7 +2596,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_SOLDIER = {
         name: 'ENEMY_SOLDIER',
-        type: types_8.UnitType.HUMAN,
+        type: types_9.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.SOLDIER,
         paletteSwaps: {},
         startingLife: 120,
@@ -2586,7 +2616,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_GOLEM = {
         name: 'ENEMY_GOLEM',
-        type: types_8.UnitType.GOLEM,
+        type: types_9.UnitType.GOLEM,
         sprite: SpriteFactory_4.default.GOLEM,
         paletteSwaps: (_b = {},
             _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
@@ -2791,7 +2821,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
-        var _loop_6 = function (i) {
+        var _loop_7 = function (i) {
             var section = sections[i];
             var bass = (!!section.bass) ? RandomUtils_7.randChoice(section.bass) : null;
             var lead;
@@ -2808,7 +2838,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
             }
         };
         for (var i = 0; i < sections.length; i++) {
-            _loop_6(i);
+            _loop_7(i);
         }
         setTimeout(function () { return playSuite(suite); }, sections.length * suite.length * numRepeats);
     }
@@ -2927,7 +2957,7 @@ define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
     }
     exports.useItem = useItem;
 });
-define("core/InputHandler", ["require", "exports", "core/actions", "types/types", "core/TurnHandler", "types/Tiles", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils"], function (require, exports, actions_2, types_9, TurnHandler_1, Tiles_3, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
+define("core/InputHandler", ["require", "exports", "core/actions", "types/types", "core/TurnHandler", "types/Tiles", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils"], function (require, exports, actions_2, types_10, TurnHandler_1, Tiles_3, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3007,7 +3037,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_9.GameScreen.GAME:
+            case types_10.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3042,7 +3072,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_9.GameScreen.INVENTORY:
+            case types_10.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3071,7 +3101,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_9.GameScreen.GAME: {
+            case types_10.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3089,11 +3119,11 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_9.GameScreen.INVENTORY: {
+            case types_10.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_9.GameScreen.GAME;
+                    state.screen = types_10.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3106,11 +3136,11 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_9.GameScreen.INVENTORY:
-                state.screen = types_9.GameScreen.GAME;
+            case types_10.GameScreen.INVENTORY:
+                state.screen = types_10.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_9.GameScreen.INVENTORY;
+                state.screen = types_10.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
@@ -3146,7 +3176,7 @@ define("core/main", ["require", "exports", "core/actions"], function (require, e
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_3.restartGame(); };
 });
-define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "units/Unit", "types/types"], function (require, exports, PromiseUtils_9, Unit_3, types_10) {
+define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "units/Unit", "types/types"], function (require, exports, PromiseUtils_9, Unit_3, types_11) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var WIDTH = 80;
@@ -3161,9 +3191,9 @@ define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "u
         AsciiRenderer.prototype.render = function () {
             var screen = jwb.state.screen;
             switch (screen) {
-                case types_10.GameScreen.GAME:
+                case types_11.GameScreen.GAME:
                     return this._renderGameScreen();
-                case types_10.GameScreen.INVENTORY:
+                case types_11.GameScreen.INVENTORY:
                     return this._renderInventoryScreen();
                 default:
                     throw "Invalid screen " + screen;
@@ -3270,7 +3300,7 @@ define("maps/AsciiMaps", ["require", "exports", "units/UnitClasses", "units/Unit
         var enemyUnitLocations = [];
         for (var y = 0; y < lines.length; y++) {
             var line = lines[y];
-            var _loop_7 = function (x) {
+            var _loop_8 = function (x) {
                 var c = line[x];
                 var tile = Object.values(Tiles_4.default).filter(function (t) { return t.char === c; })[0] || null;
                 if (!tile) {
@@ -3290,7 +3320,7 @@ define("maps/AsciiMaps", ["require", "exports", "units/UnitClasses", "units/Unit
                 tiles[y][x] = tile;
             };
             for (var x = 0; x < line.length; x++) {
-                _loop_7(x);
+                _loop_8(x);
             }
         }
         var width = tiles.map(function (row) { return row.length; }).reduce(function (a, b) { return Math.max(a, b); }) + 1;
