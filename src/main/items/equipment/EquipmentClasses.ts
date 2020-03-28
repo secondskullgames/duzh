@@ -25,7 +25,7 @@ const BRONZE_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.LIGHT_BROWN,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_BROWN
   },
-  damage: 4,
+  damage: 5,
   minLevel: 1,
   maxLevel: 2
 };
@@ -40,7 +40,7 @@ const IRON_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.BLACK,
     [Colors.LIGHT_GRAY]: Colors.DARK_GRAY
   },
-  damage: 7,
+  damage: 8,
   minLevel: 3,
   maxLevel: 4
 };
@@ -55,7 +55,7 @@ const STEEL_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_GRAY
   },
-  damage: 10,
+  damage: 11,
   minLevel: 4,
   maxLevel: 6
 };
@@ -71,7 +71,7 @@ const FIRE_SWORD: EquipmentClass = {
     [Colors.LIGHT_GRAY]: Colors.RED,
     [Colors.BLACK]: Colors.DARK_RED
   },
-  damage: 14,
+  damage: 15,
   minLevel: 5,
   maxLevel: 6
 };
@@ -83,22 +83,31 @@ const SHORT_BOW: EquipmentClass = {
   equipmentCategory: EquipmentSlot.RANGED_WEAPON,
   mapIcon: SpriteFactory.MAP_BOW,
   paletteSwaps: {},
-  damage: 6,
+  damage: 2,
   minLevel: 2,
+  maxLevel: 4
+};
+
+const LONG_BOW: EquipmentClass = {
+  name: 'Long Bow',
+  char: 'S',
+  itemCategory: ItemCategory.WEAPON,
+  equipmentCategory: EquipmentSlot.RANGED_WEAPON,
+  mapIcon: SpriteFactory.MAP_BOW,
+  paletteSwaps: {
+    [Colors.DARK_GREEN]: Colors.DARK_RED,
+    [Colors.GREEN]: Colors.RED,
+  },
+  damage: 6,
+  minLevel: 5,
   maxLevel: 6
 };
 
 function getWeaponClasses() {
-  return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW];
+  return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW, LONG_BOW];
 }
 
-export default {
-  BRONZE_SWORD,
-  IRON_SWORD,
-  STEEL_SWORD,
-  getWeaponClasses
-};
-
 export {
-  EquipmentClass
+  EquipmentClass,
+  getWeaponClasses
 };

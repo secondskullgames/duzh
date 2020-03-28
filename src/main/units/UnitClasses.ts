@@ -23,13 +23,13 @@ const PLAYER: UnitClass = {
   },
   startingLife: 100,
   startingMana: 100,
-  startingDamage: 10,
+  startingDamage: 8,
   minLevel: 1,
   maxLevel: 20,
   lifePerLevel: level => 10,
   manaPerLevel: level => 0,
   damagePerLevel: level => 1,
-  experienceToNextLevel: currentLevel => (currentLevel < 10) ? 2 * currentLevel + 4: null, // 6, 8, 10, 12, 14...
+  experienceToNextLevel: currentLevel => (currentLevel < 10) ? 2 * currentLevel + 2: null, // 4, 6, 8, 10, 12, 14...
 };
 
 const ENEMY_SNAKE: UnitClass = {
@@ -37,12 +37,12 @@ const ENEMY_SNAKE: UnitClass = {
   type: UnitType.ANIMAL,
   sprite: SpriteFactory.SNAKE,
   paletteSwaps: {},
-  startingLife: 60,
+  startingLife: 50,
   startingMana: null,
-  startingDamage: 5,
+  startingDamage: 4,
   minLevel: 1,
   maxLevel: 3,
-  lifePerLevel: () => 15,
+  lifePerLevel: () => 12,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
@@ -58,19 +58,19 @@ const ENEMY_GRUNT: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.GRUNT,
   paletteSwaps: {},
-  startingLife: 90,
+  startingLife: 60,
   startingMana: null,
-  startingDamage: 9,
+  startingDamage: 6,
   minLevel: 1,
   maxLevel: 4,
-  lifePerLevel: () => 15,
+  lifePerLevel: () => 12,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.6,
+    speed: 0.8,
     visionRange: 8,
-    fleeThreshold: 0.3
+    fleeThreshold: 0.1
   }
 };
 
@@ -79,14 +79,14 @@ const ENEMY_SOLDIER: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.SOLDIER,
   paletteSwaps: {},
-  startingLife: 120,
+  startingLife: 100,
   startingMana: null,
-  startingDamage: 12,
+  startingDamage: 10,
   minLevel: 3,
   maxLevel: 6,
-  lifePerLevel: () => 20,
+  lifePerLevel: () => 15,
   manaPerLevel: () => null,
-  damagePerLevel: () => 4,
+  damagePerLevel: () => 3,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.9,
@@ -103,17 +103,17 @@ const ENEMY_GOLEM: UnitClass = {
     [Colors.DARK_GRAY]: Colors.DARKER_GRAY,
     [Colors.LIGHT_GRAY]: Colors.DARKER_GRAY,
   },
-  startingLife: 150,
+  startingLife: 120,
   startingMana: null,
-  startingDamage: 30,
+  startingDamage: 20,
   minLevel: 5,
   maxLevel: 9,
-  lifePerLevel: () => 30,
+  lifePerLevel: () => 25,
   manaPerLevel: () => null,
-  damagePerLevel: () => 5,
+  damagePerLevel: () => 4,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.6,
+    speed: 0.7,
     visionRange: 12,
     fleeThreshold: 0
   }

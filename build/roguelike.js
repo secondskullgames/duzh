@@ -712,6 +712,7 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
 define("graphics/animations/Animations", ["require", "exports", "types/types", "utils/PromiseUtils"], function (require, exports, types_1, PromiseUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var FRAME_LENGTH = 150; // milliseconds
     function playAttackingAnimation(source, target) {
         return _playAnimation({
             frames: [
@@ -724,10 +725,35 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
                     { unit: target, activity: types_1.Activity.STANDING }
                 ]
             ],
-            delay: 150
+            delay: FRAME_LENGTH
         });
     }
     exports.playAttackingAnimation = playAttackingAnimation;
+    function playFloorFireAnimation(source, targets) {
+        var frames = [];
+        for (var i = 0; i < targets.length; i++) {
+            var frame_1 = [];
+            frame_1.push({ unit: source, activity: types_1.Activity.STANDING });
+            for (var j = 0; j < targets.length; j++) {
+                var activity = (j === i) ? types_1.Activity.DAMAGED : types_1.Activity.STANDING;
+                frame_1.push({ unit: targets[j], activity: activity });
+            }
+            frames.push(frame_1);
+        }
+        // last frame (all standing)
+        var frame = [];
+        frame.push({ unit: source, activity: types_1.Activity.STANDING });
+        for (var i = 0; i < targets.length; i++) {
+            frame.push({ unit: targets[i], activity: types_1.Activity.STANDING });
+        }
+        frames.push(frame);
+        console.log(frames);
+        return _playAnimation({
+            frames: frames,
+            delay: FRAME_LENGTH
+        });
+    }
+    exports.playFloorFireAnimation = playFloorFireAnimation;
     function _playAnimation(animation) {
         var delay = animation.delay, frames = animation.frames;
         var promises = [];
@@ -737,19 +763,16 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
                 for (var j = 0; j < frames[i].length; j++) {
                     var _a = frames[i][j], unit = _a.unit, activity = _a.activity;
                     unit.activity = activity;
-                    console.log(unit.name + " " + activity + " => update");
                     updatePromises.push(unit.sprite.update());
                 }
                 return Promise.all(updatePromises);
             };
             promises.push(updatePromise);
             promises.push(function () {
-                console.log("render");
                 return jwb.renderer.render();
             });
             if (i < (frames.length - 1)) {
                 promises.push(function () {
-                    console.log("wait");
                     return PromiseUtils_2.wait(delay);
                 });
             }
@@ -813,9 +836,10 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
             var targetUnit = map.getUnit({ x: x, y: y });
             if (!!targetUnit) {
                 var messages = jwb.state.messages;
-                var damage = unit.getRangedDamage();
-                messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage + " damage!");
-                targetUnit.takeDamage(damage, unit)
+                var damage_2 = unit.getRangedDamage();
+                messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage_2 + " damage!");
+                Animations_1.playAttackingAnimation(unit, targetUnit)
+                    .then(function () { return targetUnit.takeDamage(damage_2, unit); })
                     .then(function () { return resolve(); });
             }
             else {
@@ -1684,7 +1708,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     var INVENTORY_LEFT = 2 * TILE_WIDTH;
     var INVENTORY_TOP = 2 * TILE_HEIGHT;
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
-    var INVENTORY_HEIGHT = 12 * TILE_HEIGHT;
+    var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var LINE_HEIGHT = 16;
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
@@ -1963,7 +1987,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
 });
 define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_7, SpriteFactory_2, Colors_4) {
     "use strict";
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     Object.defineProperty(exports, "__esModule", { value: true });
     var BRONZE_SWORD = {
         name: 'Bronze Sword',
@@ -1976,7 +2000,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _a[Colors_4.default.DARK_GRAY] = Colors_4.default.LIGHT_BROWN,
             _a[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_BROWN,
             _a),
-        damage: 4,
+        damage: 5,
         minLevel: 1,
         maxLevel: 2
     };
@@ -1990,7 +2014,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
             _b[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARK_GRAY,
             _b),
-        damage: 7,
+        damage: 8,
         minLevel: 3,
         maxLevel: 4
     };
@@ -2004,7 +2028,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
             _c[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_GRAY,
             _c),
-        damage: 10,
+        damage: 11,
         minLevel: 4,
         maxLevel: 6
     };
@@ -2019,7 +2043,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _d[Colors_4.default.LIGHT_GRAY] = Colors_4.default.RED,
             _d[Colors_4.default.BLACK] = Colors_4.default.DARK_RED,
             _d),
-        damage: 14,
+        damage: 15,
         minLevel: 5,
         maxLevel: 6
     };
@@ -2030,21 +2054,30 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_7.EquipmentSlot.RANGED_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_BOW,
         paletteSwaps: {},
-        damage: 6,
+        damage: 2,
         minLevel: 2,
+        maxLevel: 4
+    };
+    var LONG_BOW = {
+        name: 'Long Bow',
+        char: 'S',
+        itemCategory: types_7.ItemCategory.WEAPON,
+        equipmentCategory: types_7.EquipmentSlot.RANGED_WEAPON,
+        mapIcon: SpriteFactory_2.default.MAP_BOW,
+        paletteSwaps: (_e = {},
+            _e[Colors_4.default.DARK_GREEN] = Colors_4.default.DARK_RED,
+            _e[Colors_4.default.GREEN] = Colors_4.default.RED,
+            _e),
+        damage: 6,
+        minLevel: 5,
         maxLevel: 6
     };
     function getWeaponClasses() {
-        return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW];
+        return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW, LONG_BOW];
     }
-    exports.default = {
-        BRONZE_SWORD: BRONZE_SWORD,
-        IRON_SWORD: IRON_SWORD,
-        STEEL_SWORD: STEEL_SWORD,
-        getWeaponClasses: getWeaponClasses
-    };
+    exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem"], function (require, exports, Sounds_3, InventoryItem_1, types_8, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_3, InventoryItem_1, types_8, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2082,6 +2115,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                     && ([-1, 0, 1].indexOf(dy) > -1)
                     && !(dx === 0 && dy === 0);
             });
+            promises.push(function () { return Animations_2.playFloorFireAnimation(unit, adjacentUnits); });
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
@@ -2115,7 +2149,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
         return [createMapPotion, createFloorFireScroll];
     }
     function _getWeaponSuppliers(level) {
-        return EquipmentClasses_1.default.getWeaponClasses()
+        return EquipmentClasses_1.getWeaponClasses()
             .filter(function (weaponClass) { return level >= weaponClass.minLevel; })
             .filter(function (weaponClass) { return level <= weaponClass.maxLevel; })
             .map(function (weaponClass) { return function (_a) {
@@ -2546,25 +2580,25 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _a),
         startingLife: 100,
         startingMana: 100,
-        startingDamage: 10,
+        startingDamage: 8,
         minLevel: 1,
         maxLevel: 20,
         lifePerLevel: function (level) { return 10; },
         manaPerLevel: function (level) { return 0; },
         damagePerLevel: function (level) { return 1; },
-        experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 4 : null; },
+        experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 2 : null; },
     };
     var ENEMY_SNAKE = {
         name: 'ENEMY_SNAKE',
         type: types_9.UnitType.ANIMAL,
         sprite: SpriteFactory_4.default.SNAKE,
         paletteSwaps: {},
-        startingLife: 60,
+        startingLife: 50,
         startingMana: null,
-        startingDamage: 5,
+        startingDamage: 4,
         minLevel: 1,
         maxLevel: 3,
-        lifePerLevel: function () { return 15; },
+        lifePerLevel: function () { return 12; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
@@ -2579,19 +2613,19 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_9.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.GRUNT,
         paletteSwaps: {},
-        startingLife: 90,
+        startingLife: 60,
         startingMana: null,
-        startingDamage: 9,
+        startingDamage: 6,
         minLevel: 1,
         maxLevel: 4,
-        lifePerLevel: function () { return 15; },
+        lifePerLevel: function () { return 12; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.6,
+            speed: 0.8,
             visionRange: 8,
-            fleeThreshold: 0.3
+            fleeThreshold: 0.1
         }
     };
     var ENEMY_SOLDIER = {
@@ -2599,14 +2633,14 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_9.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.SOLDIER,
         paletteSwaps: {},
-        startingLife: 120,
+        startingLife: 100,
         startingMana: null,
-        startingDamage: 12,
+        startingDamage: 10,
         minLevel: 3,
         maxLevel: 6,
-        lifePerLevel: function () { return 20; },
+        lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 4; },
+        damagePerLevel: function () { return 3; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.9,
@@ -2622,17 +2656,17 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
             _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARKER_GRAY,
             _b),
-        startingLife: 150,
+        startingLife: 120,
         startingMana: null,
-        startingDamage: 30,
+        startingDamage: 20,
         minLevel: 5,
         maxLevel: 9,
-        lifePerLevel: function () { return 30; },
+        lifePerLevel: function () { return 25; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 5; },
+        damagePerLevel: function () { return 4; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.6,
+            speed: 0.7,
             visionRange: 12,
             fleeThreshold: 0
         }

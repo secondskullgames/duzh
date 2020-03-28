@@ -54,7 +54,8 @@ function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
         const { messages } = jwb.state;
         const damage = unit.getRangedDamage();
         messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        targetUnit.takeDamage(damage, unit)
+        playAttackingAnimation(unit, targetUnit)
+          .then(() => targetUnit.takeDamage(damage, unit))
           .then(() => resolve());
       } else {
         resolve();

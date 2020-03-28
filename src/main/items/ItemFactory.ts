@@ -7,8 +7,9 @@ import Unit from '../units/Unit';
 import { chainPromises } from '../utils/PromiseUtils';
 import { randChoice } from '../utils/RandomUtils';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import EquipmentClasses, { EquipmentClass } from './equipment/EquipmentClasses';
+import { EquipmentClass, getWeaponClasses } from './equipment/EquipmentClasses';
 import MapItem from './MapItem';
+import { playFloorFireAnimation } from '../graphics/animations/Animations';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -51,6 +52,8 @@ function createScrollOfFloorFire(damage: number): InventoryItem {
         && !(dx === 0 && dy === 0);
     });
 
+    promises.push(() => playFloorFireAnimation(unit, adjacentUnits));
+
     adjacentUnits.forEach(u => {
       promises.push(() => u.takeDamage(damage, unit));
     });
@@ -89,7 +92,7 @@ function _getItemSuppliers(level: number): MapItemSupplier[] {
 }
 
 function _getWeaponSuppliers(level: number): MapItemSupplier[] {
-  return EquipmentClasses.getWeaponClasses()
+  return getWeaponClasses()
     .filter(weaponClass => level >= weaponClass.minLevel)
     .filter(weaponClass => level <= weaponClass.maxLevel)
     .map(weaponClass => ({ x, y }) => _createMapEquipment(weaponClass, { x, y }));
