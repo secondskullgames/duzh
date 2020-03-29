@@ -2772,7 +2772,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
     }(DungeonGenerator_1.default));
     exports.default = RoomCorridorDungeonGenerator;
 });
-define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, ArrayUtils_5, MapUtils_7) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, MapUtils_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BlobDungeonGenerator = /** @class */ (function (_super) {
@@ -2845,19 +2845,14 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             return floorTiles;
         };
         BlobDungeonGenerator.prototype._addFloorTile = function (tiles) {
-            var _this = this;
             var floorTiles = this._getFloorTiles(tiles);
-            var candidates = this._getCandidates(tiles, floorTiles)
-                .sort(ArrayUtils_5.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
-            //const minIndex = 0;
-            //const maxIndex = randInt(0, candidates.length - 1);
-            var minIndex = Math.floor((candidates.length - 1) * 0.4);
-            var maxIndex = Math.floor((candidates.length - 1) * 0.7);
-            var index = RandomUtils_7.randInt(minIndex, maxIndex);
+            var candidates = this._getCandidates(tiles, floorTiles);
+            var index = RandomUtils_7.randInt(0, candidates.length - 1);
             var _a = candidates[index], x = _a.x, y = _a.y;
             tiles[y][x] = types_14.TileType.FLOOR;
         };
         BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
+            var _this = this;
             return this._getEmptyTiles(tiles)
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
@@ -2865,49 +2860,94 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             })
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                // To facilitate wall generation, disallow two specific cases:
-                // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
-                if (y >= 2) {
-                    if (tiles[y - 1][x] === types_14.TileType.NONE && tiles[y - 2][x] === types_14.TileType.FLOOR) {
-                        return false;
-                    }
-                }
-                // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
-                if (y <= (tiles.length - 3)) {
-                    if (tiles[y + 1][x] === types_14.TileType.NONE && tiles[y + 2][x] === types_14.TileType.FLOOR) {
-                        return false;
-                    }
-                }
-                return true;
+                return _this._isLegalWallCoordinates({ x: x, y: y }, tiles);
             })
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
                 return floorTiles.some(function (floorTile) { return MapUtils_7.isAdjacent({ x: x, y: y }, floorTile); });
             });
         };
-        /**
-         * @return the number of nearby tiles
-         */
-        BlobDungeonGenerator.prototype._getSnakeScore = function (tile, tiles) {
-            var score = 0;
-            var offset = 1;
+        BlobDungeonGenerator.prototype._isLegalWallCoordinates = function (_a, tiles) {
+            var x = _a.x, y = _a.y;
+            // To facilitate wall generation, disallow some specific cases:
+            // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
+            var height = tiles.length;
+            var m = 3; // number of consecutive wall tiles required
+            for (var n = 2; n <= m; n++) {
+                if (y >= n) {
+                    if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
+                        && (tiles[y - n][x] === types_14.TileType.FLOOR)) {
+                        return false;
+                    }
+                }
+                // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
+                if (y <= (height - 1 - n)) {
+                    if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
+                        && (tiles[y + n][x] == types_14.TileType.FLOOR)) {
+                        return false;
+                    }
+                }
+                // 3. can't add a floor tile if there's a wall to the left of it, AND a floor tile to the left of that
+                if (x >= 2) {
+                    if (tiles[y][x - 1] === types_14.TileType.NONE && tiles[y][x - 2] === types_14.TileType.FLOOR) {
+                        //return false;
+                    }
+                }
+                // 4. can't add a floor tile if there's a wall to the right of it, AND a floor tile to the right of that
+                if (x <= (height - 3)) {
+                    if (tiles[y][x + 1] === types_14.TileType.NONE && tiles[y][x + 2] === types_14.TileType.FLOOR) {
+                        //return false;
+                    }
+                }
+                // 5. check for kitty corner floor tiles
+                if (this._hasKittyCornerFloorTile({ x: x, y: y }, tiles)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        BlobDungeonGenerator.prototype._hasKittyCornerFloorTile = function (_a, tiles) {
+            var x = _a.x, y = _a.y;
             var height = tiles.length;
             var width = tiles[0].length;
-            var minY = Math.max(0, tile.y - offset);
-            var maxY = Math.min(tile.y + offset, height - 1);
-            var minX = Math.max(0, tile.x - offset);
-            var maxX = Math.min(tile.x + offset, width - 1);
-            for (var y = minY; y <= maxY; y++) {
-                for (var x = minX; x <= maxX; x++) {
-                    if (MapUtils_7.coordinatesEquals(tile, { x: x, y: y })) {
-                        continue;
-                    }
-                    if (tiles[y][x] === types_14.TileType.FLOOR) {
-                        score++;
+            // one tile apart vertically
+            for (var _i = 0, _b = [[-1, -1], [1, -1], [-1, 1], [1, 1]]; _i < _b.length; _i++) {
+                var _c = _b[_i], dx = _c[0], dy = _c[1];
+                var _d = [x + dx, y + dy], x2 = _d[0], y2 = _d[1];
+                if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
+                    // out of bounds
+                }
+                else if (tiles[y2][x2] === types_14.TileType.FLOOR) {
+                    if (tiles[y2][x] === types_14.TileType.NONE && tiles[y][x2] === types_14.TileType.NONE) {
+                        return true;
                     }
                 }
             }
-            return score;
+            // two tiles apart vertically
+            // @X        ab
+            // XX        cd
+            //  F        ef
+            for (var _e = 0, _f = [[-1, -2], [1, -2], [-1, 2], [1, 2]]; _e < _f.length; _e++) {
+                var _g = _f[_e], dx = _g[0], dy = _g[1];
+                var a = { x: x, y: y };
+                var b = { x: x + dx, y: y };
+                var c = { x: x, y: y + (dy / 2) };
+                var d = { x: x + dx, y: y + (dy / 2) };
+                var e = { x: x, y: y + dy };
+                var f = { x: x + dx, y: y + dy };
+                if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {
+                    // out of bounds
+                }
+                else {
+                    if (tiles[b.y][b.x] === types_14.TileType.NONE
+                        && tiles[c.y][c.x] === types_14.TileType.NONE
+                        && tiles[d.y][d.x] === types_14.TileType.NONE
+                        && tiles[f.y][f.x] === types_14.TileType.FLOOR) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
         BlobDungeonGenerator.prototype._addWalls = function (tiles) {
             var height = tiles.length;
@@ -2920,155 +2960,28 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                 }
             }
         };
+        /**
+         * @param end inclusive
+         */
+        BlobDungeonGenerator.prototype._range = function (start, end) {
+            var range = [];
+            for (var i = start; i <= end; i++) {
+                range.push(i);
+            }
+            return range;
+        };
         return BlobDungeonGenerator;
     }(DungeonGenerator_2.default));
     exports.default = BlobDungeonGenerator;
 });
-define("maps/generation/ReverseBlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, types_15, RandomUtils_8, ArrayUtils_6, MapUtils_8) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var ReverseBlobDungeonGenerator = /** @class */ (function (_super) {
-        __extends(ReverseBlobDungeonGenerator, _super);
-        function ReverseBlobDungeonGenerator(tileSet) {
-            return _super.call(this, tileSet) || this;
-        }
-        /**
-         * Strategy:
-         * Fill the map with floor tiles.
-         * Until the map is half-empty, replace floor tiles on the edge with empty/wall tiles.
-         * New tile placement should be random - but aim for a certain level of "snakiness",
-         * where snakiness is defined as the number of tiles within N units
-         * (more adjacent tiles - less snaky).
-         */
-        ReverseBlobDungeonGenerator.prototype.generateTiles = function (width, height) {
-            var tiles = this._initTiles(width, height);
-            var targetNumFloorTiles = this._getTargetNumFloorTiles(width * height);
-            while (this._getFloorTiles(tiles).length > targetNumFloorTiles) {
-                this._removeFloorTile(tiles);
-            }
-            this._addWalls(tiles);
-            return {
-                tiles: tiles,
-                width: width,
-                height: height,
-                rooms: []
-            };
-        };
-        ReverseBlobDungeonGenerator.prototype._initTiles = function (width, height) {
-            var tiles = [];
-            for (var y = 0; y < height; y++) {
-                var row = [];
-                for (var x = 0; x < width; x++) {
-                    if (x === 0 || y === 0 || x === (width - 1) || y === (height - 1)) {
-                        row.push(types_15.TileType.NONE);
-                    }
-                    else {
-                        row.push(types_15.TileType.FLOOR);
-                    }
-                }
-                tiles.push(row);
-            }
-            return tiles;
-        };
-        ReverseBlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
-            return RandomUtils_8.randInt(Math.round(max * 3 / 8), Math.round(max * 5 / 8));
-        };
-        ReverseBlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
-            var floorTiles = [];
-            for (var y = 0; y < tiles.length; y++) {
-                for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_15.TileType.FLOOR) {
-                        floorTiles.push({ x: x, y: y });
-                    }
-                }
-            }
-            return floorTiles;
-        };
-        ReverseBlobDungeonGenerator.prototype._getEmptyTiles = function (tiles) {
-            var floorTiles = [];
-            for (var y = 0; y < tiles.length; y++) {
-                for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_15.TileType.NONE) {
-                        floorTiles.push({ x: x, y: y });
-                    }
-                }
-            }
-            return floorTiles;
-        };
-        ReverseBlobDungeonGenerator.prototype._removeFloorTile = function (tiles) {
-            var _this = this;
-            var floorTiles = this._getFloorTiles(tiles);
-            var emptyTiles = this._getEmptyTiles(tiles);
-            var candidates = floorTiles
-                .filter(function (_a) {
-                var x = _a.x, y = _a.y;
-                return emptyTiles.some(function (emptyTile) { return MapUtils_8.isAdjacent({ x: x, y: y }, emptyTile); });
-            })
-                .sort(ArrayUtils_6.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
-            var maxIndexToConsider = RandomUtils_8.randInt(0, candidates.length - 1);
-            var index = RandomUtils_8.randInt(maxIndexToConsider, candidates.length - 1);
-            var _a = candidates[index], x = _a.x, y = _a.y;
-            tiles[y][x] = types_15.TileType.NONE;
-        };
-        /**
-         * @return the number of nearby tiles
-         */
-        ReverseBlobDungeonGenerator.prototype._getSnakeScore = function (tile, tiles) {
-            var score = 0;
-            var offset = 1;
-            var height = tiles.length;
-            var width = tiles[0].length;
-            var minY = Math.max(0, tile.y - offset);
-            var maxY = Math.min(tile.y + offset, height - 1);
-            var minX = Math.max(0, tile.x - offset);
-            var maxX = Math.min(tile.x + offset, width - 1);
-            for (var y = minY; y <= maxY; y++) {
-                for (var x = minX; x <= maxX; x++) {
-                    if (MapUtils_8.coordinatesEquals(tile, { x: x, y: y })) {
-                        continue;
-                    }
-                    if (tiles[y][x] === types_15.TileType.FLOOR) {
-                        score++;
-                    }
-                }
-            }
-            return score;
-        };
-        ReverseBlobDungeonGenerator.prototype._addWalls = function (tiles) {
-            var height = tiles.length;
-            var width = tiles[0].length;
-            for (var y = 0; y < (height - 1); y++) {
-                for (var x = 0; x < width; x++) {
-                    if (tiles[y][x] === types_15.TileType.NONE && tiles[y + 1][x] === types_15.TileType.FLOOR) {
-                        var anyWallsAbove = false;
-                        for (var y2 = 0; y2 < y; y2++) {
-                            if (tiles[y2][x] === types_15.TileType.WALL_TOP) {
-                                anyWallsAbove = true;
-                                break;
-                            }
-                        }
-                        if (!anyWallsAbove) {
-                            tiles[y][x] = types_15.TileType.WALL_TOP;
-                        }
-                    }
-                }
-            }
-        };
-        return ReverseBlobDungeonGenerator;
-    }(DungeonGenerator_3.default));
-    exports.default = ReverseBlobDungeonGenerator;
-});
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "utils/RandomUtils", "maps/generation/BlobDungeonGenerator"], function (require, exports, ItemFactory_1, UnitFactory_1, RandomUtils_9, BlobDungeonGenerator_1) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "utils/RandomUtils", "maps/generation/BlobDungeonGenerator"], function (require, exports, ItemFactory_1, UnitFactory_1, RandomUtils_8, BlobDungeonGenerator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // outer dimensions
-    var MIN_ROOM_DIMENSION = 5;
-    var MAX_ROOM_DIMENSION = 9;
-    var MIN_ROOM_PADDING = 1;
     function createRandomMap(tileSet, level, width, height, numEnemies, numItems) {
-        var minRoomDimension = RandomUtils_9.randInt(5, 7);
-        var maxRoomDimension = RandomUtils_9.randInt(7, 10);
-        var minRoomPadding = RandomUtils_9.randInt(0, 2);
+        var minRoomDimension = RandomUtils_8.randInt(5, 7);
+        var maxRoomDimension = RandomUtils_8.randInt(7, 10);
+        var minRoomPadding = RandomUtils_8.randInt(0, 2);
         /*const dungeonGenerator = new RoomCorridorDungeonGenerator(
           tileSet,
           minRoomDimension,
@@ -3080,7 +2993,7 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_10, AudioUtils_5) {
+define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_9, AudioUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _transpose8va(_a) {
@@ -3228,11 +3141,11 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         var numRepeats = 4;
         var _loop_9 = function (i) {
             var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_10.randChoice(section.bass) : null;
+            var bass = (!!section.bass) ? RandomUtils_9.randChoice(section.bass) : null;
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_10.randChoice(section.lead);
+                    lead = RandomUtils_9.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
@@ -3255,7 +3168,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_3, Colors_6, types_16, SpriteFactory_4) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_3, Colors_6, types_15, SpriteFactory_4) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3274,22 +3187,22 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_16.TileType.FLOOR] = 'dungeon/tile_floor',
-        _a[types_16.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
-        _a[types_16.TileType.WALL_TOP] = 'dungeon/tile_wall',
-        _a[types_16.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
-        _a[types_16.TileType.WALL] = null,
-        _a[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _a[types_16.TileType.NONE] = null,
+        _a[types_15.TileType.FLOOR] = 'dungeon/tile_floor',
+        _a[types_15.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
+        _a[types_15.TileType.WALL_TOP] = 'dungeon/tile_wall',
+        _a[types_15.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
+        _a[types_15.TileType.WALL] = null,
+        _a[types_15.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _a[types_15.TileType.NONE] = null,
         _a);
     var caveFilenames = (_b = {},
-        _b[types_16.TileType.FLOOR] = 'cave/tile_floor',
-        _b[types_16.TileType.FLOOR_HALL] = 'cave/tile_floor',
-        _b[types_16.TileType.WALL_TOP] = 'cave/tile_wall',
-        _b[types_16.TileType.WALL_HALL] = 'cave/tile_wall',
-        _b[types_16.TileType.WALL] = null,
-        _b[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _b[types_16.TileType.NONE] = null,
+        _b[types_15.TileType.FLOOR] = 'cave/tile_floor',
+        _b[types_15.TileType.FLOOR_HALL] = 'cave/tile_floor',
+        _b[types_15.TileType.WALL_TOP] = 'cave/tile_wall',
+        _b[types_15.TileType.WALL_HALL] = 'cave/tile_wall',
+        _b[types_15.TileType.WALL] = null,
+        _b[types_15.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _b[types_15.TileType.NONE] = null,
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -3297,7 +3210,7 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_9, MapSupplier_1, InputHandler_1, RandomUtils_11) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -3325,7 +3238,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         loadMap(0);
         InputHandler_1.attachEvents();
         jwb.renderer.render();
-        Music_1.default.playSuite(RandomUtils_11.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        Music_1.default.playSuite(RandomUtils_10.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
     }
     exports.restartGame = restartGame;
     /**
@@ -3335,10 +3248,10 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         map.rooms.forEach(function (room) {
-            if (MapUtils_9.contains(room, playerUnit)) {
+            if (MapUtils_8.contains(room, playerUnit)) {
                 for (var y = room.top; y < room.top + room.height; y++) {
                     for (var x = room.left; x < room.left + room.width; x++) {
-                        if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
+                        if (!MapUtils_8.isTileRevealed({ x: x, y: y })) {
                             map.revealedTiles.push({ x: x, y: y });
                         }
                     }
@@ -3348,7 +3261,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var radius = 2;
         for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
             for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-                if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
+                if (!MapUtils_8.isTileRevealed({ x: x, y: y })) {
                     map.revealedTiles.push({ x: x, y: y });
                 }
             }
@@ -3356,7 +3269,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_17) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_16) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3436,7 +3349,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_17.GameScreen.GAME:
+            case types_16.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3471,7 +3384,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_17.GameScreen.INVENTORY:
+            case types_16.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3500,7 +3413,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_17.GameScreen.GAME: {
+            case types_16.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3512,17 +3425,17 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_17.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_16.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_17.GameScreen.INVENTORY: {
+            case types_16.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_17.GameScreen.GAME;
+                    state.screen = types_16.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3535,11 +3448,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_17.GameScreen.INVENTORY:
-                state.screen = types_17.GameScreen.GAME;
+            case types_16.GameScreen.INVENTORY:
+                state.screen = types_16.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_17.GameScreen.INVENTORY;
+                state.screen = types_16.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();

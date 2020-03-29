@@ -85,65 +85,102 @@ class BlobDungeonGenerator extends DungeonGenerator {
 
   private _addFloorTile(tiles: TileType[][]): void {
     const floorTiles = this._getFloorTiles(tiles);
-    const candidates = this._getCandidates(tiles, floorTiles)
-      .sort(comparing(tile => this._getSnakeScore(tile, tiles)));
+    const candidates = this._getCandidates(tiles, floorTiles);
 
-    //const minIndex = 0;
-    //const maxIndex = randInt(0, candidates.length - 1);
-
-    const minIndex = Math.floor((candidates.length - 1) * 0.4);
-    const maxIndex = Math.floor((candidates.length - 1) * 0.7);
-
-    const index = randInt(minIndex, maxIndex);
+    const index = randInt(0, candidates.length - 1);
     const { x, y } = candidates[index];
     tiles[y][x] = TileType.FLOOR;
   }
 
-  private _getCandidates(tiles: TileType[][], floorTiles: Coordinates[]) {
+  private _getCandidates(tiles: TileType[][], floorTiles: Coordinates[]): Coordinates[] {
     return this._getEmptyTiles(tiles)
       .filter(({ x, y }) => y > 0)
-      .filter(({ x, y }) => {
-        // To facilitate wall generation, disallow two specific cases:
-        // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
-        if (y >= 2) {
-          if (tiles[y - 1][x] === TileType.NONE && tiles[y - 2][x] === TileType.FLOOR) {
-            return false;
-          }
-        }
-        // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
-        if (y <= (tiles.length - 3)) {
-          if (tiles[y + 1][x] === TileType.NONE && tiles[y + 2][x] === TileType.FLOOR) {
-            return false;
-          }
-        }
-        return true;
-      })
+      .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
       .filter(({ x, y }) => floorTiles.some(floorTile => isAdjacent({ x, y }, floorTile)));
   }
 
-  /**
-   * @return the number of nearby tiles
-   */
-  private _getSnakeScore(tile: Coordinates, tiles: TileType[][]) {
-    let score = 0;
-    const offset = 1;
+  private _isLegalWallCoordinates({ x, y }: Coordinates, tiles: TileType[][]) {
+    // To facilitate wall generation, disallow some specific cases:
+    // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
+    const height = tiles.length;
+    const m = 3; // number of consecutive wall tiles required
+    for (let n = 2; n <= m; n++) {
+      if (y >= n) {
+        if (
+          this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === TileType.NONE)
+          && (tiles[y - n][x] === TileType.FLOOR)
+        ) {
+          return false;
+        }
+      }
+      // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
+      if (y <= (height - 1 - n)) {
+        if (
+          this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === TileType.NONE)
+          && (tiles[y + n][x] == TileType.FLOOR)
+        ) {
+          return false;
+        }
+      }
+      // 3. can't add a floor tile if there's a wall to the left of it, AND a floor tile to the left of that
+      if (x >= 2) {
+        if (tiles[y][x - 1] === TileType.NONE && tiles[y][x - 2] === TileType.FLOOR) {
+          //return false;
+        }
+      }
+      // 4. can't add a floor tile if there's a wall to the right of it, AND a floor tile to the right of that
+      if (x <= (height - 3)) {
+        if (tiles[y][x + 1] === TileType.NONE && tiles[y][x + 2] === TileType.FLOOR) {
+          //return false;
+        }
+      }
+      // 5. check for kitty corner floor tiles
+      if (this._hasKittyCornerFloorTile({ x, y }, tiles)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private _hasKittyCornerFloorTile({ x, y }: Coordinates, tiles: TileType[][]) {
     const height = tiles.length;
     const width = tiles[0].length;
-    const minY = Math.max(0, tile.y - offset);
-    const maxY = Math.min(tile.y + offset, height - 1);
-    const minX = Math.max(0, tile.x - offset);
-    const maxX = Math.min(tile.x + offset, width - 1);
-    for (let y = minY; y <= maxY; y++) {
-      for (let x = minX; x <= maxX; x++) {
-        if (coordinatesEquals(tile, { x, y })) {
-          continue;
-        }
-        if (tiles[y][x] === TileType.FLOOR) {
-          score++;
+    // one tile apart vertically
+    for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const [x2, y2] = [x + dx, y + dy];
+      if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
+        // out of bounds
+      } else if (tiles[y2][x2] === TileType.FLOOR) {
+        if (tiles[y2][x] === TileType.NONE && tiles[y][x2] === TileType.NONE) {
+          return true;
         }
       }
     }
-    return score;
+    // two tiles apart vertically
+    // @X        ab
+    // XX        cd
+    //  F        ef
+    for (let [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
+      const a = { x, y };
+      const b = { x: x + dx, y };
+      const c = { x, y: y + (dy / 2) };
+      const d = { x: x + dx, y: y + (dy / 2) };
+      const e = { x, y: y + dy };
+      const f = { x: x + dx, y: y + dy };
+      if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {
+        // out of bounds
+      } else {
+        if (
+          tiles[b.y][b.x] === TileType.NONE
+          && tiles[c.y][c.x] === TileType.NONE
+          && tiles[d.y][d.x] === TileType.NONE
+          && tiles[f.y][f.x] === TileType.FLOOR
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private _addWalls(tiles: TileType[][]) {
@@ -156,6 +193,17 @@ class BlobDungeonGenerator extends DungeonGenerator {
         }
       }
     }
+  }
+
+  /**
+   * @param end inclusive
+   */
+  private _range(start: number, end: number): number[] {
+    const range = [];
+    for (let i = start; i <= end; i++) {
+      range.push(i);
+    }
+    return range;
   }
 }
 

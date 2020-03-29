@@ -83,7 +83,7 @@ const SHORT_BOW: EquipmentClass = {
   equipmentCategory: EquipmentSlot.RANGED_WEAPON,
   mapIcon: SpriteFactory.MAP_BOW,
   paletteSwaps: {},
-  damage: 2,
+  damage: 4,
   minLevel: 2,
   maxLevel: 4
 };
@@ -98,7 +98,7 @@ const LONG_BOW: EquipmentClass = {
     [Colors.DARK_GREEN]: Colors.DARK_RED,
     [Colors.GREEN]: Colors.RED,
   },
-  damage: 6,
+  damage: 8,
   minLevel: 5,
   maxLevel: 6
 };
