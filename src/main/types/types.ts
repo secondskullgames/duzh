@@ -18,9 +18,18 @@ interface Rect {
   height: number
 }
 
+enum TileType {
+  FLOOR,
+  FLOOR_HALL,
+  WALL_TOP,
+  WALL_HALL,
+  WALL,
+  NONE,
+  STAIRS_DOWN
+}
+
 interface Tile {
-  name: string,
-  char: string,
+  type: TileType,
   sprite: Sprite | null,
   isBlocking: boolean
 }
@@ -38,7 +47,7 @@ interface MapSection {
   width: number,
   height: number,
   rooms: Room[],
-  tiles: Tile[][]
+  tiles: TileType[][]
 }
 
 type PaletteSwaps = {
@@ -82,6 +91,10 @@ enum UnitType {
   ANIMAL = 'ANIMAL'
 }
 
+type TileSet = {
+  [tileType in TileType]: (Sprite | null)
+};
+
 export {
   Activity,
   Coordinates,
@@ -96,6 +109,8 @@ export {
   Room,
   Sample,
   SpriteSupplier,
+  TileType,
   Tile,
-  UnitType
+  UnitType,
+  TileSet
 };

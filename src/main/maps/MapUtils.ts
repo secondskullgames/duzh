@@ -1,13 +1,14 @@
-import { Coordinates, Rect, Tile } from '../types/types';
+import { Coordinates, Rect, Tile, TileSet } from '../types/types';
 import { sortBy } from '../utils/ArrayUtils';
+import { TileType } from '../types/types';
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
  *         which do not collide with `occupiedLocations`
  */
 function pickUnoccupiedLocations(
-  tiles: Tile[][],
-  allowedTileTypes: Tile[],
+  tiles: TileType[][],
+  allowedTileTypes: TileType[],
   occupiedLocations: Coordinates[],
   numToChoose: number
 ): Coordinates[] {
@@ -77,6 +78,25 @@ function isTileRevealed({ x, y }: Coordinates) {
   return jwb.state.getMap().revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
 }
 
+function isBlocking(tileType: TileType) {
+  switch (tileType) {
+    case TileType.FLOOR:
+    case TileType.FLOOR_HALL:
+    case TileType.STAIRS_DOWN:
+      return false;
+    default:
+      return true;
+  }
+}
+
+function createTile(type: TileType, tileSet: TileSet): Tile {
+  return {
+    type,
+    sprite: tileSet[type],
+    isBlocking: isBlocking(type)
+  }
+}
+
 export {
   pickUnoccupiedLocations,
   civDistance,
@@ -85,5 +105,7 @@ export {
   contains,
   coordinatesEquals,
   isAdjacent,
-  isTileRevealed
+  isTileRevealed,
+  isBlocking,
+  createTile
 };

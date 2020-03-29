@@ -1,7 +1,6 @@
-import { Coordinates, Rect, Room, Tile } from '../types/types';
 import Unit from '../units/Unit';
-import Tiles from '../types/Tiles';
 import MapItem from '../items/MapItem';
+import { Coordinates, Entity, Rect, Room, TileType, Tile } from '../types/types';
 
 class MapInstance {
   width: number;
@@ -9,10 +8,11 @@ class MapInstance {
   /**
    * [y][x]
    */
-  tiles: Tile[][];
+  private readonly _tiles: Tile[][];
   rooms: Room[];
   units: Unit[];
   items: MapItem[];
+  projectiles: Entity[];
   revealedTiles: Coordinates[];
 
   constructor(
@@ -25,16 +25,17 @@ class MapInstance {
   ) {
     this.width = width;
     this.height = height;
-    this.tiles = tiles;
+    this._tiles = tiles;
     this.rooms = rooms;
     this.units = units;
     this.items = items;
+    this.projectiles = [];
     this.revealedTiles = [];
   }
 
   getTile({ x, y }: Coordinates): Tile {
     if (x < this.width && y < this.height) {
-      return (this.tiles[y] || [])[x] || Tiles.NONE;
+      return (this._tiles[y] || [])[x] || TileType.NONE;
     }
     throw `Illegal coordinates ${x}, ${y}`;
   }

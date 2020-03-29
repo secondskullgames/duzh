@@ -50,7 +50,6 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
     frame.push({ unit: targets[i], activity: Activity.STANDING });
   }
   frames.push(frame);
-  console.log(frames);
   return _playAnimation({
     frames,
     delay: FRAME_LENGTH
@@ -59,6 +58,7 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
 
 function _playAnimation(animation: Animation): Promise<any> {
   const { delay, frames } = animation;
+  console.log(frames);
 
   const promises: (() => Promise<any>)[] = [];
   for (let i = 0; i < frames.length; i++) {

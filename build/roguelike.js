@@ -281,6 +281,17 @@ define("types/Colors", ["require", "exports"], function (require, exports) {
 define("types/types", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var TileType;
+    (function (TileType) {
+        TileType[TileType["FLOOR"] = 0] = "FLOOR";
+        TileType[TileType["FLOOR_HALL"] = 1] = "FLOOR_HALL";
+        TileType[TileType["WALL_TOP"] = 2] = "WALL_TOP";
+        TileType[TileType["WALL_HALL"] = 3] = "WALL_HALL";
+        TileType[TileType["WALL"] = 4] = "WALL";
+        TileType[TileType["NONE"] = 5] = "NONE";
+        TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
+    })(TileType || (TileType = {}));
+    exports.TileType = TileType;
     var ItemCategory;
     (function (ItemCategory) {
         ItemCategory["POTION"] = "POTION";
@@ -345,7 +356,7 @@ define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
     }
     exports.average = average;
 });
-define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils"], function (require, exports, ArrayUtils_1) {
+define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types"], function (require, exports, ArrayUtils_1, types_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -427,6 +438,25 @@ define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils"], function (re
         return jwb.state.getMap().revealedTiles.some(function (tile) { return coordinatesEquals({ x: x, y: y }, tile); });
     }
     exports.isTileRevealed = isTileRevealed;
+    function isBlocking(tileType) {
+        switch (tileType) {
+            case types_1.TileType.FLOOR:
+            case types_1.TileType.FLOOR_HALL:
+            case types_1.TileType.STAIRS_DOWN:
+                return false;
+            default:
+                return true;
+        }
+    }
+    exports.isBlocking = isBlocking;
+    function createTile(type, tileSet) {
+        return {
+            type: type,
+            sprite: tileSet[type],
+            isBlocking: isBlocking(type)
+        };
+    }
+    exports.createTile = createTile;
 });
 define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -709,7 +739,7 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     };
     exports.default = Sounds;
 });
-define("graphics/animations/Animations", ["require", "exports", "types/types", "utils/PromiseUtils"], function (require, exports, types_1, PromiseUtils_2) {
+define("graphics/animations/Animations", ["require", "exports", "types/types", "utils/PromiseUtils"], function (require, exports, types_2, PromiseUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FRAME_LENGTH = 150; // milliseconds
@@ -717,12 +747,12 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return _playAnimation({
             frames: [
                 [
-                    { unit: source, activity: types_1.Activity.ATTACKING },
-                    { unit: target, activity: types_1.Activity.DAMAGED }
+                    { unit: source, activity: types_2.Activity.ATTACKING },
+                    { unit: target, activity: types_2.Activity.DAMAGED }
                 ],
                 [
-                    { unit: source, activity: types_1.Activity.STANDING },
-                    { unit: target, activity: types_1.Activity.STANDING }
+                    { unit: source, activity: types_2.Activity.STANDING },
+                    { unit: target, activity: types_2.Activity.STANDING }
                 ]
             ],
             delay: FRAME_LENGTH
@@ -733,21 +763,20 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         var frames = [];
         for (var i = 0; i < targets.length; i++) {
             var frame_1 = [];
-            frame_1.push({ unit: source, activity: types_1.Activity.STANDING });
+            frame_1.push({ unit: source, activity: types_2.Activity.STANDING });
             for (var j = 0; j < targets.length; j++) {
-                var activity = (j === i) ? types_1.Activity.DAMAGED : types_1.Activity.STANDING;
+                var activity = (j === i) ? types_2.Activity.DAMAGED : types_2.Activity.STANDING;
                 frame_1.push({ unit: targets[j], activity: activity });
             }
             frames.push(frame_1);
         }
         // last frame (all standing)
         var frame = [];
-        frame.push({ unit: source, activity: types_1.Activity.STANDING });
+        frame.push({ unit: source, activity: types_2.Activity.STANDING });
         for (var i = 0; i < targets.length; i++) {
-            frame.push({ unit: targets[i], activity: types_1.Activity.STANDING });
+            frame.push({ unit: targets[i], activity: types_2.Activity.STANDING });
         }
         frames.push(frame);
-        console.log(frames);
         return _playAnimation({
             frames: frames,
             delay: FRAME_LENGTH
@@ -756,6 +785,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
     exports.playFloorFireAnimation = playFloorFireAnimation;
     function _playAnimation(animation) {
         var delay = animation.delay, frames = animation.frames;
+        console.log(frames);
         var promises = [];
         var _loop_4 = function (i) {
             var updatePromise = function () {
@@ -783,7 +813,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return PromiseUtils_2.chainPromises(promises);
     }
 });
-define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "graphics/animations/Animations"], function (require, exports, types_2, AudioUtils_1, Sounds_1, Animations_1) {
+define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "graphics/animations/Animations"], function (require, exports, types_3, AudioUtils_1, Sounds_1, Animations_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function moveOrAttack(unit, _a) {
@@ -822,7 +852,7 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
         return unit.sprite.update()
             .then(function () { return jwb.renderer.render(); })
             .then(function () { return new Promise(function (resolve) {
-            if (!unit.equipment.get(types_2.EquipmentSlot.RANGED_WEAPON)) {
+            if (!unit.equipment.get(types_3.EquipmentSlot.RANGED_WEAPON)) {
                 // change direction and re-render, but don't do anything (don't spend a turn)
                 resolve();
                 return;
@@ -1107,10 +1137,10 @@ define("items/InventoryItem", ["require", "exports"], function (require, exports
     }());
     exports.default = InventoryItem;
 });
-define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_3) {
+define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var categories = Object.values(types_3.ItemCategory);
+    var categories = Object.values(types_4.ItemCategory);
     /**
      * Contains information about all items held by a particular unit, grouped by category,
      * as well as data about the selected item/category in the inventory menu
@@ -1212,7 +1242,7 @@ define("items/equipment/EquipmentMap", ["require", "exports"], function (require
     }());
     exports.default = EquipmentMap;
 });
-define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_4, AudioUtils_2, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1) {
+define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_5, AudioUtils_2, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1237,7 +1267,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this._damage = unitClass.startingDamage;
             this.queuedOrder = null;
             this.aiHandler = unitClass.aiHandler;
-            this.activity = types_4.Activity.STANDING;
+            this.activity = types_5.Activity.STANDING;
             this.direction = null;
         }
         Unit.prototype._regenLife = function () {
@@ -1273,7 +1303,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_4.EquipmentSlot.RANGED_WEAPON);
+                return (slot !== types_5.EquipmentSlot.RANGED_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
@@ -1286,11 +1316,16 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_4.EquipmentSlot.MELEE_WEAPON);
+                return (slot !== types_5.EquipmentSlot.MELEE_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
-                damage += (item.damage || 0);
+                if (slot === types_5.EquipmentSlot.RANGED_WEAPON) {
+                    damage += (item.damage || 0);
+                }
+                else {
+                    damage += (item.damage || 0) / 2;
+                }
             });
             return Math.round(damage);
         };
@@ -1370,7 +1405,485 @@ define("items/MapItem", ["require", "exports"], function (require, exports) {
     }());
     exports.default = MapItem;
 });
-define("graphics/sprites/UnitSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_1, Sprite_1, Colors_1, Directions_2, ImageUtils_2) {
+define("maps/MapInstance", ["require", "exports", "types/types"], function (require, exports, types_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var MapInstance = /** @class */ (function () {
+        function MapInstance(width, height, tiles, rooms, units, items) {
+            this.width = width;
+            this.height = height;
+            this._tiles = tiles;
+            this.rooms = rooms;
+            this.units = units;
+            this.items = items;
+            this.projectiles = [];
+            this.revealedTiles = [];
+        }
+        MapInstance.prototype.getTile = function (_a) {
+            var x = _a.x, y = _a.y;
+            if (x < this.width && y < this.height) {
+                return (this._tiles[y] || [])[x] || types_6.TileType.NONE;
+            }
+            throw "Illegal coordinates " + x + ", " + y;
+        };
+        MapInstance.prototype.getUnit = function (_a) {
+            var x = _a.x, y = _a.y;
+            return this.units.filter(function (u) { return u.x === x && u.y === y; })[0] || null;
+        };
+        MapInstance.prototype.getItem = function (_a) {
+            var x = _a.x, y = _a.y;
+            return this.items.filter(function (i) { return i.x === x && i.y === y; })[0] || null;
+        };
+        MapInstance.prototype.contains = function (_a) {
+            var x = _a.x, y = _a.y;
+            return x >= 0 && x < this.width && y >= 0 && y < this.height;
+        };
+        MapInstance.prototype.isBlocked = function (_a) {
+            var x = _a.x, y = _a.y;
+            if (!this.contains({ x: x, y: y })) {
+                throw "(" + x + ", " + y + ") is not on the map";
+            }
+            return !!this.getUnit({ x: x, y: y }) || this.getTile({ x: x, y: y }).isBlocking;
+        };
+        MapInstance.prototype.removeItem = function (_a) {
+            var x = _a.x, y = _a.y;
+            var index = this.items.findIndex(function (i) { return (i.x === x && i.y === y); });
+            this.items.splice(index, 1);
+        };
+        MapInstance.prototype.getRect = function () {
+            return {
+                left: 0,
+                top: 0,
+                width: this.width,
+                height: this.height
+            };
+        };
+        return MapInstance;
+    }());
+    exports.default = MapInstance;
+});
+define("maps/MapSupplier", ["require", "exports", "maps/MapInstance"], function (require, exports, MapInstance_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function createMap(mapSupplier) {
+        var _a;
+        var level = mapSupplier.level, width = mapSupplier.width, height = mapSupplier.height, tiles = mapSupplier.tiles, rooms = mapSupplier.rooms, playerUnitLocation = mapSupplier.playerUnitLocation, enemyUnitLocations = mapSupplier.enemyUnitLocations, enemyUnitSupplier = mapSupplier.enemyUnitSupplier, itemLocations = mapSupplier.itemLocations, itemSupplier = mapSupplier.itemSupplier;
+        var playerUnit = jwb.state.playerUnit;
+        var units = [playerUnit];
+        _a = [playerUnitLocation.x, playerUnitLocation.y], playerUnit.x = _a[0], playerUnit.y = _a[1];
+        units.push.apply(units, enemyUnitLocations.map(function (_a) {
+            var x = _a.x, y = _a.y;
+            return enemyUnitSupplier({ x: x, y: y }, level);
+        }));
+        var items = itemLocations.map(function (_a) {
+            var x = _a.x, y = _a.y;
+            return itemSupplier({ x: x, y: y }, level);
+        });
+        return new MapInstance_1.default(width, height, tiles, rooms, units, items);
+    }
+    exports.createMap = createMap;
+});
+define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_7) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var GameState = /** @class */ (function () {
+        function GameState(playerUnit, mapSuppliers) {
+            this.screen = types_7.GameScreen.GAME;
+            this.playerUnit = playerUnit;
+            this.mapSuppliers = mapSuppliers;
+            this.mapIndex = 0;
+            this._map = null;
+            this.messages = [];
+            this.turn = 1;
+        }
+        GameState.prototype.getMap = function () {
+            if (!this._map) {
+                throw 'Tried to retrieve map before map was loaded';
+            }
+            return this._map;
+        };
+        GameState.prototype.setMap = function (map) {
+            this._map = map;
+        };
+        return GameState;
+    }());
+    exports.default = GameState;
+});
+define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_5) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function playTurn(playerUnitOrder) {
+        var playerUnit = jwb.state.playerUnit;
+        playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
+        return _update();
+    }
+    function _update() {
+        var state = jwb.state;
+        var playerUnit = state.playerUnit;
+        var map = state.getMap();
+        // make sure the player unit's update happens first
+        var unitPromises = [];
+        unitPromises.push(function () { return playerUnit.update(); });
+        map.units.forEach(function (u) {
+            if (u !== playerUnit) {
+                unitPromises.push(function () { return u.update(); });
+            }
+        });
+        return PromiseUtils_5.chainPromises(unitPromises)
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () {
+            state.turn++;
+            state.messages = [];
+        });
+    }
+    exports.default = {
+        playTurn: playTurn
+    };
+});
+define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_3, Sounds_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function pickupItem(unit, mapItem) {
+        var state = jwb.state;
+        var inventoryItem = mapItem.inventoryItem;
+        unit.inventory.add(inventoryItem);
+        state.messages.push("Picked up a " + inventoryItem.name + ".");
+        AudioUtils_3.playSound(Sounds_3.default.PICK_UP_ITEM);
+    }
+    exports.pickupItem = pickupItem;
+    function useItem(unit, item) {
+        return item.use(unit)
+            .then(function () { return unit.inventory.remove(item); });
+    }
+    exports.useItem = useItem;
+});
+define("graphics/Renderer", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Renderer = /** @class */ (function () {
+        function Renderer() {
+        }
+        return Renderer;
+    }());
+    exports.default = Renderer;
+});
+define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_8, actions_1, PromiseUtils_6, Colors_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TILE_WIDTH = 32;
+    var TILE_HEIGHT = 24;
+    var WIDTH = 20; // in tiles
+    var HEIGHT = 15; // in tiles
+    var SCREEN_WIDTH = 640;
+    var SCREEN_HEIGHT = 360;
+    var BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
+    var BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
+    var BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;
+    var BOTTOM_BAR_HEIGHT = 2 * TILE_HEIGHT;
+    var INVENTORY_LEFT = 2 * TILE_WIDTH;
+    var INVENTORY_TOP = 2 * TILE_HEIGHT;
+    var INVENTORY_WIDTH = 16 * TILE_WIDTH;
+    var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
+    var LINE_HEIGHT = 16;
+    var SpriteRenderer = /** @class */ (function () {
+        function SpriteRenderer() {
+            this._container = document.getElementById('container');
+            this._container.innerHTML = '';
+            this._canvas = document.createElement('canvas');
+            this._canvas.width = WIDTH * TILE_WIDTH;
+            this._canvas.height = HEIGHT * TILE_HEIGHT;
+            this._container.appendChild(this._canvas);
+            this._context = this._canvas.getContext('2d');
+            this._context.imageSmoothingEnabled = false;
+            this._context.textBaseline = 'middle';
+        }
+        SpriteRenderer.prototype.render = function () {
+            var _this = this;
+            var screen = jwb.state.screen;
+            switch (screen) {
+                case 'GAME':
+                    return this._renderGameScreen();
+                case 'INVENTORY':
+                    return this._renderGameScreen()
+                        .then(function () { return _this._renderInventory(); });
+                default:
+                    throw "Invalid screen " + screen;
+            }
+        };
+        SpriteRenderer.prototype._renderGameScreen = function () {
+            var _this = this;
+            actions_1.revealTiles();
+            this._context.fillStyle = Colors_1.default.BLACK;
+            this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+            return PromiseUtils_6.chainPromises([
+                function () { return _this._renderTiles(); },
+                function () { return _this._renderItems(); },
+                function () { return _this._renderUnits(); },
+                function () { return Promise.all([_this._renderPlayerInfo(), _this._renderBottomBar(), _this._renderMessages()]); }
+            ]);
+        };
+        SpriteRenderer.prototype._renderTiles = function () {
+            var promises = [];
+            var map = jwb.state.getMap();
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var tile = map.getTile({ x: x, y: y });
+                        if (!!tile) {
+                            promises.push(this._renderElement(tile, { x: x, y: y }));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        };
+        SpriteRenderer.prototype._renderItems = function () {
+            var map = jwb.state.getMap();
+            var promises = [];
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var item = map.getItem({ x: x, y: y });
+                        if (!!item) {
+                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_1.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            promises.push(this._renderElement(item, { x: x, y: y }));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        };
+        SpriteRenderer.prototype._renderProjectiles = function () {
+            var map = jwb.state.getMap();
+            var promises = [];
+            var _loop_5 = function (y) {
+                var _loop_6 = function (x) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var projectile = map.projectiles
+                            .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
+                        if (!!projectile) {
+                            promises.push(this_2._renderElement(projectile, { x: x, y: y }));
+                        }
+                    }
+                };
+                for (var x = 0; x < map.width; x++) {
+                    _loop_6(x);
+                }
+            };
+            var this_2 = this;
+            for (var y = 0; y < map.height; y++) {
+                _loop_5(y);
+            }
+            return Promise.all(promises);
+        };
+        SpriteRenderer.prototype._renderUnits = function () {
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            var promises = [];
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var unit = map.getUnit({ x: x, y: y });
+                        if (!!unit) {
+                            if (unit === playerUnit) {
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_1.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            }
+                            else {
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_1.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            }
+                            promises.push(this._renderElement(unit, { x: x, y: y }));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        };
+        /**
+         * @param color (in hex form)
+         */
+        SpriteRenderer.prototype._drawEllipse = function (_a, color, width, height) {
+            var x = _a.x, y = _a.y;
+            var _context = this._context;
+            _context.fillStyle = color;
+            var topLeftPixel = this._gridToPixel({ x: x, y: y });
+            var _b = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2], cx = _b[0], cy = _b[1];
+            _context.moveTo(cx, cy);
+            _context.beginPath();
+            _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
+            _context.fill();
+            return new Promise(function (resolve) { resolve(); });
+        };
+        SpriteRenderer.prototype._renderInventory = function () {
+            var playerUnit = jwb.state.playerUnit;
+            var inventory = playerUnit.inventory;
+            var _a = this, _canvas = _a._canvas, _context = _a._context;
+            this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
+            // draw equipment
+            var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
+            var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
+            // draw titles
+            _context.fillStyle = Colors_1.default.WHITE;
+            _context.textAlign = 'center';
+            _context.font = '20px Monospace';
+            _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
+            _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
+            // draw equipment items
+            // for now, just display them all in one list
+            _context.font = '10px sans-serif';
+            _context.textAlign = 'left';
+            var y = INVENTORY_TOP + 64;
+            playerUnit.equipment.getEntries().forEach(function (_a) {
+                var slot = _a[0], equipment = _a[1];
+                _context.fillText(slot + " - " + equipment.name, equipmentLeft, y);
+                y += LINE_HEIGHT;
+            });
+            // draw inventory categories
+            var inventoryCategories = Object.values(types_8.ItemCategory);
+            var categoryWidth = 60;
+            var xOffset = 4;
+            _context.font = '14px Monospace';
+            _context.textAlign = 'center';
+            for (var i = 0; i < inventoryCategories.length; i++) {
+                var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+                _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
+                if (inventoryCategories[i] === inventory.selectedCategory) {
+                    _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
+                }
+            }
+            // draw inventory items
+            if (inventory.selectedCategory) {
+                var items = inventory.get(inventory.selectedCategory);
+                var x = inventoryLeft + 8;
+                _context.font = '10px sans-serif';
+                _context.textAlign = 'left';
+                for (var i = 0; i < items.length; i++) {
+                    var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+                    if (items[i] === inventory.selectedItem) {
+                        _context.fillStyle = Colors_1.default.YELLOW;
+                    }
+                    else {
+                        _context.fillStyle = Colors_1.default.WHITE;
+                    }
+                    _context.fillText(items[i].name, x, y_1);
+                }
+                _context.fillStyle = Colors_1.default.WHITE;
+            }
+            return PromiseUtils_6.resolvedPromise();
+        };
+        SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
+            var x = _a.x, y = _a.y;
+            return ((x >= -TILE_WIDTH) &&
+                (x <= SCREEN_WIDTH + TILE_WIDTH) &&
+                (y >= -TILE_HEIGHT) &&
+                (y <= SCREEN_HEIGHT + TILE_HEIGHT));
+        };
+        SpriteRenderer.prototype._renderElement = function (element, _a) {
+            var x = _a.x, y = _a.y;
+            var pixel = this._gridToPixel({ x: x, y: y });
+            if (this._isPixelOnScreen(pixel)) {
+                var sprite = element.sprite;
+                if (!!sprite) {
+                    return this._drawSprite(sprite, pixel);
+                }
+            }
+            return PromiseUtils_6.resolvedPromise();
+        };
+        SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
+            var _this = this;
+            var x = _a.x, y = _a.y;
+            return sprite.getImage()
+                .then(function (image) { return _this._context.drawImage(image, x + sprite.dx, y + sprite.dy); });
+        };
+        /**
+         * Renders the bottom-left area of the screen, showing information about the player
+         */
+        SpriteRenderer.prototype._renderPlayerInfo = function () {
+            var _this = this;
+            var _context = this._context;
+            return new Promise(function (resolve) {
+                var playerUnit = jwb.state.playerUnit;
+                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+                _this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+                var lines = [
+                    playerUnit.name,
+                    "Level " + playerUnit.level,
+                    "Life: " + playerUnit.life + "/" + playerUnit.maxLife,
+                    "Damage: " + playerUnit.getDamage(),
+                ];
+                var experienceToNextLevel = playerUnit.experienceToNextLevel();
+                if (experienceToNextLevel !== null) {
+                    lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
+                }
+                _context.fillStyle = '#fff';
+                _context.textAlign = 'left';
+                _context.font = '10px sans-serif';
+                var left = 4;
+                for (var i = 0; i < lines.length; i++) {
+                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+                    _context.fillText(lines[i], left, y);
+                }
+                resolve();
+            });
+        };
+        SpriteRenderer.prototype._renderMessages = function () {
+            var _this = this;
+            var _context = this._context;
+            return new Promise(function (resolve) {
+                var messages = jwb.state.messages;
+                _context.fillStyle = Colors_1.default.BLACK;
+                _context.strokeStyle = Colors_1.default.WHITE;
+                var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
+                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+                _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+                _context.fillStyle = Colors_1.default.WHITE;
+                _context.textAlign = 'left';
+                _context.font = '10px sans-serif';
+                var textLeft = left + 4;
+                for (var i = 0; i < messages.length; i++) {
+                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+                    _context.fillText(messages[i], textLeft, y);
+                }
+                resolve();
+            });
+        };
+        SpriteRenderer.prototype._renderBottomBar = function () {
+            var _context = this._context;
+            var left = BOTTOM_PANEL_WIDTH;
+            var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
+            var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+            this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
+            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
+            _context.textAlign = 'left';
+            _context.fillStyle = Colors_1.default.WHITE;
+            var textLeft = left + 4;
+            _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
+            _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
+            return PromiseUtils_6.resolvedPromise();
+        };
+        SpriteRenderer.prototype._drawRect = function (_a) {
+            var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
+            var _context = this._context;
+            _context.fillStyle = Colors_1.default.BLACK;
+            _context.fillRect(left, top, width, height);
+            _context.strokeStyle = Colors_1.default.WHITE;
+            _context.strokeRect(left, top, width, height);
+        };
+        /**
+         * @return the top left pixel
+         */
+        SpriteRenderer.prototype._gridToPixel = function (_a) {
+            var x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            return {
+                x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
+                y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+            };
+        };
+        return SpriteRenderer;
+    }());
+    exports.default = SpriteRenderer;
+});
+define("graphics/sprites/UnitSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_1, Sprite_1, Colors_2, Directions_2, ImageUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteKey;
@@ -1394,18 +1907,18 @@ define("graphics/sprites/UnitSprite", ["require", "exports", "graphics/ImageSupp
             var _a;
             var _this = this;
             var imageMap = (_a = {},
-                _a[SpriteKey.STANDING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.STANDING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.STANDING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.STANDING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.ATTACKING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_N_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.ATTACKING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_E_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.ATTACKING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_S_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.ATTACKING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_W_1", Colors_1.default.WHITE, paletteSwaps),
-                _a[SpriteKey.DAMAGED_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
-                _a[SpriteKey.DAMAGED_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
-                _a[SpriteKey.DAMAGED_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
-                _a[SpriteKey.DAMAGED_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_1.default.WHITE); }]),
+                _a[SpriteKey.STANDING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.STANDING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.ATTACKING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_N_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.ATTACKING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_E_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.ATTACKING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_S_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.ATTACKING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_W_1", Colors_2.default.WHITE, paletteSwaps),
+                _a[SpriteKey.DAMAGED_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_2.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_2.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_2.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_2.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_2.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_2.default.WHITE); }]),
+                _a[SpriteKey.DAMAGED_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_2.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_2.replaceAll(img, Colors_2.default.WHITE); }]),
                 _a);
             _this = _super.call(this, imageMap, SpriteKey.STANDING_S, spriteOffsets) || this;
             _this._unit = unit;
@@ -1484,25 +1997,21 @@ define("graphics/sprites/SoldierSprite", ["require", "exports", "graphics/sprite
     }(UnitSprite_5.default));
     exports.default = SoldierSprite;
 });
-define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "graphics/sprites/PlayerSprite", "graphics/sprites/GolemSprite", "graphics/sprites/GruntSprite", "graphics/sprites/SnakeSprite", "graphics/sprites/SoldierSprite"], function (require, exports, ImageSupplier_2, Sprite_2, Colors_2, PlayerSprite_1, GolemSprite_1, GruntSprite_1, SnakeSprite_1, SoldierSprite_1) {
+define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "graphics/sprites/PlayerSprite", "graphics/sprites/GolemSprite", "graphics/sprites/GruntSprite", "graphics/sprites/SnakeSprite", "graphics/sprites/SoldierSprite"], function (require, exports, ImageSupplier_2, Sprite_2, Colors_3, PlayerSprite_1, GolemSprite_1, GruntSprite_1, SnakeSprite_1, SoldierSprite_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DEFAULT_SPRITE_KEY = 'default';
-    function _staticSprite(imageLoader, _a) {
+    function createStaticSprite(imageLoader, _a) {
         var _b;
         var dx = _a.dx, dy = _a.dy;
         return new Sprite_2.default((_b = {}, _b[DEFAULT_SPRITE_KEY] = imageLoader, _b), DEFAULT_SPRITE_KEY, { dx: dx, dy: dy });
     }
+    exports.createStaticSprite = createStaticSprite;
     var StaticSprites = {
-        WALL_TOP: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_wall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        WALL_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_wall_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_floor', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        FLOOR_HALL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('tile_floor_hall', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        STAIRS_DOWN: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('stairs_down2', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        MAP_SWORD: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('sword_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_POTION: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('potion_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
-        MAP_SCROLL: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('scroll_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
-        MAP_BOW: function (paletteSwaps) { return _staticSprite(new ImageSupplier_2.default('bow_icon', Colors_2.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
+        MAP_SWORD: function (paletteSwaps) { return createStaticSprite(new ImageSupplier_2.default('sword_icon', Colors_3.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_POTION: function (paletteSwaps) { return createStaticSprite(new ImageSupplier_2.default('potion_icon', Colors_3.default.WHITE, paletteSwaps), { dx: 0, dy: -8 }); },
+        MAP_SCROLL: function (paletteSwaps) { return createStaticSprite(new ImageSupplier_2.default('scroll_icon', Colors_3.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); },
+        MAP_BOW: function (paletteSwaps) { return createStaticSprite(new ImageSupplier_2.default('bow_icon', Colors_3.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); }
     };
     var UnitSprites = {
         PLAYER: function (unit, paletteSwaps) { return new PlayerSprite_1.default(unit, paletteSwaps); },
@@ -1514,11 +2023,6 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
     // the following does not work: { ...StaticSprites, ...UnitSprites }
     // :(
     exports.default = {
-        WALL_TOP: StaticSprites.WALL_TOP,
-        WALL_HALL: StaticSprites.WALL_HALL,
-        FLOOR: StaticSprites.FLOOR,
-        FLOOR_HALL: StaticSprites.FLOOR_HALL,
-        STAIRS_DOWN: StaticSprites.STAIRS_DOWN,
         MAP_SWORD: StaticSprites.MAP_SWORD,
         MAP_POTION: StaticSprites.MAP_POTION,
         MAP_SCROLL: StaticSprites.MAP_SCROLL,
@@ -1530,471 +2034,16 @@ define("graphics/sprites/SpriteFactory", ["require", "exports", "graphics/ImageS
         SOLDIER: UnitSprites.SOLDIER
     };
 });
-define("types/Tiles", ["require", "exports", "graphics/sprites/SpriteFactory"], function (require, exports, SpriteFactory_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Tiles = {
-        FLOOR: {
-            name: 'FLOOR',
-            char: '.',
-            sprite: SpriteFactory_1.default.FLOOR(),
-            isBlocking: false
-        },
-        FLOOR_HALL: {
-            name: 'FLOOR_HALL',
-            char: '.',
-            sprite: SpriteFactory_1.default.FLOOR_HALL(),
-            isBlocking: false
-        },
-        WALL_TOP: {
-            name: 'WALL_TOP',
-            char: '#',
-            sprite: SpriteFactory_1.default.WALL_TOP(),
-            isBlocking: true
-        },
-        WALL_HALL: {
-            name: 'WALL_HALL',
-            char: '#',
-            sprite: SpriteFactory_1.default.WALL_HALL(),
-            isBlocking: true
-        },
-        WALL: {
-            name: 'WALL',
-            char: ' ',
-            sprite: null,
-            isBlocking: true
-        },
-        NONE: {
-            name: 'NONE',
-            char: ' ',
-            sprite: null,
-            isBlocking: true
-        },
-        STAIRS_DOWN: {
-            name: 'STAIRS_DOWN',
-            char: '>',
-            sprite: SpriteFactory_1.default.STAIRS_DOWN(),
-            isBlocking: false
-        }
-    };
-    exports.default = Tiles;
-});
-define("maps/MapInstance", ["require", "exports", "types/Tiles"], function (require, exports, Tiles_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var MapInstance = /** @class */ (function () {
-        function MapInstance(width, height, tiles, rooms, units, items) {
-            this.width = width;
-            this.height = height;
-            this.tiles = tiles;
-            this.rooms = rooms;
-            this.units = units;
-            this.items = items;
-            this.revealedTiles = [];
-        }
-        MapInstance.prototype.getTile = function (_a) {
-            var x = _a.x, y = _a.y;
-            if (x < this.width && y < this.height) {
-                return (this.tiles[y] || [])[x] || Tiles_1.default.NONE;
-            }
-            throw "Illegal coordinates " + x + ", " + y;
-        };
-        MapInstance.prototype.getUnit = function (_a) {
-            var x = _a.x, y = _a.y;
-            return this.units.filter(function (u) { return u.x === x && u.y === y; })[0] || null;
-        };
-        MapInstance.prototype.getItem = function (_a) {
-            var x = _a.x, y = _a.y;
-            return this.items.filter(function (i) { return i.x === x && i.y === y; })[0] || null;
-        };
-        MapInstance.prototype.contains = function (_a) {
-            var x = _a.x, y = _a.y;
-            return x >= 0 && x < this.width && y >= 0 && y < this.height;
-        };
-        MapInstance.prototype.isBlocked = function (_a) {
-            var x = _a.x, y = _a.y;
-            if (!this.contains({ x: x, y: y })) {
-                throw "(" + x + ", " + y + ") is not on the map";
-            }
-            return !!this.getUnit({ x: x, y: y }) || this.getTile({ x: x, y: y }).isBlocking;
-        };
-        MapInstance.prototype.removeItem = function (_a) {
-            var x = _a.x, y = _a.y;
-            var index = this.items.findIndex(function (i) { return (i.x === x && i.y === y); });
-            this.items.splice(index, 1);
-        };
-        MapInstance.prototype.getRect = function () {
-            return {
-                left: 0,
-                top: 0,
-                width: this.width,
-                height: this.height
-            };
-        };
-        return MapInstance;
-    }());
-    exports.default = MapInstance;
-});
-define("maps/MapSupplier", ["require", "exports", "maps/MapInstance"], function (require, exports, MapInstance_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function createMap(mapSupplier) {
-        var _a;
-        var level = mapSupplier.level, width = mapSupplier.width, height = mapSupplier.height, tiles = mapSupplier.tiles, rooms = mapSupplier.rooms, playerUnitLocation = mapSupplier.playerUnitLocation, enemyUnitLocations = mapSupplier.enemyUnitLocations, enemyUnitSupplier = mapSupplier.enemyUnitSupplier, itemLocations = mapSupplier.itemLocations, itemSupplier = mapSupplier.itemSupplier;
-        var playerUnit = jwb.state.playerUnit;
-        var units = [playerUnit];
-        _a = [playerUnitLocation.x, playerUnitLocation.y], playerUnit.x = _a[0], playerUnit.y = _a[1];
-        units.push.apply(units, enemyUnitLocations.map(function (_a) {
-            var x = _a.x, y = _a.y;
-            return enemyUnitSupplier({ x: x, y: y }, level);
-        }));
-        var items = itemLocations.map(function (_a) {
-            var x = _a.x, y = _a.y;
-            return itemSupplier({ x: x, y: y }, level);
-        });
-        return new MapInstance_1.default(width, height, tiles, rooms, units, items);
-    }
-    exports.createMap = createMap;
-});
-define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_5) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var GameState = /** @class */ (function () {
-        function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_5.GameScreen.GAME;
-            this.playerUnit = playerUnit;
-            this.mapSuppliers = mapSuppliers;
-            this.mapIndex = 0;
-            this._map = null;
-            this.messages = [];
-            this.turn = 1;
-        }
-        GameState.prototype.getMap = function () {
-            if (!this._map) {
-                throw 'Tried to retrieve map before map was loaded';
-            }
-            return this._map;
-        };
-        GameState.prototype.setMap = function (map) {
-            this._map = map;
-        };
-        return GameState;
-    }());
-    exports.default = GameState;
-});
-define("graphics/Renderer", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Renderer = /** @class */ (function () {
-        function Renderer() {
-        }
-        return Renderer;
-    }());
-    exports.default = Renderer;
-});
-define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_6, actions_1, PromiseUtils_5, Colors_3) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var TILE_WIDTH = 32;
-    var TILE_HEIGHT = 24;
-    var WIDTH = 20; // in tiles
-    var HEIGHT = 15; // in tiles
-    var SCREEN_WIDTH = 640;
-    var SCREEN_HEIGHT = 360;
-    var BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
-    var BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
-    var BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;
-    var BOTTOM_BAR_HEIGHT = 2 * TILE_HEIGHT;
-    var INVENTORY_LEFT = 2 * TILE_WIDTH;
-    var INVENTORY_TOP = 2 * TILE_HEIGHT;
-    var INVENTORY_WIDTH = 16 * TILE_WIDTH;
-    var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
-    var LINE_HEIGHT = 16;
-    var SpriteRenderer = /** @class */ (function () {
-        function SpriteRenderer() {
-            this._container = document.getElementById('container');
-            this._container.innerHTML = '';
-            this._canvas = document.createElement('canvas');
-            this._canvas.width = WIDTH * TILE_WIDTH;
-            this._canvas.height = HEIGHT * TILE_HEIGHT;
-            this._container.appendChild(this._canvas);
-            this._context = this._canvas.getContext('2d');
-            this._context.imageSmoothingEnabled = false;
-            this._context.textBaseline = 'middle';
-        }
-        SpriteRenderer.prototype.render = function () {
-            var _this = this;
-            var screen = jwb.state.screen;
-            switch (screen) {
-                case 'GAME':
-                    return this._renderGameScreen();
-                case 'INVENTORY':
-                    return this._renderGameScreen()
-                        .then(function () { return _this._renderInventory(); });
-                default:
-                    throw "Invalid screen " + screen;
-            }
-        };
-        SpriteRenderer.prototype._renderGameScreen = function () {
-            var _this = this;
-            actions_1.revealTiles();
-            this._context.fillStyle = Colors_3.default.BLACK;
-            this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-            return PromiseUtils_5.chainPromises([
-                function () { return _this._renderTiles(); },
-                function () { return _this._renderItems(); },
-                function () { return _this._renderUnits(); },
-                function () { return Promise.all([_this._renderPlayerInfo(), _this._renderBottomBar(), _this._renderMessages()]); }
-            ]);
-        };
-        SpriteRenderer.prototype._renderTiles = function () {
-            var promises = [];
-            var map = jwb.state.getMap();
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var tile = map.getTile({ x: x, y: y });
-                        if (!!tile) {
-                            promises.push(this._renderElement(tile, { x: x, y: y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        };
-        SpriteRenderer.prototype._renderItems = function () {
-            var map = jwb.state.getMap();
-            var promises = [];
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var item = map.getItem({ x: x, y: y });
-                        if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
-                            promises.push(this._renderElement(item, { x: x, y: y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        };
-        SpriteRenderer.prototype._renderUnits = function () {
-            var playerUnit = jwb.state.playerUnit;
-            var map = jwb.state.getMap();
-            var promises = [];
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var unit = map.getUnit({ x: x, y: y });
-                        if (!!unit) {
-                            if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
-                            }
-                            else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_3.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
-                            }
-                            promises.push(this._renderElement(unit, { x: x, y: y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        };
-        /**
-         * @param color (in hex form)
-         */
-        SpriteRenderer.prototype._drawEllipse = function (_a, color, width, height) {
-            var x = _a.x, y = _a.y;
-            var _context = this._context;
-            _context.fillStyle = color;
-            var topLeftPixel = this._gridToPixel({ x: x, y: y });
-            var _b = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2], cx = _b[0], cy = _b[1];
-            _context.moveTo(cx, cy);
-            _context.beginPath();
-            _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
-            _context.fill();
-            return new Promise(function (resolve) { resolve(); });
-        };
-        SpriteRenderer.prototype._renderInventory = function () {
-            var playerUnit = jwb.state.playerUnit;
-            var inventory = playerUnit.inventory;
-            var _a = this, _canvas = _a._canvas, _context = _a._context;
-            this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
-            // draw equipment
-            var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-            var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
-            // draw titles
-            _context.fillStyle = Colors_3.default.WHITE;
-            _context.textAlign = 'center';
-            _context.font = '20px Monospace';
-            _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
-            _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
-            // draw equipment items
-            // for now, just display them all in one list
-            _context.font = '10px sans-serif';
-            _context.textAlign = 'left';
-            var y = INVENTORY_TOP + 64;
-            playerUnit.equipment.getEntries().forEach(function (_a) {
-                var slot = _a[0], equipment = _a[1];
-                _context.fillText(slot + " - " + equipment.name, equipmentLeft, y);
-                y += LINE_HEIGHT;
-            });
-            // draw inventory categories
-            var inventoryCategories = Object.values(types_6.ItemCategory);
-            var categoryWidth = 60;
-            var xOffset = 4;
-            _context.font = '14px Monospace';
-            _context.textAlign = 'center';
-            for (var i = 0; i < inventoryCategories.length; i++) {
-                var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-                _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
-                if (inventoryCategories[i] === inventory.selectedCategory) {
-                    _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
-                }
-            }
-            // draw inventory items
-            if (inventory.selectedCategory) {
-                var items = inventory.get(inventory.selectedCategory);
-                var x = inventoryLeft + 8;
-                _context.font = '10px sans-serif';
-                _context.textAlign = 'left';
-                for (var i = 0; i < items.length; i++) {
-                    var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-                    if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = Colors_3.default.YELLOW;
-                    }
-                    else {
-                        _context.fillStyle = Colors_3.default.WHITE;
-                    }
-                    _context.fillText(items[i].name, x, y_1);
-                }
-                _context.fillStyle = Colors_3.default.WHITE;
-            }
-            return PromiseUtils_5.resolvedPromise();
-        };
-        SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
-            var x = _a.x, y = _a.y;
-            return ((x >= -TILE_WIDTH) &&
-                (x <= SCREEN_WIDTH + TILE_WIDTH) &&
-                (y >= -TILE_HEIGHT) &&
-                (y <= SCREEN_HEIGHT + TILE_HEIGHT));
-        };
-        SpriteRenderer.prototype._renderElement = function (element, _a) {
-            var x = _a.x, y = _a.y;
-            var pixel = this._gridToPixel({ x: x, y: y });
-            if (this._isPixelOnScreen(pixel)) {
-                var sprite = element.sprite;
-                if (!!sprite) {
-                    return this._drawSprite(sprite, pixel);
-                }
-            }
-            return PromiseUtils_5.resolvedPromise();
-        };
-        SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
-            var _this = this;
-            var x = _a.x, y = _a.y;
-            return sprite.getImage()
-                .then(function (image) { return _this._context.drawImage(image, x + sprite.dx, y + sprite.dy); });
-        };
-        /**
-         * Renders the bottom-left area of the screen, showing information about the player
-         */
-        SpriteRenderer.prototype._renderPlayerInfo = function () {
-            var _this = this;
-            var _context = this._context;
-            return new Promise(function (resolve) {
-                var playerUnit = jwb.state.playerUnit;
-                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                var lines = [
-                    playerUnit.name,
-                    "Level " + playerUnit.level,
-                    "Life: " + playerUnit.life + "/" + playerUnit.maxLife,
-                    "Damage: " + playerUnit.getDamage(),
-                ];
-                var experienceToNextLevel = playerUnit.experienceToNextLevel();
-                if (experienceToNextLevel !== null) {
-                    lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
-                }
-                _context.fillStyle = '#fff';
-                _context.textAlign = 'left';
-                _context.font = '10px sans-serif';
-                var left = 4;
-                for (var i = 0; i < lines.length; i++) {
-                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-                    _context.fillText(lines[i], left, y);
-                }
-                resolve();
-            });
-        };
-        SpriteRenderer.prototype._renderMessages = function () {
-            var _this = this;
-            var _context = this._context;
-            return new Promise(function (resolve) {
-                var messages = jwb.state.messages;
-                _context.fillStyle = Colors_3.default.BLACK;
-                _context.strokeStyle = Colors_3.default.WHITE;
-                var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = Colors_3.default.WHITE;
-                _context.textAlign = 'left';
-                _context.font = '10px sans-serif';
-                var textLeft = left + 4;
-                for (var i = 0; i < messages.length; i++) {
-                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-                    _context.fillText(messages[i], textLeft, y);
-                }
-                resolve();
-            });
-        };
-        SpriteRenderer.prototype._renderBottomBar = function () {
-            var _context = this._context;
-            var left = BOTTOM_PANEL_WIDTH;
-            var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-            var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
-            this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
-            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
-            _context.textAlign = 'left';
-            _context.fillStyle = Colors_3.default.WHITE;
-            var textLeft = left + 4;
-            _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
-            _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_5.resolvedPromise();
-        };
-        SpriteRenderer.prototype._drawRect = function (_a) {
-            var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-            var _context = this._context;
-            _context.fillStyle = Colors_3.default.BLACK;
-            _context.fillRect(left, top, width, height);
-            _context.strokeStyle = Colors_3.default.WHITE;
-            _context.strokeRect(left, top, width, height);
-        };
-        /**
-         * @return the top left pixel
-         */
-        SpriteRenderer.prototype._gridToPixel = function (_a) {
-            var x = _a.x, y = _a.y;
-            var playerUnit = jwb.state.playerUnit;
-            return {
-                x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-                y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
-            };
-        };
-        return SpriteRenderer;
-    }());
-    exports.default = SpriteRenderer;
-});
-define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_7, SpriteFactory_2, Colors_4) {
+define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_9, SpriteFactory_1, Colors_4) {
     "use strict";
     var _a, _b, _c, _d, _e;
     Object.defineProperty(exports, "__esModule", { value: true });
     var BRONZE_SWORD = {
         name: 'Bronze Sword',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_SWORD,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_a = {},
             _a[Colors_4.default.BLACK] = Colors_4.default.BLACK,
             _a[Colors_4.default.DARK_GRAY] = Colors_4.default.LIGHT_BROWN,
@@ -2007,9 +2056,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var IRON_SWORD = {
         name: 'Iron Sword',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_SWORD,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_b = {},
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
             _b[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARK_GRAY,
@@ -2021,9 +2070,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var STEEL_SWORD = {
         name: 'Steel Sword',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_SWORD,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_c = {},
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
             _c[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_GRAY,
@@ -2035,9 +2084,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var FIRE_SWORD = {
         name: 'Fire Sword',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.MELEE_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_SWORD,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_SWORD,
         paletteSwaps: (_d = {},
             _d[Colors_4.default.DARK_GRAY] = Colors_4.default.YELLOW,
             _d[Colors_4.default.LIGHT_GRAY] = Colors_4.default.RED,
@@ -2050,9 +2099,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var SHORT_BOW = {
         name: 'Short Bow',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.RANGED_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_BOW,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.RANGED_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_BOW,
         paletteSwaps: {},
         damage: 2,
         minLevel: 2,
@@ -2061,9 +2110,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     var LONG_BOW = {
         name: 'Long Bow',
         char: 'S',
-        itemCategory: types_7.ItemCategory.WEAPON,
-        equipmentCategory: types_7.EquipmentSlot.RANGED_WEAPON,
-        mapIcon: SpriteFactory_2.default.MAP_BOW,
+        itemCategory: types_9.ItemCategory.WEAPON,
+        equipmentCategory: types_9.EquipmentSlot.RANGED_WEAPON,
+        mapIcon: SpriteFactory_1.default.MAP_BOW,
         paletteSwaps: (_e = {},
             _e[Colors_4.default.DARK_GREEN] = Colors_4.default.DARK_RED,
             _e[Colors_4.default.GREEN] = Colors_4.default.RED,
@@ -2077,20 +2126,20 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_3, InventoryItem_1, types_8, AudioUtils_3, PromiseUtils_6, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_4, PromiseUtils_7, RandomUtils_4, SpriteFactory_2, EquipmentClasses_1, MapItem_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
         var onUse = function (item, unit) {
             return new Promise(function (resolve) {
-                AudioUtils_3.playSound(Sounds_3.default.USE_POTION);
+                AudioUtils_4.playSound(Sounds_4.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
                 jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
                 resolve();
             });
         };
-        return new InventoryItem_1.default('Potion', types_8.ItemCategory.POTION, onUse);
+        return new InventoryItem_1.default('Potion', types_10.ItemCategory.POTION, onUse);
     }
     function _equipEquipment(equipmentClass, item, unit) {
         return new Promise(function (resolve) {
@@ -2119,9 +2168,9 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
-            return PromiseUtils_6.chainPromises(promises);
+            return PromiseUtils_7.chainPromises(promises);
         };
-        return new InventoryItem_1.default('Scroll of Floor Fire', types_8.ItemCategory.SCROLL, onUse);
+        return new InventoryItem_1.default('Scroll of Floor Fire', types_10.ItemCategory.SCROLL, onUse);
     }
     function _createInventoryWeapon(weaponClass) {
         var onUse = function (item, unit) { return _equipEquipment(weaponClass, item, unit); };
@@ -2136,13 +2185,13 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
     function _getItemSuppliers(level) {
         var createMapPotion = function (_a) {
             var x = _a.x, y = _a.y;
-            var sprite = SpriteFactory_3.default.MAP_POTION();
+            var sprite = SpriteFactory_2.default.MAP_POTION();
             var inventoryItem = createPotion(40);
             return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
         };
         var createFloorFireScroll = function (_a) {
             var x = _a.x, y = _a.y;
-            var sprite = SpriteFactory_3.default.MAP_SCROLL();
+            var sprite = SpriteFactory_2.default.MAP_SCROLL();
             var inventoryItem = createScrollOfFloorFire(80);
             return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
         };
@@ -2166,7 +2215,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
         createRandomItem: createRandomItem
     };
 });
-define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "types/Tiles", "utils/ArrayUtils", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, Pathfinder_2, Tiles_2, ArrayUtils_3, MapUtils_5, RandomUtils_5) {
+define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "utils/ArrayUtils", "types/types", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, Pathfinder_2, ArrayUtils_3, types_11, MapUtils_5, RandomUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -2178,7 +2227,8 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          * @param maxRoomDimension outer width, including wall
          * @param minRoomPadding minimum padding between each room and its containing section
          */
-        function DungeonGenerator(minRoomDimension, maxRoomDimension, minRoomPadding) {
+        function DungeonGenerator(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding) {
+            this._tileSet = tileSet;
             this._minRoomDimension = minRoomDimension;
             this._maxRoomDimension = maxRoomDimension;
             this._minRoomPadding = minRoomPadding;
@@ -2207,12 +2257,15 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 };
             })();
             this._addWalls(section);
-            var tiles = section.tiles;
-            var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [], 1)[0];
-            tiles[stairsLocation.y][stairsLocation.x] = Tiles_2.default.STAIRS_DOWN;
-            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], [stairsLocation], numEnemies);
-            var playerUnitLocation = this._pickPlayerLocation(tiles, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
-            var itemLocations = MapUtils_5.pickUnoccupiedLocations(tiles, [Tiles_2.default.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
+            var tileTypes = section.tiles;
+            var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], [], 1)[0];
+            tileTypes[stairsLocation.y][stairsLocation.x] = types_11.TileType.STAIRS_DOWN;
+            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], [stairsLocation], numEnemies);
+            var playerUnitLocation = this._pickPlayerLocation(tileTypes, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
+            var itemLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
+            var tiles = tileTypes.map(function (row) {
+                return row.map(function (tileType) { return MapUtils_5.createTile(tileType, _this._tileSet); });
+            });
             return {
                 level: level,
                 width: width,
@@ -2236,7 +2289,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             var minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
             var canSplitHorizontally = (width >= (2 * minSectionDimension));
             var canSplitVertically = (height >= (2 * minSectionDimension));
-            var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []));
+            var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : []));
             if (splitDirections.length > 0) {
                 var direction = RandomUtils_5.randChoice(splitDirections);
                 if (direction === 'HORIZONTAL') {
@@ -2307,7 +2360,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                         tiles[y][x] = roomTiles[roomY][roomX];
                     }
                     else {
-                        tiles[y][x] = Tiles_2.default.NONE;
+                        tiles[y][x] = types_11.TileType.NONE;
                     }
                 }
             }
@@ -2326,13 +2379,13 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                 tiles[y] = [];
                 for (var x = 0; x < width; x++) {
                     if (x > 0 && x < (width - 1) && y === 0) {
-                        tiles[y][x] = Tiles_2.default.WALL_TOP;
+                        tiles[y][x] = types_11.TileType.WALL_TOP;
                     }
                     else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
-                        tiles[y][x] = Tiles_2.default.WALL;
+                        tiles[y][x] = types_11.TileType.WALL;
                     }
                     else {
-                        tiles[y][x] = Tiles_2.default.FLOOR;
+                        tiles[y][x] = types_11.TileType.FLOOR;
                     }
                 }
             }
@@ -2391,9 +2444,9 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             for (var y = 0; y < section.height; y++) {
                 for (var x = 0; x < section.width; x++) {
                     if (y > 0) {
-                        if (section.tiles[y][x] === Tiles_2.default.FLOOR_HALL) {
-                            if (section.tiles[y - 1][x] === Tiles_2.default.NONE || section.tiles[y - 1][x] === Tiles_2.default.WALL) {
-                                section.tiles[y - 1][x] = Tiles_2.default.WALL_HALL;
+                        if (section.tiles[y][x] === types_11.TileType.FLOOR_HALL) {
+                            if (section.tiles[y - 1][x] === types_11.TileType.NONE || section.tiles[y - 1][x] === types_11.TileType.WALL) {
+                                section.tiles[y - 1][x] = types_11.TileType.WALL_HALL;
                             }
                         }
                     }
@@ -2467,11 +2520,11 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             var blockedTileDetector = function (_a) {
                 var x = _a.x, y = _a.y;
                 // can't draw a path through an existing room or a wall
-                var blockedTileTypes = [Tiles_2.default.FLOOR, Tiles_2.default.WALL, Tiles_2.default.WALL_HALL, Tiles_2.default.WALL_TOP];
+                var blockedTileType = [types_11.TileType.FLOOR, types_11.TileType.WALL, types_11.TileType.WALL_HALL, types_11.TileType.WALL_TOP];
                 if ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals({ x: x, y: y }, exit); })) {
                     return false;
                 }
-                else if (section.tiles[y][x] === Tiles_2.default.NONE || section.tiles[y][x] === Tiles_2.default.FLOOR_HALL) {
+                else if (section.tiles[y][x] === types_11.TileType.NONE || section.tiles[y][x] === types_11.TileType.FLOOR_HALL) {
                     // skip the check if we're within 1 tile vertically of an exit
                     var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
                     if (isNextToExit) {
@@ -2482,14 +2535,14 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
                         var dy = _b[_i];
                         if ((y + dy >= 0) && (y + dy < section.height)) {
                             var tile = section.tiles[y + dy][x];
-                            if (blockedTileTypes.indexOf(tile) > -1) {
+                            if (blockedTileType.indexOf(tile) > -1) {
                                 return true;
                             }
                         }
                     }
                     return false;
                 }
-                else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+                else if (blockedTileType.indexOf(section.tiles[y][x]) > -1) {
                     return true;
                 }
                 console.error('how\'d we get here?');
@@ -2497,7 +2550,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             };
             // prefer reusing floor hall tiles
             var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === Tiles_2.default.FLOOR_HALL) ? 0.01 : 1;
+                return (section.tiles[second.y][second.x] === types_11.TileType.FLOOR_HALL) ? 0.01 : 1;
             };
             var mapRect = {
                 left: 0,
@@ -2508,7 +2561,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             var path = new Pathfinder_2.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
-                section.tiles[y][x] = Tiles_2.default.FLOOR_HALL;
+                section.tiles[y][x] = types_11.TileType.FLOOR_HALL;
             });
             return (path.length > 0);
         };
@@ -2517,19 +2570,19 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_5 = function (y) {
-                var _loop_6 = function (x) {
-                    if (!tiles[y][x].isBlocking && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
+            var _loop_7 = function (y) {
+                var _loop_8 = function (x) {
+                    if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_6(x);
+                    _loop_8(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_5(y);
+                _loop_7(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -2537,7 +2590,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
         DungeonGenerator.prototype._emptyRow = function (width) {
             var row = [];
             for (var x = 0; x < width; x++) {
-                row.push(Tiles_2.default.NONE);
+                row.push(types_11.TileType.NONE);
             }
             return row;
         };
@@ -2548,7 +2601,12 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
             }
             console.log("Sections for " + name + ":");
             sections.forEach(function (section) { return console.log(section.tiles
-                .map(function (row) { return row.map(function (tile) { return tile.char; }).join(''); })
+                .map(function (row) { return row.map(function (tile) {
+                if (MapUtils_5.isBlocking(tile)) {
+                    return '#';
+                }
+                return '.';
+            }).join(''); })
                 .join('\n')); });
             console.log();
         };
@@ -2556,14 +2614,14 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "type
     }());
     exports.default = DungeonGenerator;
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_5, types_9, UnitAI_1) {
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_3, Colors_5, types_12, UnitAI_1) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
     var PLAYER = {
         name: 'PLAYER',
-        type: types_9.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.PLAYER,
+        type: types_12.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.PLAYER,
         // Green/brown colors
         paletteSwaps: (_a = {},
             _a[Colors_5.default.DARK_PURPLE] = Colors_5.default.DARK_BROWN,
@@ -2580,7 +2638,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _a),
         startingLife: 100,
         startingMana: 100,
-        startingDamage: 8,
+        startingDamage: 10,
         minLevel: 1,
         maxLevel: 20,
         lifePerLevel: function (level) { return 10; },
@@ -2590,10 +2648,10 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_SNAKE = {
         name: 'ENEMY_SNAKE',
-        type: types_9.UnitType.ANIMAL,
-        sprite: SpriteFactory_4.default.SNAKE,
+        type: types_12.UnitType.ANIMAL,
+        sprite: SpriteFactory_3.default.SNAKE,
         paletteSwaps: {},
-        startingLife: 50,
+        startingLife: 45,
         startingMana: null,
         startingDamage: 4,
         minLevel: 1,
@@ -2610,12 +2668,12 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_GRUNT = {
         name: 'ENEMY_GRUNT',
-        type: types_9.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.GRUNT,
+        type: types_12.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.GRUNT,
         paletteSwaps: {},
-        startingLife: 60,
+        startingLife: 50,
         startingMana: null,
-        startingDamage: 6,
+        startingDamage: 5,
         minLevel: 1,
         maxLevel: 4,
         lifePerLevel: function () { return 12; },
@@ -2630,12 +2688,12 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_SOLDIER = {
         name: 'ENEMY_SOLDIER',
-        type: types_9.UnitType.HUMAN,
-        sprite: SpriteFactory_4.default.SOLDIER,
+        type: types_12.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.SOLDIER,
         paletteSwaps: {},
-        startingLife: 100,
+        startingLife: 60,
         startingMana: null,
-        startingDamage: 10,
+        startingDamage: 6,
         minLevel: 3,
         maxLevel: 6,
         lifePerLevel: function () { return 15; },
@@ -2650,15 +2708,15 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
     };
     var ENEMY_GOLEM = {
         name: 'ENEMY_GOLEM',
-        type: types_9.UnitType.GOLEM,
-        sprite: SpriteFactory_4.default.GOLEM,
+        type: types_12.UnitType.GOLEM,
+        sprite: SpriteFactory_3.default.GOLEM,
         paletteSwaps: (_b = {},
             _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
             _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARKER_GRAY,
             _b),
-        startingLife: 120,
+        startingLife: 100,
         startingMana: null,
-        startingDamage: 20,
+        startingDamage: 15,
         minLevel: 5,
         maxLevel: 9,
         lifePerLevel: function () { return 25; },
@@ -2696,20 +2754,23 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
         createRandomEnemy: createRandomEnemy
     };
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/DungeonGenerator", "units/UnitFactory"], function (require, exports, ItemFactory_1, DungeonGenerator_1, UnitFactory_1) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/DungeonGenerator", "units/UnitFactory", "utils/RandomUtils"], function (require, exports, ItemFactory_1, DungeonGenerator_1, UnitFactory_1, RandomUtils_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // outer dimensions
-    var MIN_ROOM_DIMENSION = 6;
+    var MIN_ROOM_DIMENSION = 5;
     var MAX_ROOM_DIMENSION = 9;
     var MIN_ROOM_PADDING = 1;
-    function createRandomMap(level, width, height, numEnemies, numItems) {
-        var dungeonGenerator = new DungeonGenerator_1.default(MIN_ROOM_DIMENSION, MAX_ROOM_DIMENSION, MIN_ROOM_PADDING);
+    function createRandomMap(tileSet, level, width, height, numEnemies, numItems) {
+        var minRoomDimension = RandomUtils_7.randInt(5, 7);
+        var maxRoomDimension = RandomUtils_7.randInt(7, 10);
+        var minRoomPadding = RandomUtils_7.randInt(0, 2);
+        var dungeonGenerator = new DungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
         return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory_1.default.createRandomEnemy, numItems, ItemFactory_1.default.createRandomItem);
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_7, AudioUtils_4) {
+define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_8, AudioUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _transpose8va(_a) {
@@ -2855,24 +2916,24 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
     function playSuite(suite) {
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
-        var _loop_7 = function (i) {
+        var _loop_9 = function (i) {
             var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_7.randChoice(section.bass) : null;
+            var bass = (!!section.bass) ? RandomUtils_8.randChoice(section.bass) : null;
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_7.randChoice(section.lead);
+                    lead = RandomUtils_8.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
                 setTimeout(function () {
                     var figures = __spreadArrays((!!bass ? [bass.map(_transpose8vb)] : []), (!!lead ? [lead] : []));
-                    figures.forEach(function (figure) { return AudioUtils_4.playMusic(figure); });
+                    figures.forEach(function (figure) { return AudioUtils_5.playMusic(figure); });
                 }, ((numRepeats * i) + j) * suite.length);
             }
         };
         for (var i = 0; i < sections.length; i++) {
-            _loop_7(i);
+            _loop_9(i);
         }
         setTimeout(function () { return playSuite(suite); }, sections.length * suite.length * numRepeats);
     }
@@ -2884,7 +2945,49 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, MapUtils_6, MapSupplier_1, InputHandler_1, RandomUtils_8) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_3, Colors_6, types_13, SpriteFactory_4) {
+    "use strict";
+    var _a, _b;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _getTileSprite(filename) {
+        return function (paletteSwaps) { return SpriteFactory_4.createStaticSprite(new ImageSupplier_3.default(filename, Colors_6.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); };
+    }
+    function _mapFilenames(filenames) {
+        // @ts-ignore
+        var tileSet = {};
+        Object.entries(filenames).forEach(function (_a) {
+            var tileType = _a[0], filename = _a[1];
+            var sprite = filename ? _getTileSprite(filename)({}) : null;
+            // @ts-ignore
+            tileSet[tileType] = sprite;
+        });
+        return tileSet;
+    }
+    var dungeonFilenames = (_a = {},
+        _a[types_13.TileType.FLOOR] = 'dungeon/tile_floor',
+        _a[types_13.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
+        _a[types_13.TileType.WALL_TOP] = 'dungeon/tile_wall',
+        _a[types_13.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
+        _a[types_13.TileType.WALL] = null,
+        _a[types_13.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _a[types_13.TileType.NONE] = null,
+        _a);
+    var caveFilenames = (_b = {},
+        _b[types_13.TileType.FLOOR] = 'cave/tile_floor',
+        _b[types_13.TileType.FLOOR_HALL] = 'cave/tile_floor',
+        _b[types_13.TileType.WALL_TOP] = 'cave/tile_wall',
+        _b[types_13.TileType.WALL_HALL] = 'cave/tile_wall',
+        _b[types_13.TileType.WALL] = null,
+        _b[types_13.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _b[types_13.TileType.NONE] = null,
+        _b);
+    var TileSets = {
+        DUNGEON: _mapFilenames(dungeonFilenames),
+        CAVE: _mapFilenames(caveFilenames),
+    };
+    exports.default = TileSets;
+});
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_6, MapSupplier_1, InputHandler_1, RandomUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -2901,18 +3004,18 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function restartGame() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            MapFactory_1.default.createRandomMap(1, 30, 22, 7, 4),
-            MapFactory_1.default.createRandomMap(2, 32, 23, 8, 4),
-            MapFactory_1.default.createRandomMap(3, 34, 24, 9, 3),
-            MapFactory_1.default.createRandomMap(4, 36, 25, 10, 3),
-            MapFactory_1.default.createRandomMap(5, 38, 26, 11, 3),
-            MapFactory_1.default.createRandomMap(6, 30, 27, 12, 3)
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 1, 30, 22, 9, 4),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 2, 32, 23, 10, 4),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 3, 34, 24, 11, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 4, 36, 25, 12, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 5, 38, 26, 13, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 6, 30, 27, 14, 3)
         ]);
         jwb.renderer = new SpriteRenderer_1.default();
         loadMap(0);
         InputHandler_1.attachEvents();
         jwb.renderer.render();
-        Music_1.default.playSuite(RandomUtils_8.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        Music_1.default.playSuite(RandomUtils_9.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
     }
     exports.restartGame = restartGame;
     /**
@@ -2943,55 +3046,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_7) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function playTurn(playerUnitOrder) {
-        var playerUnit = jwb.state.playerUnit;
-        playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
-        return _update();
-    }
-    function _update() {
-        var state = jwb.state;
-        var playerUnit = state.playerUnit;
-        var map = state.getMap();
-        // make sure the player unit's update happens first
-        var unitPromises = [];
-        unitPromises.push(function () { return playerUnit.update(); });
-        map.units.forEach(function (u) {
-            if (u !== playerUnit) {
-                unitPromises.push(function () { return u.update(); });
-            }
-        });
-        return PromiseUtils_7.chainPromises(unitPromises)
-            .then(function () { return jwb.renderer.render(); })
-            .then(function () {
-            state.turn++;
-            state.messages = [];
-        });
-    }
-    exports.default = {
-        playTurn: playTurn
-    };
-});
-define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_5, Sounds_4) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function pickupItem(unit, mapItem) {
-        var state = jwb.state;
-        var inventoryItem = mapItem.inventoryItem;
-        unit.inventory.add(inventoryItem);
-        state.messages.push("Picked up a " + inventoryItem.name + ".");
-        AudioUtils_5.playSound(Sounds_4.default.PICK_UP_ITEM);
-    }
-    exports.pickupItem = pickupItem;
-    function useItem(unit, item) {
-        return item.use(unit)
-            .then(function () { return unit.inventory.remove(item); });
-    }
-    exports.useItem = useItem;
-});
-define("core/InputHandler", ["require", "exports", "core/actions", "types/types", "core/TurnHandler", "types/Tiles", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils"], function (require, exports, actions_2, types_10, TurnHandler_1, Tiles_3, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_14) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3071,7 +3126,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_10.GameScreen.GAME:
+            case types_14.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3106,7 +3161,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_10.GameScreen.INVENTORY:
+            case types_14.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3135,7 +3190,7 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_10.GameScreen.GAME: {
+            case types_14.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3147,17 +3202,17 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }) === Tiles_3.default.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_14.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_10.GameScreen.INVENTORY: {
+            case types_14.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_10.GameScreen.GAME;
+                    state.screen = types_14.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3170,11 +3225,11 @@ define("core/InputHandler", ["require", "exports", "core/actions", "types/types"
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_10.GameScreen.INVENTORY:
-                state.screen = types_10.GameScreen.GAME;
+            case types_14.GameScreen.INVENTORY:
+                state.screen = types_14.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_10.GameScreen.INVENTORY;
+                state.screen = types_14.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
@@ -3210,176 +3265,17 @@ define("core/main", ["require", "exports", "core/actions"], function (require, e
     window.jwb = window.jwb || {};
     window.onload = function () { return actions_3.restartGame(); };
 });
-define("graphics/AsciiRenderer", ["require", "exports", "utils/PromiseUtils", "units/Unit", "types/types"], function (require, exports, PromiseUtils_9, Unit_3, types_11) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var WIDTH = 80;
-    var HEIGHT = 32;
-    var AsciiRenderer = /** @class */ (function () {
-        function AsciiRenderer() {
-            this._container = document.getElementById('container');
-            this._container.innerHTML = '';
-            this._pre = document.createElement('pre');
-            this._container.appendChild(this._pre);
-        }
-        AsciiRenderer.prototype.render = function () {
-            var screen = jwb.state.screen;
-            switch (screen) {
-                case types_11.GameScreen.GAME:
-                    return this._renderGameScreen();
-                case types_11.GameScreen.INVENTORY:
-                    return this._renderInventoryScreen();
-                default:
-                    throw "Invalid screen " + screen;
-            }
-        };
-        AsciiRenderer.prototype._renderGameScreen = function () {
-            var map = jwb.state.getMap();
-            var lines = ['', '', '']; // extra room for messages
-            var mapHeight = HEIGHT - 7;
-            for (var y = 0; y < mapHeight; y++) {
-                var line = '';
-                for (var x = 0; x < WIDTH; x++) {
-                    if (map.contains({ x: x, y: y })) {
-                        var element = map.getUnit({ x: x, y: y }) || map.getItem({ x: x, y: y }) || map.getTile({ x: x, y: y });
-                        line += this._renderElement(element);
-                    }
-                    else {
-                        line += ' ';
-                    }
-                }
-                lines.push(line);
-            }
-            lines.push('', '', '');
-            lines.push(this._getStatusLine());
-            this._addMessageLines(lines);
-            this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_9.resolvedPromise();
-        };
-        AsciiRenderer.prototype._renderInventoryScreen = function () {
-            var state = jwb.state;
-            var playerUnit = state.playerUnit;
-            var inventory = playerUnit.inventory;
-            var inventoryLines = [];
-            var items = inventory.get(inventory.selectedCategory);
-            inventoryLines.push(inventory.selectedCategory);
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                if (item === inventory.selectedItem) {
-                    inventoryLines.push("<span style=\"color: #f00\">" + item.name + "</span>");
-                }
-                else {
-                    inventoryLines.push(item.name);
-                }
-            }
-            var lines = ['INVENTORY', ''];
-            for (var y = 0; y < HEIGHT - 3; y++) {
-                var line = (y < inventoryLines.length) ? inventoryLines[y] : '';
-                lines.push(line);
-            }
-            lines.push(this._getStatusLine());
-            this._addMessageLines(lines);
-            this._pre.innerHTML = lines.map(function (line) { return line.padEnd(WIDTH, ' '); }).join('\n');
-            return PromiseUtils_9.resolvedPromise();
-        };
-        AsciiRenderer.prototype._renderElement = function (element) {
-            if (element instanceof Unit_3.default) {
-                return "<span style=\"color: " + ((element.name === 'player') ? '#0cf' : '#f00') + "\">@</span>";
-            }
-            else {
-                return element.char;
-            }
-        };
-        AsciiRenderer.prototype._getStatusLine = function () {
-            var _a = jwb.state, playerUnit = _a.playerUnit, mapIndex = _a.mapIndex;
-            return "HP: " + playerUnit.life + "/" + playerUnit.maxLife + "    Damage: " + playerUnit.getDamage() + "    Level: " + ((mapIndex || 0) + 1);
-        };
-        AsciiRenderer.prototype._addMessageLines = function (lines) {
-            var messages = jwb.state.messages;
-            for (var i = 0; i < messages.length; i++) {
-                var message = messages.pop();
-                if (!!message) {
-                    lines[i] = message;
-                }
-            }
-        };
-        return AsciiRenderer;
-    }());
-    exports.default = AsciiRenderer;
-});
-define("graphics/sprites/SpriteClasses", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "graphics/ImageUtils"], function (require, exports, ImageSupplier_3, Colors_6, ImageUtils_3) {
+define("graphics/sprites/SpriteClasses", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "graphics/ImageUtils"], function (require, exports, ImageSupplier_4, Colors_7, ImageUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var SpriteClasses = {
         PLAYER: {
             name: 'PLAYER',
             imageMap: {
-                STANDING: function (paletteSwaps) { return new ImageSupplier_3.default('player_standing_SE_1', Colors_6.default.WHITE, paletteSwaps); },
-                STANDING_DAMAGED: function (paletteSwaps) { return new ImageSupplier_3.default('player_standing_SE_1', Colors_6.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_3.replaceAll(img, Colors_6.default.WHITE); }]); }
+                STANDING: function (paletteSwaps) { return new ImageSupplier_4.default('player_standing_SE_1', Colors_7.default.WHITE, paletteSwaps); },
+                STANDING_DAMAGED: function (paletteSwaps) { return new ImageSupplier_4.default('player_standing_SE_1', Colors_7.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_3.replaceAll(img, Colors_7.default.WHITE); }]); }
             }
         }
     };
-});
-define("maps/AsciiMaps", ["require", "exports", "units/UnitClasses", "units/Unit", "types/Tiles"], function (require, exports, UnitClasses_3, Unit_4, Tiles_4) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var FIXED_MAPS = [
-        function () { return _mapFromAscii("\n              ###########\n              #.........#\n              #....U....#               \n              #.....................\n              #.........#          .\n              ###.#######          .\n                 .                 .\n#############      .                 .\n#...........#      .           ######.#####\n#...........#      .           #..........#\n#....@......#      .           #...U....>.#\n#...................           #..........#\n#...........#                  #.....U....#\n#......U....#                  ############\n#############\n", 1); },
-        function () { return _mapFromAscii("\n###########################################\n#.........................................#\n#...............U............U............#\n#.........................................#\n#...........####################......U...#\n#...........#                  #..........#\n#...@.......#                  #..........#\n#...........#                  #..........#\n#...........#                  ############\n#############\n", 2); }
-    ];
-    function _mapFromAscii(ascii, level) {
-        var lines = ascii.split('\n').filter(function (line) { return !line.match(/^ *$/); });
-        var tiles = [];
-        var playerUnitLocation = null;
-        var enemyUnitLocations = [];
-        for (var y = 0; y < lines.length; y++) {
-            var line = lines[y];
-            var _loop_8 = function (x) {
-                var c = line[x];
-                var tile = Object.values(Tiles_4.default).filter(function (t) { return t.char === c; })[0] || null;
-                if (!tile) {
-                    if (c === '@') {
-                        playerUnitLocation = { x: x, y: y };
-                        tile = Tiles_4.default.FLOOR;
-                    }
-                    else if (c === 'U') {
-                        enemyUnitLocations.push({ x: x, y: y });
-                        tile = Tiles_4.default.FLOOR;
-                    }
-                    else {
-                        tile = Tiles_4.default.NONE;
-                    }
-                }
-                tiles[y] = tiles[y] || [];
-                tiles[y][x] = tile;
-            };
-            for (var x = 0; x < line.length; x++) {
-                _loop_8(x);
-            }
-        }
-        var width = tiles.map(function (row) { return row.length; }).reduce(function (a, b) { return Math.max(a, b); }) + 1;
-        var height = tiles.length;
-        if (!playerUnitLocation) {
-            throw 'No player unit location';
-        }
-        return {
-            level: level,
-            width: width,
-            height: height,
-            tiles: tiles,
-            rooms: [],
-            playerUnitLocation: playerUnitLocation,
-            enemyUnitLocations: enemyUnitLocations,
-            enemyUnitSupplier: function (_a) {
-                var x = _a.x, y = _a.y;
-                return new Unit_4.default(UnitClasses_3.default.ENEMY_GRUNT, 'enemy_grunt', level, { x: x, y: y });
-            },
-            itemLocations: [],
-            itemSupplier: function () {
-                throw 'unsupported';
-            }
-        };
-    }
-    exports.default = FIXED_MAPS;
 });
 //# sourceMappingURL=roguelike.js.map

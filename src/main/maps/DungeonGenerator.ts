@@ -1,11 +1,10 @@
 import Unit from '../units/Unit';
 import MapSupplier from './MapSupplier';
 import Pathfinder from '../utils/Pathfinder';
-import Tiles from '../types/Tiles';
 import MapItem from '../items/MapItem';
 import { average, comparing } from '../utils/ArrayUtils';
-import { Coordinates, MapSection, Room, Tile } from '../types/types';
-import { coordinatesEquals, hypotenuse, isAdjacent, pickUnoccupiedLocations } from './MapUtils';
+import { Coordinates, MapSection, Room, TileSet, TileType } from '../types/types';
+import { coordinatesEquals, createTile, hypotenuse, isAdjacent, pickUnoccupiedLocations, isBlocking } from './MapUtils';
 import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
 
 /**
@@ -15,13 +14,15 @@ class DungeonGenerator {
   private readonly _minRoomDimension: number;
   private readonly _maxRoomDimension: number;
   private readonly _minRoomPadding: number;
+  private readonly _tileSet: TileSet;
 
   /**
    * @param minRoomDimension outer width, including wall
    * @param maxRoomDimension outer width, including wall
    * @param minRoomPadding minimum padding between each room and its containing section
    */
-  constructor(minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
+  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
+    this._tileSet = tileSet;
     this._minRoomDimension = minRoomDimension;
     this._maxRoomDimension = maxRoomDimension;
     this._minRoomPadding = minRoomPadding;
@@ -58,12 +59,17 @@ class DungeonGenerator {
 
     this._addWalls(section);
 
-    const { tiles } = section;
-    const [stairsLocation] = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [], 1);
-    tiles[stairsLocation.y][stairsLocation.x] = Tiles.STAIRS_DOWN;
-    const enemyUnitLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation], numEnemies);
-    const [playerUnitLocation] = this._pickPlayerLocation(tiles, [stairsLocation, ...enemyUnitLocations]);
-    const itemLocations = pickUnoccupiedLocations(tiles, [Tiles.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
+    const tileTypes = section.tiles;
+
+    const [stairsLocation] = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [], 1);
+    tileTypes[stairsLocation.y][stairsLocation.x] = TileType.STAIRS_DOWN;
+    const enemyUnitLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation], numEnemies);
+    const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
+    const itemLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
+
+    const tiles = tileTypes.map((row: TileType[]) => {
+      return row.map(tileType => createTile(tileType, this._tileSet));
+    });
 
     return {
       level,
@@ -93,7 +99,7 @@ class DungeonGenerator {
     const splitDirections = [
       ...(canSplitHorizontally ? ['HORIZONTAL'] : []),
       ...(canSplitVertically ? ['VERTICAL'] : []),
-      //...((!mustSplitHorizontally && !mustSplitVertically) ? [null] : [])
+      ...((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : [])
     ];
 
     if (splitDirections.length > 0) {
@@ -105,7 +111,7 @@ class DungeonGenerator {
         const rightWidth = width - splitX;
         const rightSection = this._generateSection(rightWidth, height);
 
-        const tiles: Tile[][] = [];
+        const tiles: TileType[][] = [];
         for (let y = 0; y < leftSection.tiles.length; y++) {
           const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
           tiles.push(row);
@@ -158,7 +164,7 @@ class DungeonGenerator {
 
     const roomLeft = randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
     const roomTop = randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
-    const tiles: Tile[][] = [];
+    const tiles: TileType[][] = [];
     // x, y are relative to the section's origin
     // roomX, roomY are relative to the room's origin
     for (let y = 0; y < height; y++) {
@@ -169,7 +175,7 @@ class DungeonGenerator {
         if (roomX >= 0 && roomX < roomWidth && roomY >= 0 && roomY < roomHeight) {
           tiles[y][x] = roomTiles[roomY][roomX];
         } else {
-          tiles[y][x] = Tiles.NONE;
+          tiles[y][x] = TileType.NONE;
         }
       }
     }
@@ -184,17 +190,17 @@ class DungeonGenerator {
     return { width, height, rooms: [room], tiles };
   }
 
-  private _generateRoomTiles(width: number, height: number): Tile[][] {
-    const tiles: Tile[][] = [];
+  private _generateRoomTiles(width: number, height: number): TileType[][] {
+    const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       tiles[y] = [];
       for (let x = 0; x < width; x++) {
         if (x > 0 && x < (width - 1) && y === 0) {
-          tiles[y][x] = Tiles.WALL_TOP;
+          tiles[y][x] = TileType.WALL_TOP;
         } else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
-          tiles[y][x] = Tiles.WALL;
+          tiles[y][x] = TileType.WALL;
         } else {
-          tiles[y][x] = Tiles.FLOOR;
+          tiles[y][x] = TileType.FLOOR;
         }
       }
     }
@@ -251,9 +257,9 @@ class DungeonGenerator {
     for (let y = 0; y < section.height; y++) {
       for (let x = 0; x < section.width; x++) {
         if (y > 0) {
-          if (section.tiles[y][x] === Tiles.FLOOR_HALL) {
-            if (section.tiles[y - 1][x] === Tiles.NONE || section.tiles[y - 1][x] === Tiles.WALL) {
-              section.tiles[y - 1][x] = Tiles.WALL_HALL;
+          if (section.tiles[y][x] === TileType.FLOOR_HALL) {
+            if (section.tiles[y - 1][x] === TileType.NONE || section.tiles[y - 1][x] === TileType.WALL) {
+              section.tiles[y - 1][x] = TileType.WALL_HALL;
             }
           }
         }
@@ -330,11 +336,11 @@ class DungeonGenerator {
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
     const blockedTileDetector = ({ x, y }: Coordinates) => {
       // can't draw a path through an existing room or a wall
-      const blockedTileTypes = [Tiles.FLOOR, Tiles.WALL, Tiles.WALL_HALL, Tiles.WALL_TOP];
+      const blockedTileType = [TileType.FLOOR, TileType.WALL, TileType.WALL_HALL, TileType.WALL_TOP];
 
       if ([firstExit, secondExit].some(exit => coordinatesEquals({ x, y }, exit))) {
         return false;
-      } else if (section.tiles[y][x] === Tiles.NONE || section.tiles[y][x] === Tiles.FLOOR_HALL) {
+      } else if (section.tiles[y][x] === TileType.NONE || section.tiles[y][x] === TileType.FLOOR_HALL) {
         // skip the check if we're within 1 tile vertically of an exit
         const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
           [firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + dy }))
@@ -348,13 +354,13 @@ class DungeonGenerator {
         for (let dy of [-2, -1, 1, 2]) {
           if ((y + dy >= 0) && (y + dy < section.height)) {
             const tile = section.tiles[y + dy][x];
-            if (blockedTileTypes.indexOf(tile) > -1) {
+            if (blockedTileType.indexOf(tile) > -1) {
               return true;
             }
           }
         }
         return false;
-      } else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+      } else if (blockedTileType.indexOf(section.tiles[y][x]) > -1) {
         return true;
       }
       console.error('how\'d we get here?');
@@ -363,7 +369,7 @@ class DungeonGenerator {
 
     // prefer reusing floor hall tiles
     const tileCostCalculator = (first: Coordinates, second: Coordinates) => {
-      return (section.tiles[second.y][second.x] === Tiles.FLOOR_HALL) ? 0.01 : 1;
+      return (section.tiles[second.y][second.x] === TileType.FLOOR_HALL) ? 0.01 : 1;
     };
 
     const mapRect = {
@@ -374,7 +380,7 @@ class DungeonGenerator {
     };
     const path = new Pathfinder(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
     path.forEach(({ x, y }) => {
-      section.tiles[y][x] = Tiles.FLOOR_HALL;
+      section.tiles[y][x] = TileType.FLOOR_HALL;
     });
 
     return (path.length > 0);
@@ -383,12 +389,12 @@ class DungeonGenerator {
   /**
    * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
    */
-  private _pickPlayerLocation(tiles: Tile[][], blockedTiles: Coordinates[]) {
+  private _pickPlayerLocation(tiles: TileType[][], blockedTiles: Coordinates[]) {
     const candidates: [Coordinates, number][] = [];
 
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (!tiles[y][x].isBlocking && !blockedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+        if (!isBlocking(tiles[y][x]) && !blockedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
           const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
           candidates.push([{ x, y }, average(tileDistances)]);
         }
@@ -399,10 +405,10 @@ class DungeonGenerator {
     return candidates.sort((a, b) => (b[1] - a[1]))[0];
   }
 
-  private _emptyRow(width: number): Tile[] {
-    const row: Tile[] = [];
+  private _emptyRow(width: number): TileType[] {
+    const row: TileType[] = [];
     for (let x = 0; x < width; x++) {
-      row.push(Tiles.NONE);
+      row.push(TileType.NONE);
     }
     return row;
   }
@@ -411,7 +417,12 @@ class DungeonGenerator {
     console.log(`Sections for ${name}:`);
     sections.forEach(section => console.log(
       section.tiles
-        .map(row => row.map(tile => tile.char).join(''))
+        .map(row => row.map(tile => {
+          if (isBlocking(tile)) {
+            return '#';
+          }
+          return '.';
+        }).join(''))
         .join('\n')
     ));
     console.log();

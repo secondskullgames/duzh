@@ -1,13 +1,12 @@
-import { loadMap } from './actions';
-import { Coordinates, EquipmentSlot, GameScreen } from '../types/types';
 import TurnHandler from './TurnHandler';
-import Tiles from '../types/Tiles';
 import Sounds from '../sounds/Sounds';
+import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { fireProjectile, moveOrAttack } from '../units/UnitUtils';
 import { playSound } from '../sounds/AudioUtils';
-import Unit from '../units/Unit';
+import { loadMap } from './actions';
+import { Coordinates, GameScreen, TileType } from '../types/types';
 
 enum KeyCommand {
   UP = 'UP',
@@ -170,7 +169,7 @@ function _handleEnter(): Promise<void> {
       if (!!item) {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
-      } else if (map.getTile({ x, y }) === Tiles.STAIRS_DOWN) {
+      } else if (map.getTile({ x, y }).type === TileType.STAIRS_DOWN) {
         playSound(Sounds.DESCEND_STAIRS);
         loadMap(mapIndex + 1);
       }

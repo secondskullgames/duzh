@@ -1,4 +1,4 @@
-import { isTileRevealed } from '../maps/MapUtils';
+import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, ItemCategory, Rect, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
 import Sprite from './sprites/Sprite';
@@ -96,6 +96,23 @@ class SpriteRenderer implements Renderer {
           if (!!item) {
             promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
             promises.push(this._renderElement(item, { x, y }));
+          }
+        }
+      }
+    }
+    return Promise.all(promises);
+  }
+
+  private _renderProjectiles(): Promise<any> {
+    const map = jwb.state.getMap();
+    const promises: Promise<any>[] = [];
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (isTileRevealed({ x, y })) {
+          const projectile = map.projectiles
+            .filter(p => coordinatesEquals(p, { x, y }))[0];
+          if (!!projectile) {
+            promises.push(this._renderElement(projectile, { x, y }));
           }
         }
       }

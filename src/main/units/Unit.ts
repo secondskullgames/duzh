@@ -96,10 +96,15 @@ class Unit implements Entity {
 
   getRangedDamage(): number {
     let damage = this._damage;
+
     this.equipment.getEntries()
       .filter(([slot, item]) => (slot !== EquipmentSlot.MELEE_WEAPON))
       .forEach(([slot, item]) => {
-        damage += (item.damage || 0);
+        if (slot === EquipmentSlot.RANGED_WEAPON) {
+          damage += (item.damage || 0);
+        } else {
+          damage += (item.damage || 0) / 2;
+        }
       });
     return Math.round(damage);
   }
