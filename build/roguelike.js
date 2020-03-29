@@ -2215,25 +2215,225 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
         createRandomItem: createRandomItem
     };
 });
-define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "utils/ArrayUtils", "types/types", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, Pathfinder_2, ArrayUtils_3, types_11, MapUtils_5, RandomUtils_5) {
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_3, Colors_5, types_11, UnitAI_1) {
+    "use strict";
+    var _a, _b;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var PLAYER = {
+        name: 'PLAYER',
+        type: types_11.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.PLAYER,
+        // Green/brown colors
+        paletteSwaps: (_a = {},
+            _a[Colors_5.default.DARK_PURPLE] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.MAGENTA] = Colors_5.default.DARK_GREEN,
+            _a[Colors_5.default.DARK_BLUE] = Colors_5.default.DARK_GREEN,
+            _a[Colors_5.default.CYAN] = Colors_5.default.LIGHT_PINK,
+            _a[Colors_5.default.BLACK] = Colors_5.default.BLACK,
+            _a[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_BROWN,
+            _a[Colors_5.default.DARK_GREEN] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.GREEN] = Colors_5.default.DARK_BROWN,
+            _a[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_PINK // Face
+        ,
+            _a),
+        startingLife: 100,
+        startingMana: 100,
+        startingDamage: 10,
+        minLevel: 1,
+        maxLevel: 20,
+        lifePerLevel: function (level) { return 10; },
+        manaPerLevel: function (level) { return 0; },
+        damagePerLevel: function (level) { return 1; },
+        experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 2 : null; },
+    };
+    var ENEMY_SNAKE = {
+        name: 'ENEMY_SNAKE',
+        type: types_11.UnitType.ANIMAL,
+        sprite: SpriteFactory_3.default.SNAKE,
+        paletteSwaps: {},
+        startingLife: 45,
+        startingMana: null,
+        startingDamage: 4,
+        minLevel: 1,
+        maxLevel: 3,
+        lifePerLevel: function () { return 12; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 2; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.95,
+            visionRange: 12,
+            fleeThreshold: 0.2
+        }
+    };
+    var ENEMY_GRUNT = {
+        name: 'ENEMY_GRUNT',
+        type: types_11.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.GRUNT,
+        paletteSwaps: {},
+        startingLife: 50,
+        startingMana: null,
+        startingDamage: 5,
+        minLevel: 1,
+        maxLevel: 4,
+        lifePerLevel: function () { return 12; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 2; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.8,
+            visionRange: 8,
+            fleeThreshold: 0.1
+        }
+    };
+    var ENEMY_SOLDIER = {
+        name: 'ENEMY_SOLDIER',
+        type: types_11.UnitType.HUMAN,
+        sprite: SpriteFactory_3.default.SOLDIER,
+        paletteSwaps: {},
+        startingLife: 60,
+        startingMana: null,
+        startingDamage: 6,
+        minLevel: 3,
+        maxLevel: 6,
+        lifePerLevel: function () { return 15; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 3; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.9,
+            visionRange: 10,
+            fleeThreshold: 0.2
+        }
+    };
+    var ENEMY_GOLEM = {
+        name: 'ENEMY_GOLEM',
+        type: types_11.UnitType.GOLEM,
+        sprite: SpriteFactory_3.default.GOLEM,
+        paletteSwaps: (_b = {},
+            _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
+            _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARKER_GRAY,
+            _b),
+        startingLife: 100,
+        startingMana: null,
+        startingDamage: 15,
+        minLevel: 5,
+        maxLevel: 9,
+        lifePerLevel: function () { return 25; },
+        manaPerLevel: function () { return null; },
+        damagePerLevel: function () { return 4; },
+        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        aiParams: {
+            speed: 0.7,
+            visionRange: 12,
+            fleeThreshold: 0
+        }
+    };
+    function getEnemyClasses() {
+        return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
+    }
+    exports.default = {
+        PLAYER: PLAYER,
+        ENEMY_GRUNT: ENEMY_GRUNT,
+        ENEMY_GOLEM: ENEMY_GOLEM,
+        getEnemyClasses: getEnemyClasses
+    };
+});
+define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_5, Unit_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function createRandomEnemy(_a, level) {
+        var x = _a.x, y = _a.y;
+        var candidates = UnitClasses_1.default.getEnemyClasses()
+            .filter(function (unitClass) { return level >= unitClass.minLevel; })
+            .filter(function (unitClass) { return level <= unitClass.maxLevel; });
+        var unitClass = RandomUtils_5.randChoice(candidates);
+        return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
+    }
+    exports.default = {
+        createRandomEnemy: createRandomEnemy
+    };
+});
+define("maps/generation/DungeonGenerator", ["require", "exports", "types/types", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, types_12, MapUtils_5, ArrayUtils_3) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var DungeonGenerator = /** @class */ (function () {
+        function DungeonGenerator(tileSet) {
+            this._tileSet = tileSet;
+        }
+        DungeonGenerator.prototype.generateDungeon = function (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
+            var _this = this;
+            var section = this.generateTiles(width, height);
+            var tileTypes = section.tiles;
+            var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_12.TileType.FLOOR], [], 1)[0];
+            tileTypes[stairsLocation.y][stairsLocation.x] = types_12.TileType.STAIRS_DOWN;
+            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_12.TileType.FLOOR], [stairsLocation], numEnemies);
+            var playerUnitLocation = this._pickPlayerLocation(tileTypes, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
+            var itemLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_12.TileType.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
+            var tiles = tileTypes.map(function (row) {
+                return row.map(function (tileType) { return MapUtils_5.createTile(tileType, _this._tileSet); });
+            });
+            return {
+                level: level,
+                width: width,
+                height: height,
+                tiles: tiles,
+                rooms: section.rooms,
+                playerUnitLocation: playerUnitLocation,
+                enemyUnitLocations: enemyUnitLocations,
+                enemyUnitSupplier: enemyUnitSupplier,
+                itemLocations: itemLocations,
+                itemSupplier: itemSupplier
+            };
+        };
+        /**
+         * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
+         */
+        DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
+            var candidates = [];
+            var _loop_7 = function (y) {
+                var _loop_8 = function (x) {
+                    if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
+                        var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
+                        candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
+                    }
+                };
+                for (var x = 0; x < tiles[y].length; x++) {
+                    _loop_8(x);
+                }
+            };
+            for (var y = 0; y < tiles.length; y++) {
+                _loop_7(y);
+            }
+            console.assert(candidates.length > 0);
+            return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
+        };
+        return DungeonGenerator;
+    }());
+    exports.default = DungeonGenerator;
+});
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder"], function (require, exports, DungeonGenerator_1, types_13, RandomUtils_6, ArrayUtils_4, MapUtils_6, Pathfinder_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
      */
-    var DungeonGenerator = /** @class */ (function () {
+    var RoomCorridorDungeonGenerator = /** @class */ (function (_super) {
+        __extends(RoomCorridorDungeonGenerator, _super);
         /**
          * @param minRoomDimension outer width, including wall
          * @param maxRoomDimension outer width, including wall
          * @param minRoomPadding minimum padding between each room and its containing section
          */
-        function DungeonGenerator(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding) {
-            this._tileSet = tileSet;
-            this._minRoomDimension = minRoomDimension;
-            this._maxRoomDimension = maxRoomDimension;
-            this._minRoomPadding = minRoomPadding;
+        function RoomCorridorDungeonGenerator(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding) {
+            var _this = _super.call(this, tileSet) || this;
+            _this._minRoomDimension = minRoomDimension;
+            _this._maxRoomDimension = maxRoomDimension;
+            _this._minRoomPadding = minRoomPadding;
+            return _this;
         }
-        DungeonGenerator.prototype.generateDungeon = function (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
+        RoomCorridorDungeonGenerator.prototype.generateTiles = function (width, height) {
             var _this = this;
             // Create a section with dimensions (width, height - 1) and then shift it down by one tile.
             // This is so we have room to add a WALL_TOP tile in the top slot if necessary
@@ -2257,41 +2457,21 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
                 };
             })();
             this._addWalls(section);
-            var tileTypes = section.tiles;
-            var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], [], 1)[0];
-            tileTypes[stairsLocation.y][stairsLocation.x] = types_11.TileType.STAIRS_DOWN;
-            var enemyUnitLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], [stairsLocation], numEnemies);
-            var playerUnitLocation = this._pickPlayerLocation(tileTypes, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
-            var itemLocations = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_11.TileType.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
-            var tiles = tileTypes.map(function (row) {
-                return row.map(function (tileType) { return MapUtils_5.createTile(tileType, _this._tileSet); });
-            });
-            return {
-                level: level,
-                width: width,
-                height: height,
-                tiles: tiles,
-                rooms: section.rooms,
-                playerUnitLocation: playerUnitLocation,
-                enemyUnitLocations: enemyUnitLocations,
-                enemyUnitSupplier: enemyUnitSupplier,
-                itemLocations: itemLocations,
-                itemSupplier: itemSupplier
-            };
+            return section;
         };
         /**
          * Generate a rectangular area of tiles with the specified dimensions, consisting of any number of rooms connected
          * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
          * not large enough to form two sub-regions, just return a single section.
          */
-        DungeonGenerator.prototype._generateSection = function (width, height) {
+        RoomCorridorDungeonGenerator.prototype._generateSection = function (width, height) {
             // First, make sure the area is large enough to support two sections; if not, we're done
             var minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
             var canSplitHorizontally = (width >= (2 * minSectionDimension));
             var canSplitVertically = (height >= (2 * minSectionDimension));
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : []));
             if (splitDirections.length > 0) {
-                var direction = RandomUtils_5.randChoice(splitDirections);
+                var direction = RandomUtils_6.randChoice(splitDirections);
                 if (direction === 'HORIZONTAL') {
                     var splitX_1 = this._getSplitPoint(width);
                     var leftWidth = splitX_1;
@@ -2339,15 +2519,15 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
          * anywhere in the region at random, and can occupy a variable amount of space in the region
          * (within the specified parameters).
          */
-        DungeonGenerator.prototype._generateSingleSection = function (width, height) {
+        RoomCorridorDungeonGenerator.prototype._generateSingleSection = function (width, height) {
             var maxRoomWidth = width - (2 * this._minRoomPadding);
             var maxRoomHeight = height - (2 * this._minRoomPadding);
             console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_5.randInt(this._minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_5.randInt(this._minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_6.randInt(this._minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_6.randInt(this._minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_5.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
-            var roomTop = RandomUtils_5.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
+            var roomLeft = RandomUtils_6.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
+            var roomTop = RandomUtils_6.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -2360,7 +2540,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
                         tiles[y][x] = roomTiles[roomY][roomX];
                     }
                     else {
-                        tiles[y][x] = types_11.TileType.NONE;
+                        tiles[y][x] = types_13.TileType.NONE;
                     }
                 }
             }
@@ -2373,19 +2553,19 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             };
             return { width: width, height: height, rooms: [room], tiles: tiles };
         };
-        DungeonGenerator.prototype._generateRoomTiles = function (width, height) {
+        RoomCorridorDungeonGenerator.prototype._generateRoomTiles = function (width, height) {
             var tiles = [];
             for (var y = 0; y < height; y++) {
                 tiles[y] = [];
                 for (var x = 0; x < width; x++) {
                     if (x > 0 && x < (width - 1) && y === 0) {
-                        tiles[y][x] = types_11.TileType.WALL_TOP;
+                        tiles[y][x] = types_13.TileType.WALL_TOP;
                     }
                     else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
-                        tiles[y][x] = types_11.TileType.WALL;
+                        tiles[y][x] = types_13.TileType.WALL;
                     }
                     else {
-                        tiles[y][x] = types_11.TileType.FLOOR;
+                        tiles[y][x] = types_13.TileType.FLOOR;
                     }
                 }
             }
@@ -2395,13 +2575,13 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
          * @param dimension width or height
          * @returns the min X/Y coordinate of the *second* room
          */
-        DungeonGenerator.prototype._getSplitPoint = function (dimension) {
+        RoomCorridorDungeonGenerator.prototype._getSplitPoint = function (dimension) {
             var minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_5.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_6.randInt(minSplitPoint, maxSplitPoint);
         };
-        DungeonGenerator.prototype._joinSection = function (section) {
+        RoomCorridorDungeonGenerator.prototype._joinSection = function (section) {
             var _this = this;
             var unconnectedRooms = __spreadArrays(section.rooms);
             var connectedRooms = [];
@@ -2416,7 +2596,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
                     return _this._canJoinRooms(connectedRoom, unconnectedRoom);
                 })
-                    .sort(ArrayUtils_3.comparing(function (_a) {
+                    .sort(ArrayUtils_4.comparing(function (_a) {
                     var first = _a[0], second = _a[1];
                     return _this._roomDistance(first, second);
                 }));
@@ -2440,32 +2620,32 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
         /**
          * add walls above corridor tiles if possible
          */
-        DungeonGenerator.prototype._addWalls = function (section) {
+        RoomCorridorDungeonGenerator.prototype._addWalls = function (section) {
             for (var y = 0; y < section.height; y++) {
                 for (var x = 0; x < section.width; x++) {
                     if (y > 0) {
-                        if (section.tiles[y][x] === types_11.TileType.FLOOR_HALL) {
-                            if (section.tiles[y - 1][x] === types_11.TileType.NONE || section.tiles[y - 1][x] === types_11.TileType.WALL) {
-                                section.tiles[y - 1][x] = types_11.TileType.WALL_HALL;
+                        if (section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
+                            if (section.tiles[y - 1][x] === types_13.TileType.NONE || section.tiles[y - 1][x] === types_13.TileType.WALL) {
+                                section.tiles[y - 1][x] = types_13.TileType.WALL_HALL;
                             }
                         }
                     }
                 }
             }
         };
-        DungeonGenerator.prototype._roomDistance = function (first, second) {
+        RoomCorridorDungeonGenerator.prototype._roomDistance = function (first, second) {
             var firstCenter = { x: first.left + first.width / 2, y: first.top + first.height / 2 };
             var secondCenter = { x: second.left + second.width / 2, y: second.top + second.height / 2 };
-            return MapUtils_5.hypotenuse(firstCenter, secondCenter);
+            return MapUtils_6.hypotenuse(firstCenter, secondCenter);
         };
-        DungeonGenerator.prototype._canJoinRooms = function (first, second) {
+        RoomCorridorDungeonGenerator.prototype._canJoinRooms = function (first, second) {
             return (first !== second); // && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
         };
-        DungeonGenerator.prototype._joinRooms = function (first, second, section) {
+        RoomCorridorDungeonGenerator.prototype._joinRooms = function (first, second, section) {
             var firstExitCandidates = this._getExitCandidates(first);
             var secondExitCandidates = this._getExitCandidates(second);
-            RandomUtils_5.shuffle(firstExitCandidates);
-            RandomUtils_5.shuffle(secondExitCandidates);
+            RandomUtils_6.shuffle(firstExitCandidates);
+            RandomUtils_6.shuffle(secondExitCandidates);
             for (var _i = 0, firstExitCandidates_1 = firstExitCandidates; _i < firstExitCandidates_1.length; _i++) {
                 var firstExit = firstExitCandidates_1[_i];
                 for (var _a = 0, secondExitCandidates_1 = secondExitCandidates; _a < secondExitCandidates_1.length; _a++) {
@@ -2479,7 +2659,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             }
             return false;
         };
-        DungeonGenerator.prototype._getExitCandidates = function (room) {
+        RoomCorridorDungeonGenerator.prototype._getExitCandidates = function (room) {
             var eligibleSides = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT'];
             var candidates = [];
             eligibleSides.forEach(function (side) {
@@ -2510,23 +2690,23 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             });
             return candidates.filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                return !room.exits.some(function (exit) { return MapUtils_5.isAdjacent(exit, { x: x, y: y }); });
+                return !room.exits.some(function (exit) { return MapUtils_6.isAdjacent(exit, { x: x, y: y }); });
             });
         };
         /**
          * Find a path between the specified exits between rooms.
          */
-        DungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
+        RoomCorridorDungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
             var blockedTileDetector = function (_a) {
                 var x = _a.x, y = _a.y;
                 // can't draw a path through an existing room or a wall
-                var blockedTileType = [types_11.TileType.FLOOR, types_11.TileType.WALL, types_11.TileType.WALL_HALL, types_11.TileType.WALL_TOP];
-                if ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals({ x: x, y: y }, exit); })) {
+                var blockedTileType = [types_13.TileType.FLOOR, types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
+                if ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
                     return false;
                 }
-                else if (section.tiles[y][x] === types_11.TileType.NONE || section.tiles[y][x] === types_11.TileType.FLOOR_HALL) {
+                else if (section.tiles[y][x] === types_13.TileType.NONE || section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
                     // skip the check if we're within 1 tile vertically of an exit
-                    var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_5.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
+                    var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
                     if (isNextToExit) {
                         return false;
                     }
@@ -2550,7 +2730,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             };
             // prefer reusing floor hall tiles
             var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === types_11.TileType.FLOOR_HALL) ? 0.01 : 1;
+                return (section.tiles[second.y][second.x] === types_13.TileType.FLOOR_HALL) ? 0.01 : 1;
             };
             var mapRect = {
                 left: 0,
@@ -2561,40 +2741,18 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             var path = new Pathfinder_2.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
-                section.tiles[y][x] = types_11.TileType.FLOOR_HALL;
+                section.tiles[y][x] = types_13.TileType.FLOOR_HALL;
             });
             return (path.length > 0);
         };
-        /**
-         * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
-         */
-        DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
-            var candidates = [];
-            var _loop_7 = function (y) {
-                var _loop_8 = function (x) {
-                    if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
-                        var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
-                        candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
-                    }
-                };
-                for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_8(x);
-                }
-            };
-            for (var y = 0; y < tiles.length; y++) {
-                _loop_7(y);
-            }
-            console.assert(candidates.length > 0);
-            return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
-        };
-        DungeonGenerator.prototype._emptyRow = function (width) {
+        RoomCorridorDungeonGenerator.prototype._emptyRow = function (width) {
             var row = [];
             for (var x = 0; x < width; x++) {
-                row.push(types_11.TileType.NONE);
+                row.push(types_13.TileType.NONE);
             }
             return row;
         };
-        DungeonGenerator.prototype._logSections = function (name) {
+        RoomCorridorDungeonGenerator.prototype._logSections = function (name) {
             var sections = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 sections[_i - 1] = arguments[_i];
@@ -2602,7 +2760,7 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
             console.log("Sections for " + name + ":");
             sections.forEach(function (section) { return console.log(section.tiles
                 .map(function (row) { return row.map(function (tile) {
-                if (MapUtils_5.isBlocking(tile)) {
+                if (MapUtils_6.isBlocking(tile)) {
                     return '#';
                 }
                 return '.';
@@ -2610,151 +2768,297 @@ define("maps/DungeonGenerator", ["require", "exports", "utils/Pathfinder", "util
                 .join('\n')); });
             console.log();
         };
-        return DungeonGenerator;
-    }());
-    exports.default = DungeonGenerator;
+        return RoomCorridorDungeonGenerator;
+    }(DungeonGenerator_1.default));
+    exports.default = RoomCorridorDungeonGenerator;
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_3, Colors_5, types_12, UnitAI_1) {
-    "use strict";
-    var _a, _b;
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var PLAYER = {
-        name: 'PLAYER',
-        type: types_12.UnitType.HUMAN,
-        sprite: SpriteFactory_3.default.PLAYER,
-        // Green/brown colors
-        paletteSwaps: (_a = {},
-            _a[Colors_5.default.DARK_PURPLE] = Colors_5.default.DARK_BROWN,
-            _a[Colors_5.default.MAGENTA] = Colors_5.default.DARK_GREEN,
-            _a[Colors_5.default.DARK_BLUE] = Colors_5.default.DARK_GREEN,
-            _a[Colors_5.default.CYAN] = Colors_5.default.LIGHT_PINK,
-            _a[Colors_5.default.BLACK] = Colors_5.default.BLACK,
-            _a[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_BROWN,
-            _a[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_BROWN,
-            _a[Colors_5.default.DARK_GREEN] = Colors_5.default.DARK_BROWN,
-            _a[Colors_5.default.GREEN] = Colors_5.default.DARK_BROWN,
-            _a[Colors_5.default.ORANGE] = Colors_5.default.LIGHT_PINK // Face
-        ,
-            _a),
-        startingLife: 100,
-        startingMana: 100,
-        startingDamage: 10,
-        minLevel: 1,
-        maxLevel: 20,
-        lifePerLevel: function (level) { return 10; },
-        manaPerLevel: function (level) { return 0; },
-        damagePerLevel: function (level) { return 1; },
-        experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 2 : null; },
-    };
-    var ENEMY_SNAKE = {
-        name: 'ENEMY_SNAKE',
-        type: types_12.UnitType.ANIMAL,
-        sprite: SpriteFactory_3.default.SNAKE,
-        paletteSwaps: {},
-        startingLife: 45,
-        startingMana: null,
-        startingDamage: 4,
-        minLevel: 1,
-        maxLevel: 3,
-        lifePerLevel: function () { return 12; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
-        aiParams: {
-            speed: 0.95,
-            visionRange: 12,
-            fleeThreshold: 0.2
-        }
-    };
-    var ENEMY_GRUNT = {
-        name: 'ENEMY_GRUNT',
-        type: types_12.UnitType.HUMAN,
-        sprite: SpriteFactory_3.default.GRUNT,
-        paletteSwaps: {},
-        startingLife: 50,
-        startingMana: null,
-        startingDamage: 5,
-        minLevel: 1,
-        maxLevel: 4,
-        lifePerLevel: function () { return 12; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
-        aiParams: {
-            speed: 0.8,
-            visionRange: 8,
-            fleeThreshold: 0.1
-        }
-    };
-    var ENEMY_SOLDIER = {
-        name: 'ENEMY_SOLDIER',
-        type: types_12.UnitType.HUMAN,
-        sprite: SpriteFactory_3.default.SOLDIER,
-        paletteSwaps: {},
-        startingLife: 60,
-        startingMana: null,
-        startingDamage: 6,
-        minLevel: 3,
-        maxLevel: 6,
-        lifePerLevel: function () { return 15; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 3; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
-        aiParams: {
-            speed: 0.9,
-            visionRange: 10,
-            fleeThreshold: 0.2
-        }
-    };
-    var ENEMY_GOLEM = {
-        name: 'ENEMY_GOLEM',
-        type: types_12.UnitType.GOLEM,
-        sprite: SpriteFactory_3.default.GOLEM,
-        paletteSwaps: (_b = {},
-            _b[Colors_5.default.DARK_GRAY] = Colors_5.default.DARKER_GRAY,
-            _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARKER_GRAY,
-            _b),
-        startingLife: 100,
-        startingMana: null,
-        startingDamage: 15,
-        minLevel: 5,
-        maxLevel: 9,
-        lifePerLevel: function () { return 25; },
-        manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 4; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
-        aiParams: {
-            speed: 0.7,
-            visionRange: 12,
-            fleeThreshold: 0
-        }
-    };
-    function getEnemyClasses() {
-        return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
-    }
-    exports.default = {
-        PLAYER: PLAYER,
-        ENEMY_GRUNT: ENEMY_GRUNT,
-        ENEMY_GOLEM: ENEMY_GOLEM,
-        getEnemyClasses: getEnemyClasses
-    };
-});
-define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_6, Unit_1) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, ArrayUtils_5, MapUtils_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function createRandomEnemy(_a, level) {
-        var x = _a.x, y = _a.y;
-        var candidates = UnitClasses_1.default.getEnemyClasses()
-            .filter(function (unitClass) { return level >= unitClass.minLevel; })
-            .filter(function (unitClass) { return level <= unitClass.maxLevel; });
-        var unitClass = RandomUtils_6.randChoice(candidates);
-        return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
-    }
-    exports.default = {
-        createRandomEnemy: createRandomEnemy
-    };
+    var BlobDungeonGenerator = /** @class */ (function (_super) {
+        __extends(BlobDungeonGenerator, _super);
+        function BlobDungeonGenerator(tileSet) {
+            return _super.call(this, tileSet) || this;
+        }
+        /**
+         * Strategy:
+         * Add a floor tile near the middle of the map.
+         * Until the map is half-full, continue adding new tiles adjacent to existing tiles.
+         * New tile placement should be random - but aim for a certain level of "snakiness",
+         * where snakiness is defined as the number of tiles within N units
+         * (more adjacent tiles - less snaky).
+         */
+        BlobDungeonGenerator.prototype.generateTiles = function (width, height) {
+            var tiles = this._initTiles(width, height);
+            this._placeInitialTile(width, height, tiles);
+            var targetNumFloorTiles = this._getTargetNumFloorTiles(width * height);
+            while (this._getFloorTiles(tiles).length < targetNumFloorTiles) {
+                this._addFloorTile(tiles);
+            }
+            this._addWalls(tiles);
+            return {
+                tiles: tiles,
+                width: width,
+                height: height,
+                rooms: []
+            };
+        };
+        BlobDungeonGenerator.prototype._initTiles = function (width, height) {
+            var tiles = [];
+            for (var y = 0; y < height; y++) {
+                var row = [];
+                for (var x = 0; x < width; x++) {
+                    row.push(types_14.TileType.NONE);
+                }
+                tiles.push(row);
+            }
+            return tiles;
+        };
+        BlobDungeonGenerator.prototype._placeInitialTile = function (width, height, tiles) {
+            var x = RandomUtils_7.randInt(width * 3 / 8, width * 5 / 8);
+            var y = RandomUtils_7.randInt(height * 3 / 8, height * 5 / 8);
+            tiles[y][x] = types_14.TileType.FLOOR;
+        };
+        BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
+            return RandomUtils_7.randInt(Math.round(max * 3 / 8), Math.round(max * 5 / 8));
+        };
+        BlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
+            var floorTiles = [];
+            for (var y = 0; y < tiles.length; y++) {
+                for (var x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                        floorTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        BlobDungeonGenerator.prototype._getEmptyTiles = function (tiles) {
+            var floorTiles = [];
+            for (var y = 0; y < tiles.length; y++) {
+                for (var x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === types_14.TileType.NONE) {
+                        floorTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        BlobDungeonGenerator.prototype._addFloorTile = function (tiles) {
+            var _this = this;
+            var floorTiles = this._getFloorTiles(tiles);
+            var candidates = this._getCandidates(tiles, floorTiles)
+                .sort(ArrayUtils_5.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
+            //const minIndex = 0;
+            //const maxIndex = randInt(0, candidates.length - 1);
+            var minIndex = Math.floor((candidates.length - 1) * 0.4);
+            var maxIndex = Math.floor((candidates.length - 1) * 0.7);
+            var index = RandomUtils_7.randInt(minIndex, maxIndex);
+            var _a = candidates[index], x = _a.x, y = _a.y;
+            tiles[y][x] = types_14.TileType.FLOOR;
+        };
+        BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
+            return this._getEmptyTiles(tiles)
+                .filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                return y > 0;
+            })
+                .filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                // To facilitate wall generation, disallow two specific cases:
+                // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
+                if (y >= 2) {
+                    if (tiles[y - 1][x] === types_14.TileType.NONE && tiles[y - 2][x] === types_14.TileType.FLOOR) {
+                        return false;
+                    }
+                }
+                // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
+                if (y <= (tiles.length - 3)) {
+                    if (tiles[y + 1][x] === types_14.TileType.NONE && tiles[y + 2][x] === types_14.TileType.FLOOR) {
+                        return false;
+                    }
+                }
+                return true;
+            })
+                .filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                return floorTiles.some(function (floorTile) { return MapUtils_7.isAdjacent({ x: x, y: y }, floorTile); });
+            });
+        };
+        /**
+         * @return the number of nearby tiles
+         */
+        BlobDungeonGenerator.prototype._getSnakeScore = function (tile, tiles) {
+            var score = 0;
+            var offset = 1;
+            var height = tiles.length;
+            var width = tiles[0].length;
+            var minY = Math.max(0, tile.y - offset);
+            var maxY = Math.min(tile.y + offset, height - 1);
+            var minX = Math.max(0, tile.x - offset);
+            var maxX = Math.min(tile.x + offset, width - 1);
+            for (var y = minY; y <= maxY; y++) {
+                for (var x = minX; x <= maxX; x++) {
+                    if (MapUtils_7.coordinatesEquals(tile, { x: x, y: y })) {
+                        continue;
+                    }
+                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                        score++;
+                    }
+                }
+            }
+            return score;
+        };
+        BlobDungeonGenerator.prototype._addWalls = function (tiles) {
+            var height = tiles.length;
+            var width = tiles[0].length;
+            for (var y = 0; y < (height - 1); y++) {
+                for (var x = 0; x < width; x++) {
+                    if (tiles[y][x] === types_14.TileType.NONE && tiles[y + 1][x] === types_14.TileType.FLOOR) {
+                        tiles[y][x] = types_14.TileType.WALL_TOP;
+                    }
+                }
+            }
+        };
+        return BlobDungeonGenerator;
+    }(DungeonGenerator_2.default));
+    exports.default = BlobDungeonGenerator;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/DungeonGenerator", "units/UnitFactory", "utils/RandomUtils"], function (require, exports, ItemFactory_1, DungeonGenerator_1, UnitFactory_1, RandomUtils_7) {
+define("maps/generation/ReverseBlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, types_15, RandomUtils_8, ArrayUtils_6, MapUtils_8) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var ReverseBlobDungeonGenerator = /** @class */ (function (_super) {
+        __extends(ReverseBlobDungeonGenerator, _super);
+        function ReverseBlobDungeonGenerator(tileSet) {
+            return _super.call(this, tileSet) || this;
+        }
+        /**
+         * Strategy:
+         * Fill the map with floor tiles.
+         * Until the map is half-empty, replace floor tiles on the edge with empty/wall tiles.
+         * New tile placement should be random - but aim for a certain level of "snakiness",
+         * where snakiness is defined as the number of tiles within N units
+         * (more adjacent tiles - less snaky).
+         */
+        ReverseBlobDungeonGenerator.prototype.generateTiles = function (width, height) {
+            var tiles = this._initTiles(width, height);
+            var targetNumFloorTiles = this._getTargetNumFloorTiles(width * height);
+            while (this._getFloorTiles(tiles).length > targetNumFloorTiles) {
+                this._removeFloorTile(tiles);
+            }
+            this._addWalls(tiles);
+            return {
+                tiles: tiles,
+                width: width,
+                height: height,
+                rooms: []
+            };
+        };
+        ReverseBlobDungeonGenerator.prototype._initTiles = function (width, height) {
+            var tiles = [];
+            for (var y = 0; y < height; y++) {
+                var row = [];
+                for (var x = 0; x < width; x++) {
+                    if (x === 0 || y === 0 || x === (width - 1) || y === (height - 1)) {
+                        row.push(types_15.TileType.NONE);
+                    }
+                    else {
+                        row.push(types_15.TileType.FLOOR);
+                    }
+                }
+                tiles.push(row);
+            }
+            return tiles;
+        };
+        ReverseBlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
+            return RandomUtils_8.randInt(Math.round(max * 3 / 8), Math.round(max * 5 / 8));
+        };
+        ReverseBlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
+            var floorTiles = [];
+            for (var y = 0; y < tiles.length; y++) {
+                for (var x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
+                        floorTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        ReverseBlobDungeonGenerator.prototype._getEmptyTiles = function (tiles) {
+            var floorTiles = [];
+            for (var y = 0; y < tiles.length; y++) {
+                for (var x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === types_15.TileType.NONE) {
+                        floorTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        ReverseBlobDungeonGenerator.prototype._removeFloorTile = function (tiles) {
+            var _this = this;
+            var floorTiles = this._getFloorTiles(tiles);
+            var emptyTiles = this._getEmptyTiles(tiles);
+            var candidates = floorTiles
+                .filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                return emptyTiles.some(function (emptyTile) { return MapUtils_8.isAdjacent({ x: x, y: y }, emptyTile); });
+            })
+                .sort(ArrayUtils_6.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
+            var maxIndexToConsider = RandomUtils_8.randInt(0, candidates.length - 1);
+            var index = RandomUtils_8.randInt(maxIndexToConsider, candidates.length - 1);
+            var _a = candidates[index], x = _a.x, y = _a.y;
+            tiles[y][x] = types_15.TileType.NONE;
+        };
+        /**
+         * @return the number of nearby tiles
+         */
+        ReverseBlobDungeonGenerator.prototype._getSnakeScore = function (tile, tiles) {
+            var score = 0;
+            var offset = 1;
+            var height = tiles.length;
+            var width = tiles[0].length;
+            var minY = Math.max(0, tile.y - offset);
+            var maxY = Math.min(tile.y + offset, height - 1);
+            var minX = Math.max(0, tile.x - offset);
+            var maxX = Math.min(tile.x + offset, width - 1);
+            for (var y = minY; y <= maxY; y++) {
+                for (var x = minX; x <= maxX; x++) {
+                    if (MapUtils_8.coordinatesEquals(tile, { x: x, y: y })) {
+                        continue;
+                    }
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
+                        score++;
+                    }
+                }
+            }
+            return score;
+        };
+        ReverseBlobDungeonGenerator.prototype._addWalls = function (tiles) {
+            var height = tiles.length;
+            var width = tiles[0].length;
+            for (var y = 0; y < (height - 1); y++) {
+                for (var x = 0; x < width; x++) {
+                    if (tiles[y][x] === types_15.TileType.NONE && tiles[y + 1][x] === types_15.TileType.FLOOR) {
+                        var anyWallsAbove = false;
+                        for (var y2 = 0; y2 < y; y2++) {
+                            if (tiles[y2][x] === types_15.TileType.WALL_TOP) {
+                                anyWallsAbove = true;
+                                break;
+                            }
+                        }
+                        if (!anyWallsAbove) {
+                            tiles[y][x] = types_15.TileType.WALL_TOP;
+                        }
+                    }
+                }
+            }
+        };
+        return ReverseBlobDungeonGenerator;
+    }(DungeonGenerator_3.default));
+    exports.default = ReverseBlobDungeonGenerator;
+});
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "utils/RandomUtils", "maps/generation/BlobDungeonGenerator"], function (require, exports, ItemFactory_1, UnitFactory_1, RandomUtils_9, BlobDungeonGenerator_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // outer dimensions
@@ -2762,15 +3066,21 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "maps/Dung
     var MAX_ROOM_DIMENSION = 9;
     var MIN_ROOM_PADDING = 1;
     function createRandomMap(tileSet, level, width, height, numEnemies, numItems) {
-        var minRoomDimension = RandomUtils_7.randInt(5, 7);
-        var maxRoomDimension = RandomUtils_7.randInt(7, 10);
-        var minRoomPadding = RandomUtils_7.randInt(0, 2);
-        var dungeonGenerator = new DungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
+        var minRoomDimension = RandomUtils_9.randInt(5, 7);
+        var maxRoomDimension = RandomUtils_9.randInt(7, 10);
+        var minRoomPadding = RandomUtils_9.randInt(0, 2);
+        /*const dungeonGenerator = new RoomCorridorDungeonGenerator(
+          tileSet,
+          minRoomDimension,
+          maxRoomDimension,
+          minRoomPadding
+        );*/
+        var dungeonGenerator = new BlobDungeonGenerator_1.default(tileSet);
         return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory_1.default.createRandomEnemy, numItems, ItemFactory_1.default.createRandomItem);
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_8, AudioUtils_5) {
+define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_10, AudioUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _transpose8va(_a) {
@@ -2918,11 +3228,11 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         var numRepeats = 4;
         var _loop_9 = function (i) {
             var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_8.randChoice(section.bass) : null;
+            var bass = (!!section.bass) ? RandomUtils_10.randChoice(section.bass) : null;
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_8.randChoice(section.lead);
+                    lead = RandomUtils_10.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
@@ -2945,7 +3255,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_3, Colors_6, types_13, SpriteFactory_4) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_3, Colors_6, types_16, SpriteFactory_4) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -2964,22 +3274,22 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_13.TileType.FLOOR] = 'dungeon/tile_floor',
-        _a[types_13.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
-        _a[types_13.TileType.WALL_TOP] = 'dungeon/tile_wall',
-        _a[types_13.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
-        _a[types_13.TileType.WALL] = null,
-        _a[types_13.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _a[types_13.TileType.NONE] = null,
+        _a[types_16.TileType.FLOOR] = 'dungeon/tile_floor',
+        _a[types_16.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
+        _a[types_16.TileType.WALL_TOP] = 'dungeon/tile_wall',
+        _a[types_16.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
+        _a[types_16.TileType.WALL] = null,
+        _a[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _a[types_16.TileType.NONE] = null,
         _a);
     var caveFilenames = (_b = {},
-        _b[types_13.TileType.FLOOR] = 'cave/tile_floor',
-        _b[types_13.TileType.FLOOR_HALL] = 'cave/tile_floor',
-        _b[types_13.TileType.WALL_TOP] = 'cave/tile_wall',
-        _b[types_13.TileType.WALL_HALL] = 'cave/tile_wall',
-        _b[types_13.TileType.WALL] = null,
-        _b[types_13.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _b[types_13.TileType.NONE] = null,
+        _b[types_16.TileType.FLOOR] = 'cave/tile_floor',
+        _b[types_16.TileType.FLOOR_HALL] = 'cave/tile_floor',
+        _b[types_16.TileType.WALL_TOP] = 'cave/tile_wall',
+        _b[types_16.TileType.WALL_HALL] = 'cave/tile_wall',
+        _b[types_16.TileType.WALL] = null,
+        _b[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _b[types_16.TileType.NONE] = null,
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -2987,7 +3297,7 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_6, MapSupplier_1, InputHandler_1, RandomUtils_9) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_9, MapSupplier_1, InputHandler_1, RandomUtils_11) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -3015,7 +3325,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         loadMap(0);
         InputHandler_1.attachEvents();
         jwb.renderer.render();
-        Music_1.default.playSuite(RandomUtils_9.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        Music_1.default.playSuite(RandomUtils_11.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
     }
     exports.restartGame = restartGame;
     /**
@@ -3025,10 +3335,10 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         map.rooms.forEach(function (room) {
-            if (MapUtils_6.contains(room, playerUnit)) {
+            if (MapUtils_9.contains(room, playerUnit)) {
                 for (var y = room.top; y < room.top + room.height; y++) {
                     for (var x = room.left; x < room.left + room.width; x++) {
-                        if (!MapUtils_6.isTileRevealed({ x: x, y: y })) {
+                        if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
                             map.revealedTiles.push({ x: x, y: y });
                         }
                     }
@@ -3038,7 +3348,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var radius = 2;
         for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
             for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-                if (!MapUtils_6.isTileRevealed({ x: x, y: y })) {
+                if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
                     map.revealedTiles.push({ x: x, y: y });
                 }
             }
@@ -3046,7 +3356,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_14) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_17) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3126,7 +3436,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_14.GameScreen.GAME:
+            case types_17.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3161,7 +3471,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_14.GameScreen.INVENTORY:
+            case types_17.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3190,7 +3500,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_14.GameScreen.GAME: {
+            case types_17.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3202,17 +3512,17 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_14.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_17.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_14.GameScreen.INVENTORY: {
+            case types_17.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_14.GameScreen.GAME;
+                    state.screen = types_17.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3225,11 +3535,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_14.GameScreen.INVENTORY:
-                state.screen = types_14.GameScreen.GAME;
+            case types_17.GameScreen.INVENTORY:
+                state.screen = types_17.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_14.GameScreen.INVENTORY;
+                state.screen = types_17.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();

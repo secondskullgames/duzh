@@ -1,42 +1,30 @@
-import Unit from '../units/Unit';
-import MapSupplier from './MapSupplier';
-import Pathfinder from '../utils/Pathfinder';
-import MapItem from '../items/MapItem';
-import { average, comparing } from '../utils/ArrayUtils';
-import { Coordinates, MapSection, Room, TileSet, TileType } from '../types/types';
-import { coordinatesEquals, createTile, hypotenuse, isAdjacent, pickUnoccupiedLocations, isBlocking } from './MapUtils';
-import { randChoice, randInt, shuffle } from '../utils/RandomUtils';
+import DungeonGenerator from './DungeonGenerator';
+import { Coordinates, MapSection, Room, TileSet, TileType } from '../../types/types';
+import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
+import { comparing } from '../../utils/ArrayUtils';
+import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
+import Pathfinder from '../../utils/Pathfinder';
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
  */
-class DungeonGenerator {
+class RoomCorridorDungeonGenerator extends DungeonGenerator {
   private readonly _minRoomDimension: number;
   private readonly _maxRoomDimension: number;
   private readonly _minRoomPadding: number;
-  private readonly _tileSet: TileSet;
-
   /**
    * @param minRoomDimension outer width, including wall
    * @param maxRoomDimension outer width, including wall
    * @param minRoomPadding minimum padding between each room and its containing section
    */
   constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
-    this._tileSet = tileSet;
+    super(tileSet);
     this._minRoomDimension = minRoomDimension;
     this._maxRoomDimension = maxRoomDimension;
     this._minRoomPadding = minRoomPadding;
   }
 
-  generateDungeon(
-    level: number,
-    width: number,
-    height: number,
-    numEnemies: number,
-    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit,
-    numItems: number,
-    itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
-  ): MapSupplier {
+  protected generateTiles(width: number, height: number): MapSection {
     // Create a section with dimensions (width, height - 1) and then shift it down by one tile.
     // This is so we have room to add a WALL_TOP tile in the top slot if necessary
     const section = (() => {
@@ -58,31 +46,7 @@ class DungeonGenerator {
     })();
 
     this._addWalls(section);
-
-    const tileTypes = section.tiles;
-
-    const [stairsLocation] = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [], 1);
-    tileTypes[stairsLocation.y][stairsLocation.x] = TileType.STAIRS_DOWN;
-    const enemyUnitLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation], numEnemies);
-    const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
-    const itemLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
-
-    const tiles = tileTypes.map((row: TileType[]) => {
-      return row.map(tileType => createTile(tileType, this._tileSet));
-    });
-
-    return {
-      level,
-      width,
-      height,
-      tiles,
-      rooms: section.rooms,
-      playerUnitLocation,
-      enemyUnitLocations,
-      enemyUnitSupplier,
-      itemLocations,
-      itemSupplier
-    };
+    return section;
   }
 
   /**
@@ -386,25 +350,6 @@ class DungeonGenerator {
     return (path.length > 0);
   }
 
-  /**
-   * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
-   */
-  private _pickPlayerLocation(tiles: TileType[][], blockedTiles: Coordinates[]) {
-    const candidates: [Coordinates, number][] = [];
-
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        if (!isBlocking(tiles[y][x]) && !blockedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
-          const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
-          candidates.push([{ x, y }, average(tileDistances)]);
-        }
-      }
-    }
-
-    console.assert(candidates.length > 0);
-    return candidates.sort((a, b) => (b[1] - a[1]))[0];
-  }
-
   private _emptyRow(width: number): TileType[] {
     const row: TileType[] = [];
     for (let x = 0; x < width; x++) {
@@ -429,4 +374,4 @@ class DungeonGenerator {
   }
 }
 
-export default DungeonGenerator;
+export default RoomCorridorDungeonGenerator;
