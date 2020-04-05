@@ -106,7 +106,7 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   return resolvedPromise();
 }
 
-const UnitBehaviors: { [name: string]: UnitBehavior } = {
+const UnitBehaviors = {
   WANDER: _wander,
   ATTACK_PLAYER: _attackPlayerUnit_withPath,
   FLEE_FROM_PLAYER: _fleeFromPlayerUnit,

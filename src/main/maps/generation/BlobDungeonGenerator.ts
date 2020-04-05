@@ -1,8 +1,8 @@
 import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, TileSet, TileType } from '../../types/types';
 import { randInt } from '../../utils/RandomUtils';
-import { comparing } from '../../utils/ArrayUtils';
 import { coordinatesEquals, isAdjacent } from '../MapUtils';
+import { comparing } from '../../utils/ArrayUtils';
 
 class BlobDungeonGenerator extends DungeonGenerator {
   constructor(tileSet: TileSet) {
@@ -23,7 +23,9 @@ class BlobDungeonGenerator extends DungeonGenerator {
     this._placeInitialTile(width, height, tiles);
     const targetNumFloorTiles : number = this._getTargetNumFloorTiles(width * height);
     while (this._getFloorTiles(tiles).length < targetNumFloorTiles) {
-      this._addFloorTile(tiles);
+      if (!this._addFloorTile(tiles)) {
+        break;
+      }
     }
     this._addWalls(tiles);
     return {
@@ -53,9 +55,11 @@ class BlobDungeonGenerator extends DungeonGenerator {
   }
 
   private _getTargetNumFloorTiles(max: number) {
+    const minRatio = 0.4;
+    const maxRatio = 0.7;
     return randInt(
-      Math.round(max * 3 / 8),
-      Math.round(max * 5 / 8)
+      Math.round(max * minRatio),
+      Math.round(max * maxRatio)
     );
   }
 
@@ -83,13 +87,26 @@ class BlobDungeonGenerator extends DungeonGenerator {
     return floorTiles;
   }
 
-  private _addFloorTile(tiles: TileType[][]): void {
+  /**
+   * @return whether a tile was successfully added
+   */
+  private _addFloorTile(tiles: TileType[][]): boolean {
     const floorTiles = this._getFloorTiles(tiles);
-    const candidates = this._getCandidates(tiles, floorTiles);
+    const candidates = this._getCandidates(tiles, floorTiles)
+      .sort(comparing(tile => this._getSnakeScore(tile, tiles)));
 
-    const index = randInt(0, candidates.length - 1);
+    if (candidates.length === 0) {
+      return false;
+    }
+
+    // change these ratios to adjust the "snakiness"
+    const minIndex = Math.floor((candidates.length - 1) * 0.6);
+    const maxIndex = Math.floor((candidates.length - 1) * 0.8);
+    const index = randInt(minIndex, maxIndex);
+
     const { x, y } = candidates[index];
     tiles[y][x] = TileType.FLOOR;
+    return true;
   }
 
   private _getCandidates(tiles: TileType[][], floorTiles: Coordinates[]): Coordinates[] {
@@ -122,19 +139,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
           return false;
         }
       }
-      // 3. can't add a floor tile if there's a wall to the left of it, AND a floor tile to the left of that
-      if (x >= 2) {
-        if (tiles[y][x - 1] === TileType.NONE && tiles[y][x - 2] === TileType.FLOOR) {
-          //return false;
-        }
-      }
-      // 4. can't add a floor tile if there's a wall to the right of it, AND a floor tile to the right of that
-      if (x <= (height - 3)) {
-        if (tiles[y][x + 1] === TileType.NONE && tiles[y][x + 2] === TileType.FLOOR) {
-          //return false;
-        }
-      }
-      // 5. check for kitty corner floor tiles
+      // 3. check for kitty corner floor tiles
       if (this._hasKittyCornerFloorTile({ x, y }, tiles)) {
         return false;
       }
@@ -204,6 +209,31 @@ class BlobDungeonGenerator extends DungeonGenerator {
       range.push(i);
     }
     return range;
+  }
+
+  /**
+   * @return the number of nearby tiles
+   */
+  private _getSnakeScore(tile: Coordinates, tiles: TileType[][]) {
+    let score = 0;
+    const offset = 1;
+    const height = tiles.length;
+    const width = tiles[0].length;
+    const minY = Math.max(0, tile.y - offset);
+    const maxY = Math.min(tile.y + offset, height - 1);
+    const minX = Math.max(0, tile.x - offset);
+    const maxX = Math.min(tile.x + offset, width - 1);
+    for (let y = minY; y <= maxY; y++) {
+      for (let x = minX; x <= maxX; x++) {
+        if (coordinatesEquals(tile, { x, y })) {
+          continue;
+        }
+        if (tiles[y][x] === TileType.FLOOR) {
+          score++;
+        }
+      }
+    }
+    return score;
   }
 }
 

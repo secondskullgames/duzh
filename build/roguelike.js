@@ -1103,7 +1103,12 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
             behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
         }
         else {
-            behavior = UnitBehaviors_1.default.STAY;
+            if (RandomUtils_3.randInt(0, 1) === 1) {
+                behavior = UnitBehaviors_1.default.STAY;
+            }
+            else {
+                behavior = UnitBehaviors_1.default.WANDER;
+            }
         }
         return behavior(unit);
     };
@@ -1271,7 +1276,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.direction = null;
         }
         Unit.prototype._regenLife = function () {
-            var lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
+            var lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
             this.lifeRemainder += lifePerTurn;
             var deltaLife = Math.floor(this.lifeRemainder);
             this.lifeRemainder -= deltaLife;
@@ -2049,7 +2054,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _a[Colors_4.default.DARK_GRAY] = Colors_4.default.LIGHT_BROWN,
             _a[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_BROWN,
             _a),
-        damage: 5,
+        damage: 4,
         minLevel: 1,
         maxLevel: 2
     };
@@ -2063,7 +2068,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _b[Colors_4.default.DARK_GRAY] = Colors_4.default.BLACK,
             _b[Colors_4.default.LIGHT_GRAY] = Colors_4.default.DARK_GRAY,
             _b),
-        damage: 8,
+        damage: 6,
         minLevel: 3,
         maxLevel: 4
     };
@@ -2077,7 +2082,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _c[Colors_4.default.DARK_GRAY] = Colors_4.default.DARK_GRAY,
             _c[Colors_4.default.LIGHT_GRAY] = Colors_4.default.LIGHT_GRAY,
             _c),
-        damage: 11,
+        damage: 9,
         minLevel: 4,
         maxLevel: 6
     };
@@ -2092,7 +2097,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _d[Colors_4.default.LIGHT_GRAY] = Colors_4.default.RED,
             _d[Colors_4.default.BLACK] = Colors_4.default.DARK_RED,
             _d),
-        damage: 15,
+        damage: 12,
         minLevel: 5,
         maxLevel: 6
     };
@@ -2103,7 +2108,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.RANGED_WEAPON,
         mapIcon: SpriteFactory_1.default.MAP_BOW,
         paletteSwaps: {},
-        damage: 2,
+        damage: 4,
         minLevel: 2,
         maxLevel: 4
     };
@@ -2252,9 +2257,9 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.ANIMAL,
         sprite: SpriteFactory_3.default.SNAKE,
         paletteSwaps: {},
-        startingLife: 45,
+        startingLife: 50,
         startingMana: null,
-        startingDamage: 4,
+        startingDamage: 5,
         minLevel: 1,
         maxLevel: 3,
         lifePerLevel: function () { return 12; },
@@ -2262,7 +2267,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.95,
+            speed: 0.96,
             visionRange: 12,
             fleeThreshold: 0.2
         }
@@ -2272,9 +2277,9 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.HUMAN,
         sprite: SpriteFactory_3.default.GRUNT,
         paletteSwaps: {},
-        startingLife: 50,
+        startingLife: 70,
         startingMana: null,
-        startingDamage: 5,
+        startingDamage: 8,
         minLevel: 1,
         maxLevel: 4,
         lifePerLevel: function () { return 12; },
@@ -2282,7 +2287,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.8,
+            speed: 0.88,
             visionRange: 8,
             fleeThreshold: 0.1
         }
@@ -2292,9 +2297,9 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.HUMAN,
         sprite: SpriteFactory_3.default.SOLDIER,
         paletteSwaps: {},
-        startingLife: 60,
+        startingLife: 80,
         startingMana: null,
-        startingDamage: 6,
+        startingDamage: 8,
         minLevel: 3,
         maxLevel: 6,
         lifePerLevel: function () { return 15; },
@@ -2302,7 +2307,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         damagePerLevel: function () { return 3; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.9,
+            speed: 0.92,
             visionRange: 10,
             fleeThreshold: 0.2
         }
@@ -2317,7 +2322,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b),
         startingLife: 100,
         startingMana: null,
-        startingDamage: 15,
+        startingDamage: 12,
         minLevel: 5,
         maxLevel: 9,
         lifePerLevel: function () { return 25; },
@@ -2325,7 +2330,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         damagePerLevel: function () { return 4; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.7,
+            speed: 0.80,
             visionRange: 12,
             fleeThreshold: 0
         }
@@ -2772,7 +2777,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
     }(DungeonGenerator_1.default));
     exports.default = RoomCorridorDungeonGenerator;
 });
-define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, MapUtils_7) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, MapUtils_7, ArrayUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BlobDungeonGenerator = /** @class */ (function (_super) {
@@ -2793,7 +2798,9 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             this._placeInitialTile(width, height, tiles);
             var targetNumFloorTiles = this._getTargetNumFloorTiles(width * height);
             while (this._getFloorTiles(tiles).length < targetNumFloorTiles) {
-                this._addFloorTile(tiles);
+                if (!this._addFloorTile(tiles)) {
+                    break;
+                }
             }
             this._addWalls(tiles);
             return {
@@ -2820,7 +2827,9 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             tiles[y][x] = types_14.TileType.FLOOR;
         };
         BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
-            return RandomUtils_7.randInt(Math.round(max * 3 / 8), Math.round(max * 5 / 8));
+            var minRatio = 0.4;
+            var maxRatio = 0.7;
+            return RandomUtils_7.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
         };
         BlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
             var floorTiles = [];
@@ -2844,12 +2853,24 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             }
             return floorTiles;
         };
+        /**
+         * @return whether a tile was successfully added
+         */
         BlobDungeonGenerator.prototype._addFloorTile = function (tiles) {
+            var _this = this;
             var floorTiles = this._getFloorTiles(tiles);
-            var candidates = this._getCandidates(tiles, floorTiles);
-            var index = RandomUtils_7.randInt(0, candidates.length - 1);
+            var candidates = this._getCandidates(tiles, floorTiles)
+                .sort(ArrayUtils_5.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
+            if (candidates.length === 0) {
+                return false;
+            }
+            // change these ratios to adjust the "snakiness"
+            var minIndex = Math.floor((candidates.length - 1) * 0.6);
+            var maxIndex = Math.floor((candidates.length - 1) * 0.8);
+            var index = RandomUtils_7.randInt(minIndex, maxIndex);
             var _a = candidates[index], x = _a.x, y = _a.y;
             tiles[y][x] = types_14.TileType.FLOOR;
+            return true;
         };
         BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
             var _this = this;
@@ -2887,19 +2908,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                         return false;
                     }
                 }
-                // 3. can't add a floor tile if there's a wall to the left of it, AND a floor tile to the left of that
-                if (x >= 2) {
-                    if (tiles[y][x - 1] === types_14.TileType.NONE && tiles[y][x - 2] === types_14.TileType.FLOOR) {
-                        //return false;
-                    }
-                }
-                // 4. can't add a floor tile if there's a wall to the right of it, AND a floor tile to the right of that
-                if (x <= (height - 3)) {
-                    if (tiles[y][x + 1] === types_14.TileType.NONE && tiles[y][x + 2] === types_14.TileType.FLOOR) {
-                        //return false;
-                    }
-                }
-                // 5. check for kitty corner floor tiles
+                // 3. check for kitty corner floor tiles
                 if (this._hasKittyCornerFloorTile({ x: x, y: y }, tiles)) {
                     return false;
                 }
@@ -2969,6 +2978,30 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                 range.push(i);
             }
             return range;
+        };
+        /**
+         * @return the number of nearby tiles
+         */
+        BlobDungeonGenerator.prototype._getSnakeScore = function (tile, tiles) {
+            var score = 0;
+            var offset = 1;
+            var height = tiles.length;
+            var width = tiles[0].length;
+            var minY = Math.max(0, tile.y - offset);
+            var maxY = Math.min(tile.y + offset, height - 1);
+            var minX = Math.max(0, tile.x - offset);
+            var maxX = Math.min(tile.x + offset, width - 1);
+            for (var y = minY; y <= maxY; y++) {
+                for (var x = minX; x <= maxX; x++) {
+                    if (MapUtils_7.coordinatesEquals(tile, { x: x, y: y })) {
+                        continue;
+                    }
+                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                        score++;
+                    }
+                }
+            }
+            return score;
         };
         return BlobDungeonGenerator;
     }(DungeonGenerator_2.default));
