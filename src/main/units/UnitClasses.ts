@@ -37,9 +37,9 @@ const ENEMY_SNAKE: UnitClass = {
   type: UnitType.ANIMAL,
   sprite: SpriteFactory.SNAKE,
   paletteSwaps: {},
-  startingLife: 45,
+  startingLife: 50,
   startingMana: null,
-  startingDamage: 4,
+  startingDamage: 5,
   minLevel: 1,
   maxLevel: 3,
   lifePerLevel: () => 12,
@@ -47,7 +47,7 @@ const ENEMY_SNAKE: UnitClass = {
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.95,
+    speed: 0.96,
     visionRange: 12,
     fleeThreshold: 0.2
   }
@@ -58,9 +58,9 @@ const ENEMY_GRUNT: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.GRUNT,
   paletteSwaps: {},
-  startingLife: 50,
+  startingLife: 70,
   startingMana: null,
-  startingDamage: 5,
+  startingDamage: 8,
   minLevel: 1,
   maxLevel: 4,
   lifePerLevel: () => 12,
@@ -68,7 +68,7 @@ const ENEMY_GRUNT: UnitClass = {
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.8,
+    speed: 0.88,
     visionRange: 8,
     fleeThreshold: 0.1
   }
@@ -79,9 +79,9 @@ const ENEMY_SOLDIER: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.SOLDIER,
   paletteSwaps: {},
-  startingLife: 60,
+  startingLife: 80,
   startingMana: null,
-  startingDamage: 6,
+  startingDamage: 8,
   minLevel: 3,
   maxLevel: 6,
   lifePerLevel: () => 15,
@@ -89,7 +89,7 @@ const ENEMY_SOLDIER: UnitClass = {
   damagePerLevel: () => 3,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.9,
+    speed: 0.92,
     visionRange: 10,
     fleeThreshold: 0.2
   }
@@ -105,7 +105,7 @@ const ENEMY_GOLEM: UnitClass = {
   },
   startingLife: 100,
   startingMana: null,
-  startingDamage: 15,
+  startingDamage: 12,
   minLevel: 5,
   maxLevel: 9,
   lifePerLevel: () => 25,
@@ -113,7 +113,7 @@ const ENEMY_GOLEM: UnitClass = {
   damagePerLevel: () => 4,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.7,
+    speed: 0.80,
     visionRange: 12,
     fleeThreshold: 0
   }

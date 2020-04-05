@@ -1,7 +1,7 @@
 import Unit from './Unit';
 import UnitBehaviors, { UnitBehavior } from './UnitBehaviors';
 import { manhattanDistance } from '../maps/MapUtils';
-import { weightedRandom } from '../utils/RandomUtils';
+import { randInt, weightedRandom } from '../utils/RandomUtils';
 
 /**
  * A UnitAI is anything that an AI-controlled unit can do in a turn.
@@ -93,7 +93,11 @@ const HUMAN_DETERMINISTIC: UnitAI = unit => {
   } else if (distanceToPlayer <= visionRange) {
     behavior = UnitBehaviors.ATTACK_PLAYER;
   } else {
-    behavior = UnitBehaviors.STAY;
+    if (randInt(0, 1) === 1) {
+      behavior = UnitBehaviors.STAY;
+    } else {
+      behavior = UnitBehaviors.WANDER;
+    }
   }
   return behavior(unit);
 };

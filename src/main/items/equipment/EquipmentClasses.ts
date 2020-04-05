@@ -25,7 +25,7 @@ const BRONZE_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.LIGHT_BROWN,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_BROWN
   },
-  damage: 5,
+  damage: 4,
   minLevel: 1,
   maxLevel: 2
 };
@@ -40,7 +40,7 @@ const IRON_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.BLACK,
     [Colors.LIGHT_GRAY]: Colors.DARK_GRAY
   },
-  damage: 8,
+  damage: 6,
   minLevel: 3,
   maxLevel: 4
 };
@@ -55,7 +55,7 @@ const STEEL_SWORD: EquipmentClass = {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_GRAY
   },
-  damage: 11,
+  damage: 9,
   minLevel: 4,
   maxLevel: 6
 };
@@ -71,7 +71,7 @@ const FIRE_SWORD: EquipmentClass = {
     [Colors.LIGHT_GRAY]: Colors.RED,
     [Colors.BLACK]: Colors.DARK_RED
   },
-  damage: 15,
+  damage: 12,
   minLevel: 5,
   maxLevel: 6
 };
@@ -83,7 +83,7 @@ const SHORT_BOW: EquipmentClass = {
   equipmentCategory: EquipmentSlot.RANGED_WEAPON,
   mapIcon: SpriteFactory.MAP_BOW,
   paletteSwaps: {},
-  damage: 2,
+  damage: 4,
   minLevel: 2,
   maxLevel: 4
 };

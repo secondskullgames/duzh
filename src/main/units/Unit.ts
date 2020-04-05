@@ -56,7 +56,7 @@ class Unit implements Entity {
   }
 
   _regenLife() {
-    const lifePerTurn = (this.maxLife) * LIFE_PER_TURN_MULTIPLIER;
+    const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
     this.lifeRemainder += lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
