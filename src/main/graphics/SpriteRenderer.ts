@@ -65,6 +65,7 @@ class SpriteRenderer implements Renderer {
     return chainPromises([
       () => this._renderTiles(),
       () => this._renderItems(),
+      () => this._renderProjectiles(),
       () => this._renderUnits(),
       () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
     ]);

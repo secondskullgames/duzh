@@ -60,7 +60,7 @@ const ENEMY_GRUNT: UnitClass = {
   paletteSwaps: {},
   startingLife: 70,
   startingMana: null,
-  startingDamage: 8,
+  startingDamage: 7,
   minLevel: 1,
   maxLevel: 4,
   lifePerLevel: () => 12,

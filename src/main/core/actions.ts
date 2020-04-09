@@ -9,6 +9,8 @@ import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
 import { randChoice } from '../utils/RandomUtils';
+import EquippedItem from '../items/equipment/EquippedItem';
+import { EquipmentSlot } from '../types/types';
 
 function loadMap(index: number) {
   const { state } = jwb;
@@ -22,6 +24,17 @@ function loadMap(index: number) {
 
 function restartGame() {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
+
+  // TODO
+  const bow: EquippedItem = {
+    name: 'Garbage bow',
+    slot: EquipmentSlot.RANGED_WEAPON,
+    // @ts-ignore
+    inventoryItem: null, // TODO
+    damage: 5
+  };
+  playerUnit.equipment.add(bow);
+
   jwb.state = new GameState(playerUnit, [
     MapFactory.createRandomMap(TileSets.DUNGEON, 1, 30, 22, 9, 4),
     MapFactory.createRandomMap(TileSets.DUNGEON, 2, 32, 23, 10, 4),
