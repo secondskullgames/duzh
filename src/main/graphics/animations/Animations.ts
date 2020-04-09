@@ -1,5 +1,5 @@
 import Unit from '../../units/Unit';
-import { Activity } from '../../types/types';
+import { Activity, Projectile } from '../../types/types';
 import { chainPromises, wait } from '../../utils/PromiseUtils';
 
 const FRAME_LENGTH = 150; // milliseconds
@@ -9,7 +9,10 @@ type UnitAnimationFrame = {
   activity: Activity
 };
 
-type AnimationFrame = UnitAnimationFrame[];
+type AnimationFrame = {
+  units: UnitAnimationFrame[],
+  projectiles?: Projectile[]
+};
 
 type Animation = {
   frames: AnimationFrame[],
@@ -19,14 +22,18 @@ type Animation = {
 function playAttackingAnimation(source: Unit, target: Unit): Promise<any> {
   return _playAnimation({
     frames: [
-      [
-        { unit: source, activity: Activity.ATTACKING },
-        { unit: target, activity: Activity.DAMAGED }
-      ],
-      [
-        { unit: source, activity: Activity.STANDING },
-        { unit: target, activity: Activity.STANDING }
-      ]
+      {
+        units: [
+          { unit: source, activity: Activity.ATTACKING },
+          { unit: target, activity: Activity.DAMAGED }
+        ],
+      },
+      {
+        units: [
+          { unit: source, activity: Activity.STANDING },
+          { unit: target, activity: Activity.STANDING }
+        ]
+      }
     ],
     delay: FRAME_LENGTH
   });
@@ -41,7 +48,7 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
       const activity = (j === i) ? Activity.DAMAGED : Activity.STANDING;
       frame.push({ unit: targets[j], activity });
     }
-    frames.push(frame);
+    frames.push({ units: frame });
   }
   // last frame (all standing)
   const frame: UnitAnimationFrame[] = [];
@@ -49,7 +56,7 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
   for (let i = 0; i < targets.length; i++) {
     frame.push({ unit: targets[i], activity: Activity.STANDING });
   }
-  frames.push(frame);
+  frames.push({ units: frame });
   return _playAnimation({
     frames,
     delay: FRAME_LENGTH
@@ -64,10 +71,9 @@ function _playAnimation(animation: Animation): Promise<any> {
   for (let i = 0; i < frames.length; i++) {
     const updatePromise = () => {
       const updatePromises: Promise<any>[] = [];
-      for (let j = 0; j < frames[i].length; j++) {
-        const { unit, activity } = frames[i][j];
+      for (let j = 0; j < frames[i].units.length; j++) {
+        const { unit, activity } = frames[i].units[j];
         unit.activity = activity;
-
         updatePromises.push(unit.sprite.update());
       }
       return Promise.all(updatePromises);

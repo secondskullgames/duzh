@@ -2,16 +2,19 @@ import ImageSupplier from '../ImageSupplier';
 import Sprite from './Sprite';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
-import PlayerSprite from './PlayerSprite';
-import GolemSprite from './GolemSprite';
-import GruntSprite from './GruntSprite';
-import SnakeSprite from './SnakeSprite';
-import SoldierSprite from './SoldierSprite';
-import { PaletteSwaps, SpriteSupplier } from '../../types/types';
+import PlayerSprite from './units/PlayerSprite';
+import GolemSprite from './units/GolemSprite';
+import GruntSprite from './units/GruntSprite';
+import SnakeSprite from './units/SnakeSprite';
+import SoldierSprite from './units/SoldierSprite';
+import { PaletteSwaps, Projectile, SpriteSupplier } from '../../types/types';
+import ProjectileSprite from './projectiles/ProjectileSprite';
+import ArrowSprite from './projectiles/ArrowSprite';
 
 const DEFAULT_SPRITE_KEY = 'default';
 
 type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
+type ProjectileSpriteSupplier = (projectile: Projectile, paletteSwaps: PaletteSwaps) => Sprite;
 
 function createStaticSprite(imageLoader: ImageSupplier, { dx, dy }: { dx: number, dy: number }): Sprite {
   return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
@@ -32,6 +35,10 @@ const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
   SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new SoldierSprite(unit, paletteSwaps)
 };
 
+const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
+  ARROW: (projectile: Projectile, paletteSwaps: PaletteSwaps) => new ArrowSprite(projectile, paletteSwaps)
+};
+
 // the following does not work: { ...StaticSprites, ...UnitSprites }
 // :(
 export default {
@@ -43,7 +50,8 @@ export default {
   GOLEM: UnitSprites.GOLEM,
   GRUNT: UnitSprites.GRUNT,
   SNAKE: UnitSprites.SNAKE,
-  SOLDIER: UnitSprites.SOLDIER
+  SOLDIER: UnitSprites.SOLDIER,
+  ARROW: ProjectileSprites.ARROW
 };
 
 export { createStaticSprite };

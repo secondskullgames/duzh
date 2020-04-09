@@ -136,14 +136,13 @@ class Unit implements Entity {
   }
 
   takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<any> {
-    const { renderer } = jwb;
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
     return new Promise(resolve => {
       this.life = Math.max(this.life - damage, 0);
       if (this.life === 0) {
-        map.units = map.units.filter(u => u !== this);
+        map.removeUnit(this);
         if (this === playerUnit) {
           alert('Game Over!');
           playSound(Sounds.PLAYER_DIES);

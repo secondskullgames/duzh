@@ -1,10 +1,10 @@
-import ImageSupplier from '../ImageSupplier';
-import Sprite from './Sprite';
-import Colors from '../../types/Colors';
-import Unit from '../../units/Unit';
-import Directions from '../../types/Directions';
-import { PaletteSwaps } from '../../types/types';
-import { replaceAll } from '../ImageUtils';
+import ImageSupplier from '../../ImageSupplier';
+import Sprite from '../Sprite';
+import Colors from '../../../types/Colors';
+import Unit from '../../../units/Unit';
+import Directions from '../../../types/Directions';
+import { PaletteSwaps } from '../../../types/types';
+import { replaceAll } from '../../ImageUtils';
 
 enum SpriteKey {
   STANDING_N = 'STANDING_N',
