@@ -84,7 +84,7 @@ const SHORT_BOW: EquipmentClass = {
   mapIcon: SpriteFactory.MAP_BOW,
   paletteSwaps: {},
   damage: 4,
-  minLevel: 1, //2,
+  minLevel: 2,
   maxLevel: 4
 };
 

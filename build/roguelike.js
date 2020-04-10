@@ -930,7 +930,7 @@ define("graphics/sprites/projectiles/ArrowSprite", ["require", "exports", "graph
     var ArrowSprite = /** @class */ (function (_super) {
         __extends(ArrowSprite, _super);
         function ArrowSprite(direction, paletteSwaps) {
-            return _super.call(this, direction, 'arrow', paletteSwaps, { dx: 0, dy: 0 }) || this;
+            return _super.call(this, direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 }) || this;
         }
         return ArrowSprite;
     }(ProjectileSprite_1.default));
@@ -2274,7 +2274,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         mapIcon: SpriteFactory_2.default.MAP_BOW,
         paletteSwaps: {},
         damage: 4,
-        minLevel: 1,
+        minLevel: 2,
         maxLevel: 4
     };
     var LONG_BOW = {
@@ -2444,7 +2444,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         paletteSwaps: {},
         startingLife: 70,
         startingMana: null,
-        startingDamage: 8,
+        startingDamage: 7,
         minLevel: 1,
         maxLevel: 4,
         lifePerLevel: function () { return 12; },
@@ -3408,7 +3408,7 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10, types_16) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -3424,15 +3424,6 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     exports.loadMap = loadMap;
     function restartGame() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
-        // TODO
-        var bow = {
-            name: 'Garbage bow',
-            slot: types_16.EquipmentSlot.RANGED_WEAPON,
-            // @ts-ignore
-            inventoryItem: null,
-            damage: 5
-        };
-        playerUnit.equipment.add(bow);
         jwb.state = new GameState_1.default(playerUnit, [
             MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 1, 30, 22, 9, 4),
             MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 2, 32, 23, 10, 4),
@@ -3476,7 +3467,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_17) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_16) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3556,7 +3547,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_17.GameScreen.GAME:
+            case types_16.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3591,7 +3582,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_17.GameScreen.INVENTORY:
+            case types_16.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3620,7 +3611,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_17.GameScreen.GAME: {
+            case types_16.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3632,17 +3623,17 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_17.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_16.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_17.GameScreen.INVENTORY: {
+            case types_16.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_17.GameScreen.GAME;
+                    state.screen = types_16.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3655,11 +3646,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_17.GameScreen.INVENTORY:
-                state.screen = types_17.GameScreen.GAME;
+            case types_16.GameScreen.INVENTORY:
+                state.screen = types_16.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_17.GameScreen.INVENTORY;
+                state.screen = types_16.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
