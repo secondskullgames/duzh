@@ -1,7 +1,9 @@
 import { restartGame } from './actions';
 
+console.log('main');
+
 // @ts-ignore
 window.jwb = window.jwb || {};
-window.onload = () => restartGame();
+restartGame();
 
 export {};

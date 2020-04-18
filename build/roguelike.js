@@ -1558,7 +1558,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.x = x;
             this.y = y;
             this.name = name;
-            this.level = level;
+            this.level = 1;
             this.experience = 0;
             this.life = unitClass.startingLife;
             this.maxLife = unitClass.startingLife;
@@ -1570,6 +1570,9 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.aiHandler = unitClass.aiHandler;
             this.activity = types_5.Activity.STANDING;
             this.direction = null;
+            while (this.level < level) {
+                this._levelUp(false);
+            }
         }
         Unit.prototype._regenLife = function () {
             var lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
@@ -1630,20 +1633,22 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             });
             return Math.round(damage);
         };
-        Unit.prototype._levelUp = function () {
+        Unit.prototype._levelUp = function (withSound) {
             this.level++;
             var lifePerLevel = this.unitClass.lifePerLevel(this.level);
             this.maxLife += lifePerLevel;
             this.life += lifePerLevel;
             this._damage += this.unitClass.damagePerLevel(this.level);
-            AudioUtils_2.playSound(Sounds_2.default.LEVEL_UP);
+            if (withSound) {
+                AudioUtils_2.playSound(Sounds_2.default.LEVEL_UP);
+            }
         };
         Unit.prototype.gainExperience = function (experience) {
             this.experience += experience;
             var experienceToNextLevel = this.experienceToNextLevel();
             while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
                 this.experience -= experienceToNextLevel;
-                this._levelUp();
+                this._levelUp(true);
             }
         };
         Unit.prototype.experienceToNextLevel = function () {
@@ -1887,7 +1892,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types/types", "core/actions", "utils/PromiseUtils", "types/Colors"], function (require, exports, MapUtils_4, types_8, actions_1, PromiseUtils_6, Colors_4) {
+define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions"], function (require, exports, Colors_4, PromiseUtils_6, MapUtils_4, types_8, actions_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1905,6 +1910,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var LINE_HEIGHT = 16;
+    var SANS_SERIF = 'sans-serif';
+    var MONOSPACE = 'Monospace';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2045,7 +2052,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             // draw titles
             _context.fillStyle = Colors_4.default.WHITE;
             _context.textAlign = 'center';
-            _context.font = '20px Monospace';
+            _context.font = "20px " + MONOSPACE;
             _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
             _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
             // draw equipment items
@@ -2062,7 +2069,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             var inventoryCategories = Object.values(types_8.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
-            _context.font = '14px Monospace';
+            _context.font = "14px " + MONOSPACE;
             _context.textAlign = 'center';
             for (var i = 0; i < inventoryCategories.length; i++) {
                 var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
@@ -2075,7 +2082,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
             if (inventory.selectedCategory) {
                 var items = inventory.get(inventory.selectedCategory);
                 var x = inventoryLeft + 8;
-                _context.font = '10px sans-serif';
+                _context.font = "10px " + SANS_SERIF;
                 _context.textAlign = 'left';
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -2137,7 +2144,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 }
                 _context.fillStyle = '#fff';
                 _context.textAlign = 'left';
-                _context.font = '10px sans-serif';
+                _context.font = "10px " + SANS_SERIF;
                 var left = 4;
                 for (var i = 0; i < lines.length; i++) {
                     var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
@@ -2158,7 +2165,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "maps/MapUtils", "types
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
                 _context.fillStyle = Colors_4.default.WHITE;
                 _context.textAlign = 'left';
-                _context.font = '10px sans-serif';
+                _context.font = "10px " + SANS_SERIF;
                 var textLeft = left + 4;
                 for (var i = 0; i < messages.length; i++) {
                     var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
@@ -2219,7 +2226,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _a[Colors_5.default.DARK_GRAY] = Colors_5.default.LIGHT_BROWN,
             _a[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_BROWN,
             _a),
-        damage: 4,
+        damage: 2,
         minLevel: 1,
         maxLevel: 2
     };
@@ -2233,7 +2240,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _b[Colors_5.default.DARK_GRAY] = Colors_5.default.BLACK,
             _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARK_GRAY,
             _b),
-        damage: 6,
+        damage: 4,
         minLevel: 3,
         maxLevel: 4
     };
@@ -2247,7 +2254,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _c[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_GRAY,
             _c[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_GRAY,
             _c),
-        damage: 9,
+        damage: 6,
         minLevel: 4,
         maxLevel: 6
     };
@@ -2262,7 +2269,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _d[Colors_5.default.LIGHT_GRAY] = Colors_5.default.RED,
             _d[Colors_5.default.BLACK] = Colors_5.default.DARK_RED,
             _d),
-        damage: 12,
+        damage: 8,
         minLevel: 5,
         maxLevel: 6
     };
@@ -2273,7 +2280,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.RANGED_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_BOW,
         paletteSwaps: {},
-        damage: 4,
+        damage: 2,
         minLevel: 2,
         maxLevel: 4
     };
@@ -2287,7 +2294,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
             _e[Colors_5.default.DARK_GREEN] = Colors_5.default.DARK_RED,
             _e[Colors_5.default.GREEN] = Colors_5.default.RED,
             _e),
-        damage: 6,
+        damage: 4,
         minLevel: 5,
         maxLevel: 6
     };
@@ -2422,18 +2429,18 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.ANIMAL,
         sprite: SpriteFactory_4.default.SNAKE,
         paletteSwaps: {},
-        startingLife: 50,
+        startingLife: 40,
         startingMana: null,
-        startingDamage: 5,
+        startingDamage: 4,
         minLevel: 1,
-        maxLevel: 3,
-        lifePerLevel: function () { return 12; },
+        maxLevel: 2,
+        lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.96,
-            visionRange: 12,
+            visionRange: 10,
             fleeThreshold: 0.2
         }
     };
@@ -2442,17 +2449,17 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.GRUNT,
         paletteSwaps: {},
-        startingLife: 70,
+        startingLife: 50,
         startingMana: null,
-        startingDamage: 7,
+        startingDamage: 5,
         minLevel: 1,
         maxLevel: 4,
-        lifePerLevel: function () { return 12; },
+        lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.88,
+            speed: 0.92,
             visionRange: 8,
             fleeThreshold: 0.1
         }
@@ -2462,19 +2469,19 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.HUMAN,
         sprite: SpriteFactory_4.default.SOLDIER,
         paletteSwaps: {},
-        startingLife: 80,
+        startingLife: 60,
         startingMana: null,
-        startingDamage: 8,
+        startingDamage: 6,
         minLevel: 3,
         maxLevel: 6,
-        lifePerLevel: function () { return 15; },
+        lifePerLevel: function () { return 25; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 3; },
+        damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.92,
             visionRange: 10,
-            fleeThreshold: 0.2
+            fleeThreshold: 0.1
         }
     };
     var ENEMY_GOLEM = {
@@ -2485,17 +2492,17 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b[Colors_6.default.DARK_GRAY] = Colors_6.default.DARKER_GRAY,
             _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARKER_GRAY,
             _b),
-        startingLife: 100,
+        startingLife: 120,
         startingMana: null,
-        startingDamage: 12,
+        startingDamage: 10,
         minLevel: 5,
         maxLevel: 9,
-        lifePerLevel: function () { return 25; },
+        lifePerLevel: function () { return 40; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 4; },
+        damagePerLevel: function () { return 5; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.80,
+            speed: 0.88,
             visionRange: 12,
             fleeThreshold: 0
         }
@@ -3335,6 +3342,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         };
     })();
     function playSuite(suite) {
+        console.log('playSuite');
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
         var _loop_9 = function (i) {
@@ -3423,20 +3431,21 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.loadMap = loadMap;
     function restartGame() {
+        console.log('restartGame');
+        jwb.renderer = new SpriteRenderer_1.default();
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 1, 30, 22, 9, 4),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 2, 32, 23, 10, 4),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 3, 34, 24, 11, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 4, 36, 25, 12, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 5, 38, 26, 13, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 6, 30, 27, 14, 3)
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 1, 24, 22, 9, 4),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 2, 26, 23, 10, 4),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 3, 28, 24, 11, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 4, 30, 25, 12, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 5, 32, 26, 13, 3),
+            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 6, 34, 27, 14, 3)
         ]);
-        jwb.renderer = new SpriteRenderer_1.default();
         loadMap(0);
         InputHandler_1.attachEvents();
-        jwb.renderer.render();
         Music_1.default.playSuite(RandomUtils_10.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        return jwb.renderer.render();
     }
     exports.restartGame = restartGame;
     /**
@@ -3682,8 +3691,9 @@ define("core/globals", ["require", "exports"], function (require, exports) {
 define("core/main", ["require", "exports", "core/actions"], function (require, exports, actions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    console.log('main');
     // @ts-ignore
     window.jwb = window.jwb || {};
-    window.onload = function () { return actions_3.restartGame(); };
+    actions_3.restartGame();
 });
 //# sourceMappingURL=roguelike.js.map

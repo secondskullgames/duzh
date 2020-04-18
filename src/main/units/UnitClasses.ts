@@ -37,18 +37,18 @@ const ENEMY_SNAKE: UnitClass = {
   type: UnitType.ANIMAL,
   sprite: SpriteFactory.SNAKE,
   paletteSwaps: {},
-  startingLife: 50,
+  startingLife: 40,
   startingMana: null,
-  startingDamage: 5,
+  startingDamage: 4,
   minLevel: 1,
-  maxLevel: 3,
-  lifePerLevel: () => 12,
+  maxLevel: 2,
+  lifePerLevel: () => 15,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.96,
-    visionRange: 12,
+    visionRange: 10,
     fleeThreshold: 0.2
   }
 };
@@ -58,17 +58,17 @@ const ENEMY_GRUNT: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.GRUNT,
   paletteSwaps: {},
-  startingLife: 60,
+  startingLife: 50,
   startingMana: null,
-  startingDamage: 6,
+  startingDamage: 5,
   minLevel: 1,
   maxLevel: 4,
-  lifePerLevel: () => 12,
+  lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.88,
+    speed: 0.92,
     visionRange: 8,
     fleeThreshold: 0.1
   }
@@ -79,19 +79,19 @@ const ENEMY_SOLDIER: UnitClass = {
   type: UnitType.HUMAN,
   sprite: SpriteFactory.SOLDIER,
   paletteSwaps: {},
-  startingLife: 80,
+  startingLife: 60,
   startingMana: null,
-  startingDamage: 8,
+  startingDamage: 6,
   minLevel: 3,
   maxLevel: 6,
-  lifePerLevel: () => 15,
+  lifePerLevel: () => 25,
   manaPerLevel: () => null,
-  damagePerLevel: () => 3,
+  damagePerLevel: () => 2,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.92,
     visionRange: 10,
-    fleeThreshold: 0.2
+    fleeThreshold: 0.1
   }
 };
 
@@ -103,17 +103,17 @@ const ENEMY_GOLEM: UnitClass = {
     [Colors.DARK_GRAY]: Colors.DARKER_GRAY,
     [Colors.LIGHT_GRAY]: Colors.DARKER_GRAY,
   },
-  startingLife: 100,
+  startingLife: 120,
   startingMana: null,
-  startingDamage: 12,
+  startingDamage: 10,
   minLevel: 5,
   maxLevel: 9,
-  lifePerLevel: () => 25,
+  lifePerLevel: () => 40,
   manaPerLevel: () => null,
-  damagePerLevel: () => 4,
+  damagePerLevel: () => 5,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.80,
+    speed: 0.88,
     visionRange: 12,
     fleeThreshold: 0
   }

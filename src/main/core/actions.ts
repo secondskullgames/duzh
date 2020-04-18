@@ -20,24 +20,25 @@ function loadMap(index: number) {
   }
 }
 
-function restartGame() {
+function restartGame(): Promise<any> {
+  console.log('restartGame');
+  jwb.renderer = new SpriteRenderer();
+
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
 
   jwb.state = new GameState(playerUnit, [
-    MapFactory.createRandomMap(TileSets.DUNGEON, 1, 30, 22, 9, 4),
-    MapFactory.createRandomMap(TileSets.DUNGEON, 2, 32, 23, 10, 4),
-    MapFactory.createRandomMap(TileSets.DUNGEON, 3, 34, 24, 11, 3),
-    MapFactory.createRandomMap(TileSets.CAVE,    4, 36, 25, 12, 3),
-    MapFactory.createRandomMap(TileSets.CAVE,    5, 38, 26, 13, 3),
-    MapFactory.createRandomMap(TileSets.CAVE,    6, 30, 27, 14, 3)
+    MapFactory.createRandomMap(TileSets.DUNGEON, 1, 24, 22, 9, 4),
+    MapFactory.createRandomMap(TileSets.DUNGEON, 2, 26, 23, 10, 4),
+    MapFactory.createRandomMap(TileSets.DUNGEON, 3, 28, 24, 11, 3),
+    MapFactory.createRandomMap(TileSets.CAVE,    4, 30, 25, 12, 3),
+    MapFactory.createRandomMap(TileSets.CAVE,    5, 32, 26, 13, 3),
+    MapFactory.createRandomMap(TileSets.CAVE,    6, 34, 27, 14, 3)
   ]);
-
-  jwb.renderer = new SpriteRenderer();
 
   loadMap(0);
   attachEvents();
-  jwb.renderer.render();
   Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
+  return jwb.renderer.render();
 }
 
 /**
