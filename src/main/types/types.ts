@@ -13,6 +13,8 @@ interface Coordinates {
   y: number
 }
 
+type CoordinatePair = [Coordinates, Coordinates];
+
 interface Direction {
   dx: number,
   dy: number
@@ -47,11 +49,9 @@ interface MapSection {
   tiles: TileType[][]
 }
 
-interface Rect {
-  left: number,
-  top: number,
-  width: number,
-  height: number
+enum MapLayout {
+  ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
+  BLOB = 'BLOB'
 }
 
 type PaletteSwaps = {
@@ -60,6 +60,13 @@ type PaletteSwaps = {
 
 interface Projectile extends Entity, Coordinates {
   direction: Direction
+}
+
+interface Rect {
+  left: number,
+  top: number,
+  width: number,
+  height: number
 }
 
 interface Room extends Rect {
@@ -102,11 +109,13 @@ enum UnitType {
 export {
   Activity,
   Coordinates,
+  CoordinatePair,
   Direction,
   Entity,
   EquipmentSlot,
   GameScreen,
   ItemCategory,
+  MapLayout,
   MapSection,
   PaletteSwaps,
   Projectile,

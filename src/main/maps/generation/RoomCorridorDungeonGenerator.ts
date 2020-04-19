@@ -1,9 +1,16 @@
 import DungeonGenerator from './DungeonGenerator';
-import { Coordinates, MapSection, Room, TileSet, TileType } from '../../types/types';
+import { CoordinatePair, Coordinates, MapSection, Room, TileSet, TileType } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
-import { comparing } from '../../utils/ArrayUtils';
+import { sortBy } from '../../utils/ArrayUtils';
 import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
 import Pathfinder from '../../utils/Pathfinder';
+
+/**
+ * If the minimal spanning tree has N pairs of exits, then add an additional (N * percent) exits
+ */
+const PERCENT_EXTRA_EXITS = 50;
+
+type RoomPair = [Room, Room]
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
@@ -29,7 +36,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     // This is so we have room to add a WALL_TOP tile in the top slot if necessary
     const section = (() => {
       const section = this._generateSection(width, height - 1);
-      this._joinSection(section);
+      const connectedRoomPairs = this._joinSection(section, [], true);
+      this._joinSection(section, connectedRoomPairs, false);
 
       return {
         width,
@@ -119,8 +127,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * (within the specified parameters).
    */
   private _generateSingleSection(width: number, height: number): MapSection {
-    const maxRoomWidth = width - (2 * this._minRoomPadding);
-    const maxRoomHeight = height - (2 * this._minRoomPadding);
+    const maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
+    const maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
     console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
     const roomWidth = randInt(this._minRoomDimension, maxRoomWidth);
     const roomHeight = randInt(this._minRoomDimension, maxRoomHeight);
@@ -182,7 +190,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     return randInt(minSplitPoint, maxSplitPoint);
   }
 
-  private _joinSection(section: MapSection) {
+  private _joinSection(section: MapSection, existingRoomPairs: RoomPair[], logError: boolean): RoomPair[] {
+    const connectedRoomPairs: RoomPair[] = [];
     const unconnectedRooms: Room[] = [...section.rooms];
     const connectedRooms: Room[] = [];
     const nextRoom = unconnectedRooms.pop();
@@ -191,14 +200,19 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     }
 
     while (unconnectedRooms.length > 0) {
-      const candidatePairs: [Room, Room][] = connectedRooms
-        .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => <[Room, Room]>[connectedRoom, unconnectedRoom]))
-        .filter(([connectedRoom, unconnectedRoom]) => this._canJoinRooms(connectedRoom, unconnectedRoom))
-        .sort(comparing(([first, second]) => this._roomDistance(first, second)));
+      const candidatePairs: RoomPair[] = connectedRooms
+        .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => <RoomPair>[connectedRoom, unconnectedRoom]))
+        .filter(([connectedRoom, unconnectedRoom]) => !existingRoomPairs.some(([firstExistingRoom, secondExistingRoom]) => (
+          this._coordinatePairEquals([connectedRoom, unconnectedRoom], [firstExistingRoom, secondExistingRoom])
+        )))
+        .filter(([connectedRoom, unconnectedRoom]) => this._canJoinRooms(connectedRoom, unconnectedRoom));
+
+      shuffle(candidatePairs);
 
       let joinedAnyRooms = false;
       for (let [connectedRoom, unconnectedRoom] of candidatePairs) {
         if (this._joinRooms(connectedRoom, unconnectedRoom, section)) {
+          connectedRoomPairs.push([connectedRoom, unconnectedRoom]);
           unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
           connectedRooms.push(unconnectedRoom);
           joinedAnyRooms = true;
@@ -207,11 +221,15 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       }
 
       if (!joinedAnyRooms) {
-        console.error('Couldn\'t connect rooms!');
-        this._logSections('fux', section);
-        debugger;
+        if (logError) {
+          console.error('Couldn\'t connect rooms!');
+          this._logSections('fux', section);
+          debugger;
+        }
+        break;
       }
     }
+    return connectedRoomPairs;
   }
 
   /**
@@ -231,29 +249,27 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     }
   }
 
-  private _roomDistance(first: Room, second: Room) {
-    const firstCenter = { x: first.left + first.width / 2, y: first.top + first.height / 2 };
-    const secondCenter = { x: second.left + second.width / 2, y: second.top + second.height / 2 };
-    return hypotenuse(firstCenter, secondCenter);
-  }
-
   private _canJoinRooms(first: Room, second: Room) {
     return (first !== second); // && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
   }
 
-  private _joinRooms(first: Room, second: Room, section: MapSection): boolean {
-    const firstExitCandidates = this._getExitCandidates(first);
-    const secondExitCandidates = this._getExitCandidates(second);
-    shuffle(firstExitCandidates);
-    shuffle(secondExitCandidates);
-
+  private _joinRooms(firstRoom: Room, secondRoom: Room, section: MapSection): boolean {
+    const firstExitCandidates = this._getExitCandidates(firstRoom);
+    const secondExitCandidates = this._getExitCandidates(secondRoom);
+    let exitPairs: CoordinatePair[] = [];
     for (let firstExit of firstExitCandidates) {
       for (let secondExit of secondExitCandidates) {
-        if (this._joinExits(firstExit, secondExit, section)) {
-          first.exits.push(firstExit);
-          second.exits.push(secondExit);
-          return true;
-        }
+        exitPairs.push([firstExit, secondExit]);
+      }
+    }
+    exitPairs = sortBy(exitPairs, ([first, second]) => hypotenuse(first, second));
+
+    for (let i = 0; i < exitPairs.length; i++) {
+      const [firstExit, secondExit] = exitPairs[i];
+      if (this._joinExits(firstExit, secondExit, section)) {
+        firstRoom.exits.push(firstExit);
+        secondRoom.exits.push(secondExit);
+        return true;
       }
     }
 
@@ -300,7 +316,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
     const blockedTileDetector = ({ x, y }: Coordinates) => {
       // can't draw a path through an existing room or a wall
-      const blockedTileType = [TileType.FLOOR, TileType.WALL, TileType.WALL_HALL, TileType.WALL_TOP];
+      const blockedTileTypes = [TileType.FLOOR, TileType.FLOOR_HALL, TileType.WALL, TileType.WALL_HALL, TileType.WALL_TOP];
 
       if ([firstExit, secondExit].some(exit => coordinatesEquals({ x, y }, exit))) {
         return false;
@@ -318,13 +334,13 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
         for (let dy of [-2, -1, 1, 2]) {
           if ((y + dy >= 0) && (y + dy < section.height)) {
             const tile = section.tiles[y + dy][x];
-            if (blockedTileType.indexOf(tile) > -1) {
+            if (blockedTileTypes.indexOf(tile) > -1) {
               return true;
             }
           }
         }
         return false;
-      } else if (blockedTileType.indexOf(section.tiles[y][x]) > -1) {
+      } else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
         return true;
       }
       console.error('how\'d we get here?');
@@ -356,6 +372,14 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       row.push(TileType.NONE);
     }
     return row;
+  }
+
+  private _coordinatePairEquals(firstPair: RoomPair, secondPair: RoomPair) {
+    // it's ok to use !== here, rooms will be referentially equal
+    return (
+      (firstPair[0] === secondPair[0] && firstPair[1] === secondPair[1]) ||
+      (firstPair[0] === secondPair[1] && firstPair[1] === secondPair[0])
+    );
   }
 
   private _logSections(name: string, ...sections: MapSection[]) {

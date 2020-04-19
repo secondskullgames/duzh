@@ -164,7 +164,6 @@ const SUITE_4: Suite = (() => {
 })();
 
 function playSuite(suite: Suite) {
-  console.log('playSuite');
   const sections = Object.values(suite.sections);
   const numRepeats = 4;
   for (let i = 0; i < sections.length; i++) {

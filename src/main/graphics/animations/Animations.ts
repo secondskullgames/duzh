@@ -95,8 +95,6 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
     frames.push(frame);
   }
 
-  console.log(frames);
-
   return _playAnimation({
     frames,
     delay: 50
@@ -129,7 +127,6 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
 
 function _playAnimation(animation: Animation): Promise<any> {
   const { delay, frames } = animation;
-  console.log(frames);
 
   const promises: (() => Promise<any>)[] = [];
   for (let i = 0; i < frames.length; i++) {

@@ -309,6 +309,12 @@ define("types/types", ["require", "exports"], function (require, exports) {
         ItemCategory["WEAPON"] = "WEAPON";
     })(ItemCategory || (ItemCategory = {}));
     exports.ItemCategory = ItemCategory;
+    var MapLayout;
+    (function (MapLayout) {
+        MapLayout["ROOMS_AND_CORRIDORS"] = "ROOMS_AND_CORRIDORS";
+        MapLayout["BLOB"] = "BLOB";
+    })(MapLayout || (MapLayout = {}));
+    exports.MapLayout = MapLayout;
     var TileType;
     (function (TileType) {
         TileType[TileType["FLOOR"] = 0] = "FLOOR";
@@ -1066,7 +1072,6 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
             }
             frames.push(frame);
         }
-        console.log(frames);
         return _playAnimation({
             frames: frames,
             delay: 50
@@ -1099,7 +1104,6 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
     exports.playFloorFireAnimation = playFloorFireAnimation;
     function _playAnimation(animation) {
         var delay = animation.delay, frames = animation.frames;
-        console.log(frames);
         var promises = [];
         var _loop_4 = function (i) {
             var frame = frames[i];
@@ -2594,6 +2598,10 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
+     * If the minimal spanning tree has N pairs of exits, then add an additional (N * percent) exits
+     */
+    var PERCENT_EXTRA_EXITS = 50;
+    /**
      * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
      */
     var RoomCorridorDungeonGenerator = /** @class */ (function (_super) {
@@ -2616,7 +2624,8 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             // This is so we have room to add a WALL_TOP tile in the top slot if necessary
             var section = (function () {
                 var section = _this._generateSection(width, height - 1);
-                _this._joinSection(section);
+                var connectedRoomPairs = _this._joinSection(section, [], true);
+                _this._joinSection(section, connectedRoomPairs, false);
                 return {
                     width: width,
                     height: height,
@@ -2697,8 +2706,8 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
          * (within the specified parameters).
          */
         RoomCorridorDungeonGenerator.prototype._generateSingleSection = function (width, height) {
-            var maxRoomWidth = width - (2 * this._minRoomPadding);
-            var maxRoomHeight = height - (2 * this._minRoomPadding);
+            var maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
+            var maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
             console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
             var roomWidth = RandomUtils_6.randInt(this._minRoomDimension, maxRoomWidth);
             var roomHeight = RandomUtils_6.randInt(this._minRoomDimension, maxRoomHeight);
@@ -2758,8 +2767,9 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var maxSplitPoint = dimension - minSectionDimension;
             return RandomUtils_6.randInt(minSplitPoint, maxSplitPoint);
         };
-        RoomCorridorDungeonGenerator.prototype._joinSection = function (section) {
+        RoomCorridorDungeonGenerator.prototype._joinSection = function (section, existingRoomPairs, logError) {
             var _this = this;
+            var connectedRoomPairs = [];
             var unconnectedRooms = __spreadArrays(section.rooms);
             var connectedRooms = [];
             var nextRoom = unconnectedRooms.pop();
@@ -2771,16 +2781,21 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                     .flatMap(function (connectedRoom) { return unconnectedRooms.map(function (unconnectedRoom) { return [connectedRoom, unconnectedRoom]; }); })
                     .filter(function (_a) {
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
-                    return _this._canJoinRooms(connectedRoom, unconnectedRoom);
+                    return !existingRoomPairs.some(function (_a) {
+                        var firstExistingRoom = _a[0], secondExistingRoom = _a[1];
+                        return (_this._coordinatePairEquals([connectedRoom, unconnectedRoom], [firstExistingRoom, secondExistingRoom]));
+                    });
                 })
-                    .sort(ArrayUtils_4.comparing(function (_a) {
-                    var first = _a[0], second = _a[1];
-                    return _this._roomDistance(first, second);
-                }));
+                    .filter(function (_a) {
+                    var connectedRoom = _a[0], unconnectedRoom = _a[1];
+                    return _this._canJoinRooms(connectedRoom, unconnectedRoom);
+                });
+                RandomUtils_6.shuffle(candidatePairs);
                 var joinedAnyRooms = false;
                 for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];
                     if (this._joinRooms(connectedRoom, unconnectedRoom, section)) {
+                        connectedRoomPairs.push([connectedRoom, unconnectedRoom]);
                         unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
                         connectedRooms.push(unconnectedRoom);
                         joinedAnyRooms = true;
@@ -2788,11 +2803,15 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                     }
                 }
                 if (!joinedAnyRooms) {
-                    console.error('Couldn\'t connect rooms!');
-                    this._logSections('fux', section);
-                    debugger;
+                    if (logError) {
+                        console.error('Couldn\'t connect rooms!');
+                        this._logSections('fux', section);
+                        debugger;
+                    }
+                    break;
                 }
             }
+            return connectedRoomPairs;
         };
         /**
          * add walls above corridor tiles if possible
@@ -2810,28 +2829,30 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 }
             }
         };
-        RoomCorridorDungeonGenerator.prototype._roomDistance = function (first, second) {
-            var firstCenter = { x: first.left + first.width / 2, y: first.top + first.height / 2 };
-            var secondCenter = { x: second.left + second.width / 2, y: second.top + second.height / 2 };
-            return MapUtils_6.hypotenuse(firstCenter, secondCenter);
-        };
         RoomCorridorDungeonGenerator.prototype._canJoinRooms = function (first, second) {
             return (first !== second); // && (first.exits.length < MAX_EXITS) && (second.exits.length < MAX_EXITS);
         };
-        RoomCorridorDungeonGenerator.prototype._joinRooms = function (first, second, section) {
-            var firstExitCandidates = this._getExitCandidates(first);
-            var secondExitCandidates = this._getExitCandidates(second);
-            RandomUtils_6.shuffle(firstExitCandidates);
-            RandomUtils_6.shuffle(secondExitCandidates);
+        RoomCorridorDungeonGenerator.prototype._joinRooms = function (firstRoom, secondRoom, section) {
+            var firstExitCandidates = this._getExitCandidates(firstRoom);
+            var secondExitCandidates = this._getExitCandidates(secondRoom);
+            var exitPairs = [];
             for (var _i = 0, firstExitCandidates_1 = firstExitCandidates; _i < firstExitCandidates_1.length; _i++) {
                 var firstExit = firstExitCandidates_1[_i];
                 for (var _a = 0, secondExitCandidates_1 = secondExitCandidates; _a < secondExitCandidates_1.length; _a++) {
                     var secondExit = secondExitCandidates_1[_a];
-                    if (this._joinExits(firstExit, secondExit, section)) {
-                        first.exits.push(firstExit);
-                        second.exits.push(secondExit);
-                        return true;
-                    }
+                    exitPairs.push([firstExit, secondExit]);
+                }
+            }
+            exitPairs = ArrayUtils_4.sortBy(exitPairs, function (_a) {
+                var first = _a[0], second = _a[1];
+                return MapUtils_6.hypotenuse(first, second);
+            });
+            for (var i = 0; i < exitPairs.length; i++) {
+                var _b = exitPairs[i], firstExit = _b[0], secondExit = _b[1];
+                if (this._joinExits(firstExit, secondExit, section)) {
+                    firstRoom.exits.push(firstExit);
+                    secondRoom.exits.push(secondExit);
+                    return true;
                 }
             }
             return false;
@@ -2877,7 +2898,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var blockedTileDetector = function (_a) {
                 var x = _a.x, y = _a.y;
                 // can't draw a path through an existing room or a wall
-                var blockedTileType = [types_13.TileType.FLOOR, types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
+                var blockedTileTypes = [types_13.TileType.FLOOR, types_13.TileType.FLOOR_HALL, types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
                 if ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
                     return false;
                 }
@@ -2892,14 +2913,14 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                         var dy = _b[_i];
                         if ((y + dy >= 0) && (y + dy < section.height)) {
                             var tile = section.tiles[y + dy][x];
-                            if (blockedTileType.indexOf(tile) > -1) {
+                            if (blockedTileTypes.indexOf(tile) > -1) {
                                 return true;
                             }
                         }
                     }
                     return false;
                 }
-                else if (blockedTileType.indexOf(section.tiles[y][x]) > -1) {
+                else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
                     return true;
                 }
                 console.error('how\'d we get here?');
@@ -2928,6 +2949,11 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 row.push(types_13.TileType.NONE);
             }
             return row;
+        };
+        RoomCorridorDungeonGenerator.prototype._coordinatePairEquals = function (firstPair, secondPair) {
+            // it's ok to use !== here, rooms will be referentially equal
+            return ((firstPair[0] === secondPair[0] && firstPair[1] === secondPair[1]) ||
+                (firstPair[0] === secondPair[1] && firstPair[1] === secondPair[0]));
         };
         RoomCorridorDungeonGenerator.prototype._logSections = function (name) {
             var sections = [];
@@ -3179,22 +3205,24 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
     }(DungeonGenerator_2.default));
     exports.default = BlobDungeonGenerator;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "utils/RandomUtils", "maps/generation/BlobDungeonGenerator"], function (require, exports, ItemFactory_1, UnitFactory_1, RandomUtils_8, BlobDungeonGenerator_1) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/RoomCorridorDungeonGenerator", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils"], function (require, exports, ItemFactory_1, UnitFactory_1, RoomCorridorDungeonGenerator_1, BlobDungeonGenerator_1, types_15, RandomUtils_8) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    // outer dimensions
-    function createRandomMap(tileSet, level, width, height, numEnemies, numItems) {
-        var minRoomDimension = RandomUtils_8.randInt(5, 7);
-        var maxRoomDimension = RandomUtils_8.randInt(7, 10);
-        var minRoomPadding = RandomUtils_8.randInt(0, 2);
-        /*const dungeonGenerator = new RoomCorridorDungeonGenerator(
-          tileSet,
-          minRoomDimension,
-          maxRoomDimension,
-          minRoomPadding
-        );*/
-        var dungeonGenerator = new BlobDungeonGenerator_1.default(tileSet);
+    function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
+        var dungeonGenerator = _getDungeonGenerator(mapLayout, tileSet);
         return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory_1.default.createRandomEnemy, numItems, ItemFactory_1.default.createRandomItem);
+    }
+    function _getDungeonGenerator(mapLayout, tileSet) {
+        switch (mapLayout) {
+            case types_15.MapLayout.ROOMS_AND_CORRIDORS: {
+                var minRoomDimension = RandomUtils_8.randInt(6, 7);
+                var maxRoomDimension = RandomUtils_8.randInt(7, 10);
+                var minRoomPadding = RandomUtils_8.randInt(1, 1);
+                return new RoomCorridorDungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
+            }
+            case types_15.MapLayout.BLOB:
+                return new BlobDungeonGenerator_1.default(tileSet);
+        }
     }
     exports.default = { createRandomMap: createRandomMap };
 });
@@ -3342,7 +3370,6 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         };
     })();
     function playSuite(suite) {
-        console.log('playSuite');
         var sections = Object.values(suite.sections);
         var numRepeats = 4;
         var _loop_9 = function (i) {
@@ -3374,7 +3401,7 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         playSuite: playSuite
     };
 });
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_7, types_15, SpriteFactory_5) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_7, types_16, SpriteFactory_5) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3393,22 +3420,22 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_15.TileType.FLOOR] = 'dungeon/tile_floor',
-        _a[types_15.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
-        _a[types_15.TileType.WALL_TOP] = 'dungeon/tile_wall',
-        _a[types_15.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
-        _a[types_15.TileType.WALL] = null,
-        _a[types_15.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _a[types_15.TileType.NONE] = null,
+        _a[types_16.TileType.FLOOR] = 'dungeon/tile_floor',
+        _a[types_16.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
+        _a[types_16.TileType.WALL_TOP] = 'dungeon/tile_wall',
+        _a[types_16.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
+        _a[types_16.TileType.WALL] = null,
+        _a[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _a[types_16.TileType.NONE] = null,
         _a);
     var caveFilenames = (_b = {},
-        _b[types_15.TileType.FLOOR] = 'cave/tile_floor',
-        _b[types_15.TileType.FLOOR_HALL] = 'cave/tile_floor',
-        _b[types_15.TileType.WALL_TOP] = 'cave/tile_wall',
-        _b[types_15.TileType.WALL_HALL] = 'cave/tile_wall',
-        _b[types_15.TileType.WALL] = null,
-        _b[types_15.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _b[types_15.TileType.NONE] = null,
+        _b[types_16.TileType.FLOOR] = 'cave/tile_floor',
+        _b[types_16.TileType.FLOOR_HALL] = 'cave/tile_floor',
+        _b[types_16.TileType.WALL_TOP] = 'cave/tile_wall',
+        _b[types_16.TileType.WALL_HALL] = 'cave/tile_wall',
+        _b[types_16.TileType.WALL] = null,
+        _b[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
+        _b[types_16.TileType.NONE] = null,
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -3416,7 +3443,7 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10, types_17) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -3431,16 +3458,15 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.loadMap = loadMap;
     function restartGame() {
-        console.log('restartGame');
         jwb.renderer = new SpriteRenderer_1.default();
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 1, 24, 22, 9, 4),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 2, 26, 23, 10, 4),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.DUNGEON, 3, 28, 24, 11, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 4, 30, 25, 12, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 5, 32, 26, 13, 3),
-            MapFactory_1.default.createRandomMap(TileSets_1.default.CAVE, 6, 34, 27, 14, 3)
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4),
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4),
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3),
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3),
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3),
+            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3)
         ]);
         loadMap(0);
         InputHandler_1.attachEvents();
@@ -3476,7 +3502,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_16) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_18) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3556,7 +3582,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_16.GameScreen.GAME:
+            case types_18.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3591,7 +3617,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_16.GameScreen.INVENTORY:
+            case types_18.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3620,7 +3646,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_16.GameScreen.GAME: {
+            case types_18.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3632,17 +3658,17 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_16.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_18.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_16.GameScreen.INVENTORY: {
+            case types_18.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_16.GameScreen.GAME;
+                    state.screen = types_18.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
@@ -3655,11 +3681,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_16.GameScreen.INVENTORY:
-                state.screen = types_16.GameScreen.GAME;
+            case types_18.GameScreen.INVENTORY:
+                state.screen = types_18.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_16.GameScreen.INVENTORY;
+                state.screen = types_18.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
@@ -3691,7 +3717,6 @@ define("core/globals", ["require", "exports"], function (require, exports) {
 define("core/main", ["require", "exports", "core/actions"], function (require, exports, actions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    console.log('main');
     // @ts-ignore
     window.jwb = window.jwb || {};
     actions_3.restartGame();
