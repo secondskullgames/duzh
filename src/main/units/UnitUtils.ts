@@ -2,7 +2,7 @@ import Unit from './Unit';
 import { Coordinates, Direction, EquipmentSlot } from '../types/types';
 import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
-import { playAttackingAnimation } from '../graphics/animations/Animations';
+import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
 
 function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
   const { messages, playerUnit } = jwb.state;
@@ -43,22 +43,26 @@ function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
         return;
       }
       const map = jwb.state.getMap();
-      let { x, y } = unit;
-      do {
+      const coordinatesList = [];
+      let { x, y } = { x: unit.x + dx, y: unit.y + dy };
+      while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+        coordinatesList.push({ x, y });
         x += dx;
         y += dy;
-      } while (!map.isBlocked({ x, y }));
+      }
 
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
         const { messages } = jwb.state;
         const damage = unit.getRangedDamage();
         messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
-        playAttackingAnimation(unit, targetUnit)
+
+        playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit)
           .then(() => targetUnit.takeDamage(damage, unit))
           .then(() => resolve());
       } else {
-        resolve();
+        playArrowAnimation(unit, { dx, dy }, coordinatesList, null)
+          .then(() => resolve());
       }
     }));
 }

@@ -41,7 +41,7 @@ class Unit implements Entity {
     this.x = x;
     this.y = y;
     this.name = name;
-    this.level = level;
+    this.level = 1;
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
@@ -53,6 +53,10 @@ class Unit implements Entity {
     this.aiHandler = unitClass.aiHandler;
     this.activity = Activity.STANDING;
     this.direction = null;
+
+    while (this.level < level) {
+      this._levelUp(false);
+    }
   }
 
   _regenLife() {
@@ -109,13 +113,15 @@ class Unit implements Entity {
     return Math.round(damage);
   }
 
-  private _levelUp() {
+  private _levelUp(withSound: boolean) {
     this.level++;
     const lifePerLevel = this.unitClass.lifePerLevel(this.level);
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
     this._damage += this.unitClass.damagePerLevel(this.level);
-    playSound(Sounds.LEVEL_UP);
+    if (withSound) {
+      playSound(Sounds.LEVEL_UP);
+    }
   }
 
   gainExperience(experience: number) {
@@ -123,7 +129,7 @@ class Unit implements Entity {
     const experienceToNextLevel = this.experienceToNextLevel();
     while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
-      this._levelUp();
+      this._levelUp(true);
     }
   }
 
@@ -136,14 +142,13 @@ class Unit implements Entity {
   }
 
   takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<any> {
-    const { renderer } = jwb;
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
     return new Promise(resolve => {
       this.life = Math.max(this.life - damage, 0);
       if (this.life === 0) {
-        map.units = map.units.filter(u => u !== this);
+        map.removeUnit(this);
         if (this === playerUnit) {
           alert('Game Over!');
           playSound(Sounds.PLAYER_DIES);

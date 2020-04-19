@@ -1,5 +1,5 @@
-import { PaletteSwaps } from '../../types/types';
-import Unit from '../../units/Unit';
+import { PaletteSwaps } from '../../../types/types';
+import Unit from '../../../units/Unit';
 import UnitSprite from './UnitSprite';
 
 class PlayerSprite extends UnitSprite {

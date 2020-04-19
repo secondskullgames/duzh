@@ -1,10 +1,10 @@
+import Sprite from './sprites/Sprite';
+import Colors from '../types/Colors';
+import Renderer from './Renderer';
+import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, ItemCategory, Rect, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
-import Sprite from './sprites/Sprite';
-import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
-import Colors from '../types/Colors';
-import Renderer from './Renderer';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -26,6 +26,9 @@ const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 
 const LINE_HEIGHT = 16;
+
+const SANS_SERIF = 'sans-serif';
+const MONOSPACE = 'Monospace';
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
@@ -65,6 +68,7 @@ class SpriteRenderer implements Renderer {
     return chainPromises([
       () => this._renderTiles(),
       () => this._renderItems(),
+      () => this._renderProjectiles(),
       () => this._renderUnits(),
       () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
     ]);
@@ -173,7 +177,7 @@ class SpriteRenderer implements Renderer {
     // draw titles
     _context.fillStyle = Colors.WHITE;
     _context.textAlign = 'center';
-    _context.font = '20px Monospace';
+    _context.font = `20px ${MONOSPACE}`;
     _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
     _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
 
@@ -194,7 +198,7 @@ class SpriteRenderer implements Renderer {
     const categoryWidth = 60;
     const xOffset = 4;
 
-    _context.font = '14px Monospace';
+    _context.font = `14px ${MONOSPACE}`;
     _context.textAlign = 'center';
 
     for (let i = 0; i < inventoryCategories.length; i++) {
@@ -211,7 +215,7 @@ class SpriteRenderer implements Renderer {
       const items = inventory.get(inventory.selectedCategory);
       const x = inventoryLeft + 8;
 
-      _context.font = '10px sans-serif';
+      _context.font = `10px ${SANS_SERIF}`;
       _context.textAlign = 'left';
 
       for (let i = 0; i < items.length; i++) {
@@ -278,7 +282,7 @@ class SpriteRenderer implements Renderer {
       }
       _context.fillStyle = '#fff';
       _context.textAlign = 'left';
-      _context.font = '10px sans-serif';
+      _context.font = `10px ${SANS_SERIF}`;
 
       const left = 4;
       for (let i = 0; i < lines.length; i++) {
@@ -302,7 +306,7 @@ class SpriteRenderer implements Renderer {
 
       _context.fillStyle = Colors.WHITE;
       _context.textAlign = 'left';
-      _context.font = '10px sans-serif';
+      _context.font = `10px ${SANS_SERIF}`;
 
       const textLeft = left + 4;
 

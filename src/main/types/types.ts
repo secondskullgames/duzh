@@ -1,65 +1,28 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Colors from './Colors';
 
+enum Activity {
+  STANDING = 'STANDING',
+  WALKING = 'WALKING',
+  ATTACKING = 'ATTACKING',
+  DAMAGED = 'DAMAGED'
+}
+
 interface Coordinates {
   x: number,
   y: number
 }
+
+type CoordinatePair = [Coordinates, Coordinates];
 
 interface Direction {
   dx: number,
   dy: number
 }
 
-interface Rect {
-  left: number,
-  top: number,
-  width: number,
-  height: number
-}
-
-enum TileType {
-  FLOOR,
-  FLOOR_HALL,
-  WALL_TOP,
-  WALL_HALL,
-  WALL,
-  NONE,
-  STAIRS_DOWN
-}
-
-interface Tile {
-  type: TileType,
-  sprite: Sprite | null,
-  isBlocking: boolean
-}
-
 interface Entity extends Coordinates {
   char: string,
   sprite: Sprite
-}
-
-interface Room extends Rect {
-  exits: Coordinates[]
-}
-
-interface MapSection {
-  width: number,
-  height: number,
-  rooms: Room[],
-  tiles: TileType[][]
-}
-
-type PaletteSwaps = {
-  [src in Colors]?: Colors
-}
-
-type Sample = [number, number];
-
-enum ItemCategory {
-  POTION = 'POTION',
-  SCROLL = 'SCROLL',
-  WEAPON = 'WEAPON'
 }
 
 enum EquipmentSlot {
@@ -73,13 +36,65 @@ enum GameScreen {
   INVENTORY = 'INVENTORY'
 }
 
+enum ItemCategory {
+  POTION = 'POTION',
+  SCROLL = 'SCROLL',
+  WEAPON = 'WEAPON'
+}
+
+interface MapSection {
+  width: number,
+  height: number,
+  rooms: Room[],
+  tiles: TileType[][]
+}
+
+enum MapLayout {
+  ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
+  BLOB = 'BLOB'
+}
+
+type PaletteSwaps = {
+  [src in Colors]?: Colors
+}
+
+interface Projectile extends Entity, Coordinates {
+  direction: Direction
+}
+
+interface Rect {
+  left: number,
+  top: number,
+  width: number,
+  height: number
+}
+
+interface Room extends Rect {
+  exits: Coordinates[]
+}
+
+type Sample = [number, number];
+
 type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 
-enum Activity {
-  STANDING = 'STANDING',
-  WALKING = 'WALKING',
-  ATTACKING = 'ATTACKING',
-  DAMAGED = 'DAMAGED'
+interface Tile {
+  type: TileType,
+  sprite: Sprite | null,
+  isBlocking: boolean
+}
+
+type TileSet = {
+  [tileType in TileType]: (Sprite | null)
+};
+
+enum TileType {
+  FLOOR,
+  FLOOR_HALL,
+  WALL_TOP,
+  WALL_HALL,
+  WALL,
+  NONE,
+  STAIRS_DOWN
 }
 
 enum UnitType {
@@ -91,26 +106,25 @@ enum UnitType {
   ANIMAL = 'ANIMAL'
 }
 
-type TileSet = {
-  [tileType in TileType]: (Sprite | null)
-};
-
 export {
   Activity,
   Coordinates,
+  CoordinatePair,
   Direction,
   Entity,
   EquipmentSlot,
   GameScreen,
   ItemCategory,
+  MapLayout,
   MapSection,
   PaletteSwaps,
+  Projectile,
   Rect,
   Room,
   Sample,
   SpriteSupplier,
-  TileType,
   Tile,
-  UnitType,
-  TileSet
+  TileSet,
+  TileType,
+  UnitType
 };

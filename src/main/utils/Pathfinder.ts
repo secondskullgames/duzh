@@ -81,7 +81,6 @@ class Pathfinder {
       if (coordinatesEquals(bestNode, goal)) {
         // Done!
         const path: Coordinates[] = traverseParents(bestNode);
-        //console.log(`path = ${JSON.stringify(path)}`);
         return path;
       } else {
         const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);

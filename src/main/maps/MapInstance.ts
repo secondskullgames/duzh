@@ -48,6 +48,10 @@ class MapInstance {
     return this.items.filter(i => i.x === x && i.y === y)[0] || null;
   }
 
+  getProjectile({ x, y }: Coordinates): (Entity | null) {
+    return this.projectiles.filter(p => p.x === x && p.y === y)[0] || null;
+  }
+
   contains({ x, y }: Coordinates): boolean {
     return x >= 0 && x < this.width && y >= 0 && y < this.height;
   }
@@ -59,9 +63,25 @@ class MapInstance {
     return !!this.getUnit({ x, y }) || this.getTile({ x, y }).isBlocking;
   }
 
+  removeUnit({ x, y }: Coordinates) {
+    const index = this.units.findIndex(u => (u.x === x && u.y === y));
+    if (index >= 0) {
+      this.units.splice(index, 1);
+    }
+  }
+
   removeItem({ x, y }: Coordinates) {
     const index = this.items.findIndex(i => (i.x === x && i.y === y));
-    this.items.splice(index, 1);
+    if (index >= 0) {
+      this.items.splice(index, 1);
+    }
+  }
+
+  removeProjectile({ x, y }: Coordinates) {
+    const index = this.projectiles.findIndex(i => (i.x === x && i.y === y));
+    if (index >= 0) {
+      this.projectiles.splice(index, 1);
+    }
   }
 
   getRect(): Rect {
