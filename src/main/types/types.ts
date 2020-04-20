@@ -84,7 +84,7 @@ interface Tile {
 }
 
 type TileSet = {
-  [tileType in TileType]: (Sprite | null)
+  [tileType in TileType]: (Sprite | null)[]
 };
 
 enum TileType {

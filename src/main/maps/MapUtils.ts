@@ -1,6 +1,7 @@
 import { Coordinates, Rect, Tile, TileSet } from '../types/types';
 import { sortBy } from '../utils/ArrayUtils';
 import { TileType } from '../types/types';
+import { randChoice } from '../utils/RandomUtils';
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
@@ -92,7 +93,7 @@ function isBlocking(tileType: TileType) {
 function createTile(type: TileType, tileSet: TileSet): Tile {
   return {
     type,
-    sprite: tileSet[type],
+    sprite: randChoice(tileSet[type]),
     isBlocking: isBlocking(type)
   }
 }

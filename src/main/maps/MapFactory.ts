@@ -16,7 +16,7 @@ function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGe
   switch (mapLayout) {
     case MapLayout.ROOMS_AND_CORRIDORS: {
       const minRoomDimension = randInt(6, 7);
-      const maxRoomDimension = randInt(7, 10);
+      const maxRoomDimension = randInt(7, 9);
       const minRoomPadding = randInt(1, 1);
       return new RoomCorridorDungeonGenerator(
         tileSet,

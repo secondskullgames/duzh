@@ -362,7 +362,54 @@ define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
     }
     exports.average = average;
 });
-define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types"], function (require, exports, ArrayUtils_1, types_1) {
+define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * @param max inclusive
+     */
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    exports.randInt = randInt;
+    function randChoice(list) {
+        return list[randInt(0, list.length - 1)];
+    }
+    exports.randChoice = randChoice;
+    /**
+     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
+     */
+    function shuffle(list) {
+        var n = list.length;
+        // While there remain elements to shuffle...
+        while (n > 0) {
+            // Pick a remaining element...
+            var i = randInt(0, n - 1);
+            n--;
+            // And swap it with the current element.
+            var tmp = list[n];
+            list[n] = list[i];
+            list[i] = tmp;
+        }
+    }
+    exports.shuffle = shuffle;
+    function weightedRandom(probabilities, mappedObjects) {
+        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
+        var rand = Math.random() * total;
+        var counter = 0;
+        var entries = Object.entries(probabilities);
+        for (var i = 0; i < entries.length; i++) {
+            var _a = entries[i], key = _a[0], value = _a[1];
+            counter += value;
+            if (counter > rand) {
+                return mappedObjects[key];
+            }
+        }
+        throw 'Error in weightedRandom()!';
+    }
+    exports.weightedRandom = weightedRandom;
+});
+define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types", "utils/RandomUtils"], function (require, exports, ArrayUtils_1, types_1, RandomUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -458,60 +505,13 @@ define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types"
     function createTile(type, tileSet) {
         return {
             type: type,
-            sprite: tileSet[type],
+            sprite: RandomUtils_1.randChoice(tileSet[type]),
             isBlocking: isBlocking(type)
         };
     }
     exports.createTile = createTile;
 });
-define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * @param max inclusive
-     */
-    function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-    exports.randInt = randInt;
-    function randChoice(list) {
-        return list[randInt(0, list.length - 1)];
-    }
-    exports.randChoice = randChoice;
-    /**
-     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
-     */
-    function shuffle(list) {
-        var n = list.length;
-        // While there remain elements to shuffle...
-        while (n > 0) {
-            // Pick a remaining element...
-            var i = randInt(0, n - 1);
-            n--;
-            // And swap it with the current element.
-            var tmp = list[n];
-            list[n] = list[i];
-            list[i] = tmp;
-        }
-    }
-    exports.shuffle = shuffle;
-    function weightedRandom(probabilities, mappedObjects) {
-        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
-        var rand = Math.random() * total;
-        var counter = 0;
-        var entries = Object.entries(probabilities);
-        for (var i = 0; i < entries.length; i++) {
-            var _a = entries[i], key = _a[0], value = _a[1];
-            counter += value;
-            if (counter > rand) {
-                return mappedObjects[key];
-            }
-        }
-        throw 'Error in weightedRandom()!';
-    }
-    exports.weightedRandom = weightedRandom;
-});
-define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_1, RandomUtils_1) {
+define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_1, RandomUtils_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
@@ -579,7 +579,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
                         var node = _a.node, cost = _a.cost;
                         return cost === nodeCosts[0].cost;
                     });
-                    var _a = RandomUtils_1.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
+                    var _a = RandomUtils_2.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
                     open.splice(open.indexOf(chosenNode_1), 1);
                     closed.push(chosenNode_1);
                     this_1._findNeighbors(chosenNode_1, rect).forEach(function (neighbor) {
@@ -1215,7 +1215,7 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
     }
     exports.fireProjectile = fireProjectile;
 });
-define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions"], function (require, exports, Pathfinder_1, RandomUtils_2, UnitUtils_1, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3) {
+define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions"], function (require, exports, Pathfinder_1, RandomUtils_3, UnitUtils_1, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _wanderAndAttack(unit) {
@@ -1237,7 +1237,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_2.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
         return PromiseUtils_3.resolvedPromise();
@@ -1255,7 +1255,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             }
         });
         if (tiles.length > 0) {
-            var _a = RandomUtils_2.randChoice(tiles), x = _a.x, y = _a.y;
+            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
         return PromiseUtils_3.resolvedPromise();
@@ -1317,7 +1317,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
     };
     exports.default = UnitBehaviors;
 });
-define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, UnitBehaviors_1, MapUtils_3, RandomUtils_3) {
+define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, UnitBehaviors_1, MapUtils_3, RandomUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var behaviorMap = {
@@ -1335,7 +1335,7 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
                 behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
             }
             else {
-                behavior = RandomUtils_3.weightedRandom({
+                behavior = RandomUtils_4.weightedRandom({
                     'ATTACK_PLAYER': 0.2,
                     'WANDER': 0.5,
                     'FLEE_FROM_PLAYER': 0.3
@@ -1343,14 +1343,14 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
             }
         }
         else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_3.weightedRandom({
+            behavior = RandomUtils_4.weightedRandom({
                 'WANDER': 0.3,
                 'ATTACK_PLAYER': 0.1,
                 'STAY': 0.6
             }, behaviorMap);
         }
         else {
-            behavior = RandomUtils_3.weightedRandom({
+            behavior = RandomUtils_4.weightedRandom({
                 'ATTACK_PLAYER': 0.6,
                 'WANDER': 0.2,
                 'STAY': 0.2
@@ -1367,14 +1367,14 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
             behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
         }
         else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_3.weightedRandom({
+            behavior = RandomUtils_4.weightedRandom({
                 'WANDER': 0.4,
                 'STAY': 0.4,
                 'ATTACK_PLAYER': 0.2
             }, behaviorMap);
         }
         else {
-            behavior = RandomUtils_3.weightedRandom({
+            behavior = RandomUtils_4.weightedRandom({
                 'ATTACK_PLAYER': 0.9,
                 'STAY': 0.1
             }, behaviorMap);
@@ -1382,13 +1382,11 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
         return behavior(unit);
     };
     exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
-    var FULL_AGGRO = function (unit) { return UnitBehaviors_1.default.ATTACK_PLAYER(unit); };
-    exports.FULL_AGGRO = FULL_AGGRO;
     var HUMAN_DETERMINISTIC = function (unit) {
         var _a = jwb.state, playerUnit = _a.playerUnit, turn = _a.turn;
         var aiParams = unit.unitClass.aiParams;
         if (!aiParams) {
-            throw 'HUMAN_DETEERMINISTIC behavior requires aiParams!';
+            throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
         }
         var speed = aiParams.speed, visionRange = aiParams.visionRange, fleeThreshold = aiParams.fleeThreshold;
         var behavior;
@@ -1403,7 +1401,7 @@ define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUt
             behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
         }
         else {
-            if (RandomUtils_3.randInt(0, 1) === 1) {
+            if (RandomUtils_4.randInt(0, 1) === 1) {
                 behavior = UnitBehaviors_1.default.STAY;
             }
             else {
@@ -1914,8 +1912,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var LINE_HEIGHT = 16;
-    var SANS_SERIF = 'sans-serif';
-    var MONOSPACE = 'Monospace';
+    /*
+    const SANS_SERIF = 'sans-serif';
+    const MONOSPACE = 'Monospace';
+    */
+    var SANS_SERIF = 'Apple II';
+    var MONOSPACE = 'Apple II';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2307,7 +2309,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_4, PromiseUtils_7, RandomUtils_4, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_4, PromiseUtils_7, RandomUtils_5, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2390,7 +2392,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
     function createRandomItem(_a, level) {
         var x = _a.x, y = _a.y;
         var suppliers = __spreadArrays(_getItemSuppliers(level), _getWeaponSuppliers(level));
-        return RandomUtils_4.randChoice(suppliers)({ x: x, y: y });
+        return RandomUtils_5.randChoice(suppliers)({ x: x, y: y });
     }
     exports.default = {
         createRandomItem: createRandomItem
@@ -2440,10 +2442,10 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         maxLevel: 2,
         lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
+        damagePerLevel: function () { return 1; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.96,
+            speed: 0.95,
             visionRange: 10,
             fleeThreshold: 0.2
         }
@@ -2460,10 +2462,10 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         maxLevel: 4,
         lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
+        damagePerLevel: function () { return 1; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.92,
+            speed: 0.90,
             visionRange: 8,
             fleeThreshold: 0.1
         }
@@ -2478,12 +2480,12 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         startingDamage: 6,
         minLevel: 3,
         maxLevel: 6,
-        lifePerLevel: function () { return 25; },
+        lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.92,
+            speed: 0.90,
             visionRange: 10,
             fleeThreshold: 0.1
         }
@@ -2496,14 +2498,14 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b[Colors_6.default.DARK_GRAY] = Colors_6.default.DARKER_GRAY,
             _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARKER_GRAY,
             _b),
-        startingLife: 120,
+        startingLife: 100,
         startingMana: null,
         startingDamage: 10,
         minLevel: 5,
         maxLevel: 9,
-        lifePerLevel: function () { return 40; },
+        lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 5; },
+        damagePerLevel: function () { return 3; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.88,
@@ -2521,7 +2523,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         getEnemyClasses: getEnemyClasses
     };
 });
-define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_5, Unit_1) {
+define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_6, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomEnemy(_a, level) {
@@ -2529,7 +2531,7 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
         var candidates = UnitClasses_1.default.getEnemyClasses()
             .filter(function (unitClass) { return level >= unitClass.minLevel; })
             .filter(function (unitClass) { return level <= unitClass.maxLevel; });
-        var unitClass = RandomUtils_5.randChoice(candidates);
+        var unitClass = RandomUtils_6.randChoice(candidates);
         return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
     }
     exports.default = {
@@ -2594,7 +2596,7 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
     }());
     exports.default = DungeonGenerator;
 });
-define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder"], function (require, exports, DungeonGenerator_1, types_13, RandomUtils_6, ArrayUtils_4, MapUtils_6, Pathfinder_2) {
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder"], function (require, exports, DungeonGenerator_1, types_13, RandomUtils_7, ArrayUtils_4, MapUtils_6, Pathfinder_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -2657,7 +2659,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var canSplitVertically = (height >= (2 * minSectionDimension));
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : []));
             if (splitDirections.length > 0) {
-                var direction = RandomUtils_6.randChoice(splitDirections);
+                var direction = RandomUtils_7.randChoice(splitDirections);
                 if (direction === 'HORIZONTAL') {
                     var splitX_1 = this._getSplitPoint(width);
                     var leftWidth = splitX_1;
@@ -2709,11 +2711,11 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
             var maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
             console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_6.randInt(this._minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_6.randInt(this._minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_7.randInt(this._minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_7.randInt(this._minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_6.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
-            var roomTop = RandomUtils_6.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
+            var roomLeft = RandomUtils_7.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
+            var roomTop = RandomUtils_7.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -2765,7 +2767,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_6.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_7.randInt(minSplitPoint, maxSplitPoint);
         };
         RoomCorridorDungeonGenerator.prototype._joinSection = function (section, existingRoomPairs, logError) {
             var _this = this;
@@ -2790,7 +2792,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
                     return _this._canJoinRooms(connectedRoom, unconnectedRoom);
                 });
-                RandomUtils_6.shuffle(candidatePairs);
+                RandomUtils_7.shuffle(candidatePairs);
                 var joinedAnyRooms = false;
                 for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];
@@ -2975,7 +2977,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
     }(DungeonGenerator_1.default));
     exports.default = RoomCorridorDungeonGenerator;
 });
-define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_7, MapUtils_7, ArrayUtils_5) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_8, MapUtils_7, ArrayUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BlobDungeonGenerator = /** @class */ (function (_super) {
@@ -3020,14 +3022,14 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             return tiles;
         };
         BlobDungeonGenerator.prototype._placeInitialTile = function (width, height, tiles) {
-            var x = RandomUtils_7.randInt(width * 3 / 8, width * 5 / 8);
-            var y = RandomUtils_7.randInt(height * 3 / 8, height * 5 / 8);
+            var x = RandomUtils_8.randInt(width * 3 / 8, width * 5 / 8);
+            var y = RandomUtils_8.randInt(height * 3 / 8, height * 5 / 8);
             tiles[y][x] = types_14.TileType.FLOOR;
         };
         BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
             var minRatio = 0.4;
             var maxRatio = 0.7;
-            return RandomUtils_7.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
+            return RandomUtils_8.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
         };
         BlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
             var floorTiles = [];
@@ -3065,7 +3067,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             // change these ratios to adjust the "snakiness"
             var minIndex = Math.floor((candidates.length - 1) * 0.6);
             var maxIndex = Math.floor((candidates.length - 1) * 0.8);
-            var index = RandomUtils_7.randInt(minIndex, maxIndex);
+            var index = RandomUtils_8.randInt(minIndex, maxIndex);
             var _a = candidates[index], x = _a.x, y = _a.y;
             tiles[y][x] = types_14.TileType.FLOOR;
             return true;
@@ -3205,7 +3207,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
     }(DungeonGenerator_2.default));
     exports.default = BlobDungeonGenerator;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/RoomCorridorDungeonGenerator", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils"], function (require, exports, ItemFactory_1, UnitFactory_1, RoomCorridorDungeonGenerator_1, BlobDungeonGenerator_1, types_15, RandomUtils_8) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/RoomCorridorDungeonGenerator", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils"], function (require, exports, ItemFactory_1, UnitFactory_1, RoomCorridorDungeonGenerator_1, BlobDungeonGenerator_1, types_15, RandomUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
@@ -3215,9 +3217,9 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     function _getDungeonGenerator(mapLayout, tileSet) {
         switch (mapLayout) {
             case types_15.MapLayout.ROOMS_AND_CORRIDORS: {
-                var minRoomDimension = RandomUtils_8.randInt(6, 7);
-                var maxRoomDimension = RandomUtils_8.randInt(7, 10);
-                var minRoomPadding = RandomUtils_8.randInt(1, 1);
+                var minRoomDimension = RandomUtils_9.randInt(6, 7);
+                var maxRoomDimension = RandomUtils_9.randInt(7, 9);
+                var minRoomPadding = RandomUtils_9.randInt(1, 1);
                 return new RoomCorridorDungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
             }
             case types_15.MapLayout.BLOB:
@@ -3226,7 +3228,7 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_9, AudioUtils_5) {
+define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_10, AudioUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _transpose8va(_a) {
@@ -3374,11 +3376,11 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
         var numRepeats = 4;
         var _loop_9 = function (i) {
             var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_9.randChoice(section.bass) : null;
+            var bass = (!!section.bass) ? RandomUtils_10.randChoice(section.bass) : null;
             var lead;
             if (!!section.lead) {
                 do {
-                    lead = RandomUtils_9.randChoice(section.lead);
+                    lead = RandomUtils_10.randChoice(section.lead);
                 } while (lead === bass);
             }
             for (var j = 0; j < numRepeats; j++) {
@@ -3412,30 +3414,34 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         // @ts-ignore
         var tileSet = {};
         Object.entries(filenames).forEach(function (_a) {
-            var tileType = _a[0], filename = _a[1];
-            var sprite = filename ? _getTileSprite(filename)({}) : null;
+            var tileType = _a[0], filenames = _a[1];
             // @ts-ignore
-            tileSet[tileType] = sprite;
+            tileSet[tileType] = [];
+            filenames.forEach(function (filename) {
+                var sprite = !!filename ? _getTileSprite(filename)({}) : null;
+                // @ts-ignore
+                tileSet[tileType].push(sprite);
+            });
         });
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_16.TileType.FLOOR] = 'dungeon/tile_floor',
-        _a[types_16.TileType.FLOOR_HALL] = 'dungeon/tile_floor_hall',
-        _a[types_16.TileType.WALL_TOP] = 'dungeon/tile_wall',
-        _a[types_16.TileType.WALL_HALL] = 'dungeon/tile_wall_hall',
-        _a[types_16.TileType.WALL] = null,
-        _a[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _a[types_16.TileType.NONE] = null,
+        _a[types_16.TileType.FLOOR] = ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
+        _a[types_16.TileType.FLOOR_HALL] = ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
+        _a[types_16.TileType.WALL_TOP] = ['dungeon/tile_wall'],
+        _a[types_16.TileType.WALL_HALL] = ['dungeon/tile_wall_hall'],
+        _a[types_16.TileType.WALL] = [null],
+        _a[types_16.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _a[types_16.TileType.NONE] = [null],
         _a);
     var caveFilenames = (_b = {},
-        _b[types_16.TileType.FLOOR] = 'cave/tile_floor',
-        _b[types_16.TileType.FLOOR_HALL] = 'cave/tile_floor',
-        _b[types_16.TileType.WALL_TOP] = 'cave/tile_wall',
-        _b[types_16.TileType.WALL_HALL] = 'cave/tile_wall',
-        _b[types_16.TileType.WALL] = null,
-        _b[types_16.TileType.STAIRS_DOWN] = 'stairs_down2',
-        _b[types_16.TileType.NONE] = null,
+        _b[types_16.TileType.FLOOR] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_16.TileType.FLOOR_HALL] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_16.TileType.WALL_TOP] = ['cave/tile_wall'],
+        _b[types_16.TileType.WALL_HALL] = ['cave/tile_wall'],
+        _b[types_16.TileType.WALL] = [null],
+        _b[types_16.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _b[types_16.TileType.NONE] = [null],
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -3443,7 +3449,7 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_10, types_17) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_11, types_17) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
@@ -3470,7 +3476,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         ]);
         loadMap(0);
         InputHandler_1.attachEvents();
-        Music_1.default.playSuite(RandomUtils_10.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        Music_1.default.playSuite(RandomUtils_11.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
         return jwb.renderer.render();
     }
     exports.restartGame = restartGame;

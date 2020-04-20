@@ -72,14 +72,12 @@ const HUMAN_AGGRESSIVE: UnitAI = unit => {
   return behavior(unit);
 };
 
-const FULL_AGGRO: UnitAI = unit => UnitBehaviors.ATTACK_PLAYER(unit);
-
 const HUMAN_DETERMINISTIC: UnitAI = unit => {
   const { playerUnit, turn } = jwb.state;
 
   const { aiParams } = unit.unitClass;
   if (!aiParams) {
-    throw 'HUMAN_DETEERMINISTIC behavior requires aiParams!';
+    throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
   }
   const { speed, visionRange, fleeThreshold } = aiParams;
 
@@ -115,6 +113,5 @@ export {
   UnitAI,
   HUMAN_CAUTIOUS,
   HUMAN_AGGRESSIVE,
-  FULL_AGGRO,
   HUMAN_DETERMINISTIC
 };
