@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "amd",
+    "moduleResolution": "node",
+    "target": "es5",
+    "lib": ["dom", "es5", "es6", "es2015", "es2017", "es2019.array"],
+    "sourceMap": true,
+    "alwaysStrict": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true
+  },
+  "files": [],
+  "references": [
+    { "path": "./src/main" },
+    { "path": "./src/test" }
+  ]
+}

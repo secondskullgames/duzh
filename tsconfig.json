@@ -1,19 +1,7 @@
 {
-  "compilerOptions": {
-    "outFile": "build/roguelike.js",
-    "lib": ["dom", "es5", "es6", "es2015", "es2017", "es2019.array"],
-    "module": "amd",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "target": "es5",
-    "alwaysStrict": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "noImplicitAny": true
-  },
-  "include": [
-    "src/*",
-    "src/**/*"
+  "files": [],
+  "references": [
+    { "path": "./src/main" },
+    { "path": "./src/test" }
   ]
 }
