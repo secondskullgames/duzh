@@ -184,7 +184,7 @@ class SpriteRenderer implements Renderer {
     // draw equipment items
     // for now, just display them all in one list
 
-    _context.font = '10px sans-serif';
+    _context.font = `10px ${SANS_SERIF}`;
     _context.textAlign = 'left';
 
     let y = INVENTORY_TOP + 64;

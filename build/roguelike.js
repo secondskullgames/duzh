@@ -1912,12 +1912,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var LINE_HEIGHT = 16;
-    /*
-    const SANS_SERIF = 'sans-serif';
-    const MONOSPACE = 'Monospace';
-    */
-    var SANS_SERIF = 'Apple II';
-    var MONOSPACE = 'Apple II';
+    var SANS_SERIF = 'sans-serif';
+    var MONOSPACE = 'Monospace';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2063,7 +2059,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
             // draw equipment items
             // for now, just display them all in one list
-            _context.font = '10px sans-serif';
+            _context.font = "10px " + SANS_SERIF;
             _context.textAlign = 'left';
             var y = INVENTORY_TOP + 64;
             playerUnit.equipment.getEntries().forEach(function (_a) {
@@ -2599,10 +2595,6 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
 define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder"], function (require, exports, DungeonGenerator_1, types_13, RandomUtils_7, ArrayUtils_4, MapUtils_6, Pathfinder_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * If the minimal spanning tree has N pairs of exits, then add an additional (N * percent) exits
-     */
-    var PERCENT_EXTRA_EXITS = 50;
     /**
      * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
      */
