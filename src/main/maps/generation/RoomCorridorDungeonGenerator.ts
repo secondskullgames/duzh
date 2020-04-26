@@ -5,11 +5,6 @@ import { sortBy } from '../../utils/ArrayUtils';
 import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
 import Pathfinder from '../../utils/Pathfinder';
 
-/**
- * If the minimal spanning tree has N pairs of exits, then add an additional (N * percent) exits
- */
-const PERCENT_EXTRA_EXITS = 50;
-
 type RoomPair = [Room, Room]
 
 /**

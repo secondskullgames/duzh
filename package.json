@@ -1,0 +1,22 @@
+{
+  "name": "roguelike-js",
+  "version": "0.1.0",
+  "description": "A graphical Roguelike in the browser, written in Typescript",
+  "main": "core/main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "prepare": "tsc -p tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwbutler/roguelike-js.git"
+  },
+  "author": "jwbutler"
+}

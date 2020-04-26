@@ -5,8 +5,7 @@
     <script src="lib/require.js"></script>
     <script src="build/roguelike.js"></script>
     <script>
-      require(['core/main']);
-      //require(['core/actions'], actions => actions.restartGame());
+      require(['core/main'], ({ init }) => init());
     </script>
     <link rel="stylesheet" href="style.css" />
     <title></title>
@@ -14,7 +13,7 @@
   <body>
     <div id="container"></div>
     <br />
-    <button onclick="require(['core/debug'], debug => debug.revealMap());">Reveal Map</button>
-    <button onclick="require(['core/debug'], debug => debug.killEnemies());">Kill Enemies</button>
+    <button onclick="require(['core/main'], ({ revealMap }) => revealMap());">Reveal Map</button>
+    <button onclick="require(['core/main'], ({ killEnemies }) => killEnemies());">Kill Enemies</button>
   </body>
 </html>
