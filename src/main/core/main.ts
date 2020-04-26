@@ -1,7 +1,14 @@
 import { restartGame } from './actions';
+import { revealMap, killEnemies } from './debug';
 
-// @ts-ignore
-window.jwb = window.jwb || {};
-restartGame();
+function init() {
+  // @ts-ignore
+  window.jwb = window.jwb || {};
+  restartGame();
+}
 
-export {};
+export {
+  init,
+  killEnemies,
+  revealMap,
+};

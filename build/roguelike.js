@@ -3712,11 +3712,16 @@ define("core/globals", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
 });
-define("core/main", ["require", "exports", "core/actions"], function (require, exports, actions_3) {
+define("core/main", ["require", "exports", "core/actions", "core/debug"], function (require, exports, actions_3, debug_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    // @ts-ignore
-    window.jwb = window.jwb || {};
-    actions_3.restartGame();
+    exports.revealMap = debug_1.revealMap;
+    exports.killEnemies = debug_1.killEnemies;
+    function init() {
+        // @ts-ignore
+        window.jwb = window.jwb || {};
+        actions_3.restartGame();
+    }
+    exports.init = init;
 });
 //# sourceMappingURL=roguelike.js.map

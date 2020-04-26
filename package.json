@@ -7,7 +7,6 @@
     "lib": "lib"
   },
   "dependencies": {
-    "tsc": "^1.20150623.0",
     "typescript": "^3.8.3"
   },
   "devDependencies": {},
