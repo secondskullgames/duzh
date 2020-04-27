@@ -6,6 +6,7 @@ import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUti
 import Pathfinder from '../../utils/Pathfinder';
 
 type RoomPair = [Room, Room]
+type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
@@ -34,18 +35,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       const connectedRoomPairs = this._joinSection(section, [], true);
       this._joinSection(section, connectedRoomPairs, false);
 
-      return {
-        width,
-        height,
-        rooms: section.rooms.map(room => ({
-          left: room.left,
-          top: room.top + 1,
-          width: room.width,
-          height: room.height,
-          exits: room.exits.map(({ x, y }) => ({ x, y: y + 1 }))
-        })),
-        tiles: [this._emptyRow(width), ...section.tiles]
-      };
+      return this._shiftVertically(section, 1);
     })();
 
     this._addWalls(section);
@@ -58,62 +48,68 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * not large enough to form two sub-regions, just return a single section.
    */
   private _generateSection(width: number, height: number): MapSection {
+    const splitDirection = this._getSplitDirection(width, height);
+    if (splitDirection === 'HORIZONTAL') {
+      const splitX = this._getSplitPoint(width);
+      const leftWidth = splitX;
+      const leftSection = this._generateSection(leftWidth, height);
+      const rightWidth = width - splitX;
+      const rightSection = this._generateSection(rightWidth, height);
+
+      const tiles: TileType[][] = [];
+      for (let y = 0; y < leftSection.tiles.length; y++) {
+        const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
+        tiles.push(row);
+      }
+      // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
+      // relative to this section's coordinates
+      const rightRooms = rightSection.rooms
+        .map(room => ({ ...room, left: room.left + splitX }));
+
+      return {
+        width,
+        height,
+        rooms: [...leftSection.rooms, ...rightRooms],
+        tiles
+      };
+    } else if (splitDirection === 'VERTICAL') {
+      const splitY = this._getSplitPoint(height);
+      const topHeight = splitY;
+      const bottomHeight = height - splitY;
+      const topSection = this._generateSection(width, topHeight);
+      const bottomSection = this._generateSection(width, bottomHeight);
+      const tiles = [...topSection.tiles, ...bottomSection.tiles];
+      const bottomRooms = bottomSection.rooms
+        .map(room => ({ ...room, top: room.top + splitY }));
+      return {
+        width,
+        height,
+        rooms: [...topSection.rooms, ...bottomRooms],
+        tiles
+      };
+    } else {
+      // Base case: return a single section
+      return this._generateSingleSection(width, height);
+    }
+  }
+
+  private _getSplitDirection(width: number, height: number): SplitDirection {
     // First, make sure the area is large enough to support two sections; if not, we're done
     const minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
     const canSplitVertically = (height >= (2 * minSectionDimension));
 
-    const splitDirections = [
+    // @ts-ignore
+    const splitDirections: SplitDirection[] = [
       ...(canSplitHorizontally ? ['HORIZONTAL'] : []),
       ...(canSplitVertically ? ['VERTICAL'] : []),
-      ...((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : [])
+      ...((!canSplitHorizontally && !canSplitVertically) ? ['NONE'] : [])
     ];
 
     if (splitDirections.length > 0) {
-      const direction = randChoice(splitDirections);
-      if (direction === 'HORIZONTAL') {
-        const splitX = this._getSplitPoint(width);
-        const leftWidth = splitX;
-        const leftSection = this._generateSection(leftWidth, height);
-        const rightWidth = width - splitX;
-        const rightSection = this._generateSection(rightWidth, height);
-
-        const tiles: TileType[][] = [];
-        for (let y = 0; y < leftSection.tiles.length; y++) {
-          const row = [...leftSection.tiles[y], ...rightSection.tiles[y]];
-          tiles.push(row);
-        }
-        // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
-        // relative to this section's coordinates
-        const rightRooms = rightSection.rooms
-          .map(room => ({ ...room, left: room.left + splitX }));
-
-        return {
-          width,
-          height,
-          rooms: [...leftSection.rooms, ...rightRooms],
-          tiles
-        };
-      } else if (direction === 'VERTICAL') {
-        const splitY = this._getSplitPoint(height);
-        const topHeight = splitY;
-        const bottomHeight = height - splitY;
-        const topSection = this._generateSection(width, topHeight);
-        const bottomSection = this._generateSection(width, bottomHeight);
-        const tiles = [...topSection.tiles, ...bottomSection.tiles];
-        const bottomRooms = bottomSection.rooms
-          .map(room => ({ ...room, top: room.top + splitY }));
-        return {
-          width,
-          height,
-          rooms: [...topSection.rooms, ...bottomRooms],
-          tiles
-        };
-      }
+      return randChoice(splitDirections);
     }
-
-    // Base case: return a single section
-    return this._generateSingleSection(width, height);
+    return 'NONE';
   }
 
   /**
@@ -390,6 +386,20 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
         .join('\n')
     ));
     console.log();
+  }
+
+  private _shiftVertically(section: MapSection, dy: number) {
+    return {
+      ...section,
+      rooms: section.rooms.map(room => ({
+        left: room.left,
+        top: room.top + dy,
+        width: room.width,
+        height: room.height,
+        exits: room.exits.map(({ x, y }) => ({ x, y: y + dy }))
+      })),
+      tiles: [this._emptyRow(section.width), ...section.tiles]
+    };
   }
 }
 

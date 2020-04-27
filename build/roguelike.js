@@ -2620,21 +2620,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 var section = _this._generateSection(width, height - 1);
                 var connectedRoomPairs = _this._joinSection(section, [], true);
                 _this._joinSection(section, connectedRoomPairs, false);
-                return {
-                    width: width,
-                    height: height,
-                    rooms: section.rooms.map(function (room) { return ({
-                        left: room.left,
-                        top: room.top + 1,
-                        width: room.width,
-                        height: room.height,
-                        exits: room.exits.map(function (_a) {
-                            var x = _a.x, y = _a.y;
-                            return ({ x: x, y: y + 1 });
-                        })
-                    }); }),
-                    tiles: __spreadArrays([_this._emptyRow(width)], section.tiles)
-                };
+                return _this._shiftVertically(section, 1);
             })();
             this._addWalls(section);
             return section;
@@ -2645,54 +2631,61 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
          * not large enough to form two sub-regions, just return a single section.
          */
         RoomCorridorDungeonGenerator.prototype._generateSection = function (width, height) {
+            var splitDirection = this._getSplitDirection(width, height);
+            if (splitDirection === 'HORIZONTAL') {
+                var splitX_1 = this._getSplitPoint(width);
+                var leftWidth = splitX_1;
+                var leftSection = this._generateSection(leftWidth, height);
+                var rightWidth = width - splitX_1;
+                var rightSection = this._generateSection(rightWidth, height);
+                var tiles = [];
+                for (var y = 0; y < leftSection.tiles.length; y++) {
+                    var row = __spreadArrays(leftSection.tiles[y], rightSection.tiles[y]);
+                    tiles.push(row);
+                }
+                // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
+                // relative to this section's coordinates
+                var rightRooms = rightSection.rooms
+                    .map(function (room) { return (__assign(__assign({}, room), { left: room.left + splitX_1 })); });
+                return {
+                    width: width,
+                    height: height,
+                    rooms: __spreadArrays(leftSection.rooms, rightRooms),
+                    tiles: tiles
+                };
+            }
+            else if (splitDirection === 'VERTICAL') {
+                var splitY_1 = this._getSplitPoint(height);
+                var topHeight = splitY_1;
+                var bottomHeight = height - splitY_1;
+                var topSection = this._generateSection(width, topHeight);
+                var bottomSection = this._generateSection(width, bottomHeight);
+                var tiles = __spreadArrays(topSection.tiles, bottomSection.tiles);
+                var bottomRooms = bottomSection.rooms
+                    .map(function (room) { return (__assign(__assign({}, room), { top: room.top + splitY_1 })); });
+                return {
+                    width: width,
+                    height: height,
+                    rooms: __spreadArrays(topSection.rooms, bottomRooms),
+                    tiles: tiles
+                };
+            }
+            else {
+                // Base case: return a single section
+                return this._generateSingleSection(width, height);
+            }
+        };
+        RoomCorridorDungeonGenerator.prototype._getSplitDirection = function (width, height) {
             // First, make sure the area is large enough to support two sections; if not, we're done
             var minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
             var canSplitHorizontally = (width >= (2 * minSectionDimension));
             var canSplitVertically = (height >= (2 * minSectionDimension));
-            var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NEITHER'] : []));
+            // @ts-ignore
+            var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NONE'] : []));
             if (splitDirections.length > 0) {
-                var direction = RandomUtils_7.randChoice(splitDirections);
-                if (direction === 'HORIZONTAL') {
-                    var splitX_1 = this._getSplitPoint(width);
-                    var leftWidth = splitX_1;
-                    var leftSection = this._generateSection(leftWidth, height);
-                    var rightWidth = width - splitX_1;
-                    var rightSection = this._generateSection(rightWidth, height);
-                    var tiles = [];
-                    for (var y = 0; y < leftSection.tiles.length; y++) {
-                        var row = __spreadArrays(leftSection.tiles[y], rightSection.tiles[y]);
-                        tiles.push(row);
-                    }
-                    // rightSection.rooms are relative to its own origin, we need to offset them by rightSection's coordinates
-                    // relative to this section's coordinates
-                    var rightRooms = rightSection.rooms
-                        .map(function (room) { return (__assign(__assign({}, room), { left: room.left + splitX_1 })); });
-                    return {
-                        width: width,
-                        height: height,
-                        rooms: __spreadArrays(leftSection.rooms, rightRooms),
-                        tiles: tiles
-                    };
-                }
-                else if (direction === 'VERTICAL') {
-                    var splitY_1 = this._getSplitPoint(height);
-                    var topHeight = splitY_1;
-                    var bottomHeight = height - splitY_1;
-                    var topSection = this._generateSection(width, topHeight);
-                    var bottomSection = this._generateSection(width, bottomHeight);
-                    var tiles = __spreadArrays(topSection.tiles, bottomSection.tiles);
-                    var bottomRooms = bottomSection.rooms
-                        .map(function (room) { return (__assign(__assign({}, room), { top: room.top + splitY_1 })); });
-                    return {
-                        width: width,
-                        height: height,
-                        rooms: __spreadArrays(topSection.rooms, bottomRooms),
-                        tiles: tiles
-                    };
-                }
+                return RandomUtils_7.randChoice(splitDirections);
             }
-            // Base case: return a single section
-            return this._generateSingleSection(width, height);
+            return 'NONE';
         };
         /**
          * Create a rectangular section of tiles, consisting of a room surrounded by empty spaces.  The room can be placed
@@ -2965,6 +2958,18 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 .join('\n')); });
             console.log();
         };
+        RoomCorridorDungeonGenerator.prototype._shiftVertically = function (section, dy) {
+            return __assign(__assign({}, section), { rooms: section.rooms.map(function (room) { return ({
+                    left: room.left,
+                    top: room.top + dy,
+                    width: room.width,
+                    height: room.height,
+                    exits: room.exits.map(function (_a) {
+                        var x = _a.x, y = _a.y;
+                        return ({ x: x, y: y + dy });
+                    })
+                }); }), tiles: __spreadArrays([this._emptyRow(section.width)], section.tiles) });
+        };
         return RoomCorridorDungeonGenerator;
     }(DungeonGenerator_1.default));
     exports.default = RoomCorridorDungeonGenerator;
@@ -3211,7 +3216,7 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
             case types_15.MapLayout.ROOMS_AND_CORRIDORS: {
                 var minRoomDimension = RandomUtils_9.randInt(6, 7);
                 var maxRoomDimension = RandomUtils_9.randInt(7, 9);
-                var minRoomPadding = RandomUtils_9.randInt(1, 1);
+                var minRoomPadding = 2;
                 return new RoomCorridorDungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
             }
             case types_15.MapLayout.BLOB:
