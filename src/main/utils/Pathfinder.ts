@@ -80,8 +80,7 @@ class Pathfinder {
       const bestNode = nodeCosts[0].node;
       if (coordinatesEquals(bestNode, goal)) {
         // Done!
-        const path: Coordinates[] = traverseParents(bestNode);
-        return path;
+        return traverseParents(bestNode);
       } else {
         const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);

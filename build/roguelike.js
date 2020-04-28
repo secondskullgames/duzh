@@ -2885,7 +2885,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var blockedTileDetector = function (_a) {
                 var x = _a.x, y = _a.y;
                 // can't draw a path through an existing room or a wall
-                var blockedTileTypes = [types_13.TileType.FLOOR, types_13.TileType.FLOOR_HALL, types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
+                var blockedTileTypes = [types_13.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
                 if ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
                     return false;
                 }
@@ -3214,9 +3214,9 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     function _getDungeonGenerator(mapLayout, tileSet) {
         switch (mapLayout) {
             case types_15.MapLayout.ROOMS_AND_CORRIDORS: {
-                var minRoomDimension = RandomUtils_9.randInt(6, 7);
-                var maxRoomDimension = RandomUtils_9.randInt(7, 9);
-                var minRoomPadding = 2;
+                var minRoomDimension = RandomUtils_9.randInt(6, 6);
+                var maxRoomDimension = RandomUtils_9.randInt(9, 9);
+                var minRoomPadding = 0;
                 return new RoomCorridorDungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
             }
             case types_15.MapLayout.BLOB:

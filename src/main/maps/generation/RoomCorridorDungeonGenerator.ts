@@ -4,6 +4,7 @@ import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
 import { sortBy } from '../../utils/ArrayUtils';
 import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
 import Pathfinder from '../../utils/Pathfinder';
+import TileEligibilityChecker from './TileEligibilityChecker';
 
 type RoomPair = [Room, Room]
 type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
@@ -305,39 +306,6 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * Find a path between the specified exits between rooms.
    */
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
-    const blockedTileDetector = ({ x, y }: Coordinates) => {
-      // can't draw a path through an existing room or a wall
-      const blockedTileTypes = [TileType.FLOOR, TileType.FLOOR_HALL, TileType.WALL, TileType.WALL_HALL, TileType.WALL_TOP];
-
-      if ([firstExit, secondExit].some(exit => coordinatesEquals({ x, y }, exit))) {
-        return false;
-      } else if (section.tiles[y][x] === TileType.NONE || section.tiles[y][x] === TileType.FLOOR_HALL) {
-        // skip the check if we're within 1 tile vertically of an exit
-        const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
-          [firstExit, secondExit].some(exit => coordinatesEquals(exit, { x, y: y + dy }))
-        ));
-
-        if (isNextToExit) {
-          return false;
-        }
-
-        // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-        for (let dy of [-2, -1, 1, 2]) {
-          if ((y + dy >= 0) && (y + dy < section.height)) {
-            const tile = section.tiles[y + dy][x];
-            if (blockedTileTypes.indexOf(tile) > -1) {
-              return true;
-            }
-          }
-        }
-        return false;
-      } else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
-        return true;
-      }
-      console.error('how\'d we get here?');
-      return true;
-    };
-
     // prefer reusing floor hall tiles
     const tileCostCalculator = (first: Coordinates, second: Coordinates) => {
       return (section.tiles[second.y][second.x] === TileType.FLOOR_HALL) ? 0.01 : 1;
@@ -349,6 +317,9 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       width: section.width,
       height: section.height
     };
+
+    const tileChecker = new TileEligibilityChecker();
+    const blockedTileDetector = ({ x, y }: Coordinates) => tileChecker.isBlocked({ x, y }, section, [firstExit, secondExit]);
     const path = new Pathfinder(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
     path.forEach(({ x, y }) => {
       section.tiles[y][x] = TileType.FLOOR_HALL;
