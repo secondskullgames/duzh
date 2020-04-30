@@ -15,7 +15,7 @@ class SoundPlayer {
   constructor (maxPolyphony: number, gain: number) {
     this._context = new AudioContext();
     this._gainNode = this._context.createGain();
-    this._gainNode.gain.value = gain * 0.15; // sounds can be VERY loud
+    this._gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
     this._gainNode.connect(this._context.destination);
 
     this._oscillators = [];

@@ -3,8 +3,9 @@ import Colors from '../types/Colors';
 import Renderer from './Renderer';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
-import { Coordinates, Entity, ItemCategory, Rect, Tile } from '../types/types';
+import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
+import { loadImage } from './ImageUtils';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -29,6 +30,9 @@ const LINE_HEIGHT = 16;
 
 const SANS_SERIF = 'sans-serif';
 const MONOSPACE = 'Monospace';
+const GAME_OVER_FILENAME = 'gameover';
+const TITLE_FILENAME = 'title';
+const VICTORY_FILENAME = 'victory';
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
@@ -50,11 +54,17 @@ class SpriteRenderer implements Renderer {
   render(): Promise<any> {
     const { screen } = jwb.state;
     switch (screen) {
-      case 'GAME':
+      case GameScreen.TITLE:
+        return this._renderStaticImage(TITLE_FILENAME);
+      case GameScreen.GAME:
         return this._renderGameScreen();
-      case 'INVENTORY':
+      case GameScreen.INVENTORY:
         return this._renderGameScreen()
           .then(() => this._renderInventory());
+      case GameScreen.VICTORY:
+        return this._renderStaticImage(VICTORY_FILENAME);
+      case GameScreen.GAME_OVER:
+        return this._renderStaticImage(GAME_OVER_FILENAME);
       default:
         throw `Invalid screen ${screen}`;
     }
@@ -159,7 +169,9 @@ class SpriteRenderer implements Renderer {
     _context.beginPath();
     _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
     _context.fill();
-    return new Promise(resolve => { resolve(); });
+    return new Promise(resolve => {
+      resolve();
+    });
   }
 
   private _renderInventory(): Promise<any> {
@@ -355,6 +367,12 @@ class SpriteRenderer implements Renderer {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
       y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
     };
+  }
+
+  private _renderStaticImage(filename: string): Promise<any> {
+    return loadImage(filename)
+      .then(imageData => createImageBitmap(imageData))
+      .then(image => this._context.drawImage(image, 0, 0));
   }
 }
 

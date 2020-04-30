@@ -10,6 +10,8 @@ function loadImage(filename: string): Promise<ImageData> {
     const img: HTMLImageElement = document.createElement('img');
 
     img.addEventListener('load', () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
       const context = canvas.getContext('2d');
       if (!context) {
         throw 'Couldn\'t get rendering context!';

@@ -38,6 +38,8 @@ define("graphics/ImageUtils", ["require", "exports"], function (require, exports
             canvas.style.display = 'none';
             var img = document.createElement('img');
             img.addEventListener('load', function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
                 var context = canvas.getContext('2d');
                 if (!context) {
                     throw 'Couldn\'t get rendering context!';
@@ -300,6 +302,9 @@ define("types/types", ["require", "exports"], function (require, exports) {
     (function (GameScreen) {
         GameScreen["GAME"] = "GAME";
         GameScreen["INVENTORY"] = "INVENTORY";
+        GameScreen["TITLE"] = "TITLE";
+        GameScreen["VICTORY"] = "VICTORY";
+        GameScreen["GAME_OVER"] = "GAME_OVER";
     })(GameScreen || (GameScreen = {}));
     exports.GameScreen = GameScreen;
     var ItemCategory;
@@ -570,9 +575,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
                     .sort(function (a, b) { return a.cost - b.cost; });
                 var bestNode = nodeCosts[0].node;
                 if (MapUtils_1.coordinatesEquals(bestNode, goal)) {
-                    // Done!
-                    var path = traverseParents(bestNode);
-                    return { value: path };
+                    return { value: traverseParents(bestNode) };
                 }
                 else {
                     var bestNodes = nodeCosts.filter(function (_a) {
@@ -635,7 +638,7 @@ define("sounds/SoundPlayer", ["require", "exports"], function (require, exports)
         function SoundPlayer(maxPolyphony, gain) {
             this._context = new AudioContext();
             this._gainNode = this._context.createGain();
-            this._gainNode.gain.value = gain * 0.15; // sounds can be VERY loud
+            this._gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
             this._gainNode.connect(this._context.destination);
             this._oscillators = [];
         }
@@ -726,6 +729,12 @@ define("sounds/AudioUtils", ["require", "exports", "sounds/SoundPlayer"], functi
         MUSIC.playSound(samples, false);
     }
     exports.playMusic = playMusic;
+    function stopMusic() {
+        if (MUSIC) {
+            MUSIC.stop();
+        }
+    }
+    exports.stopMusic = stopMusic;
 });
 define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -1545,7 +1554,195 @@ define("items/equipment/EquipmentMap", ["require", "exports"], function (require
     }());
     exports.default = EquipmentMap;
 });
-define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap"], function (require, exports, types_5, AudioUtils_2, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1) {
+define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_5, AudioUtils_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _transpose8va(_a) {
+        var freq = _a[0], ms = _a[1];
+        return [freq * 2, ms];
+    }
+    function _transpose8vb(_a) {
+        var freq = _a[0], ms = _a[1];
+        return [freq / 2, ms];
+    }
+    function _duplicate(samples) {
+        return __spreadArrays(samples, samples);
+    }
+    var SUITE_1 = (function () {
+        var FIGURE_1 = [[300, 2000], [200, 1000], [225, 1000]];
+        var FIGURE_2 = [[300, 1000], [225, 1000], [200, 2000]];
+        var FIGURE_3 = [[200, 1000], [225, 1000], [250, 2000]];
+        var FIGURE_4 = [[300, 200], [250, 100], [225, 200], [600, 500], [300, 200], [200, 200], [225, 100], [200, 200], [225, 200], [300, 100], [600, 500], [300, 500], [600, 500], [250, 500], [300, 200], [200, 200], [250, 100], [300, 200], [225, 200], [250, 100]];
+        var FIGURE_5 = [[600, 500], [225, 250], [250, 250], [500, 500], [600, 500], [400, 500], [250, 500], [200, 250], [225, 250], [300, 250], [400, 250]];
+        var FIGURE_6 = [[600, 200], [0, 100], [600, 200], [0, 500], [600, 500], [0, 500]];
+        return {
+            length: 4000,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    var SUITE_2 = (function () {
+        var FIGURE_1 = [[100, 1000], [80, 1000], [120, 1000], [80, 1000]]
+            .map(_transpose8va);
+        var FIGURE_2 = [[50, 1000], [80, 1000], [200, 1000], [240, 750], [230, 250]]
+            //const FIGURE_2 = [[50,1000],[80,1000],[200,1000],[240,750],[/*230*/225,250]]
+            .map(_transpose8va)
+            .map(_transpose8va);
+        var FIGURE_3 = [[300, 500], [240, 500], [225, 1000], [200, 750], [150, 250], [180, 1000]];
+        // const FIGURE_3 = [[300,500],[/*235*/240,500],[225,1000],[200,750],[150,250],[180,1000]];
+        var FIGURE_4 = [[50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125], [50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125]]
+            .map(_transpose8va)
+            .map(_transpose8va);
+        var FIGURE_5 = [[300, 500], [200, 1000], [225, 500], [240, 500], [150, 1000], [100, 250], [180, 250]];
+        //const FIGURE_5 = [[300,500],[200,1000],[225,500],[/*235*/240,500],[150,1000],[100,250],[180,250]];
+        var FIGURE_6 = [[100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [120, 250], [100, 250], [0, 250], [100, 250], [0, 250], [80, 250], [100, 250], [80, 250], [90, 250]]
+            .map(_transpose8va);
+        return {
+            length: 4000,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    var SUITE_3 = (function () {
+        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
+            .map(_transpose8va);
+        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
+        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
+            .map(_transpose8va);
+        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
+        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
+            .map(_transpose8va);
+        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
+        return {
+            length: 6400,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    var SUITE_4 = (function () {
+        var FIGURE_1 = [[100, 1920], [135, 1920], [100, 1920], [150, 1920]]
+            .map(_transpose8va);
+        var FIGURE_2 = [[80, 1920], [100, 1920], [120, 1920], [90, 1920]]
+            .map(_transpose8va);
+        var FIGURE_3 = [[100, 960], [150, 960], [120, 960], [135, 960], [100, 960], [150, 960], [120, 960], [135, 960]]
+            .map(_transpose8va);
+        var FIGURE_4 = _duplicate([[0, 240], [50, 240], [150, 240], [50, 240], [120, 240], [50, 240], [0, 480], [120, 240], [150, 240], [50, 240], [180, 1200]])
+            .map(_transpose8va);
+        var FIGURE_5 = [[200, 720], [240, 480], [0, 480], [270, 480], [280, 240], [270, 240], [240, 240], [270, 240], [240, 240], [0, 480], [200, 720], [240, 720], [0, 480], [300, 240], [360, 240], [300, 240], [280, 480], [0, 720]];
+        var FIGURE_6 = _duplicate([[100, 200], [0, 40], [100, 240], [0, 240], [100, 240], [0, 960], [100, 200], [0, 40], [100, 200], [0, 40], [120, 480], [100, 200], [0, 40], [100, 200], [0, 40], [90, 480]])
+            .map(_transpose8va);
+        return {
+            length: 7680,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    var ACTIVE_SUITE = null;
+    function playSuite(suite) {
+        ACTIVE_SUITE = suite;
+        var sections = Object.values(suite.sections);
+        var numRepeats = 4;
+        var _loop_5 = function (i) {
+            var section = sections[i];
+            var bass = (!!section.bass) ? RandomUtils_5.randChoice(section.bass) : null;
+            var lead;
+            if (!!section.lead) {
+                do {
+                    lead = RandomUtils_5.randChoice(section.lead);
+                } while (lead === bass);
+            }
+            for (var j = 0; j < numRepeats; j++) {
+                setTimeout(function () {
+                    if (suite === ACTIVE_SUITE) {
+                        var figures = __spreadArrays((!!bass ? [bass.map(_transpose8vb)] : []), (!!lead ? [lead] : []));
+                        figures.forEach(function (figure) { return AudioUtils_2.playMusic(figure); });
+                    }
+                }, ((numRepeats * i) + j) * suite.length);
+            }
+        };
+        for (var i = 0; i < sections.length; i++) {
+            _loop_5(i);
+        }
+        setTimeout(function () {
+            if (suite === ACTIVE_SUITE) {
+                playSuite(suite);
+            }
+        }, sections.length * suite.length * numRepeats);
+    }
+    function stop() {
+        AudioUtils_2.stopMusic();
+        ACTIVE_SUITE = null;
+    }
+    exports.default = {
+        SUITE_1: SUITE_1,
+        SUITE_2: SUITE_2,
+        SUITE_3: SUITE_3,
+        SUITE_4: SUITE_4,
+        playSuite: playSuite,
+        stop: stop
+    };
+});
+define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music"], function (require, exports, types_5, AudioUtils_3, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1, Music_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1642,7 +1839,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.life += lifePerLevel;
             this._damage += this.unitClass.damagePerLevel(this.level);
             if (withSound) {
-                AudioUtils_2.playSound(Sounds_2.default.LEVEL_UP);
+                AudioUtils_3.playSound(Sounds_2.default.LEVEL_UP);
             }
         };
         Unit.prototype.gainExperience = function (experience) {
@@ -1670,11 +1867,12 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
                 if (_this.life === 0) {
                     map.removeUnit(_this);
                     if (_this === playerUnit) {
-                        alert('Game Over!');
-                        AudioUtils_2.playSound(Sounds_2.default.PLAYER_DIES);
+                        jwb.state.screen = types_5.GameScreen.GAME_OVER;
+                        Music_1.default.stop();
+                        AudioUtils_3.playSound(Sounds_2.default.PLAYER_DIES);
                     }
                     else {
-                        AudioUtils_2.playSound(Sounds_2.default.ENEMY_DIES);
+                        AudioUtils_3.playSound(Sounds_2.default.ENEMY_DIES);
                     }
                     if (sourceUnit) {
                         sourceUnit.gainExperience(1);
@@ -1682,10 +1880,10 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
                 }
                 else {
                     if (_this === playerUnit) {
-                        AudioUtils_2.playSound(Sounds_2.default.PLAYER_HITS_ENEMY);
+                        AudioUtils_3.playSound(Sounds_2.default.PLAYER_HITS_ENEMY);
                     }
                     else {
-                        AudioUtils_2.playSound(Sounds_2.default.ENEMY_HITS_PLAYER);
+                        AudioUtils_3.playSound(Sounds_2.default.ENEMY_HITS_PLAYER);
                     }
                 }
                 resolve();
@@ -1815,7 +2013,7 @@ define("core/GameState", ["require", "exports", "types/types"], function (requir
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, mapSuppliers) {
-            this.screen = types_7.GameScreen.GAME;
+            this.screen = types_7.GameScreen.TITLE;
             this.playerUnit = playerUnit;
             this.mapSuppliers = mapSuppliers;
             this.mapIndex = 0;
@@ -1867,7 +2065,7 @@ define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], functio
         playTurn: playTurn
     };
 });
-define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_3, Sounds_3) {
+define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_4, Sounds_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function pickupItem(unit, mapItem) {
@@ -1875,7 +2073,7 @@ define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
         var inventoryItem = mapItem.inventoryItem;
         unit.inventory.add(inventoryItem);
         state.messages.push("Picked up a " + inventoryItem.name + ".");
-        AudioUtils_3.playSound(Sounds_3.default.PICK_UP_ITEM);
+        AudioUtils_4.playSound(Sounds_3.default.PICK_UP_ITEM);
     }
     exports.pickupItem = pickupItem;
     function useItem(unit, item) {
@@ -1894,7 +2092,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions"], function (require, exports, Colors_4, PromiseUtils_6, MapUtils_4, types_8, actions_1) {
+define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils"], function (require, exports, Colors_4, PromiseUtils_6, MapUtils_4, types_8, actions_1, ImageUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -1914,6 +2112,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var LINE_HEIGHT = 16;
     var SANS_SERIF = 'sans-serif';
     var MONOSPACE = 'Monospace';
+    var GAME_OVER_FILENAME = 'gameover';
+    var TITLE_FILENAME = 'title';
+    var VICTORY_FILENAME = 'victory';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -1930,11 +2131,17 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _this = this;
             var screen = jwb.state.screen;
             switch (screen) {
-                case 'GAME':
+                case types_8.GameScreen.TITLE:
+                    return this._renderStaticImage(TITLE_FILENAME);
+                case types_8.GameScreen.GAME:
                     return this._renderGameScreen();
-                case 'INVENTORY':
+                case types_8.GameScreen.INVENTORY:
                     return this._renderGameScreen()
                         .then(function () { return _this._renderInventory(); });
+                case types_8.GameScreen.VICTORY:
+                    return this._renderStaticImage(VICTORY_FILENAME);
+                case types_8.GameScreen.GAME_OVER:
+                    return this._renderStaticImage(GAME_OVER_FILENAME);
                 default:
                     throw "Invalid screen " + screen;
             }
@@ -1986,8 +2193,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderProjectiles = function () {
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_5 = function (y) {
-                var _loop_6 = function (x) {
+            var _loop_6 = function (y) {
+                var _loop_7 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var projectile = map.projectiles
                             .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
@@ -1997,12 +2204,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_6(x);
+                    _loop_7(x);
                 }
             };
             var this_2 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_5(y);
+                _loop_6(y);
             }
             return Promise.all(promises);
         };
@@ -2041,7 +2248,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             _context.beginPath();
             _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
             _context.fill();
-            return new Promise(function (resolve) { resolve(); });
+            return new Promise(function (resolve) {
+                resolve();
+            });
         };
         SpriteRenderer.prototype._renderInventory = function () {
             var playerUnit = jwb.state.playerUnit;
@@ -2209,6 +2418,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
             };
         };
+        SpriteRenderer.prototype._renderStaticImage = function (filename) {
+            var _this = this;
+            return ImageUtils_3.loadImage(filename)
+                .then(function (imageData) { return createImageBitmap(imageData); })
+                .then(function (image) { return _this._context.drawImage(image, 0, 0); });
+        };
         return SpriteRenderer;
     }());
     exports.default = SpriteRenderer;
@@ -2305,13 +2520,13 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_4, PromiseUtils_7, RandomUtils_5, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_5, PromiseUtils_7, RandomUtils_6, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
         var onUse = function (item, unit) {
             return new Promise(function (resolve) {
-                AudioUtils_4.playSound(Sounds_4.default.USE_POTION);
+                AudioUtils_5.playSound(Sounds_4.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
                 jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
@@ -2388,7 +2603,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
     function createRandomItem(_a, level) {
         var x = _a.x, y = _a.y;
         var suppliers = __spreadArrays(_getItemSuppliers(level), _getWeaponSuppliers(level));
-        return RandomUtils_5.randChoice(suppliers)({ x: x, y: y });
+        return RandomUtils_6.randChoice(suppliers)({ x: x, y: y });
     }
     exports.default = {
         createRandomItem: createRandomItem
@@ -2494,14 +2709,14 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b[Colors_6.default.DARK_GRAY] = Colors_6.default.DARKER_GRAY,
             _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARKER_GRAY,
             _b),
-        startingLife: 100,
+        startingLife: 80,
         startingMana: null,
         startingDamage: 10,
         minLevel: 5,
         maxLevel: 9,
         lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 3; },
+        damagePerLevel: function () { return 2; },
         aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
         aiParams: {
             speed: 0.88,
@@ -2519,7 +2734,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         getEnemyClasses: getEnemyClasses
     };
 });
-define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_6, Unit_1) {
+define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/RandomUtils", "units/Unit"], function (require, exports, UnitClasses_1, RandomUtils_7, Unit_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomEnemy(_a, level) {
@@ -2527,7 +2742,7 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
         var candidates = UnitClasses_1.default.getEnemyClasses()
             .filter(function (unitClass) { return level >= unitClass.minLevel; })
             .filter(function (unitClass) { return level <= unitClass.maxLevel; });
-        var unitClass = RandomUtils_6.randChoice(candidates);
+        var unitClass = RandomUtils_7.randChoice(candidates);
         return new Unit_1.default(unitClass, unitClass.name, level, { x: x, y: y });
     }
     exports.default = {
@@ -2543,7 +2758,9 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
         }
         DungeonGenerator.prototype.generateDungeon = function (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
             var _this = this;
+            var t1 = new Date().getTime();
             var section = this.generateTiles(width, height);
+            var t2 = new Date().getTime();
             var tileTypes = section.tiles;
             var stairsLocation = MapUtils_5.pickUnoccupiedLocations(tileTypes, [types_12.TileType.FLOOR], [], 1)[0];
             tileTypes[stairsLocation.y][stairsLocation.x] = types_12.TileType.STAIRS_DOWN;
@@ -2553,6 +2770,8 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
             var tiles = tileTypes.map(function (row) {
                 return row.map(function (tileType) { return MapUtils_5.createTile(tileType, _this._tileSet); });
             });
+            var t3 = new Date().getTime();
+            console.log("Generated dungeon " + level + " in " + (t3 - t1) + " (" + (t2 - t1) + ", " + (t3 - t2) + ") ms");
             return {
                 level: level,
                 width: width,
@@ -2571,19 +2790,19 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_7 = function (y) {
-                var _loop_8 = function (x) {
+            var _loop_8 = function (y) {
+                var _loop_9 = function (x) {
                     if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_8(x);
+                    _loop_9(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_7(y);
+                _loop_8(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -2592,7 +2811,48 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
     }());
     exports.default = DungeonGenerator;
 });
-define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder"], function (require, exports, DungeonGenerator_1, types_13, RandomUtils_7, ArrayUtils_4, MapUtils_6, Pathfinder_2) {
+define("maps/generation/TileEligibilityChecker", ["require", "exports", "types/types", "maps/MapUtils"], function (require, exports, types_13, MapUtils_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TileEligibilityChecker = /** @class */ (function () {
+        function TileEligibilityChecker() {
+        }
+        TileEligibilityChecker.prototype.isBlocked = function (_a, section, exits) {
+            var x = _a.x, y = _a.y;
+            // can't draw a path through an existing room or a wall
+            var blockedTileTypes = [types_13.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
+            if (exits.some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
+                return false;
+            }
+            else if (section.tiles[y][x] === types_13.TileType.NONE || section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
+                // skip the check if we're within 1 tile vertically of an exit
+                var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return (exits.some(function (exit) { return MapUtils_6.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
+                if (isNextToExit) {
+                    return false;
+                }
+                // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
+                for (var _i = 0, _b = [-2, -1, 1, 2]; _i < _b.length; _i++) {
+                    var dy = _b[_i];
+                    if ((y + dy >= 0) && (y + dy < section.height)) {
+                        var tile = section.tiles[y + dy][x];
+                        if (blockedTileTypes.indexOf(tile) > -1) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+                return true;
+            }
+            console.error('how\'d we get here?');
+            return true;
+        };
+        return TileEligibilityChecker;
+    }());
+    exports.default = TileEligibilityChecker;
+});
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder", "maps/generation/TileEligibilityChecker"], function (require, exports, DungeonGenerator_1, types_14, RandomUtils_8, ArrayUtils_4, MapUtils_7, Pathfinder_2, TileEligibilityChecker_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -2683,7 +2943,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             // @ts-ignore
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NONE'] : []));
             if (splitDirections.length > 0) {
-                return RandomUtils_7.randChoice(splitDirections);
+                return RandomUtils_8.randChoice(splitDirections);
             }
             return 'NONE';
         };
@@ -2696,11 +2956,11 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
             var maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
             console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_7.randInt(this._minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_7.randInt(this._minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_8.randInt(this._minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_8.randInt(this._minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_7.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
-            var roomTop = RandomUtils_7.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
+            var roomLeft = RandomUtils_8.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
+            var roomTop = RandomUtils_8.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -2713,7 +2973,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                         tiles[y][x] = roomTiles[roomY][roomX];
                     }
                     else {
-                        tiles[y][x] = types_13.TileType.NONE;
+                        tiles[y][x] = types_14.TileType.NONE;
                     }
                 }
             }
@@ -2732,13 +2992,13 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 tiles[y] = [];
                 for (var x = 0; x < width; x++) {
                     if (x > 0 && x < (width - 1) && y === 0) {
-                        tiles[y][x] = types_13.TileType.WALL_TOP;
+                        tiles[y][x] = types_14.TileType.WALL_TOP;
                     }
                     else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
-                        tiles[y][x] = types_13.TileType.WALL;
+                        tiles[y][x] = types_14.TileType.WALL;
                     }
                     else {
-                        tiles[y][x] = types_13.TileType.FLOOR;
+                        tiles[y][x] = types_14.TileType.FLOOR;
                     }
                 }
             }
@@ -2752,7 +3012,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_7.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_8.randInt(minSplitPoint, maxSplitPoint);
         };
         RoomCorridorDungeonGenerator.prototype._joinSection = function (section, existingRoomPairs, logError) {
             var _this = this;
@@ -2777,7 +3037,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
                     return _this._canJoinRooms(connectedRoom, unconnectedRoom);
                 });
-                RandomUtils_7.shuffle(candidatePairs);
+                RandomUtils_8.shuffle(candidatePairs);
                 var joinedAnyRooms = false;
                 for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];
@@ -2807,9 +3067,9 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             for (var y = 0; y < section.height; y++) {
                 for (var x = 0; x < section.width; x++) {
                     if (y > 0) {
-                        if (section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
-                            if (section.tiles[y - 1][x] === types_13.TileType.NONE || section.tiles[y - 1][x] === types_13.TileType.WALL) {
-                                section.tiles[y - 1][x] = types_13.TileType.WALL_HALL;
+                        if (section.tiles[y][x] === types_14.TileType.FLOOR_HALL) {
+                            if (section.tiles[y - 1][x] === types_14.TileType.NONE || section.tiles[y - 1][x] === types_14.TileType.WALL) {
+                                section.tiles[y - 1][x] = types_14.TileType.WALL_HALL;
                             }
                         }
                     }
@@ -2832,7 +3092,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             }
             exitPairs = ArrayUtils_4.sortBy(exitPairs, function (_a) {
                 var first = _a[0], second = _a[1];
-                return MapUtils_6.hypotenuse(first, second);
+                return MapUtils_7.hypotenuse(first, second);
             });
             for (var i = 0; i < exitPairs.length; i++) {
                 var _b = exitPairs[i], firstExit = _b[0], secondExit = _b[1];
@@ -2875,47 +3135,16 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             });
             return candidates.filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                return !room.exits.some(function (exit) { return MapUtils_6.isAdjacent(exit, { x: x, y: y }); });
+                return !room.exits.some(function (exit) { return MapUtils_7.isAdjacent(exit, { x: x, y: y }); });
             });
         };
         /**
          * Find a path between the specified exits between rooms.
          */
         RoomCorridorDungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
-            var blockedTileDetector = function (_a) {
-                var x = _a.x, y = _a.y;
-                // can't draw a path through an existing room or a wall
-                var blockedTileTypes = [types_13.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
-                if ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
-                    return false;
-                }
-                else if (section.tiles[y][x] === types_13.TileType.NONE || section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
-                    // skip the check if we're within 1 tile vertically of an exit
-                    var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return ([firstExit, secondExit].some(function (exit) { return MapUtils_6.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
-                    if (isNextToExit) {
-                        return false;
-                    }
-                    // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-                    for (var _i = 0, _b = [-2, -1, 1, 2]; _i < _b.length; _i++) {
-                        var dy = _b[_i];
-                        if ((y + dy >= 0) && (y + dy < section.height)) {
-                            var tile = section.tiles[y + dy][x];
-                            if (blockedTileTypes.indexOf(tile) > -1) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-                else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
-                    return true;
-                }
-                console.error('how\'d we get here?');
-                return true;
-            };
             // prefer reusing floor hall tiles
             var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === types_13.TileType.FLOOR_HALL) ? 0.01 : 1;
+                return (section.tiles[second.y][second.x] === types_14.TileType.FLOOR_HALL) ? 0.01 : 1;
             };
             var mapRect = {
                 left: 0,
@@ -2923,17 +3152,22 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 width: section.width,
                 height: section.height
             };
+            var tileChecker = new TileEligibilityChecker_1.default();
+            var blockedTileDetector = function (_a) {
+                var x = _a.x, y = _a.y;
+                return tileChecker.isBlocked({ x: x, y: y }, section, [firstExit, secondExit]);
+            };
             var path = new Pathfinder_2.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
-                section.tiles[y][x] = types_13.TileType.FLOOR_HALL;
+                section.tiles[y][x] = types_14.TileType.FLOOR_HALL;
             });
             return (path.length > 0);
         };
         RoomCorridorDungeonGenerator.prototype._emptyRow = function (width) {
             var row = [];
             for (var x = 0; x < width; x++) {
-                row.push(types_13.TileType.NONE);
+                row.push(types_14.TileType.NONE);
             }
             return row;
         };
@@ -2950,7 +3184,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             console.log("Sections for " + name + ":");
             sections.forEach(function (section) { return console.log(section.tiles
                 .map(function (row) { return row.map(function (tile) {
-                if (MapUtils_6.isBlocking(tile)) {
+                if (MapUtils_7.isBlocking(tile)) {
                     return '#';
                 }
                 return '.';
@@ -2974,7 +3208,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
     }(DungeonGenerator_1.default));
     exports.default = RoomCorridorDungeonGenerator;
 });
-define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_2, types_14, RandomUtils_8, MapUtils_7, ArrayUtils_5) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_2, types_15, RandomUtils_9, MapUtils_8, ArrayUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BlobDungeonGenerator = /** @class */ (function (_super) {
@@ -3012,27 +3246,27 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             for (var y = 0; y < height; y++) {
                 var row = [];
                 for (var x = 0; x < width; x++) {
-                    row.push(types_14.TileType.NONE);
+                    row.push(types_15.TileType.NONE);
                 }
                 tiles.push(row);
             }
             return tiles;
         };
         BlobDungeonGenerator.prototype._placeInitialTile = function (width, height, tiles) {
-            var x = RandomUtils_8.randInt(width * 3 / 8, width * 5 / 8);
-            var y = RandomUtils_8.randInt(height * 3 / 8, height * 5 / 8);
-            tiles[y][x] = types_14.TileType.FLOOR;
+            var x = RandomUtils_9.randInt(width * 3 / 8, width * 5 / 8);
+            var y = RandomUtils_9.randInt(height * 3 / 8, height * 5 / 8);
+            tiles[y][x] = types_15.TileType.FLOOR;
         };
         BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
             var minRatio = 0.4;
             var maxRatio = 0.7;
-            return RandomUtils_8.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
+            return RandomUtils_9.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
         };
         BlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
             var floorTiles = [];
             for (var y = 0; y < tiles.length; y++) {
                 for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
                         floorTiles.push({ x: x, y: y });
                     }
                 }
@@ -3043,7 +3277,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var floorTiles = [];
             for (var y = 0; y < tiles.length; y++) {
                 for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_14.TileType.NONE) {
+                    if (tiles[y][x] === types_15.TileType.NONE) {
                         floorTiles.push({ x: x, y: y });
                     }
                 }
@@ -3064,9 +3298,9 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             // change these ratios to adjust the "snakiness"
             var minIndex = Math.floor((candidates.length - 1) * 0.6);
             var maxIndex = Math.floor((candidates.length - 1) * 0.8);
-            var index = RandomUtils_8.randInt(minIndex, maxIndex);
+            var index = RandomUtils_9.randInt(minIndex, maxIndex);
             var _a = candidates[index], x = _a.x, y = _a.y;
-            tiles[y][x] = types_14.TileType.FLOOR;
+            tiles[y][x] = types_15.TileType.FLOOR;
             return true;
         };
         BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
@@ -3082,7 +3316,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             })
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                return floorTiles.some(function (floorTile) { return MapUtils_7.isAdjacent({ x: x, y: y }, floorTile); });
+                return floorTiles.some(function (floorTile) { return MapUtils_8.isAdjacent({ x: x, y: y }, floorTile); });
             });
         };
         BlobDungeonGenerator.prototype._isLegalWallCoordinates = function (_a, tiles) {
@@ -3093,15 +3327,15 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var m = 3; // number of consecutive wall tiles required
             for (var n = 2; n <= m; n++) {
                 if (y >= n) {
-                    if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
-                        && (tiles[y - n][x] === types_14.TileType.FLOOR)) {
+                    if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_15.TileType.NONE; })
+                        && (tiles[y - n][x] === types_15.TileType.FLOOR)) {
                         return false;
                     }
                 }
                 // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
                 if (y <= (height - 1 - n)) {
-                    if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
-                        && (tiles[y + n][x] == types_14.TileType.FLOOR)) {
+                    if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_15.TileType.NONE; })
+                        && (tiles[y + n][x] == types_15.TileType.FLOOR)) {
                         return false;
                     }
                 }
@@ -3123,8 +3357,8 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                 if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
                     // out of bounds
                 }
-                else if (tiles[y2][x2] === types_14.TileType.FLOOR) {
-                    if (tiles[y2][x] === types_14.TileType.NONE && tiles[y][x2] === types_14.TileType.NONE) {
+                else if (tiles[y2][x2] === types_15.TileType.FLOOR) {
+                    if (tiles[y2][x] === types_15.TileType.NONE && tiles[y][x2] === types_15.TileType.NONE) {
                         return true;
                     }
                 }
@@ -3145,10 +3379,10 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                     // out of bounds
                 }
                 else {
-                    if (tiles[b.y][b.x] === types_14.TileType.NONE
-                        && tiles[c.y][c.x] === types_14.TileType.NONE
-                        && tiles[d.y][d.x] === types_14.TileType.NONE
-                        && tiles[f.y][f.x] === types_14.TileType.FLOOR) {
+                    if (tiles[b.y][b.x] === types_15.TileType.NONE
+                        && tiles[c.y][c.x] === types_15.TileType.NONE
+                        && tiles[d.y][d.x] === types_15.TileType.NONE
+                        && tiles[f.y][f.x] === types_15.TileType.FLOOR) {
                         return true;
                     }
                 }
@@ -3160,8 +3394,8 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var width = tiles[0].length;
             for (var y = 0; y < (height - 1); y++) {
                 for (var x = 0; x < width; x++) {
-                    if (tiles[y][x] === types_14.TileType.NONE && tiles[y + 1][x] === types_14.TileType.FLOOR) {
-                        tiles[y][x] = types_14.TileType.WALL_TOP;
+                    if (tiles[y][x] === types_15.TileType.NONE && tiles[y + 1][x] === types_15.TileType.FLOOR) {
+                        tiles[y][x] = types_15.TileType.WALL_TOP;
                     }
                 }
             }
@@ -3190,10 +3424,10 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var maxX = Math.min(tile.x + offset, width - 1);
             for (var y = minY; y <= maxY; y++) {
                 for (var x = minX; x <= maxX; x++) {
-                    if (MapUtils_7.coordinatesEquals(tile, { x: x, y: y })) {
+                    if (MapUtils_8.coordinatesEquals(tile, { x: x, y: y })) {
                         continue;
                     }
-                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
                         score++;
                     }
                 }
@@ -3204,7 +3438,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
     }(DungeonGenerator_2.default));
     exports.default = BlobDungeonGenerator;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/RoomCorridorDungeonGenerator", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils"], function (require, exports, ItemFactory_1, UnitFactory_1, RoomCorridorDungeonGenerator_1, BlobDungeonGenerator_1, types_15, RandomUtils_9) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/RoomCorridorDungeonGenerator", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils"], function (require, exports, ItemFactory_1, UnitFactory_1, RoomCorridorDungeonGenerator_1, BlobDungeonGenerator_1, types_16, RandomUtils_10) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
@@ -3213,194 +3447,19 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     }
     function _getDungeonGenerator(mapLayout, tileSet) {
         switch (mapLayout) {
-            case types_15.MapLayout.ROOMS_AND_CORRIDORS: {
-                var minRoomDimension = RandomUtils_9.randInt(6, 6);
-                var maxRoomDimension = RandomUtils_9.randInt(9, 9);
+            case types_16.MapLayout.ROOMS_AND_CORRIDORS: {
+                var minRoomDimension = RandomUtils_10.randInt(6, 6);
+                var maxRoomDimension = RandomUtils_10.randInt(9, 9);
                 var minRoomPadding = 0;
                 return new RoomCorridorDungeonGenerator_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
             }
-            case types_15.MapLayout.BLOB:
+            case types_16.MapLayout.BLOB:
                 return new BlobDungeonGenerator_1.default(tileSet);
         }
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_10, AudioUtils_5) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function _transpose8va(_a) {
-        var freq = _a[0], ms = _a[1];
-        return [freq * 2, ms];
-    }
-    function _transpose8vb(_a) {
-        var freq = _a[0], ms = _a[1];
-        return [freq / 2, ms];
-    }
-    function _duplicate(samples) {
-        return __spreadArrays(samples, samples);
-    }
-    var SUITE_1 = (function () {
-        var FIGURE_1 = [[300, 2000], [200, 1000], [225, 1000]];
-        var FIGURE_2 = [[300, 1000], [225, 1000], [200, 2000]];
-        var FIGURE_3 = [[200, 1000], [225, 1000], [250, 2000]];
-        var FIGURE_4 = [[300, 200], [250, 100], [225, 200], [600, 500], [300, 200], [200, 200], [225, 100], [200, 200], [225, 200], [300, 100], [600, 500], [300, 500], [600, 500], [250, 500], [300, 200], [200, 200], [250, 100], [300, 200], [225, 200], [250, 100]];
-        var FIGURE_5 = [[600, 500], [225, 250], [250, 250], [500, 500], [600, 500], [400, 500], [250, 500], [200, 250], [225, 250], [300, 250], [400, 250]];
-        var FIGURE_6 = [[600, 200], [0, 100], [600, 200], [0, 500], [600, 500], [0, 500]];
-        return {
-            length: 4000,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_2 = (function () {
-        var FIGURE_1 = [[100, 1000], [80, 1000], [120, 1000], [80, 1000]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[50, 1000], [80, 1000], [200, 1000], [240, 750], [230, 250]]
-            //const FIGURE_2 = [[50,1000],[80,1000],[200,1000],[240,750],[/*230*/225,250]]
-            .map(_transpose8va)
-            .map(_transpose8va);
-        var FIGURE_3 = [[300, 500], [240, 500], [225, 1000], [200, 750], [150, 250], [180, 1000]];
-        // const FIGURE_3 = [[300,500],[/*235*/240,500],[225,1000],[200,750],[150,250],[180,1000]];
-        var FIGURE_4 = [[50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125], [50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125]]
-            .map(_transpose8va)
-            .map(_transpose8va);
-        var FIGURE_5 = [[300, 500], [200, 1000], [225, 500], [240, 500], [150, 1000], [100, 250], [180, 250]];
-        //const FIGURE_5 = [[300,500],[200,1000],[225,500],[/*235*/240,500],[150,1000],[100,250],[180,250]];
-        var FIGURE_6 = [[100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [120, 250], [100, 250], [0, 250], [100, 250], [0, 250], [80, 250], [100, 250], [80, 250], [90, 250]]
-            .map(_transpose8va);
-        return {
-            length: 4000,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_3 = (function () {
-        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
-        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
-            .map(_transpose8va);
-        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
-        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
-            .map(_transpose8va);
-        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
-        return {
-            length: 6400,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_4 = (function () {
-        var FIGURE_1 = [[100, 1920], [135, 1920], [100, 1920], [150, 1920]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[80, 1920], [100, 1920], [120, 1920], [90, 1920]]
-            .map(_transpose8va);
-        var FIGURE_3 = [[100, 960], [150, 960], [120, 960], [135, 960], [100, 960], [150, 960], [120, 960], [135, 960]]
-            .map(_transpose8va);
-        var FIGURE_4 = _duplicate([[0, 240], [50, 240], [150, 240], [50, 240], [120, 240], [50, 240], [0, 480], [120, 240], [150, 240], [50, 240], [180, 1200]])
-            .map(_transpose8va);
-        var FIGURE_5 = [[200, 720], [240, 480], [0, 480], [270, 480], [280, 240], [270, 240], [240, 240], [270, 240], [240, 240], [0, 480], [200, 720], [240, 720], [0, 480], [300, 240], [360, 240], [300, 240], [280, 480], [0, 720]];
-        var FIGURE_6 = _duplicate([[100, 200], [0, 40], [100, 240], [0, 240], [100, 240], [0, 960], [100, 200], [0, 40], [100, 200], [0, 40], [120, 480], [100, 200], [0, 40], [100, 200], [0, 40], [90, 480]])
-            .map(_transpose8va);
-        return {
-            length: 7680,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    function playSuite(suite) {
-        var sections = Object.values(suite.sections);
-        var numRepeats = 4;
-        var _loop_9 = function (i) {
-            var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_10.randChoice(section.bass) : null;
-            var lead;
-            if (!!section.lead) {
-                do {
-                    lead = RandomUtils_10.randChoice(section.lead);
-                } while (lead === bass);
-            }
-            for (var j = 0; j < numRepeats; j++) {
-                setTimeout(function () {
-                    var figures = __spreadArrays((!!bass ? [bass.map(_transpose8vb)] : []), (!!lead ? [lead] : []));
-                    figures.forEach(function (figure) { return AudioUtils_5.playMusic(figure); });
-                }, ((numRepeats * i) + j) * suite.length);
-            }
-        };
-        for (var i = 0; i < sections.length; i++) {
-            _loop_9(i);
-        }
-        setTimeout(function () { return playSuite(suite); }, sections.length * suite.length * numRepeats);
-    }
-    exports.default = {
-        SUITE_1: SUITE_1,
-        SUITE_2: SUITE_2,
-        SUITE_3: SUITE_3,
-        SUITE_4: SUITE_4,
-        playSuite: playSuite
-    };
-});
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_7, types_16, SpriteFactory_5) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_7, types_17, SpriteFactory_5) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3423,22 +3482,22 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_16.TileType.FLOOR] = ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
-        _a[types_16.TileType.FLOOR_HALL] = ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
-        _a[types_16.TileType.WALL_TOP] = ['dungeon/tile_wall'],
-        _a[types_16.TileType.WALL_HALL] = ['dungeon/tile_wall_hall'],
-        _a[types_16.TileType.WALL] = [null],
-        _a[types_16.TileType.STAIRS_DOWN] = ['stairs_down2'],
-        _a[types_16.TileType.NONE] = [null],
+        _a[types_17.TileType.FLOOR] = ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
+        _a[types_17.TileType.FLOOR_HALL] = ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
+        _a[types_17.TileType.WALL_TOP] = ['dungeon/tile_wall'],
+        _a[types_17.TileType.WALL_HALL] = ['dungeon/tile_wall_hall'],
+        _a[types_17.TileType.WALL] = [null],
+        _a[types_17.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _a[types_17.TileType.NONE] = [null],
         _a);
     var caveFilenames = (_b = {},
-        _b[types_16.TileType.FLOOR] = ['cave/tile_floor', 'cave/tile_floor_2'],
-        _b[types_16.TileType.FLOOR_HALL] = ['cave/tile_floor', 'cave/tile_floor_2'],
-        _b[types_16.TileType.WALL_TOP] = ['cave/tile_wall'],
-        _b[types_16.TileType.WALL_HALL] = ['cave/tile_wall'],
-        _b[types_16.TileType.WALL] = [null],
-        _b[types_16.TileType.STAIRS_DOWN] = ['stairs_down2'],
-        _b[types_16.TileType.NONE] = [null],
+        _b[types_17.TileType.FLOOR] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_17.TileType.FLOOR_HALL] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_17.TileType.WALL_TOP] = ['cave/tile_wall'],
+        _b[types_17.TileType.WALL_HALL] = ['cave/tile_wall'],
+        _b[types_17.TileType.WALL] = [null],
+        _b[types_17.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _b[types_17.TileType.NONE] = [null],
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -3446,13 +3505,14 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_1, TileSets_1, MapUtils_8, MapSupplier_1, InputHandler_1, RandomUtils_11, types_17) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, MapUtils_9, MapSupplier_1, InputHandler_1, RandomUtils_11, types_18) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
         var state = jwb.state;
         if (index >= state.mapSuppliers.length) {
-            alert('YOU WIN!');
+            Music_2.default.stop();
+            jwb.state.screen = types_18.GameScreen.VICTORY;
         }
         else {
             state.mapIndex = index;
@@ -3460,20 +3520,30 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         }
     }
     exports.loadMap = loadMap;
-    function restartGame() {
+    function initialize() {
+        // @ts-ignore
+        window.jwb = window.jwb || {};
         jwb.renderer = new SpriteRenderer_1.default();
+        InputHandler_1.attachEvents();
+        // TODO - shouldn't need to initialize this here!
+        var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
+        jwb.state = new GameState_1.default(playerUnit, []);
+        return jwb.renderer.render();
+    }
+    exports.initialize = initialize;
+    function restartGame() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4),
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4),
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3),
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3),
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3),
-            MapFactory_1.default.createRandomMap(types_17.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3)
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4),
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4),
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3),
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3),
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3),
+            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3)
         ]);
         loadMap(0);
-        InputHandler_1.attachEvents();
-        Music_1.default.playSuite(RandomUtils_11.randChoice([Music_1.default.SUITE_1, Music_1.default.SUITE_2, Music_1.default.SUITE_3]));
+        Music_2.default.stop();
+        Music_2.default.playSuite(RandomUtils_11.randChoice([Music_2.default.SUITE_1, Music_2.default.SUITE_2, Music_2.default.SUITE_3]));
         return jwb.renderer.render();
     }
     exports.restartGame = restartGame;
@@ -3484,10 +3554,10 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         map.rooms.forEach(function (room) {
-            if (MapUtils_8.contains(room, playerUnit)) {
+            if (MapUtils_9.contains(room, playerUnit)) {
                 for (var y = room.top; y < room.top + room.height; y++) {
                     for (var x = room.left; x < room.left + room.width; x++) {
-                        if (!MapUtils_8.isTileRevealed({ x: x, y: y })) {
+                        if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
                             map.revealedTiles.push({ x: x, y: y });
                         }
                     }
@@ -3497,7 +3567,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var radius = 2;
         for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
             for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-                if (!MapUtils_8.isTileRevealed({ x: x, y: y })) {
+                if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
                     map.revealedTiles.push({ x: x, y: y });
                 }
             }
@@ -3505,7 +3575,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_18) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_19) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3585,7 +3655,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_18.GameScreen.GAME:
+            case types_19.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -3620,7 +3690,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_18.GameScreen.INVENTORY:
+            case types_19.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -3641,6 +3711,10 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         break;
                 }
                 return jwb.renderer.render();
+            case types_19.GameScreen.TITLE:
+            case types_19.GameScreen.VICTORY:
+            case types_19.GameScreen.GAME_OVER:
+                return PromiseUtils_8.resolvedPromise();
             default:
                 throw "Invalid game screen " + state.screen;
         }
@@ -3649,7 +3723,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_18.GameScreen.GAME: {
+            case types_19.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -3661,22 +3735,30 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_18.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_19.TileType.STAIRS_DOWN) {
                     AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_18.GameScreen.INVENTORY: {
+            case types_19.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_18.GameScreen.GAME;
+                    state.screen = types_19.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
                 return PromiseUtils_8.resolvedPromise();
             }
+            case types_19.GameScreen.TITLE:
+            case types_19.GameScreen.VICTORY:
+            case types_19.GameScreen.GAME_OVER:
+                return actions_2.restartGame()
+                    // TODO - MASSIVE HACK!
+                    // restartGame() reinitializes jwb.state. REFACTOR!
+                    .then(function () { jwb.state.screen = types_19.GameScreen.GAME; })
+                    .then(function () { return jwb.renderer.render(); });
             default:
                 throw "Unknown game screen: " + state.screen;
         }
@@ -3684,11 +3766,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_18.GameScreen.INVENTORY:
-                state.screen = types_18.GameScreen.GAME;
+            case types_19.GameScreen.INVENTORY:
+                state.screen = types_19.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_18.GameScreen.INVENTORY;
+                state.screen = types_19.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
@@ -3720,13 +3802,9 @@ define("core/globals", ["require", "exports"], function (require, exports) {
 define("core/main", ["require", "exports", "core/actions", "core/debug"], function (require, exports, actions_3, debug_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.initialize = actions_3.initialize;
+    exports.restartGame = actions_3.restartGame;
     exports.revealMap = debug_1.revealMap;
     exports.killEnemies = debug_1.killEnemies;
-    function init() {
-        // @ts-ignore
-        window.jwb = window.jwb || {};
-        actions_3.restartGame();
-    }
-    exports.init = init;
 });
 //# sourceMappingURL=roguelike.js.map

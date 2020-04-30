@@ -1,5 +1,5 @@
 import { randChoice } from '../utils/RandomUtils';
-import { playMusic } from './AudioUtils';
+import { playMusic, stopMusic } from './AudioUtils';
 import { Sample } from '../types/types';
 
 function _transpose8va([freq, ms]: Sample): Sample {
@@ -163,7 +163,10 @@ const SUITE_4: Suite = (() => {
   };
 })();
 
+let ACTIVE_SUITE: Suite | null = null;
+
 function playSuite(suite: Suite) {
+  ACTIVE_SUITE = suite;
   const sections = Object.values(suite.sections);
   const numRepeats = 4;
   for (let i = 0; i < sections.length; i++) {
@@ -178,15 +181,29 @@ function playSuite(suite: Suite) {
 
     for (let j = 0; j < numRepeats; j++) {
       setTimeout(() => {
-        const figures = [
-          ...(!!bass ? [bass.map(_transpose8vb)] : []),
-          ...(!!lead ? [lead] : [])
-        ];
-        figures.forEach(figure => playMusic(figure));
+        if (suite === ACTIVE_SUITE) {
+          const figures = [
+            ...(!!bass ? [bass.map(_transpose8vb)] : []),
+            ...(!!lead ? [lead] : [])
+          ];
+          figures.forEach(figure => playMusic(figure));
+        }
       }, ((numRepeats * i) + j) * suite.length);
     }
   }
-  setTimeout(() => playSuite(suite), sections.length * suite.length * numRepeats);
+  setTimeout(
+    () => {
+      if (suite === ACTIVE_SUITE) {
+        playSuite(suite);
+      }
+    },
+    sections.length * suite.length * numRepeats
+  );
+}
+
+function stop() {
+  stopMusic();
+  ACTIVE_SUITE = null;
 }
 
 export default {
@@ -194,5 +211,6 @@ export default {
   SUITE_2,
   SUITE_3,
   SUITE_4,
-  playSuite
+  playSuite,
+  stop
 };

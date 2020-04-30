@@ -21,7 +21,9 @@ abstract class DungeonGenerator {
     numItems: number,
     itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
   ): MapSupplier {
+    const t1 = new Date().getTime();
     const section = this.generateTiles(width, height);
+    const t2 = new Date().getTime();
 
     const tileTypes = section.tiles;
 
@@ -35,6 +37,8 @@ abstract class DungeonGenerator {
       return row.map(tileType => createTile(tileType, this._tileSet));
     });
 
+    const t3 = new Date().getTime();
+    console.log(`Generated dungeon ${level} in ${t3 - t1} (${t2 - t1}, ${t3 - t2}) ms`);
     return {
       level,
       width,

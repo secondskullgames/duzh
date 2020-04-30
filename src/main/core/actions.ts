@@ -9,21 +9,33 @@ import { contains, isTileRevealed } from '../maps/MapUtils';
 import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
 import { randChoice } from '../utils/RandomUtils';
-import { MapLayout } from '../types/types';
+import { GameScreen, MapLayout } from '../types/types';
 
 function loadMap(index: number) {
   const { state } = jwb;
   if (index >= state.mapSuppliers.length) {
-    alert('YOU WIN!');
+    Music.stop();
+    jwb.state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
     state.setMap(createMap(state.mapSuppliers[index]));
   }
 }
 
-function restartGame(): Promise<any> {
+function initialize(): Promise<any> {
+  // @ts-ignore
+  window.jwb = window.jwb || {};
   jwb.renderer = new SpriteRenderer();
+  attachEvents();
 
+  // TODO - shouldn't need to initialize this here!
+  const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
+  jwb.state = new GameState(playerUnit, []);
+
+  return jwb.renderer.render();
+}
+
+function restartGame(): Promise<any> {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
 
   jwb.state = new GameState(playerUnit, [
@@ -36,7 +48,7 @@ function restartGame(): Promise<any> {
   ]);
 
   loadMap(0);
-  attachEvents();
+  Music.stop();
   Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
   return jwb.renderer.render();
 }
@@ -72,6 +84,7 @@ function revealTiles(): void {
 }
 
 export {
+  initialize,
   loadMap,
   restartGame,
   revealTiles,

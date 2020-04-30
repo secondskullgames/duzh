@@ -1,4 +1,4 @@
-import { Activity, Coordinates, Direction, Entity, EquipmentSlot } from '../types/types';
+import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import Sprite from '../graphics/sprites/Sprite';
 import UnitClass from './UnitClass';
 import { playSound } from '../sounds/AudioUtils';
@@ -7,6 +7,7 @@ import { UnitAI } from './UnitAI';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
+import Music from '../sounds/Music';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -150,7 +151,8 @@ class Unit implements Entity {
       if (this.life === 0) {
         map.removeUnit(this);
         if (this === playerUnit) {
-          alert('Game Over!');
+          jwb.state.screen = GameScreen.GAME_OVER;
+          Music.stop();
           playSound(Sounds.PLAYER_DIES);
         } else {
           playSound(Sounds.ENEMY_DIES);

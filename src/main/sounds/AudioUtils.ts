@@ -22,7 +22,14 @@ function playMusic(samples: Sample[]) {
   MUSIC.playSound(samples, false);
 }
 
+function stopMusic() {
+  if (MUSIC) {
+    MUSIC.stop();
+  }
+}
+
 export {
   playSound,
-  playMusic
+  playMusic,
+  stopMusic
 };

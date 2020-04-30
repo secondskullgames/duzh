@@ -1,14 +1,9 @@
-import { restartGame } from './actions';
+import { initialize, restartGame } from './actions';
 import { revealMap, killEnemies } from './debug';
 
-function init() {
-  // @ts-ignore
-  window.jwb = window.jwb || {};
-  restartGame();
-}
-
 export {
-  init,
+  initialize,
+  restartGame,
   killEnemies,
   revealMap,
 };

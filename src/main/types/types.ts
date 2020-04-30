@@ -33,7 +33,10 @@ enum EquipmentSlot {
 
 enum GameScreen {
   GAME = 'GAME',
-  INVENTORY = 'INVENTORY'
+  INVENTORY = 'INVENTORY',
+  TITLE = 'TITLE',
+  VICTORY = 'VICTORY',
+  GAME_OVER = 'GAME_OVER'
 }
 
 enum ItemCategory {

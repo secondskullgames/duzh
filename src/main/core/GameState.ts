@@ -13,7 +13,7 @@ class GameState {
   turn: number;
 
   constructor(playerUnit: Unit, mapSuppliers: MapSupplier[]) {
-    this.screen = GameScreen.GAME;
+    this.screen = GameScreen.TITLE;
     this.playerUnit = playerUnit;
     this.mapSuppliers = mapSuppliers;
     this.mapIndex = 0;
