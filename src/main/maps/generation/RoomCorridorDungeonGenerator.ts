@@ -35,7 +35,6 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       const section = this._generateSection(width, height - 1);
       const connectedRoomPairs = this._joinSection(section, [], true);
       this._joinSection(section, connectedRoomPairs, false);
-
       return this._shiftVertically(section, 1);
     })();
 
@@ -306,27 +305,30 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * Find a path between the specified exits between rooms.
    */
   private _joinExits(firstExit: Coordinates, secondExit: Coordinates, section: MapSection): boolean {
-    // prefer reusing floor hall tiles
-    const tileCostCalculator = (first: Coordinates, second: Coordinates) => {
-      return (section.tiles[second.y][second.x] === TileType.FLOOR_HALL) ? 0.01 : 1;
-    };
-
-    const mapRect = {
-      left: 0,
-      top: 0,
-      width: section.width,
-      height: section.height
-    };
-
     const tileChecker = new TileEligibilityChecker();
-    const blockedTileDetector = ({ x, y }: Coordinates) => tileChecker.isBlocked({ x, y }, section, [firstExit, secondExit]);
-    const path = new Pathfinder(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
+
+    const unblockedTiles: Coordinates[] = [];
+    for (let y = 0; y < section.height; y++) {
+      for (let x = 0; x < section.width; x++) {
+        if (!tileChecker.isBlocked({ x, y }, section, [firstExit, secondExit])) {
+          unblockedTiles.push({ x, y });
+        }
+      }
+    }
+
+    const tileCostCalculator = (first: Coordinates, second: Coordinates) => this._calculateTileCost(section, first, second);
+    const path = new Pathfinder(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
     path.forEach(({ x, y }) => {
       section.tiles[y][x] = TileType.FLOOR_HALL;
     });
 
     return (path.length > 0);
   }
+
+  private _calculateTileCost(section: MapSection, first: Coordinates, second: Coordinates) {
+    // prefer reusing floor hall tiles
+    return (section.tiles[second.y][second.x] === TileType.FLOOR_HALL) ? 0.5 : 1;
+  };
 
   private _emptyRow(width: number): TileType[] {
     const row: TileType[] = [];

@@ -554,14 +554,15 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
         /**
          * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
          */
-        function Pathfinder(blockedTileDetector, tileCostCalculator) {
-            this.blockedTileDetector = blockedTileDetector;
-            this.tileCostCalculator = tileCostCalculator;
+        function Pathfinder(tileCostCalculator) {
+            this._tileCostCalculator = tileCostCalculator;
         }
         /**
          * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
+         *
+         * @param tiles All allowable unblocked tiles
          */
-        Pathfinder.prototype.findPath = function (start, goal, rect) {
+        Pathfinder.prototype.findPath = function (start, goal, tiles) {
             var _this = this;
             var open = [
                 { x: start.x, y: start.y, cost: 0, parent: null }
@@ -585,7 +586,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
                     var _a = RandomUtils_2.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
                     open.splice(open.indexOf(chosenNode_1), 1);
                     closed.push(chosenNode_1);
-                    this_1._findNeighbors(chosenNode_1, rect).forEach(function (neighbor) {
+                    this_1._findNeighbors(chosenNode_1, tiles).forEach(function (neighbor) {
                         if (closed.some(function (coordinates) { return MapUtils_1.coordinatesEquals(coordinates, neighbor); })) {
                             // already been seen, don't need to look at it*
                         }
@@ -593,7 +594,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
                             // don't need to look at it now, will look later?
                         }
                         else {
-                            var movementCost = _this.tileCostCalculator(chosenNode_1, neighbor);
+                            var movementCost = _this._tileCostCalculator(chosenNode_1, neighbor);
                             open.push({
                                 x: neighbor.x,
                                 y: neighbor.y,
@@ -611,8 +612,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
                     return state_1.value;
             }
         };
-        Pathfinder.prototype._findNeighbors = function (tile, rect) {
-            var _this = this;
+        Pathfinder.prototype._findNeighbors = function (tile, tiles) {
             return CARDINAL_DIRECTIONS
                 .map(function (_a) {
                 var dx = _a[0], dy = _a[1];
@@ -620,11 +620,7 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
             })
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                return MapUtils_1.contains(rect, { x: x, y: y });
-            })
-                .filter(function (_a) {
-                var x = _a.x, y = _a.y;
-                return !_this.blockedTileDetector({ x: x, y: y });
+                return tiles.some(function (tile) { return MapUtils_1.coordinatesEquals(tile, { x: x, y: y }); });
             });
         };
         return Pathfinder;
@@ -1273,17 +1269,21 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         var mapRect = map.getRect();
-        var blockedTileDetector = function (_a) {
-            var x = _a.x, y = _a.y;
-            if (!map.getTile({ x: x, y: y }).isBlocking) {
-                return false;
+        var unblockedTiles = [];
+        for (var y = 0; y < mapRect.height; y++) {
+            for (var x = 0; x < mapRect.width; x++) {
+                if (!map.getTile({ x: x, y: y }).isBlocking) {
+                    // blocked
+                }
+                else if (MapUtils_2.coordinatesEquals({ x: x, y: y }, playerUnit)) {
+                    // blocked
+                }
+                else {
+                    unblockedTiles.push({ x: x, y: y });
+                }
             }
-            else if (MapUtils_2.coordinatesEquals({ x: x, y: y }, playerUnit)) {
-                return false;
-            }
-            return true;
-        };
-        var path = new Pathfinder_1.default(blockedTileDetector, function () { return 1; }).findPath(unit, playerUnit, mapRect);
+        }
+        var path = new Pathfinder_1.default(function () { return 1; }).findPath(unit, playerUnit, unblockedTiles);
         if (path.length > 1) {
             var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
             var unitAtPoint = map.getUnit({ x: x, y: y });
@@ -1312,7 +1312,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             }
         });
         if (tiles.length > 0) {
-            var orderedTiles = ArrayUtils_2.sortByReversed(tiles, function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); });
+            var orderedTiles = tiles.sort(ArrayUtils_2.comparingReversed(function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); }));
             var _a = orderedTiles[0], x = _a.x, y = _a.y;
             return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
         }
@@ -3142,28 +3142,29 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
          * Find a path between the specified exits between rooms.
          */
         RoomCorridorDungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
-            // prefer reusing floor hall tiles
-            var tileCostCalculator = function (first, second) {
-                return (section.tiles[second.y][second.x] === types_14.TileType.FLOOR_HALL) ? 0.01 : 1;
-            };
-            var mapRect = {
-                left: 0,
-                top: 0,
-                width: section.width,
-                height: section.height
-            };
+            var _this = this;
             var tileChecker = new TileEligibilityChecker_1.default();
-            var blockedTileDetector = function (_a) {
-                var x = _a.x, y = _a.y;
-                return tileChecker.isBlocked({ x: x, y: y }, section, [firstExit, secondExit]);
-            };
-            var path = new Pathfinder_2.default(blockedTileDetector, tileCostCalculator).findPath(firstExit, secondExit, mapRect);
+            var unblockedTiles = [];
+            for (var y = 0; y < section.height; y++) {
+                for (var x = 0; x < section.width; x++) {
+                    if (!tileChecker.isBlocked({ x: x, y: y }, section, [firstExit, secondExit])) {
+                        unblockedTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            var tileCostCalculator = function (first, second) { return _this._calculateTileCost(section, first, second); };
+            var path = new Pathfinder_2.default(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
                 section.tiles[y][x] = types_14.TileType.FLOOR_HALL;
             });
             return (path.length > 0);
         };
+        RoomCorridorDungeonGenerator.prototype._calculateTileCost = function (section, first, second) {
+            // prefer reusing floor hall tiles
+            return (section.tiles[second.y][second.x] === types_14.TileType.FLOOR_HALL) ? 0.5 : 1;
+        };
+        ;
         RoomCorridorDungeonGenerator.prototype._emptyRow = function (width) {
             var row = [];
             for (var x = 0; x < width; x++) {

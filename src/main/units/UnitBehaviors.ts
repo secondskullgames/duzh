@@ -4,7 +4,7 @@ import { randChoice } from '../utils/RandomUtils';
 import { Coordinates, Rect } from '../types/types';
 import { moveOrAttack } from './UnitUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
-import { sortBy, sortByReversed } from '../utils/ArrayUtils';
+import { comparingReversed } from '../utils/ArrayUtils';
 import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 import Directions from '../types/Directions';
 
@@ -59,16 +59,20 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
 
   const mapRect: Rect = map.getRect();
 
-  const blockedTileDetector = ({ x, y }: Coordinates) => {
-    if (!map.getTile({ x, y }).isBlocking) {
-      return false;
-    } else if (coordinatesEquals({ x, y }, playerUnit)) {
-      return false;
+  const unblockedTiles: Coordinates[] = [];
+  for (let y = 0; y < mapRect.height; y++) {
+    for (let x = 0; x < mapRect.width; x++) {
+      if (!map.getTile({ x, y }).isBlocking) {
+        // blocked
+      } else if (coordinatesEquals({ x, y }, playerUnit)) {
+        // blocked
+      } else {
+        unblockedTiles.push({ x, y });
+      }
     }
-    return true;
-  };
+  }
 
-  const path: Coordinates[] = new Pathfinder(blockedTileDetector, () => 1).findPath(unit, playerUnit, mapRect);
+  const path: Coordinates[] = new Pathfinder(() => 1).findPath(unit, playerUnit, unblockedTiles);
 
   if (path.length > 1) {
     const { x, y } = path[1]; // first tile is the unit's own tile
@@ -99,7 +103,7 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   });
 
   if (tiles.length > 0) {
-    const orderedTiles = sortByReversed(tiles, coordinates => manhattanDistance(coordinates, playerUnit));
+    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
     const { x, y } = orderedTiles[0];
     return moveOrAttack(unit, { x, y });
   }

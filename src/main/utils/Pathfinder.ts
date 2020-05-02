@@ -45,23 +45,23 @@ function traverseParents(node: Node): Coordinates[] {
  * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
  */
 class Pathfinder {
-  private readonly blockedTileDetector: (coordinates: Coordinates) => boolean;
-  private readonly tileCostCalculator: (first: Coordinates, second: Coordinates) => number;
+  private readonly _tileCostCalculator: (first: Coordinates, second: Coordinates) => number;
+
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
    */
   constructor(
-    blockedTileDetector: ({ x, y }: Coordinates) => boolean,
     tileCostCalculator: (first: Coordinates, second: Coordinates) => number
   ) {
-    this.blockedTileDetector = blockedTileDetector;
-    this.tileCostCalculator = tileCostCalculator;
+    this._tileCostCalculator = tileCostCalculator;
   }
 
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
+   *
+   * @param tiles All allowable unblocked tiles
    */
-  findPath(start: Coordinates, goal: Coordinates, rect: Rect): Coordinates[] {
+  findPath(start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] {
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
@@ -86,13 +86,13 @@ class Pathfinder {
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
         closed.push(chosenNode);
-        this._findNeighbors(chosenNode, rect).forEach(neighbor => {
+        this._findNeighbors(chosenNode, tiles).forEach(neighbor => {
           if (closed.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
             // already been seen, don't need to look at it*
           } else if (open.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
             // don't need to look at it now, will look later?
           } else {
-            const movementCost = this.tileCostCalculator(chosenNode, neighbor);
+            const movementCost = this._tileCostCalculator(chosenNode, neighbor);
             open.push({
               x: neighbor.x,
               y: neighbor.y,
@@ -105,11 +105,10 @@ class Pathfinder {
     }
   }
 
-  private _findNeighbors(tile: Coordinates, rect: Rect): Coordinates[] {
+  private _findNeighbors(tile: Coordinates, tiles: Coordinates[]): Coordinates[] {
     return CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
-      .filter(({ x, y }) => contains(rect, { x, y }))
-      .filter(({ x, y }) => !this.blockedTileDetector({ x, y }));
+      .filter(({ x, y }) => tiles.some(tile => coordinatesEquals(tile, { x, y })));
   }
 }
 
