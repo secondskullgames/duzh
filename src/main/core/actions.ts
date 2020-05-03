@@ -5,20 +5,21 @@ import MapFactory from '../maps/MapFactory';
 import UnitClasses from '../units/UnitClasses';
 import Music from '../sounds/Music';
 import TileSets from '../maps/TileSets';
-import { contains, isTileRevealed } from '../maps/MapUtils';
-import { createMap } from '../maps/MapSupplier';
 import { attachEvents } from './InputHandler';
 import { randChoice } from '../utils/RandomUtils';
 import { GameScreen, MapLayout } from '../types/types';
+import { contains, isTileRevealed } from '../maps/MapUtils';
 
 function loadMap(index: number) {
   const { state } = jwb;
-  if (index >= state.mapSuppliers.length) {
+  if (index >= state.maps.length) {
     Music.stop();
     jwb.state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
-    state.setMap(createMap(state.mapSuppliers[index]));
+    // TODO - this isn't memoized
+    const mapBuilder = state.maps[index]();
+    state.setMap(mapBuilder.build());
   }
 }
 
@@ -27,30 +28,32 @@ function initialize(): Promise<any> {
   window.jwb = window.jwb || {};
   jwb.renderer = new SpriteRenderer();
   attachEvents();
-
-  // TODO - shouldn't need to initialize this here!
-  const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
-  jwb.state = new GameState(playerUnit, []);
-
+  _initState();
   return jwb.renderer.render();
 }
 
-function restartGame(): Promise<any> {
+function _initState() {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
-
   jwb.state = new GameState(playerUnit, [
-    MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 28, 22, 9, 4),
-    MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 30, 23, 10, 4),
-    MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 3, 32, 24, 11, 3),
-    MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 4, 34, 25, 12, 3),
-    MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 5, 36, 26, 13, 3),
-    MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 6, 38, 27, 14, 3)
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 28, 22, 9, 4),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 30, 23, 10, 4),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 3, 32, 24, 11, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 4, 34, 25, 12, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 5, 36, 26, 13, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 6, 38, 27, 14, 3)
   ]);
+}
 
+function startGame(): Promise<any> {
   loadMap(0);
   Music.stop();
   Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
   return jwb.renderer.render();
+}
+
+function restartGame(): Promise<any> {
+  _initState();
+  return startGame();
 }
 
 /**
@@ -88,4 +91,5 @@ export {
   loadMap,
   restartGame,
   revealTiles,
+  startGame
 };

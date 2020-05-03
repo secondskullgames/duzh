@@ -18,5 +18,6 @@
     "type": "git",
     "url": "git+https://github.com/jwbutler/roguelike-js.git"
   },
-  "author": "jwbutler"
+  "author": "jwbutler",
+  "license": "BSD-1-Clause"
 }

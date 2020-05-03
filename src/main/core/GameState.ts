@@ -1,21 +1,21 @@
-import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
-import MapSupplier from '../maps/MapSupplier';
+import MapBuilder from '../maps/MapBuilder';
 import MapInstance from '../maps/MapInstance';
+import { GameScreen } from '../types/types';
 
 class GameState {
   screen: GameScreen;
   playerUnit: Unit;
-  mapSuppliers: MapSupplier[];
+  maps: (() => MapBuilder)[];
   mapIndex: number | null;
   private _map: MapInstance | null;
   messages: string[];
   turn: number;
 
-  constructor(playerUnit: Unit, mapSuppliers: MapSupplier[]) {
+  constructor(playerUnit: Unit, maps: (() => MapBuilder)[]) {
     this.screen = GameScreen.TITLE;
     this.playerUnit = playerUnit;
-    this.mapSuppliers = mapSuppliers;
+    this.maps = maps;
     this.mapIndex = 0;
     this._map = null;
     this.messages = [];

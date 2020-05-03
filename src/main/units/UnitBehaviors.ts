@@ -63,11 +63,11 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
   for (let y = 0; y < mapRect.height; y++) {
     for (let x = 0; x < mapRect.width; x++) {
       if (!map.getTile({ x, y }).isBlocking) {
-        // blocked
-      } else if (coordinatesEquals({ x, y }, playerUnit)) {
-        // blocked
-      } else {
         unblockedTiles.push({ x, y });
+      } else if (coordinatesEquals({ x, y }, playerUnit)) {
+        unblockedTiles.push({ x, y });
+      } else {
+        // blocked
       }
     }
   }

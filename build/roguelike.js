@@ -1273,13 +1273,13 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         for (var y = 0; y < mapRect.height; y++) {
             for (var x = 0; x < mapRect.width; x++) {
                 if (!map.getTile({ x: x, y: y }).isBlocking) {
-                    // blocked
+                    unblockedTiles.push({ x: x, y: y });
                 }
                 else if (MapUtils_2.coordinatesEquals({ x: x, y: y }, playerUnit)) {
-                    // blocked
+                    unblockedTiles.push({ x: x, y: y });
                 }
                 else {
-                    unblockedTiles.push({ x: x, y: y });
+                    // blocked
                 }
             }
         }
@@ -1987,35 +1987,50 @@ define("maps/MapInstance", ["require", "exports", "types/types"], function (requ
     }());
     exports.default = MapInstance;
 });
-define("maps/MapSupplier", ["require", "exports", "maps/MapInstance"], function (require, exports, MapInstance_1) {
+define("maps/MapBuilder", ["require", "exports", "maps/MapInstance"], function (require, exports, MapInstance_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function createMap(mapSupplier) {
-        var _a;
-        var level = mapSupplier.level, width = mapSupplier.width, height = mapSupplier.height, tiles = mapSupplier.tiles, rooms = mapSupplier.rooms, playerUnitLocation = mapSupplier.playerUnitLocation, enemyUnitLocations = mapSupplier.enemyUnitLocations, enemyUnitSupplier = mapSupplier.enemyUnitSupplier, itemLocations = mapSupplier.itemLocations, itemSupplier = mapSupplier.itemSupplier;
-        var playerUnit = jwb.state.playerUnit;
-        var units = [playerUnit];
-        _a = [playerUnitLocation.x, playerUnitLocation.y], playerUnit.x = _a[0], playerUnit.y = _a[1];
-        units.push.apply(units, enemyUnitLocations.map(function (_a) {
-            var x = _a.x, y = _a.y;
-            return enemyUnitSupplier({ x: x, y: y }, level);
-        }));
-        var items = itemLocations.map(function (_a) {
-            var x = _a.x, y = _a.y;
-            return itemSupplier({ x: x, y: y }, level);
-        });
-        return new MapInstance_1.default(width, height, tiles, rooms, units, items);
-    }
-    exports.createMap = createMap;
+    var MapBuilder = /** @class */ (function () {
+        function MapBuilder(level, width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
+            this._level = level;
+            this._width = width;
+            this._height = height;
+            this._tiles = tiles;
+            this._rooms = rooms;
+            this._playerUnitLocation = playerUnitLocation;
+            this._enemyUnitLocations = enemyUnitLocations;
+            this._itemLocations = itemLocations;
+            this._enemyUnitSupplier = enemyUnitSupplier;
+            this._itemSupplier = itemSupplier;
+        }
+        MapBuilder.prototype.build = function () {
+            var _a;
+            var _this = this;
+            var playerUnit = jwb.state.playerUnit;
+            var units = [playerUnit];
+            _a = [this._playerUnitLocation.x, this._playerUnitLocation.y], playerUnit.x = _a[0], playerUnit.y = _a[1];
+            units.push.apply(units, this._enemyUnitLocations.map(function (_a) {
+                var x = _a.x, y = _a.y;
+                return _this._enemyUnitSupplier({ x: x, y: y }, _this._level);
+            }));
+            var items = this._itemLocations.map(function (_a) {
+                var x = _a.x, y = _a.y;
+                return _this._itemSupplier({ x: x, y: y }, _this._level);
+            });
+            return new MapInstance_1.default(this._width, this._height, this._tiles, this._rooms, units, items);
+        };
+        return MapBuilder;
+    }());
+    exports.default = MapBuilder;
 });
 define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var GameState = /** @class */ (function () {
-        function GameState(playerUnit, mapSuppliers) {
+        function GameState(playerUnit, maps) {
             this.screen = types_7.GameScreen.TITLE;
             this.playerUnit = playerUnit;
-            this.mapSuppliers = mapSuppliers;
+            this.maps = maps;
             this.mapIndex = 0;
             this._map = null;
             this.messages = [];
@@ -2749,7 +2764,7 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
         createRandomEnemy: createRandomEnemy
     };
 });
-define("maps/generation/DungeonGenerator", ["require", "exports", "types/types", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, types_12, MapUtils_5, ArrayUtils_3) {
+define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuilder", "types/types", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, MapBuilder_1, types_12, MapUtils_5, ArrayUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DungeonGenerator = /** @class */ (function () {
@@ -2772,18 +2787,7 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "types/types",
             });
             var t3 = new Date().getTime();
             console.log("Generated dungeon " + level + " in " + (t3 - t1) + " (" + (t2 - t1) + ", " + (t3 - t2) + ") ms");
-            return {
-                level: level,
-                width: width,
-                height: height,
-                tiles: tiles,
-                rooms: section.rooms,
-                playerUnitLocation: playerUnitLocation,
-                enemyUnitLocations: enemyUnitLocations,
-                enemyUnitSupplier: enemyUnitSupplier,
-                itemLocations: itemLocations,
-                itemSupplier: itemSupplier
-            };
+            return new MapBuilder_1.default(level, width, height, tiles, section.rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier);
         };
         /**
          * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
@@ -3506,18 +3510,20 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "maps/MapUtils", "maps/MapSupplier", "core/InputHandler", "utils/RandomUtils", "types/types"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, MapUtils_9, MapSupplier_1, InputHandler_1, RandomUtils_11, types_18) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_18, MapUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function loadMap(index) {
         var state = jwb.state;
-        if (index >= state.mapSuppliers.length) {
+        if (index >= state.maps.length) {
             Music_2.default.stop();
             jwb.state.screen = types_18.GameScreen.VICTORY;
         }
         else {
             state.mapIndex = index;
-            state.setMap(MapSupplier_1.createMap(state.mapSuppliers[index]));
+            // TODO - this isn't memoized
+            var mapBuilder = state.maps[index]();
+            state.setMap(mapBuilder.build());
         }
     }
     exports.loadMap = loadMap;
@@ -3526,26 +3532,31 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         window.jwb = window.jwb || {};
         jwb.renderer = new SpriteRenderer_1.default();
         InputHandler_1.attachEvents();
-        // TODO - shouldn't need to initialize this here!
-        var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
-        jwb.state = new GameState_1.default(playerUnit, []);
+        _initState();
         return jwb.renderer.render();
     }
     exports.initialize = initialize;
-    function restartGame() {
+    function _initState() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4),
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4),
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3),
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3),
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3),
-            MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3)
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4); },
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4); },
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3); }
         ]);
+    }
+    function startGame() {
         loadMap(0);
         Music_2.default.stop();
         Music_2.default.playSuite(RandomUtils_11.randChoice([Music_2.default.SUITE_1, Music_2.default.SUITE_2, Music_2.default.SUITE_3]));
         return jwb.renderer.render();
+    }
+    exports.startGame = startGame;
+    function restartGame() {
+        _initState();
+        return startGame();
     }
     exports.restartGame = restartGame;
     /**
@@ -3753,13 +3764,12 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return PromiseUtils_8.resolvedPromise();
             }
             case types_19.GameScreen.TITLE:
+                jwb.state.screen = types_19.GameScreen.GAME;
+                return actions_2.startGame();
             case types_19.GameScreen.VICTORY:
             case types_19.GameScreen.GAME_OVER:
-                return actions_2.restartGame()
-                    // TODO - MASSIVE HACK!
-                    // restartGame() reinitializes jwb.state. REFACTOR!
-                    .then(function () { jwb.state.screen = types_19.GameScreen.GAME; })
-                    .then(function () { return jwb.renderer.render(); });
+                jwb.state.screen = types_19.GameScreen.GAME;
+                return actions_2.restartGame();
             default:
                 throw "Unknown game screen: " + state.screen;
         }

@@ -5,7 +5,7 @@ import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { fireProjectile, moveOrAttack } from '../units/UnitUtils';
 import { playSound } from '../sounds/AudioUtils';
-import { loadMap, restartGame } from './actions';
+import { loadMap, restartGame, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
 
 enum KeyCommand {
@@ -191,13 +191,12 @@ function _handleEnter(): Promise<void> {
       return resolvedPromise();
     }
     case GameScreen.TITLE:
+      jwb.state.screen = GameScreen.GAME;
+      return startGame();
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
-      return restartGame()
-        // TODO - MASSIVE HACK!
-        // restartGame() reinitializes jwb.state. REFACTOR!
-        .then(() => { jwb.state.screen = GameScreen.GAME; })
-        .then(() => jwb.renderer.render());
+      jwb.state.screen = GameScreen.GAME;
+      return restartGame();
     default:
       throw `Unknown game screen: ${state.screen}`;
   }

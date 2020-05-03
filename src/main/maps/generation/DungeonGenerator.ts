@@ -1,5 +1,5 @@
 import Unit from '../../units/Unit';
-import MapSupplier from '../MapSupplier';
+import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
 import { Coordinates, MapSection, TileSet, TileType } from '../../types/types';
 import { coordinatesEquals, createTile, hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
@@ -20,7 +20,7 @@ abstract class DungeonGenerator {
     enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit,
     numItems: number,
     itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
-  ): MapSupplier {
+  ): MapBuilder {
     const t1 = new Date().getTime();
     const section = this.generateTiles(width, height);
     const t2 = new Date().getTime();
@@ -39,18 +39,18 @@ abstract class DungeonGenerator {
 
     const t3 = new Date().getTime();
     console.log(`Generated dungeon ${level} in ${t3 - t1} (${t2 - t1}, ${t3 - t2}) ms`);
-    return {
+    return new MapBuilder(
       level,
       width,
       height,
       tiles,
-      rooms: section.rooms,
+      section.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitSupplier,
       itemLocations,
       itemSupplier
-    };
+    );
   }
 
   protected abstract generateTiles(width: number, height: number): MapSection;

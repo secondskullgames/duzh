@@ -1,4 +1,4 @@
-import MapSupplier from './MapSupplier';
+import MapBuilder from './MapBuilder';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
 import RoomCorridorDungeonGenerator from './generation/RoomCorridorDungeonGenerator';
@@ -7,7 +7,15 @@ import DungeonGenerator from './generation/DungeonGenerator';
 import { MapLayout, TileSet } from '../types/types';
 import { randInt } from '../utils/RandomUtils';
 
-function createRandomMap(mapLayout: MapLayout, tileSet: TileSet, level: number, width: number, height: number, numEnemies: number, numItems: number): MapSupplier {
+function createRandomMap(
+  mapLayout: MapLayout,
+  tileSet: TileSet,
+  level: number,
+  width: number,
+  height: number,
+  numEnemies: number,
+  numItems: number
+): MapBuilder {
   const dungeonGenerator = _getDungeonGenerator(mapLayout, tileSet);
   return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
 }
