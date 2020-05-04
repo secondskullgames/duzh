@@ -191,11 +191,11 @@ function _handleEnter(): Promise<void> {
       return resolvedPromise();
     }
     case GameScreen.TITLE:
-      jwb.state.screen = GameScreen.GAME;
+      state.screen = GameScreen.GAME;
       return startGame();
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
-      jwb.state.screen = GameScreen.GAME;
+      state.screen = GameScreen.GAME;
       return restartGame();
     default:
       throw `Unknown game screen: ${state.screen}`;

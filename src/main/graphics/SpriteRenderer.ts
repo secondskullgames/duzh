@@ -34,6 +34,10 @@ const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
 
+const FONT_SMALL = `10px ${SANS_SERIF}`;
+const FONT_MEDIUM = `14px ${MONOSPACE}`;
+const FONT_LARGE = `20px ${MONOSPACE}`;
+
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
   private readonly _canvas: HTMLCanvasElement;
@@ -55,16 +59,16 @@ class SpriteRenderer implements Renderer {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
-        return this._renderStaticImage(TITLE_FILENAME);
+        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
       case GameScreen.GAME:
         return this._renderGameScreen();
       case GameScreen.INVENTORY:
         return this._renderGameScreen()
           .then(() => this._renderInventory());
       case GameScreen.VICTORY:
-        return this._renderStaticImage(VICTORY_FILENAME);
+        return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       case GameScreen.GAME_OVER:
-        return this._renderStaticImage(GAME_OVER_FILENAME);
+        return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       default:
         throw `Invalid screen ${screen}`;
     }
@@ -196,7 +200,7 @@ class SpriteRenderer implements Renderer {
     // draw equipment items
     // for now, just display them all in one list
 
-    _context.font = `10px ${SANS_SERIF}`;
+    _context.font = FONT_SMALL;
     _context.textAlign = 'left';
 
     let y = INVENTORY_TOP + 64;
@@ -210,7 +214,7 @@ class SpriteRenderer implements Renderer {
     const categoryWidth = 60;
     const xOffset = 4;
 
-    _context.font = `14px ${MONOSPACE}`;
+    _context.font = FONT_MEDIUM;
     _context.textAlign = 'center';
 
     for (let i = 0; i < inventoryCategories.length; i++) {
@@ -227,7 +231,7 @@ class SpriteRenderer implements Renderer {
       const items = inventory.get(inventory.selectedCategory);
       const x = inventoryLeft + 8;
 
-      _context.font = `10px ${SANS_SERIF}`;
+      _context.font = FONT_SMALL;
       _context.textAlign = 'left';
 
       for (let i = 0; i < items.length; i++) {
@@ -292,9 +296,9 @@ class SpriteRenderer implements Renderer {
       if (experienceToNextLevel !== null) {
         lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
       }
-      _context.fillStyle = '#fff';
+      _context.fillStyle = Colors.WHITE;
       _context.textAlign = 'left';
-      _context.font = `10px ${SANS_SERIF}`;
+      _context.font = FONT_SMALL;
 
       const left = 4;
       for (let i = 0; i < lines.length; i++) {
@@ -318,7 +322,7 @@ class SpriteRenderer implements Renderer {
 
       _context.fillStyle = Colors.WHITE;
       _context.textAlign = 'left';
-      _context.font = `10px ${SANS_SERIF}`;
+      _context.font = FONT_SMALL;
 
       const textLeft = left + 4;
 
@@ -332,6 +336,7 @@ class SpriteRenderer implements Renderer {
 
   private _renderBottomBar(): Promise<void> {
     const { _context } = this;
+    const { mapIndex, turn } = jwb.state;
 
     const left = BOTTOM_PANEL_WIDTH;
     const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
@@ -339,7 +344,6 @@ class SpriteRenderer implements Renderer {
 
     this._drawRect({ left, top, width, height: BOTTOM_BAR_HEIGHT });
 
-    const { mapIndex, turn } = jwb.state;
     _context.textAlign = 'left';
     _context.fillStyle = Colors.WHITE;
     const textLeft = left + 4;
@@ -369,10 +373,17 @@ class SpriteRenderer implements Renderer {
     };
   }
 
-  private _renderStaticImage(filename: string): Promise<any> {
+  private _renderSplashScreen(filename: string, text: string): Promise<any> {
     return loadImage(filename)
       .then(imageData => createImageBitmap(imageData))
-      .then(image => this._context.drawImage(image, 0, 0));
+      .then(image => this._context.drawImage(image, 0, 0, this._canvas.width, this._canvas.height))
+      .then(() => {
+        const { _context } = this;
+        _context.textAlign = 'center';
+        _context.font = FONT_LARGE;
+        _context.fillStyle = Colors.WHITE;
+        _context.fillText(text, SCREEN_WIDTH / 2, 300);
+      });
   }
 }
 

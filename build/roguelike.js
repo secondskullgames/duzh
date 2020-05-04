@@ -2130,6 +2130,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
     var VICTORY_FILENAME = 'victory';
+    var FONT_SMALL = "10px " + SANS_SERIF;
+    var FONT_MEDIUM = "14px " + MONOSPACE;
+    var FONT_LARGE = "20px " + MONOSPACE;
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2147,16 +2150,16 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var screen = jwb.state.screen;
             switch (screen) {
                 case types_8.GameScreen.TITLE:
-                    return this._renderStaticImage(TITLE_FILENAME);
+                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
                 case types_8.GameScreen.GAME:
                     return this._renderGameScreen();
                 case types_8.GameScreen.INVENTORY:
                     return this._renderGameScreen()
                         .then(function () { return _this._renderInventory(); });
                 case types_8.GameScreen.VICTORY:
-                    return this._renderStaticImage(VICTORY_FILENAME);
+                    return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
                 case types_8.GameScreen.GAME_OVER:
-                    return this._renderStaticImage(GAME_OVER_FILENAME);
+                    return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
                 default:
                     throw "Invalid screen " + screen;
             }
@@ -2283,7 +2286,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
             // draw equipment items
             // for now, just display them all in one list
-            _context.font = "10px " + SANS_SERIF;
+            _context.font = FONT_SMALL;
             _context.textAlign = 'left';
             var y = INVENTORY_TOP + 64;
             playerUnit.equipment.getEntries().forEach(function (_a) {
@@ -2295,7 +2298,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var inventoryCategories = Object.values(types_8.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
-            _context.font = "14px " + MONOSPACE;
+            _context.font = FONT_MEDIUM;
             _context.textAlign = 'center';
             for (var i = 0; i < inventoryCategories.length; i++) {
                 var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
@@ -2308,7 +2311,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             if (inventory.selectedCategory) {
                 var items = inventory.get(inventory.selectedCategory);
                 var x = inventoryLeft + 8;
-                _context.font = "10px " + SANS_SERIF;
+                _context.font = FONT_SMALL;
                 _context.textAlign = 'left';
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -2368,9 +2371,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 if (experienceToNextLevel !== null) {
                     lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
                 }
-                _context.fillStyle = '#fff';
+                _context.fillStyle = Colors_4.default.WHITE;
                 _context.textAlign = 'left';
-                _context.font = "10px " + SANS_SERIF;
+                _context.font = FONT_SMALL;
                 var left = 4;
                 for (var i = 0; i < lines.length; i++) {
                     var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
@@ -2391,7 +2394,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
                 _context.fillStyle = Colors_4.default.WHITE;
                 _context.textAlign = 'left';
-                _context.font = "10px " + SANS_SERIF;
+                _context.font = FONT_SMALL;
                 var textLeft = left + 4;
                 for (var i = 0; i < messages.length; i++) {
                     var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
@@ -2402,11 +2405,11 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         };
         SpriteRenderer.prototype._renderBottomBar = function () {
             var _context = this._context;
+            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
             var left = BOTTOM_PANEL_WIDTH;
             var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
             var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
             this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
-            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
             _context.textAlign = 'left';
             _context.fillStyle = Colors_4.default.WHITE;
             var textLeft = left + 4;
@@ -2433,11 +2436,18 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
             };
         };
-        SpriteRenderer.prototype._renderStaticImage = function (filename) {
+        SpriteRenderer.prototype._renderSplashScreen = function (filename, text) {
             var _this = this;
             return ImageUtils_3.loadImage(filename)
                 .then(function (imageData) { return createImageBitmap(imageData); })
-                .then(function (image) { return _this._context.drawImage(image, 0, 0); });
+                .then(function (image) { return _this._context.drawImage(image, 0, 0, _this._canvas.width, _this._canvas.height); })
+                .then(function () {
+                var _context = _this._context;
+                _context.textAlign = 'center';
+                _context.font = FONT_LARGE;
+                _context.fillStyle = Colors_4.default.WHITE;
+                _context.fillText(text, SCREEN_WIDTH / 2, 300);
+            });
         };
         return SpriteRenderer;
     }());
@@ -2856,7 +2866,7 @@ define("maps/generation/TileEligibilityChecker", ["require", "exports", "types/t
     }());
     exports.default = TileEligibilityChecker;
 });
-define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils", "utils/Pathfinder", "maps/generation/TileEligibilityChecker"], function (require, exports, DungeonGenerator_1, types_14, RandomUtils_8, ArrayUtils_4, MapUtils_7, Pathfinder_2, TileEligibilityChecker_1) {
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "utils/Pathfinder", "maps/generation/TileEligibilityChecker", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_1, Pathfinder_2, TileEligibilityChecker_1, types_14, RandomUtils_8, ArrayUtils_4, MapUtils_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -3764,11 +3774,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return PromiseUtils_8.resolvedPromise();
             }
             case types_19.GameScreen.TITLE:
-                jwb.state.screen = types_19.GameScreen.GAME;
+                state.screen = types_19.GameScreen.GAME;
                 return actions_2.startGame();
             case types_19.GameScreen.VICTORY:
             case types_19.GameScreen.GAME_OVER:
-                jwb.state.screen = types_19.GameScreen.GAME;
+                state.screen = types_19.GameScreen.GAME;
                 return actions_2.restartGame();
             default:
                 throw "Unknown game screen: " + state.screen;

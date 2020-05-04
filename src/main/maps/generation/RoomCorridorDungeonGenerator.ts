@@ -1,10 +1,10 @@
 import DungeonGenerator from './DungeonGenerator';
+import Pathfinder from '../../utils/Pathfinder';
+import TileEligibilityChecker from './TileEligibilityChecker';
 import { CoordinatePair, Coordinates, MapSection, Room, TileSet, TileType } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
 import { sortBy } from '../../utils/ArrayUtils';
 import { coordinatesEquals, hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
-import Pathfinder from '../../utils/Pathfinder';
-import TileEligibilityChecker from './TileEligibilityChecker';
 
 type RoomPair = [Room, Room]
 type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
