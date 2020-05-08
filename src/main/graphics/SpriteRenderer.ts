@@ -5,7 +5,8 @@ import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
-import { loadImage } from './ImageUtils';
+import { applyTransparentColor, loadImage } from './ImageUtils';
+import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -42,6 +43,7 @@ class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
   private readonly _canvas: HTMLCanvasElement;
   private readonly _context: CanvasRenderingContext2D;
+  private readonly _fontRenderer: FontRenderer;
 
   constructor() {
     this._container = <any>document.getElementById('container');
@@ -53,13 +55,15 @@ class SpriteRenderer implements Renderer {
     this._context = <any>this._canvas.getContext('2d');
     this._context.imageSmoothingEnabled = false;
     this._context.textBaseline = 'middle';
+    this._fontRenderer = new FontRenderer();
   }
 
   render(): Promise<any> {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
-        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN')
+          .then(() => this._drawText('XUZH AND DUZH', Fonts.DOS_PERFECT_VGA, { x: 100, y: 100 }, Colors.RED));
       case GameScreen.GAME:
         return this._renderGameScreen();
       case GameScreen.INVENTORY:
@@ -383,6 +387,16 @@ class SpriteRenderer implements Renderer {
         _context.font = FONT_LARGE;
         _context.fillStyle = Colors.WHITE;
         _context.fillText(text, SCREEN_WIDTH / 2, 300);
+      });
+  }
+
+  private _drawText(text: string, font: FontDefinition, center: Coordinates, color: Colors): Promise<any> {
+    return this._fontRenderer.render(text, font, color)
+      .then(image => {
+        const left = center.x - (image.width / 2);
+        const top = center.y - (image.height / 2);
+        this._context.drawImage(image, left, top);
+        return resolvedPromise();
       });
   }
 }

@@ -2107,7 +2107,118 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils"], function (require, exports, Colors_4, PromiseUtils_6, MapUtils_4, types_8, actions_1, ImageUtils_3) {
+define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "utils/PromiseUtils", "types/Colors"], function (require, exports, ImageUtils_3, PromiseUtils_6, Colors_4) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var NUM_CHARACTERS = 26 + 26 + 2 + 10;
+    var CHARACTERS = (function () {
+        var characters = [];
+        for (var c = 'A'.charCodeAt(0); c <= 'Z'.charCodeAt(0); c++) {
+            characters.push(String.fromCodePoint(c));
+        }
+        for (var c = 'a'.charCodeAt(0); c <= 'z'.charCodeAt(0); c++) {
+            characters.push(String.fromCodePoint(c));
+        }
+        for (var c = '0'.charCodeAt(0); c <= '9'.charCodeAt(0); c++) {
+            characters.push(String.fromCodePoint(c));
+        }
+        characters.push(' ');
+        return characters;
+    })();
+    var Fonts = {
+        DOS_PERFECT_VGA: { name: 'DOS PerfectVGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+    };
+    exports.Fonts = Fonts;
+    var FontRenderer = /** @class */ (function () {
+        function FontRenderer() {
+            this._loadedFonts = {};
+        }
+        FontRenderer.prototype.render = function (text, font, color) {
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = text.length * font.width;
+            canvas.height = font.height;
+            return this._loadFont(font)
+                .then(function (fontInstance) {
+                var promises = [];
+                var _loop_6 = function (i) {
+                    var _a;
+                    var c = text.charAt(i);
+                    var x = i * font.width;
+                    var imageData = fontInstance.imageMap[c];
+                    promises.push(ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a))
+                        .then(function (imageData) { return createImageBitmap(imageData); })
+                        .then(function (imageBitmap) {
+                        context.drawImage(imageBitmap, x, 0, font.width, font.height);
+                    }));
+                };
+                for (var i = 0; i < text.length; i++) {
+                    _loop_6(i);
+                }
+                return Promise.all(promises);
+            })
+                .then(function () { return PromiseUtils_6.resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)); })
+                .then(function (imageData) { return createImageBitmap(imageData); });
+        };
+        FontRenderer.prototype._loadFont = function (definition) {
+            var _this = this;
+            if (this._loadedFonts[definition.name]) {
+                return PromiseUtils_6.resolvedPromise(this._loadedFonts[definition.name]);
+            }
+            var width = NUM_CHARACTERS * definition.width;
+            return ImageUtils_3.loadImage("fonts/" + definition.src)
+                .then(function (imageData) { return createImageBitmap(imageData); })
+                .then(function (imageBitmap) {
+                var canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = definition.height;
+                var context = canvas.getContext('2d');
+                context.drawImage(imageBitmap, 0, 0);
+                var imageMap = {};
+                CHARACTERS.forEach(function (c) {
+                    _this._getCharacterData(definition, context, c.charCodeAt(0))
+                        .then(function (imageData) { imageMap[c] = imageData; });
+                });
+                var fontInstance = __assign(__assign({}, definition), { imageMap: imageMap });
+                _this._loadedFonts[definition.name] = fontInstance;
+                return fontInstance;
+            });
+        };
+        FontRenderer.prototype._getCharacterData = function (definition, context, char) {
+            var offset = this._getCharOffset(char);
+            var imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
+            return ImageUtils_3.applyTransparentColor(imageData, Colors_4.default.WHITE);
+        };
+        /**
+         * Note: fonts are in the format:
+         * ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
+         * A => 0
+         * a => 27
+         * 0 => 54
+         */
+        FontRenderer.prototype._getCharOffset = function (char) {
+            if (char >= 65 && char <= 90) { // 'A' - 'Z'
+                return char - 65; // 'A' = 0
+            }
+            else if (char >= 97 && char <= 122) { // 'a' - 'z'
+                return char - 70; // 'a' = 27
+            }
+            else if (char >= 48 && char <= 57) { // '0' - '9'
+                return char + 6; // '0' = 54
+            }
+            else if (char === 32) { // ' '
+                return 26;
+            }
+            else {
+                // TODO add other special chars
+            }
+            throw "invalid character code " + char;
+        };
+        return FontRenderer;
+    }());
+    exports.default = FontRenderer;
+});
+define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils", "graphics/FontRenderer"], function (require, exports, Colors_5, PromiseUtils_7, MapUtils_4, types_8, actions_1, ImageUtils_4, FontRenderer_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -2144,13 +2255,15 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             this._context = this._canvas.getContext('2d');
             this._context.imageSmoothingEnabled = false;
             this._context.textBaseline = 'middle';
+            this._fontRenderer = new FontRenderer_1.default();
         }
         SpriteRenderer.prototype.render = function () {
             var _this = this;
             var screen = jwb.state.screen;
             switch (screen) {
                 case types_8.GameScreen.TITLE:
-                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN')
+                        .then(function () { return _this._drawText('XUZH AND DUZH', FontRenderer_1.Fonts.DOS_PERFECT_VGA, { x: 100, y: 100 }, Colors_5.default.RED); });
                 case types_8.GameScreen.GAME:
                     return this._renderGameScreen();
                 case types_8.GameScreen.INVENTORY:
@@ -2167,9 +2280,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderGameScreen = function () {
             var _this = this;
             actions_1.revealTiles();
-            this._context.fillStyle = Colors_4.default.BLACK;
+            this._context.fillStyle = Colors_5.default.BLACK;
             this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-            return PromiseUtils_6.chainPromises([
+            return PromiseUtils_7.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
                 function () { return _this._renderProjectiles(); },
@@ -2200,7 +2313,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var item = map.getItem({ x: x, y: y });
                         if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_4.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             promises.push(this._renderElement(item, { x: x, y: y }));
                         }
                     }
@@ -2211,8 +2324,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderProjectiles = function () {
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_6 = function (y) {
-                var _loop_7 = function (x) {
+            var _loop_7 = function (y) {
+                var _loop_8 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var projectile = map.projectiles
                             .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
@@ -2222,12 +2335,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_7(x);
+                    _loop_8(x);
                 }
             };
             var this_2 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_6(y);
+                _loop_7(y);
             }
             return Promise.all(promises);
         };
@@ -2241,10 +2354,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                         var unit = map.getUnit({ x: x, y: y });
                         if (!!unit) {
                             if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_4.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_4.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
                             }
                             promises.push(this._renderElement(unit, { x: x, y: y }));
                         }
@@ -2279,7 +2392,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
             var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
             // draw titles
-            _context.fillStyle = Colors_4.default.WHITE;
+            _context.fillStyle = Colors_5.default.WHITE;
             _context.textAlign = 'center';
             _context.font = "20px " + MONOSPACE;
             _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
@@ -2316,16 +2429,16 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                     if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = Colors_4.default.YELLOW;
+                        _context.fillStyle = Colors_5.default.YELLOW;
                     }
                     else {
-                        _context.fillStyle = Colors_4.default.WHITE;
+                        _context.fillStyle = Colors_5.default.WHITE;
                     }
                     _context.fillText(items[i].name, x, y_1);
                 }
-                _context.fillStyle = Colors_4.default.WHITE;
+                _context.fillStyle = Colors_5.default.WHITE;
             }
-            return PromiseUtils_6.resolvedPromise();
+            return PromiseUtils_7.resolvedPromise();
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -2343,7 +2456,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     return this._drawSprite(sprite, pixel);
                 }
             }
-            return PromiseUtils_6.resolvedPromise();
+            return PromiseUtils_7.resolvedPromise();
         };
         SpriteRenderer.prototype._drawSprite = function (sprite, _a) {
             var _this = this;
@@ -2371,7 +2484,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 if (experienceToNextLevel !== null) {
                     lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
                 }
-                _context.fillStyle = Colors_4.default.WHITE;
+                _context.fillStyle = Colors_5.default.WHITE;
                 _context.textAlign = 'left';
                 _context.font = FONT_SMALL;
                 var left = 4;
@@ -2387,12 +2500,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _context = this._context;
             return new Promise(function (resolve) {
                 var messages = jwb.state.messages;
-                _context.fillStyle = Colors_4.default.BLACK;
-                _context.strokeStyle = Colors_4.default.WHITE;
+                _context.fillStyle = Colors_5.default.BLACK;
+                _context.strokeStyle = Colors_5.default.WHITE;
                 var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
                 var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
                 _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = Colors_4.default.WHITE;
+                _context.fillStyle = Colors_5.default.WHITE;
                 _context.textAlign = 'left';
                 _context.font = FONT_SMALL;
                 var textLeft = left + 4;
@@ -2411,18 +2524,18 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
             this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
             _context.textAlign = 'left';
-            _context.fillStyle = Colors_4.default.WHITE;
+            _context.fillStyle = Colors_5.default.WHITE;
             var textLeft = left + 4;
             _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
             _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_6.resolvedPromise();
+            return PromiseUtils_7.resolvedPromise();
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
             var _context = this._context;
-            _context.fillStyle = Colors_4.default.BLACK;
+            _context.fillStyle = Colors_5.default.BLACK;
             _context.fillRect(left, top, width, height);
-            _context.strokeStyle = Colors_4.default.WHITE;
+            _context.strokeStyle = Colors_5.default.WHITE;
             _context.strokeRect(left, top, width, height);
         };
         /**
@@ -2438,22 +2551,32 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         };
         SpriteRenderer.prototype._renderSplashScreen = function (filename, text) {
             var _this = this;
-            return ImageUtils_3.loadImage(filename)
+            return ImageUtils_4.loadImage(filename)
                 .then(function (imageData) { return createImageBitmap(imageData); })
                 .then(function (image) { return _this._context.drawImage(image, 0, 0, _this._canvas.width, _this._canvas.height); })
                 .then(function () {
                 var _context = _this._context;
                 _context.textAlign = 'center';
                 _context.font = FONT_LARGE;
-                _context.fillStyle = Colors_4.default.WHITE;
+                _context.fillStyle = Colors_5.default.WHITE;
                 _context.fillText(text, SCREEN_WIDTH / 2, 300);
+            });
+        };
+        SpriteRenderer.prototype._drawText = function (text, font, center, color) {
+            var _this = this;
+            return this._fontRenderer.render(text, font, color)
+                .then(function (image) {
+                var left = center.x - (image.width / 2);
+                var top = center.y - (image.height / 2);
+                _this._context.drawImage(image, left, top);
+                return PromiseUtils_7.resolvedPromise();
             });
         };
         return SpriteRenderer;
     }());
     exports.default = SpriteRenderer;
 });
-define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_9, SpriteFactory_2, Colors_5) {
+define("items/equipment/EquipmentClasses", ["require", "exports", "types/types", "graphics/sprites/SpriteFactory", "types/Colors"], function (require, exports, types_9, SpriteFactory_2, Colors_6) {
     "use strict";
     var _a, _b, _c, _d, _e;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -2464,9 +2587,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_a = {},
-            _a[Colors_5.default.BLACK] = Colors_5.default.BLACK,
-            _a[Colors_5.default.DARK_GRAY] = Colors_5.default.LIGHT_BROWN,
-            _a[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_BROWN,
+            _a[Colors_6.default.BLACK] = Colors_6.default.BLACK,
+            _a[Colors_6.default.DARK_GRAY] = Colors_6.default.LIGHT_BROWN,
+            _a[Colors_6.default.LIGHT_GRAY] = Colors_6.default.LIGHT_BROWN,
             _a),
         damage: 2,
         minLevel: 1,
@@ -2479,8 +2602,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_b = {},
-            _b[Colors_5.default.DARK_GRAY] = Colors_5.default.BLACK,
-            _b[Colors_5.default.LIGHT_GRAY] = Colors_5.default.DARK_GRAY,
+            _b[Colors_6.default.DARK_GRAY] = Colors_6.default.BLACK,
+            _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARK_GRAY,
             _b),
         damage: 4,
         minLevel: 3,
@@ -2493,8 +2616,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_c = {},
-            _c[Colors_5.default.DARK_GRAY] = Colors_5.default.DARK_GRAY,
-            _c[Colors_5.default.LIGHT_GRAY] = Colors_5.default.LIGHT_GRAY,
+            _c[Colors_6.default.DARK_GRAY] = Colors_6.default.DARK_GRAY,
+            _c[Colors_6.default.LIGHT_GRAY] = Colors_6.default.LIGHT_GRAY,
             _c),
         damage: 6,
         minLevel: 4,
@@ -2507,9 +2630,9 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.MELEE_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_SWORD,
         paletteSwaps: (_d = {},
-            _d[Colors_5.default.DARK_GRAY] = Colors_5.default.YELLOW,
-            _d[Colors_5.default.LIGHT_GRAY] = Colors_5.default.RED,
-            _d[Colors_5.default.BLACK] = Colors_5.default.DARK_RED,
+            _d[Colors_6.default.DARK_GRAY] = Colors_6.default.YELLOW,
+            _d[Colors_6.default.LIGHT_GRAY] = Colors_6.default.RED,
+            _d[Colors_6.default.BLACK] = Colors_6.default.DARK_RED,
             _d),
         damage: 8,
         minLevel: 5,
@@ -2533,8 +2656,8 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
         equipmentCategory: types_9.EquipmentSlot.RANGED_WEAPON,
         mapIcon: SpriteFactory_2.default.MAP_BOW,
         paletteSwaps: (_e = {},
-            _e[Colors_5.default.DARK_GREEN] = Colors_5.default.DARK_RED,
-            _e[Colors_5.default.GREEN] = Colors_5.default.RED,
+            _e[Colors_6.default.DARK_GREEN] = Colors_6.default.DARK_RED,
+            _e[Colors_6.default.GREEN] = Colors_6.default.RED,
             _e),
         damage: 4,
         minLevel: 5,
@@ -2545,7 +2668,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_5, PromiseUtils_7, RandomUtils_6, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_5, PromiseUtils_8, RandomUtils_6, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2587,7 +2710,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
-            return PromiseUtils_7.chainPromises(promises);
+            return PromiseUtils_8.chainPromises(promises);
         };
         return new InventoryItem_1.default('Scroll of Floor Fire', types_10.ItemCategory.SCROLL, onUse);
     }
@@ -2634,7 +2757,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
         createRandomItem: createRandomItem
     };
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_6, types_11, UnitAI_1) {
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_7, types_11, UnitAI_1) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -2644,16 +2767,16 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         sprite: SpriteFactory_4.default.PLAYER,
         // Green/brown colors
         paletteSwaps: (_a = {},
-            _a[Colors_6.default.DARK_PURPLE] = Colors_6.default.DARK_BROWN,
-            _a[Colors_6.default.MAGENTA] = Colors_6.default.DARK_GREEN,
-            _a[Colors_6.default.DARK_BLUE] = Colors_6.default.DARK_GREEN,
-            _a[Colors_6.default.CYAN] = Colors_6.default.LIGHT_PINK,
-            _a[Colors_6.default.BLACK] = Colors_6.default.BLACK,
-            _a[Colors_6.default.DARK_GRAY] = Colors_6.default.DARK_BROWN,
-            _a[Colors_6.default.LIGHT_GRAY] = Colors_6.default.LIGHT_BROWN,
-            _a[Colors_6.default.DARK_GREEN] = Colors_6.default.DARK_BROWN,
-            _a[Colors_6.default.GREEN] = Colors_6.default.DARK_BROWN,
-            _a[Colors_6.default.ORANGE] = Colors_6.default.LIGHT_PINK // Face
+            _a[Colors_7.default.DARK_PURPLE] = Colors_7.default.DARK_BROWN,
+            _a[Colors_7.default.MAGENTA] = Colors_7.default.DARK_GREEN,
+            _a[Colors_7.default.DARK_BLUE] = Colors_7.default.DARK_GREEN,
+            _a[Colors_7.default.CYAN] = Colors_7.default.LIGHT_PINK,
+            _a[Colors_7.default.BLACK] = Colors_7.default.BLACK,
+            _a[Colors_7.default.DARK_GRAY] = Colors_7.default.DARK_BROWN,
+            _a[Colors_7.default.LIGHT_GRAY] = Colors_7.default.LIGHT_BROWN,
+            _a[Colors_7.default.DARK_GREEN] = Colors_7.default.DARK_BROWN,
+            _a[Colors_7.default.GREEN] = Colors_7.default.DARK_BROWN,
+            _a[Colors_7.default.ORANGE] = Colors_7.default.LIGHT_PINK // Face
         ,
             _a),
         startingLife: 100,
@@ -2731,8 +2854,8 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         type: types_11.UnitType.GOLEM,
         sprite: SpriteFactory_4.default.GOLEM,
         paletteSwaps: (_b = {},
-            _b[Colors_6.default.DARK_GRAY] = Colors_6.default.DARKER_GRAY,
-            _b[Colors_6.default.LIGHT_GRAY] = Colors_6.default.DARKER_GRAY,
+            _b[Colors_7.default.DARK_GRAY] = Colors_7.default.DARKER_GRAY,
+            _b[Colors_7.default.LIGHT_GRAY] = Colors_7.default.DARKER_GRAY,
             _b),
         startingLife: 80,
         startingMana: null,
@@ -2804,19 +2927,19 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_8 = function (y) {
-                var _loop_9 = function (x) {
+            var _loop_9 = function (y) {
+                var _loop_10 = function (x) {
                     if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_9(x);
+                    _loop_10(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_8(y);
+                _loop_9(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -3474,12 +3597,12 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_7, types_17, SpriteFactory_5) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_8, types_17, SpriteFactory_5) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
     function _getTileSprite(filename) {
-        return function (paletteSwaps) { return SpriteFactory_5.createStaticSprite(new ImageSupplier_4.default(filename, Colors_7.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); };
+        return function (paletteSwaps) { return SpriteFactory_5.createStaticSprite(new ImageSupplier_4.default(filename, Colors_8.default.WHITE, paletteSwaps), { dx: 0, dy: 0 }); };
     }
     function _mapFilenames(filenames) {
         // @ts-ignore
@@ -3597,7 +3720,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_8, UnitUtils_2, AudioUtils_6, actions_2, types_19) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, AudioUtils_6, actions_2, types_19) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3670,7 +3793,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return _handleTab();
             default:
         }
-        return PromiseUtils_8.resolvedPromise();
+        return PromiseUtils_9.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
@@ -3736,7 +3859,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
             case types_19.GameScreen.TITLE:
             case types_19.GameScreen.VICTORY:
             case types_19.GameScreen.GAME_OVER:
-                return PromiseUtils_8.resolvedPromise();
+                return PromiseUtils_9.resolvedPromise();
             default:
                 throw "Invalid game screen " + state.screen;
         }
@@ -3771,7 +3894,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
-                return PromiseUtils_8.resolvedPromise();
+                return PromiseUtils_9.resolvedPromise();
             }
             case types_19.GameScreen.TITLE:
                 state.screen = types_19.GameScreen.GAME;
