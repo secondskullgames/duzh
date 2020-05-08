@@ -29,18 +29,25 @@ interface FontInstance extends FontDefinition {
   imageMap: { [char: string]: ImageData }
 }
 
-const Fonts: { [name: string]: FontDefinition } = {
-  DOS_PERFECT_VGA: { name: 'DOS PerfectVGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+const Fonts = {
+  PERFECT_DOS_VGA: <FontDefinition>{ name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
 };
 
 class FontRenderer {
   private readonly _loadedFonts: { [name: string]: FontInstance };
+  private readonly _imageMemos: { [key: string]: ImageBitmap };
 
   constructor() {
     this._loadedFonts = {};
+    this._imageMemos = {};
   }
 
   render(text: string, font: FontDefinition, color: Colors): Promise<ImageBitmap> {
+    const key = this._getMemoKey(text, font, color);
+    if (!!this._imageMemos[key]) {
+      return resolvedPromise(this._imageMemos[key]);
+    }
+
     const canvas = document.createElement('canvas');
     const context : CanvasRenderingContext2D = <any>canvas.getContext('2d');
     canvas.width = text.length * font.width;
@@ -52,7 +59,7 @@ class FontRenderer {
         for (let i = 0; i < text.length; i++) {
           const c = text.charAt(i);
           const x = i * font.width;
-          const imageData : ImageData = fontInstance.imageMap[c];
+          const imageData : ImageData = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
           promises.push(replaceColors(imageData, { [Colors.BLACK]: color })
             .then(imageData => createImageBitmap(imageData))
             .then(imageBitmap => {
@@ -62,7 +69,8 @@ class FontRenderer {
         return Promise.all(promises);
       })
       .then(() => resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)))
-      .then(imageData => createImageBitmap(imageData));
+      .then(imageData => createImageBitmap(imageData))
+      .then(imageBitmap => { this._imageMemos[key] = imageBitmap; return imageBitmap; });
   }
 
   private _loadFont(definition: FontDefinition): Promise<FontInstance> {
@@ -117,8 +125,13 @@ class FontRenderer {
       return 26;
     } else {
       // TODO add other special chars
+      return 26; // default to ' '
     }
     throw `invalid character code ${char}`;
+  }
+
+  private _getMemoKey(text: string, font: FontDefinition, color: Colors) {
+    return `${font.name}_${color}_${text}`;
   }
 }
 
