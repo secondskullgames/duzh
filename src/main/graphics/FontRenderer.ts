@@ -26,21 +26,28 @@ interface FontDefinition {
 }
 
 interface FontInstance extends FontDefinition {
-  imageMap: { [char: string]: ImageData }
+  imageMap: { [char: string]: ImageBitmap }
 }
 
-const Fonts: { [name: string]: FontDefinition } = {
-  DOS_PERFECT_VGA: { name: 'DOS PerfectVGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+const Fonts = {
+  PERFECT_DOS_VGA: <FontDefinition>{ name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
 };
 
 class FontRenderer {
   private readonly _loadedFonts: { [name: string]: FontInstance };
+  private readonly _imageMemos: { [key: string]: ImageBitmap };
 
   constructor() {
     this._loadedFonts = {};
+    this._imageMemos = {};
   }
 
   render(text: string, font: FontDefinition, color: Colors): Promise<ImageBitmap> {
+    const key = this._getMemoKey(text, font, color);
+    if (!!this._imageMemos[key]) {
+      return resolvedPromise(this._imageMemos[key]);
+    }
+
     const canvas = document.createElement('canvas');
     const context : CanvasRenderingContext2D = <any>canvas.getContext('2d');
     canvas.width = text.length * font.width;
@@ -48,21 +55,18 @@ class FontRenderer {
 
     return this._loadFont(font)
       .then(fontInstance => {
-        const promises: Promise<any>[] = [];
         for (let i = 0; i < text.length; i++) {
           const c = text.charAt(i);
           const x = i * font.width;
-          const imageData : ImageData = fontInstance.imageMap[c];
-          promises.push(replaceColors(imageData, { [Colors.BLACK]: color })
-            .then(imageData => createImageBitmap(imageData))
-            .then(imageBitmap => {
-              context.drawImage(imageBitmap, x, 0, font.width, font.height);
-            }));
+          const imageBitmap : ImageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
+          context.drawImage(imageBitmap, x, 0, font.width, font.height);
         }
-        return Promise.all(promises);
+        return resolvedPromise();
       })
       .then(() => resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)))
-      .then(imageData => createImageBitmap(imageData));
+      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
+      .then(imageData => createImageBitmap(imageData))
+      .then(imageBitmap => { this._imageMemos[key] = imageBitmap; return imageBitmap; });
   }
 
   private _loadFont(definition: FontDefinition): Promise<FontInstance> {
@@ -79,17 +83,25 @@ class FontRenderer {
         canvas.height = definition.height;
         const context: CanvasRenderingContext2D = <any>canvas.getContext('2d');
         context.drawImage(imageBitmap, 0, 0);
-        const imageMap : {[char: string]: ImageData } = {};
+        const imageMap: { [char: string]: ImageBitmap } = {};
+        const promises: Promise<any>[] = [];
         CHARACTERS.forEach(c => {
-          this._getCharacterData(definition, context, c.charCodeAt(0))
-            .then(imageData => { imageMap[c] = imageData });
+          promises.push(this._getCharacterData(definition, context, c.charCodeAt(0))
+            .then(imageData => createImageBitmap(imageData))
+            .then(imageBitmap => {
+              imageMap[c] = imageBitmap;
+            }));
         });
-        const fontInstance: FontInstance = {
-          ...definition,
-          imageMap
-        };
-        this._loadedFonts[definition.name] = fontInstance;
-        return fontInstance;
+
+        return Promise.all(promises)
+          .then(() => {
+            const fontInstance: FontInstance = {
+              ...definition,
+              imageMap
+            };
+            this._loadedFonts[definition.name] = fontInstance;
+            return fontInstance;
+          });
       });
   }
 
@@ -117,8 +129,13 @@ class FontRenderer {
       return 26;
     } else {
       // TODO add other special chars
+      return 26; // default to ' '
     }
     throw `invalid character code ${char}`;
+  }
+
+  private _getMemoKey(text: string, font: FontDefinition, color: Colors) {
+    return `${font.name}_${color}_${text}`;
   }
 }
 

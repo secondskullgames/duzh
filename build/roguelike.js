@@ -2026,6 +2026,9 @@ define("maps/MapBuilder", ["require", "exports", "maps/MapInstance"], function (
 define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * Global mutable state
+     */
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, maps) {
             this.screen = types_7.GameScreen.TITLE;
@@ -2126,39 +2129,41 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
         return characters;
     })();
     var Fonts = {
-        DOS_PERFECT_VGA: { name: 'DOS PerfectVGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+        PERFECT_DOS_VGA: { name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
     };
     exports.Fonts = Fonts;
     var FontRenderer = /** @class */ (function () {
         function FontRenderer() {
             this._loadedFonts = {};
+            this._imageMemos = {};
         }
         FontRenderer.prototype.render = function (text, font, color) {
+            var _this = this;
+            var key = this._getMemoKey(text, font, color);
+            if (!!this._imageMemos[key]) {
+                return PromiseUtils_6.resolvedPromise(this._imageMemos[key]);
+            }
             var canvas = document.createElement('canvas');
             var context = canvas.getContext('2d');
             canvas.width = text.length * font.width;
             canvas.height = font.height;
             return this._loadFont(font)
                 .then(function (fontInstance) {
-                var promises = [];
-                var _loop_6 = function (i) {
-                    var _a;
+                for (var i = 0; i < text.length; i++) {
                     var c = text.charAt(i);
                     var x = i * font.width;
-                    var imageData = fontInstance.imageMap[c];
-                    promises.push(ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a))
-                        .then(function (imageData) { return createImageBitmap(imageData); })
-                        .then(function (imageBitmap) {
-                        context.drawImage(imageBitmap, x, 0, font.width, font.height);
-                    }));
-                };
-                for (var i = 0; i < text.length; i++) {
-                    _loop_6(i);
+                    var imageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
+                    context.drawImage(imageBitmap, x, 0, font.width, font.height);
                 }
-                return Promise.all(promises);
+                return PromiseUtils_6.resolvedPromise();
             })
                 .then(function () { return PromiseUtils_6.resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)); })
-                .then(function (imageData) { return createImageBitmap(imageData); });
+                .then(function (imageData) {
+                var _a;
+                return ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a));
+            })
+                .then(function (imageData) { return createImageBitmap(imageData); })
+                .then(function (imageBitmap) { _this._imageMemos[key] = imageBitmap; return imageBitmap; });
         };
         FontRenderer.prototype._loadFont = function (definition) {
             var _this = this;
@@ -2175,13 +2180,20 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
                 var context = canvas.getContext('2d');
                 context.drawImage(imageBitmap, 0, 0);
                 var imageMap = {};
+                var promises = [];
                 CHARACTERS.forEach(function (c) {
-                    _this._getCharacterData(definition, context, c.charCodeAt(0))
-                        .then(function (imageData) { imageMap[c] = imageData; });
+                    promises.push(_this._getCharacterData(definition, context, c.charCodeAt(0))
+                        .then(function (imageData) { return createImageBitmap(imageData); })
+                        .then(function (imageBitmap) {
+                        imageMap[c] = imageBitmap;
+                    }));
                 });
-                var fontInstance = __assign(__assign({}, definition), { imageMap: imageMap });
-                _this._loadedFonts[definition.name] = fontInstance;
-                return fontInstance;
+                return Promise.all(promises)
+                    .then(function () {
+                    var fontInstance = __assign(__assign({}, definition), { imageMap: imageMap });
+                    _this._loadedFonts[definition.name] = fontInstance;
+                    return fontInstance;
+                });
             });
         };
         FontRenderer.prototype._getCharacterData = function (definition, context, char) {
@@ -2211,8 +2223,12 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
             }
             else {
                 // TODO add other special chars
+                return 26; // default to ' '
             }
             throw "invalid character code " + char;
+        };
+        FontRenderer.prototype._getMemoKey = function (text, font, color) {
+            return font.name + "_" + color + "_" + text;
         };
         return FontRenderer;
     }());
@@ -2236,14 +2252,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var LINE_HEIGHT = 16;
-    var SANS_SERIF = 'sans-serif';
-    var MONOSPACE = 'Monospace';
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
     var VICTORY_FILENAME = 'victory';
-    var FONT_SMALL = "10px " + SANS_SERIF;
-    var FONT_MEDIUM = "14px " + MONOSPACE;
-    var FONT_LARGE = "20px " + MONOSPACE;
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2262,8 +2273,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var screen = jwb.state.screen;
             switch (screen) {
                 case types_8.GameScreen.TITLE:
-                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN')
-                        .then(function () { return _this._drawText('XUZH AND DUZH', FontRenderer_1.Fonts.DOS_PERFECT_VGA, { x: 100, y: 100 }, Colors_5.default.RED); });
+                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
                 case types_8.GameScreen.GAME:
                     return this._renderGameScreen();
                 case types_8.GameScreen.INVENTORY:
@@ -2324,8 +2334,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderProjectiles = function () {
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_7 = function (y) {
-                var _loop_8 = function (x) {
+            var _loop_6 = function (y) {
+                var _loop_7 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var projectile = map.projectiles
                             .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
@@ -2335,12 +2345,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_8(x);
+                    _loop_7(x);
                 }
             };
             var this_2 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_7(y);
+                _loop_6(y);
             }
             return Promise.all(promises);
         };
@@ -2384,6 +2394,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             });
         };
         SpriteRenderer.prototype._renderInventory = function () {
+            var _this = this;
             var playerUnit = jwb.state.playerUnit;
             var inventory = playerUnit.inventory;
             var _a = this, _canvas = _a._canvas, _context = _a._context;
@@ -2391,31 +2402,24 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             // draw equipment
             var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
             var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
-            // draw titles
-            _context.fillStyle = Colors_5.default.WHITE;
-            _context.textAlign = 'center';
-            _context.font = "20px " + MONOSPACE;
-            _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
-            _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
+            var promises = [];
+            promises.push(this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _canvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
+            promises.push(this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _canvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
             // draw equipment items
             // for now, just display them all in one list
-            _context.font = FONT_SMALL;
-            _context.textAlign = 'left';
             var y = INVENTORY_TOP + 64;
             playerUnit.equipment.getEntries().forEach(function (_a) {
                 var slot = _a[0], equipment = _a[1];
-                _context.fillText(slot + " - " + equipment.name, equipmentLeft, y);
+                promises.push(_this._drawText(slot + " - " + equipment.name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y: y }, Colors_5.default.WHITE, 'left'));
                 y += LINE_HEIGHT;
             });
             // draw inventory categories
             var inventoryCategories = Object.values(types_8.ItemCategory);
             var categoryWidth = 60;
             var xOffset = 4;
-            _context.font = FONT_MEDIUM;
-            _context.textAlign = 'center';
             for (var i = 0; i < inventoryCategories.length; i++) {
                 var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-                _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
+                promises.push(this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: INVENTORY_TOP + 40 }, Colors_5.default.WHITE, 'center'));
                 if (inventoryCategories[i] === inventory.selectedCategory) {
                     _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
                 }
@@ -2424,21 +2428,19 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             if (inventory.selectedCategory) {
                 var items = inventory.get(inventory.selectedCategory);
                 var x = inventoryLeft + 8;
-                _context.font = FONT_SMALL;
-                _context.textAlign = 'left';
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+                    var color = void 0;
                     if (items[i] === inventory.selectedItem) {
-                        _context.fillStyle = Colors_5.default.YELLOW;
+                        color = Colors_5.default.YELLOW;
                     }
                     else {
-                        _context.fillStyle = Colors_5.default.WHITE;
+                        color = Colors_5.default.WHITE;
                     }
-                    _context.fillText(items[i].name, x, y_1);
+                    promises.push(this._drawText(items[i].name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: y_1 }, color, 'left'));
                 }
-                _context.fillStyle = Colors_5.default.WHITE;
             }
-            return PromiseUtils_7.resolvedPromise();
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -2468,67 +2470,54 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
          * Renders the bottom-left area of the screen, showing information about the player
          */
         SpriteRenderer.prototype._renderPlayerInfo = function () {
-            var _this = this;
-            var _context = this._context;
-            return new Promise(function (resolve) {
-                var playerUnit = jwb.state.playerUnit;
-                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                var lines = [
-                    playerUnit.name,
-                    "Level " + playerUnit.level,
-                    "Life: " + playerUnit.life + "/" + playerUnit.maxLife,
-                    "Damage: " + playerUnit.getDamage(),
-                ];
-                var experienceToNextLevel = playerUnit.experienceToNextLevel();
-                if (experienceToNextLevel !== null) {
-                    lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
-                }
-                _context.fillStyle = Colors_5.default.WHITE;
-                _context.textAlign = 'left';
-                _context.font = FONT_SMALL;
-                var left = 4;
-                for (var i = 0; i < lines.length; i++) {
-                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-                    _context.fillText(lines[i], left, y);
-                }
-                resolve();
-            });
+            var playerUnit = jwb.state.playerUnit;
+            var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+            this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+            var lines = [
+                playerUnit.name,
+                "Level " + playerUnit.level,
+                "Life: " + playerUnit.life + "/" + playerUnit.maxLife,
+                "Damage: " + playerUnit.getDamage(),
+            ];
+            var experienceToNextLevel = playerUnit.experienceToNextLevel();
+            if (experienceToNextLevel !== null) {
+                lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
+            }
+            var left = 4;
+            var promises = [];
+            for (var i = 0; i < lines.length; i++) {
+                var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+                promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_5.default.WHITE, 'left'));
+            }
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderMessages = function () {
-            var _this = this;
             var _context = this._context;
-            return new Promise(function (resolve) {
-                var messages = jwb.state.messages;
-                _context.fillStyle = Colors_5.default.BLACK;
-                _context.strokeStyle = Colors_5.default.WHITE;
-                var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-                var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-                _this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-                _context.fillStyle = Colors_5.default.WHITE;
-                _context.textAlign = 'left';
-                _context.font = FONT_SMALL;
-                var textLeft = left + 4;
-                for (var i = 0; i < messages.length; i++) {
-                    var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-                    _context.fillText(messages[i], textLeft, y);
-                }
-                resolve();
-            });
+            var messages = jwb.state.messages;
+            _context.fillStyle = Colors_5.default.BLACK;
+            _context.strokeStyle = Colors_5.default.WHITE;
+            var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
+            var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+            this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+            var textLeft = left + 4;
+            var promises = [];
+            for (var i = 0; i < messages.length; i++) {
+                var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: y }, Colors_5.default.WHITE, 'left'));
+            }
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderBottomBar = function () {
-            var _context = this._context;
             var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
             var left = BOTTOM_PANEL_WIDTH;
             var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
             var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
             this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
-            _context.textAlign = 'left';
-            _context.fillStyle = Colors_5.default.WHITE;
             var textLeft = left + 4;
-            _context.fillText("Level: " + ((mapIndex || 0) + 1), textLeft, top + 8);
-            _context.fillText("Turn: " + turn, textLeft, top + 8 + LINE_HEIGHT);
-            return PromiseUtils_7.resolvedPromise();
+            return Promise.all([
+                this._drawText("Level: " + ((mapIndex || 0) + 1), FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 }, Colors_5.default.WHITE, 'left'),
+                this._drawText("Turn: " + turn, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 + LINE_HEIGHT }, Colors_5.default.WHITE, 'left')
+            ]);
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
@@ -2554,21 +2543,28 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return ImageUtils_4.loadImage(filename)
                 .then(function (imageData) { return createImageBitmap(imageData); })
                 .then(function (image) { return _this._context.drawImage(image, 0, 0, _this._canvas.width, _this._canvas.height); })
-                .then(function () {
-                var _context = _this._context;
-                _context.textAlign = 'center';
-                _context.font = FONT_LARGE;
-                _context.fillStyle = Colors_5.default.WHITE;
-                _context.fillText(text, SCREEN_WIDTH / 2, 300);
-            });
+                .then(function () { return _this._drawText(text, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors_5.default.WHITE, 'center'); });
         };
-        SpriteRenderer.prototype._drawText = function (text, font, center, color) {
+        SpriteRenderer.prototype._drawText = function (text, font, _a, color, textAlign) {
             var _this = this;
+            var x = _a.x, y = _a.y;
             return this._fontRenderer.render(text, font, color)
-                .then(function (image) {
-                var left = center.x - (image.width / 2);
-                var top = center.y - (image.height / 2);
-                _this._context.drawImage(image, left, top);
+                .then(function (imageBitmap) {
+                var left;
+                switch (textAlign) {
+                    case 'left':
+                        left = x;
+                        break;
+                    case 'center':
+                        left = Math.floor(x - imageBitmap.width / 2);
+                        break;
+                    case 'right':
+                        left = x + imageBitmap.width;
+                        break;
+                    default:
+                        throw 'fux';
+                }
+                _this._context.drawImage(imageBitmap, left, y);
                 return PromiseUtils_7.resolvedPromise();
             });
         };
@@ -2927,19 +2923,19 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_9 = function (y) {
-                var _loop_10 = function (x) {
+            var _loop_8 = function (y) {
+                var _loop_9 = function (x) {
                     if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_10(x);
+                    _loop_9(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_9(y);
+                _loop_8(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -3646,6 +3642,9 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
 define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_18, MapUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /*
+     * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
+     */
     function loadMap(index) {
         var state = jwb.state;
         if (index >= state.maps.length) {
@@ -3924,6 +3923,10 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     }
     exports.attachEvents = attachEvents;
 });
+/*
+ * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
+ * that are only nitended for debugging purposes.
+ */
 define("core/debug", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });

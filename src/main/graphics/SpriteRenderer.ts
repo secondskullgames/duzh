@@ -29,15 +29,9 @@ const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 
 const LINE_HEIGHT = 16;
 
-const SANS_SERIF = 'sans-serif';
-const MONOSPACE = 'Monospace';
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
-
-const FONT_SMALL = `10px ${SANS_SERIF}`;
-const FONT_MEDIUM = `14px ${MONOSPACE}`;
-const FONT_LARGE = `20px ${MONOSPACE}`;
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
@@ -62,8 +56,7 @@ class SpriteRenderer implements Renderer {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
-        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN')
-          .then(() => this._drawText('XUZH AND DUZH', Fonts.DOS_PERFECT_VGA, { x: 100, y: 100 }, Colors.RED));
+        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
       case GameScreen.GAME:
         return this._renderGameScreen();
       case GameScreen.INVENTORY:
@@ -194,22 +187,16 @@ class SpriteRenderer implements Renderer {
     const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
     const inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
 
-    // draw titles
-    _context.fillStyle = Colors.WHITE;
-    _context.textAlign = 'center';
-    _context.font = `20px ${MONOSPACE}`;
-    _context.fillText('EQUIPMENT', _canvas.width / 4, INVENTORY_TOP + 12);
-    _context.fillText('INVENTORY', _canvas.width * 3 / 4, INVENTORY_TOP + 12);
+    const promises: Promise<any>[] = [];
+    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _canvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _canvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
 
     // draw equipment items
     // for now, just display them all in one list
 
-    _context.font = FONT_SMALL;
-    _context.textAlign = 'left';
-
     let y = INVENTORY_TOP + 64;
     playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
-      _context.fillText(`${slot} - ${equipment.name}`, equipmentLeft, y);
+      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     });
 
@@ -218,39 +205,31 @@ class SpriteRenderer implements Renderer {
     const categoryWidth = 60;
     const xOffset = 4;
 
-    _context.font = FONT_MEDIUM;
-    _context.textAlign = 'center';
-
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-      _context.fillText(inventoryCategories[i], x, INVENTORY_TOP + 40);
+      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: INVENTORY_TOP + 40 }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
         _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
       }
     }
 
     // draw inventory items
-
     if (inventory.selectedCategory) {
       const items = inventory.get(inventory.selectedCategory);
       const x = inventoryLeft + 8;
-
-      _context.font = FONT_SMALL;
-      _context.textAlign = 'left';
-
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+        let color;
         if (items[i] === inventory.selectedItem) {
-          _context.fillStyle = Colors.YELLOW;
+          color = Colors.YELLOW;
         } else {
-          _context.fillStyle = Colors.WHITE;
+          color = Colors.WHITE;
         }
-        _context.fillText(items[i].name, x, y);
+        promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
       }
-      _context.fillStyle = Colors.WHITE;
     }
 
-    return resolvedPromise();
+    return Promise.all(promises);
   }
 
   private _isPixelOnScreen({ x, y }: Coordinates): boolean {
@@ -282,64 +261,53 @@ class SpriteRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderPlayerInfo(): Promise<void> {
-    const { _context } = this;
-    return new Promise(resolve => {
-      const { playerUnit } = jwb.state;
+  private _renderPlayerInfo(): Promise<any> {
+    const { playerUnit } = jwb.state;
 
-      const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      this._drawRect({ left: 0, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+    const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+    this._drawRect({ left: 0, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
-      const lines = [
-        playerUnit.name,
-        `Level ${playerUnit.level}`,
-        `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
-        `Damage: ${playerUnit.getDamage()}`,
-      ];
-      const experienceToNextLevel = playerUnit.experienceToNextLevel();
-      if (experienceToNextLevel !== null) {
-        lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-      }
-      _context.fillStyle = Colors.WHITE;
-      _context.textAlign = 'left';
-      _context.font = FONT_SMALL;
+    const lines = [
+      playerUnit.name,
+      `Level ${playerUnit.level}`,
+      `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
+      `Damage: ${playerUnit.getDamage()}`,
+    ];
+    const experienceToNextLevel = playerUnit.experienceToNextLevel();
+    if (experienceToNextLevel !== null) {
+      lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+    }
 
-      const left = 4;
-      for (let i = 0; i < lines.length; i++) {
-        let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-        _context.fillText(lines[i], left, y);
-      }
-      resolve();
-    });
+    const left = 4;
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < lines.length; i++) {
+      let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+    }
+    return Promise.all(promises);
   }
 
-  private _renderMessages(): Promise<void> {
+  private _renderMessages(): Promise<any> {
     const { _context } = this;
-    return new Promise(resolve => {
-      const { messages } = jwb.state;
-      _context.fillStyle = Colors.BLACK;
-      _context.strokeStyle = Colors.WHITE;
+    const { messages } = jwb.state;
+    _context.fillStyle = Colors.BLACK;
+    _context.strokeStyle = Colors.WHITE;
 
-      const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-      const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-      this._drawRect({ left, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
+    const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
+    const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
+    this._drawRect({ left, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
-      _context.fillStyle = Colors.WHITE;
-      _context.textAlign = 'left';
-      _context.font = FONT_SMALL;
+    const textLeft = left + 4;
 
-      const textLeft = left + 4;
-
-      for (let i = 0; i < messages.length; i++) {
-        let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-        _context.fillText(messages[i], textLeft, y);
-      }
-      resolve();
-    });
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: textLeft, y }, Colors.WHITE, 'left'));
+    }
+    return Promise.all(promises);
   }
 
-  private _renderBottomBar(): Promise<void> {
-    const { _context } = this;
+  private _renderBottomBar(): Promise<any> {
     const { mapIndex, turn } = jwb.state;
 
     const left = BOTTOM_PANEL_WIDTH;
@@ -348,13 +316,11 @@ class SpriteRenderer implements Renderer {
 
     this._drawRect({ left, top, width, height: BOTTOM_BAR_HEIGHT });
 
-    _context.textAlign = 'left';
-    _context.fillStyle = Colors.WHITE;
     const textLeft = left + 4;
-    _context.fillText(`Level: ${(mapIndex || 0) + 1}`, textLeft, top + 8);
-    _context.fillText(`Turn: ${turn}`, textLeft, top + 8 + LINE_HEIGHT);
-
-    return resolvedPromise();
+    return Promise.all([
+      this._drawText(`Level: ${(mapIndex || 0) + 1}`, Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 }, Colors.WHITE, 'left'),
+      this._drawText(`Turn: ${turn}`, Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 + LINE_HEIGHT }, Colors.WHITE, 'left')
+    ]);
   }
 
   private _drawRect({ left, top, width, height }: Rect) {
@@ -381,21 +347,27 @@ class SpriteRenderer implements Renderer {
     return loadImage(filename)
       .then(imageData => createImageBitmap(imageData))
       .then(image => this._context.drawImage(image, 0, 0, this._canvas.width, this._canvas.height))
-      .then(() => {
-        const { _context } = this;
-        _context.textAlign = 'center';
-        _context.font = FONT_LARGE;
-        _context.fillStyle = Colors.WHITE;
-        _context.fillText(text, SCREEN_WIDTH / 2, 300);
-      });
+      .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center'));
   }
 
-  private _drawText(text: string, font: FontDefinition, center: Coordinates, color: Colors): Promise<any> {
+  private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Colors, textAlign: 'left' | 'center' | 'right'): Promise<any> {
     return this._fontRenderer.render(text, font, color)
-      .then(image => {
-        const left = center.x - (image.width / 2);
-        const top = center.y - (image.height / 2);
-        this._context.drawImage(image, left, top);
+      .then(imageBitmap => {
+        let left;
+        switch (textAlign) {
+          case 'left':
+            left = x;
+            break;
+          case 'center':
+            left = Math.floor(x - imageBitmap.width / 2);
+            break;
+          case 'right':
+            left = x + imageBitmap.width;
+            break;
+          default:
+            throw 'fux';
+        }
+        this._context.drawImage(imageBitmap, left, y);
         return resolvedPromise();
       });
   }

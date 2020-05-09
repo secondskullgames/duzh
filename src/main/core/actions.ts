@@ -10,6 +10,10 @@ import { randChoice } from '../utils/RandomUtils';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 
+/*
+ * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
+ */
+
 function loadMap(index: number) {
   const { state } = jwb;
   if (index >= state.maps.length) {
