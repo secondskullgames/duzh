@@ -2241,6 +2241,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var VICTORY_FILENAME = 'victory';
     var HUD_FILENAME = 'HUD';
     var INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
+    var SHADOW_FILENAME = 'shadow';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2316,31 +2317,16 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderItems = function () {
-            var map = jwb.state.getMap();
-            var promises = [];
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var item = map.getItem({ x: x, y: y });
-                        if (!!item) {
-                            promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
-                            promises.push(this._renderElement(item, { x: x, y: y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        };
-        SpriteRenderer.prototype._renderProjectiles = function () {
+            var _this = this;
             var map = jwb.state.getMap();
             var promises = [];
             var _loop_6 = function (y) {
                 var _loop_7 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var projectile = map.projectiles
-                            .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
-                        if (!!projectile) {
-                            promises.push(this_2._renderElement(projectile, { x: x, y: y }));
+                        var item_1 = map.getItem({ x: x, y: y });
+                        if (!!item_1) {
+                            promises.push(this_2._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY)
+                                .then(function () { return _this._renderElement(item_1, { x: x, y: y }); }));
                         }
                     }
                 };
@@ -2354,43 +2340,78 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             }
             return Promise.all(promises);
         };
+        SpriteRenderer.prototype._renderProjectiles = function () {
+            var map = jwb.state.getMap();
+            var promises = [];
+            var _loop_8 = function (y) {
+                var _loop_9 = function (x) {
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var projectile = map.projectiles
+                            .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
+                        if (!!projectile) {
+                            promises.push(this_3._renderElement(projectile, { x: x, y: y }));
+                        }
+                    }
+                };
+                for (var x = 0; x < map.width; x++) {
+                    _loop_9(x);
+                }
+            };
+            var this_3 = this;
+            for (var y = 0; y < map.height; y++) {
+                _loop_8(y);
+            }
+            return Promise.all(promises);
+        };
         SpriteRenderer.prototype._renderUnits = function () {
+            var _this = this;
             var playerUnit = jwb.state.playerUnit;
             var map = jwb.state.getMap();
             var promises = [];
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
+            var _loop_10 = function (y) {
+                var _loop_11 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var unit = map.getUnit({ x: x, y: y });
-                        if (!!unit) {
-                            if (unit === playerUnit) {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                        var unit_1 = map.getUnit({ x: x, y: y });
+                        if (!!unit_1) {
+                            var shadowColor = void 0;
+                            if (unit_1 === playerUnit) {
+                                shadowColor = Colors_5.default.GREEN;
                             }
                             else {
-                                promises.push(this._drawEllipse({ x: x, y: y }, Colors_5.default.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+                                shadowColor = Colors_5.default.DARK_GRAY;
                             }
-                            promises.push(this._renderElement(unit, { x: x, y: y }));
+                            promises.push(this_4._drawEllipse({ x: x, y: y }, shadowColor)
+                                .then(function () { return _this._renderElement(unit_1, { x: x, y: y }); }));
                         }
                     }
+                };
+                for (var x = 0; x < map.width; x++) {
+                    _loop_11(x);
                 }
+            };
+            var this_4 = this;
+            for (var y = 0; y < map.height; y++) {
+                _loop_10(y);
             }
             return Promise.all(promises);
         };
         /**
+         * TODO memoize
          * @param color (in hex form)
          */
-        SpriteRenderer.prototype._drawEllipse = function (_a, color, width, height) {
+        SpriteRenderer.prototype._drawEllipse = function (_a, color) {
+            var _this = this;
             var x = _a.x, y = _a.y;
-            var _bufferContext = this._bufferContext;
-            _bufferContext.fillStyle = color;
-            var topLeftPixel = this._gridToPixel({ x: x, y: y });
-            var _b = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2], cx = _b[0], cy = _b[1];
-            _bufferContext.moveTo(cx, cy);
-            _bufferContext.beginPath();
-            _bufferContext.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
-            _bufferContext.fill();
-            return new Promise(function (resolve) {
-                resolve();
+            var _b = this._gridToPixel({ x: x, y: y }), left = _b.x, top = _b.y;
+            return ImageUtils_4.loadImage(SHADOW_FILENAME)
+                .then(function (imageData) { return ImageUtils_4.applyTransparentColor(imageData, Colors_5.default.WHITE); })
+                .then(function (imageData) {
+                var _a;
+                return ImageUtils_4.replaceColors(imageData, (_a = {}, _a[Colors_5.default.BLACK] = color, _a));
+            })
+                .then(createImageBitmap)
+                .then(function (imageBitmap) {
+                _this._bufferContext.drawImage(imageBitmap, left, top);
             });
         };
         SpriteRenderer.prototype._renderInventory = function () {
@@ -2406,14 +2427,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
                 var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
                 var promises = [];
-                promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, {
-                    x: _bufferCanvas.width / 4,
-                    y: INVENTORY_TOP + 12
-                }, Colors_5.default.WHITE, 'center'));
-                promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, {
-                    x: _bufferCanvas.width * 3 / 4,
-                    y: INVENTORY_TOP + 12
-                }, Colors_5.default.WHITE, 'center'));
+                promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
+                promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
                 // draw equipment items
                 // for now, just display them all in one list
                 var y = INVENTORY_TOP + 64;
@@ -2951,19 +2966,19 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_8 = function (y) {
-                var _loop_9 = function (x) {
+            var _loop_12 = function (y) {
+                var _loop_13 = function (x) {
                     if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_9(x);
+                    _loop_13(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_8(y);
+                _loop_12(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];

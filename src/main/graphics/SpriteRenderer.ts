@@ -5,7 +5,7 @@ import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
-import { applyTransparentColor, loadImage } from './ImageUtils';
+import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 
 const TILE_WIDTH = 32;
@@ -34,6 +34,7 @@ const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
 const HUD_FILENAME = 'HUD';
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
+const SHADOW_FILENAME = 'shadow';
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
@@ -127,8 +128,8 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (!!item) {
-            promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
-            promises.push(this._renderElement(item, { x, y }));
+            promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY)
+              .then(() => this._renderElement(item, { x, y })));
           }
         }
       }
@@ -163,12 +164,14 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const unit = map.getUnit({ x, y });
           if (!!unit) {
+            let shadowColor;
             if (unit === playerUnit) {
-              promises.push(this._drawEllipse({ x, y }, Colors.GREEN, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+              shadowColor = Colors.GREEN;
             } else {
-              promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY, TILE_WIDTH * 3 / 8, TILE_HEIGHT * 3 / 8));
+              shadowColor = Colors.DARK_GRAY;
             }
-            promises.push(this._renderElement(unit, { x, y }));
+            promises.push(this._drawEllipse({ x, y }, shadowColor)
+              .then(() => this._renderElement(unit, { x, y })));
           }
         }
       }
@@ -177,20 +180,18 @@ class SpriteRenderer implements Renderer {
   }
 
   /**
+   * TODO memoize
    * @param color (in hex form)
    */
-  private _drawEllipse({ x, y }: Coordinates, color: Colors, width: number, height: number): Promise<any> {
-    const { _bufferContext } = this;
-    _bufferContext.fillStyle = color;
-    const topLeftPixel = this._gridToPixel({ x, y });
-    const [cx, cy] = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2];
-    _bufferContext.moveTo(cx, cy);
-    _bufferContext.beginPath();
-    _bufferContext.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
-    _bufferContext.fill();
-    return new Promise(resolve => {
-      resolve();
-    });
+  private _drawEllipse({ x, y }: Coordinates, color: Colors): Promise<any> {
+    const { x: left, y: top } = this._gridToPixel({ x, y });
+    return loadImage(SHADOW_FILENAME)
+      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
+      .then(createImageBitmap)
+      .then(imageBitmap => {
+        this._bufferContext.drawImage(imageBitmap, left, top)
+      });
   }
 
   private _renderInventory(): Promise<any> {
@@ -209,14 +210,8 @@ class SpriteRenderer implements Renderer {
         const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
 
         const promises: Promise<any>[] = [];
-        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, {
-          x: _bufferCanvas.width / 4,
-          y: INVENTORY_TOP + 12
-        }, Colors.WHITE, 'center'));
-        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, {
-          x: _bufferCanvas.width * 3 / 4,
-          y: INVENTORY_TOP + 12
-        }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
 
         // draw equipment items
         // for now, just display them all in one list
