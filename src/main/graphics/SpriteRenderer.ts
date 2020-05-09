@@ -17,10 +17,10 @@ const HEIGHT = 15; // in tiles
 const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 360;
 
-const BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
-const BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
-const BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;
-const BOTTOM_BAR_HEIGHT = 2 * TILE_HEIGHT;
+const HUD_HEIGHT = 3 * TILE_HEIGHT;
+const HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
+const HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
+const HUD_MARGIN = 5;
 
 const INVENTORY_LEFT = 2 * TILE_WIDTH;
 const INVENTORY_TOP = 2 * TILE_HEIGHT;
@@ -32,6 +32,8 @@ const LINE_HEIGHT = 16;
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
+const HUD_FILENAME = 'HUD';
+const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
@@ -97,7 +99,7 @@ class SpriteRenderer implements Renderer {
       () => this._renderItems(),
       () => this._renderProjectiles(),
       () => this._renderUnits(),
-      () => Promise.all([this._renderPlayerInfo(), this._renderBottomBar(), this._renderMessages()])
+      () => this._renderHUD()
     ]);
   }
 
@@ -196,56 +198,68 @@ class SpriteRenderer implements Renderer {
     const { inventory } = playerUnit;
     const { _bufferCanvas, _bufferContext } = this;
 
-    this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
+    return loadImage(INVENTORY_BACKGROUND_FILENAME)
+      .then(createImageBitmap)
+      .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
+      .then(() => {
 
-    // draw equipment
+        // draw equipment
 
-    const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-    const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+        const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
+        const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
 
-    const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+        const promises: Promise<any>[] = [];
+        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, {
+          x: _bufferCanvas.width / 4,
+          y: INVENTORY_TOP + 12
+        }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, {
+          x: _bufferCanvas.width * 3 / 4,
+          y: INVENTORY_TOP + 12
+        }, Colors.WHITE, 'center'));
 
-    // draw equipment items
-    // for now, just display them all in one list
+        // draw equipment items
+        // for now, just display them all in one list
 
-    let y = INVENTORY_TOP + 64;
-    playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
-      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
-      y += LINE_HEIGHT;
-    });
+        let y = INVENTORY_TOP + 64;
+        playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
+          promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+          y += LINE_HEIGHT;
+        });
 
-    // draw inventory categories
-    const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
-    const categoryWidth = 60;
-    const xOffset = 4;
+        // draw inventory categories
+        const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
+        const categoryWidth = 60;
+        const xOffset = 4;
 
-    for (let i = 0; i < inventoryCategories.length; i++) {
-      const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: INVENTORY_TOP + 40 }, Colors.WHITE, 'center'));
-      if (inventoryCategories[i] === inventory.selectedCategory) {
-        _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
-      }
-    }
-
-    // draw inventory items
-    if (inventory.selectedCategory) {
-      const items = inventory.get(inventory.selectedCategory);
-      const x = inventoryLeft + 8;
-      for (let i = 0; i < items.length; i++) {
-        const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-        let color;
-        if (items[i] === inventory.selectedItem) {
-          color = Colors.YELLOW;
-        } else {
-          color = Colors.WHITE;
+        for (let i = 0; i < inventoryCategories.length; i++) {
+          const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+          const top = INVENTORY_TOP + 40;
+          promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
+          if (inventoryCategories[i] === inventory.selectedCategory) {
+            _bufferContext.fillStyle = Colors.WHITE;
+            _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+          }
         }
-        promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
-      }
-    }
 
-    return Promise.all(promises);
+        // draw inventory items
+        if (inventory.selectedCategory) {
+          const items = inventory.get(inventory.selectedCategory);
+          const x = inventoryLeft + 8;
+          for (let i = 0; i < items.length; i++) {
+            const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+            let color;
+            if (items[i] === inventory.selectedItem) {
+              color = Colors.YELLOW;
+            } else {
+              color = Colors.WHITE;
+            }
+            promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
+          }
+        }
+
+        return Promise.all(promises);
+      });
   }
 
   private _isPixelOnScreen({ x, y }: Coordinates): boolean {
@@ -274,14 +288,26 @@ class SpriteRenderer implements Renderer {
       .then(image => this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
+  private _renderHUD(): Promise<any> {
+    return this._renderHUDFrame()
+      .then(() => Promise.all([
+        this._renderHUDLeftPanel(),
+        this._renderHUDMiddlePanel(),
+        this._renderHUDRightPanel(),
+      ]));
+  }
+
+  private _renderHUDFrame(): Promise<any> {
+    return loadImage(HUD_FILENAME)
+      .then(createImageBitmap)
+      .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
+  }
+
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderPlayerInfo(): Promise<any> {
+  private _renderHUDLeftPanel(): Promise<any> {
     const { playerUnit } = jwb.state;
-
-    const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-    this._drawRect({ left: 0, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
 
     const lines = [
       playerUnit.name,
@@ -289,54 +315,56 @@ class SpriteRenderer implements Renderer {
       `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
       `Damage: ${playerUnit.getDamage()}`,
     ];
-    const experienceToNextLevel = playerUnit.experienceToNextLevel();
-    if (experienceToNextLevel !== null) {
-      lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-    }
 
-    const left = 4;
+    const left = HUD_MARGIN;
+    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
     const promises: Promise<any>[] = [];
     for (let i = 0; i < lines.length; i++) {
-      let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+      let y = top + (LINE_HEIGHT * i);
       promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
     }
     return Promise.all(promises);
   }
 
-  private _renderMessages(): Promise<any> {
+  private _renderHUDMiddlePanel(): Promise<any> {
     const { _bufferContext } = this;
     const { messages } = jwb.state;
     _bufferContext.fillStyle = Colors.BLACK;
     _bufferContext.strokeStyle = Colors.WHITE;
 
-    const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-    const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-    this._drawRect({ left, top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-
-    const textLeft = left + 4;
+    const left = HUD_LEFT_WIDTH + HUD_MARGIN;
+    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
 
     const promises: Promise<any>[] = [];
     for (let i = 0; i < messages.length; i++) {
-      let y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: textLeft, y }, Colors.WHITE, 'left'));
+      let y = top + (LINE_HEIGHT * i);
+      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
     }
     return Promise.all(promises);
   }
 
-  private _renderBottomBar(): Promise<any> {
-    const { mapIndex, turn } = jwb.state;
+  private _renderHUDRightPanel(): Promise<any> {
+    const { mapIndex, playerUnit, turn } = jwb.state;
 
-    const left = BOTTOM_PANEL_WIDTH;
-    const top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-    const width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
+    const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
+    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
 
-    this._drawRect({ left, top, width, height: BOTTOM_BAR_HEIGHT });
+    const lines = [
+      `Turn: ${turn}`,
+      `Floor: ${(mapIndex || 0) + 1}`,
+    ];
 
-    const textLeft = left + 4;
-    return Promise.all([
-      this._drawText(`Level: ${(mapIndex || 0) + 1}`, Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 }, Colors.WHITE, 'left'),
-      this._drawText(`Turn: ${turn}`, Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 + LINE_HEIGHT }, Colors.WHITE, 'left')
-    ]);
+    const experienceToNextLevel = playerUnit.experienceToNextLevel();
+    if (experienceToNextLevel !== null) {
+      lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+    }
+
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < lines.length; i++) {
+      let y = top + (LINE_HEIGHT * i);
+      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+    }
+    return Promise.all(promises);
   }
 
   private _drawRect({ left, top, width, height }: Rect) {

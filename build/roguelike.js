@@ -1172,7 +1172,8 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
                 var targetUnit_1 = map.getUnit({ x: x, y: y });
                 if (!!targetUnit_1) {
                     var damage_1 = unit.getDamage();
-                    messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit_1.name + " (" + targetUnit_1.level + ") for " + damage_1 + " damage!");
+                    messages.push(unit.name + " hit " + targetUnit_1.name);
+                    messages.push("for " + damage_1 + " damage!");
                     Animations_1.playAttackingAnimation(unit, targetUnit_1)
                         .then(function () { return targetUnit_1.takeDamage(damage_1, unit); })
                         .then(function () { return resolve(); });
@@ -1207,7 +1208,8 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
             if (!!targetUnit) {
                 var messages = jwb.state.messages;
                 var damage_2 = unit.getRangedDamage();
-                messages.push(unit.name + " (" + unit.level + ") hit " + targetUnit.name + " (" + targetUnit.level + ") for " + damage_2 + " damage!");
+                messages.push(unit.name + " hit " + targetUnit.name);
+                messages.push("for " + damage_2 + " damage!");
                 Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
                     .then(function () { return targetUnit.takeDamage(damage_2, unit); })
                     .then(function () { return resolve(); });
@@ -2126,7 +2128,12 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
         return characters;
     })();
     var Fonts = {
-        PERFECT_DOS_VGA: { name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15_2', width: 9, height: 15 }
+        PERFECT_DOS_VGA: {
+            name: 'PERFECT_DOS_VGA',
+            src: 'dos_perfect_vga_9x15_2',
+            width: 9,
+            height: 15
+        }
     };
     exports.Fonts = Fonts;
     var FontRenderer = /** @class */ (function () {
@@ -2220,10 +2227,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var HEIGHT = 15; // in tiles
     var SCREEN_WIDTH = 640;
     var SCREEN_HEIGHT = 360;
-    var BOTTOM_PANEL_HEIGHT = 4 * TILE_HEIGHT;
-    var BOTTOM_PANEL_WIDTH = 6 * TILE_WIDTH;
-    var BOTTOM_BAR_WIDTH = 8 * TILE_WIDTH;
-    var BOTTOM_BAR_HEIGHT = 2 * TILE_HEIGHT;
+    var HUD_HEIGHT = 3 * TILE_HEIGHT;
+    var HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
+    var HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
+    var HUD_MARGIN = 5;
     var INVENTORY_LEFT = 2 * TILE_WIDTH;
     var INVENTORY_TOP = 2 * TILE_HEIGHT;
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
@@ -2232,6 +2239,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
     var VICTORY_FILENAME = 'victory';
+    var HUD_FILENAME = 'HUD';
+    var INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
     var SpriteRenderer = /** @class */ (function () {
         function SpriteRenderer() {
             this._container = document.getElementById('container');
@@ -2288,7 +2297,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 function () { return _this._renderItems(); },
                 function () { return _this._renderProjectiles(); },
                 function () { return _this._renderUnits(); },
-                function () { return Promise.all([_this._renderPlayerInfo(), _this._renderBottomBar(), _this._renderMessages()]); }
+                function () { return _this._renderHUD(); }
             ]);
         };
         SpriteRenderer.prototype._renderTiles = function () {
@@ -2389,49 +2398,61 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var playerUnit = jwb.state.playerUnit;
             var inventory = playerUnit.inventory;
             var _a = this, _bufferCanvas = _a._bufferCanvas, _bufferContext = _a._bufferContext;
-            this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
-            // draw equipment
-            var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-            var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
-            var promises = [];
-            promises.push(this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
-            promises.push(this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
-            // draw equipment items
-            // for now, just display them all in one list
-            var y = INVENTORY_TOP + 64;
-            playerUnit.equipment.getEntries().forEach(function (_a) {
-                var slot = _a[0], equipment = _a[1];
-                promises.push(_this._drawText(slot + " - " + equipment.name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y: y }, Colors_5.default.WHITE, 'left'));
-                y += LINE_HEIGHT;
+            return ImageUtils_4.loadImage(INVENTORY_BACKGROUND_FILENAME)
+                .then(createImageBitmap)
+                .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT); })
+                .then(function () {
+                // draw equipment
+                var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
+                var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+                var promises = [];
+                promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, {
+                    x: _bufferCanvas.width / 4,
+                    y: INVENTORY_TOP + 12
+                }, Colors_5.default.WHITE, 'center'));
+                promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, {
+                    x: _bufferCanvas.width * 3 / 4,
+                    y: INVENTORY_TOP + 12
+                }, Colors_5.default.WHITE, 'center'));
+                // draw equipment items
+                // for now, just display them all in one list
+                var y = INVENTORY_TOP + 64;
+                playerUnit.equipment.getEntries().forEach(function (_a) {
+                    var slot = _a[0], equipment = _a[1];
+                    promises.push(_this._drawText(slot + " - " + equipment.name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y: y }, Colors_5.default.WHITE, 'left'));
+                    y += LINE_HEIGHT;
+                });
+                // draw inventory categories
+                var inventoryCategories = Object.values(types_8.ItemCategory);
+                var categoryWidth = 60;
+                var xOffset = 4;
+                for (var i = 0; i < inventoryCategories.length; i++) {
+                    var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+                    var top_1 = INVENTORY_TOP + 40;
+                    promises.push(_this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: top_1 }, Colors_5.default.WHITE, 'center'));
+                    if (inventoryCategories[i] === inventory.selectedCategory) {
+                        _bufferContext.fillStyle = Colors_5.default.WHITE;
+                        _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+                    }
+                }
+                // draw inventory items
+                if (inventory.selectedCategory) {
+                    var items = inventory.get(inventory.selectedCategory);
+                    var x = inventoryLeft + 8;
+                    for (var i = 0; i < items.length; i++) {
+                        var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+                        var color = void 0;
+                        if (items[i] === inventory.selectedItem) {
+                            color = Colors_5.default.YELLOW;
+                        }
+                        else {
+                            color = Colors_5.default.WHITE;
+                        }
+                        promises.push(_this._drawText(items[i].name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: y_1 }, color, 'left'));
+                    }
+                }
+                return Promise.all(promises);
             });
-            // draw inventory categories
-            var inventoryCategories = Object.values(types_8.ItemCategory);
-            var categoryWidth = 60;
-            var xOffset = 4;
-            for (var i = 0; i < inventoryCategories.length; i++) {
-                var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-                promises.push(this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: INVENTORY_TOP + 40 }, Colors_5.default.WHITE, 'center'));
-                if (inventoryCategories[i] === inventory.selectedCategory) {
-                    _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
-                }
-            }
-            // draw inventory items
-            if (inventory.selectedCategory) {
-                var items = inventory.get(inventory.selectedCategory);
-                var x = inventoryLeft + 8;
-                for (var i = 0; i < items.length; i++) {
-                    var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-                    var color = void 0;
-                    if (items[i] === inventory.selectedItem) {
-                        color = Colors_5.default.YELLOW;
-                    }
-                    else {
-                        color = Colors_5.default.WHITE;
-                    }
-                    promises.push(this._drawText(items[i].name, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: y_1 }, color, 'left'));
-                }
-            }
-            return Promise.all(promises);
         };
         SpriteRenderer.prototype._isPixelOnScreen = function (_a) {
             var x = _a.x, y = _a.y;
@@ -2457,58 +2478,73 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return sprite.getImage()
                 .then(function (image) { return _this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
+        SpriteRenderer.prototype._renderHUD = function () {
+            var _this = this;
+            return this._renderHUDFrame()
+                .then(function () { return Promise.all([
+                _this._renderHUDLeftPanel(),
+                _this._renderHUDMiddlePanel(),
+                _this._renderHUDRightPanel(),
+            ]); });
+        };
+        SpriteRenderer.prototype._renderHUDFrame = function () {
+            var _this = this;
+            return ImageUtils_4.loadImage(HUD_FILENAME)
+                .then(createImageBitmap)
+                .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT); });
+        };
         /**
          * Renders the bottom-left area of the screen, showing information about the player
          */
-        SpriteRenderer.prototype._renderPlayerInfo = function () {
+        SpriteRenderer.prototype._renderHUDLeftPanel = function () {
             var playerUnit = jwb.state.playerUnit;
-            var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-            this._drawRect({ left: 0, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
             var lines = [
                 playerUnit.name,
                 "Level " + playerUnit.level,
                 "Life: " + playerUnit.life + "/" + playerUnit.maxLife,
                 "Damage: " + playerUnit.getDamage(),
             ];
-            var experienceToNextLevel = playerUnit.experienceToNextLevel();
-            if (experienceToNextLevel !== null) {
-                lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
-            }
-            var left = 4;
+            var left = HUD_MARGIN;
+            var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
             var promises = [];
             for (var i = 0; i < lines.length; i++) {
-                var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
+                var y = top + (LINE_HEIGHT * i);
                 promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_5.default.WHITE, 'left'));
             }
             return Promise.all(promises);
         };
-        SpriteRenderer.prototype._renderMessages = function () {
+        SpriteRenderer.prototype._renderHUDMiddlePanel = function () {
             var _bufferContext = this._bufferContext;
             var messages = jwb.state.messages;
             _bufferContext.fillStyle = Colors_5.default.BLACK;
             _bufferContext.strokeStyle = Colors_5.default.WHITE;
-            var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
-            var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
-            this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
-            var textLeft = left + 4;
+            var left = HUD_LEFT_WIDTH + HUD_MARGIN;
+            var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
             var promises = [];
             for (var i = 0; i < messages.length; i++) {
-                var y = top + (LINE_HEIGHT / 2) + (LINE_HEIGHT * i);
-                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: y }, Colors_5.default.WHITE, 'left'));
+                var y = top + (LINE_HEIGHT * i);
+                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_5.default.WHITE, 'left'));
             }
             return Promise.all(promises);
         };
-        SpriteRenderer.prototype._renderBottomBar = function () {
-            var _a = jwb.state, mapIndex = _a.mapIndex, turn = _a.turn;
-            var left = BOTTOM_PANEL_WIDTH;
-            var top = SCREEN_HEIGHT - BOTTOM_BAR_HEIGHT;
-            var width = SCREEN_WIDTH - 2 * BOTTOM_PANEL_WIDTH;
-            this._drawRect({ left: left, top: top, width: width, height: BOTTOM_BAR_HEIGHT });
-            var textLeft = left + 4;
-            return Promise.all([
-                this._drawText("Level: " + ((mapIndex || 0) + 1), FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 }, Colors_5.default.WHITE, 'left'),
-                this._drawText("Turn: " + turn, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: textLeft, y: top + 8 + LINE_HEIGHT }, Colors_5.default.WHITE, 'left')
-            ]);
+        SpriteRenderer.prototype._renderHUDRightPanel = function () {
+            var _a = jwb.state, mapIndex = _a.mapIndex, playerUnit = _a.playerUnit, turn = _a.turn;
+            var left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
+            var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            var lines = [
+                "Turn: " + turn,
+                "Floor: " + ((mapIndex || 0) + 1),
+            ];
+            var experienceToNextLevel = playerUnit.experienceToNextLevel();
+            if (experienceToNextLevel !== null) {
+                lines.push("Experience: " + playerUnit.experience + "/" + experienceToNextLevel);
+            }
+            var promises = [];
+            for (var i = 0; i < lines.length; i++) {
+                var y = top + (LINE_HEIGHT * i);
+                promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_5.default.WHITE, 'left'));
+            }
+            return Promise.all(promises);
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
@@ -2664,7 +2700,8 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                 AudioUtils_5.playSound(Sounds_4.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-                jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
+                jwb.state.messages.push(unit.name + " used " + item.name);
+                jwb.state.messages.push("and gained " + (unit.life - prevLife) + " life.");
                 resolve();
             });
         };

@@ -20,7 +20,8 @@ function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
         const damage = unit.getDamage();
-        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
+        messages.push(`${unit.name} hit ${targetUnit.name}`);
+        messages.push(`for ${damage} damage!`);
         playAttackingAnimation(unit, targetUnit)
           .then(() => targetUnit.takeDamage(damage, unit))
           .then(() => resolve());
@@ -55,7 +56,8 @@ function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
       if (!!targetUnit) {
         const { messages } = jwb.state;
         const damage = unit.getRangedDamage();
-        messages.push(`${unit.name} (${unit.level}) hit ${targetUnit.name} (${targetUnit.level}) for ${damage} damage!`);
+        messages.push(`${unit.name} hit ${targetUnit.name}`);
+        messages.push(`for ${damage} damage!`);
 
         playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit)
           .then(() => targetUnit.takeDamage(damage, unit))
