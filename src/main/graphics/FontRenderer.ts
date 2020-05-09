@@ -2,19 +2,17 @@ import { applyTransparentColor, loadImage, replaceAll, replaceColors } from './I
 import { resolvedPromise } from '../utils/PromiseUtils';
 import Colors from '../types/Colors';
 
-const NUM_CHARACTERS = 26 + 26 + 2 + 10;
+// Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
+const MIN_CHARACTER_CODE = 32;  // ' '
+const MAX_CHARACTER_CODE = 126; // '~'
+const NUM_CHARACTERS = MAX_CHARACTER_CODE - MIN_CHARACTER_CODE + 1;
+const DEFAULT_CHAR = ' ';
+
 const CHARACTERS = (() => {
   const characters = [];
-  for (let c = 'A'.charCodeAt(0); c <= 'Z'.charCodeAt(0); c++) {
+  for (let c = MIN_CHARACTER_CODE; c <= MAX_CHARACTER_CODE; c++) {
     characters.push(String.fromCodePoint(c));
   }
-  for (let c = 'a'.charCodeAt(0); c <= 'z'.charCodeAt(0); c++) {
-    characters.push(String.fromCodePoint(c));
-  }
-  for (let c = '0'.charCodeAt(0); c <= '9'.charCodeAt(0); c++) {
-    characters.push(String.fromCodePoint(c));
-  }
-  characters.push(' ');
   return characters;
 })();
 
@@ -30,7 +28,12 @@ interface FontInstance extends FontDefinition {
 }
 
 const Fonts = {
-  PERFECT_DOS_VGA: <FontDefinition>{ name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+  PERFECT_DOS_VGA: <FontDefinition>{
+    name: 'PERFECT_DOS_VGA',
+    src: 'dos_perfect_vga_9x15_2',
+    width: 9,
+    height: 15
+  }
 };
 
 class FontRenderer {
@@ -58,7 +61,7 @@ class FontRenderer {
         for (let i = 0; i < text.length; i++) {
           const c = text.charAt(i);
           const x = i * font.width;
-          const imageBitmap : ImageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
+          const imageBitmap : ImageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[DEFAULT_CHAR]; // TODO hacky placeholder
           context.drawImage(imageBitmap, x, 0, font.width, font.height);
         }
         return resolvedPromise();
@@ -111,25 +114,9 @@ class FontRenderer {
     return applyTransparentColor(imageData, Colors.WHITE);
   }
 
-  /**
-   * Note: fonts are in the format:
-   * ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
-   * A => 0
-   * a => 27
-   * 0 => 54
-   */
   private _getCharOffset(char: number) {
-    if (char >= 65 && char <= 90) {         // 'A' - 'Z'
-      return char - 65;                     // 'A' = 0
-    } else if (char >= 97 && char <= 122) { // 'a' - 'z'
-      return char - 70;                     // 'a' = 27
-    } else if (char >= 48 && char <= 57) {  // '0' - '9'
-      return char + 6;                      // '0' = 54
-    } else if (char === 32) {               // ' '
-      return 26;
-    } else {
-      // TODO add other special chars
-      return 26; // default to ' '
+    if (char >= MIN_CHARACTER_CODE && char <= MAX_CHARACTER_CODE) {
+      return char - MIN_CHARACTER_CODE;
     }
     throw `invalid character code ${char}`;
   }

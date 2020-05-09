@@ -35,6 +35,8 @@ const VICTORY_FILENAME = 'victory';
 
 class SpriteRenderer implements Renderer {
   private readonly _container: HTMLElement;
+  private readonly _bufferCanvas: HTMLCanvasElement;
+  private readonly _bufferContext: CanvasRenderingContext2D;
   private readonly _canvas: HTMLCanvasElement;
   private readonly _context: CanvasRenderingContext2D;
   private readonly _fontRenderer: FontRenderer;
@@ -42,17 +44,26 @@ class SpriteRenderer implements Renderer {
   constructor() {
     this._container = <any>document.getElementById('container');
     this._container.innerHTML = '';
+    this._bufferCanvas = document.createElement('canvas');
+    this._bufferCanvas.width = WIDTH * TILE_WIDTH;
+    this._bufferCanvas.height = HEIGHT * TILE_HEIGHT;
+    this._bufferContext = <any>this._bufferCanvas.getContext('2d');
+    this._bufferContext.imageSmoothingEnabled = false;
+    this._fontRenderer = new FontRenderer();
     this._canvas = document.createElement('canvas');
     this._canvas.width = WIDTH * TILE_WIDTH;
     this._canvas.height = HEIGHT * TILE_HEIGHT;
-    this._container.appendChild(this._canvas);
     this._context = <any>this._canvas.getContext('2d');
-    this._context.imageSmoothingEnabled = false;
-    this._context.textBaseline = 'middle';
-    this._fontRenderer = new FontRenderer();
+    this._bufferContext.imageSmoothingEnabled = false;
+    this._container.appendChild(this._canvas);
   }
 
   render(): Promise<any> {
+    return this._renderScreen()
+      .then(() => this._renderBuffer());
+  }
+
+  private _renderScreen(): Promise<any> {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
@@ -71,10 +82,15 @@ class SpriteRenderer implements Renderer {
     }
   }
 
+  private _renderBuffer(): Promise<any> {
+    return createImageBitmap(this._bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+      .then(imageBitmap => this._context.drawImage(imageBitmap, 0, 0));
+  }
+
   private _renderGameScreen(): Promise<any> {
     revealTiles();
-    this._context.fillStyle = Colors.BLACK;
-    this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    this._bufferContext.fillStyle = Colors.BLACK;
+    this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
 
     return chainPromises([
       () => this._renderTiles(),
@@ -162,14 +178,14 @@ class SpriteRenderer implements Renderer {
    * @param color (in hex form)
    */
   private _drawEllipse({ x, y }: Coordinates, color: Colors, width: number, height: number): Promise<any> {
-    const { _context } = this;
-    _context.fillStyle = color;
+    const { _bufferContext } = this;
+    _bufferContext.fillStyle = color;
     const topLeftPixel = this._gridToPixel({ x, y });
     const [cx, cy] = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2];
-    _context.moveTo(cx, cy);
-    _context.beginPath();
-    _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
-    _context.fill();
+    _bufferContext.moveTo(cx, cy);
+    _bufferContext.beginPath();
+    _bufferContext.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
+    _bufferContext.fill();
     return new Promise(resolve => {
       resolve();
     });
@@ -178,18 +194,18 @@ class SpriteRenderer implements Renderer {
   private _renderInventory(): Promise<any> {
     const { playerUnit } = jwb.state;
     const { inventory } = playerUnit;
-    const { _canvas, _context } = this;
+    const { _bufferCanvas, _bufferContext } = this;
 
     this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
 
     // draw equipment
 
     const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-    const inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
+    const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
 
     const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _canvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _canvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
 
     // draw equipment items
     // for now, just display them all in one list
@@ -209,7 +225,7 @@ class SpriteRenderer implements Renderer {
       const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: INVENTORY_TOP + 40 }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
-        _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
+        _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
       }
     }
 
@@ -255,7 +271,7 @@ class SpriteRenderer implements Renderer {
 
   private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
     return sprite.getImage()
-      .then(image => this._context.drawImage(image, x + sprite.dx, y + sprite.dy));
+      .then(image => this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
   /**
@@ -288,10 +304,10 @@ class SpriteRenderer implements Renderer {
   }
 
   private _renderMessages(): Promise<any> {
-    const { _context } = this;
+    const { _bufferContext } = this;
     const { messages } = jwb.state;
-    _context.fillStyle = Colors.BLACK;
-    _context.strokeStyle = Colors.WHITE;
+    _bufferContext.fillStyle = Colors.BLACK;
+    _bufferContext.strokeStyle = Colors.WHITE;
 
     const left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
     const top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
@@ -324,12 +340,12 @@ class SpriteRenderer implements Renderer {
   }
 
   private _drawRect({ left, top, width, height }: Rect) {
-    const { _context } = this;
+    const { _bufferContext } = this;
 
-    _context.fillStyle = Colors.BLACK;
-    _context.fillRect(left, top, width, height);
-    _context.strokeStyle = Colors.WHITE;
-    _context.strokeRect(left, top, width, height);
+    _bufferContext.fillStyle = Colors.BLACK;
+    _bufferContext.fillRect(left, top, width, height);
+    _bufferContext.strokeStyle = Colors.WHITE;
+    _bufferContext.strokeRect(left, top, width, height);
   }
 
   /**
@@ -346,7 +362,7 @@ class SpriteRenderer implements Renderer {
   private _renderSplashScreen(filename: string, text: string): Promise<any> {
     return loadImage(filename)
       .then(imageData => createImageBitmap(imageData))
-      .then(image => this._context.drawImage(image, 0, 0, this._canvas.width, this._canvas.height))
+      .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
       .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center'));
   }
 
@@ -367,7 +383,7 @@ class SpriteRenderer implements Renderer {
           default:
             throw 'fux';
         }
-        this._context.drawImage(imageBitmap, left, y);
+        this._bufferContext.drawImage(imageBitmap, left, y);
         return resolvedPromise();
       });
   }

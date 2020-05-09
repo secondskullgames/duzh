@@ -2113,23 +2113,20 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
 define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "utils/PromiseUtils", "types/Colors"], function (require, exports, ImageUtils_3, PromiseUtils_6, Colors_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var NUM_CHARACTERS = 26 + 26 + 2 + 10;
+    // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
+    var MIN_CHARACTER_CODE = 32; // ' '
+    var MAX_CHARACTER_CODE = 126; // '~'
+    var NUM_CHARACTERS = MAX_CHARACTER_CODE - MIN_CHARACTER_CODE + 1;
+    var DEFAULT_CHAR = ' ';
     var CHARACTERS = (function () {
         var characters = [];
-        for (var c = 'A'.charCodeAt(0); c <= 'Z'.charCodeAt(0); c++) {
+        for (var c = MIN_CHARACTER_CODE; c <= MAX_CHARACTER_CODE; c++) {
             characters.push(String.fromCodePoint(c));
         }
-        for (var c = 'a'.charCodeAt(0); c <= 'z'.charCodeAt(0); c++) {
-            characters.push(String.fromCodePoint(c));
-        }
-        for (var c = '0'.charCodeAt(0); c <= '9'.charCodeAt(0); c++) {
-            characters.push(String.fromCodePoint(c));
-        }
-        characters.push(' ');
         return characters;
     })();
     var Fonts = {
-        PERFECT_DOS_VGA: { name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+        PERFECT_DOS_VGA: { name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15_2', width: 9, height: 15 }
     };
     exports.Fonts = Fonts;
     var FontRenderer = /** @class */ (function () {
@@ -2152,7 +2149,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
                 for (var i = 0; i < text.length; i++) {
                     var c = text.charAt(i);
                     var x = i * font.width;
-                    var imageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
+                    var imageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[DEFAULT_CHAR]; // TODO hacky placeholder
                     context.drawImage(imageBitmap, x, 0, font.width, font.height);
                 }
                 return PromiseUtils_6.resolvedPromise();
@@ -2201,29 +2198,9 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
             var imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
             return ImageUtils_3.applyTransparentColor(imageData, Colors_4.default.WHITE);
         };
-        /**
-         * Note: fonts are in the format:
-         * ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
-         * A => 0
-         * a => 27
-         * 0 => 54
-         */
         FontRenderer.prototype._getCharOffset = function (char) {
-            if (char >= 65 && char <= 90) { // 'A' - 'Z'
-                return char - 65; // 'A' = 0
-            }
-            else if (char >= 97 && char <= 122) { // 'a' - 'z'
-                return char - 70; // 'a' = 27
-            }
-            else if (char >= 48 && char <= 57) { // '0' - '9'
-                return char + 6; // '0' = 54
-            }
-            else if (char === 32) { // ' '
-                return 26;
-            }
-            else {
-                // TODO add other special chars
-                return 26; // default to ' '
+            if (char >= MIN_CHARACTER_CODE && char <= MAX_CHARACTER_CODE) {
+                return char - MIN_CHARACTER_CODE;
             }
             throw "invalid character code " + char;
         };
@@ -2259,16 +2236,25 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         function SpriteRenderer() {
             this._container = document.getElementById('container');
             this._container.innerHTML = '';
+            this._bufferCanvas = document.createElement('canvas');
+            this._bufferCanvas.width = WIDTH * TILE_WIDTH;
+            this._bufferCanvas.height = HEIGHT * TILE_HEIGHT;
+            this._bufferContext = this._bufferCanvas.getContext('2d');
+            this._bufferContext.imageSmoothingEnabled = false;
+            this._fontRenderer = new FontRenderer_1.default();
             this._canvas = document.createElement('canvas');
             this._canvas.width = WIDTH * TILE_WIDTH;
             this._canvas.height = HEIGHT * TILE_HEIGHT;
-            this._container.appendChild(this._canvas);
             this._context = this._canvas.getContext('2d');
-            this._context.imageSmoothingEnabled = false;
-            this._context.textBaseline = 'middle';
-            this._fontRenderer = new FontRenderer_1.default();
+            this._bufferContext.imageSmoothingEnabled = false;
+            this._container.appendChild(this._canvas);
         }
         SpriteRenderer.prototype.render = function () {
+            var _this = this;
+            return this._renderScreen()
+                .then(function () { return _this._renderBuffer(); });
+        };
+        SpriteRenderer.prototype._renderScreen = function () {
             var _this = this;
             var screen = jwb.state.screen;
             switch (screen) {
@@ -2287,11 +2273,16 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     throw "Invalid screen " + screen;
             }
         };
+        SpriteRenderer.prototype._renderBuffer = function () {
+            var _this = this;
+            return createImageBitmap(this._bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+                .then(function (imageBitmap) { return _this._context.drawImage(imageBitmap, 0, 0); });
+        };
         SpriteRenderer.prototype._renderGameScreen = function () {
             var _this = this;
             actions_1.revealTiles();
-            this._context.fillStyle = Colors_5.default.BLACK;
-            this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+            this._bufferContext.fillStyle = Colors_5.default.BLACK;
+            this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
             return PromiseUtils_7.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
@@ -2381,14 +2372,14 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
          */
         SpriteRenderer.prototype._drawEllipse = function (_a, color, width, height) {
             var x = _a.x, y = _a.y;
-            var _context = this._context;
-            _context.fillStyle = color;
+            var _bufferContext = this._bufferContext;
+            _bufferContext.fillStyle = color;
             var topLeftPixel = this._gridToPixel({ x: x, y: y });
             var _b = [topLeftPixel.x + TILE_WIDTH / 2, topLeftPixel.y + TILE_HEIGHT / 2], cx = _b[0], cy = _b[1];
-            _context.moveTo(cx, cy);
-            _context.beginPath();
-            _context.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
-            _context.fill();
+            _bufferContext.moveTo(cx, cy);
+            _bufferContext.beginPath();
+            _bufferContext.ellipse(cx, cy, width, height, 0, 0, 2 * Math.PI);
+            _bufferContext.fill();
             return new Promise(function (resolve) {
                 resolve();
             });
@@ -2397,14 +2388,14 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _this = this;
             var playerUnit = jwb.state.playerUnit;
             var inventory = playerUnit.inventory;
-            var _a = this, _canvas = _a._canvas, _context = _a._context;
+            var _a = this, _bufferCanvas = _a._bufferCanvas, _bufferContext = _a._bufferContext;
             this._drawRect({ left: INVENTORY_LEFT, top: INVENTORY_TOP, width: INVENTORY_WIDTH, height: INVENTORY_HEIGHT });
             // draw equipment
             var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-            var inventoryLeft = (_canvas.width + TILE_WIDTH) / 2;
+            var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
             var promises = [];
-            promises.push(this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _canvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
-            promises.push(this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _canvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
+            promises.push(this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
+            promises.push(this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_5.default.WHITE, 'center'));
             // draw equipment items
             // for now, just display them all in one list
             var y = INVENTORY_TOP + 64;
@@ -2421,7 +2412,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
                 promises.push(this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: INVENTORY_TOP + 40 }, Colors_5.default.WHITE, 'center'));
                 if (inventoryCategories[i] === inventory.selectedCategory) {
-                    _context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
+                    _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 48, categoryWidth - 8, 1);
                 }
             }
             // draw inventory items
@@ -2464,7 +2455,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _this = this;
             var x = _a.x, y = _a.y;
             return sprite.getImage()
-                .then(function (image) { return _this._context.drawImage(image, x + sprite.dx, y + sprite.dy); });
+                .then(function (image) { return _this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
         /**
          * Renders the bottom-left area of the screen, showing information about the player
@@ -2492,10 +2483,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderMessages = function () {
-            var _context = this._context;
+            var _bufferContext = this._bufferContext;
             var messages = jwb.state.messages;
-            _context.fillStyle = Colors_5.default.BLACK;
-            _context.strokeStyle = Colors_5.default.WHITE;
+            _bufferContext.fillStyle = Colors_5.default.BLACK;
+            _bufferContext.strokeStyle = Colors_5.default.WHITE;
             var left = SCREEN_WIDTH - BOTTOM_PANEL_WIDTH;
             var top = SCREEN_HEIGHT - BOTTOM_PANEL_HEIGHT;
             this._drawRect({ left: left, top: top, width: BOTTOM_PANEL_WIDTH, height: BOTTOM_PANEL_HEIGHT });
@@ -2521,11 +2512,11 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         };
         SpriteRenderer.prototype._drawRect = function (_a) {
             var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-            var _context = this._context;
-            _context.fillStyle = Colors_5.default.BLACK;
-            _context.fillRect(left, top, width, height);
-            _context.strokeStyle = Colors_5.default.WHITE;
-            _context.strokeRect(left, top, width, height);
+            var _bufferContext = this._bufferContext;
+            _bufferContext.fillStyle = Colors_5.default.BLACK;
+            _bufferContext.fillRect(left, top, width, height);
+            _bufferContext.strokeStyle = Colors_5.default.WHITE;
+            _bufferContext.strokeRect(left, top, width, height);
         };
         /**
          * @return the top left pixel
@@ -2542,7 +2533,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _this = this;
             return ImageUtils_4.loadImage(filename)
                 .then(function (imageData) { return createImageBitmap(imageData); })
-                .then(function (image) { return _this._context.drawImage(image, 0, 0, _this._canvas.width, _this._canvas.height); })
+                .then(function (image) { return _this._bufferContext.drawImage(image, 0, 0, _this._bufferCanvas.width, _this._bufferCanvas.height); })
                 .then(function () { return _this._drawText(text, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors_5.default.WHITE, 'center'); });
         };
         SpriteRenderer.prototype._drawText = function (text, font, _a, color, textAlign) {
@@ -2564,7 +2555,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     default:
                         throw 'fux';
                 }
-                _this._context.drawImage(imageBitmap, left, y);
+                _this._bufferContext.drawImage(imageBitmap, left, y);
                 return PromiseUtils_7.resolvedPromise();
             });
         };
