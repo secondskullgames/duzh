@@ -1,13 +1,13 @@
-import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import Sprite from '../graphics/sprites/Sprite';
 import UnitClass from './UnitClass';
-import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
-import { UnitAI } from './UnitAI';
-import { resolvedPromise } from '../utils/PromiseUtils';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 import Music from '../sounds/Music';
+import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
+import { UnitAI } from './UnitAI';
+import { resolvedPromise } from '../utils/PromiseUtils';
+import { playSound } from '../sounds/SoundFX';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 

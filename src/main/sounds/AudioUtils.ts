@@ -1,35 +1,14 @@
-import { Sample } from '../types/types';
-import SoundPlayer from './SoundPlayer';
+import { Sample } from './types';
 
-const _getMusicPlayer = () => new SoundPlayer(4, 0.12);
-const _getSoundPlayer = () => new SoundPlayer(4, 0.20);
-
-// TODO very hacky memoizing
-let MUSIC: SoundPlayer | null = null;
-let SFX: SoundPlayer | null = null;
-
-function playSound(samples: Sample[]) {
-  if (!SFX) {
-    SFX = _getSoundPlayer();
-  }
-  SFX.playSound(samples, false);
+function transpose8va([freq, ms]: Sample): Sample {
+  return [freq * 2, ms];
 }
 
-function playMusic(samples: Sample[]) {
-  if (!MUSIC) {
-    MUSIC = _getMusicPlayer();
-  }
-  MUSIC.playSound(samples, false);
-}
-
-function stopMusic() {
-  if (MUSIC) {
-    MUSIC.stop();
-  }
+function transpose8vb([freq, ms]: Sample): Sample {
+  return [freq / 2, ms];
 }
 
 export {
-  playSound,
-  playMusic,
-  stopMusic
+  transpose8va,
+  transpose8vb
 };

@@ -1,7 +1,7 @@
 import Unit from './Unit';
-import { Coordinates, Direction, EquipmentSlot } from '../types/types';
-import { playSound } from '../sounds/AudioUtils';
 import Sounds from '../sounds/Sounds';
+import { Coordinates, Direction, EquipmentSlot } from '../types/types';
+import { playSound } from '../sounds/SoundFX';
 import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
 
 function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
