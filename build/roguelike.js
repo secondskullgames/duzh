@@ -2026,6 +2026,9 @@ define("maps/MapBuilder", ["require", "exports", "maps/MapInstance"], function (
 define("core/GameState", ["require", "exports", "types/types"], function (require, exports, types_7) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * Global mutable state
+     */
     var GameState = /** @class */ (function () {
         function GameState(playerUnit, maps) {
             this.screen = types_7.GameScreen.TITLE;
@@ -2126,7 +2129,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
         return characters;
     })();
     var Fonts = {
-        PERFECT_DOS_VGA: { src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
+        PERFECT_DOS_VGA: { name: 'PERFECT_DOS_VGA', src: 'dos_perfect_vga_9x15', width: 9, height: 15 }
     };
     exports.Fonts = Fonts;
     var FontRenderer = /** @class */ (function () {
@@ -2146,24 +2149,19 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
             canvas.height = font.height;
             return this._loadFont(font)
                 .then(function (fontInstance) {
-                var promises = [];
-                var _loop_6 = function (i) {
-                    var _a;
+                for (var i = 0; i < text.length; i++) {
                     var c = text.charAt(i);
                     var x = i * font.width;
-                    var imageData = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
-                    promises.push(ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a))
-                        .then(function (imageData) { return createImageBitmap(imageData); })
-                        .then(function (imageBitmap) {
-                        context.drawImage(imageBitmap, x, 0, font.width, font.height);
-                    }));
-                };
-                for (var i = 0; i < text.length; i++) {
-                    _loop_6(i);
+                    var imageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[' ']; // TODO hacky placeholder
+                    context.drawImage(imageBitmap, x, 0, font.width, font.height);
                 }
-                return Promise.all(promises);
+                return PromiseUtils_6.resolvedPromise();
             })
                 .then(function () { return PromiseUtils_6.resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)); })
+                .then(function (imageData) {
+                var _a;
+                return ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a));
+            })
                 .then(function (imageData) { return createImageBitmap(imageData); })
                 .then(function (imageBitmap) { _this._imageMemos[key] = imageBitmap; return imageBitmap; });
         };
@@ -2182,13 +2180,20 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
                 var context = canvas.getContext('2d');
                 context.drawImage(imageBitmap, 0, 0);
                 var imageMap = {};
+                var promises = [];
                 CHARACTERS.forEach(function (c) {
-                    _this._getCharacterData(definition, context, c.charCodeAt(0))
-                        .then(function (imageData) { imageMap[c] = imageData; });
+                    promises.push(_this._getCharacterData(definition, context, c.charCodeAt(0))
+                        .then(function (imageData) { return createImageBitmap(imageData); })
+                        .then(function (imageBitmap) {
+                        imageMap[c] = imageBitmap;
+                    }));
                 });
-                var fontInstance = __assign(__assign({}, definition), { imageMap: imageMap });
-                _this._loadedFonts[definition.name] = fontInstance;
-                return fontInstance;
+                return Promise.all(promises)
+                    .then(function () {
+                    var fontInstance = __assign(__assign({}, definition), { imageMap: imageMap });
+                    _this._loadedFonts[definition.name] = fontInstance;
+                    return fontInstance;
+                });
             });
         };
         FontRenderer.prototype._getCharacterData = function (definition, context, char) {
@@ -2329,8 +2334,8 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderProjectiles = function () {
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_7 = function (y) {
-                var _loop_8 = function (x) {
+            var _loop_6 = function (y) {
+                var _loop_7 = function (x) {
                     if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
                         var projectile = map.projectiles
                             .filter(function (p) { return MapUtils_4.coordinatesEquals(p, { x: x, y: y }); })[0];
@@ -2340,12 +2345,12 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_8(x);
+                    _loop_7(x);
                 }
             };
             var this_2 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_7(y);
+                _loop_6(y);
             }
             return Promise.all(promises);
         };
@@ -2544,22 +2549,22 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var _this = this;
             var x = _a.x, y = _a.y;
             return this._fontRenderer.render(text, font, color)
-                .then(function (image) {
+                .then(function (imageBitmap) {
                 var left;
                 switch (textAlign) {
                     case 'left':
                         left = x;
                         break;
                     case 'center':
-                        left = Math.floor(x - image.width / 2);
+                        left = Math.floor(x - imageBitmap.width / 2);
                         break;
                     case 'right':
-                        left = x + image.width;
+                        left = x + imageBitmap.width;
                         break;
                     default:
                         throw 'fux';
                 }
-                _this._context.drawImage(image, left, y);
+                _this._context.drawImage(imageBitmap, left, y);
                 return PromiseUtils_7.resolvedPromise();
             });
         };
@@ -2918,19 +2923,19 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
          */
         DungeonGenerator.prototype._pickPlayerLocation = function (tiles, blockedTiles) {
             var candidates = [];
-            var _loop_9 = function (y) {
-                var _loop_10 = function (x) {
+            var _loop_8 = function (y) {
+                var _loop_9 = function (x) {
                     if (!MapUtils_5.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_5.coordinatesEquals(tile, { x: x, y: y }); })) {
                         var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_5.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
                 for (var x = 0; x < tiles[y].length; x++) {
-                    _loop_10(x);
+                    _loop_9(x);
                 }
             };
             for (var y = 0; y < tiles.length; y++) {
-                _loop_9(y);
+                _loop_8(y);
             }
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
@@ -3637,6 +3642,9 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
 define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_18, MapUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    /*
+     * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
+     */
     function loadMap(index) {
         var state = jwb.state;
         if (index >= state.maps.length) {
@@ -3915,6 +3923,10 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     }
     exports.attachEvents = attachEvents;
 });
+/*
+ * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
+ * that are only nitended for debugging purposes.
+ */
 define("core/debug", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });

@@ -3,6 +3,9 @@ import MapBuilder from '../maps/MapBuilder';
 import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
 
+/**
+ * Global mutable state
+ */
 class GameState {
   screen: GameScreen;
   playerUnit: Unit;

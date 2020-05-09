@@ -352,22 +352,22 @@ class SpriteRenderer implements Renderer {
 
   private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Colors, textAlign: 'left' | 'center' | 'right'): Promise<any> {
     return this._fontRenderer.render(text, font, color)
-      .then(image => {
+      .then(imageBitmap => {
         let left;
         switch (textAlign) {
           case 'left':
             left = x;
             break;
           case 'center':
-            left = Math.floor(x - image.width / 2);
+            left = Math.floor(x - imageBitmap.width / 2);
             break;
           case 'right':
-            left = x + image.width;
+            left = x + imageBitmap.width;
             break;
           default:
             throw 'fux';
         }
-        this._context.drawImage(image, left, y);
+        this._context.drawImage(imageBitmap, left, y);
         return resolvedPromise();
       });
   }
