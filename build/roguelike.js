@@ -29,6 +29,102 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+define("types/Colors", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Colors;
+    (function (Colors) {
+        // Original 16 MS Paint colors from Will
+        Colors["BLACK"] = "#000000";
+        Colors["WHITE"] = "#FFFFFF";
+        Colors["DARK_GRAY"] = "#808080";
+        Colors["LIGHT_GRAY"] = "#C0C0C0";
+        Colors["DARK_RED"] = "#800000";
+        Colors["RED"] = "#FF0000";
+        Colors["DARK_YELLOW"] = "#808000";
+        Colors["YELLOW"] = "#FFFF00";
+        Colors["DARK_GREEN"] = "#008000";
+        Colors["GREEN"] = "#00FF00";
+        Colors["DARK_TEAL"] = "#004040";
+        Colors["CYAN"] = "#00FFFF";
+        Colors["DARK_BLUE"] = "#000080";
+        Colors["BLUE"] = "#0000FF";
+        Colors["DARK_PURPLE"] = "#800080";
+        Colors["MAGENTA"] = "#FF00FF";
+        // some extended colors
+        Colors["DARK_BROWN"] = "#804000";
+        Colors["LIGHT_BROWN"] = "#c08040";
+        Colors["ORANGE"] = "#ff8040";
+        Colors["LIGHT_PINK"] = "#ffc0c0";
+        Colors["MEDIUM_RED"] = "#c00000";
+        Colors["MEDIUM_BLUE"] = "#0000c0";
+        Colors["DARKER_GRAY"] = "#404040";
+        Colors["TEAL"] = "#008080";
+    })(Colors || (Colors = {}));
+    exports.default = Colors;
+});
+define("types/types", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Activity;
+    (function (Activity) {
+        Activity["STANDING"] = "STANDING";
+        Activity["WALKING"] = "WALKING";
+        Activity["ATTACKING"] = "ATTACKING";
+        Activity["DAMAGED"] = "DAMAGED";
+    })(Activity || (Activity = {}));
+    exports.Activity = Activity;
+    var EquipmentSlot;
+    (function (EquipmentSlot) {
+        EquipmentSlot["MELEE_WEAPON"] = "MELEE_WEAPON";
+        EquipmentSlot["RANGED_WEAPON"] = "RANGED_WEAPON";
+        EquipmentSlot["ARMOR"] = "ARMOR";
+    })(EquipmentSlot || (EquipmentSlot = {}));
+    exports.EquipmentSlot = EquipmentSlot;
+    var GameScreen;
+    (function (GameScreen) {
+        GameScreen["GAME"] = "GAME";
+        GameScreen["INVENTORY"] = "INVENTORY";
+        GameScreen["TITLE"] = "TITLE";
+        GameScreen["VICTORY"] = "VICTORY";
+        GameScreen["GAME_OVER"] = "GAME_OVER";
+    })(GameScreen || (GameScreen = {}));
+    exports.GameScreen = GameScreen;
+    var ItemCategory;
+    (function (ItemCategory) {
+        ItemCategory["POTION"] = "POTION";
+        ItemCategory["SCROLL"] = "SCROLL";
+        ItemCategory["WEAPON"] = "WEAPON";
+    })(ItemCategory || (ItemCategory = {}));
+    exports.ItemCategory = ItemCategory;
+    var MapLayout;
+    (function (MapLayout) {
+        MapLayout["ROOMS_AND_CORRIDORS"] = "ROOMS_AND_CORRIDORS";
+        MapLayout["BLOB"] = "BLOB";
+    })(MapLayout || (MapLayout = {}));
+    exports.MapLayout = MapLayout;
+    var TileType;
+    (function (TileType) {
+        TileType[TileType["FLOOR"] = 0] = "FLOOR";
+        TileType[TileType["FLOOR_HALL"] = 1] = "FLOOR_HALL";
+        TileType[TileType["WALL_TOP"] = 2] = "WALL_TOP";
+        TileType[TileType["WALL_HALL"] = 3] = "WALL_HALL";
+        TileType[TileType["WALL"] = 4] = "WALL";
+        TileType[TileType["NONE"] = 5] = "NONE";
+        TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
+    })(TileType || (TileType = {}));
+    exports.TileType = TileType;
+    var UnitType;
+    (function (UnitType) {
+        UnitType["HUMAN"] = "HUMAN";
+        UnitType["ELEMENTAL"] = "ELEMENTAL";
+        UnitType["GHOST"] = "GHOST";
+        UnitType["GOLEM"] = "GOLEM";
+        UnitType["WIZARD"] = "WIZARD";
+        UnitType["ANIMAL"] = "ANIMAL";
+    })(UnitType || (UnitType = {}));
+    exports.UnitType = UnitType;
+});
 define("graphics/ImageUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -245,102 +341,6 @@ define("graphics/sprites/Sprite", ["require", "exports"], function (require, exp
         return Sprite;
     }());
     exports.default = Sprite;
-});
-define("types/Colors", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Colors;
-    (function (Colors) {
-        // Original 16 MS Paint colors from Will
-        Colors["BLACK"] = "#000000";
-        Colors["WHITE"] = "#FFFFFF";
-        Colors["DARK_GRAY"] = "#808080";
-        Colors["LIGHT_GRAY"] = "#C0C0C0";
-        Colors["DARK_RED"] = "#800000";
-        Colors["RED"] = "#FF0000";
-        Colors["DARK_YELLOW"] = "#808000";
-        Colors["YELLOW"] = "#FFFF00";
-        Colors["DARK_GREEN"] = "#008000";
-        Colors["GREEN"] = "#00FF00";
-        Colors["DARK_TEAL"] = "#004040";
-        Colors["CYAN"] = "#00FFFF";
-        Colors["DARK_BLUE"] = "#000080";
-        Colors["BLUE"] = "#0000FF";
-        Colors["DARK_PURPLE"] = "#800080";
-        Colors["MAGENTA"] = "#FF00FF";
-        // some extended colors
-        Colors["DARK_BROWN"] = "#804000";
-        Colors["LIGHT_BROWN"] = "#c08040";
-        Colors["ORANGE"] = "#ff8040";
-        Colors["LIGHT_PINK"] = "#ffc0c0";
-        Colors["MEDIUM_RED"] = "#c00000";
-        Colors["MEDIUM_BLUE"] = "#0000c0";
-        Colors["DARKER_GRAY"] = "#404040";
-        Colors["TEAL"] = "#008080";
-    })(Colors || (Colors = {}));
-    exports.default = Colors;
-});
-define("types/types", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Activity;
-    (function (Activity) {
-        Activity["STANDING"] = "STANDING";
-        Activity["WALKING"] = "WALKING";
-        Activity["ATTACKING"] = "ATTACKING";
-        Activity["DAMAGED"] = "DAMAGED";
-    })(Activity || (Activity = {}));
-    exports.Activity = Activity;
-    var EquipmentSlot;
-    (function (EquipmentSlot) {
-        EquipmentSlot["MELEE_WEAPON"] = "MELEE_WEAPON";
-        EquipmentSlot["RANGED_WEAPON"] = "RANGED_WEAPON";
-        EquipmentSlot["ARMOR"] = "ARMOR";
-    })(EquipmentSlot || (EquipmentSlot = {}));
-    exports.EquipmentSlot = EquipmentSlot;
-    var GameScreen;
-    (function (GameScreen) {
-        GameScreen["GAME"] = "GAME";
-        GameScreen["INVENTORY"] = "INVENTORY";
-        GameScreen["TITLE"] = "TITLE";
-        GameScreen["VICTORY"] = "VICTORY";
-        GameScreen["GAME_OVER"] = "GAME_OVER";
-    })(GameScreen || (GameScreen = {}));
-    exports.GameScreen = GameScreen;
-    var ItemCategory;
-    (function (ItemCategory) {
-        ItemCategory["POTION"] = "POTION";
-        ItemCategory["SCROLL"] = "SCROLL";
-        ItemCategory["WEAPON"] = "WEAPON";
-    })(ItemCategory || (ItemCategory = {}));
-    exports.ItemCategory = ItemCategory;
-    var MapLayout;
-    (function (MapLayout) {
-        MapLayout["ROOMS_AND_CORRIDORS"] = "ROOMS_AND_CORRIDORS";
-        MapLayout["BLOB"] = "BLOB";
-    })(MapLayout || (MapLayout = {}));
-    exports.MapLayout = MapLayout;
-    var TileType;
-    (function (TileType) {
-        TileType[TileType["FLOOR"] = 0] = "FLOOR";
-        TileType[TileType["FLOOR_HALL"] = 1] = "FLOOR_HALL";
-        TileType[TileType["WALL_TOP"] = 2] = "WALL_TOP";
-        TileType[TileType["WALL_HALL"] = 3] = "WALL_HALL";
-        TileType[TileType["WALL"] = 4] = "WALL";
-        TileType[TileType["NONE"] = 5] = "NONE";
-        TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
-    })(TileType || (TileType = {}));
-    exports.TileType = TileType;
-    var UnitType;
-    (function (UnitType) {
-        UnitType["HUMAN"] = "HUMAN";
-        UnitType["ELEMENTAL"] = "ELEMENTAL";
-        UnitType["GHOST"] = "GHOST";
-        UnitType["GOLEM"] = "GOLEM";
-        UnitType["WIZARD"] = "WIZARD";
-        UnitType["ANIMAL"] = "ANIMAL";
-    })(UnitType || (UnitType = {}));
-    exports.UnitType = UnitType;
 });
 define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -627,111 +627,6 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
     }());
     exports.default = Pathfinder;
 });
-define("sounds/SoundPlayer", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var SoundPlayer = /** @class */ (function () {
-        function SoundPlayer(maxPolyphony, gain) {
-            this._context = new AudioContext();
-            this._gainNode = this._context.createGain();
-            this._gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
-            this._gainNode.connect(this._context.destination);
-            this._oscillators = [];
-        }
-        SoundPlayer.prototype._newOscillator = function () {
-            var oscillatorNode = this._context.createOscillator();
-            oscillatorNode.type = 'square';
-            oscillatorNode.connect(this._gainNode);
-            return {
-                node: oscillatorNode,
-                started: false,
-                stopped: false,
-                isRepeating: false
-            };
-        };
-        ;
-        SoundPlayer.prototype.stop = function () {
-            try {
-                this._oscillators.forEach(function (oscillator) {
-                    if (oscillator && oscillator.started) {
-                        oscillator.node.stop(0);
-                        oscillator.stopped = true;
-                    }
-                });
-                this._oscillators = [];
-            }
-            catch (e) {
-                console.error(e);
-            }
-        };
-        ;
-        SoundPlayer.prototype.playSound = function (samples, repeating) {
-            var _this = this;
-            if (repeating === void 0) { repeating = false; }
-            var oscillator = this._newOscillator();
-            this._oscillators.push(oscillator);
-            if (samples.length) {
-                var startTime = this._context.currentTime;
-                var nextStartTime = startTime;
-                for (var i = 0; i < samples.length; i++) {
-                    var _a = samples[i], freq = _a[0], ms = _a[1];
-                    oscillator.node.frequency.setValueAtTime(freq, nextStartTime);
-                    nextStartTime += ms / 1000;
-                }
-                var runtime = samples.map(function (_a) {
-                    var freq = _a[0], ms = _a[1];
-                    return ms;
-                }).reduce(function (a, b) { return a + b; });
-                oscillator.node.start();
-                oscillator.started = true;
-                if (repeating) {
-                    oscillator.isRepeating = true;
-                }
-                oscillator.node.onended = function () {
-                    if (oscillator.isRepeating && !oscillator.stopped) {
-                        _this.playSound(samples, true);
-                    }
-                    else {
-                        _this._oscillators.splice(_this._oscillators.indexOf(oscillator, 1));
-                    }
-                };
-                oscillator.node.stop(startTime + runtime / 1000);
-            }
-        };
-        ;
-        return SoundPlayer;
-    }());
-    exports.default = SoundPlayer;
-});
-define("sounds/AudioUtils", ["require", "exports", "sounds/SoundPlayer"], function (require, exports, SoundPlayer_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.12); };
-    var _getSoundPlayer = function () { return new SoundPlayer_1.default(4, 0.20); };
-    // TODO very hacky memoizing
-    var MUSIC = null;
-    var SFX = null;
-    function playSound(samples) {
-        if (!SFX) {
-            SFX = _getSoundPlayer();
-        }
-        SFX.playSound(samples, false);
-    }
-    exports.playSound = playSound;
-    function playMusic(samples) {
-        if (!MUSIC) {
-            MUSIC = _getMusicPlayer();
-        }
-        MUSIC.playSound(samples, false);
-    }
-    exports.playMusic = playMusic;
-    function stopMusic() {
-        if (MUSIC) {
-            MUSIC.stop();
-        }
-    }
-    exports.stopMusic = stopMusic;
-});
 define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -749,6 +644,109 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
         DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
     };
     exports.default = Sounds;
+});
+define("sounds/types", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
+define("sounds/CustomOscillator", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var CustomOscillator = /** @class */ (function () {
+        function CustomOscillator(context, gainNode, repeating) {
+            this._delegate = context.createOscillator();
+            this._delegate.type = 'square';
+            this._delegate.connect(gainNode);
+            this._isComplete = false;
+            this._isRepeating = repeating;
+        }
+        CustomOscillator.prototype.play = function (samples, context) {
+            var _this = this;
+            if (samples.length) {
+                var startTime = context.currentTime;
+                var nextStartTime = startTime;
+                for (var i = 0; i < samples.length; i++) {
+                    var _a = samples[i], freq = _a[0], ms = _a[1];
+                    this._delegate.frequency.setValueAtTime(freq, nextStartTime);
+                    nextStartTime += ms / 1000;
+                }
+                var runtime = samples.map(function (_a) {
+                    var freq = _a[0], ms = _a[1];
+                    return ms;
+                }).reduce(function (a, b) { return a + b; });
+                this._delegate.start();
+                this._delegate.onended = function () {
+                    if (_this._isRepeating && !_this._isComplete) {
+                        _this.play(samples, context);
+                    }
+                    else {
+                        _this._isComplete = true;
+                    }
+                };
+                this._delegate.stop(startTime + runtime / 1000);
+            }
+        };
+        CustomOscillator.prototype.isComplete = function () {
+            return this._isComplete;
+        };
+        CustomOscillator.prototype.stop = function () {
+            this._delegate.stop(0);
+            this._isComplete = true;
+        };
+        return CustomOscillator;
+    }());
+    exports.default = CustomOscillator;
+});
+define("sounds/SoundPlayer", ["require", "exports", "sounds/CustomOscillator"], function (require, exports, CustomOscillator_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SoundPlayer = /** @class */ (function () {
+        function SoundPlayer(maxPolyphony, gain) {
+            this._context = new AudioContext();
+            this._gainNode = this._context.createGain();
+            this._gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
+            this._gainNode.connect(this._context.destination);
+            this._oscillators = [];
+        }
+        SoundPlayer.prototype.stop = function () {
+            try {
+                this._oscillators.forEach(function (oscillator) { return oscillator.stop(); });
+            }
+            catch (e) {
+                console.error(e);
+            }
+        };
+        ;
+        SoundPlayer.prototype.playSound = function (samples, repeating) {
+            if (repeating === void 0) { repeating = false; }
+            this._cleanup();
+            var oscillator = new CustomOscillator_1.default(this._context, this._gainNode, repeating);
+            oscillator.play(samples, this._context);
+            this._oscillators.push(oscillator);
+        };
+        ;
+        SoundPlayer.prototype._cleanup = function () {
+            this._oscillators = this._oscillators.filter(function (o) { return !o.isComplete(); });
+        };
+        return SoundPlayer;
+    }());
+    exports.default = SoundPlayer;
+});
+define("sounds/SoundFX", ["require", "exports", "sounds/SoundPlayer"], function (require, exports, SoundPlayer_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    // TODO very hacky memoizing
+    var PLAYER = null;
+    function _getSoundPlayer() {
+        return new SoundPlayer_1.default(4, 0.20);
+    }
+    function playSound(samples) {
+        if (!PLAYER) {
+            PLAYER = _getSoundPlayer();
+        }
+        PLAYER.playSound(samples, false);
+    }
+    exports.playSound = playSound;
 });
 define("types/Directions", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -1151,7 +1149,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return PromiseUtils_2.chainPromises(promises);
     }
 });
-define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "graphics/animations/Animations"], function (require, exports, types_3, AudioUtils_1, Sounds_1, Animations_1) {
+define("units/UnitUtils", ["require", "exports", "sounds/Sounds", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_1, types_3, SoundFX_1, Animations_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function moveOrAttack(unit, _a) {
@@ -1164,7 +1162,7 @@ define("units/UnitUtils", ["require", "exports", "types/types", "sounds/AudioUti
             if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
                 _a = [x, y], unit.x = _a[0], unit.y = _a[1];
                 if (unit === playerUnit) {
-                    AudioUtils_1.playSound(Sounds_1.default.FOOTSTEP);
+                    SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
                 }
                 resolve();
             }
@@ -1556,150 +1554,27 @@ define("items/equipment/EquipmentMap", ["require", "exports"], function (require
     }());
     exports.default = EquipmentMap;
 });
-define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, RandomUtils_5, AudioUtils_2) {
+define("sounds/AudioUtils", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function _transpose8va(_a) {
+    function transpose8va(_a) {
         var freq = _a[0], ms = _a[1];
         return [freq * 2, ms];
     }
-    function _transpose8vb(_a) {
+    exports.transpose8va = transpose8va;
+    function transpose8vb(_a) {
         var freq = _a[0], ms = _a[1];
         return [freq / 2, ms];
     }
-    function _duplicate(samples) {
-        return __spreadArrays(samples, samples);
-    }
-    var SUITE_1 = (function () {
-        var FIGURE_1 = [[300, 2000], [200, 1000], [225, 1000]];
-        var FIGURE_2 = [[300, 1000], [225, 1000], [200, 2000]];
-        var FIGURE_3 = [[200, 1000], [225, 1000], [250, 2000]];
-        var FIGURE_4 = [[300, 200], [250, 100], [225, 200], [600, 500], [300, 200], [200, 200], [225, 100], [200, 200], [225, 200], [300, 100], [600, 500], [300, 500], [600, 500], [250, 500], [300, 200], [200, 200], [250, 100], [300, 200], [225, 200], [250, 100]];
-        var FIGURE_5 = [[600, 500], [225, 250], [250, 250], [500, 500], [600, 500], [400, 500], [250, 500], [200, 250], [225, 250], [300, 250], [400, 250]];
-        var FIGURE_6 = [[600, 200], [0, 100], [600, 200], [0, 500], [600, 500], [0, 500]];
-        return {
-            length: 4000,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_2 = (function () {
-        var FIGURE_1 = [[100, 1000], [80, 1000], [120, 1000], [80, 1000]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[50, 1000], [80, 1000], [200, 1000], [240, 750], [230, 250]]
-            //const FIGURE_2 = [[50,1000],[80,1000],[200,1000],[240,750],[/*230*/225,250]]
-            .map(_transpose8va)
-            .map(_transpose8va);
-        var FIGURE_3 = [[300, 500], [240, 500], [225, 1000], [200, 750], [150, 250], [180, 1000]];
-        // const FIGURE_3 = [[300,500],[/*235*/240,500],[225,1000],[200,750],[150,250],[180,1000]];
-        var FIGURE_4 = [[50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125], [50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125]]
-            .map(_transpose8va)
-            .map(_transpose8va);
-        var FIGURE_5 = [[300, 500], [200, 1000], [225, 500], [240, 500], [150, 1000], [100, 250], [180, 250]];
-        //const FIGURE_5 = [[300,500],[200,1000],[225,500],[/*235*/240,500],[150,1000],[100,250],[180,250]];
-        var FIGURE_6 = [[100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [120, 250], [100, 250], [0, 250], [100, 250], [0, 250], [80, 250], [100, 250], [80, 250], [90, 250]]
-            .map(_transpose8va);
-        return {
-            length: 4000,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_3 = (function () {
-        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
-        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
-            .map(_transpose8va);
-        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
-        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
-            .map(_transpose8va);
-        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
-        return {
-            length: 6400,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
-    var SUITE_4 = (function () {
-        var FIGURE_1 = [[100, 1920], [135, 1920], [100, 1920], [150, 1920]]
-            .map(_transpose8va);
-        var FIGURE_2 = [[80, 1920], [100, 1920], [120, 1920], [90, 1920]]
-            .map(_transpose8va);
-        var FIGURE_3 = [[100, 960], [150, 960], [120, 960], [135, 960], [100, 960], [150, 960], [120, 960], [135, 960]]
-            .map(_transpose8va);
-        var FIGURE_4 = _duplicate([[0, 240], [50, 240], [150, 240], [50, 240], [120, 240], [50, 240], [0, 480], [120, 240], [150, 240], [50, 240], [180, 1200]])
-            .map(_transpose8va);
-        var FIGURE_5 = [[200, 720], [240, 480], [0, 480], [270, 480], [280, 240], [270, 240], [240, 240], [270, 240], [240, 240], [0, 480], [200, 720], [240, 720], [0, 480], [300, 240], [360, 240], [300, 240], [280, 480], [0, 720]];
-        var FIGURE_6 = _duplicate([[100, 200], [0, 40], [100, 240], [0, 240], [100, 240], [0, 960], [100, 200], [0, 40], [100, 200], [0, 40], [120, 480], [100, 200], [0, 40], [100, 200], [0, 40], [90, 480]])
-            .map(_transpose8va);
-        return {
-            length: 7680,
-            sections: {
-                SECTION_A: {
-                    bass: [FIGURE_1, FIGURE_6]
-                },
-                SECTION_B: {
-                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
-                    lead: [FIGURE_4, FIGURE_5]
-                },
-                SECTION_C: {
-                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
-                    lead: [FIGURE_4]
-                },
-                SECTION_D: {
-                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
-                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
-                }
-            }
-        };
-    })();
+    exports.transpose8vb = transpose8vb;
+});
+define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, SoundPlayer_2, RandomUtils_5, AudioUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    // TODO very hacky memoizing
+    var PLAYER = null;
     var ACTIVE_SUITE = null;
+    var _getMusicPlayer = function () { return new SoundPlayer_2.default(4, 0.12); };
     function playSuite(suite) {
         ACTIVE_SUITE = suite;
         var sections = Object.values(suite.sections);
@@ -1716,8 +1591,8 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
             for (var j = 0; j < numRepeats; j++) {
                 setTimeout(function () {
                     if (suite === ACTIVE_SUITE) {
-                        var figures = __spreadArrays((!!bass ? [bass.map(_transpose8vb)] : []), (!!lead ? [lead] : []));
-                        figures.forEach(function (figure) { return AudioUtils_2.playMusic(figure); });
+                        var figures = __spreadArrays((!!bass ? [bass.map(AudioUtils_1.transpose8vb)] : []), (!!lead ? [lead] : []));
+                        figures.forEach(function (figure) { return playMusic(figure); });
                     }
                 }, ((numRepeats * i) + j) * suite.length);
             }
@@ -1731,20 +1606,27 @@ define("sounds/Music", ["require", "exports", "utils/RandomUtils", "sounds/Audio
             }
         }, sections.length * suite.length * numRepeats);
     }
+    function playMusic(samples) {
+        if (!PLAYER) {
+            PLAYER = _getMusicPlayer();
+        }
+        PLAYER.playSound(samples, false);
+    }
+    function stopMusic() {
+        if (PLAYER) {
+            PLAYER.stop();
+        }
+    }
     function stop() {
-        AudioUtils_2.stopMusic();
+        stopMusic();
         ACTIVE_SUITE = null;
     }
     exports.default = {
-        SUITE_1: SUITE_1,
-        SUITE_2: SUITE_2,
-        SUITE_3: SUITE_3,
-        SUITE_4: SUITE_4,
         playSuite: playSuite,
         stop: stop
     };
 });
-define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", "sounds/Sounds", "utils/PromiseUtils", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music"], function (require, exports, types_5, AudioUtils_3, Sounds_2, PromiseUtils_4, InventoryMap_1, EquipmentMap_1, Music_1) {
+define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1841,7 +1723,7 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
             this.life += lifePerLevel;
             this._damage += this.unitClass.damagePerLevel(this.level);
             if (withSound) {
-                AudioUtils_3.playSound(Sounds_2.default.LEVEL_UP);
+                SoundFX_2.playSound(Sounds_2.default.LEVEL_UP);
             }
         };
         Unit.prototype.gainExperience = function (experience) {
@@ -1871,10 +1753,10 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
                     if (_this === playerUnit) {
                         jwb.state.screen = types_5.GameScreen.GAME_OVER;
                         Music_1.default.stop();
-                        AudioUtils_3.playSound(Sounds_2.default.PLAYER_DIES);
+                        SoundFX_2.playSound(Sounds_2.default.PLAYER_DIES);
                     }
                     else {
-                        AudioUtils_3.playSound(Sounds_2.default.ENEMY_DIES);
+                        SoundFX_2.playSound(Sounds_2.default.ENEMY_DIES);
                     }
                     if (sourceUnit) {
                         sourceUnit.gainExperience(1);
@@ -1882,10 +1764,10 @@ define("units/Unit", ["require", "exports", "types/types", "sounds/AudioUtils", 
                 }
                 else {
                     if (_this === playerUnit) {
-                        AudioUtils_3.playSound(Sounds_2.default.PLAYER_HITS_ENEMY);
+                        SoundFX_2.playSound(Sounds_2.default.PLAYER_HITS_ENEMY);
                     }
                     else {
-                        AudioUtils_3.playSound(Sounds_2.default.ENEMY_HITS_PLAYER);
+                        SoundFX_2.playSound(Sounds_2.default.ENEMY_HITS_PLAYER);
                     }
                 }
                 resolve();
@@ -2085,7 +1967,7 @@ define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], functio
         playTurn: playTurn
     };
 });
-define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/Sounds"], function (require, exports, AudioUtils_4, Sounds_3) {
+define("items/ItemUtils", ["require", "exports", "sounds/SoundFX", "sounds/Sounds"], function (require, exports, SoundFX_3, Sounds_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function pickupItem(unit, mapItem) {
@@ -2093,7 +1975,7 @@ define("items/ItemUtils", ["require", "exports", "sounds/AudioUtils", "sounds/So
         var inventoryItem = mapItem.inventoryItem;
         unit.inventory.add(inventoryItem);
         state.messages.push("Picked up a " + inventoryItem.name + ".");
-        AudioUtils_4.playSound(Sounds_3.default.PICK_UP_ITEM);
+        SoundFX_3.playSound(Sounds_3.default.PICK_UP_ITEM);
     }
     exports.pickupItem = pickupItem;
     function useItem(unit, item) {
@@ -2706,13 +2588,13 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "types/types", "sounds/AudioUtils", "utils/PromiseUtils", "utils/RandomUtils", "graphics/sprites/SpriteFactory", "items/equipment/EquipmentClasses", "items/MapItem", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, types_10, AudioUtils_5, PromiseUtils_8, RandomUtils_6, SpriteFactory_3, EquipmentClasses_1, MapItem_1, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_10, SoundFX_4, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
         var onUse = function (item, unit) {
             return new Promise(function (resolve) {
-                AudioUtils_5.playSound(Sounds_4.default.USE_POTION);
+                SoundFX_4.playSound(Sounds_4.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
                 jwb.state.messages.push(unit.name + " used " + item.name);
@@ -3682,7 +3564,147 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
     };
     exports.default = TileSets;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_18, MapUtils_9) {
+define("sounds/Suites", ["require", "exports", "sounds/AudioUtils"], function (require, exports, AudioUtils_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _duplicate(samples) {
+        return __spreadArrays(samples, samples);
+    }
+    var SUITE_1 = (function () {
+        var FIGURE_1 = [[300, 2000], [200, 1000], [225, 1000]];
+        var FIGURE_2 = [[300, 1000], [225, 1000], [200, 2000]];
+        var FIGURE_3 = [[200, 1000], [225, 1000], [250, 2000]];
+        var FIGURE_4 = [[300, 200], [250, 100], [225, 200], [600, 500], [300, 200], [200, 200], [225, 100], [200, 200], [225, 200], [300, 100], [600, 500], [300, 500], [600, 500], [250, 500], [300, 200], [200, 200], [250, 100], [300, 200], [225, 200], [250, 100]];
+        var FIGURE_5 = [[600, 500], [225, 250], [250, 250], [500, 500], [600, 500], [400, 500], [250, 500], [200, 250], [225, 250], [300, 250], [400, 250]];
+        var FIGURE_6 = [[600, 200], [0, 100], [600, 200], [0, 500], [600, 500], [0, 500]];
+        return {
+            length: 4000,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    exports.SUITE_1 = SUITE_1;
+    var SUITE_2 = (function () {
+        var FIGURE_1 = [[100, 1000], [80, 1000], [120, 1000], [80, 1000]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_2 = [[50, 1000], [80, 1000], [200, 1000], [240, 750], [230, 250]]
+            //const FIGURE_2 = [[50,1000],[80,1000],[200,1000],[240,750],[/*230*/225,250]]
+            .map(AudioUtils_2.transpose8va)
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_3 = [[300, 500], [240, 500], [225, 1000], [200, 750], [150, 250], [180, 1000]];
+        // const FIGURE_3 = [[300,500],[/*235*/240,500],[225,1000],[200,750],[150,250],[180,1000]];
+        var FIGURE_4 = [[50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125], [50, 250], [80, 250], [100, 500], [80, 250], [100, 250], [225, 125], [200, 125], [180, 125], [150, 125]]
+            .map(AudioUtils_2.transpose8va)
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_5 = [[300, 500], [200, 1000], [225, 500], [240, 500], [150, 1000], [100, 250], [180, 250]];
+        //const FIGURE_5 = [[300,500],[200,1000],[225,500],[/*235*/240,500],[150,1000],[100,250],[180,250]];
+        var FIGURE_6 = [[100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [0, 250], [100, 250], [120, 250], [100, 250], [0, 250], [100, 250], [0, 250], [80, 250], [100, 250], [80, 250], [90, 250]]
+            .map(AudioUtils_2.transpose8va);
+        return {
+            length: 4000,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    exports.SUITE_2 = SUITE_2;
+    var SUITE_3 = (function () {
+        var FIGURE_1 = [[100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [100, 400], [0, 200], [50, 100], [0, 100], [100, 200], [50, 200], [100, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200], [80, 400], [0, 200], [40, 100], [0, 100], [80, 200], [40, 200], [80, 200], [0, 200]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_2 = [[200, 1400], [100, 200], [235, 800], [225, 800], [270, 1600], [300, 800], [270, 400], [235, 200], [225, 200]];
+        var FIGURE_3 = [[75, 1600], [80, 1600], [100, 3200]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_4 = [[300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100], [300, 200], [280, 400], [235, 100], [200, 100], [240, 400], [225, 200], [200, 100], [0, 100]];
+        var FIGURE_5 = [[200, 800], [225, 400], [235, 400], [200, 200], [150, 200], [100, 400], [180, 800], [160, 600], [100, 200], [150, 200], [160, 200], [100, 400], [120, 200], [150, 200], [180, 400], [230, 800]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_6 = [[100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [160, 150], [0, 50], [150, 150], [0, 50], [120, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [150, 150], [0, 50], [160, 150], [0, 50], [180, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [100, 150], [0, 50], [235, 150], [0, 50], [225, 150], [0, 50], [180, 150], [0, 50]];
+        return {
+            length: 6400,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    exports.SUITE_3 = SUITE_3;
+    var SUITE_4 = (function () {
+        var FIGURE_1 = [[100, 1920], [135, 1920], [100, 1920], [150, 1920]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_2 = [[80, 1920], [100, 1920], [120, 1920], [90, 1920]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_3 = [[100, 960], [150, 960], [120, 960], [135, 960], [100, 960], [150, 960], [120, 960], [135, 960]]
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_4 = _duplicate([[0, 240], [50, 240], [150, 240], [50, 240], [120, 240], [50, 240], [0, 480], [120, 240], [150, 240], [50, 240], [180, 1200]])
+            .map(AudioUtils_2.transpose8va);
+        var FIGURE_5 = [[200, 720], [240, 480], [0, 480], [270, 480], [280, 240], [270, 240], [240, 240], [270, 240], [240, 240], [0, 480], [200, 720], [240, 720], [0, 480], [300, 240], [360, 240], [300, 240], [280, 480], [0, 720]];
+        var FIGURE_6 = _duplicate([[100, 200], [0, 40], [100, 240], [0, 240], [100, 240], [0, 960], [100, 200], [0, 40], [100, 200], [0, 40], [120, 480], [100, 200], [0, 40], [100, 200], [0, 40], [90, 480]])
+            .map(AudioUtils_2.transpose8va);
+        return {
+            length: 7680,
+            sections: {
+                SECTION_A: {
+                    bass: [FIGURE_1, FIGURE_6]
+                },
+                SECTION_B: {
+                    bass: [FIGURE_1, FIGURE_2, FIGURE_4],
+                    lead: [FIGURE_4, FIGURE_5]
+                },
+                SECTION_C: {
+                    bass: [FIGURE_2, FIGURE_3 /*, FIGURE_4*/],
+                    lead: [FIGURE_4]
+                },
+                SECTION_D: {
+                    bass: [FIGURE_3, FIGURE_4, FIGURE_6],
+                    lead: [FIGURE_4, FIGURE_5, FIGURE_6],
+                }
+            }
+        };
+    })();
+    exports.SUITE_4 = SUITE_4;
+});
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_18, MapUtils_9, Suites_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
@@ -3725,7 +3747,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function startGame() {
         loadMap(0);
         Music_2.default.stop();
-        Music_2.default.playSuite(RandomUtils_11.randChoice([Music_2.default.SUITE_1, Music_2.default.SUITE_2, Music_2.default.SUITE_3]));
+        Music_2.default.playSuite(RandomUtils_11.randChoice([Suites_1.SUITE_1, Suites_1.SUITE_2, Suites_1.SUITE_3]));
         return jwb.renderer.render();
     }
     exports.startGame = startGame;
@@ -3762,7 +3784,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/AudioUtils", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, AudioUtils_6, actions_2, types_19) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/SoundFX", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, SoundFX_5, actions_2, types_19) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -3923,7 +3945,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     map.removeItem({ x: x, y: y });
                 }
                 else if (map.getTile({ x: x, y: y }).type === types_19.TileType.STAIRS_DOWN) {
-                    AudioUtils_6.playSound(Sounds_5.default.DESCEND_STAIRS);
+                    SoundFX_5.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);

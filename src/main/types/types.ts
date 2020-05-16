@@ -76,8 +76,6 @@ interface Room extends Rect {
   exits: Coordinates[]
 }
 
-type Sample = [number, number];
-
 type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
 
 interface Tile {
@@ -124,7 +122,6 @@ export {
   Projectile,
   Rect,
   Room,
-  Sample,
   SpriteSupplier,
   Tile,
   TileSet,

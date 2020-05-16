@@ -1,7 +1,7 @@
 import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import InventoryItem from './InventoryItem';
-import { playSound } from '../sounds/AudioUtils';
+import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 
 function pickupItem(unit: Unit, mapItem: MapItem) {

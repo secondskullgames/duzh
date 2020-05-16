@@ -9,6 +9,7 @@ import { attachEvents } from './InputHandler';
 import { randChoice } from '../utils/RandomUtils';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
+import { SUITE_1, SUITE_2, SUITE_3 } from '../sounds/Suites';
 
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
@@ -51,7 +52,7 @@ function _initState() {
 function startGame(): Promise<any> {
   loadMap(0);
   Music.stop();
-  Music.playSuite(randChoice([Music.SUITE_1, Music.SUITE_2, Music.SUITE_3]));
+  Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   return jwb.renderer.render();
 }
 

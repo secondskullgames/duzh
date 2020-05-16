@@ -1,14 +1,14 @@
 import Sounds from '../sounds/Sounds';
 import InventoryItem from './InventoryItem';
-import { ItemCategory, Coordinates } from '../types/types';
-import { playSound } from '../sounds/AudioUtils';
 import EquippedItem from './equipment/EquippedItem';
 import Unit from '../units/Unit';
+import MapItem from './MapItem';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { chainPromises } from '../utils/PromiseUtils';
 import { randChoice } from '../utils/RandomUtils';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { EquipmentClass, getWeaponClasses } from './equipment/EquipmentClasses';
-import MapItem from './MapItem';
+import { ItemCategory, Coordinates } from '../types/types';
+import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;

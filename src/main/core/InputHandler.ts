@@ -4,7 +4,7 @@ import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { fireProjectile, moveOrAttack } from '../units/UnitUtils';
-import { playSound } from '../sounds/AudioUtils';
+import { playSound } from '../sounds/SoundFX';
 import { loadMap, restartGame, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
 
