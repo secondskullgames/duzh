@@ -7,12 +7,12 @@
     "lib": "lib"
   },
   "dependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "3.8.3"
   },
   "devDependencies": {},
   "scripts": {
     "prepare": "tsc -b",
-    "test": "node build/test"
+    "test": "node build/test/test"
   },
   "repository": {
     "type": "git",

@@ -4,5 +4,8 @@
     "module": "CommonJS",
     "outDir": "../../build/test"
   },
-  "include": ["**/*"]
+  "include": [
+    "**/*",
+    "../main/**/*"
+  ]
 }
