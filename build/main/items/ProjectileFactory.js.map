@@ -1,0 +1,1 @@
+{"version":3,"file":"ProjectileFactory.js","sourceRoot":"","sources":["../../../src/main/items/ProjectileFactory.ts"],"names":[],"mappings":";;AACA,mEAA8D;AAE9D,SAAS,WAAW,CAAC,EAAqB,EAAE,SAAoB;QAAzC,QAAC,EAAE,QAAC;IACzB,OAAO;QACL,CAAC,GAAA;QACD,CAAC,GAAA;QACD,SAAS,WAAA;QACT,MAAM,EAAE,uBAAa,CAAC,KAAK,CAAC,SAAS,EAAE,EAAE,CAAC;QAC1C,IAAI,EAAE,GAAG;KACV,CAAC;AACJ,CAAC;AAGC,kCAAW"}

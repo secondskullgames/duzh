@@ -12,7 +12,7 @@
   "devDependencies": {},
   "scripts": {
     "prepare": "tsc -b",
-    "test": "node build/test/test"
+    "test": "node build/test"
   },
   "repository": {
     "type": "git",

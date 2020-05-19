@@ -2,7 +2,7 @@
   "extends": "../../tsconfig-base.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "outDir": "../../build/test"
+    "outDir": "../../build"
   },
   "include": [
     "**/*",

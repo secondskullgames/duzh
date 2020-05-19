@@ -6,6 +6,7 @@ import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
 import { MapLayout, TileSet } from '../types/types';
 import { randInt } from '../utils/RandomUtils';
+import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
 
 function createRandomMap(
   mapLayout: MapLayout,
@@ -26,7 +27,8 @@ function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGe
       const minRoomDimension = randInt(6, 6);
       const maxRoomDimension = randInt(9, 9);
       const minRoomPadding = 0;
-      return new RoomCorridorDungeonGenerator(
+      // return new RoomCorridorDungeonGenerator(
+      return new RoomCorridorDungeonGenerator2(
         tileSet,
         minRoomDimension,
         maxRoomDimension,
