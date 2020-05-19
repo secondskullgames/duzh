@@ -23,20 +23,19 @@ type InternalConnection = {
   neighbors: Section[]
 }
 
+const ROOM_PADDING = [2, 2, 1, 1]; // left, top, right, bottom;
+
 class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private readonly _minRoomDimension: number;
   private readonly _maxRoomDimension: number;
-  private readonly _minRoomPadding: number;
   /**
    * @param minRoomDimension outer width, including wall
    * @param maxRoomDimension outer width, including wall
-   * @param minRoomPadding minimum padding between each room and its containing section
    */
-  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
+  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number) {
     super(tileSet);
     this._minRoomDimension = minRoomDimension;
     this._maxRoomDimension = maxRoomDimension;
-    this._minRoomPadding = minRoomPadding;
   }
 
   protected generateTiles(width: number, height: number): MapSection {
@@ -60,8 +59,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     // TODO
     const debugOutput = `
       Sections: ${sections.map(section => `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`).join('; ')}\n
-      MST: ${minimalSpanningTree.map(connection => `((${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y}))`).join('; ')},
-      opt: ${optionalConnections.map(connection => `((${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y}))`).join('; ')}
+      MST: ${minimalSpanningTree.map(this._connectionToString).join('; ')},
+      opt: ${optionalConnections.map(this._connectionToString).join('; ')},
+      Internal: ${internalConnections.map(connection => `${connection.section}, ${connection.neighbors.length}`)}
     `;
 
     console.log(debugOutput);
@@ -87,17 +87,18 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * not large enough to form two sub-regions, just return a single section.
    */
   private _generateSections(left: number, top: number, width: number, height: number): Section[] {
+    console.log(`_generateSections(${left},${top},${width},${height})`);
     const splitDirection = this._getSplitDirection(width, height);
     if (splitDirection === 'HORIZONTAL') {
-      const splitX = this._getSplitPoint(left, width);
-      const leftWidth = splitX;
+      const splitX = this._getSplitPoint(left, width, splitDirection);
+      const leftWidth = splitX - left;
       const leftSections = this._generateSections(left, top, leftWidth, height);
       const rightWidth = width - splitX;
       const rightSections = this._generateSections(splitX, top, rightWidth, height);
       return [...leftSections, ...rightSections];
     } else if (splitDirection === 'VERTICAL') {
-      const splitY = this._getSplitPoint(top, height);
-      const topHeight = splitY;
+      const splitY = this._getSplitPoint(top, height, splitDirection);
+      const topHeight = splitY - top;
       const bottomHeight = height - splitY;
       const topSections = this._generateSections(left, top, width, topHeight);
       const bottomSections = this._generateSections(left, splitY, width, bottomHeight);
@@ -128,9 +129,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   private _getSplitDirection(width: number, height: number): Direction | null {
     // First, make sure the area is large enough to support two sections; if not, we're done
-    const minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
-    const canSplitHorizontally = (width >= (2 * minSectionDimension));
-    const canSplitVertically = (height >= (2 * minSectionDimension));
+    const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+    const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+    const canSplitHorizontally = (width >= (2 * minWidth));
+    const canSplitVertically = (height >= (2 * minHeight));
 
     if (canSplitHorizontally) {
       return 'HORIZONTAL';
@@ -146,8 +148,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * @param dimension width or height
    * @returns the min X/Y coordinate of the *second* room
    */
-  private _getSplitPoint(start: number, dimension: number): number {
-    const minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
+  private _getSplitPoint(start: number, dimension: number, direction: Direction): number {
+    const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+    const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+    const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
     const minSplitPoint = start + minSectionDimension;
     const maxSplitPoint = start + dimension - minSectionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
@@ -189,10 +193,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
             connections.push(this._buildConnection(connectedSection, unconnectedSection));
             connectedAny = true;
             break;
-          } else {
-            console.log('can\'t connect:');
-            console.log(connectedSection);
-            console.log(unconnectedSection);
           }
         }
       }
@@ -202,8 +202,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         connectedSections.forEach(x => console.log(x));
         console.log('unconnected:');
         unconnectedSections.forEach(x => console.log(x));
-        console.error('fux');
-        //throw 'fux';
+        throw 'fux';
       }
     }
 
@@ -285,7 +284,20 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   }
 
   private _addWalls(tiles: TileType[][]): void {
-    //throw 'TODO';
+    const height = tiles.length;
+    const width = tiles[0].length;
+    for (let y = 0; y < height - 2; y++) {
+      for (let x = 0; x < width; x++) {
+        if (
+          tiles[y][x] === TileType.NONE
+          && tiles[y + 1][x] === TileType.NONE
+          && (tiles[y + 2][x] === TileType.FLOOR || tiles[y + 2][x] === TileType.FLOOR_HALL)
+        ) {
+          tiles[y][x] = TileType.WALL_TOP;
+          tiles[y + 1][x] = (tiles[y + 2][x] === TileType.FLOOR) ? TileType.WALL : TileType.WALL_HALL;
+        }
+      }
+    }
   }
 
   private _canConnect(first: Section, second: Section): boolean {
@@ -352,7 +364,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1};
     }
     else {
-      console.error('fux2');
       throw 'fux2';
     }
 
@@ -362,6 +373,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       startCoordinates: firstCoordinates,
       endCoordinates: secondCoordinates
     };
+  }
+
+  private _connectionToString(connection: Connection) {
+    return `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
   }
 }
 

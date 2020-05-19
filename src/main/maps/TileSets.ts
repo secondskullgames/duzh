@@ -32,9 +32,9 @@ function _mapFilenames(filenames: TileFilenames): TileSet {
 const dungeonFilenames: TileFilenames = {
   [TileType.FLOOR]: ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
   [TileType.FLOOR_HALL]: ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
-  [TileType.WALL_TOP]: ['dungeon/tile_wall'],
+  [TileType.WALL_TOP]: [null],
   [TileType.WALL_HALL]: ['dungeon/tile_wall_hall'],
-  [TileType.WALL]: [null],
+  [TileType.WALL]: ['dungeon/tile_wall'],
   [TileType.STAIRS_DOWN]: ['stairs_down2'],
   [TileType.NONE]: [null]
 };
@@ -42,9 +42,9 @@ const dungeonFilenames: TileFilenames = {
 const caveFilenames: TileFilenames = {
   [TileType.FLOOR]: ['cave/tile_floor', 'cave/tile_floor_2'],
   [TileType.FLOOR_HALL]: ['cave/tile_floor', 'cave/tile_floor_2'],
-  [TileType.WALL_TOP]: ['cave/tile_wall'],
+  [TileType.WALL_TOP]: [],
   [TileType.WALL_HALL]: ['cave/tile_wall'],
-  [TileType.WALL]: [null],
+  [TileType.WALL]: ['cave/tile_wall'],
   [TileType.STAIRS_DOWN]: ['stairs_down2'],
   [TileType.NONE]: [null]
 };

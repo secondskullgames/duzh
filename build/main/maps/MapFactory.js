@@ -15,9 +15,8 @@ function _getDungeonGenerator(mapLayout, tileSet) {
         case types_1.MapLayout.ROOMS_AND_CORRIDORS: {
             var minRoomDimension = RandomUtils_1.randInt(6, 6);
             var maxRoomDimension = RandomUtils_1.randInt(9, 9);
-            var minRoomPadding = 0;
             // return new RoomCorridorDungeonGenerator(
-            return new RoomCorridorDungeonGenerator2_1.default(tileSet, minRoomDimension, maxRoomDimension, minRoomPadding);
+            return new RoomCorridorDungeonGenerator2_1.default(tileSet, minRoomDimension, maxRoomDimension);
         }
         case types_1.MapLayout.BLOB:
             return new BlobDungeonGenerator_1.default(tileSet);

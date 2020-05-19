@@ -40,7 +40,7 @@ function initialize(): Promise<any> {
 function _initState() {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
   jwb.state = new GameState(playerUnit, [
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 20, 15, 0, 0),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 26, 18, 0, 0),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 28, 22, 9, 4),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 30, 23, 10, 4),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 3, 32, 24, 11, 3),
