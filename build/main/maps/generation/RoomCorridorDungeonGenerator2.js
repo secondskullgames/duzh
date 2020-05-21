@@ -28,8 +28,8 @@ var ROOM_PADDING = [2, 2, 1, 1]; // left, top, right, bottom;
 var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
     __extends(RoomCorridorDungeonGenerator2, _super);
     /**
-     * @param minRoomDimension outer width, including wall
-     * @param maxRoomDimension outer width, including wall
+     * @param minRoomDimension inner width, not including wall
+     * @param maxRoomDimension inner width, not including wall
      */
     function RoomCorridorDungeonGenerator2(tileSet, minRoomDimension, maxRoomDimension) {
         var _this = _super.call(this, tileSet) || this;
@@ -80,14 +80,14 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             var splitX = this._getSplitPoint(left, width, splitDirection);
             var leftWidth = splitX - left;
             var leftSections = this._generateSections(left, top, leftWidth, height);
-            var rightWidth = width - splitX;
+            var rightWidth = width - leftWidth;
             var rightSections = this._generateSections(splitX, top, rightWidth, height);
             return __spreadArrays(leftSections, rightSections);
         }
         else if (splitDirection === 'VERTICAL') {
             var splitY = this._getSplitPoint(top, height, splitDirection);
             var topHeight = splitY - top;
-            var bottomHeight = height - splitY;
+            var bottomHeight = height - topHeight;
             var topSections = this._generateSections(left, top, width, topHeight);
             var bottomSections = this._generateSections(left, splitY, width, bottomHeight);
             return __spreadArrays(topSections, bottomSections);
@@ -181,7 +181,7 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
                 connectedSections.forEach(function (x) { return console.log(x); });
                 console.log('unconnected:');
                 unconnectedSections.forEach(function (x) { return console.log(x); });
-                throw 'fux';
+                'Failed to generate minimal spanning tree';
             }
         }
         return connections;
@@ -336,7 +336,7 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
         }
         else {
-            throw 'fux2';
+            throw 'Failed to build connection';
         }
         return {
             start: first,

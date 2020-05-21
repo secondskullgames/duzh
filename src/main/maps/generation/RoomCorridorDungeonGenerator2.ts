@@ -29,8 +29,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private readonly _minRoomDimension: number;
   private readonly _maxRoomDimension: number;
   /**
-   * @param minRoomDimension outer width, including wall
-   * @param maxRoomDimension outer width, including wall
+   * @param minRoomDimension inner width, not including wall
+   * @param maxRoomDimension inner width, not including wall
    */
   constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number) {
     super(tileSet);
@@ -93,13 +93,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       const splitX = this._getSplitPoint(left, width, splitDirection);
       const leftWidth = splitX - left;
       const leftSections = this._generateSections(left, top, leftWidth, height);
-      const rightWidth = width - splitX;
+      const rightWidth = width - leftWidth;
       const rightSections = this._generateSections(splitX, top, rightWidth, height);
       return [...leftSections, ...rightSections];
     } else if (splitDirection === 'VERTICAL') {
       const splitY = this._getSplitPoint(top, height, splitDirection);
       const topHeight = splitY - top;
-      const bottomHeight = height - splitY;
+      const bottomHeight = height - topHeight;
       const topSections = this._generateSections(left, top, width, topHeight);
       const bottomSections = this._generateSections(left, splitY, width, bottomHeight);
       return [...topSections, ...bottomSections];
@@ -202,7 +202,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         connectedSections.forEach(x => console.log(x));
         console.log('unconnected:');
         unconnectedSections.forEach(x => console.log(x));
-        throw 'fux';
+        'Failed to generate minimal spanning tree';
       }
     }
 
@@ -244,8 +244,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     return internalConnections;
   }
 
-  private _generateTiles(width: number, height: number, sections: Section[], connections: Connection[],
-                         internalConnections: InternalConnection[]): TileType[][] {
+  private _generateTiles(
+    width: number,
+    height: number,
+    sections: Section[],
+    connections: Connection[],
+    internalConnections: InternalConnection[]
+  ): TileType[][] {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -364,7 +369,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1};
     }
     else {
-      throw 'fux2';
+      throw 'Failed to build connection';
     }
 
     return {

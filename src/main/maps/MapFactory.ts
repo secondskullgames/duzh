@@ -24,8 +24,8 @@ function createRandomMap(
 function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator {
   switch (mapLayout) {
     case MapLayout.ROOMS_AND_CORRIDORS: {
-      const minRoomDimension = randInt(6, 6);
-      const maxRoomDimension = randInt(9, 9);
+      const minRoomDimension = 4;
+      const maxRoomDimension = 7;
       // return new RoomCorridorDungeonGenerator(
       return new RoomCorridorDungeonGenerator2(
         tileSet,

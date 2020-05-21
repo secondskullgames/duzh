@@ -3532,8 +3532,8 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
     var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
         __extends(RoomCorridorDungeonGenerator2, _super);
         /**
-         * @param minRoomDimension outer width, including wall
-         * @param maxRoomDimension outer width, including wall
+         * @param minRoomDimension inner width, not including wall
+         * @param maxRoomDimension inner width, not including wall
          */
         function RoomCorridorDungeonGenerator2(tileSet, minRoomDimension, maxRoomDimension) {
             var _this = _super.call(this, tileSet) || this;
@@ -3584,14 +3584,14 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                 var splitX = this._getSplitPoint(left, width, splitDirection);
                 var leftWidth = splitX - left;
                 var leftSections = this._generateSections(left, top, leftWidth, height);
-                var rightWidth = width - splitX;
+                var rightWidth = width - leftWidth;
                 var rightSections = this._generateSections(splitX, top, rightWidth, height);
                 return __spreadArrays(leftSections, rightSections);
             }
             else if (splitDirection === 'VERTICAL') {
                 var splitY = this._getSplitPoint(top, height, splitDirection);
                 var topHeight = splitY - top;
-                var bottomHeight = height - splitY;
+                var bottomHeight = height - topHeight;
                 var topSections = this._generateSections(left, top, width, topHeight);
                 var bottomSections = this._generateSections(left, splitY, width, bottomHeight);
                 return __spreadArrays(topSections, bottomSections);
@@ -3685,7 +3685,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                     connectedSections.forEach(function (x) { return console.log(x); });
                     console.log('unconnected:');
                     unconnectedSections.forEach(function (x) { return console.log(x); });
-                    throw 'fux';
+                    'Failed to generate minimal spanning tree';
                 }
             }
             return connections;
@@ -3840,7 +3840,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                 secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
             }
             else {
-                throw 'fux2';
+                throw 'Failed to build connection';
             }
             return {
                 start: first,
@@ -3856,7 +3856,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
     }(DungeonGenerator_3.default));
     exports.default = RoomCorridorDungeonGenerator2;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/BlobDungeonGenerator", "types/types", "utils/RandomUtils", "maps/generation/RoomCorridorDungeonGenerator2"], function (require, exports, ItemFactory_1, UnitFactory_1, BlobDungeonGenerator_1, types_17, RandomUtils_11, RoomCorridorDungeonGenerator2_1) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/BlobDungeonGenerator", "types/types", "maps/generation/RoomCorridorDungeonGenerator2"], function (require, exports, ItemFactory_1, UnitFactory_1, BlobDungeonGenerator_1, types_17, RoomCorridorDungeonGenerator2_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
@@ -3866,8 +3866,8 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     function _getDungeonGenerator(mapLayout, tileSet) {
         switch (mapLayout) {
             case types_17.MapLayout.ROOMS_AND_CORRIDORS: {
-                var minRoomDimension = RandomUtils_11.randInt(6, 6);
-                var maxRoomDimension = RandomUtils_11.randInt(9, 9);
+                var minRoomDimension = 4;
+                var maxRoomDimension = 7;
                 // return new RoomCorridorDungeonGenerator(
                 return new RoomCorridorDungeonGenerator2_1.default(tileSet, minRoomDimension, maxRoomDimension);
             }
@@ -4063,7 +4063,7 @@ define("sounds/Suites", ["require", "exports", "sounds/AudioUtils"], function (r
     })();
     exports.SUITE_4 = SUITE_4;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_12, types_19, MapUtils_10, Suites_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_1, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_11, types_19, MapUtils_10, Suites_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
@@ -4107,7 +4107,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function startGame() {
         loadMap(0);
         Music_2.default.stop();
-        Music_2.default.playSuite(RandomUtils_12.randChoice([Suites_1.SUITE_1, Suites_1.SUITE_2, Suites_1.SUITE_3]));
+        Music_2.default.playSuite(RandomUtils_11.randChoice([Suites_1.SUITE_1, Suites_1.SUITE_2, Suites_1.SUITE_3]));
         return jwb.renderer.render();
     }
     exports.startGame = startGame;
