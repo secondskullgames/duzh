@@ -16,6 +16,7 @@ type Connection = {
   end: Section,
   startCoordinates: Coordinates,
   endCoordinates: Coordinates,
+  middleCoordinates: Coordinates,
   direction: Direction
 };
 
@@ -380,12 +381,17 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
 
     const direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
+    const middleCoordinates = {
+      x: (firstCoordinates.x + secondCoordinates.x) / 2,
+      y: (firstCoordinates.y + secondCoordinates.y) / 2
+    };
 
     return {
       start: first,
       end: second,
       startCoordinates: firstCoordinates,
       endCoordinates: secondCoordinates,
+      middleCoordinates,
       direction
     };
   }
@@ -418,6 +424,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           this._joinPerpendicularly(tiles, firstConnection, secondConnection);
         } else {
           // join parallel connections
+          this._joinParallelConnections(tiles, firstConnection, secondConnection);
         }
       }
     });
@@ -425,13 +432,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   private _joinPerpendicularly(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
     const joinPoint = {
-      x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).startCoordinates.x,
-      y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).startCoordinates.y
+      x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
+      y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
     };
 
-    let dx = Math.sign(joinPoint.x - firstConnection.startCoordinates.x);
-    let dy = Math.sign(joinPoint.y - firstConnection.startCoordinates.y);
-    let { x, y } = firstConnection.endCoordinates;
+    let dx = Math.sign(joinPoint.x - firstConnection.middleCoordinates.x);
+    let dy = Math.sign(joinPoint.y - firstConnection.middleCoordinates.y);
+    let { x, y } = firstConnection.middleCoordinates;
     x += dx;
     y += dy;
     do {
@@ -440,13 +447,58 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       y += dy;
     } while (!coordinatesEquals({ x, y }, joinPoint));
 
-    dx = Math.sign(secondConnection.startCoordinates.x - joinPoint.x);
-    dy = Math.sign(secondConnection.startCoordinates.y - joinPoint.y);
+    dx = Math.sign(secondConnection.middleCoordinates.x - joinPoint.x);
+    dy = Math.sign(secondConnection.middleCoordinates.y - joinPoint.y);
     do {
       tiles[y][x] = TileType.FLOOR_HALL;
       x += dx;
       y += dy;
-    } while (!coordinatesEquals({ x, y }, secondConnection.startCoordinates));
+    } while (!coordinatesEquals({ x, y }, secondConnection.middleCoordinates));
+  }
+
+  private _joinParallelConnections(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
+    const width = secondConnection.middleCoordinates.x - firstConnection.middleCoordinates.x;
+    const height = secondConnection.middleCoordinates.y - firstConnection.middleCoordinates.y;
+    const middle = {
+      x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
+      y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
+    };
+    const dx = Math.sign(width);
+    const dy = Math.sign(height);
+
+    const majorDirection: Direction = (Math.abs(width) >= Math.abs(height)) ? 'HORIZONTAL' : 'VERTICAL';
+    let { x, y } = firstConnection.middleCoordinates;
+
+    switch (majorDirection) {
+      case 'HORIZONTAL':
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          x += dx;
+        } while (x !== middle.x);
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          y += dy;
+        } while (y !== secondConnection.middleCoordinates.y);
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          x += dx;
+        } while (x !== secondConnection.middleCoordinates.x);
+        break;
+      case 'VERTICAL':
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          y += dy;
+        } while (y !== middle.y);
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          x += dx;
+        } while (x !== secondConnection.middleCoordinates.x);
+        do {
+          tiles[y][x] = TileType.FLOOR_HALL;
+          y += dy;
+        } while (y !== secondConnection.middleCoordinates.y);
+        break;
+    }
   }
 }
 

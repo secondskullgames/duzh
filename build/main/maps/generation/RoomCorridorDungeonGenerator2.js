@@ -344,20 +344,22 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             throw 'Failed to build connection';
         }
         var direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
+        var middleCoordinates = {
+            x: (firstCoordinates.x + secondCoordinates.x) / 2,
+            y: (firstCoordinates.y + secondCoordinates.y) / 2
+        };
         return {
             start: first,
             end: second,
             startCoordinates: firstCoordinates,
             endCoordinates: secondCoordinates,
+            middleCoordinates: middleCoordinates,
             direction: direction
         };
     };
     RoomCorridorDungeonGenerator2.prototype._connectionToString = function (connection) {
         return "[(" + connection.startCoordinates.x + ", " + connection.startCoordinates.y + ")-(" + connection.endCoordinates.x + ", " + connection.endCoordinates.y + ")]";
     };
-    /**
-     *
-     */
     RoomCorridorDungeonGenerator2.prototype._addTilesForInternalConnections = function (tiles, internalConnections, connections) {
         var _this = this;
         internalConnections.forEach(function (internalConnection) {
@@ -382,6 +384,7 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
                 }
                 else {
                     // join parallel connections
+                    _this._joinParallelConnections(tiles, firstConnection, secondConnection);
                 }
             };
             for (var i = 0; i < neighbors.length - 1; i++) {
@@ -393,12 +396,12 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
     };
     RoomCorridorDungeonGenerator2.prototype._joinPerpendicularly = function (tiles, firstConnection, secondConnection) {
         var joinPoint = {
-            x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).startCoordinates.x,
-            y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).startCoordinates.y
+            x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
+            y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
         };
-        var dx = Math.sign(joinPoint.x - firstConnection.startCoordinates.x);
-        var dy = Math.sign(joinPoint.y - firstConnection.startCoordinates.y);
-        var _a = firstConnection.endCoordinates, x = _a.x, y = _a.y;
+        var dx = Math.sign(joinPoint.x - firstConnection.middleCoordinates.x);
+        var dy = Math.sign(joinPoint.y - firstConnection.middleCoordinates.y);
+        var _a = firstConnection.middleCoordinates, x = _a.x, y = _a.y;
         x += dx;
         y += dy;
         do {
@@ -406,13 +409,55 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             x += dx;
             y += dy;
         } while (!MapUtils_1.coordinatesEquals({ x: x, y: y }, joinPoint));
-        dx = Math.sign(secondConnection.startCoordinates.x - joinPoint.x);
-        dy = Math.sign(secondConnection.startCoordinates.y - joinPoint.y);
+        dx = Math.sign(secondConnection.middleCoordinates.x - joinPoint.x);
+        dy = Math.sign(secondConnection.middleCoordinates.y - joinPoint.y);
         do {
             tiles[y][x] = types_1.TileType.FLOOR_HALL;
             x += dx;
             y += dy;
-        } while (!MapUtils_1.coordinatesEquals({ x: x, y: y }, secondConnection.startCoordinates));
+        } while (!MapUtils_1.coordinatesEquals({ x: x, y: y }, secondConnection.middleCoordinates));
+    };
+    RoomCorridorDungeonGenerator2.prototype._joinParallelConnections = function (tiles, firstConnection, secondConnection) {
+        var width = secondConnection.middleCoordinates.x - firstConnection.middleCoordinates.x;
+        var height = secondConnection.middleCoordinates.y - firstConnection.middleCoordinates.y;
+        var middle = {
+            x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
+            y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
+        };
+        var dx = Math.sign(width);
+        var dy = Math.sign(height);
+        var majorDirection = (Math.abs(width) >= Math.abs(height)) ? 'HORIZONTAL' : 'VERTICAL';
+        var _a = firstConnection.middleCoordinates, x = _a.x, y = _a.y;
+        switch (majorDirection) {
+            case 'HORIZONTAL':
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    x += dx;
+                } while (x !== middle.x);
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    y += dy;
+                } while (y !== secondConnection.middleCoordinates.y);
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    x += dx;
+                } while (x !== secondConnection.middleCoordinates.x);
+                break;
+            case 'VERTICAL':
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    y += dy;
+                } while (y !== middle.y);
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    x += dx;
+                } while (x !== secondConnection.middleCoordinates.x);
+                do {
+                    tiles[y][x] = types_1.TileType.FLOOR_HALL;
+                    y += dy;
+                } while (y !== secondConnection.middleCoordinates.y);
+                break;
+        }
     };
     return RoomCorridorDungeonGenerator2;
 }(DungeonGenerator_1.default));
