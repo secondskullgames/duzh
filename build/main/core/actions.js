@@ -41,7 +41,7 @@ exports.initialize = initialize;
 function _initState() {
     var playerUnit = new Unit_1.default(UnitClasses_1.default.PLAYER, 'player', 1, { x: 0, y: 0 });
     jwb.state = new GameState_1.default(playerUnit, [
-        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 26, 18, 0, 0); },
+        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 26, 24, 0, 0); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3); },

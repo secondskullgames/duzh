@@ -15,7 +15,8 @@ type Connection = {
   start: Section,
   end: Section,
   startCoordinates: Coordinates,
-  endCoordinates: Coordinates
+  endCoordinates: Coordinates,
+  direction: Direction
 };
 
 type InternalConnection = {
@@ -44,7 +45,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     // 2. Add rooms within sections, with appropriate padding.
     //    (Don't add a room for every section; approximately half.  Rules TBD.)
     const sections : Section[] = this._generateSections(0, 0, width, height);
-    //this._removeRooms(sections);
+    this._removeRooms(sections);
 
     // 3. Construct a minimal spanning tree between sections (including those without rooms).
     const minimalSpanningTree: Connection[] = this._generateMinimalSpanningTree(sections);
@@ -232,8 +233,12 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       if (!section.roomRect) {
         const connectedSections: Section[] = [];
         sections.forEach(otherSection => {
-          if (!spanningConnections.some(connection => this._connectionMatches(connection, section, otherSection))) {
-            connectedSections.push(otherSection);
+          if (otherSection !== section) {
+            if (spanningConnections.some(connection => this._connectionMatches(connection, section, otherSection))) {
+              if (this._canConnect(section, otherSection)) {
+                connectedSections.push(otherSection);
+              }
+            }
           }
         });
 
@@ -284,6 +289,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       }
       tiles[y][x] = TileType.FLOOR_HALL;
     });
+
+    this._addTilesForInternalConnections(tiles, internalConnections, connections);
 
     return tiles;
   }
@@ -372,16 +379,74 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       throw 'Failed to build connection';
     }
 
+    const direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
+
     return {
       start: first,
       end: second,
       startCoordinates: firstCoordinates,
-      endCoordinates: secondCoordinates
+      endCoordinates: secondCoordinates,
+      direction
     };
   }
 
   private _connectionToString(connection: Connection) {
     return `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
+  }
+
+  private _addTilesForInternalConnections(tiles: TileType[][], internalConnections: InternalConnection[], connections: Connection[]) {
+    internalConnections.forEach(internalConnection => {
+      const neighbors = [...internalConnection.neighbors];
+      shuffle(neighbors);
+      for (let i = 0; i < neighbors.length - 1; i++) {
+        const firstNeighbor = internalConnection.neighbors[i];
+        const secondNeighbor = internalConnection.neighbors[i + 1];
+        const firstConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, firstNeighbor))[0];
+        const secondConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, secondNeighbor))[0];
+
+        if (!firstConnection || !secondConnection) {
+          console.error('fux3');
+          console.log(connections.map(this._connectionToString).join(', '));
+          console.log(neighbors.join(' '));
+          console.log(firstNeighbor.rect);
+          console.log(secondNeighbor.rect);
+          return;
+        }
+
+        if (firstConnection.direction !== secondConnection.direction) {
+          // join perpendicularly
+          this._joinPerpendicularly(tiles, firstConnection, secondConnection);
+        } else {
+          // join parallel connections
+        }
+      }
+    });
+  }
+
+  private _joinPerpendicularly(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
+    const joinPoint = {
+      x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).startCoordinates.x,
+      y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).startCoordinates.y
+    };
+
+    let dx = Math.sign(joinPoint.x - firstConnection.startCoordinates.x);
+    let dy = Math.sign(joinPoint.y - firstConnection.startCoordinates.y);
+    let { x, y } = firstConnection.endCoordinates;
+    x += dx;
+    y += dy;
+    do {
+      tiles[y][x] = TileType.FLOOR_HALL;
+      x += dx;
+      y += dy;
+    } while (!coordinatesEquals({ x, y }, joinPoint));
+
+    dx = Math.sign(secondConnection.startCoordinates.x - joinPoint.x);
+    dy = Math.sign(secondConnection.startCoordinates.y - joinPoint.y);
+    do {
+      tiles[y][x] = TileType.FLOOR_HALL;
+      x += dx;
+      y += dy;
+    } while (!coordinatesEquals({ x, y }, secondConnection.startCoordinates));
   }
 }
 
