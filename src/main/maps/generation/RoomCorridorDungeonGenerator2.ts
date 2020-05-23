@@ -56,21 +56,24 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     // 6. Add "red-green" connections in empty rooms only if:
     //    - both edges connect to a room
     //    - there is no red-red connection in the section
-    const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
+    const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree);
+    const externalConnections = this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections);
+    //const externalConnections = [...minimalSpanningTree, ...optionalConnections];
 
     // TODO
     const debugOutput = `
-      Sections: ${sections.map(section => `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`).join('; ')}\n
-      MST: ${minimalSpanningTree.map(this._connectionToString).join('; ')},
-      opt: ${optionalConnections.map(this._connectionToString).join('; ')},
-      Internal: ${internalConnections.map(connection => `${connection.section}, ${connection.neighbors.length}`)}
+      Sections: ${sections.map(section => this._sectionToString(section)).join('; ')}
+      MST: ${minimalSpanningTree.map(this._connectionToString).join('; ')}
+      opt: ${optionalConnections.map(this._connectionToString).join('; ')}
+      external: ${externalConnections.map(this._connectionToString).join('; ')}
+      Internal: ${internalConnections.map(connection => `${this._sectionToString(connection.section)}, ${connection.neighbors.length}`).join('; ')}
     `;
 
     console.log(debugOutput);
     // END TODO
 
     // Compute the actual tiles based on section/connection specifications.
-    const tiles: TileType[][] = this._generateTiles(width, height, sections, [...minimalSpanningTree, ...optionalConnections], internalConnections);
+    const tiles: TileType[][] = this._generateTiles(width, height, sections, externalConnections, internalConnections);
 
     // 7. Add walls.
     this._addWalls(tiles);
@@ -81,6 +84,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       width,
       height
     };
+  }
+
+  private _sectionToString(section: Section) {
+    return `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`;
   }
 
   /**
@@ -165,7 +172,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     if (sections.length < minRooms) {
       throw 'Not enough sections';
     }
-    const numRooms = randInt(minRooms, maxRooms);
+
+    //const numRooms = randInt(minRooms, maxRooms);
+    const numRooms = 4;
 
     const shuffledSections = [...sections];
     shuffle(shuffledSections);
@@ -228,21 +237,21 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     return optionalConnections;
   }
 
-  private _addInternalConnections(sections: Section[], spanningConnections: Connection[], optionalConnections: Connection[]): InternalConnection[] {
+  private _addInternalConnections(sections: Section[], spanningConnections: Connection[]): InternalConnection[] {
     const internalConnections: InternalConnection[] = [];
     sections.forEach(section => {
       if (!section.roomRect) {
         const connectedSections: Section[] = [];
-        sections.forEach(otherSection => {
-          if (otherSection !== section) {
-            if (spanningConnections.some(connection => this._connectionMatches(connection, section, otherSection))) {
-              if (this._canConnect(section, otherSection)) {
-                connectedSections.push(otherSection);
-              }
-            }
+        const neighbors = sections.filter(s => s !== section).filter(s => this._canConnect(section, s));
+        neighbors.forEach(neighbor => {
+          if (spanningConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
+            connectedSections.push(neighbor);
           }
         });
-
+        if (connectedSections.length === 0) {
+          shuffle(neighbors);
+          connectedSections.push(neighbors[0]);
+        }
         internalConnections.push({ section, neighbors: connectedSections });
       }
     });
@@ -419,6 +428,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           return;
         }
 
+        console.log(`joining ${this._connectionToString(firstConnection)} to ${this._connectionToString(secondConnection)}`);
+
         if (firstConnection.direction !== secondConnection.direction) {
           // join perpendicularly
           this._joinPerpendicularly(tiles, firstConnection, secondConnection);
@@ -439,8 +450,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     let dx = Math.sign(joinPoint.x - firstConnection.middleCoordinates.x);
     let dy = Math.sign(joinPoint.y - firstConnection.middleCoordinates.y);
     let { x, y } = firstConnection.middleCoordinates;
-    x += dx;
-    y += dy;
     do {
       tiles[y][x] = TileType.FLOOR_HALL;
       x += dx;
@@ -499,6 +508,31 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         } while (y !== secondConnection.middleCoordinates.y);
         break;
     }
+  }
+
+  /**
+   * @return a copy of `optionalConnections` with the desired elements removed
+   */
+  private _stripOrphanedConnections(
+    externalConnections: Connection[],
+    internalConnections: InternalConnection[]
+  ): Connection[] {
+    return externalConnections.filter(connection => {
+      for (let [start, end] of [[connection.start, connection.end], [connection.end, connection.start]]) {
+        if (!!start.roomRect) {
+          if (!!end.roomRect) {
+            return true;
+          }
+          for (let internalConnection of internalConnections) {
+            if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
+    });
   }
 }
 

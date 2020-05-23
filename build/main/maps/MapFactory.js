@@ -12,7 +12,7 @@ function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, n
 function _getDungeonGenerator(mapLayout, tileSet) {
     switch (mapLayout) {
         case types_1.MapLayout.ROOMS_AND_CORRIDORS: {
-            var minRoomDimension = 4;
+            var minRoomDimension = 3;
             var maxRoomDimension = 7;
             // return new RoomCorridorDungeonGenerator(
             return new RoomCorridorDungeonGenerator2_1.default(tileSet, minRoomDimension, maxRoomDimension);
