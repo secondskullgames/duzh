@@ -3218,10 +3218,8 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
             //    - both edges connect to a room
             //    - there is no red-red connection in the section
             var internalConnections = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
-            var REMOVE_ORPHANED_CONNECTIONS = true;
-            var externalConnections = REMOVE_ORPHANED_CONNECTIONS
-                ? this._stripOrphanedConnections(__spreadArrays(minimalSpanningTree, optionalConnections), internalConnections)
-                : __spreadArrays(minimalSpanningTree, optionalConnections);
+            var externalConnections = __spreadArrays(minimalSpanningTree, optionalConnections);
+            this._stripOrphanedConnections(externalConnections, internalConnections);
             // TODO
             var debugOutput = "\n      Sections: " + sections.map(function (section) { return _this._sectionToString(section); }).join('; ') + "\n      MST: " + minimalSpanningTree.map(this._connectionToString).join('; ') + "\n      opt: " + optionalConnections.map(this._connectionToString).join('; ') + "\n      external: " + externalConnections.map(this._connectionToString).join('; ') + "\n      Internal: " + internalConnections.map(function (connection) { return _this._sectionToString(connection.section) + ", " + connection.neighbors.length; }).join('; ') + "\n    ";
             console.log(debugOutput);
@@ -3246,7 +3244,6 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
          * not large enough to form two sub-regions, just return a single section.
          */
         RoomCorridorDungeonGenerator2.prototype._generateSections = function (left, top, width, height) {
-            console.log("_generateSections(" + left + "," + top + "," + width + "," + height + ")");
             var splitDirection = this._getSplitDirection(width, height);
             if (splitDirection === 'HORIZONTAL') {
                 var splitX = this._getSplitPoint(left, width, splitDirection);
@@ -3319,8 +3316,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
             if (sections.length < minRooms) {
                 throw 'Not enough sections';
             }
-            //const numRooms = randInt(minRooms, maxRooms);
-            var numRooms = 4;
+            var numRooms = RandomUtils_9.randInt(minRooms, maxRooms);
             var shuffledSections = __spreadArrays(sections);
             RandomUtils_9.shuffle(shuffledSections);
             for (var i = numRooms; i < shuffledSections.length; i++) {
@@ -3565,7 +3561,6 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                         console.log(secondNeighbor.rect);
                         return { value: void 0 };
                     }
-                    console.log("joining " + _this._connectionToString(firstConnection) + " to " + _this._connectionToString(secondConnection));
                     if (firstConnection.direction !== secondConnection.direction) {
                         // join perpendicularly
                         _this._joinPerpendicularly(tiles, firstConnection, secondConnection);
@@ -3653,50 +3648,90 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
          * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
          * internal connection that connects to that endpoint.
          *
-         *
-         *
          * @return a copy of `externalConnections` with the desired elements removed
          */
         RoomCorridorDungeonGenerator2.prototype._stripOrphanedConnections = function (externalConnections, internalConnections) {
             var _this = this;
-            var updatedConnections = externalConnections.filter(function (connection) {
-                var start = connection.start, end = connection.end;
-                var startHasInternalConnection = false;
-                var endHasInternalConnection = false;
-                for (var _i = 0, internalConnections_1 = internalConnections; _i < internalConnections_1.length; _i++) {
-                    var internalConnection = internalConnections_1[_i];
-                    if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-                        startHasInternalConnection = true;
-                    }
-                    if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
-                        endHasInternalConnection = true;
-                    }
-                }
-                var isOrphaned = !((!!start.roomRect || startHasInternalConnection)
-                    && (!!end.roomRect || endHasInternalConnection));
-                if (isOrphaned) {
-                    console.log("Connection " + _this._connectionToString(connection) + " is orphaned: " + !!start.roomRect + ", " + startHasInternalConnection + ", " + !!end.roomRect + ", " + endHasInternalConnection);
-                }
-                return true;
-            });
-            var orphanedConnections = externalConnections.filter(function (c) { return updatedConnections.indexOf(c) === -1; });
-            var _loop_18 = function (connection) {
-                internalConnections.forEach(function (internalConnection) {
-                    internalConnection.neighbors = internalConnection.neighbors.filter(function (neighbor) {
-                        if (internalConnection.section === connection.start && internalConnection.neighbors.indexOf(connection.end) > -1) {
-                            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.end), 1);
-                        }
-                        if (internalConnection.section === connection.end && internalConnection.neighbors.indexOf(connection.start) > -1) {
-                            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.start), 1);
-                        }
-                    });
+            var removedAnyConnections = false;
+            var _loop_18 = function () {
+                var orphanedConnections = externalConnections.filter(function (connection) {
+                    return _this._isOrphanedConnection(connection, internalConnections);
                 });
+                this_6._subtract(externalConnections, orphanedConnections);
+                internalConnections.forEach(function (internalConnection) {
+                    _this._pruneInternalConnection(internalConnection, orphanedConnections);
+                });
+                var orphanedInternalConnections = internalConnections.filter(function (internalConnection) {
+                    return _this._isOrphanedInternalConnection(internalConnection, internalConnections);
+                });
+                this_6._subtract(internalConnections, orphanedInternalConnections);
+                removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
+                console.log("stripping: " + orphanedConnections.length + ", " + orphanedInternalConnections.length);
             };
+            var this_6 = this;
+            do {
+                _loop_18();
+            } while (removedAnyConnections);
+        };
+        RoomCorridorDungeonGenerator2.prototype._isOrphanedConnection = function (connection, internalConnections) {
+            var start = connection.start, end = connection.end;
+            var startHasInternalConnection = false;
+            var endHasInternalConnection = false;
+            for (var _i = 0, internalConnections_1 = internalConnections; _i < internalConnections_1.length; _i++) {
+                var internalConnection = internalConnections_1[_i];
+                if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+                    startHasInternalConnection = true;
+                }
+                if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+                    endHasInternalConnection = true;
+                }
+            }
+            return !((!!start.roomRect || startHasInternalConnection)
+                && (!!end.roomRect || endHasInternalConnection));
+        };
+        RoomCorridorDungeonGenerator2.prototype._pruneInternalConnection = function (internalConnection, orphanedConnections) {
+            var _loop_19 = function (connection) {
+                var section = internalConnection.section, neighbors = internalConnection.neighbors;
+                var start = connection.start, end = connection.end;
+                var updatedNeighbors = neighbors.filter(function (neighbor) {
+                    if (section === start && neighbor === start) {
+                        return false;
+                    }
+                    if (section === end && neighbor === end) {
+                        return false;
+                    }
+                    return true;
+                });
+                this_7._replace(neighbors, updatedNeighbors);
+            };
+            var this_7 = this;
             for (var _i = 0, orphanedConnections_1 = orphanedConnections; _i < orphanedConnections_1.length; _i++) {
                 var connection = orphanedConnections_1[_i];
-                _loop_18(connection);
+                _loop_19(connection);
             }
-            return updatedConnections;
+        };
+        /**
+         * An internal connection is orphaned if at most one of its neighbors has either a room or another
+         * internal connection
+         */
+        RoomCorridorDungeonGenerator2.prototype._isOrphanedInternalConnection = function (internalConnection, internalConnections) {
+            var connectedNeighbors = 0;
+            var section = internalConnection.section, neighbors = internalConnection.neighbors;
+            neighbors.forEach(function (neighbor) {
+                var neighborHasInternalConnection = internalConnections.find(function (other) { return other.section === neighbor && other.neighbors.indexOf(section) > -1; });
+                if (!!neighbor.roomRect || neighborHasInternalConnection) {
+                    connectedNeighbors++;
+                }
+            });
+            return connectedNeighbors <= 1;
+        };
+        RoomCorridorDungeonGenerator2.prototype._replace = function (array, contents) {
+            array.splice(0, array.length);
+            array.push.apply(array, contents);
+        };
+        RoomCorridorDungeonGenerator2.prototype._subtract = function (array, toRemove) {
+            var updated = array.filter(function (element) { return toRemove.indexOf(element) === -1; });
+            this._replace(array, updated);
         };
         return RoomCorridorDungeonGenerator2;
     }(DungeonGenerator_2.default));

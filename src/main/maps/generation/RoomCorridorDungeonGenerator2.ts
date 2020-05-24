@@ -58,11 +58,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     //    - there is no red-red connection in the section
     const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
 
-    const REMOVE_ORPHANED_CONNECTIONS = true;
-
-    const externalConnections = REMOVE_ORPHANED_CONNECTIONS
-      ? this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections)
-      : [...minimalSpanningTree, ...optionalConnections];
+    const externalConnections = [...minimalSpanningTree, ...optionalConnections];
+    this._stripOrphanedConnections(externalConnections, internalConnections);
 
     // TODO
     const debugOutput = `
@@ -100,7 +97,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * not large enough to form two sub-regions, just return a single section.
    */
   private _generateSections(left: number, top: number, width: number, height: number): Section[] {
-    console.log(`_generateSections(${left},${top},${width},${height})`);
     const splitDirection = this._getSplitDirection(width, height);
     if (splitDirection === 'HORIZONTAL') {
       const splitX = this._getSplitPoint(left, width, splitDirection);
@@ -177,8 +173,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       throw 'Not enough sections';
     }
 
-    //const numRooms = randInt(minRooms, maxRooms);
-    const numRooms = 4;
+    const numRooms = randInt(minRooms, maxRooms);
 
     const shuffledSections = [...sections];
     shuffle(shuffledSections);
@@ -443,8 +438,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           return;
         }
 
-        console.log(`joining ${this._connectionToString(firstConnection)} to ${this._connectionToString(secondConnection)}`);
-
         if (firstConnection.direction !== secondConnection.direction) {
           // join perpendicularly
           this._joinPerpendicularly(tiles, firstConnection, secondConnection);
@@ -535,54 +528,95 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
    * internal connection that connects to that endpoint.
    *
-   *
-   *
    * @return a copy of `externalConnections` with the desired elements removed
    */
   private _stripOrphanedConnections(
     externalConnections: Connection[],
     internalConnections: InternalConnection[]
   ) {
-    const updatedConnections = externalConnections.filter(connection => {
-      const { start, end } = connection;
-      let startHasInternalConnection = false;
-      let endHasInternalConnection = false;
-
-      for (let internalConnection of internalConnections) {
-        if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-          startHasInternalConnection = true;
-        }
-        if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
-          endHasInternalConnection = true;
-        }
-      }
-
-      const isOrphaned = !(
-        (!!start.roomRect || startHasInternalConnection)
-        && (!!end.roomRect || endHasInternalConnection)
-      );
-
-      if (isOrphaned) {
-        console.log(`Connection ${this._connectionToString(connection)} is orphaned: ${!!start.roomRect}, ${startHasInternalConnection}, ${!!end.roomRect}, ${endHasInternalConnection}`);
-      }
-
-      return true;
-    });
-
-    const orphanedConnections = externalConnections.filter(c => updatedConnections.indexOf(c) === -1);
-    for (let connection of orphanedConnections) {
-      internalConnections.forEach(internalConnection => {
-        internalConnection.neighbors = internalConnection.neighbors.filter(neighbor => {
-          if (internalConnection.section === connection.start && internalConnection.neighbors.indexOf(connection.end) > -1) {
-            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.end), 1);
-          }
-          if (internalConnection.section === connection.end && internalConnection.neighbors.indexOf(connection.start) > -1) {
-            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.start), 1);
-          }
-        });
+    let removedAnyConnections = false;
+    do {
+      const orphanedConnections = externalConnections.filter(connection => {
+        return this._isOrphanedConnection(connection, internalConnections);
       });
+
+      this._subtract(externalConnections, orphanedConnections);
+
+      internalConnections.forEach(internalConnection => {
+        this._pruneInternalConnection(internalConnection, orphanedConnections);
+      });
+
+      const orphanedInternalConnections = internalConnections.filter(internalConnection => {
+        return this._isOrphanedInternalConnection(internalConnection, internalConnections);
+      });
+      this._subtract(internalConnections, orphanedInternalConnections);
+
+      removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
+      console.log(`stripping: ${orphanedConnections.length}, ${orphanedInternalConnections.length}`);
+    } while (removedAnyConnections);
+  }
+
+  private _isOrphanedConnection(connection: Connection, internalConnections: InternalConnection[]) {
+    const { start, end } = connection;
+    let startHasInternalConnection = false;
+    let endHasInternalConnection = false;
+
+    for (let internalConnection of internalConnections) {
+      if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+        startHasInternalConnection = true;
+      }
+      if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+        endHasInternalConnection = true;
+      }
     }
-    return updatedConnections;
+
+    return !(
+      (!!start.roomRect || startHasInternalConnection)
+      && (!!end.roomRect || endHasInternalConnection)
+    );
+  }
+
+  private _pruneInternalConnection(internalConnection: InternalConnection, orphanedConnections: Connection[]) {
+    for (let connection of orphanedConnections) {
+      const { section, neighbors } = internalConnection;
+      const { start, end } = connection;
+      const updatedNeighbors: Section[] = neighbors.filter(neighbor => {
+        if (section === start && neighbor === start) {
+          return false;
+        }
+        if (section === end && neighbor === end) {
+          return false;
+        }
+        return true;
+      });
+      this._replace(neighbors, updatedNeighbors);
+    }
+  }
+
+  /**
+   * An internal connection is orphaned if at most one of its neighbors has either a room or another
+   * internal connection
+   */
+  private _isOrphanedInternalConnection(internalConnection: InternalConnection, internalConnections: InternalConnection[]) {
+    let connectedNeighbors = 0;
+    const { section, neighbors } = internalConnection;
+    neighbors.forEach(neighbor => {
+      const neighborHasInternalConnection = internalConnections.find(other => other.section === neighbor && other.neighbors.indexOf(section) > -1);
+      if (!!neighbor.roomRect || neighborHasInternalConnection) {
+        connectedNeighbors++;
+      }
+    });
+    return connectedNeighbors <= 1;
+  }
+
+  private _replace<T>(array: T[], contents: T[]) {
+    array.splice(0, array.length);
+    array.push(...contents);
+  }
+
+  private _subtract<T>(array: T[], toRemove: T[]) {
+    const updated = array.filter(element => toRemove.indexOf(element) === -1);
+    this._replace(array, updated);
   }
 }
 
