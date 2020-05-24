@@ -54,8 +54,10 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
         //    - both edges connect to a room
         //    - there is no red-red connection in the section
         var internalConnections = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
-        //const externalConnections = this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections);
-        var externalConnections = __spreadArrays(minimalSpanningTree, optionalConnections);
+        var REMOVE_ORPHANED_CONNECTIONS = true;
+        var externalConnections = REMOVE_ORPHANED_CONNECTIONS
+            ? this._stripOrphanedConnections(__spreadArrays(minimalSpanningTree, optionalConnections), internalConnections)
+            : __spreadArrays(minimalSpanningTree, optionalConnections);
         // TODO
         var debugOutput = "\n      Sections: " + sections.map(function (section) { return _this._sectionToString(section); }).join('; ') + "\n      MST: " + minimalSpanningTree.map(this._connectionToString).join('; ') + "\n      opt: " + optionalConnections.map(this._connectionToString).join('; ') + "\n      external: " + externalConnections.map(this._connectionToString).join('; ') + "\n      Internal: " + internalConnections.map(function (connection) { return _this._sectionToString(connection.section) + ", " + connection.neighbors.length; }).join('; ') + "\n    ";
         console.log(debugOutput);
@@ -484,31 +486,34 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
         }
     };
     /**
+     * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
+     * internal connection that connects to that endpoint.
+     *
+     *
+     *
      * @return a copy of `externalConnections` with the desired elements removed
      */
     RoomCorridorDungeonGenerator2.prototype._stripOrphanedConnections = function (externalConnections, internalConnections) {
+        var _this = this;
         var updatedConnections = externalConnections.filter(function (connection) {
-            for (var _i = 0, _a = [[connection.start, connection.end], [connection.end, connection.start]]; _i < _a.length; _i++) {
-                var _b = _a[_i], start = _b[0], end = _b[1];
-                for (var _c = 0, internalConnections_1 = internalConnections; _c < internalConnections_1.length; _c++) {
-                    var internalConnection = internalConnections_1[_c];
-                    if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-                        return true;
-                    }
+            var start = connection.start, end = connection.end;
+            var startHasInternalConnection = false;
+            var endHasInternalConnection = false;
+            for (var _i = 0, internalConnections_1 = internalConnections; _i < internalConnections_1.length; _i++) {
+                var internalConnection = internalConnections_1[_i];
+                if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+                    startHasInternalConnection = true;
                 }
-                if (!!start.roomRect) {
-                    if (!!end.roomRect) {
-                        return true;
-                    }
-                    for (var _d = 0, internalConnections_2 = internalConnections; _d < internalConnections_2.length; _d++) {
-                        var internalConnection = internalConnections_2[_d];
-                        if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-                            return true;
-                        }
-                    }
+                if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+                    endHasInternalConnection = true;
                 }
             }
-            return false;
+            var isOrphaned = !((!!start.roomRect || startHasInternalConnection)
+                && (!!end.roomRect || endHasInternalConnection));
+            if (isOrphaned) {
+                console.log("Connection " + _this._connectionToString(connection) + " is orphaned: " + !!start.roomRect + ", " + startHasInternalConnection + ", " + !!end.roomRect + ", " + endHasInternalConnection);
+            }
+            return true;
         });
         var orphanedConnections = externalConnections.filter(function (c) { return updatedConnections.indexOf(c) === -1; });
         var _loop_5 = function (connection) {

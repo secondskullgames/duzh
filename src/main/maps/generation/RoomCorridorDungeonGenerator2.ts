@@ -57,8 +57,12 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     //    - both edges connect to a room
     //    - there is no red-red connection in the section
     const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
-    //const externalConnections = this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections);
-    const externalConnections = [...minimalSpanningTree, ...optionalConnections];
+
+    const REMOVE_ORPHANED_CONNECTIONS = true;
+
+    const externalConnections = REMOVE_ORPHANED_CONNECTIONS
+      ? this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections)
+      : [...minimalSpanningTree, ...optionalConnections];
 
     // TODO
     const debugOutput = `
@@ -528,31 +532,41 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   }
 
   /**
+   * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
+   * internal connection that connects to that endpoint.
+   *
+   *
+   *
    * @return a copy of `externalConnections` with the desired elements removed
    */
   private _stripOrphanedConnections(
     externalConnections: Connection[],
     internalConnections: InternalConnection[]
-  ): Connection[] {
+  ) {
     const updatedConnections = externalConnections.filter(connection => {
-      for (let [start, end] of [[connection.start, connection.end], [connection.end, connection.start]]) {
-        for (let internalConnection of internalConnections) {
-          if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-            return true;
-          }
+      const { start, end } = connection;
+      let startHasInternalConnection = false;
+      let endHasInternalConnection = false;
+
+      for (let internalConnection of internalConnections) {
+        if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+          startHasInternalConnection = true;
         }
-        if (!!start.roomRect) {
-          if (!!end.roomRect) {
-            return true;
-          }
-          for (let internalConnection of internalConnections) {
-            if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-              return true;
-            }
-          }
+        if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+          endHasInternalConnection = true;
         }
       }
-      return false;
+
+      const isOrphaned = !(
+        (!!start.roomRect || startHasInternalConnection)
+        && (!!end.roomRect || endHasInternalConnection)
+      );
+
+      if (isOrphaned) {
+        console.log(`Connection ${this._connectionToString(connection)} is orphaned: ${!!start.roomRect}, ${startHasInternalConnection}, ${!!end.roomRect}, ${endHasInternalConnection}`);
+      }
+
+      return true;
     });
 
     const orphanedConnections = externalConnections.filter(c => updatedConnections.indexOf(c) === -1);
