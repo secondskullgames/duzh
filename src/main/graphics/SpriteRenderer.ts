@@ -7,6 +7,7 @@ import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../ty
 import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
+import MinimapRenderer from './MinimapRenderer';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -37,6 +38,8 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 const SHADOW_FILENAME = 'shadow';
 
 class SpriteRenderer implements Renderer {
+  static SCREEN_WIDTH = SCREEN_WIDTH;
+  static SCREEN_HEIGHT = SCREEN_HEIGHT;
   private readonly _container: HTMLElement;
   private readonly _bufferCanvas: HTMLCanvasElement;
   private readonly _bufferContext: CanvasRenderingContext2D;
@@ -80,6 +83,8 @@ class SpriteRenderer implements Renderer {
         return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       case GameScreen.GAME_OVER:
         return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+      case GameScreen.MINIMAP:
+        return this._renderMinimap();
       default:
         throw `Invalid screen ${screen}`;
     }
@@ -409,6 +414,12 @@ class SpriteRenderer implements Renderer {
         this._bufferContext.drawImage(imageBitmap, left, y);
         return resolvedPromise();
       });
+  }
+
+  private _renderMinimap(): Promise<any> {
+    const minimapRenderer = new MinimapRenderer();
+    return minimapRenderer.render()
+      .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
   }
 }
 

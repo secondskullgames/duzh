@@ -7,6 +7,7 @@ var types_1 = require("../types/types");
 var actions_1 = require("../core/actions");
 var ImageUtils_1 = require("./ImageUtils");
 var FontRenderer_1 = require("./FontRenderer");
+var MinimapRenderer_1 = require("./MinimapRenderer");
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 24;
 var WIDTH = 20; // in tiles
@@ -65,6 +66,8 @@ var SpriteRenderer = /** @class */ (function () {
                 return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
             case types_1.GameScreen.GAME_OVER:
                 return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+            case types_1.GameScreen.MINIMAP:
+                return this._renderMinimap();
             default:
                 throw "Invalid screen " + screen;
         }
@@ -396,6 +399,14 @@ var SpriteRenderer = /** @class */ (function () {
             return PromiseUtils_1.resolvedPromise();
         });
     };
+    SpriteRenderer.prototype._renderMinimap = function () {
+        var _this = this;
+        var minimapRenderer = new MinimapRenderer_1.default();
+        return minimapRenderer.render()
+            .then(function (bitmap) { return _this._bufferContext.drawImage(bitmap, 0, 0); });
+    };
+    SpriteRenderer.SCREEN_WIDTH = SCREEN_WIDTH;
+    SpriteRenderer.SCREEN_HEIGHT = SCREEN_HEIGHT;
     return SpriteRenderer;
 }());
 exports.default = SpriteRenderer;

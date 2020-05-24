@@ -22,6 +22,7 @@ var GameScreen;
     GameScreen["TITLE"] = "TITLE";
     GameScreen["VICTORY"] = "VICTORY";
     GameScreen["GAME_OVER"] = "GAME_OVER";
+    GameScreen["MINIMAP"] = "MINIMAP";
 })(GameScreen || (GameScreen = {}));
 exports.GameScreen = GameScreen;
 var ItemCategory;

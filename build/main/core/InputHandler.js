@@ -21,6 +21,7 @@ var KeyCommand;
     KeyCommand["TAB"] = "TAB";
     KeyCommand["ENTER"] = "ENTER";
     KeyCommand["SPACEBAR"] = "SPACEBAR";
+    KeyCommand["M"] = "M";
 })(KeyCommand || (KeyCommand = {}));
 function _mapToCommand(e) {
     switch (e.key) {
@@ -46,6 +47,9 @@ function _mapToCommand(e) {
             return KeyCommand.ENTER;
         case ' ':
             return KeyCommand.SPACEBAR;
+        case 'm':
+        case 'M':
+            return KeyCommand.M;
     }
     return null;
 }
@@ -76,6 +80,8 @@ function keyHandler(e) {
         case KeyCommand.TAB:
             e.preventDefault();
             return _handleTab();
+        case KeyCommand.M:
+            return _handleMap();
         default:
     }
     return PromiseUtils_1.resolvedPromise();
@@ -144,6 +150,7 @@ function _handleArrowKey(command) {
         case types_1.GameScreen.TITLE:
         case types_1.GameScreen.VICTORY:
         case types_1.GameScreen.GAME_OVER:
+        case types_1.GameScreen.MINIMAP:
             return PromiseUtils_1.resolvedPromise();
         default:
             throw "Invalid game screen " + state.screen;
@@ -200,6 +207,18 @@ function _handleTab() {
             break;
         default:
             state.screen = types_1.GameScreen.INVENTORY;
+            break;
+    }
+    return renderer.render();
+}
+function _handleMap() {
+    var state = jwb.state, renderer = jwb.renderer;
+    switch (state.screen) {
+        case types_1.GameScreen.MINIMAP:
+            state.screen = types_1.GameScreen.GAME;
+            break;
+        default:
+            state.screen = types_1.GameScreen.MINIMAP;
             break;
     }
     return renderer.render();

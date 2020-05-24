@@ -56,9 +56,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     // 6. Add "red-green" connections in empty rooms only if:
     //    - both edges connect to a room
     //    - there is no red-red connection in the section
-    const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree);
-    const externalConnections = this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections);
-    //const externalConnections = [...minimalSpanningTree, ...optionalConnections];
+    const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
+    //const externalConnections = this._stripOrphanedConnections([...minimalSpanningTree, ...optionalConnections], internalConnections);
+    const externalConnections = [...minimalSpanningTree, ...optionalConnections];
 
     // TODO
     const debugOutput = `
@@ -237,7 +237,11 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     return optionalConnections;
   }
 
-  private _addInternalConnections(sections: Section[], spanningConnections: Connection[]): InternalConnection[] {
+  private _addInternalConnections(
+    sections: Section[],
+    spanningConnections: Connection[],
+    optionalConnections: Connection[]
+  ): InternalConnection[] {
     const internalConnections: InternalConnection[] = [];
     sections.forEach(section => {
       if (!section.roomRect) {
@@ -248,11 +252,18 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
             connectedSections.push(neighbor);
           }
         });
-        if (connectedSections.length === 0) {
+        if (connectedSections.length === 1) {
           shuffle(neighbors);
-          connectedSections.push(neighbors[0]);
+          for (let neighbor of neighbors) {
+            if (optionalConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
+              connectedSections.push(neighbor);
+              break;
+            }
+          }
         }
-        internalConnections.push({ section, neighbors: connectedSections });
+        if (connectedSections.length > 0) {
+          internalConnections.push({ section, neighbors: connectedSections });
+        }
       }
     });
 
@@ -442,83 +453,94 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   }
 
   private _joinPerpendicularly(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
-    const joinPoint = {
+    const start = firstConnection.middleCoordinates;
+    const middle = {
       x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
       y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
     };
+    const end = secondConnection.middleCoordinates;
 
-    let dx = Math.sign(joinPoint.x - firstConnection.middleCoordinates.x);
-    let dy = Math.sign(joinPoint.y - firstConnection.middleCoordinates.y);
-    let { x, y } = firstConnection.middleCoordinates;
-    do {
+    let dx = Math.sign(middle.x - start.x);
+    let dy = Math.sign(middle.y - start.y);
+
+    let { x, y } = start;
+    while (!coordinatesEquals({ x, y }, middle)) {
       tiles[y][x] = TileType.FLOOR_HALL;
       x += dx;
       y += dy;
-    } while (!coordinatesEquals({ x, y }, joinPoint));
+    }
 
-    dx = Math.sign(secondConnection.middleCoordinates.x - joinPoint.x);
-    dy = Math.sign(secondConnection.middleCoordinates.y - joinPoint.y);
-    do {
+    dx = Math.sign(end.x - middle.x);
+    dy = Math.sign(end.y - middle.y);
+    while (!coordinatesEquals({ x, y }, end)) {
       tiles[y][x] = TileType.FLOOR_HALL;
       x += dx;
       y += dy;
-    } while (!coordinatesEquals({ x, y }, secondConnection.middleCoordinates));
+    }
   }
 
   private _joinParallelConnections(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
-    const width = secondConnection.middleCoordinates.x - firstConnection.middleCoordinates.x;
-    const height = secondConnection.middleCoordinates.y - firstConnection.middleCoordinates.y;
+    const start = firstConnection.middleCoordinates;
     const middle = {
       x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
       y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
     };
-    const dx = Math.sign(width);
-    const dy = Math.sign(height);
+    const end = secondConnection.middleCoordinates;
 
-    const majorDirection: Direction = (Math.abs(width) >= Math.abs(height)) ? 'HORIZONTAL' : 'VERTICAL';
-    let { x, y } = firstConnection.middleCoordinates;
+    const xDistance = end.x - start.x;
+    const yDistance = end.y - start.y;
+    const dx = Math.sign(xDistance);
+    const dy = Math.sign(yDistance);
+
+    const majorDirection: Direction = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
+    let { x, y } = start;
 
     switch (majorDirection) {
       case 'HORIZONTAL':
-        do {
+        while (x !== middle.x) {
           tiles[y][x] = TileType.FLOOR_HALL;
           x += dx;
-        } while (x !== middle.x);
-        do {
+        }
+        while (y !== end.y) {
           tiles[y][x] = TileType.FLOOR_HALL;
           y += dy;
-        } while (y !== secondConnection.middleCoordinates.y);
-        do {
+        }
+        while (x !== end.x) {
           tiles[y][x] = TileType.FLOOR_HALL;
           x += dx;
-        } while (x !== secondConnection.middleCoordinates.x);
+        }
         break;
       case 'VERTICAL':
-        do {
+        while (y !== middle.y) {
           tiles[y][x] = TileType.FLOOR_HALL;
           y += dy;
-        } while (y !== middle.y);
-        do {
+        }
+        while (x !== end.x) {
           tiles[y][x] = TileType.FLOOR_HALL;
           x += dx;
-        } while (x !== secondConnection.middleCoordinates.x);
-        do {
+        }
+        while (y !== end.y) {
           tiles[y][x] = TileType.FLOOR_HALL;
           y += dy;
-        } while (y !== secondConnection.middleCoordinates.y);
+        }
         break;
     }
   }
 
   /**
-   * @return a copy of `optionalConnections` with the desired elements removed
+   * @return a copy of `externalConnections` with the desired elements removed
    */
   private _stripOrphanedConnections(
     externalConnections: Connection[],
     internalConnections: InternalConnection[]
   ): Connection[] {
-    return externalConnections.filter(connection => {
+    const updatedConnections = externalConnections.filter(connection => {
       for (let [start, end] of [[connection.start, connection.end], [connection.end, connection.start]]) {
+        for (let internalConnection of internalConnections) {
+          if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+            return true;
+          }
+        }
         if (!!start.roomRect) {
           if (!!end.roomRect) {
             return true;
@@ -530,9 +552,23 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           }
         }
       }
-
       return false;
     });
+
+    const orphanedConnections = externalConnections.filter(c => updatedConnections.indexOf(c) === -1);
+    for (let connection of orphanedConnections) {
+      internalConnections.forEach(internalConnection => {
+        internalConnection.neighbors = internalConnection.neighbors.filter(neighbor => {
+          if (internalConnection.section === connection.start && internalConnection.neighbors.indexOf(connection.end) > -1) {
+            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.end), 1);
+          }
+          if (internalConnection.section === connection.end && internalConnection.neighbors.indexOf(connection.start) > -1) {
+            internalConnection.neighbors.splice(internalConnection.neighbors.indexOf(connection.start), 1);
+          }
+        });
+      });
+    }
+    return updatedConnections;
   }
 }
 

@@ -4,6 +4,7 @@
  * that are only nitended for debugging purposes.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("../types/types");
 function revealMap() {
     jwb.DEBUG = true;
     jwb.renderer.render();
@@ -15,4 +16,8 @@ function killEnemies() {
     jwb.renderer.render();
 }
 exports.killEnemies = killEnemies;
+function renderMinimap() {
+    jwb.state.screen = types_1.GameScreen.MINIMAP;
+}
+exports.renderMinimap = renderMinimap;
 //# sourceMappingURL=debug.js.map

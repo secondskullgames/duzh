@@ -19,7 +19,8 @@ enum KeyCommand {
   SHIFT_RIGHT = 'SHIFT_RIGHT',
   TAB = 'TAB',
   ENTER = 'ENTER',
-  SPACEBAR = 'SPACEBAR'
+  SPACEBAR = 'SPACEBAR',
+  M = 'M'
 }
 
 function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
@@ -46,6 +47,9 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
       return KeyCommand.ENTER;
     case ' ':
       return KeyCommand.SPACEBAR;
+    case 'm':
+    case 'M':
+      return KeyCommand.M;
   }
   return null;
 }
@@ -80,6 +84,8 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
     case KeyCommand.TAB:
       e.preventDefault();
       return _handleTab();
+    case KeyCommand.M:
+      return _handleMap();
     default:
   }
   return resolvedPromise();
@@ -151,6 +157,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
     case GameScreen.TITLE:
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
+    case GameScreen.MINIMAP:
       return resolvedPromise();
     default:
       throw `Invalid game screen ${state.screen}`;
@@ -211,6 +218,20 @@ function _handleTab(): Promise<void> {
       break;
     default:
       state.screen = GameScreen.INVENTORY;
+      break;
+  }
+  return renderer.render();
+}
+
+function _handleMap(): Promise<void> {
+  const { state, renderer } = jwb;
+
+  switch (state.screen) {
+    case GameScreen.MINIMAP:
+      state.screen = GameScreen.GAME;
+      break;
+    default:
+      state.screen = GameScreen.MINIMAP;
       break;
   }
   return renderer.render();
