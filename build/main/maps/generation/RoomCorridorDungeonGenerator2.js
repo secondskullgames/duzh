@@ -24,7 +24,9 @@ var DungeonGenerator_1 = require("./DungeonGenerator");
 var types_1 = require("../../types/types");
 var RandomUtils_1 = require("../../utils/RandomUtils");
 var MapUtils_1 = require("../MapUtils");
-var ROOM_PADDING = [2, 2, 1, 1]; // left, top, right, bottom;
+var ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom;
+var MIN_ROOM_FRACTION = 0.25;
+var MAX_ROOM_FRACTION = 0.75;
 var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
     __extends(RoomCorridorDungeonGenerator2, _super);
     /**
@@ -147,8 +149,8 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
         return RandomUtils_1.randInt(minSplitPoint, maxSplitPoint);
     };
     RoomCorridorDungeonGenerator2.prototype._removeRooms = function (sections) {
-        var minRooms = 3;
-        var maxRooms = Math.max(sections.length - 1, minRooms);
+        var minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
+        var maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
         if (sections.length < minRooms) {
             throw 'Not enough sections';
         }
@@ -503,6 +505,13 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             this_2._subtract(internalConnections, orphanedInternalConnections);
             removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
             console.log("stripping: " + orphanedConnections.length + ", " + orphanedInternalConnections.length);
+            var missedOrphans = externalConnections.filter(function (connection) {
+                return _this._isOrphanedConnection(connection, internalConnections);
+            });
+            if (missedOrphans.length > 0 && !removedAnyConnections) {
+                console.log('fuck, missed orphans: ' + missedOrphans.map(this_2._connectionToString).join('; '));
+                debugger;
+            }
         };
         var this_2 = this;
         do {
@@ -530,10 +539,10 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             var section = internalConnection.section, neighbors = internalConnection.neighbors;
             var start = connection.start, end = connection.end;
             var updatedNeighbors = neighbors.filter(function (neighbor) {
-                if (section === start && neighbor === start) {
+                if (section === start && neighbor === end) {
                     return false;
                 }
-                if (section === end && neighbor === end) {
+                if (section === end && neighbor === start) {
                     return false;
                 }
                 return true;

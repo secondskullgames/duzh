@@ -217,8 +217,11 @@ function _handleMap() {
         case types_1.GameScreen.MINIMAP:
             state.screen = types_1.GameScreen.GAME;
             break;
-        default:
+        case types_1.GameScreen.GAME:
+        case types_1.GameScreen.INVENTORY:
             state.screen = types_1.GameScreen.MINIMAP;
+            break;
+        default:
             break;
     }
     return renderer.render();

@@ -230,8 +230,11 @@ function _handleMap(): Promise<void> {
     case GameScreen.MINIMAP:
       state.screen = GameScreen.GAME;
       break;
-    default:
+    case GameScreen.GAME:
+    case GameScreen.INVENTORY:
       state.screen = GameScreen.MINIMAP;
+      break;
+    default:
       break;
   }
   return renderer.render();

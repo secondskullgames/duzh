@@ -25,7 +25,9 @@ type InternalConnection = {
   neighbors: Section[]
 }
 
-const ROOM_PADDING = [2, 2, 1, 1]; // left, top, right, bottom;
+const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom;
+const MIN_ROOM_FRACTION = 0.25;
+const MAX_ROOM_FRACTION = 0.75;
 
 class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private readonly _minRoomDimension: number;
@@ -167,8 +169,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   }
 
   private _removeRooms(sections: Section[]): void {
-    const minRooms = 3;
-    const maxRooms = Math.max(sections.length - 1, minRooms);
+    const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
+    const maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
     if (sections.length < minRooms) {
       throw 'Not enough sections';
     }
@@ -443,7 +445,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           this._joinPerpendicularly(tiles, firstConnection, secondConnection);
         } else {
           // join parallel connections
-          this._joinParallelConnections(tiles, firstConnection, secondConnection);
+          // TODO: This will also try to join U-shaped connections, and doesn't do it correctly!
+          // For now, we're just going to run a validation step and regenerate if it fails.
+          this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
         }
       }
     });
@@ -451,11 +455,11 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   private _joinPerpendicularly(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
     const start = firstConnection.middleCoordinates;
-    const middle = {
-      x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
-      y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
-    };
     const end = secondConnection.middleCoordinates;
+    const middle = {
+      x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
+      y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
+    };
 
     let dx = Math.sign(middle.x - start.x);
     let dy = Math.sign(middle.y - start.y);
@@ -476,13 +480,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
   }
 
-  private _joinParallelConnections(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
+  private _joinParallelConnections(tiles: TileType[][], internalConnection: InternalConnection, firstConnection: Connection, secondConnection: Connection) {
     const start = firstConnection.middleCoordinates;
-    const middle = {
-      x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
-      y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
-    };
     const end = secondConnection.middleCoordinates;
+    const middle = {
+      x: Math.round((start.x + end.x) / 2),
+      y: Math.round((start.y + end.y) / 2)
+    };
 
     const xDistance = end.x - start.x;
     const yDistance = end.y - start.y;
@@ -581,10 +585,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       const { section, neighbors } = internalConnection;
       const { start, end } = connection;
       const updatedNeighbors: Section[] = neighbors.filter(neighbor => {
-        if (section === start && neighbor === start) {
+        if (section === start && neighbor === end) {
           return false;
         }
-        if (section === end && neighbor === end) {
+        if (section === end && neighbor === start) {
           return false;
         }
         return true;

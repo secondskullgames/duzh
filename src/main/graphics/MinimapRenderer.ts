@@ -1,6 +1,7 @@
 import SpriteRenderer from './SpriteRenderer';
 import Colors from '../types/Colors';
 import { TileType } from '../types/types';
+import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 
 class MinimapRenderer {
   private readonly _canvas: HTMLCanvasElement;
@@ -25,23 +26,30 @@ class MinimapRenderer {
     ));
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const tileType = map.getTile({ x, y }).type;
         let color: Colors;
-        switch (tileType) {
-          case TileType.FLOOR:
-          case TileType.FLOOR_HALL:
-          case TileType.STAIRS_DOWN:
-            color = Colors.LIGHT_GRAY;
-            break;
-          case TileType.WALL:
-          case TileType.WALL_HALL:
-            color = Colors.DARK_GRAY;
-            break;
-          case TileType.NONE:
-          case TileType.WALL_TOP:
-          default:
-            color = Colors.BLACK;
-            break;
+        if (isTileRevealed({ x, y })) {
+          const tileType = map.getTile({ x, y }).type;
+          switch (tileType) {
+            case TileType.FLOOR:
+            case TileType.FLOOR_HALL:
+            case TileType.STAIRS_DOWN:
+              color = Colors.LIGHT_GRAY;
+              break;
+            case TileType.WALL:
+            case TileType.WALL_HALL:
+              color = Colors.DARK_GRAY;
+              break;
+            case TileType.NONE:
+            case TileType.WALL_TOP:
+            default:
+              color = Colors.BLACK;
+              break;
+          }
+          if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
+            color = Colors.RED;
+          }
+        } else {
+          color = Colors.BLACK;
         }
         this._context.fillStyle = color;
         this._context.fillRect(x * m, y * m, m, m);

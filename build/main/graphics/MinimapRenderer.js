@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SpriteRenderer_1 = require("./SpriteRenderer");
 var Colors_1 = require("../types/Colors");
 var types_1 = require("../types/types");
+var MapUtils_1 = require("../maps/MapUtils");
 var MinimapRenderer = /** @class */ (function () {
     function MinimapRenderer() {
         this._canvas = document.createElement('canvas');
@@ -18,23 +19,31 @@ var MinimapRenderer = /** @class */ (function () {
         var m = Math.floor(Math.min(this._canvas.width / map.width, this._canvas.height / map.height));
         for (var y = 0; y < map.height; y++) {
             for (var x = 0; x < map.width; x++) {
-                var tileType = map.getTile({ x: x, y: y }).type;
                 var color = void 0;
-                switch (tileType) {
-                    case types_1.TileType.FLOOR:
-                    case types_1.TileType.FLOOR_HALL:
-                    case types_1.TileType.STAIRS_DOWN:
-                        color = Colors_1.default.LIGHT_GRAY;
-                        break;
-                    case types_1.TileType.WALL:
-                    case types_1.TileType.WALL_HALL:
-                        color = Colors_1.default.DARK_GRAY;
-                        break;
-                    case types_1.TileType.NONE:
-                    case types_1.TileType.WALL_TOP:
-                    default:
-                        color = Colors_1.default.BLACK;
-                        break;
+                if (MapUtils_1.isTileRevealed({ x: x, y: y })) {
+                    var tileType = map.getTile({ x: x, y: y }).type;
+                    switch (tileType) {
+                        case types_1.TileType.FLOOR:
+                        case types_1.TileType.FLOOR_HALL:
+                        case types_1.TileType.STAIRS_DOWN:
+                            color = Colors_1.default.LIGHT_GRAY;
+                            break;
+                        case types_1.TileType.WALL:
+                        case types_1.TileType.WALL_HALL:
+                            color = Colors_1.default.DARK_GRAY;
+                            break;
+                        case types_1.TileType.NONE:
+                        case types_1.TileType.WALL_TOP:
+                        default:
+                            color = Colors_1.default.BLACK;
+                            break;
+                    }
+                    if (MapUtils_1.coordinatesEquals(jwb.state.playerUnit, { x: x, y: y })) {
+                        color = Colors_1.default.RED;
+                    }
+                }
+                else {
+                    color = Colors_1.default.BLACK;
                 }
                 this._context.fillStyle = color;
                 this._context.fillRect(x * m, y * m, m, m);
