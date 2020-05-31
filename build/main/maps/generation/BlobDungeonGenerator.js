@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11,11 +12,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import DungeonGenerator from './DungeonGenerator.js';
-import { TileType } from '../../types/types.js';
-import { randInt } from '../../utils/RandomUtils.js';
-import { coordinatesEquals, isAdjacent } from '../MapUtils.js';
-import { comparing } from '../../utils/ArrayUtils.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var DungeonGenerator_1 = require("./DungeonGenerator");
+var types_1 = require("../../types/types");
+var RandomUtils_1 = require("../../utils/RandomUtils");
+var MapUtils_1 = require("../MapUtils");
+var ArrayUtils_1 = require("../../utils/ArrayUtils");
 var BlobDungeonGenerator = /** @class */ (function (_super) {
     __extends(BlobDungeonGenerator, _super);
     function BlobDungeonGenerator(tileSet) {
@@ -51,27 +53,27 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         for (var y = 0; y < height; y++) {
             var row = [];
             for (var x = 0; x < width; x++) {
-                row.push(TileType.NONE);
+                row.push(types_1.TileType.NONE);
             }
             tiles.push(row);
         }
         return tiles;
     };
     BlobDungeonGenerator.prototype._placeInitialTile = function (width, height, tiles) {
-        var x = randInt(width * 3 / 8, width * 5 / 8);
-        var y = randInt(height * 3 / 8, height * 5 / 8);
-        tiles[y][x] = TileType.FLOOR;
+        var x = RandomUtils_1.randInt(width * 3 / 8, width * 5 / 8);
+        var y = RandomUtils_1.randInt(height * 3 / 8, height * 5 / 8);
+        tiles[y][x] = types_1.TileType.FLOOR;
     };
     BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
         var minRatio = 0.4;
         var maxRatio = 0.7;
-        return randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
+        return RandomUtils_1.randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
     };
     BlobDungeonGenerator.prototype._getFloorTiles = function (tiles) {
         var floorTiles = [];
         for (var y = 0; y < tiles.length; y++) {
             for (var x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === TileType.FLOOR) {
+                if (tiles[y][x] === types_1.TileType.FLOOR) {
                     floorTiles.push({ x: x, y: y });
                 }
             }
@@ -82,7 +84,7 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         var floorTiles = [];
         for (var y = 0; y < tiles.length; y++) {
             for (var x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === TileType.NONE) {
+                if (tiles[y][x] === types_1.TileType.NONE) {
                     floorTiles.push({ x: x, y: y });
                 }
             }
@@ -96,16 +98,16 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         var _this = this;
         var floorTiles = this._getFloorTiles(tiles);
         var candidates = this._getCandidates(tiles, floorTiles)
-            .sort(comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
+            .sort(ArrayUtils_1.comparing(function (tile) { return _this._getSnakeScore(tile, tiles); }));
         if (candidates.length === 0) {
             return false;
         }
         // change these ratios to adjust the "snakiness"
         var minIndex = Math.floor((candidates.length - 1) * 0.6);
         var maxIndex = Math.floor((candidates.length - 1) * 0.8);
-        var index = randInt(minIndex, maxIndex);
+        var index = RandomUtils_1.randInt(minIndex, maxIndex);
         var _a = candidates[index], x = _a.x, y = _a.y;
-        tiles[y][x] = TileType.FLOOR;
+        tiles[y][x] = types_1.TileType.FLOOR;
         return true;
     };
     BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
@@ -121,7 +123,7 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         })
             .filter(function (_a) {
             var x = _a.x, y = _a.y;
-            return floorTiles.some(function (floorTile) { return isAdjacent({ x: x, y: y }, floorTile); });
+            return floorTiles.some(function (floorTile) { return MapUtils_1.isAdjacent({ x: x, y: y }, floorTile); });
         });
     };
     BlobDungeonGenerator.prototype._isLegalWallCoordinates = function (_a, tiles) {
@@ -132,15 +134,15 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         var m = 3; // number of consecutive wall tiles required
         for (var n = 2; n <= m; n++) {
             if (y >= n) {
-                if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === TileType.NONE; })
-                    && (tiles[y - n][x] === TileType.FLOOR)) {
+                if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_1.TileType.NONE; })
+                    && (tiles[y - n][x] === types_1.TileType.FLOOR)) {
                     return false;
                 }
             }
             // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
             if (y <= (height - 1 - n)) {
-                if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === TileType.NONE; })
-                    && (tiles[y + n][x] == TileType.FLOOR)) {
+                if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_1.TileType.NONE; })
+                    && (tiles[y + n][x] == types_1.TileType.FLOOR)) {
                     return false;
                 }
             }
@@ -162,8 +164,8 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
             if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
                 // out of bounds
             }
-            else if (tiles[y2][x2] === TileType.FLOOR) {
-                if (tiles[y2][x] === TileType.NONE && tiles[y][x2] === TileType.NONE) {
+            else if (tiles[y2][x2] === types_1.TileType.FLOOR) {
+                if (tiles[y2][x] === types_1.TileType.NONE && tiles[y][x2] === types_1.TileType.NONE) {
                     return true;
                 }
             }
@@ -184,10 +186,10 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
                 // out of bounds
             }
             else {
-                if (tiles[b.y][b.x] === TileType.NONE
-                    && tiles[c.y][c.x] === TileType.NONE
-                    && tiles[d.y][d.x] === TileType.NONE
-                    && tiles[f.y][f.x] === TileType.FLOOR) {
+                if (tiles[b.y][b.x] === types_1.TileType.NONE
+                    && tiles[c.y][c.x] === types_1.TileType.NONE
+                    && tiles[d.y][d.x] === types_1.TileType.NONE
+                    && tiles[f.y][f.x] === types_1.TileType.FLOOR) {
                     return true;
                 }
             }
@@ -199,8 +201,8 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         var width = tiles[0].length;
         for (var y = 0; y < (height - 1); y++) {
             for (var x = 0; x < width; x++) {
-                if (tiles[y][x] === TileType.NONE && tiles[y + 1][x] === TileType.FLOOR) {
-                    tiles[y][x] = TileType.WALL_TOP;
+                if (tiles[y][x] === types_1.TileType.NONE && tiles[y + 1][x] === types_1.TileType.FLOOR) {
+                    tiles[y][x] = types_1.TileType.WALL_TOP;
                 }
             }
         }
@@ -229,10 +231,10 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         var maxX = Math.min(tile.x + offset, width - 1);
         for (var y = minY; y <= maxY; y++) {
             for (var x = minX; x <= maxX; x++) {
-                if (coordinatesEquals(tile, { x: x, y: y })) {
+                if (MapUtils_1.coordinatesEquals(tile, { x: x, y: y })) {
                     continue;
                 }
-                if (tiles[y][x] === TileType.FLOOR) {
+                if (tiles[y][x] === types_1.TileType.FLOOR) {
                     score++;
                 }
             }
@@ -240,6 +242,6 @@ var BlobDungeonGenerator = /** @class */ (function (_super) {
         return score;
     };
     return BlobDungeonGenerator;
-}(DungeonGenerator));
-export default BlobDungeonGenerator;
+}(DungeonGenerator_1.default));
+exports.default = BlobDungeonGenerator;
 //# sourceMappingURL=BlobDungeonGenerator.js.map

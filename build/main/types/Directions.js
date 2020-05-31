@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Directions = {
     N: { dx: 0, dy: -1 },
     E: { dx: 1, dy: 0 },
@@ -22,7 +24,7 @@ function _directionToString(direction) {
     }
     throw "Invalid direction " + direction;
 }
-export default {
+exports.default = {
     N: Directions.N,
     E: Directions.E,
     S: Directions.S,

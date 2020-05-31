@@ -1,5 +1,7 @@
-import { loadImage, applyTransparentColor, replaceColors } from './ImageUtils.js';
-import { chainPromises } from '../utils/PromiseUtils.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var ImageUtils_1 = require("./ImageUtils");
+var PromiseUtils_1 = require("../utils/PromiseUtils");
 var ImageSupplier = /** @class */ (function () {
     /**
      * @param effects A list of custom transformations to be applied to the image, in order
@@ -8,11 +10,11 @@ var ImageSupplier = /** @class */ (function () {
         if (paletteSwaps === void 0) { paletteSwaps = {}; }
         if (effects === void 0) { effects = []; }
         this._image = null;
-        this._imageSupplier = function () { return loadImage(filename)
-            .then(function (imageData) { return applyTransparentColor(imageData, transparentColor); })
-            .then(function (imageData) { return replaceColors(imageData, paletteSwaps); })
+        this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
+            .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
+            .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
             // @ts-ignore
-            .then(function (imageData) { return chainPromises(effects, imageData); })
+            .then(function (imageData) { return PromiseUtils_1.chainPromises(effects, imageData); })
             .then(function (imageData) { return createImageBitmap(imageData); }); };
     }
     ImageSupplier.prototype.get = function () {
@@ -23,5 +25,5 @@ var ImageSupplier = /** @class */ (function () {
     };
     return ImageSupplier;
 }());
-export default ImageSupplier;
+exports.default = ImageSupplier;
 //# sourceMappingURL=ImageSupplier.js.map

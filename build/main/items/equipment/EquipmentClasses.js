@@ -1,17 +1,19 @@
+"use strict";
 var _a, _b, _c, _d, _e;
-import { EquipmentSlot, ItemCategory } from '../../types/types.js';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory.js';
-import Colors from '../../types/Colors.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("../../types/types");
+var SpriteFactory_1 = require("../../graphics/sprites/SpriteFactory");
+var Colors_1 = require("../../types/Colors");
 var BRONZE_SWORD = {
     name: 'Bronze Sword',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-    mapIcon: SpriteFactory.MAP_SWORD,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.MELEE_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_SWORD,
     paletteSwaps: (_a = {},
-        _a[Colors.BLACK] = Colors.BLACK,
-        _a[Colors.DARK_GRAY] = Colors.LIGHT_BROWN,
-        _a[Colors.LIGHT_GRAY] = Colors.LIGHT_BROWN,
+        _a[Colors_1.default.BLACK] = Colors_1.default.BLACK,
+        _a[Colors_1.default.DARK_GRAY] = Colors_1.default.LIGHT_BROWN,
+        _a[Colors_1.default.LIGHT_GRAY] = Colors_1.default.LIGHT_BROWN,
         _a),
     damage: 2,
     minLevel: 1,
@@ -20,12 +22,12 @@ var BRONZE_SWORD = {
 var IRON_SWORD = {
     name: 'Iron Sword',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-    mapIcon: SpriteFactory.MAP_SWORD,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.MELEE_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_SWORD,
     paletteSwaps: (_b = {},
-        _b[Colors.DARK_GRAY] = Colors.BLACK,
-        _b[Colors.LIGHT_GRAY] = Colors.DARK_GRAY,
+        _b[Colors_1.default.DARK_GRAY] = Colors_1.default.BLACK,
+        _b[Colors_1.default.LIGHT_GRAY] = Colors_1.default.DARK_GRAY,
         _b),
     damage: 4,
     minLevel: 3,
@@ -34,12 +36,12 @@ var IRON_SWORD = {
 var STEEL_SWORD = {
     name: 'Steel Sword',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-    mapIcon: SpriteFactory.MAP_SWORD,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.MELEE_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_SWORD,
     paletteSwaps: (_c = {},
-        _c[Colors.DARK_GRAY] = Colors.DARK_GRAY,
-        _c[Colors.LIGHT_GRAY] = Colors.LIGHT_GRAY,
+        _c[Colors_1.default.DARK_GRAY] = Colors_1.default.DARK_GRAY,
+        _c[Colors_1.default.LIGHT_GRAY] = Colors_1.default.LIGHT_GRAY,
         _c),
     damage: 6,
     minLevel: 4,
@@ -48,13 +50,13 @@ var STEEL_SWORD = {
 var FIRE_SWORD = {
     name: 'Fire Sword',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-    mapIcon: SpriteFactory.MAP_SWORD,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.MELEE_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_SWORD,
     paletteSwaps: (_d = {},
-        _d[Colors.DARK_GRAY] = Colors.YELLOW,
-        _d[Colors.LIGHT_GRAY] = Colors.RED,
-        _d[Colors.BLACK] = Colors.DARK_RED,
+        _d[Colors_1.default.DARK_GRAY] = Colors_1.default.YELLOW,
+        _d[Colors_1.default.LIGHT_GRAY] = Colors_1.default.RED,
+        _d[Colors_1.default.BLACK] = Colors_1.default.DARK_RED,
         _d),
     damage: 8,
     minLevel: 5,
@@ -63,9 +65,9 @@ var FIRE_SWORD = {
 var SHORT_BOW = {
     name: 'Short Bow',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.RANGED_WEAPON,
-    mapIcon: SpriteFactory.MAP_BOW,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.RANGED_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_BOW,
     paletteSwaps: {},
     damage: 2,
     minLevel: 2,
@@ -74,12 +76,12 @@ var SHORT_BOW = {
 var LONG_BOW = {
     name: 'Long Bow',
     char: 'S',
-    itemCategory: ItemCategory.WEAPON,
-    equipmentCategory: EquipmentSlot.RANGED_WEAPON,
-    mapIcon: SpriteFactory.MAP_BOW,
+    itemCategory: types_1.ItemCategory.WEAPON,
+    equipmentCategory: types_1.EquipmentSlot.RANGED_WEAPON,
+    mapIcon: SpriteFactory_1.default.MAP_BOW,
     paletteSwaps: (_e = {},
-        _e[Colors.DARK_GREEN] = Colors.DARK_RED,
-        _e[Colors.GREEN] = Colors.RED,
+        _e[Colors_1.default.DARK_GREEN] = Colors_1.default.DARK_RED,
+        _e[Colors_1.default.GREEN] = Colors_1.default.RED,
         _e),
     damage: 4,
     minLevel: 5,
@@ -88,5 +90,5 @@ var LONG_BOW = {
 function getWeaponClasses() {
     return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW, LONG_BOW];
 }
-export { getWeaponClasses };
+exports.getWeaponClasses = getWeaponClasses;
 //# sourceMappingURL=EquipmentClasses.js.map

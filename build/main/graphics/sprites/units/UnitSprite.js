@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11,11 +12,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ImageSupplier from '../../ImageSupplier.js';
-import Sprite from '../Sprite.js';
-import Colors from '../../../types/Colors.js';
-import Directions from '../../../types/Directions.js';
-import { replaceAll } from '../../ImageUtils.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var ImageSupplier_1 = require("../../ImageSupplier");
+var Sprite_1 = require("../Sprite");
+var Colors_1 = require("../../../types/Colors");
+var Directions_1 = require("../../../types/Directions");
+var ImageUtils_1 = require("../../ImageUtils");
 var SpriteKey;
 (function (SpriteKey) {
     SpriteKey["STANDING_N"] = "STANDING_N";
@@ -37,18 +39,18 @@ var UnitSprite = /** @class */ (function (_super) {
         var _a;
         var _this = this;
         var imageMap = (_a = {},
-            _a[SpriteKey.STANDING_N] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_N_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.STANDING_E] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_E_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.STANDING_S] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_S_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.STANDING_W] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_W_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.ATTACKING_N] = new ImageSupplier(spriteName + "/" + spriteName + "_attacking_N_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.ATTACKING_E] = new ImageSupplier(spriteName + "/" + spriteName + "_attacking_E_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.ATTACKING_S] = new ImageSupplier(spriteName + "/" + spriteName + "_attacking_S_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.ATTACKING_W] = new ImageSupplier(spriteName + "/" + spriteName + "_attacking_W_1", Colors.WHITE, paletteSwaps),
-            _a[SpriteKey.DAMAGED_N] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_N_1", Colors.WHITE, paletteSwaps, [function (img) { return replaceAll(img, Colors.WHITE); }]),
-            _a[SpriteKey.DAMAGED_E] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_E_1", Colors.WHITE, paletteSwaps, [function (img) { return replaceAll(img, Colors.WHITE); }]),
-            _a[SpriteKey.DAMAGED_S] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_S_1", Colors.WHITE, paletteSwaps, [function (img) { return replaceAll(img, Colors.WHITE); }]),
-            _a[SpriteKey.DAMAGED_W] = new ImageSupplier(spriteName + "/" + spriteName + "_standing_W_1", Colors.WHITE, paletteSwaps, [function (img) { return replaceAll(img, Colors.WHITE); }]),
+            _a[SpriteKey.STANDING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.STANDING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.STANDING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.STANDING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.ATTACKING_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_N_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.ATTACKING_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_E_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.ATTACKING_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_S_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.ATTACKING_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_attacking_W_1", Colors_1.default.WHITE, paletteSwaps),
+            _a[SpriteKey.DAMAGED_N] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_N_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_1.replaceAll(img, Colors_1.default.WHITE); }]),
+            _a[SpriteKey.DAMAGED_E] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_E_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_1.replaceAll(img, Colors_1.default.WHITE); }]),
+            _a[SpriteKey.DAMAGED_S] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_S_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_1.replaceAll(img, Colors_1.default.WHITE); }]),
+            _a[SpriteKey.DAMAGED_W] = new ImageSupplier_1.default(spriteName + "/" + spriteName + "_standing_W_1", Colors_1.default.WHITE, paletteSwaps, [function (img) { return ImageUtils_1.replaceAll(img, Colors_1.default.WHITE); }]),
             _a);
         _this = _super.call(this, imageMap, SpriteKey.STANDING_S, spriteOffsets) || this;
         _this._unit = unit;
@@ -59,11 +61,11 @@ var UnitSprite = /** @class */ (function (_super) {
         return this.getImage();
     };
     UnitSprite.prototype._getKey = function () {
-        var direction = this._unit.direction || Directions.S;
-        var key = this._unit.activity + "_" + Directions.toString(direction);
+        var direction = this._unit.direction || Directions_1.default.S;
+        var key = this._unit.activity + "_" + Directions_1.default.toString(direction);
         return key;
     };
     return UnitSprite;
-}(Sprite));
-export default UnitSprite;
+}(Sprite_1.default));
+exports.default = UnitSprite;
 //# sourceMappingURL=UnitSprite.js.map

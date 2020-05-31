@@ -3,6 +3,8 @@
  * that are only nitended for debugging purposes.
  */
 
+import { GameScreen } from '../types/types';
+
 function revealMap() {
   jwb.DEBUG = true;
   jwb.renderer.render();
@@ -14,7 +16,12 @@ function killEnemies() {
   jwb.renderer.render();
 }
 
+function renderMinimap() {
+  jwb.state.screen = GameScreen.MINIMAP;
+}
+
 export {
   revealMap,
-  killEnemies
+  killEnemies,
+  renderMinimap
 };

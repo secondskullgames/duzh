@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var MapItem = /** @class */ (function () {
     function MapItem(_a, char, sprite, inventoryItem) {
         var x = _a.x, y = _a.y;
@@ -9,5 +11,5 @@ var MapItem = /** @class */ (function () {
     }
     return MapItem;
 }());
-export default MapItem;
+exports.default = MapItem;
 //# sourceMappingURL=MapItem.js.map

@@ -1,24 +1,26 @@
+"use strict";
 var _a, _b;
-import SpriteFactory from '../graphics/sprites/SpriteFactory.js';
-import Colors from '../types/Colors.js';
-import { UnitType } from '../types/types.js';
-import { HUMAN_DETERMINISTIC } from './UnitAI.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var SpriteFactory_1 = require("../graphics/sprites/SpriteFactory");
+var Colors_1 = require("../types/Colors");
+var types_1 = require("../types/types");
+var UnitAI_1 = require("./UnitAI");
 var PLAYER = {
     name: 'PLAYER',
-    type: UnitType.HUMAN,
-    sprite: SpriteFactory.PLAYER,
+    type: types_1.UnitType.HUMAN,
+    sprite: SpriteFactory_1.default.PLAYER,
     // Green/brown colors
     paletteSwaps: (_a = {},
-        _a[Colors.DARK_PURPLE] = Colors.DARK_BROWN,
-        _a[Colors.MAGENTA] = Colors.DARK_GREEN,
-        _a[Colors.DARK_BLUE] = Colors.DARK_GREEN,
-        _a[Colors.CYAN] = Colors.LIGHT_PINK,
-        _a[Colors.BLACK] = Colors.BLACK,
-        _a[Colors.DARK_GRAY] = Colors.DARK_BROWN,
-        _a[Colors.LIGHT_GRAY] = Colors.LIGHT_BROWN,
-        _a[Colors.DARK_GREEN] = Colors.DARK_BROWN,
-        _a[Colors.GREEN] = Colors.DARK_BROWN,
-        _a[Colors.ORANGE] = Colors.LIGHT_PINK // Face
+        _a[Colors_1.default.DARK_PURPLE] = Colors_1.default.DARK_BROWN,
+        _a[Colors_1.default.MAGENTA] = Colors_1.default.DARK_GREEN,
+        _a[Colors_1.default.DARK_BLUE] = Colors_1.default.DARK_GREEN,
+        _a[Colors_1.default.CYAN] = Colors_1.default.LIGHT_PINK,
+        _a[Colors_1.default.BLACK] = Colors_1.default.BLACK,
+        _a[Colors_1.default.DARK_GRAY] = Colors_1.default.DARK_BROWN,
+        _a[Colors_1.default.LIGHT_GRAY] = Colors_1.default.LIGHT_BROWN,
+        _a[Colors_1.default.DARK_GREEN] = Colors_1.default.DARK_BROWN,
+        _a[Colors_1.default.GREEN] = Colors_1.default.DARK_BROWN,
+        _a[Colors_1.default.ORANGE] = Colors_1.default.LIGHT_PINK // Face
     ,
         _a),
     startingLife: 100,
@@ -33,8 +35,8 @@ var PLAYER = {
 };
 var ENEMY_SNAKE = {
     name: 'ENEMY_SNAKE',
-    type: UnitType.ANIMAL,
-    sprite: SpriteFactory.SNAKE,
+    type: types_1.UnitType.ANIMAL,
+    sprite: SpriteFactory_1.default.SNAKE,
     paletteSwaps: {},
     startingLife: 40,
     startingMana: null,
@@ -44,7 +46,7 @@ var ENEMY_SNAKE = {
     lifePerLevel: function () { return 15; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 1; },
-    aiHandler: HUMAN_DETERMINISTIC,
+    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
     aiParams: {
         speed: 0.95,
         visionRange: 10,
@@ -53,8 +55,8 @@ var ENEMY_SNAKE = {
 };
 var ENEMY_GRUNT = {
     name: 'ENEMY_GRUNT',
-    type: UnitType.HUMAN,
-    sprite: SpriteFactory.GRUNT,
+    type: types_1.UnitType.HUMAN,
+    sprite: SpriteFactory_1.default.GRUNT,
     paletteSwaps: {},
     startingLife: 50,
     startingMana: null,
@@ -64,7 +66,7 @@ var ENEMY_GRUNT = {
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 1; },
-    aiHandler: HUMAN_DETERMINISTIC,
+    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
     aiParams: {
         speed: 0.90,
         visionRange: 8,
@@ -73,8 +75,8 @@ var ENEMY_GRUNT = {
 };
 var ENEMY_SOLDIER = {
     name: 'ENEMY_SOLDIER',
-    type: UnitType.HUMAN,
-    sprite: SpriteFactory.SOLDIER,
+    type: types_1.UnitType.HUMAN,
+    sprite: SpriteFactory_1.default.SOLDIER,
     paletteSwaps: {},
     startingLife: 60,
     startingMana: null,
@@ -84,7 +86,7 @@ var ENEMY_SOLDIER = {
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 2; },
-    aiHandler: HUMAN_DETERMINISTIC,
+    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
     aiParams: {
         speed: 0.90,
         visionRange: 10,
@@ -93,11 +95,11 @@ var ENEMY_SOLDIER = {
 };
 var ENEMY_GOLEM = {
     name: 'ENEMY_GOLEM',
-    type: UnitType.GOLEM,
-    sprite: SpriteFactory.GOLEM,
+    type: types_1.UnitType.GOLEM,
+    sprite: SpriteFactory_1.default.GOLEM,
     paletteSwaps: (_b = {},
-        _b[Colors.DARK_GRAY] = Colors.DARKER_GRAY,
-        _b[Colors.LIGHT_GRAY] = Colors.DARKER_GRAY,
+        _b[Colors_1.default.DARK_GRAY] = Colors_1.default.DARKER_GRAY,
+        _b[Colors_1.default.LIGHT_GRAY] = Colors_1.default.DARKER_GRAY,
         _b),
     startingLife: 80,
     startingMana: null,
@@ -107,7 +109,7 @@ var ENEMY_GOLEM = {
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 2; },
-    aiHandler: HUMAN_DETERMINISTIC,
+    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
     aiParams: {
         speed: 0.88,
         visionRange: 12,
@@ -117,7 +119,7 @@ var ENEMY_GOLEM = {
 function getEnemyClasses() {
     return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
 }
-export default {
+exports.default = {
     PLAYER: PLAYER,
     ENEMY_GRUNT: ENEMY_GRUNT,
     ENEMY_GOLEM: ENEMY_GOLEM,

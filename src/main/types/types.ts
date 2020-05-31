@@ -36,7 +36,8 @@ enum GameScreen {
   INVENTORY = 'INVENTORY',
   TITLE = 'TITLE',
   VICTORY = 'VICTORY',
-  GAME_OVER = 'GAME_OVER'
+  GAME_OVER = 'GAME_OVER',
+  MINIMAP = 'MINIMAP'
 }
 
 enum ItemCategory {

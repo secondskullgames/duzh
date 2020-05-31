@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var EquippedItem = /** @class */ (function () {
     function EquippedItem(name, slot, inventoryItem, damage) {
         this.name = name;
@@ -7,5 +9,5 @@ var EquippedItem = /** @class */ (function () {
     }
     return EquippedItem;
 }());
-export default EquippedItem;
+exports.default = EquippedItem;
 //# sourceMappingURL=EquippedItem.js.map

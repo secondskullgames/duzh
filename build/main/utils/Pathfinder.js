@@ -1,5 +1,7 @@
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils.js';
-import { randChoice } from './RandomUtils.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var MapUtils_1 = require("../maps/MapUtils");
+var RandomUtils_1 = require("./RandomUtils");
 var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 /**
  * @return the exact cost of the path from `start` to `coordinates`
@@ -12,7 +14,7 @@ function g(node, start) {
  */
 function h(coordinates, goal) {
     // return civDistance(coordinates, goal);
-    return manhattanDistance(coordinates, goal);
+    return MapUtils_1.manhattanDistance(coordinates, goal);
 }
 /**
  * @return an estimate of the best cost from `start` to `goal` combining both `g` and `h`
@@ -56,7 +58,7 @@ var Pathfinder = /** @class */ (function () {
             var nodeCosts = open.map(function (node) { return ({ node: node, cost: f(node, start, goal) }); })
                 .sort(function (a, b) { return a.cost - b.cost; });
             var bestNode = nodeCosts[0].node;
-            if (coordinatesEquals(bestNode, goal)) {
+            if (MapUtils_1.coordinatesEquals(bestNode, goal)) {
                 return { value: traverseParents(bestNode) };
             }
             else {
@@ -64,14 +66,14 @@ var Pathfinder = /** @class */ (function () {
                     var node = _a.node, cost = _a.cost;
                     return cost === nodeCosts[0].cost;
                 });
-                var _a = randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
+                var _a = RandomUtils_1.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
                 open.splice(open.indexOf(chosenNode_1), 1);
                 closed.push(chosenNode_1);
                 this_1._findNeighbors(chosenNode_1, tiles).forEach(function (neighbor) {
-                    if (closed.some(function (coordinates) { return coordinatesEquals(coordinates, neighbor); })) {
+                    if (closed.some(function (coordinates) { return MapUtils_1.coordinatesEquals(coordinates, neighbor); })) {
                         // already been seen, don't need to look at it*
                     }
-                    else if (open.some(function (coordinates) { return coordinatesEquals(coordinates, neighbor); })) {
+                    else if (open.some(function (coordinates) { return MapUtils_1.coordinatesEquals(coordinates, neighbor); })) {
                         // don't need to look at it now, will look later?
                     }
                     else {
@@ -101,10 +103,10 @@ var Pathfinder = /** @class */ (function () {
         })
             .filter(function (_a) {
             var x = _a.x, y = _a.y;
-            return tiles.some(function (tile) { return coordinatesEquals(tile, { x: x, y: y }); });
+            return tiles.some(function (tile) { return MapUtils_1.coordinatesEquals(tile, { x: x, y: y }); });
         });
     };
     return Pathfinder;
 }());
-export default Pathfinder;
+exports.default = Pathfinder;
 //# sourceMappingURL=Pathfinder.js.map

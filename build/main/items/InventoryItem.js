@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var InventoryItem = /** @class */ (function () {
     function InventoryItem(name, category, onUse) {
         var _this = this;
@@ -10,5 +12,5 @@ var InventoryItem = /** @class */ (function () {
     };
     return InventoryItem;
 }());
-export default InventoryItem;
+exports.default = InventoryItem;
 //# sourceMappingURL=InventoryItem.js.map

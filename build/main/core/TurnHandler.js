@@ -1,4 +1,6 @@
-import { chainPromises } from '../utils/PromiseUtils.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var PromiseUtils_1 = require("../utils/PromiseUtils");
 function playTurn(playerUnitOrder) {
     var playerUnit = jwb.state.playerUnit;
     playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
@@ -16,14 +18,14 @@ function _update() {
             unitPromises.push(function () { return u.update(); });
         }
     });
-    return chainPromises(unitPromises)
+    return PromiseUtils_1.chainPromises(unitPromises)
         .then(function () { return jwb.renderer.render(); })
         .then(function () {
         state.turn++;
         state.messages = [];
     });
 }
-export default {
+exports.default = {
     playTurn: playTurn
 };
 //# sourceMappingURL=TurnHandler.js.map

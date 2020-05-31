@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11,13 +12,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import UnitSprite from './UnitSprite.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var UnitSprite_1 = require("./UnitSprite");
 var PlayerSprite = /** @class */ (function (_super) {
     __extends(PlayerSprite, _super);
     function PlayerSprite(unit, paletteSwaps) {
         return _super.call(this, unit, 'player', paletteSwaps, { dx: -4, dy: -20 }) || this;
     }
     return PlayerSprite;
-}(UnitSprite));
-export default PlayerSprite;
+}(UnitSprite_1.default));
+exports.default = PlayerSprite;
 //# sourceMappingURL=PlayerSprite.js.map

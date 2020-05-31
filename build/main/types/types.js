@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Activity;
 (function (Activity) {
     Activity["STANDING"] = "STANDING";
@@ -5,12 +7,14 @@ var Activity;
     Activity["ATTACKING"] = "ATTACKING";
     Activity["DAMAGED"] = "DAMAGED";
 })(Activity || (Activity = {}));
+exports.Activity = Activity;
 var EquipmentSlot;
 (function (EquipmentSlot) {
     EquipmentSlot["MELEE_WEAPON"] = "MELEE_WEAPON";
     EquipmentSlot["RANGED_WEAPON"] = "RANGED_WEAPON";
     EquipmentSlot["ARMOR"] = "ARMOR";
 })(EquipmentSlot || (EquipmentSlot = {}));
+exports.EquipmentSlot = EquipmentSlot;
 var GameScreen;
 (function (GameScreen) {
     GameScreen["GAME"] = "GAME";
@@ -18,18 +22,22 @@ var GameScreen;
     GameScreen["TITLE"] = "TITLE";
     GameScreen["VICTORY"] = "VICTORY";
     GameScreen["GAME_OVER"] = "GAME_OVER";
+    GameScreen["MINIMAP"] = "MINIMAP";
 })(GameScreen || (GameScreen = {}));
+exports.GameScreen = GameScreen;
 var ItemCategory;
 (function (ItemCategory) {
     ItemCategory["POTION"] = "POTION";
     ItemCategory["SCROLL"] = "SCROLL";
     ItemCategory["WEAPON"] = "WEAPON";
 })(ItemCategory || (ItemCategory = {}));
+exports.ItemCategory = ItemCategory;
 var MapLayout;
 (function (MapLayout) {
     MapLayout["ROOMS_AND_CORRIDORS"] = "ROOMS_AND_CORRIDORS";
     MapLayout["BLOB"] = "BLOB";
 })(MapLayout || (MapLayout = {}));
+exports.MapLayout = MapLayout;
 var TileType;
 (function (TileType) {
     TileType[TileType["FLOOR"] = 0] = "FLOOR";
@@ -40,6 +48,7 @@ var TileType;
     TileType[TileType["NONE"] = 5] = "NONE";
     TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
 })(TileType || (TileType = {}));
+exports.TileType = TileType;
 var UnitType;
 (function (UnitType) {
     UnitType["HUMAN"] = "HUMAN";
@@ -49,5 +58,5 @@ var UnitType;
     UnitType["WIZARD"] = "WIZARD";
     UnitType["ANIMAL"] = "ANIMAL";
 })(UnitType || (UnitType = {}));
-export { Activity, EquipmentSlot, GameScreen, ItemCategory, MapLayout, TileType, UnitType };
+exports.UnitType = UnitType;
 //# sourceMappingURL=types.js.map

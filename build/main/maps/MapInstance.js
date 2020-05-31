@@ -1,4 +1,6 @@
-import { TileType } from '../types/types.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("../types/types");
 var MapInstance = /** @class */ (function () {
     function MapInstance(width, height, tiles, rooms, units, items) {
         this.width = width;
@@ -13,7 +15,7 @@ var MapInstance = /** @class */ (function () {
     MapInstance.prototype.getTile = function (_a) {
         var x = _a.x, y = _a.y;
         if (x < this.width && y < this.height) {
-            return (this._tiles[y] || [])[x] || TileType.NONE;
+            return (this._tiles[y] || [])[x] || types_1.TileType.NONE;
         }
         throw "Illegal coordinates " + x + ", " + y;
     };
@@ -71,5 +73,5 @@ var MapInstance = /** @class */ (function () {
     };
     return MapInstance;
 }());
-export default MapInstance;
+exports.default = MapInstance;
 //# sourceMappingURL=MapInstance.js.map

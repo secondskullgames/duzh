@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function loadImage(filename) {
     return new Promise(function (resolve, reject) {
         var canvas = document.createElement('canvas');
@@ -27,6 +29,7 @@ function loadImage(filename) {
         img.src = "png/" + filename + ".png";
     });
 }
+exports.loadImage = loadImage;
 function applyTransparentColor(imageData, transparentColor) {
     return new Promise(function (resolve, reject) {
         var _a = hex2rgb(transparentColor), tr = _a[0], tg = _a[1], tb = _a[2];
@@ -47,6 +50,7 @@ function applyTransparentColor(imageData, transparentColor) {
         resolve(new ImageData(array, imageData.width, imageData.height));
     });
 }
+exports.applyTransparentColor = applyTransparentColor;
 function replaceColors(imageData, colorMap) {
     return new Promise(function (resolve) {
         if (!colorMap) {
@@ -83,6 +87,7 @@ function replaceColors(imageData, colorMap) {
         resolve(new ImageData(array, imageData.width, imageData.height));
     });
 }
+exports.replaceColors = replaceColors;
 /**
  * Replace all non-transparent colors with the specified `color`.
  */
@@ -106,6 +111,7 @@ function replaceAll(imageData, color) {
         resolve(new ImageData(array, imageData.width, imageData.height));
     });
 }
+exports.replaceAll = replaceAll;
 /**
  * Convert a hex string, e.g. '#00c0ff', to its equivalent RGB values, e.g. (0, 192, 255).
  * This implementation relies on the browser automatically doing this conversion when
@@ -120,5 +126,5 @@ function hex2rgb(hex) {
         .map(function (c) { return parseInt(c); })
         .filter(function (c) { return c != null && !isNaN(c); });
 }
-export { loadImage, applyTransparentColor, replaceColors, replaceAll, hex2rgb };
+exports.hex2rgb = hex2rgb;
 //# sourceMappingURL=ImageUtils.js.map

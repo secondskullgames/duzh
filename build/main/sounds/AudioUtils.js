@@ -1,25 +1,13 @@
-import SoundPlayer from './SoundPlayer.js';
-var _getMusicPlayer = function () { return new SoundPlayer(4, 0.12); };
-var _getSoundPlayer = function () { return new SoundPlayer(4, 0.20); };
-// TODO very hacky memoizing
-var MUSIC = null;
-var SFX = null;
-function playSound(samples) {
-    if (!SFX) {
-        SFX = _getSoundPlayer();
-    }
-    SFX.playSound(samples, false);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function transpose8va(_a) {
+    var freq = _a[0], ms = _a[1];
+    return [freq * 2, ms];
 }
-function playMusic(samples) {
-    if (!MUSIC) {
-        MUSIC = _getMusicPlayer();
-    }
-    MUSIC.playSound(samples, false);
+exports.transpose8va = transpose8va;
+function transpose8vb(_a) {
+    var freq = _a[0], ms = _a[1];
+    return [freq / 2, ms];
 }
-function stopMusic() {
-    if (MUSIC) {
-        MUSIC.stop();
-    }
-}
-export { playSound, playMusic, stopMusic };
+exports.transpose8vb = transpose8vb;
 //# sourceMappingURL=AudioUtils.js.map

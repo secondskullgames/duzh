@@ -1,8 +1,7 @@
-import * as TestDungeonGenerator from './maps/generation/TestDungeonGenerator';
+import TestMapUtils from './maps/TestMapUtils';
 
 function test() {
-  Object.values(TestDungeonGenerator).forEach(test => test());
+  TestMapUtils();
 }
 
-console.log('a');
 test();

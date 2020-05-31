@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Colors;
 (function (Colors) {
     // Original 16 MS Paint colors from Will
@@ -27,5 +29,5 @@ var Colors;
     Colors["DARKER_GRAY"] = "#404040";
     Colors["TEAL"] = "#008080";
 })(Colors || (Colors = {}));
-export default Colors;
+exports.default = Colors;
 //# sourceMappingURL=Colors.js.map

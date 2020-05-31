@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Note: It's expected that a separate Sprite instance will be created
  * per entity, and frame caching will be handled... somewhere else
@@ -27,5 +29,5 @@ var Sprite = /** @class */ (function () {
     };
     return Sprite;
 }());
-export default Sprite;
+exports.default = Sprite;
 //# sourceMappingURL=Sprite.js.map

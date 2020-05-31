@@ -1,4 +1,6 @@
-import MapInstance from './MapInstance.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var MapInstance_1 = require("./MapInstance");
 var MapBuilder = /** @class */ (function () {
     function MapBuilder(level, width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
         this._level = level;
@@ -26,9 +28,9 @@ var MapBuilder = /** @class */ (function () {
             var x = _a.x, y = _a.y;
             return _this._itemSupplier({ x: x, y: y }, _this._level);
         });
-        return new MapInstance(this._width, this._height, this._tiles, this._rooms, units, items);
+        return new MapInstance_1.default(this._width, this._height, this._tiles, this._rooms, units, items);
     };
     return MapBuilder;
 }());
-export default MapBuilder;
+exports.default = MapBuilder;
 //# sourceMappingURL=MapBuilder.js.map

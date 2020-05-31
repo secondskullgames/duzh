@@ -1,10 +1,12 @@
-import { Activity, EquipmentSlot, GameScreen } from '../types/types.js';
-import { playSound } from '../sounds/AudioUtils.js';
-import Sounds from '../sounds/Sounds.js';
-import { resolvedPromise } from '../utils/PromiseUtils.js';
-import InventoryMap from '../items/InventoryMap.js';
-import EquipmentMap from '../items/equipment/EquipmentMap.js';
-import Music from '../sounds/Music.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var Sounds_1 = require("../sounds/Sounds");
+var InventoryMap_1 = require("../items/InventoryMap");
+var EquipmentMap_1 = require("../items/equipment/EquipmentMap");
+var Music_1 = require("../sounds/Music");
+var types_1 = require("../types/types");
+var PromiseUtils_1 = require("../utils/PromiseUtils");
+var SoundFX_1 = require("../sounds/SoundFX");
 var LIFE_PER_TURN_MULTIPLIER = 0.005;
 var Unit = /** @class */ (function () {
     function Unit(unitClass, name, level, _a) {
@@ -12,8 +14,8 @@ var Unit = /** @class */ (function () {
         this.char = '@';
         this.unitClass = unitClass;
         this.sprite = unitClass.sprite(this, unitClass.paletteSwaps);
-        this.inventory = new InventoryMap();
-        this.equipment = new EquipmentMap();
+        this.inventory = new InventoryMap_1.default();
+        this.equipment = new EquipmentMap_1.default();
         this.x = x;
         this.y = y;
         this.name = name;
@@ -27,7 +29,7 @@ var Unit = /** @class */ (function () {
         this._damage = unitClass.startingDamage;
         this.queuedOrder = null;
         this.aiHandler = unitClass.aiHandler;
-        this.activity = Activity.STANDING;
+        this.activity = types_1.Activity.STANDING;
         this.direction = null;
         while (this.level < level) {
             this._levelUp(false);
@@ -57,7 +59,7 @@ var Unit = /** @class */ (function () {
             if (!!_this.aiHandler) {
                 return _this.aiHandler(_this);
             }
-            return resolvedPromise();
+            return PromiseUtils_1.resolvedPromise();
         })
             .then(function () { return _this.sprite.update(); });
     };
@@ -66,7 +68,7 @@ var Unit = /** @class */ (function () {
         this.equipment.getEntries()
             .filter(function (_a) {
             var slot = _a[0], item = _a[1];
-            return (slot !== EquipmentSlot.RANGED_WEAPON);
+            return (slot !== types_1.EquipmentSlot.RANGED_WEAPON);
         })
             .forEach(function (_a) {
             var slot = _a[0], item = _a[1];
@@ -79,11 +81,11 @@ var Unit = /** @class */ (function () {
         this.equipment.getEntries()
             .filter(function (_a) {
             var slot = _a[0], item = _a[1];
-            return (slot !== EquipmentSlot.MELEE_WEAPON);
+            return (slot !== types_1.EquipmentSlot.MELEE_WEAPON);
         })
             .forEach(function (_a) {
             var slot = _a[0], item = _a[1];
-            if (slot === EquipmentSlot.RANGED_WEAPON) {
+            if (slot === types_1.EquipmentSlot.RANGED_WEAPON) {
                 damage += (item.damage || 0);
             }
             else {
@@ -99,7 +101,7 @@ var Unit = /** @class */ (function () {
         this.life += lifePerLevel;
         this._damage += this.unitClass.damagePerLevel(this.level);
         if (withSound) {
-            playSound(Sounds.LEVEL_UP);
+            SoundFX_1.playSound(Sounds_1.default.LEVEL_UP);
         }
     };
     Unit.prototype.gainExperience = function (experience) {
@@ -127,12 +129,12 @@ var Unit = /** @class */ (function () {
             if (_this.life === 0) {
                 map.removeUnit(_this);
                 if (_this === playerUnit) {
-                    jwb.state.screen = GameScreen.GAME_OVER;
-                    Music.stop();
-                    playSound(Sounds.PLAYER_DIES);
+                    jwb.state.screen = types_1.GameScreen.GAME_OVER;
+                    Music_1.default.stop();
+                    SoundFX_1.playSound(Sounds_1.default.PLAYER_DIES);
                 }
                 else {
-                    playSound(Sounds.ENEMY_DIES);
+                    SoundFX_1.playSound(Sounds_1.default.ENEMY_DIES);
                 }
                 if (sourceUnit) {
                     sourceUnit.gainExperience(1);
@@ -140,10 +142,10 @@ var Unit = /** @class */ (function () {
             }
             else {
                 if (_this === playerUnit) {
-                    playSound(Sounds.PLAYER_HITS_ENEMY);
+                    SoundFX_1.playSound(Sounds_1.default.PLAYER_HITS_ENEMY);
                 }
                 else {
-                    playSound(Sounds.ENEMY_HITS_PLAYER);
+                    SoundFX_1.playSound(Sounds_1.default.ENEMY_HITS_PLAYER);
                 }
             }
             resolve();
@@ -152,5 +154,5 @@ var Unit = /** @class */ (function () {
     ;
     return Unit;
 }());
-export default Unit;
+exports.default = Unit;
 //# sourceMappingURL=Unit.js.map

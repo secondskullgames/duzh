@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TestDungeonGenerator = require("./maps/generation/TestDungeonGenerator");
+var TestMapUtils_1 = require("./maps/TestMapUtils");
 function test() {
-    Object.values(TestDungeonGenerator).forEach(function (test) { return test(); });
+    TestMapUtils_1.default();
 }
-console.log('a');
 test();
 //# sourceMappingURL=index.js.map

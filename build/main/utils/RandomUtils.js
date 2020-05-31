@@ -1,12 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * @param max inclusive
  */
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
+exports.randInt = randInt;
 function randChoice(list) {
     return list[randInt(0, list.length - 1)];
 }
+exports.randChoice = randChoice;
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
  */
@@ -23,6 +27,7 @@ function shuffle(list) {
         list[i] = tmp;
     }
 }
+exports.shuffle = shuffle;
 function weightedRandom(probabilities, mappedObjects) {
     var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
     var rand = Math.random() * total;
@@ -37,5 +42,5 @@ function weightedRandom(probabilities, mappedObjects) {
     }
     throw 'Error in weightedRandom()!';
 }
-export { randInt, randChoice, weightedRandom, shuffle };
+exports.weightedRandom = weightedRandom;
 //# sourceMappingURL=RandomUtils.js.map

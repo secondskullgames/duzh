@@ -1,3 +1,4 @@
+"use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -5,27 +6,29 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import Sounds from '../sounds/Sounds.js';
-import InventoryItem from './InventoryItem.js';
-import { ItemCategory } from '../types/types.js';
-import { playSound } from '../sounds/AudioUtils.js';
-import { chainPromises } from '../utils/PromiseUtils.js';
-import { randChoice } from '../utils/RandomUtils.js';
-import SpriteFactory from '../graphics/sprites/SpriteFactory.js';
-import { getWeaponClasses } from './equipment/EquipmentClasses.js';
-import MapItem from './MapItem.js';
-import { playFloorFireAnimation } from '../graphics/animations/Animations.js';
+Object.defineProperty(exports, "__esModule", { value: true });
+var Sounds_1 = require("../sounds/Sounds");
+var InventoryItem_1 = require("./InventoryItem");
+var MapItem_1 = require("./MapItem");
+var SpriteFactory_1 = require("../graphics/sprites/SpriteFactory");
+var PromiseUtils_1 = require("../utils/PromiseUtils");
+var RandomUtils_1 = require("../utils/RandomUtils");
+var EquipmentClasses_1 = require("./equipment/EquipmentClasses");
+var types_1 = require("../types/types");
+var SoundFX_1 = require("../sounds/SoundFX");
+var Animations_1 = require("../graphics/animations/Animations");
 function createPotion(lifeRestored) {
     var onUse = function (item, unit) {
         return new Promise(function (resolve) {
-            playSound(Sounds.USE_POTION);
+            SoundFX_1.playSound(Sounds_1.default.USE_POTION);
             var prevLife = unit.life;
             unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-            jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
+            jwb.state.messages.push(unit.name + " used " + item.name);
+            jwb.state.messages.push("and gained " + (unit.life - prevLife) + " life.");
             resolve();
         });
     };
-    return new InventoryItem('Potion', ItemCategory.POTION, onUse);
+    return new InventoryItem_1.default('Potion', types_1.ItemCategory.POTION, onUse);
 }
 function _equipEquipment(equipmentClass, item, unit) {
     return new Promise(function (resolve) {
@@ -50,41 +53,41 @@ function createScrollOfFloorFire(damage) {
                 && ([-1, 0, 1].indexOf(dy) > -1)
                 && !(dx === 0 && dy === 0);
         });
-        promises.push(function () { return playFloorFireAnimation(unit, adjacentUnits); });
+        promises.push(function () { return Animations_1.playFloorFireAnimation(unit, adjacentUnits); });
         adjacentUnits.forEach(function (u) {
             promises.push(function () { return u.takeDamage(damage, unit); });
         });
-        return chainPromises(promises);
+        return PromiseUtils_1.chainPromises(promises);
     };
-    return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
+    return new InventoryItem_1.default('Scroll of Floor Fire', types_1.ItemCategory.SCROLL, onUse);
 }
 function _createInventoryWeapon(weaponClass) {
     var onUse = function (item, unit) { return _equipEquipment(weaponClass, item, unit); };
-    return new InventoryItem(weaponClass.name, weaponClass.itemCategory, onUse);
+    return new InventoryItem_1.default(weaponClass.name, weaponClass.itemCategory, onUse);
 }
 function _createMapEquipment(equipmentClass, _a) {
     var x = _a.x, y = _a.y;
     var sprite = equipmentClass.mapIcon(equipmentClass.paletteSwaps);
     var inventoryItem = _createInventoryWeapon(equipmentClass);
-    return new MapItem({ x: x, y: y }, equipmentClass.char, sprite, inventoryItem);
+    return new MapItem_1.default({ x: x, y: y }, equipmentClass.char, sprite, inventoryItem);
 }
 function _getItemSuppliers(level) {
     var createMapPotion = function (_a) {
         var x = _a.x, y = _a.y;
-        var sprite = SpriteFactory.MAP_POTION();
+        var sprite = SpriteFactory_1.default.MAP_POTION();
         var inventoryItem = createPotion(40);
-        return new MapItem({ x: x, y: y }, 'K', sprite, inventoryItem);
+        return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
     };
     var createFloorFireScroll = function (_a) {
         var x = _a.x, y = _a.y;
-        var sprite = SpriteFactory.MAP_SCROLL();
+        var sprite = SpriteFactory_1.default.MAP_SCROLL();
         var inventoryItem = createScrollOfFloorFire(80);
-        return new MapItem({ x: x, y: y }, 'K', sprite, inventoryItem);
+        return new MapItem_1.default({ x: x, y: y }, 'K', sprite, inventoryItem);
     };
     return [createMapPotion, createFloorFireScroll];
 }
 function _getWeaponSuppliers(level) {
-    return getWeaponClasses()
+    return EquipmentClasses_1.getWeaponClasses()
         .filter(function (weaponClass) { return level >= weaponClass.minLevel; })
         .filter(function (weaponClass) { return level <= weaponClass.maxLevel; })
         .map(function (weaponClass) { return function (_a) {
@@ -95,9 +98,9 @@ function _getWeaponSuppliers(level) {
 function createRandomItem(_a, level) {
     var x = _a.x, y = _a.y;
     var suppliers = __spreadArrays(_getItemSuppliers(level), _getWeaponSuppliers(level));
-    return randChoice(suppliers)({ x: x, y: y });
+    return RandomUtils_1.randChoice(suppliers)({ x: x, y: y });
 }
-export default {
+exports.default = {
     createRandomItem: createRandomItem
 };
 //# sourceMappingURL=ItemFactory.js.map

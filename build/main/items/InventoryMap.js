@@ -1,3 +1,4 @@
+"use strict";
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -5,8 +6,9 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { ItemCategory } from '../types/types.js';
-var categories = Object.values(ItemCategory);
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("../types/types");
+var categories = Object.values(types_1.ItemCategory);
 /**
  * Contains information about all items held by a particular unit, grouped by category,
  * as well as data about the selected item/category in the inventory menu
@@ -66,5 +68,5 @@ var InventoryMap = /** @class */ (function () {
     };
     return InventoryMap;
 }());
-export default InventoryMap;
+exports.default = InventoryMap;
 //# sourceMappingURL=InventoryMap.js.map

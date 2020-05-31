@@ -1,11 +1,10 @@
 import MapBuilder from './MapBuilder';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
-import RoomCorridorDungeonGenerator from './generation/RoomCorridorDungeonGenerator';
 import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
 import { MapLayout, TileSet } from '../types/types';
-import { randInt } from '../utils/RandomUtils';
+import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
 
 function createRandomMap(
   mapLayout: MapLayout,
@@ -23,14 +22,13 @@ function createRandomMap(
 function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator {
   switch (mapLayout) {
     case MapLayout.ROOMS_AND_CORRIDORS: {
-      const minRoomDimension = randInt(6, 6);
-      const maxRoomDimension = randInt(9, 9);
-      const minRoomPadding = 0;
-      return new RoomCorridorDungeonGenerator(
+      const minRoomDimension = 3;
+      const maxRoomDimension = 7;
+      // return new RoomCorridorDungeonGenerator(
+      return new RoomCorridorDungeonGenerator2(
         tileSet,
         minRoomDimension,
-        maxRoomDimension,
-        minRoomPadding
+        maxRoomDimension
       );
     }
     case MapLayout.BLOB:

@@ -1,7 +1,12 @@
-import { GameScreen } from '../types/types.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = require("../types/types");
+/**
+ * Global mutable state
+ */
 var GameState = /** @class */ (function () {
     function GameState(playerUnit, maps) {
-        this.screen = GameScreen.TITLE;
+        this.screen = types_1.GameScreen.TITLE;
         this.playerUnit = playerUnit;
         this.maps = maps;
         this.mapIndex = 0;
@@ -20,5 +25,5 @@ var GameState = /** @class */ (function () {
     };
     return GameState;
 }());
-export default GameState;
+exports.default = GameState;
 //# sourceMappingURL=GameState.js.map

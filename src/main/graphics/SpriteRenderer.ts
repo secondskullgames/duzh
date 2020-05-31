@@ -7,6 +7,7 @@ import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../ty
 import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
+import MinimapRenderer from './MinimapRenderer';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -26,6 +27,7 @@ const INVENTORY_LEFT = 2 * TILE_WIDTH;
 const INVENTORY_TOP = 2 * TILE_HEIGHT;
 const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
+const INVENTORY_MARGIN = 12;
 
 const LINE_HEIGHT = 16;
 
@@ -37,6 +39,8 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 const SHADOW_FILENAME = 'shadow';
 
 class SpriteRenderer implements Renderer {
+  static SCREEN_WIDTH = SCREEN_WIDTH;
+  static SCREEN_HEIGHT = SCREEN_HEIGHT;
   private readonly _container: HTMLElement;
   private readonly _bufferCanvas: HTMLCanvasElement;
   private readonly _bufferContext: CanvasRenderingContext2D;
@@ -80,6 +84,8 @@ class SpriteRenderer implements Renderer {
         return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       case GameScreen.GAME_OVER:
         return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+      case GameScreen.MINIMAP:
+        return this._renderMinimap();
       default:
         throw `Invalid screen ${screen}`;
     }
@@ -203,15 +209,13 @@ class SpriteRenderer implements Renderer {
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
       .then(() => {
-
         // draw equipment
-
-        const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-        const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+        const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+        const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
 
         const promises: Promise<any>[] = [];
-        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
-        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
 
         // draw equipment items
         // for now, just display them all in one list
@@ -228,7 +232,7 @@ class SpriteRenderer implements Renderer {
         const xOffset = 4;
 
         for (let i = 0; i < inventoryCategories.length; i++) {
-          const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+          const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
           const top = INVENTORY_TOP + 40;
           promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
           if (inventoryCategories[i] === inventory.selectedCategory) {
@@ -240,7 +244,7 @@ class SpriteRenderer implements Renderer {
         // draw inventory items
         if (inventory.selectedCategory) {
           const items = inventory.get(inventory.selectedCategory);
-          const x = inventoryLeft + 8;
+          const x = itemsLeft + 8;
           for (let i = 0; i < items.length; i++) {
             const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
             let color;
@@ -409,6 +413,12 @@ class SpriteRenderer implements Renderer {
         this._bufferContext.drawImage(imageBitmap, left, y);
         return resolvedPromise();
       });
+  }
+
+  private _renderMinimap(): Promise<any> {
+    const minimapRenderer = new MinimapRenderer();
+    return minimapRenderer.render()
+      .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
   }
 }
 
