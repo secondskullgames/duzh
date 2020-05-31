@@ -24,9 +24,9 @@ var DungeonGenerator_1 = require("./DungeonGenerator");
 var types_1 = require("../../types/types");
 var RandomUtils_1 = require("../../utils/RandomUtils");
 var MapUtils_1 = require("../MapUtils");
-var ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom;
-var MIN_ROOM_FRACTION = 0.25;
-var MAX_ROOM_FRACTION = 0.75;
+var ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
+var MIN_ROOM_FRACTION = 0.4;
+var MAX_ROOM_FRACTION = 0.8;
 var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
     __extends(RoomCorridorDungeonGenerator2, _super);
     /**
@@ -405,7 +405,9 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
                 }
                 else {
                     // join parallel connections
-                    _this._joinParallelConnections(tiles, firstConnection, secondConnection);
+                    // TODO: This will also try to join U-shaped connections, and doesn't do it correctly!
+                    // For now, we're just going to run a validation step and regenerate if it fails.
+                    _this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
                 }
             };
             for (var i = 0; i < neighbors.length - 1; i++) {
@@ -417,11 +419,11 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
     };
     RoomCorridorDungeonGenerator2.prototype._joinPerpendicularly = function (tiles, firstConnection, secondConnection) {
         var start = firstConnection.middleCoordinates;
-        var middle = {
-            x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
-            y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
-        };
         var end = secondConnection.middleCoordinates;
+        var middle = {
+            x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
+            y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
+        };
         var dx = Math.sign(middle.x - start.x);
         var dy = Math.sign(middle.y - start.y);
         var x = start.x, y = start.y;
@@ -438,13 +440,13 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             y += dy;
         }
     };
-    RoomCorridorDungeonGenerator2.prototype._joinParallelConnections = function (tiles, firstConnection, secondConnection) {
+    RoomCorridorDungeonGenerator2.prototype._joinParallelConnections = function (tiles, internalConnection, firstConnection, secondConnection) {
         var start = firstConnection.middleCoordinates;
-        var middle = {
-            x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
-            y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
-        };
         var end = secondConnection.middleCoordinates;
+        var middle = {
+            x: Math.round((start.x + end.x) / 2),
+            y: Math.round((start.y + end.y) / 2)
+        };
         var xDistance = end.x - start.x;
         var yDistance = end.y - start.y;
         var dx = Math.sign(xDistance);
@@ -505,13 +507,6 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
             this_2._subtract(internalConnections, orphanedInternalConnections);
             removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
             console.log("stripping: " + orphanedConnections.length + ", " + orphanedInternalConnections.length);
-            var missedOrphans = externalConnections.filter(function (connection) {
-                return _this._isOrphanedConnection(connection, internalConnections);
-            });
-            if (missedOrphans.length > 0 && !removedAnyConnections) {
-                console.log('fuck, missed orphans: ' + missedOrphans.map(this_2._connectionToString).join('; '));
-                debugger;
-            }
         };
         var this_2 = this;
         do {

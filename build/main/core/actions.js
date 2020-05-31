@@ -41,11 +41,9 @@ exports.initialize = initialize;
 function _initState() {
     var playerUnit = new Unit_1.default(UnitClasses_1.default.PLAYER, 'player', 1, { x: 0, y: 0 });
     jwb.state = new GameState_1.default(playerUnit, [
-        //() => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 50, 40, 0, 0),
-        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 24, 24, 0, 0); },
-        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4); },
-        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4); },
-        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3); },
+        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 40, 30, 12, 5); },
+        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 40, 30, 13, 4); },
+        function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 40, 30, 14, 3); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3); },
         function () { return MapFactory_1.default.createRandomMap(types_1.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3); }

@@ -27,6 +27,7 @@ const INVENTORY_LEFT = 2 * TILE_WIDTH;
 const INVENTORY_TOP = 2 * TILE_HEIGHT;
 const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
+const INVENTORY_MARGIN = 12;
 
 const LINE_HEIGHT = 16;
 
@@ -208,15 +209,13 @@ class SpriteRenderer implements Renderer {
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
       .then(() => {
-
         // draw equipment
-
-        const equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-        const inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+        const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+        const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
 
         const promises: Promise<any>[] = [];
-        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
-        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
 
         // draw equipment items
         // for now, just display them all in one list
@@ -233,7 +232,7 @@ class SpriteRenderer implements Renderer {
         const xOffset = 4;
 
         for (let i = 0; i < inventoryCategories.length; i++) {
-          const x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+          const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
           const top = INVENTORY_TOP + 40;
           promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
           if (inventoryCategories[i] === inventory.selectedCategory) {
@@ -245,7 +244,7 @@ class SpriteRenderer implements Renderer {
         // draw inventory items
         if (inventory.selectedCategory) {
           const items = inventory.get(inventory.selectedCategory);
-          const x = inventoryLeft + 8;
+          const x = itemsLeft + 8;
           for (let i = 0; i < items.length; i++) {
             const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
             let color;

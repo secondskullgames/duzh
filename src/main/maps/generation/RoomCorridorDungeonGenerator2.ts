@@ -25,9 +25,9 @@ type InternalConnection = {
   neighbors: Section[]
 }
 
-const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom;
-const MIN_ROOM_FRACTION = 0.25;
-const MAX_ROOM_FRACTION = 0.75;
+const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
+const MIN_ROOM_FRACTION = 0.4;
+const MAX_ROOM_FRACTION = 0.8;
 
 class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private readonly _minRoomDimension: number;

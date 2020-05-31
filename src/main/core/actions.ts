@@ -40,14 +40,9 @@ function initialize(): Promise<any> {
 function _initState() {
   const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
   jwb.state = new GameState(playerUnit, [
-    //() => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 50, 40, 0, 0),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 24, 24, 0, 0),
-
-
-
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 28, 22, 9, 4),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 30, 23, 10, 4),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 3, 32, 24, 11, 3),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 32, 24, 10, 5),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 32, 24, 11, 4),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 3, 32, 24, 12, 3),
     () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 4, 34, 25, 12, 3),
     () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 5, 36, 26, 13, 3),
     () => MapFactory.createRandomMap(MapLayout.BLOB, TileSets.CAVE, 6, 38, 27, 14, 3)

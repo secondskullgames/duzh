@@ -2912,7 +2912,48 @@ define("units/UnitFactory", ["require", "exports", "units/UnitClasses", "utils/R
         createRandomEnemy: createRandomEnemy
     };
 });
-define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuilder", "types/types", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, MapBuilder_1, types_13, MapUtils_6, ArrayUtils_3) {
+define("maps/generation/TileEligibilityChecker", ["require", "exports", "types/types", "maps/MapUtils"], function (require, exports, types_13, MapUtils_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TileEligibilityChecker = /** @class */ (function () {
+        function TileEligibilityChecker() {
+        }
+        TileEligibilityChecker.prototype.isBlocked = function (_a, section, exits) {
+            var x = _a.x, y = _a.y;
+            // can't draw a path through an existing room or a wall
+            var blockedTileTypes = [types_13.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ types_13.TileType.WALL, types_13.TileType.WALL_HALL, types_13.TileType.WALL_TOP];
+            if (exits.some(function (exit) { return MapUtils_6.coordinatesEquals({ x: x, y: y }, exit); })) {
+                return false;
+            }
+            else if (section.tiles[y][x] === types_13.TileType.NONE || section.tiles[y][x] === types_13.TileType.FLOOR_HALL) {
+                // skip the check if we're within 1 tile vertically of an exit
+                var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return (exits.some(function (exit) { return MapUtils_6.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
+                if (isNextToExit) {
+                    return false;
+                }
+                // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
+                for (var _i = 0, _b = [-2, -1, 1, 2]; _i < _b.length; _i++) {
+                    var dy = _b[_i];
+                    if ((y + dy >= 0) && (y + dy < section.height)) {
+                        var tile = section.tiles[y + dy][x];
+                        if (blockedTileTypes.indexOf(tile) > -1) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+                return true;
+            }
+            console.error('how\'d we get here?');
+            return true;
+        };
+        return TileEligibilityChecker;
+    }());
+    exports.default = TileEligibilityChecker;
+});
+define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuilder", "types/types", "maps/MapUtils", "utils/ArrayUtils", "utils/Pathfinder", "maps/generation/TileEligibilityChecker"], function (require, exports, MapBuilder_1, types_14, MapUtils_7, ArrayUtils_3, Pathfinder_2, TileEligibilityChecker_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var DungeonGenerator = /** @class */ (function () {
@@ -2921,20 +2962,29 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
         }
         DungeonGenerator.prototype.generateDungeon = function (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
             var _this = this;
-            var t1 = new Date().getTime();
-            var section = this.generateTiles(width, height);
-            var t2 = new Date().getTime();
+            var section;
+            var isValid = false;
+            var iterations = 0;
+            do {
+                var t1 = new Date().getTime();
+                section = this.generateTiles(width, height);
+                isValid = this._validateSection(section);
+                var t2 = new Date().getTime();
+                console.log("Generated dungeon tiles for level " + level + " in " + (t2 - t1) + " ms");
+                if (!isValid) {
+                    console.error("Generated invalid tiles for level " + level + ", regenerating");
+                }
+                iterations++;
+            } while (!isValid && (iterations < 100));
             var tileTypes = section.tiles;
-            var stairsLocation = MapUtils_6.pickUnoccupiedLocations(tileTypes, [types_13.TileType.FLOOR], [], 1)[0];
-            tileTypes[stairsLocation.y][stairsLocation.x] = types_13.TileType.STAIRS_DOWN;
-            var enemyUnitLocations = MapUtils_6.pickUnoccupiedLocations(tileTypes, [types_13.TileType.FLOOR], [stairsLocation], numEnemies);
+            var stairsLocation = MapUtils_7.pickUnoccupiedLocations(tileTypes, [types_14.TileType.FLOOR], [], 1)[0];
+            tileTypes[stairsLocation.y][stairsLocation.x] = types_14.TileType.STAIRS_DOWN;
+            var enemyUnitLocations = MapUtils_7.pickUnoccupiedLocations(tileTypes, [types_14.TileType.FLOOR], [stairsLocation], numEnemies);
             var playerUnitLocation = this._pickPlayerLocation(tileTypes, __spreadArrays([stairsLocation], enemyUnitLocations))[0];
-            var itemLocations = MapUtils_6.pickUnoccupiedLocations(tileTypes, [types_13.TileType.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
+            var itemLocations = MapUtils_7.pickUnoccupiedLocations(tileTypes, [types_14.TileType.FLOOR], __spreadArrays([stairsLocation, playerUnitLocation], enemyUnitLocations), numItems);
             var tiles = tileTypes.map(function (row) {
-                return row.map(function (tileType) { return MapUtils_6.createTile(tileType, _this._tileSet); });
+                return row.map(function (tileType) { return MapUtils_7.createTile(tileType, _this._tileSet); });
             });
-            var t3 = new Date().getTime();
-            console.log("Generated dungeon " + level + " in " + (t3 - t1) + " (" + (t2 - t1) + ", " + (t3 - t2) + ") ms");
             return new MapBuilder_1.default(level, width, height, tiles, section.rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier);
         };
         /**
@@ -2944,8 +2994,8 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
             var candidates = [];
             var _loop_12 = function (y) {
                 var _loop_13 = function (x) {
-                    if (!MapUtils_6.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_6.coordinatesEquals(tile, { x: x, y: y }); })) {
-                        var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_6.hypotenuse({ x: x, y: y }, blockedTile); });
+                    if (!MapUtils_7.isBlocking(tiles[y][x]) && !blockedTiles.some(function (tile) { return MapUtils_7.coordinatesEquals(tile, { x: x, y: y }); })) {
+                        var tileDistances = blockedTiles.map(function (blockedTile) { return MapUtils_7.hypotenuse({ x: x, y: y }, blockedTile); });
                         candidates.push([{ x: x, y: y }, ArrayUtils_3.average(tileDistances)]);
                     }
                 };
@@ -2959,11 +3009,76 @@ define("maps/generation/DungeonGenerator", ["require", "exports", "maps/MapBuild
             console.assert(candidates.length > 0);
             return candidates.sort(function (a, b) { return (b[1] - a[1]); })[0];
         };
+        /**
+         * Verify that:
+         * - all rooms can be connected
+         * - wall placement is correct
+         *   (all floor tiles have either another floor tile, or a wall + wall top directly above them)
+         *
+         * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
+         * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
+         *
+         * @return true if the provided `section` is valid
+         */
+        DungeonGenerator.prototype._validateSection = function (section) {
+            return this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
+        };
+        DungeonGenerator.prototype._validateRoomConnectivity = function (section) {
+            var rooms = section.rooms;
+            var roomCenters = rooms.map(function (room) { return ({
+                x: Math.round(room.left + room.width) / 2,
+                y: Math.round(room.top + room.height) / 2
+            }); });
+            var tileChecker = new TileEligibilityChecker_1.default();
+            var unblockedTiles = [];
+            for (var y = 0; y < section.height; y++) {
+                for (var x = 0; x < section.width; x++) {
+                    if (!tileChecker.isBlocked({ x: x, y: y }, section, [])) {
+                        unblockedTiles.push({ x: x, y: y });
+                    }
+                }
+            }
+            var pathfinder = new Pathfinder_2.default(function () { return 1; });
+            for (var i = 0; i < rooms.length; i++) {
+                for (var j = i + 1; j < rooms.length; j++) {
+                    var path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
+                    if (path.length === 0) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        };
+        DungeonGenerator.prototype._validateWallPlacement = function (section) {
+            var floorTypes = [types_14.TileType.FLOOR, types_14.TileType.FLOOR_HALL];
+            var wallTypes = [types_14.TileType.WALL, types_14.TileType.WALL_HALL];
+            for (var y = 0; y < section.height; y++) {
+                for (var x = 0; x < section.width; x++) {
+                    var tileType = section.tiles[y][x];
+                    if (floorTypes.indexOf(tileType) > -1) {
+                        if (y < 2) {
+                            return false;
+                        }
+                        var oneUp = section.tiles[y - 1][x];
+                        var twoUp = section.tiles[y - 2][x];
+                        if (floorTypes.indexOf(oneUp) > -1) {
+                            // continue
+                        }
+                        else if (wallTypes.indexOf(oneUp) > -1) {
+                            if (twoUp !== types_14.TileType.WALL_TOP) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        };
         return DungeonGenerator;
     }());
     exports.default = DungeonGenerator;
 });
-define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_1, types_14, RandomUtils_8, MapUtils_7, ArrayUtils_4) {
+define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils", "utils/ArrayUtils"], function (require, exports, DungeonGenerator_1, types_15, RandomUtils_8, MapUtils_8, ArrayUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var BlobDungeonGenerator = /** @class */ (function (_super) {
@@ -3001,7 +3116,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             for (var y = 0; y < height; y++) {
                 var row = [];
                 for (var x = 0; x < width; x++) {
-                    row.push(types_14.TileType.NONE);
+                    row.push(types_15.TileType.NONE);
                 }
                 tiles.push(row);
             }
@@ -3010,7 +3125,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
         BlobDungeonGenerator.prototype._placeInitialTile = function (width, height, tiles) {
             var x = RandomUtils_8.randInt(width * 3 / 8, width * 5 / 8);
             var y = RandomUtils_8.randInt(height * 3 / 8, height * 5 / 8);
-            tiles[y][x] = types_14.TileType.FLOOR;
+            tiles[y][x] = types_15.TileType.FLOOR;
         };
         BlobDungeonGenerator.prototype._getTargetNumFloorTiles = function (max) {
             var minRatio = 0.4;
@@ -3021,7 +3136,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var floorTiles = [];
             for (var y = 0; y < tiles.length; y++) {
                 for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
                         floorTiles.push({ x: x, y: y });
                     }
                 }
@@ -3032,7 +3147,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var floorTiles = [];
             for (var y = 0; y < tiles.length; y++) {
                 for (var x = 0; x < tiles[y].length; x++) {
-                    if (tiles[y][x] === types_14.TileType.NONE) {
+                    if (tiles[y][x] === types_15.TileType.NONE) {
                         floorTiles.push({ x: x, y: y });
                     }
                 }
@@ -3055,7 +3170,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var maxIndex = Math.floor((candidates.length - 1) * 0.8);
             var index = RandomUtils_8.randInt(minIndex, maxIndex);
             var _a = candidates[index], x = _a.x, y = _a.y;
-            tiles[y][x] = types_14.TileType.FLOOR;
+            tiles[y][x] = types_15.TileType.FLOOR;
             return true;
         };
         BlobDungeonGenerator.prototype._getCandidates = function (tiles, floorTiles) {
@@ -3071,7 +3186,7 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             })
                 .filter(function (_a) {
                 var x = _a.x, y = _a.y;
-                return floorTiles.some(function (floorTile) { return MapUtils_7.isAdjacent({ x: x, y: y }, floorTile); });
+                return floorTiles.some(function (floorTile) { return MapUtils_8.isAdjacent({ x: x, y: y }, floorTile); });
             });
         };
         BlobDungeonGenerator.prototype._isLegalWallCoordinates = function (_a, tiles) {
@@ -3082,15 +3197,15 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var m = 3; // number of consecutive wall tiles required
             for (var n = 2; n <= m; n++) {
                 if (y >= n) {
-                    if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
-                        && (tiles[y - n][x] === types_14.TileType.FLOOR)) {
+                    if (this._range(y - (n - 1), y - 1).every(function (y2) { return tiles[y2][x] === types_15.TileType.NONE; })
+                        && (tiles[y - n][x] === types_15.TileType.FLOOR)) {
                         return false;
                     }
                 }
                 // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
                 if (y <= (height - 1 - n)) {
-                    if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_14.TileType.NONE; })
-                        && (tiles[y + n][x] == types_14.TileType.FLOOR)) {
+                    if (this._range(y + 1, y + (n - 1)).every(function (y2) { return tiles[y2][x] === types_15.TileType.NONE; })
+                        && (tiles[y + n][x] == types_15.TileType.FLOOR)) {
                         return false;
                     }
                 }
@@ -3112,8 +3227,8 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                 if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
                     // out of bounds
                 }
-                else if (tiles[y2][x2] === types_14.TileType.FLOOR) {
-                    if (tiles[y2][x] === types_14.TileType.NONE && tiles[y][x2] === types_14.TileType.NONE) {
+                else if (tiles[y2][x2] === types_15.TileType.FLOOR) {
+                    if (tiles[y2][x] === types_15.TileType.NONE && tiles[y][x2] === types_15.TileType.NONE) {
                         return true;
                     }
                 }
@@ -3134,10 +3249,10 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
                     // out of bounds
                 }
                 else {
-                    if (tiles[b.y][b.x] === types_14.TileType.NONE
-                        && tiles[c.y][c.x] === types_14.TileType.NONE
-                        && tiles[d.y][d.x] === types_14.TileType.NONE
-                        && tiles[f.y][f.x] === types_14.TileType.FLOOR) {
+                    if (tiles[b.y][b.x] === types_15.TileType.NONE
+                        && tiles[c.y][c.x] === types_15.TileType.NONE
+                        && tiles[d.y][d.x] === types_15.TileType.NONE
+                        && tiles[f.y][f.x] === types_15.TileType.FLOOR) {
                         return true;
                     }
                 }
@@ -3149,8 +3264,8 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var width = tiles[0].length;
             for (var y = 0; y < (height - 1); y++) {
                 for (var x = 0; x < width; x++) {
-                    if (tiles[y][x] === types_14.TileType.NONE && tiles[y + 1][x] === types_14.TileType.FLOOR) {
-                        tiles[y][x] = types_14.TileType.WALL_TOP;
+                    if (tiles[y][x] === types_15.TileType.NONE && tiles[y + 1][x] === types_15.TileType.FLOOR) {
+                        tiles[y][x] = types_15.TileType.WALL_TOP;
                     }
                 }
             }
@@ -3179,10 +3294,10 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
             var maxX = Math.min(tile.x + offset, width - 1);
             for (var y = minY; y <= maxY; y++) {
                 for (var x = minX; x <= maxX; x++) {
-                    if (MapUtils_7.coordinatesEquals(tile, { x: x, y: y })) {
+                    if (MapUtils_8.coordinatesEquals(tile, { x: x, y: y })) {
                         continue;
                     }
-                    if (tiles[y][x] === types_14.TileType.FLOOR) {
+                    if (tiles[y][x] === types_15.TileType.FLOOR) {
                         score++;
                     }
                 }
@@ -3193,12 +3308,12 @@ define("maps/generation/BlobDungeonGenerator", ["require", "exports", "maps/gene
     }(DungeonGenerator_1.default));
     exports.default = BlobDungeonGenerator;
 });
-define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_15, RandomUtils_9, MapUtils_8) {
+define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "maps/generation/DungeonGenerator", "types/types", "utils/RandomUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_2, types_16, RandomUtils_9, MapUtils_9) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom;
-    var MIN_ROOM_FRACTION = 0.25;
-    var MAX_ROOM_FRACTION = 0.75;
+    var ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
+    var MIN_ROOM_FRACTION = 0.4;
+    var MAX_ROOM_FRACTION = 0.8;
     var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
         __extends(RoomCorridorDungeonGenerator2, _super);
         /**
@@ -3427,7 +3542,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
             for (var y = 0; y < height; y++) {
                 var row = [];
                 for (var x = 0; x < width; x++) {
-                    row.push(types_15.TileType.NONE);
+                    row.push(types_16.TileType.NONE);
                 }
                 tiles.push(row);
             }
@@ -3436,7 +3551,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                 if (!!section.roomRect) {
                     for (var y = section.roomRect.top; y < section.roomRect.top + section.roomRect.height; y++) {
                         for (var x = section.roomRect.left; x < section.roomRect.left + section.roomRect.width; x++) {
-                            tiles[y][x] = types_15.TileType.FLOOR;
+                            tiles[y][x] = types_16.TileType.FLOOR;
                         }
                     }
                 }
@@ -3446,12 +3561,12 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                 var dx = Math.sign(connection.endCoordinates.x - connection.startCoordinates.x);
                 var dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
                 var _a = connection.startCoordinates, x = _a.x, y = _a.y;
-                while (!MapUtils_8.coordinatesEquals({ x: x, y: y }, connection.endCoordinates)) {
-                    tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                while (!MapUtils_9.coordinatesEquals({ x: x, y: y }, connection.endCoordinates)) {
+                    tiles[y][x] = types_16.TileType.FLOOR_HALL;
                     x += dx;
                     y += dy;
                 }
-                tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                tiles[y][x] = types_16.TileType.FLOOR_HALL;
             });
             this._addTilesForInternalConnections(tiles, internalConnections, connections);
             return tiles;
@@ -3461,17 +3576,17 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
             var width = tiles[0].length;
             for (var y = 0; y < height - 2; y++) {
                 for (var x = 0; x < width; x++) {
-                    if (tiles[y][x] === types_15.TileType.NONE
-                        && tiles[y + 1][x] === types_15.TileType.NONE
-                        && (tiles[y + 2][x] === types_15.TileType.FLOOR || tiles[y + 2][x] === types_15.TileType.FLOOR_HALL)) {
-                        tiles[y][x] = types_15.TileType.WALL_TOP;
-                        tiles[y + 1][x] = (tiles[y + 2][x] === types_15.TileType.FLOOR) ? types_15.TileType.WALL : types_15.TileType.WALL_HALL;
+                    if (tiles[y][x] === types_16.TileType.NONE
+                        && tiles[y + 1][x] === types_16.TileType.NONE
+                        && (tiles[y + 2][x] === types_16.TileType.FLOOR || tiles[y + 2][x] === types_16.TileType.FLOOR_HALL)) {
+                        tiles[y][x] = types_16.TileType.WALL_TOP;
+                        tiles[y + 1][x] = (tiles[y + 2][x] === types_16.TileType.FLOOR) ? types_16.TileType.WALL : types_16.TileType.WALL_HALL;
                     }
                 }
             }
         };
         RoomCorridorDungeonGenerator2.prototype._canConnect = function (first, second) {
-            return MapUtils_8.areAdjacent(first.rect, second.rect, 5);
+            return MapUtils_9.areAdjacent(first.rect, second.rect, 5);
         };
         RoomCorridorDungeonGenerator2.prototype._connectionMatches = function (connection, first, second) {
             // ref. equality should be fine
@@ -3577,7 +3692,9 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                     }
                     else {
                         // join parallel connections
-                        _this._joinParallelConnections(tiles, firstConnection, secondConnection);
+                        // TODO: This will also try to join U-shaped connections, and doesn't do it correctly!
+                        // For now, we're just going to run a validation step and regenerate if it fails.
+                        _this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
                     }
                 };
                 for (var i = 0; i < neighbors.length - 1; i++) {
@@ -3589,34 +3706,34 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
         };
         RoomCorridorDungeonGenerator2.prototype._joinPerpendicularly = function (tiles, firstConnection, secondConnection) {
             var start = firstConnection.middleCoordinates;
-            var middle = {
-                x: ((firstConnection.direction === 'VERTICAL') ? firstConnection : secondConnection).middleCoordinates.x,
-                y: ((firstConnection.direction === 'HORIZONTAL') ? firstConnection : secondConnection).middleCoordinates.y
-            };
             var end = secondConnection.middleCoordinates;
+            var middle = {
+                x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
+                y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
+            };
             var dx = Math.sign(middle.x - start.x);
             var dy = Math.sign(middle.y - start.y);
             var x = start.x, y = start.y;
-            while (!MapUtils_8.coordinatesEquals({ x: x, y: y }, middle)) {
-                tiles[y][x] = types_15.TileType.FLOOR_HALL;
+            while (!MapUtils_9.coordinatesEquals({ x: x, y: y }, middle)) {
+                tiles[y][x] = types_16.TileType.FLOOR_HALL;
                 x += dx;
                 y += dy;
             }
             dx = Math.sign(end.x - middle.x);
             dy = Math.sign(end.y - middle.y);
-            while (!MapUtils_8.coordinatesEquals({ x: x, y: y }, end)) {
-                tiles[y][x] = types_15.TileType.FLOOR_HALL;
+            while (!MapUtils_9.coordinatesEquals({ x: x, y: y }, end)) {
+                tiles[y][x] = types_16.TileType.FLOOR_HALL;
                 x += dx;
                 y += dy;
             }
         };
-        RoomCorridorDungeonGenerator2.prototype._joinParallelConnections = function (tiles, firstConnection, secondConnection) {
+        RoomCorridorDungeonGenerator2.prototype._joinParallelConnections = function (tiles, internalConnection, firstConnection, secondConnection) {
             var start = firstConnection.middleCoordinates;
-            var middle = {
-                x: Math.round((firstConnection.middleCoordinates.x + secondConnection.middleCoordinates.x) / 2),
-                y: Math.round((firstConnection.middleCoordinates.y + secondConnection.middleCoordinates.y) / 2)
-            };
             var end = secondConnection.middleCoordinates;
+            var middle = {
+                x: Math.round((start.x + end.x) / 2),
+                y: Math.round((start.y + end.y) / 2)
+            };
             var xDistance = end.x - start.x;
             var yDistance = end.y - start.y;
             var dx = Math.sign(xDistance);
@@ -3626,29 +3743,29 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
             switch (majorDirection) {
                 case 'HORIZONTAL':
                     while (x !== middle.x) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         x += dx;
                     }
                     while (y !== end.y) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         y += dy;
                     }
                     while (x !== end.x) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         x += dx;
                     }
                     break;
                 case 'VERTICAL':
                     while (y !== middle.y) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         y += dy;
                     }
                     while (x !== end.x) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         x += dx;
                     }
                     while (y !== end.y) {
-                        tiles[y][x] = types_15.TileType.FLOOR_HALL;
+                        tiles[y][x] = types_16.TileType.FLOOR_HALL;
                         y += dy;
                     }
                     break;
@@ -3677,13 +3794,6 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                 this_6._subtract(internalConnections, orphanedInternalConnections);
                 removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
                 console.log("stripping: " + orphanedConnections.length + ", " + orphanedInternalConnections.length);
-                var missedOrphans = externalConnections.filter(function (connection) {
-                    return _this._isOrphanedConnection(connection, internalConnections);
-                });
-                if (missedOrphans.length > 0 && !removedAnyConnections) {
-                    console.log('fuck, missed orphans: ' + missedOrphans.map(this_6._connectionToString).join('; '));
-                    debugger;
-                }
             };
             var this_6 = this;
             do {
@@ -3754,7 +3864,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
     }(DungeonGenerator_2.default));
     exports.default = RoomCorridorDungeonGenerator2;
 });
-define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/BlobDungeonGenerator", "types/types", "maps/generation/RoomCorridorDungeonGenerator2"], function (require, exports, ItemFactory_1, UnitFactory_1, BlobDungeonGenerator_1, types_16, RoomCorridorDungeonGenerator2_1) {
+define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/UnitFactory", "maps/generation/BlobDungeonGenerator", "types/types", "maps/generation/RoomCorridorDungeonGenerator2"], function (require, exports, ItemFactory_1, UnitFactory_1, BlobDungeonGenerator_1, types_17, RoomCorridorDungeonGenerator2_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
@@ -3763,19 +3873,19 @@ define("maps/MapFactory", ["require", "exports", "items/ItemFactory", "units/Uni
     }
     function _getDungeonGenerator(mapLayout, tileSet) {
         switch (mapLayout) {
-            case types_16.MapLayout.ROOMS_AND_CORRIDORS: {
+            case types_17.MapLayout.ROOMS_AND_CORRIDORS: {
                 var minRoomDimension = 3;
                 var maxRoomDimension = 7;
                 // return new RoomCorridorDungeonGenerator(
                 return new RoomCorridorDungeonGenerator2_1.default(tileSet, minRoomDimension, maxRoomDimension);
             }
-            case types_16.MapLayout.BLOB:
+            case types_17.MapLayout.BLOB:
                 return new BlobDungeonGenerator_1.default(tileSet);
         }
     }
     exports.default = { createRandomMap: createRandomMap };
 });
-define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_9, types_17, SpriteFactory_5) {
+define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/Colors", "types/types", "graphics/sprites/SpriteFactory"], function (require, exports, ImageSupplier_4, Colors_9, types_18, SpriteFactory_5) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3798,22 +3908,22 @@ define("maps/TileSets", ["require", "exports", "graphics/ImageSupplier", "types/
         return tileSet;
     }
     var dungeonFilenames = (_a = {},
-        _a[types_17.TileType.FLOOR] = ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
-        _a[types_17.TileType.FLOOR_HALL] = ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
-        _a[types_17.TileType.WALL_TOP] = [null],
-        _a[types_17.TileType.WALL_HALL] = ['dungeon/tile_wall_hall'],
-        _a[types_17.TileType.WALL] = ['dungeon/tile_wall'],
-        _a[types_17.TileType.STAIRS_DOWN] = ['stairs_down2'],
-        _a[types_17.TileType.NONE] = [null],
+        _a[types_18.TileType.FLOOR] = ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
+        _a[types_18.TileType.FLOOR_HALL] = ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
+        _a[types_18.TileType.WALL_TOP] = [null],
+        _a[types_18.TileType.WALL_HALL] = ['dungeon/tile_wall_hall'],
+        _a[types_18.TileType.WALL] = ['dungeon/tile_wall'],
+        _a[types_18.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _a[types_18.TileType.NONE] = [null],
         _a);
     var caveFilenames = (_b = {},
-        _b[types_17.TileType.FLOOR] = ['cave/tile_floor', 'cave/tile_floor_2'],
-        _b[types_17.TileType.FLOOR_HALL] = ['cave/tile_floor', 'cave/tile_floor_2'],
-        _b[types_17.TileType.WALL_TOP] = [],
-        _b[types_17.TileType.WALL_HALL] = ['cave/tile_wall'],
-        _b[types_17.TileType.WALL] = ['cave/tile_wall'],
-        _b[types_17.TileType.STAIRS_DOWN] = ['stairs_down2'],
-        _b[types_17.TileType.NONE] = [null],
+        _b[types_18.TileType.FLOOR] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_18.TileType.FLOOR_HALL] = ['cave/tile_floor', 'cave/tile_floor_2'],
+        _b[types_18.TileType.WALL_TOP] = [],
+        _b[types_18.TileType.WALL_HALL] = ['cave/tile_wall'],
+        _b[types_18.TileType.WALL] = ['cave/tile_wall'],
+        _b[types_18.TileType.STAIRS_DOWN] = ['stairs_down2'],
+        _b[types_18.TileType.NONE] = [null],
         _b);
     var TileSets = {
         DUNGEON: _mapFilenames(dungeonFilenames),
@@ -3961,7 +4071,7 @@ define("sounds/Suites", ["require", "exports", "sounds/AudioUtils"], function (r
     })();
     exports.SUITE_4 = SUITE_4;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_2, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_10, types_18, MapUtils_9, Suites_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_2, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_10, types_19, MapUtils_10, Suites_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
@@ -3971,7 +4081,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var state = jwb.state;
         if (index >= state.maps.length) {
             Music_2.default.stop();
-            jwb.state.screen = types_18.GameScreen.VICTORY;
+            jwb.state.screen = types_19.GameScreen.VICTORY;
         }
         else {
             state.mapIndex = index;
@@ -3993,14 +4103,12 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function _initState() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            //() => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 50, 40, 0, 0),
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 24, 24, 0, 0); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 28, 22, 9, 4); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 30, 23, 10, 4); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 11, 3); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3); },
-            function () { return MapFactory_1.default.createRandomMap(types_18.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3); }
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 40, 30, 12, 5); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 40, 30, 13, 4); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 40, 30, 14, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3); }
         ]);
     }
     function startGame() {
@@ -4022,10 +4130,10 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var playerUnit = jwb.state.playerUnit;
         var map = jwb.state.getMap();
         map.rooms.forEach(function (room) {
-            if (MapUtils_9.contains(room, playerUnit)) {
+            if (MapUtils_10.contains(room, playerUnit)) {
                 for (var y = room.top; y < room.top + room.height; y++) {
                     for (var x = room.left; x < room.left + room.width; x++) {
-                        if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
+                        if (!MapUtils_10.isTileRevealed({ x: x, y: y })) {
                             map.revealedTiles.push({ x: x, y: y });
                         }
                     }
@@ -4035,7 +4143,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         var radius = 2;
         for (var y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
             for (var x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
-                if (!MapUtils_9.isTileRevealed({ x: x, y: y })) {
+                if (!MapUtils_10.isTileRevealed({ x: x, y: y })) {
                     map.revealedTiles.push({ x: x, y: y });
                 }
             }
@@ -4043,7 +4151,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/SoundFX", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, SoundFX_5, actions_2, types_19) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/SoundFX", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, SoundFX_5, actions_2, types_20) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -4129,7 +4237,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var _a, _b, _c, _d;
         var state = jwb.state;
         switch (state.screen) {
-            case types_19.GameScreen.GAME:
+            case types_20.GameScreen.GAME:
                 var dx_1;
                 var dy_1;
                 switch (command) {
@@ -4164,7 +4272,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
-            case types_19.GameScreen.INVENTORY:
+            case types_20.GameScreen.INVENTORY:
                 var inventory = state.playerUnit.inventory;
                 switch (command) {
                     case KeyCommand.UP:
@@ -4185,10 +4293,10 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         break;
                 }
                 return jwb.renderer.render();
-            case types_19.GameScreen.TITLE:
-            case types_19.GameScreen.VICTORY:
-            case types_19.GameScreen.GAME_OVER:
-            case types_19.GameScreen.MINIMAP:
+            case types_20.GameScreen.TITLE:
+            case types_20.GameScreen.VICTORY:
+            case types_20.GameScreen.GAME_OVER:
+            case types_20.GameScreen.MINIMAP:
                 return PromiseUtils_9.resolvedPromise();
             default:
                 throw "Invalid game screen " + state.screen;
@@ -4198,7 +4306,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var state = jwb.state;
         var playerUnit = state.playerUnit;
         switch (state.screen) {
-            case types_19.GameScreen.GAME: {
+            case types_20.GameScreen.GAME: {
                 var mapIndex = state.mapIndex;
                 var map = state.getMap();
                 var x = playerUnit.x, y = playerUnit.y;
@@ -4210,28 +4318,28 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     ItemUtils_1.pickupItem(playerUnit, item);
                     map.removeItem({ x: x, y: y });
                 }
-                else if (map.getTile({ x: x, y: y }).type === types_19.TileType.STAIRS_DOWN) {
+                else if (map.getTile({ x: x, y: y }).type === types_20.TileType.STAIRS_DOWN) {
                     SoundFX_5.playSound(Sounds_5.default.DESCEND_STAIRS);
                     actions_2.loadMap(mapIndex + 1);
                 }
                 return TurnHandler_1.default.playTurn(null);
             }
-            case types_19.GameScreen.INVENTORY: {
+            case types_20.GameScreen.INVENTORY: {
                 var playerUnit_1 = state.playerUnit;
                 var selectedItem = playerUnit_1.inventory.selectedItem;
                 if (!!selectedItem) {
-                    state.screen = types_19.GameScreen.GAME;
+                    state.screen = types_20.GameScreen.GAME;
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
                 return PromiseUtils_9.resolvedPromise();
             }
-            case types_19.GameScreen.TITLE:
-                state.screen = types_19.GameScreen.GAME;
+            case types_20.GameScreen.TITLE:
+                state.screen = types_20.GameScreen.GAME;
                 return actions_2.startGame();
-            case types_19.GameScreen.VICTORY:
-            case types_19.GameScreen.GAME_OVER:
-                state.screen = types_19.GameScreen.GAME;
+            case types_20.GameScreen.VICTORY:
+            case types_20.GameScreen.GAME_OVER:
+                state.screen = types_20.GameScreen.GAME;
                 return actions_2.restartGame();
             default:
                 throw "Unknown game screen: " + state.screen;
@@ -4240,11 +4348,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleTab() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_19.GameScreen.INVENTORY:
-                state.screen = types_19.GameScreen.GAME;
+            case types_20.GameScreen.INVENTORY:
+                state.screen = types_20.GameScreen.GAME;
                 break;
             default:
-                state.screen = types_19.GameScreen.INVENTORY;
+                state.screen = types_20.GameScreen.INVENTORY;
                 break;
         }
         return renderer.render();
@@ -4252,12 +4360,12 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleMap() {
         var state = jwb.state, renderer = jwb.renderer;
         switch (state.screen) {
-            case types_19.GameScreen.MINIMAP:
-                state.screen = types_19.GameScreen.GAME;
+            case types_20.GameScreen.MINIMAP:
+                state.screen = types_20.GameScreen.GAME;
                 break;
-            case types_19.GameScreen.GAME:
-            case types_19.GameScreen.INVENTORY:
-                state.screen = types_19.GameScreen.MINIMAP;
+            case types_20.GameScreen.GAME:
+            case types_20.GameScreen.INVENTORY:
+                state.screen = types_20.GameScreen.MINIMAP;
                 break;
             default:
                 break;
@@ -4273,7 +4381,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
  * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
  * that are only nitended for debugging purposes.
  */
-define("core/debug", ["require", "exports", "types/types"], function (require, exports, types_20) {
+define("core/debug", ["require", "exports", "types/types"], function (require, exports, types_21) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function revealMap() {
@@ -4288,7 +4396,7 @@ define("core/debug", ["require", "exports", "types/types"], function (require, e
     }
     exports.killEnemies = killEnemies;
     function renderMinimap() {
-        jwb.state.screen = types_20.GameScreen.MINIMAP;
+        jwb.state.screen = types_21.GameScreen.MINIMAP;
     }
     exports.renderMinimap = renderMinimap;
 });
@@ -4300,48 +4408,7 @@ define("core/main", ["require", "exports", "core/actions", "core/debug"], functi
     exports.revealMap = debug_1.revealMap;
     exports.killEnemies = debug_1.killEnemies;
 });
-define("maps/generation/TileEligibilityChecker", ["require", "exports", "types/types", "maps/MapUtils"], function (require, exports, types_21, MapUtils_10) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var TileEligibilityChecker = /** @class */ (function () {
-        function TileEligibilityChecker() {
-        }
-        TileEligibilityChecker.prototype.isBlocked = function (_a, section, exits) {
-            var x = _a.x, y = _a.y;
-            // can't draw a path through an existing room or a wall
-            var blockedTileTypes = [types_21.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ types_21.TileType.WALL, types_21.TileType.WALL_HALL, types_21.TileType.WALL_TOP];
-            if (exits.some(function (exit) { return MapUtils_10.coordinatesEquals({ x: x, y: y }, exit); })) {
-                return false;
-            }
-            else if (section.tiles[y][x] === types_21.TileType.NONE || section.tiles[y][x] === types_21.TileType.FLOOR_HALL) {
-                // skip the check if we're within 1 tile vertically of an exit
-                var isNextToExit = [-2, -1, 1, 2].some(function (dy) { return (exits.some(function (exit) { return MapUtils_10.coordinatesEquals(exit, { x: x, y: y + dy }); })); });
-                if (isNextToExit) {
-                    return false;
-                }
-                // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-                for (var _i = 0, _b = [-2, -1, 1, 2]; _i < _b.length; _i++) {
-                    var dy = _b[_i];
-                    if ((y + dy >= 0) && (y + dy < section.height)) {
-                        var tile = section.tiles[y + dy][x];
-                        if (blockedTileTypes.indexOf(tile) > -1) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-            else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
-                return true;
-            }
-            console.error('how\'d we get here?');
-            return true;
-        };
-        return TileEligibilityChecker;
-    }());
-    exports.default = TileEligibilityChecker;
-});
-define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "utils/Pathfinder", "maps/generation/TileEligibilityChecker", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, Pathfinder_2, TileEligibilityChecker_1, types_22, RandomUtils_11, ArrayUtils_5, MapUtils_11) {
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "utils/Pathfinder", "maps/generation/TileEligibilityChecker", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, Pathfinder_3, TileEligibilityChecker_2, types_22, RandomUtils_11, ArrayUtils_5, MapUtils_11) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -4632,7 +4699,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
          */
         RoomCorridorDungeonGenerator.prototype._joinExits = function (firstExit, secondExit, section) {
             var _this = this;
-            var tileChecker = new TileEligibilityChecker_1.default();
+            var tileChecker = new TileEligibilityChecker_2.default();
             var unblockedTiles = [];
             for (var y = 0; y < section.height; y++) {
                 for (var x = 0; x < section.width; x++) {
@@ -4642,7 +4709,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                 }
             }
             var tileCostCalculator = function (first, second) { return _this._calculateTileCost(section, first, second); };
-            var path = new Pathfinder_2.default(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
+            var path = new Pathfinder_3.default(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
             path.forEach(function (_a) {
                 var x = _a.x, y = _a.y;
                 section.tiles[y][x] = types_22.TileType.FLOOR_HALL;
