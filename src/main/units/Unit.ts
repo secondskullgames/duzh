@@ -8,6 +8,7 @@ import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } f
 import { UnitAI } from './UnitAI';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { playSound } from '../sounds/SoundFX';
+import { Ability } from './UnitAbilities';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -32,6 +33,7 @@ class Unit implements Entity {
   aiHandler?: UnitAI;
   activity: Activity;
   direction: Direction | null;
+  private remainingCooldowns: Map<Ability, number>;
 
   constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
     this.unitClass = unitClass;
@@ -54,13 +56,14 @@ class Unit implements Entity {
     this.aiHandler = unitClass.aiHandler;
     this.activity = Activity.STANDING;
     this.direction = null;
+    this.remainingCooldowns = new Map();
 
     while (this.level < level) {
       this._levelUp(false);
     }
   }
 
-  _regenLife() {
+  private _regenLife() {
     const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
     this.lifeRemainder += lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
@@ -68,9 +71,17 @@ class Unit implements Entity {
     this.life = Math.min(this.life + deltaLife, this.maxLife);
   };
 
+  private _updateCooldowns() {
+    // I hate javascript, wtf is this callback signature
+    this.remainingCooldowns.forEach((cooldown, ability, map) => {
+      map.set(ability, Math.max(cooldown - 1, 0));
+    });
+  }
+
   update(): Promise<void> {
     return new Promise(resolve => {
       this._regenLife();
+      this._updateCooldowns();
       if (!!this.queuedOrder) {
         const { queuedOrder } = this;
         this.queuedOrder = null;
@@ -171,6 +182,15 @@ class Unit implements Entity {
       resolve();
     });
   };
+
+  getCooldown(ability: Ability): number {
+    return this.remainingCooldowns.get(ability) || 0
+  }
+
+  useAbility(ability: Ability): Promise<any> {
+    this.remainingCooldowns.set(ability, ability.cooldown);
+    return resolvedPromise();
+  }
 }
 
 export default Unit;

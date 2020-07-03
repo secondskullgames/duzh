@@ -22,6 +22,7 @@ var INVENTORY_LEFT = 2 * TILE_WIDTH;
 var INVENTORY_TOP = 2 * TILE_HEIGHT;
 var INVENTORY_WIDTH = 16 * TILE_WIDTH;
 var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
+var INVENTORY_MARGIN = 12;
 var LINE_HEIGHT = 16;
 var GAME_OVER_FILENAME = 'gameover';
 var TITLE_FILENAME = 'title';
@@ -213,11 +214,11 @@ var SpriteRenderer = /** @class */ (function () {
             .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT); })
             .then(function () {
             // draw equipment
-            var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-            var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+            var equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+            var itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
             var promises = [];
-            promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_1.default.WHITE, 'center'));
-            promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_1.default.WHITE, 'center'));
+            promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors_1.default.WHITE, 'center'));
+            promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors_1.default.WHITE, 'center'));
             // draw equipment items
             // for now, just display them all in one list
             var y = INVENTORY_TOP + 64;
@@ -231,7 +232,7 @@ var SpriteRenderer = /** @class */ (function () {
             var categoryWidth = 60;
             var xOffset = 4;
             for (var i = 0; i < inventoryCategories.length; i++) {
-                var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+                var x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
                 var top_1 = INVENTORY_TOP + 40;
                 promises.push(_this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: top_1 }, Colors_1.default.WHITE, 'center'));
                 if (inventoryCategories[i] === inventory.selectedCategory) {
@@ -242,7 +243,7 @@ var SpriteRenderer = /** @class */ (function () {
             // draw inventory items
             if (inventory.selectedCategory) {
                 var items = inventory.get(inventory.selectedCategory);
-                var x = inventoryLeft + 8;
+                var x = itemsLeft + 8;
                 for (var i = 0; i < items.length; i++) {
                     var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                     var color = void 0;

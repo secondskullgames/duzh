@@ -1,40 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Sounds_1 = require("../sounds/Sounds");
 var types_1 = require("../types/types");
-var SoundFX_1 = require("../sounds/SoundFX");
 var Animations_1 = require("../graphics/animations/Animations");
-function moveOrAttack(unit, _a) {
-    var x = _a.x, y = _a.y;
-    var _b = jwb.state, messages = _b.messages, playerUnit = _b.playerUnit;
-    var map = jwb.state.getMap();
-    unit.direction = { dx: x - unit.x, dy: y - unit.y };
-    return new Promise(function (resolve) {
-        var _a;
-        if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
-            _a = [x, y], unit.x = _a[0], unit.y = _a[1];
-            if (unit === playerUnit) {
-                SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
-            }
-            resolve();
-        }
-        else {
-            var targetUnit_1 = map.getUnit({ x: x, y: y });
-            if (!!targetUnit_1) {
-                var damage_1 = unit.getDamage();
-                messages.push(unit.name + " hit " + targetUnit_1.name);
-                messages.push("for " + damage_1 + " damage!");
-                Animations_1.playAttackingAnimation(unit, targetUnit_1)
-                    .then(function () { return targetUnit_1.takeDamage(damage_1, unit); })
-                    .then(function () { return resolve(); });
-            }
-            else {
-                resolve();
-            }
-        }
-    });
+var UnitAbilities_1 = require("./UnitAbilities");
+function attack(unit, target) {
+    var damage = unit.getDamage();
+    jwb.state.messages.push(unit.name + " hit " + target.name);
+    jwb.state.messages.push("for " + damage + " damage!");
+    return Animations_1.playAttackingAnimation(unit, target)
+        .then(function () { return target.takeDamage(damage, unit); });
 }
-exports.moveOrAttack = moveOrAttack;
+exports.attack = attack;
+function heavyAttack(unit, target) {
+    var damage = unit.getDamage() * 2;
+    jwb.state.messages.push(unit.name + " hit " + target.name);
+    jwb.state.messages.push("for " + damage + " damage!");
+    return unit.useAbility(UnitAbilities_1.default.HEAVY_ATTACK) // TODO this should not be hardcoded here
+        .then(function () { return Animations_1.playAttackingAnimation(unit, target); })
+        .then(function () { return target.takeDamage(damage, unit); });
+}
+exports.heavyAttack = heavyAttack;
 function fireProjectile(unit, _a) {
     var dx = _a.dx, dy = _a.dy;
     unit.direction = { dx: dx, dy: dy };
@@ -57,11 +42,11 @@ function fireProjectile(unit, _a) {
         var targetUnit = map.getUnit({ x: x, y: y });
         if (!!targetUnit) {
             var messages = jwb.state.messages;
-            var damage_2 = unit.getRangedDamage();
+            var damage_1 = unit.getRangedDamage();
             messages.push(unit.name + " hit " + targetUnit.name);
-            messages.push("for " + damage_2 + " damage!");
+            messages.push("for " + damage_1 + " damage!");
             Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
-                .then(function () { return targetUnit.takeDamage(damage_2, unit); })
+                .then(function () { return targetUnit.takeDamage(damage_1, unit); })
                 .then(function () { return resolve(); });
         }
         else {

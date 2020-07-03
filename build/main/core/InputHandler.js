@@ -8,6 +8,7 @@ var UnitUtils_1 = require("../units/UnitUtils");
 var SoundFX_1 = require("../sounds/SoundFX");
 var actions_1 = require("./actions");
 var types_1 = require("../types/types");
+var UnitAbilities_1 = require("../units/UnitAbilities");
 var KeyCommand;
 (function (KeyCommand) {
     KeyCommand["UP"] = "UP";
@@ -22,6 +23,7 @@ var KeyCommand;
     KeyCommand["ENTER"] = "ENTER";
     KeyCommand["SPACEBAR"] = "SPACEBAR";
     KeyCommand["M"] = "M";
+    KeyCommand["KEY_1"] = "1";
 })(KeyCommand || (KeyCommand = {}));
 function _mapToCommand(e) {
     switch (e.key) {
@@ -50,10 +52,14 @@ function _mapToCommand(e) {
         case 'm':
         case 'M':
             return KeyCommand.M;
+        case '1':
+            return KeyCommand.KEY_1;
     }
     return null;
 }
+// global state
 var BUSY = false;
+var QUEUED_ABILITY = null;
 function keyHandlerWrapper(e) {
     if (!BUSY) {
         BUSY = true;
@@ -82,6 +88,8 @@ function keyHandler(e) {
             return _handleTab();
         case KeyCommand.M:
             return _handleMap();
+        case KeyCommand.KEY_1:
+            return _handleAbility(command);
         default:
     }
     return PromiseUtils_1.resolvedPromise();
@@ -122,7 +130,11 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_RIGHT:
                         return function (u) { return UnitUtils_1.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
                     default:
-                        return function (u) { return UnitUtils_1.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
+                        if (QUEUED_ABILITY === UnitAbilities_1.default.HEAVY_ATTACK) {
+                            QUEUED_ABILITY = null;
+                            return function (u) { return UnitAbilities_1.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                        }
+                        return function (u) { return UnitAbilities_1.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                 }
             })();
             return TurnHandler_1.default.playTurn(queuedOrder);
@@ -225,6 +237,20 @@ function _handleMap() {
             break;
     }
     return renderer.render();
+}
+function _handleAbility(command) {
+    var playerUnit = jwb.state.playerUnit;
+    switch (command) {
+        case KeyCommand.KEY_1:
+            if (playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK) <= 0) {
+                QUEUED_ABILITY = UnitAbilities_1.default.HEAVY_ATTACK;
+            }
+            else {
+                console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));
+            }
+            break;
+    }
+    return PromiseUtils_1.resolvedPromise();
 }
 function attachEvents() {
     window.onkeydown = keyHandlerWrapper;

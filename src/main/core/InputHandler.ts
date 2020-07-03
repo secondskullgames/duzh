@@ -3,10 +3,11 @@ import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
-import { fireProjectile, moveOrAttack } from '../units/UnitUtils';
+import { fireProjectile } from '../units/UnitUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, restartGame, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
+import UnitAbilities, { Ability } from '../units/UnitAbilities';
 
 enum KeyCommand {
   UP = 'UP',
@@ -20,7 +21,8 @@ enum KeyCommand {
   TAB = 'TAB',
   ENTER = 'ENTER',
   SPACEBAR = 'SPACEBAR',
-  M = 'M'
+  M = 'M',
+  KEY_1 = '1'
 }
 
 function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
@@ -50,11 +52,16 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
     case 'm':
     case 'M':
       return KeyCommand.M;
+    case '1':
+      return KeyCommand.KEY_1;
   }
   return null;
 }
 
+// global state
+
 let BUSY = false;
+let QUEUED_ABILITY: Ability | null = null;
 
 function keyHandlerWrapper(e: KeyboardEvent) {
   if (!BUSY) {
@@ -86,6 +93,8 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
       return _handleTab();
     case KeyCommand.M:
       return _handleMap();
+    case KeyCommand.KEY_1:
+      return _handleAbility(command);
     default:
   }
   return resolvedPromise();
@@ -128,7 +137,11 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           case KeyCommand.SHIFT_RIGHT:
             return (u: Unit) => fireProjectile(u, { dx, dy });
           default:
-            return (u: Unit) => moveOrAttack(u, { x: u.x + dx, y: u.y + dy });
+            if (QUEUED_ABILITY === UnitAbilities.HEAVY_ATTACK) {
+              QUEUED_ABILITY = null;
+              return (u: Unit) => UnitAbilities.HEAVY_ATTACK.use(u, { dx, dy });
+            }
+            return (u: Unit) => UnitAbilities.ATTACK.use(u, { dx, dy });
         }
       })();
       return TurnHandler.playTurn(queuedOrder);
@@ -238,6 +251,20 @@ function _handleMap(): Promise<void> {
       break;
   }
   return renderer.render();
+}
+
+function _handleAbility(command: KeyCommand): Promise<void> {
+  const { playerUnit } = jwb.state;
+  switch (command) {
+    case KeyCommand.KEY_1:
+      if (playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK) <= 0) {
+        QUEUED_ABILITY = UnitAbilities.HEAVY_ATTACK;
+      } else {
+        console.log(`HEAVY_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
+      }
+      break;
+  }
+  return resolvedPromise();
 }
 
 function attachEvents() {

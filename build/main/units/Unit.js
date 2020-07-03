@@ -31,6 +31,7 @@ var Unit = /** @class */ (function () {
         this.aiHandler = unitClass.aiHandler;
         this.activity = types_1.Activity.STANDING;
         this.direction = null;
+        this.remainingCooldowns = new Map();
         while (this.level < level) {
             this._levelUp(false);
         }
@@ -43,10 +44,17 @@ var Unit = /** @class */ (function () {
         this.life = Math.min(this.life + deltaLife, this.maxLife);
     };
     ;
+    Unit.prototype._updateCooldowns = function () {
+        // I hate javascript, wtf is this callback signature
+        this.remainingCooldowns.forEach(function (cooldown, ability, map) {
+            map.set(ability, Math.max(cooldown - 1, 0));
+        });
+    };
     Unit.prototype.update = function () {
         var _this = this;
         return new Promise(function (resolve) {
             _this._regenLife();
+            _this._updateCooldowns();
             if (!!_this.queuedOrder) {
                 var queuedOrder = _this.queuedOrder;
                 _this.queuedOrder = null;
@@ -152,6 +160,13 @@ var Unit = /** @class */ (function () {
         });
     };
     ;
+    Unit.prototype.getCooldown = function (ability) {
+        return this.remainingCooldowns.get(ability) || 0;
+    };
+    Unit.prototype.useAbility = function (ability) {
+        this.remainingCooldowns.set(ability, ability.cooldown);
+        return PromiseUtils_1.resolvedPromise();
+    };
     return Unit;
 }());
 exports.default = Unit;

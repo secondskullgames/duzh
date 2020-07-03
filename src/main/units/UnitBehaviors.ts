@@ -2,11 +2,11 @@ import Pathfinder from '../utils/Pathfinder';
 import Unit from './Unit';
 import { randChoice } from '../utils/RandomUtils';
 import { Coordinates, Rect } from '../types/types';
-import { moveOrAttack } from './UnitUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { comparingReversed } from '../utils/ArrayUtils';
 import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 import Directions from '../types/Directions';
+import UnitAbilities from './UnitAbilities';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
@@ -29,7 +29,8 @@ function _wanderAndAttack(unit: Unit): Promise<void> {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    return moveOrAttack(unit, { x, y });
+    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
+    return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
   return resolvedPromise();
 }
@@ -48,7 +49,8 @@ function _wander(unit: Unit): Promise<void> {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    return moveOrAttack(unit, { x, y });
+    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
+    return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
   return resolvedPromise();
 }
@@ -78,7 +80,8 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
     const { x, y } = path[1]; // first tile is the unit's own tile
     const unitAtPoint = map.getUnit({ x, y });
     if (!unitAtPoint || unitAtPoint === playerUnit) {
-      return moveOrAttack(unit, { x, y });
+      const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
+      return UnitAbilities.ATTACK.use(unit, { dx, dy });
     }
   }
   return resolvedPromise();
@@ -105,7 +108,8 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   if (tiles.length > 0) {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
     const { x, y } = orderedTiles[0];
-    return moveOrAttack(unit, { x, y });
+    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
+    return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
   return resolvedPromise();
 }

@@ -3,33 +3,25 @@ import Sounds from '../sounds/Sounds';
 import { Coordinates, Direction, EquipmentSlot } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
+import UnitAbilities from './UnitAbilities';
 
-function moveOrAttack(unit: Unit, { x, y }: Coordinates): Promise<void> {
-  const { messages, playerUnit } = jwb.state;
-  const map = jwb.state.getMap();
-  unit.direction = { dx: x - unit.x, dy: y - unit.y };
+function attack(unit: Unit, target: Unit): Promise<void> {
+  const damage = unit.getDamage();
+  jwb.state.messages.push(`${unit.name} hit ${target.name}`);
+  jwb.state.messages.push(`for ${damage} damage!`);
 
-  return new Promise(resolve => {
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        playSound(Sounds.FOOTSTEP);
-      }
-      resolve();
-    } else {
-      const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
-        const damage = unit.getDamage();
-        messages.push(`${unit.name} hit ${targetUnit.name}`);
-        messages.push(`for ${damage} damage!`);
-        playAttackingAnimation(unit, targetUnit)
-          .then(() => targetUnit.takeDamage(damage, unit))
-          .then(() => resolve());
-      } else {
-        resolve();
-      }
-    }
-  });
+  return playAttackingAnimation(unit, target)
+    .then(() => target.takeDamage(damage, unit));
+}
+
+function heavyAttack(unit: Unit, target: Unit): Promise<void> {
+  const damage = unit.getDamage() * 2;
+  jwb.state.messages.push(`${unit.name} hit ${target.name}`);
+  jwb.state.messages.push(`for ${damage} damage!`);
+
+  return unit.useAbility(UnitAbilities.HEAVY_ATTACK) // TODO this should not be hardcoded here
+    .then(() => playAttackingAnimation(unit, target))
+    .then(() => target.takeDamage(damage, unit));
 }
 
 function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
@@ -70,6 +62,7 @@ function fireProjectile(unit: Unit, { dx, dy }: Direction): Promise<void> {
 }
 
 export {
-  moveOrAttack,
+  attack,
+  heavyAttack,
   fireProjectile
 };
