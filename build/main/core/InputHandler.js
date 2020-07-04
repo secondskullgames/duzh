@@ -4,7 +4,6 @@ var TurnHandler_1 = require("./TurnHandler");
 var Sounds_1 = require("../sounds/Sounds");
 var ItemUtils_1 = require("../items/ItemUtils");
 var PromiseUtils_1 = require("../utils/PromiseUtils");
-var UnitUtils_1 = require("../units/UnitUtils");
 var SoundFX_1 = require("../sounds/SoundFX");
 var actions_1 = require("./actions");
 var types_1 = require("../types/types");
@@ -128,7 +127,7 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_DOWN:
                     case KeyCommand.SHIFT_LEFT:
                     case KeyCommand.SHIFT_RIGHT:
-                        return function (u) { return UnitUtils_1.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
+                        return function (u) { return UnitAbilities_1.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                     default:
                         if (QUEUED_ABILITY === UnitAbilities_1.default.HEAVY_ATTACK) {
                             QUEUED_ABILITY = null;

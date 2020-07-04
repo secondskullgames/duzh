@@ -7,6 +7,7 @@ var Music_1 = require("../sounds/Music");
 var types_1 = require("../types/types");
 var PromiseUtils_1 = require("../utils/PromiseUtils");
 var SoundFX_1 = require("../sounds/SoundFX");
+var UnitAbilities_1 = require("./UnitAbilities");
 var LIFE_PER_TURN_MULTIPLIER = 0.005;
 var Unit = /** @class */ (function () {
     function Unit(unitClass, name, level, _a) {
@@ -32,6 +33,7 @@ var Unit = /** @class */ (function () {
         this.activity = types_1.Activity.STANDING;
         this.direction = null;
         this.remainingCooldowns = new Map();
+        this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK];
         while (this.level < level) {
             this._levelUp(false);
         }

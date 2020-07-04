@@ -3,7 +3,6 @@ import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
-import { fireProjectile } from '../units/UnitUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, restartGame, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
@@ -135,7 +134,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           case KeyCommand.SHIFT_DOWN:
           case KeyCommand.SHIFT_LEFT:
           case KeyCommand.SHIFT_RIGHT:
-            return (u: Unit) => fireProjectile(u, { dx, dy });
+            return (u: Unit) => UnitAbilities.SHOOT_ARROW.use(u, { dx, dy });
           default:
             if (QUEUED_ABILITY === UnitAbilities.HEAVY_ATTACK) {
               QUEUED_ABILITY = null;

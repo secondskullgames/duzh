@@ -14,12 +14,16 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Sounds_1 = require("../sounds/Sounds");
+var types_1 = require("../types/types");
 var SoundFX_1 = require("../sounds/SoundFX");
 var UnitUtils_1 = require("./UnitUtils");
+var Animations_1 = require("../graphics/animations/Animations");
 var Ability = /** @class */ (function () {
-    function Ability(name, cooldown) {
+    function Ability(name, cooldown, icon) {
+        if (icon === void 0) { icon = null; }
         this.name = name;
         this.cooldown = cooldown;
+        this.icon = icon;
     }
     return Ability;
 }());
@@ -64,7 +68,7 @@ var NormalAttack = /** @class */ (function (_super) {
 var HeavyAttack = /** @class */ (function (_super) {
     __extends(HeavyAttack, _super);
     function HeavyAttack() {
-        return _super.call(this, 'HEAVY_ATTACK', 10) || this;
+        return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
     }
     HeavyAttack.prototype.use = function (unit, direction) {
         if (!direction) {
@@ -98,9 +102,55 @@ var HeavyAttack = /** @class */ (function (_super) {
     };
     return HeavyAttack;
 }(Ability));
+var ShootArrow = /** @class */ (function (_super) {
+    __extends(ShootArrow, _super);
+    function ShootArrow() {
+        return _super.call(this, 'SHOOT_ARROW', 0) || this;
+    }
+    ShootArrow.prototype.use = function (unit, direction) {
+        if (!direction) {
+            throw 'ShootArrow requires a direction!';
+        }
+        var dx = direction.dx, dy = direction.dy;
+        unit.direction = { dx: dx, dy: dy };
+        return unit.sprite.update()
+            .then(function () { return jwb.renderer.render(); })
+            .then(function () { return new Promise(function (resolve) {
+            if (!unit.equipment.get(types_1.EquipmentSlot.RANGED_WEAPON)) {
+                // change direction and re-render, but don't do anything (don't spend a turn)
+                resolve();
+                return;
+            }
+            var map = jwb.state.getMap();
+            var coordinatesList = [];
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            while (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                coordinatesList.push({ x: x, y: y });
+                x += dx;
+                y += dy;
+            }
+            var targetUnit = map.getUnit({ x: x, y: y });
+            if (!!targetUnit) {
+                var messages = jwb.state.messages;
+                var damage_1 = unit.getRangedDamage();
+                messages.push(unit.name + " hit " + targetUnit.name);
+                messages.push("for " + damage_1 + " damage!");
+                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
+                    .then(function () { return targetUnit.takeDamage(damage_1, unit); })
+                    .then(function () { return resolve(); });
+            }
+            else {
+                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, null)
+                    .then(function () { return resolve(); });
+            }
+        }); });
+    };
+    return ShootArrow;
+}(Ability));
 var UnitAbilities = {
     ATTACK: new NormalAttack(),
-    HEAVY_ATTACK: new HeavyAttack()
+    HEAVY_ATTACK: new HeavyAttack(),
+    SHOOT_ARROW: new ShootArrow(),
 };
 exports.default = UnitAbilities;
 //# sourceMappingURL=UnitAbilities.js.map

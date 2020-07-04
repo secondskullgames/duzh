@@ -8,7 +8,7 @@ import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } f
 import { UnitAI } from './UnitAI';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { playSound } from '../sounds/SoundFX';
-import { Ability } from './UnitAbilities';
+import UnitAbilities, { Ability } from './UnitAbilities';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -33,7 +33,8 @@ class Unit implements Entity {
   aiHandler?: UnitAI;
   activity: Activity;
   direction: Direction | null;
-  private remainingCooldowns: Map<Ability, number>;
+  private readonly remainingCooldowns: Map<Ability, number>;
+  readonly abilities: Ability[];
 
   constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
     this.unitClass = unitClass;
@@ -57,6 +58,7 @@ class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = null;
     this.remainingCooldowns = new Map();
+    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK];
 
     while (this.level < level) {
       this._levelUp(false);

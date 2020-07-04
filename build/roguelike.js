@@ -1178,70 +1178,34 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return PromiseUtils_2.chainPromises(promises);
     }
 });
-define("units/UnitUtils", ["require", "exports", "types/types", "graphics/animations/Animations", "units/UnitAbilities"], function (require, exports, types_3, Animations_1, UnitAbilities_1) {
+define("units/UnitUtils", ["require", "exports", "graphics/animations/Animations", "units/UnitAbilities"], function (require, exports, Animations_1, UnitAbilities_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function attack(unit, target) {
         var damage = unit.getDamage();
-        jwb.state.messages.push(unit.name + " hit " + target.name);
-        jwb.state.messages.push("for " + damage + " damage!");
+        jwb.state.messages.push(unit.name + " hit " + target.name + " for " + damage + " damage!");
         return Animations_1.playAttackingAnimation(unit, target)
             .then(function () { return target.takeDamage(damage, unit); });
     }
     exports.attack = attack;
     function heavyAttack(unit, target) {
         var damage = unit.getDamage() * 2;
-        jwb.state.messages.push(unit.name + " hit " + target.name);
-        jwb.state.messages.push("for " + damage + " damage!");
+        jwb.state.messages.push(unit.name + " hit " + target.name + " for " + damage + " damage!");
         return unit.useAbility(UnitAbilities_1.default.HEAVY_ATTACK) // TODO this should not be hardcoded here
             .then(function () { return Animations_1.playAttackingAnimation(unit, target); })
             .then(function () { return target.takeDamage(damage, unit); });
     }
     exports.heavyAttack = heavyAttack;
-    function fireProjectile(unit, _a) {
-        var dx = _a.dx, dy = _a.dy;
-        unit.direction = { dx: dx, dy: dy };
-        return unit.sprite.update()
-            .then(function () { return jwb.renderer.render(); })
-            .then(function () { return new Promise(function (resolve) {
-            if (!unit.equipment.get(types_3.EquipmentSlot.RANGED_WEAPON)) {
-                // change direction and re-render, but don't do anything (don't spend a turn)
-                resolve();
-                return;
-            }
-            var map = jwb.state.getMap();
-            var coordinatesList = [];
-            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
-            while (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
-                coordinatesList.push({ x: x, y: y });
-                x += dx;
-                y += dy;
-            }
-            var targetUnit = map.getUnit({ x: x, y: y });
-            if (!!targetUnit) {
-                var messages = jwb.state.messages;
-                var damage_1 = unit.getRangedDamage();
-                messages.push(unit.name + " hit " + targetUnit.name);
-                messages.push("for " + damage_1 + " damage!");
-                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
-                    .then(function () { return targetUnit.takeDamage(damage_1, unit); })
-                    .then(function () { return resolve(); });
-            }
-            else {
-                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, null)
-                    .then(function () { return resolve(); });
-            }
-        }); });
-    }
-    exports.fireProjectile = fireProjectile;
 });
-define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "sounds/SoundFX", "units/UnitUtils"], function (require, exports, Sounds_1, SoundFX_1, UnitUtils_1) {
+define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/types", "sounds/SoundFX", "units/UnitUtils", "graphics/animations/Animations"], function (require, exports, Sounds_1, types_3, SoundFX_1, UnitUtils_1, Animations_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Ability = /** @class */ (function () {
-        function Ability(name, cooldown) {
+        function Ability(name, cooldown, icon) {
+            if (icon === void 0) { icon = null; }
             this.name = name;
             this.cooldown = cooldown;
+            this.icon = icon;
         }
         return Ability;
     }());
@@ -1286,7 +1250,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "sounds/So
     var HeavyAttack = /** @class */ (function (_super) {
         __extends(HeavyAttack, _super);
         function HeavyAttack() {
-            return _super.call(this, 'HEAVY_ATTACK', 10) || this;
+            return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
         }
         HeavyAttack.prototype.use = function (unit, direction) {
             if (!direction) {
@@ -1320,9 +1284,55 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "sounds/So
         };
         return HeavyAttack;
     }(Ability));
+    var ShootArrow = /** @class */ (function (_super) {
+        __extends(ShootArrow, _super);
+        function ShootArrow() {
+            return _super.call(this, 'SHOOT_ARROW', 0) || this;
+        }
+        ShootArrow.prototype.use = function (unit, direction) {
+            if (!direction) {
+                throw 'ShootArrow requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            unit.direction = { dx: dx, dy: dy };
+            return unit.sprite.update()
+                .then(function () { return jwb.renderer.render(); })
+                .then(function () { return new Promise(function (resolve) {
+                if (!unit.equipment.get(types_3.EquipmentSlot.RANGED_WEAPON)) {
+                    // change direction and re-render, but don't do anything (don't spend a turn)
+                    resolve();
+                    return;
+                }
+                var map = jwb.state.getMap();
+                var coordinatesList = [];
+                var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+                while (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    coordinatesList.push({ x: x, y: y });
+                    x += dx;
+                    y += dy;
+                }
+                var targetUnit = map.getUnit({ x: x, y: y });
+                if (!!targetUnit) {
+                    var messages = jwb.state.messages;
+                    var damage_1 = unit.getRangedDamage();
+                    messages.push(unit.name + " hit " + targetUnit.name);
+                    messages.push("for " + damage_1 + " damage!");
+                    Animations_2.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
+                        .then(function () { return targetUnit.takeDamage(damage_1, unit); })
+                        .then(function () { return resolve(); });
+                }
+                else {
+                    Animations_2.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, null)
+                        .then(function () { return resolve(); });
+                }
+            }); });
+        };
+        return ShootArrow;
+    }(Ability));
     var UnitAbilities = {
         ATTACK: new NormalAttack(),
-        HEAVY_ATTACK: new HeavyAttack()
+        HEAVY_ATTACK: new HeavyAttack(),
+        SHOOT_ARROW: new ShootArrow(),
     };
     exports.default = UnitAbilities;
 });
@@ -1736,7 +1746,7 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
         stop: stop
     };
 });
-define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2) {
+define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX", "units/UnitAbilities"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2, UnitAbilities_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1764,6 +1774,7 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.activity = types_5.Activity.STANDING;
             this.direction = null;
             this.remainingCooldowns = new Map();
+            this.abilities = [UnitAbilities_3.default.ATTACK, UnitAbilities_3.default.HEAVY_ATTACK];
             while (this.level < level) {
                 this._levelUp(false);
             }
@@ -2293,16 +2304,21 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
     var HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
     var HUD_MARGIN = 5;
+    var HUD_BORDER_MARGIN = 3;
     var INVENTORY_LEFT = 2 * TILE_WIDTH;
     var INVENTORY_TOP = 2 * TILE_HEIGHT;
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var INVENTORY_MARGIN = 12;
+    var ABILITIES_PANEL_HEIGHT = 36;
+    var ABILITIES_OUTER_MARGIN = 13;
+    var ABILITIES_INNER_MARGIN = 10;
+    var ABILITIES_Y_MARGIN = 5;
     var LINE_HEIGHT = 16;
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
     var VICTORY_FILENAME = 'victory';
-    var HUD_FILENAME = 'HUD';
+    var HUD_FILENAME = 'HUD2';
     var INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
     var SHADOW_FILENAME = 'shadow';
     var SpriteRenderer = /** @class */ (function () {
@@ -2358,11 +2374,13 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             actions_1.revealTiles();
             this._bufferContext.fillStyle = Colors_6.default.BLACK;
             this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+            // can't pass direct references to the functions because `this` won't be defined
             return PromiseUtils_7.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
                 function () { return _this._renderProjectiles(); },
                 function () { return _this._renderUnits(); },
+                function () { return _this._renderMessages(); },
                 function () { return _this._renderHUD(); }
             ]);
         };
@@ -2558,6 +2576,22 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return sprite.getImage()
                 .then(function (image) { return _this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
+        SpriteRenderer.prototype._renderMessages = function () {
+            var _bufferContext = this._bufferContext;
+            var messages = jwb.state.messages;
+            _bufferContext.fillStyle = Colors_6.default.BLACK;
+            _bufferContext.strokeStyle = Colors_6.default.BLACK;
+            var left = 0;
+            var top = 0;
+            var promises = [];
+            for (var i = 0; i < messages.length; i++) {
+                var y = top + (LINE_HEIGHT * i);
+                _bufferContext.fillStyle = Colors_6.default.BLACK;
+                _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
+            }
+            return Promise.all(promises);
+        };
         SpriteRenderer.prototype._renderHUD = function () {
             var _this = this;
             return this._renderHUDFrame()
@@ -2570,6 +2604,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderHUDFrame = function () {
             var _this = this;
             return ImageUtils_4.loadImage(HUD_FILENAME)
+                .then(function (imageData) { return ImageUtils_4.applyTransparentColor(imageData, Colors_6.default.WHITE); })
                 .then(createImageBitmap)
                 .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT); });
         };
@@ -2594,16 +2629,19 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderHUDMiddlePanel = function () {
-            var _bufferContext = this._bufferContext;
-            var messages = jwb.state.messages;
-            _bufferContext.fillStyle = Colors_6.default.BLACK;
-            _bufferContext.strokeStyle = Colors_6.default.WHITE;
-            var left = HUD_LEFT_WIDTH + HUD_MARGIN;
-            var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            var _this = this;
+            var left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+            var top = SCREEN_HEIGHT - HUD_HEIGHT + ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+            var playerUnit = jwb.state.playerUnit;
             var promises = [];
-            for (var i = 0; i < messages.length; i++) {
-                var y = top + (LINE_HEIGHT * i);
-                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
+            for (var i = 0; i < playerUnit.abilities.length; i++) {
+                var ability = playerUnit.abilities[i];
+                if (!!ability.icon) {
+                    promises.push(ImageUtils_4.loadImage("abilities/" + ability.icon)
+                        .then(createImageBitmap)
+                        .then(function (image) { return _this._bufferContext.drawImage(image, left, top); })
+                        .then(function () { left += ABILITIES_INNER_MARGIN; }));
+                }
             }
             return Promise.all(promises);
         };
@@ -2625,14 +2663,6 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
             }
             return Promise.all(promises);
-        };
-        SpriteRenderer.prototype._drawRect = function (_a) {
-            var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-            var _bufferContext = this._bufferContext;
-            _bufferContext.fillStyle = Colors_6.default.BLACK;
-            _bufferContext.fillRect(left, top, width, height);
-            _bufferContext.strokeStyle = Colors_6.default.WHITE;
-            _bufferContext.strokeRect(left, top, width, height);
         };
         /**
          * @return the top left pixel
@@ -2779,7 +2809,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_11, SoundFX_4, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_11, SoundFX_4, Animations_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2818,7 +2848,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                     && ([-1, 0, 1].indexOf(dy) > -1)
                     && !(dx === 0 && dy === 0);
             });
-            promises.push(function () { return Animations_2.playFloorFireAnimation(unit, adjacentUnits); });
+            promises.push(function () { return Animations_3.playFloorFireAnimation(unit, adjacentUnits); });
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
@@ -4248,7 +4278,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, SoundFX_5, actions_2, types_20, UnitAbilities_3) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, SoundFX_5, actions_2, types_20, UnitAbilities_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -4370,13 +4400,13 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         case KeyCommand.SHIFT_DOWN:
                         case KeyCommand.SHIFT_LEFT:
                         case KeyCommand.SHIFT_RIGHT:
-                            return function (u) { return UnitUtils_2.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return UnitAbilities_4.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                         default:
-                            if (QUEUED_ABILITY === UnitAbilities_3.default.HEAVY_ATTACK) {
+                            if (QUEUED_ABILITY === UnitAbilities_4.default.HEAVY_ATTACK) {
                                 QUEUED_ABILITY = null;
-                                return function (u) { return UnitAbilities_3.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                                return function (u) { return UnitAbilities_4.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                             }
-                            return function (u) { return UnitAbilities_3.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return UnitAbilities_4.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
@@ -4484,11 +4514,11 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var playerUnit = jwb.state.playerUnit;
         switch (command) {
             case KeyCommand.KEY_1:
-                if (playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK) <= 0) {
-                    QUEUED_ABILITY = UnitAbilities_3.default.HEAVY_ATTACK;
+                if (playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK) <= 0) {
+                    QUEUED_ABILITY = UnitAbilities_4.default.HEAVY_ATTACK;
                 }
                 else {
-                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK));
+                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK));
                 }
                 break;
         }

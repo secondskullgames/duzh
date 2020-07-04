@@ -18,16 +18,21 @@ var HUD_HEIGHT = 3 * TILE_HEIGHT;
 var HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
 var HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
 var HUD_MARGIN = 5;
+var HUD_BORDER_MARGIN = 3;
 var INVENTORY_LEFT = 2 * TILE_WIDTH;
 var INVENTORY_TOP = 2 * TILE_HEIGHT;
 var INVENTORY_WIDTH = 16 * TILE_WIDTH;
 var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 var INVENTORY_MARGIN = 12;
+var ABILITIES_PANEL_HEIGHT = 36;
+var ABILITIES_OUTER_MARGIN = 13;
+var ABILITIES_INNER_MARGIN = 10;
+var ABILITIES_Y_MARGIN = 5;
 var LINE_HEIGHT = 16;
 var GAME_OVER_FILENAME = 'gameover';
 var TITLE_FILENAME = 'title';
 var VICTORY_FILENAME = 'victory';
-var HUD_FILENAME = 'HUD';
+var HUD_FILENAME = 'HUD2';
 var INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 var SHADOW_FILENAME = 'shadow';
 var SpriteRenderer = /** @class */ (function () {
@@ -83,11 +88,13 @@ var SpriteRenderer = /** @class */ (function () {
         actions_1.revealTiles();
         this._bufferContext.fillStyle = Colors_1.default.BLACK;
         this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+        // can't pass direct references to the functions because `this` won't be defined
         return PromiseUtils_1.chainPromises([
             function () { return _this._renderTiles(); },
             function () { return _this._renderItems(); },
             function () { return _this._renderProjectiles(); },
             function () { return _this._renderUnits(); },
+            function () { return _this._renderMessages(); },
             function () { return _this._renderHUD(); }
         ]);
     };
@@ -283,6 +290,22 @@ var SpriteRenderer = /** @class */ (function () {
         return sprite.getImage()
             .then(function (image) { return _this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy); });
     };
+    SpriteRenderer.prototype._renderMessages = function () {
+        var _bufferContext = this._bufferContext;
+        var messages = jwb.state.messages;
+        _bufferContext.fillStyle = Colors_1.default.BLACK;
+        _bufferContext.strokeStyle = Colors_1.default.BLACK;
+        var left = 0;
+        var top = 0;
+        var promises = [];
+        for (var i = 0; i < messages.length; i++) {
+            var y = top + (LINE_HEIGHT * i);
+            _bufferContext.fillStyle = Colors_1.default.BLACK;
+            _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+            promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_1.default.WHITE, 'left'));
+        }
+        return Promise.all(promises);
+    };
     SpriteRenderer.prototype._renderHUD = function () {
         var _this = this;
         return this._renderHUDFrame()
@@ -295,6 +318,7 @@ var SpriteRenderer = /** @class */ (function () {
     SpriteRenderer.prototype._renderHUDFrame = function () {
         var _this = this;
         return ImageUtils_1.loadImage(HUD_FILENAME)
+            .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, Colors_1.default.WHITE); })
             .then(createImageBitmap)
             .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT); });
     };
@@ -319,16 +343,19 @@ var SpriteRenderer = /** @class */ (function () {
         return Promise.all(promises);
     };
     SpriteRenderer.prototype._renderHUDMiddlePanel = function () {
-        var _bufferContext = this._bufferContext;
-        var messages = jwb.state.messages;
-        _bufferContext.fillStyle = Colors_1.default.BLACK;
-        _bufferContext.strokeStyle = Colors_1.default.WHITE;
-        var left = HUD_LEFT_WIDTH + HUD_MARGIN;
-        var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+        var _this = this;
+        var left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+        var top = SCREEN_HEIGHT - HUD_HEIGHT + ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+        var playerUnit = jwb.state.playerUnit;
         var promises = [];
-        for (var i = 0; i < messages.length; i++) {
-            var y = top + (LINE_HEIGHT * i);
-            promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_1.default.WHITE, 'left'));
+        for (var i = 0; i < playerUnit.abilities.length; i++) {
+            var ability = playerUnit.abilities[i];
+            if (!!ability.icon) {
+                promises.push(ImageUtils_1.loadImage("abilities/" + ability.icon)
+                    .then(createImageBitmap)
+                    .then(function (image) { return _this._bufferContext.drawImage(image, left, top); })
+                    .then(function () { left += ABILITIES_INNER_MARGIN; }));
+            }
         }
         return Promise.all(promises);
     };
@@ -350,14 +377,6 @@ var SpriteRenderer = /** @class */ (function () {
             promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_1.default.WHITE, 'left'));
         }
         return Promise.all(promises);
-    };
-    SpriteRenderer.prototype._drawRect = function (_a) {
-        var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-        var _bufferContext = this._bufferContext;
-        _bufferContext.fillStyle = Colors_1.default.BLACK;
-        _bufferContext.fillRect(left, top, width, height);
-        _bufferContext.strokeStyle = Colors_1.default.WHITE;
-        _bufferContext.strokeRect(left, top, width, height);
     };
     /**
      * @return the top left pixel
