@@ -58,7 +58,6 @@ function _mapToCommand(e) {
 }
 // global state
 var BUSY = false;
-var QUEUED_ABILITY = null;
 function keyHandlerWrapper(e) {
     if (!BUSY) {
         BUSY = true;
@@ -129,8 +128,8 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_RIGHT:
                         return function (u) { return UnitAbilities_1.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                     default:
-                        if (QUEUED_ABILITY === UnitAbilities_1.default.HEAVY_ATTACK) {
-                            QUEUED_ABILITY = null;
+                        if (jwb.state.queuedAbility === UnitAbilities_1.default.HEAVY_ATTACK) {
+                            jwb.state.queuedAbility = null;
                             return function (u) { return UnitAbilities_1.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                         }
                         return function (u) { return UnitAbilities_1.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
@@ -238,11 +237,13 @@ function _handleMap() {
     return renderer.render();
 }
 function _handleAbility(command) {
+    var renderer = jwb.renderer;
     var playerUnit = jwb.state.playerUnit;
     switch (command) {
         case KeyCommand.KEY_1:
             if (playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK) <= 0) {
-                QUEUED_ABILITY = UnitAbilities_1.default.HEAVY_ATTACK;
+                jwb.state.queuedAbility = UnitAbilities_1.default.HEAVY_ATTACK;
+                return renderer.render();
             }
             else {
                 console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));

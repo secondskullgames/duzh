@@ -2058,6 +2058,7 @@ define("core/GameState", ["require", "exports", "types/types"], function (requir
             this._map = null;
             this.messages = [];
             this.turn = 1;
+            this.queuedAbility = null;
         }
         GameState.prototype.getMap = function () {
             if (!this._map) {
@@ -2310,10 +2311,10 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
     var INVENTORY_MARGIN = 12;
-    var ABILITIES_PANEL_HEIGHT = 36;
+    var ABILITIES_PANEL_HEIGHT = 48;
     var ABILITIES_OUTER_MARGIN = 13;
     var ABILITIES_INNER_MARGIN = 10;
-    var ABILITIES_Y_MARGIN = 5;
+    var ABILITIES_Y_MARGIN = 4;
     var LINE_HEIGHT = 16;
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
@@ -2629,18 +2630,17 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderHUDMiddlePanel = function () {
-            var _this = this;
             var left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
-            var top = SCREEN_HEIGHT - HUD_HEIGHT + ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+            var top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
             var playerUnit = jwb.state.playerUnit;
             var promises = [];
+            var keyNumber = 1;
             for (var i = 0; i < playerUnit.abilities.length; i++) {
                 var ability = playerUnit.abilities[i];
                 if (!!ability.icon) {
-                    promises.push(ImageUtils_4.loadImage("abilities/" + ability.icon)
-                        .then(createImageBitmap)
-                        .then(function (image) { return _this._bufferContext.drawImage(image, left, top); })
-                        .then(function () { left += ABILITIES_INNER_MARGIN; }));
+                    promises.push(this._renderAbility(ability, left, top));
+                    promises.push(this._drawText("" + keyNumber, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors_6.default.WHITE, 'center'));
+                    keyNumber++;
                 }
             }
             return Promise.all(promises);
@@ -2710,6 +2710,28 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var minimapRenderer = new MinimapRenderer_1.default();
             return minimapRenderer.render()
                 .then(function (bitmap) { return _this._bufferContext.drawImage(bitmap, 0, 0); });
+        };
+        SpriteRenderer.prototype._renderAbility = function (ability, left, top) {
+            var _this = this;
+            var borderColor;
+            var _a = jwb.state, queuedAbility = _a.queuedAbility, playerUnit = _a.playerUnit;
+            if (queuedAbility === ability) {
+                borderColor = Colors_6.default.GREEN;
+            }
+            else if (playerUnit.getCooldown(ability) === 0) {
+                borderColor = Colors_6.default.WHITE;
+            }
+            else {
+                borderColor = Colors_6.default.DARK_GRAY;
+            }
+            return ImageUtils_4.loadImage("abilities/" + ability.icon)
+                .then(function (image) {
+                var _a;
+                return ImageUtils_4.replaceColors(image, (_a = {}, _a[Colors_6.default.DARK_GRAY] = borderColor, _a));
+            })
+                .then(createImageBitmap)
+                .then(function (image) { return _this._bufferContext.drawImage(image, left, top); })
+                .then(function () { left += ABILITIES_INNER_MARGIN; });
         };
         SpriteRenderer.SCREEN_WIDTH = SCREEN_WIDTH;
         SpriteRenderer.SCREEN_HEIGHT = SCREEN_HEIGHT;
@@ -4331,7 +4353,6 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     }
     // global state
     var BUSY = false;
-    var QUEUED_ABILITY = null;
     function keyHandlerWrapper(e) {
         if (!BUSY) {
             BUSY = true;
@@ -4402,8 +4423,8 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         case KeyCommand.SHIFT_RIGHT:
                             return function (u) { return UnitAbilities_4.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                         default:
-                            if (QUEUED_ABILITY === UnitAbilities_4.default.HEAVY_ATTACK) {
-                                QUEUED_ABILITY = null;
+                            if (jwb.state.queuedAbility === UnitAbilities_4.default.HEAVY_ATTACK) {
+                                jwb.state.queuedAbility = null;
                                 return function (u) { return UnitAbilities_4.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                             }
                             return function (u) { return UnitAbilities_4.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
@@ -4511,11 +4532,13 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         return renderer.render();
     }
     function _handleAbility(command) {
+        var renderer = jwb.renderer;
         var playerUnit = jwb.state.playerUnit;
         switch (command) {
             case KeyCommand.KEY_1:
                 if (playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK) <= 0) {
-                    QUEUED_ABILITY = UnitAbilities_4.default.HEAVY_ATTACK;
+                    jwb.state.queuedAbility = UnitAbilities_4.default.HEAVY_ATTACK;
+                    return renderer.render();
                 }
                 else {
                     console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK));

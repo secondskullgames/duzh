@@ -60,7 +60,6 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
 // global state
 
 let BUSY = false;
-let QUEUED_ABILITY: Ability | null = null;
 
 function keyHandlerWrapper(e: KeyboardEvent) {
   if (!BUSY) {
@@ -136,8 +135,8 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           case KeyCommand.SHIFT_RIGHT:
             return (u: Unit) => UnitAbilities.SHOOT_ARROW.use(u, { dx, dy });
           default:
-            if (QUEUED_ABILITY === UnitAbilities.HEAVY_ATTACK) {
-              QUEUED_ABILITY = null;
+            if (jwb.state.queuedAbility === UnitAbilities.HEAVY_ATTACK) {
+              jwb.state.queuedAbility = null;
               return (u: Unit) => UnitAbilities.HEAVY_ATTACK.use(u, { dx, dy });
             }
             return (u: Unit) => UnitAbilities.ATTACK.use(u, { dx, dy });
@@ -253,11 +252,13 @@ function _handleMap(): Promise<void> {
 }
 
 function _handleAbility(command: KeyCommand): Promise<void> {
+  const { renderer } = jwb;
   const { playerUnit } = jwb.state;
   switch (command) {
     case KeyCommand.KEY_1:
       if (playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK) <= 0) {
-        QUEUED_ABILITY = UnitAbilities.HEAVY_ATTACK;
+        jwb.state.queuedAbility = UnitAbilities.HEAVY_ATTACK;
+        return renderer.render();
       } else {
         console.log(`HEAVY_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
       }

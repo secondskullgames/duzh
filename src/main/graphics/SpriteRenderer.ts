@@ -8,6 +8,7 @@ import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 import MinimapRenderer from './MinimapRenderer';
+import { Ability } from '../units/UnitAbilities';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -30,10 +31,10 @@ const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 const INVENTORY_MARGIN = 12;
 
-const ABILITIES_PANEL_HEIGHT = 36;
+const ABILITIES_PANEL_HEIGHT = 48;
 const ABILITIES_OUTER_MARGIN = 13;
 const ABILITIES_INNER_MARGIN = 10;
-const ABILITIES_Y_MARGIN = 5;
+const ABILITIES_Y_MARGIN = 4;
 
 const LINE_HEIGHT = 16;
 
@@ -355,17 +356,17 @@ class SpriteRenderer implements Renderer {
 
   private _renderHUDMiddlePanel(): Promise<any> {
     let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
-    const top = SCREEN_HEIGHT - HUD_HEIGHT + ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+    const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
     let { playerUnit } = jwb.state;
     const promises: Promise<any>[] = [];
 
+    let keyNumber = 1;
     for (let i = 0; i < playerUnit.abilities.length; i++) {
       const ability = playerUnit.abilities[i];
       if (!!ability.icon) {
-        promises.push(loadImage(`abilities/${ability.icon}`)
-          .then(createImageBitmap)
-          .then(image => this._bufferContext.drawImage(image, left, top))
-          .then(() => { left += ABILITIES_INNER_MARGIN }));
+        promises.push(this._renderAbility(ability, left, top));
+        promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center'));
+        keyNumber++;
       }
     }
 
@@ -440,6 +441,24 @@ class SpriteRenderer implements Renderer {
     const minimapRenderer = new MinimapRenderer();
     return minimapRenderer.render()
       .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
+  }
+
+  private _renderAbility(ability: Ability, left: number, top: number) {
+    let borderColor: Colors;
+    const { queuedAbility, playerUnit } = jwb.state;
+    if (queuedAbility === ability) {
+      borderColor = Colors.GREEN;
+    } else if (playerUnit.getCooldown(ability) === 0) {
+      borderColor = Colors.WHITE;
+    } else {
+      borderColor = Colors.DARK_GRAY;
+    }
+
+    return loadImage(`abilities/${ability.icon}`)
+      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }))
+      .then(createImageBitmap)
+      .then(image => this._bufferContext.drawImage(image, left, top))
+      .then(() => { left += ABILITIES_INNER_MARGIN });
   }
 }
 
