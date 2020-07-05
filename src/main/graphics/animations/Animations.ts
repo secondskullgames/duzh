@@ -4,6 +4,7 @@ import { chainPromises, resolvedPromise, wait } from '../../utils/PromiseUtils';
 import { createArrow } from '../../items/ProjectileFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
+const PROJECTILE_FRAME_LENGTH = 50; // milliseconds
 
 type UnitAnimationFrame = {
   unit: Unit,
@@ -97,7 +98,7 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
 
   return _playAnimation({
     frames,
-    delay: 50
+    delay: PROJECTILE_FRAME_LENGTH
   });
 }
 

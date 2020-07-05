@@ -34,6 +34,7 @@ const INVENTORY_MARGIN = 12;
 const ABILITIES_PANEL_HEIGHT = 48;
 const ABILITIES_OUTER_MARGIN = 13;
 const ABILITIES_INNER_MARGIN = 10;
+const ABILITY_ICON_WIDTH = 20;
 const ABILITIES_Y_MARGIN = 4;
 
 const LINE_HEIGHT = 16;
@@ -366,6 +367,7 @@ class SpriteRenderer implements Renderer {
       if (!!ability.icon) {
         promises.push(this._renderAbility(ability, left, top));
         promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center'));
+        left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
     }

@@ -23,6 +23,7 @@ var KeyCommand;
     KeyCommand["SPACEBAR"] = "SPACEBAR";
     KeyCommand["M"] = "M";
     KeyCommand["KEY_1"] = "1";
+    KeyCommand["KEY_2"] = "2";
 })(KeyCommand || (KeyCommand = {}));
 function _mapToCommand(e) {
     switch (e.key) {
@@ -53,6 +54,8 @@ function _mapToCommand(e) {
             return KeyCommand.M;
         case '1':
             return KeyCommand.KEY_1;
+        case '2':
+            return KeyCommand.KEY_2;
     }
     return null;
 }
@@ -87,6 +90,7 @@ function keyHandler(e) {
         case KeyCommand.M:
             return _handleMap();
         case KeyCommand.KEY_1:
+        case KeyCommand.KEY_2:
             return _handleAbility(command);
         default:
     }
@@ -128,9 +132,10 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_RIGHT:
                         return function (u) { return UnitAbilities_1.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                     default:
-                        if (jwb.state.queuedAbility === UnitAbilities_1.default.HEAVY_ATTACK) {
+                        if (!!jwb.state.queuedAbility) {
+                            var ability_1 = jwb.state.queuedAbility;
                             jwb.state.queuedAbility = null;
-                            return function (u) { return UnitAbilities_1.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return ability_1.use(u, { dx: dx_1, dy: dy_1 }); };
                         }
                         return function (u) { return UnitAbilities_1.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                 }
@@ -247,6 +252,15 @@ function _handleAbility(command) {
             }
             else {
                 console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));
+            }
+            break;
+        case KeyCommand.KEY_2:
+            if (playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK) <= 0) {
+                jwb.state.queuedAbility = UnitAbilities_1.default.KNOCKBACK_ATTACK;
+                return renderer.render();
+            }
+            else {
+                console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK));
             }
             break;
     }

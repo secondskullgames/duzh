@@ -4,6 +4,7 @@ var types_1 = require("../../types/types");
 var PromiseUtils_1 = require("../../utils/PromiseUtils");
 var ProjectileFactory_1 = require("../../items/ProjectileFactory");
 var FRAME_LENGTH = 150; // milliseconds
+var PROJECTILE_FRAME_LENGTH = 50; // milliseconds
 function playAttackingAnimation(source, target) {
     return _playAnimation({
         frames: [
@@ -76,7 +77,7 @@ function playArrowAnimation(source, direction, coordinatesList, target) {
     }
     return _playAnimation({
         frames: frames,
-        delay: 50
+        delay: PROJECTILE_FRAME_LENGTH
     });
 }
 exports.playArrowAnimation = playArrowAnimation;

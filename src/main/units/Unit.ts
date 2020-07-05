@@ -58,7 +58,7 @@ class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = null;
     this.remainingCooldowns = new Map();
-    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK];
+    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK];
 
     while (this.level < level) {
       this._levelUp(false);
@@ -189,9 +189,8 @@ class Unit implements Entity {
     return this.remainingCooldowns.get(ability) || 0
   }
 
-  useAbility(ability: Ability): Promise<any> {
+  useAbility(ability: Ability) {
     this.remainingCooldowns.set(ability, ability.cooldown);
-    return resolvedPromise();
   }
 }
 

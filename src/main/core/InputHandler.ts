@@ -21,7 +21,8 @@ enum KeyCommand {
   ENTER = 'ENTER',
   SPACEBAR = 'SPACEBAR',
   M = 'M',
-  KEY_1 = '1'
+  KEY_1 = '1',
+  KEY_2 = '2'
 }
 
 function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
@@ -53,6 +54,8 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
       return KeyCommand.M;
     case '1':
       return KeyCommand.KEY_1;
+    case '2':
+      return KeyCommand.KEY_2;
   }
   return null;
 }
@@ -92,6 +95,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
     case KeyCommand.M:
       return _handleMap();
     case KeyCommand.KEY_1:
+    case KeyCommand.KEY_2:
       return _handleAbility(command);
     default:
   }
@@ -135,9 +139,10 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           case KeyCommand.SHIFT_RIGHT:
             return (u: Unit) => UnitAbilities.SHOOT_ARROW.use(u, { dx, dy });
           default:
-            if (jwb.state.queuedAbility === UnitAbilities.HEAVY_ATTACK) {
+            if (!!jwb.state.queuedAbility) {
+              const ability = jwb.state.queuedAbility;
               jwb.state.queuedAbility = null;
-              return (u: Unit) => UnitAbilities.HEAVY_ATTACK.use(u, { dx, dy });
+              return (u: Unit) => ability.use(u, { dx, dy });
             }
             return (u: Unit) => UnitAbilities.ATTACK.use(u, { dx, dy });
         }
@@ -261,6 +266,14 @@ function _handleAbility(command: KeyCommand): Promise<void> {
         return renderer.render();
       } else {
         console.log(`HEAVY_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
+      }
+      break;
+    case KeyCommand.KEY_2:
+      if (playerUnit.getCooldown(UnitAbilities.KNOCKBACK_ATTACK) <= 0) {
+        jwb.state.queuedAbility = UnitAbilities.KNOCKBACK_ATTACK;
+        return renderer.render();
+      } else {
+        console.log(`KNOCKBACK_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.KNOCKBACK_ATTACK)}`);
       }
       break;
   }

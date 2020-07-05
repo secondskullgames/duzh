@@ -27,6 +27,7 @@ var INVENTORY_MARGIN = 12;
 var ABILITIES_PANEL_HEIGHT = 48;
 var ABILITIES_OUTER_MARGIN = 13;
 var ABILITIES_INNER_MARGIN = 10;
+var ABILITY_ICON_WIDTH = 20;
 var ABILITIES_Y_MARGIN = 4;
 var LINE_HEIGHT = 16;
 var GAME_OVER_FILENAME = 'gameover';
@@ -353,6 +354,7 @@ var SpriteRenderer = /** @class */ (function () {
             if (!!ability.icon) {
                 promises.push(this._renderAbility(ability, left, top));
                 promises.push(this._drawText("" + keyNumber, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors_1.default.WHITE, 'center'));
+                left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
                 keyNumber++;
             }
         }

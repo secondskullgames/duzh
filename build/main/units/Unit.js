@@ -33,7 +33,7 @@ var Unit = /** @class */ (function () {
         this.activity = types_1.Activity.STANDING;
         this.direction = null;
         this.remainingCooldowns = new Map();
-        this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK];
+        this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK];
         while (this.level < level) {
             this._levelUp(false);
         }
@@ -167,7 +167,6 @@ var Unit = /** @class */ (function () {
     };
     Unit.prototype.useAbility = function (ability) {
         this.remainingCooldowns.set(ability, ability.cooldown);
-        return PromiseUtils_1.resolvedPromise();
     };
     return Unit;
 }());

@@ -1034,6 +1034,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FRAME_LENGTH = 150; // milliseconds
+    var PROJECTILE_FRAME_LENGTH = 50; // milliseconds
     function playAttackingAnimation(source, target) {
         return _playAnimation({
             frames: [
@@ -1106,7 +1107,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         }
         return _playAnimation({
             frames: frames,
-            delay: 50
+            delay: PROJECTILE_FRAME_LENGTH
         });
     }
     exports.playArrowAnimation = playArrowAnimation;
@@ -1178,7 +1179,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return PromiseUtils_2.chainPromises(promises);
     }
 });
-define("units/UnitUtils", ["require", "exports", "graphics/animations/Animations", "units/UnitAbilities"], function (require, exports, Animations_1, UnitAbilities_1) {
+define("units/UnitUtils", ["require", "exports", "graphics/animations/Animations"], function (require, exports, Animations_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function attack(unit, target) {
@@ -1191,8 +1192,7 @@ define("units/UnitUtils", ["require", "exports", "graphics/animations/Animations
     function heavyAttack(unit, target) {
         var damage = unit.getDamage() * 2;
         jwb.state.messages.push(unit.name + " hit " + target.name + " for " + damage + " damage!");
-        return unit.useAbility(UnitAbilities_1.default.HEAVY_ATTACK) // TODO this should not be hardcoded here
-            .then(function () { return Animations_1.playAttackingAnimation(unit, target); })
+        return Animations_1.playAttackingAnimation(unit, target)
             .then(function () { return target.takeDamage(damage, unit); });
     }
     exports.heavyAttack = heavyAttack;
@@ -1253,6 +1253,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
             return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
         }
         HeavyAttack.prototype.use = function (unit, direction) {
+            var _this = this;
             if (!direction) {
                 throw 'HeavyAttack requires a direction!';
             }
@@ -1273,6 +1274,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
                 else {
                     var targetUnit = map.getUnit({ x: x, y: y });
                     if (!!targetUnit) {
+                        unit.useAbility(_this);
                         UnitUtils_1.heavyAttack(unit, targetUnit)
                             .then(resolve);
                     }
@@ -1283,6 +1285,56 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
             });
         };
         return HeavyAttack;
+    }(Ability));
+    var KnockbackAttack = /** @class */ (function (_super) {
+        __extends(KnockbackAttack, _super);
+        function KnockbackAttack() {
+            return _super.call(this, 'KNOCKBACK_ATTACK', 10, 'knockback_icon') || this;
+        }
+        KnockbackAttack.prototype.use = function (unit, direction) {
+            var _this = this;
+            if (!direction) {
+                throw 'KnockbackAttack requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
+            return new Promise(function (resolve) {
+                var _a;
+                if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                    if (unit === playerUnit) {
+                        SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                    }
+                    resolve();
+                }
+                else {
+                    var targetUnit_1 = map.getUnit({ x: x, y: y });
+                    if (!!targetUnit_1) {
+                        unit.useAbility(_this);
+                        UnitUtils_1.attack(unit, targetUnit_1)
+                            .then(function () {
+                            var _a;
+                            var targetCoordinates = { x: x, y: y };
+                            for (var i = 0; i < 2; i++) {
+                                var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+                                if (!map.isBlocked(oneTileBack)) {
+                                    targetCoordinates = oneTileBack;
+                                }
+                            }
+                            _a = [targetCoordinates.x, targetCoordinates.y], targetUnit_1.x = _a[0], targetUnit_1.y = _a[1];
+                        })
+                            .then(resolve);
+                    }
+                    else {
+                        resolve();
+                    }
+                }
+            });
+        };
+        return KnockbackAttack;
     }(Ability));
     var ShootArrow = /** @class */ (function (_super) {
         __extends(ShootArrow, _super);
@@ -1332,11 +1384,12 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
     var UnitAbilities = {
         ATTACK: new NormalAttack(),
         HEAVY_ATTACK: new HeavyAttack(),
+        KNOCKBACK_ATTACK: new KnockbackAttack(),
         SHOOT_ARROW: new ShootArrow(),
     };
     exports.default = UnitAbilities;
 });
-define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions", "units/UnitAbilities"], function (require, exports, Pathfinder_1, RandomUtils_3, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3, UnitAbilities_2) {
+define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions", "units/UnitAbilities"], function (require, exports, Pathfinder_1, RandomUtils_3, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3, UnitAbilities_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _wanderAndAttack(unit) {
@@ -1360,7 +1413,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         if (tiles.length > 0) {
             var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
             var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1379,7 +1432,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         if (tiles.length > 0) {
             var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
             var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1407,7 +1460,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             var unitAtPoint = map.getUnit({ x: x, y: y });
             if (!unitAtPoint || unitAtPoint === playerUnit) {
                 var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-                return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+                return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
             }
         }
         return PromiseUtils_3.resolvedPromise();
@@ -1434,7 +1487,7 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             var orderedTiles = tiles.sort(ArrayUtils_2.comparingReversed(function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); }));
             var _a = orderedTiles[0], x = _a.x, y = _a.y;
             var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1746,7 +1799,7 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
         stop: stop
     };
 });
-define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX", "units/UnitAbilities"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2, UnitAbilities_3) {
+define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX", "units/UnitAbilities"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2, UnitAbilities_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1774,7 +1827,7 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.activity = types_5.Activity.STANDING;
             this.direction = null;
             this.remainingCooldowns = new Map();
-            this.abilities = [UnitAbilities_3.default.ATTACK, UnitAbilities_3.default.HEAVY_ATTACK];
+            this.abilities = [UnitAbilities_2.default.ATTACK, UnitAbilities_2.default.HEAVY_ATTACK, UnitAbilities_2.default.KNOCKBACK_ATTACK];
             while (this.level < level) {
                 this._levelUp(false);
             }
@@ -1908,7 +1961,6 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
         };
         Unit.prototype.useAbility = function (ability) {
             this.remainingCooldowns.set(ability, ability.cooldown);
-            return PromiseUtils_4.resolvedPromise();
         };
         return Unit;
     }());
@@ -2314,6 +2366,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var ABILITIES_PANEL_HEIGHT = 48;
     var ABILITIES_OUTER_MARGIN = 13;
     var ABILITIES_INNER_MARGIN = 10;
+    var ABILITY_ICON_WIDTH = 20;
     var ABILITIES_Y_MARGIN = 4;
     var LINE_HEIGHT = 16;
     var GAME_OVER_FILENAME = 'gameover';
@@ -2640,6 +2693,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 if (!!ability.icon) {
                     promises.push(this._renderAbility(ability, left, top));
                     promises.push(this._drawText("" + keyNumber, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors_6.default.WHITE, 'center'));
+                    left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
                     keyNumber++;
                 }
             }
@@ -4300,7 +4354,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, SoundFX_5, actions_2, types_20, UnitAbilities_4) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, SoundFX_5, actions_2, types_20, UnitAbilities_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -4318,6 +4372,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         KeyCommand["SPACEBAR"] = "SPACEBAR";
         KeyCommand["M"] = "M";
         KeyCommand["KEY_1"] = "1";
+        KeyCommand["KEY_2"] = "2";
     })(KeyCommand || (KeyCommand = {}));
     function _mapToCommand(e) {
         switch (e.key) {
@@ -4348,6 +4403,8 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return KeyCommand.M;
             case '1':
                 return KeyCommand.KEY_1;
+            case '2':
+                return KeyCommand.KEY_2;
         }
         return null;
     }
@@ -4382,6 +4439,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
             case KeyCommand.M:
                 return _handleMap();
             case KeyCommand.KEY_1:
+            case KeyCommand.KEY_2:
                 return _handleAbility(command);
             default:
         }
@@ -4421,13 +4479,14 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         case KeyCommand.SHIFT_DOWN:
                         case KeyCommand.SHIFT_LEFT:
                         case KeyCommand.SHIFT_RIGHT:
-                            return function (u) { return UnitAbilities_4.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return UnitAbilities_3.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                         default:
-                            if (jwb.state.queuedAbility === UnitAbilities_4.default.HEAVY_ATTACK) {
+                            if (!!jwb.state.queuedAbility) {
+                                var ability_1 = jwb.state.queuedAbility;
                                 jwb.state.queuedAbility = null;
-                                return function (u) { return UnitAbilities_4.default.HEAVY_ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                                return function (u) { return ability_1.use(u, { dx: dx_1, dy: dy_1 }); };
                             }
-                            return function (u) { return UnitAbilities_4.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return UnitAbilities_3.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
@@ -4536,12 +4595,21 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         var playerUnit = jwb.state.playerUnit;
         switch (command) {
             case KeyCommand.KEY_1:
-                if (playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK) <= 0) {
-                    jwb.state.queuedAbility = UnitAbilities_4.default.HEAVY_ATTACK;
+                if (playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK) <= 0) {
+                    jwb.state.queuedAbility = UnitAbilities_3.default.HEAVY_ATTACK;
                     return renderer.render();
                 }
                 else {
-                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_4.default.HEAVY_ATTACK));
+                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK));
+                }
+                break;
+            case KeyCommand.KEY_2:
+                if (playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK) <= 0) {
+                    jwb.state.queuedAbility = UnitAbilities_3.default.KNOCKBACK_ATTACK;
+                    return renderer.render();
+                }
+                else {
+                    console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK));
                 }
                 break;
         }
