@@ -13,6 +13,7 @@ var GameState = /** @class */ (function () {
         this._map = null;
         this.messages = [];
         this.turn = 1;
+        this.queuedAbility = null;
     }
     GameState.prototype.getMap = function () {
         if (!this._map) {

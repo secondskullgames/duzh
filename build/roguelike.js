@@ -656,6 +656,42 @@ define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/Random
     }());
     exports.default = Pathfinder;
 });
+define("types/Directions", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Directions = {
+        N: { dx: 0, dy: -1 },
+        E: { dx: 1, dy: 0 },
+        S: { dx: 0, dy: 1 },
+        W: { dx: -1, dy: 0 }
+    };
+    function _equals(first, second) {
+        return first.dx === second.dx && first.dy === second.dy;
+    }
+    function _directionToString(direction) {
+        if (_equals(direction, Directions.N)) {
+            return 'N';
+        }
+        else if (_equals(direction, Directions.E)) {
+            return 'E';
+        }
+        else if (_equals(direction, Directions.S)) {
+            return 'S';
+        }
+        else if (_equals(direction, Directions.W)) {
+            return 'W';
+        }
+        throw "Invalid direction " + direction;
+    }
+    exports.default = {
+        N: Directions.N,
+        E: Directions.E,
+        S: Directions.S,
+        W: Directions.W,
+        values: function () { return [Directions.N, Directions.E, Directions.S, Directions.W]; },
+        toString: _directionToString
+    };
+});
 define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -776,42 +812,6 @@ define("sounds/SoundFX", ["require", "exports", "sounds/SoundPlayer"], function 
         PLAYER.playSound(samples, false);
     }
     exports.playSound = playSound;
-});
-define("types/Directions", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Directions = {
-        N: { dx: 0, dy: -1 },
-        E: { dx: 1, dy: 0 },
-        S: { dx: 0, dy: 1 },
-        W: { dx: -1, dy: 0 }
-    };
-    function _equals(first, second) {
-        return first.dx === second.dx && first.dy === second.dy;
-    }
-    function _directionToString(direction) {
-        if (_equals(direction, Directions.N)) {
-            return 'N';
-        }
-        else if (_equals(direction, Directions.E)) {
-            return 'E';
-        }
-        else if (_equals(direction, Directions.S)) {
-            return 'S';
-        }
-        else if (_equals(direction, Directions.W)) {
-            return 'W';
-        }
-        throw "Invalid direction " + direction;
-    }
-    exports.default = {
-        N: Directions.N,
-        E: Directions.E,
-        S: Directions.S,
-        W: Directions.W,
-        values: function () { return [Directions.N, Directions.E, Directions.S, Directions.W]; },
-        toString: _directionToString
-    };
 });
 define("graphics/sprites/units/UnitSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_1, Sprite_1, Colors_1, Directions_1, ImageUtils_2) {
     "use strict";
@@ -1034,6 +1034,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var FRAME_LENGTH = 150; // milliseconds
+    var PROJECTILE_FRAME_LENGTH = 50; // milliseconds
     function playAttackingAnimation(source, target) {
         return _playAnimation({
             frames: [
@@ -1106,7 +1107,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         }
         return _playAnimation({
             frames: frames,
-            delay: 50
+            delay: PROJECTILE_FRAME_LENGTH
         });
     }
     exports.playArrowAnimation = playArrowAnimation;
@@ -1178,78 +1179,217 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
         return PromiseUtils_2.chainPromises(promises);
     }
 });
-define("units/UnitUtils", ["require", "exports", "sounds/Sounds", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_1, types_3, SoundFX_1, Animations_1) {
+define("units/UnitUtils", ["require", "exports", "graphics/animations/Animations"], function (require, exports, Animations_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function moveOrAttack(unit, _a) {
-        var x = _a.x, y = _a.y;
-        var _b = jwb.state, messages = _b.messages, playerUnit = _b.playerUnit;
-        var map = jwb.state.getMap();
-        unit.direction = { dx: x - unit.x, dy: y - unit.y };
-        return new Promise(function (resolve) {
-            var _a;
-            if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
-                _a = [x, y], unit.x = _a[0], unit.y = _a[1];
-                if (unit === playerUnit) {
-                    SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
-                }
-                resolve();
+    function attack(unit, target) {
+        var damage = unit.getDamage();
+        jwb.state.messages.push(unit.name + " hit " + target.name + " for " + damage + " damage!");
+        return Animations_1.playAttackingAnimation(unit, target)
+            .then(function () { return target.takeDamage(damage, unit); });
+    }
+    exports.attack = attack;
+    function heavyAttack(unit, target) {
+        var damage = unit.getDamage() * 2;
+        jwb.state.messages.push(unit.name + " hit " + target.name + " for " + damage + " damage!");
+        return Animations_1.playAttackingAnimation(unit, target)
+            .then(function () { return target.takeDamage(damage, unit); });
+    }
+    exports.heavyAttack = heavyAttack;
+});
+define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/types", "sounds/SoundFX", "units/UnitUtils", "graphics/animations/Animations"], function (require, exports, Sounds_1, types_3, SoundFX_1, UnitUtils_1, Animations_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Ability = /** @class */ (function () {
+        function Ability(name, cooldown, icon) {
+            if (icon === void 0) { icon = null; }
+            this.name = name;
+            this.cooldown = cooldown;
+            this.icon = icon;
+        }
+        return Ability;
+    }());
+    exports.Ability = Ability;
+    var NormalAttack = /** @class */ (function (_super) {
+        __extends(NormalAttack, _super);
+        function NormalAttack() {
+            return _super.call(this, 'ATTACK', 0) || this;
+        }
+        NormalAttack.prototype.use = function (unit, direction) {
+            if (!direction) {
+                throw 'NormalAttack requires a direction!';
             }
-            else {
-                var targetUnit_1 = map.getUnit({ x: x, y: y });
-                if (!!targetUnit_1) {
-                    var damage_1 = unit.getDamage();
-                    messages.push(unit.name + " hit " + targetUnit_1.name);
+            var dx = direction.dx, dy = direction.dy;
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
+            return new Promise(function (resolve) {
+                var _a;
+                if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                    if (unit === playerUnit) {
+                        SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                    }
+                    resolve();
+                }
+                else {
+                    var targetUnit = map.getUnit({ x: x, y: y });
+                    if (!!targetUnit) {
+                        UnitUtils_1.attack(unit, targetUnit)
+                            .then(resolve);
+                    }
+                    else {
+                        resolve();
+                    }
+                }
+            });
+        };
+        return NormalAttack;
+    }(Ability));
+    var HeavyAttack = /** @class */ (function (_super) {
+        __extends(HeavyAttack, _super);
+        function HeavyAttack() {
+            return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
+        }
+        HeavyAttack.prototype.use = function (unit, direction) {
+            var _this = this;
+            if (!direction) {
+                throw 'HeavyAttack requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
+            return new Promise(function (resolve) {
+                var _a;
+                if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                    if (unit === playerUnit) {
+                        SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                    }
+                    resolve();
+                }
+                else {
+                    var targetUnit = map.getUnit({ x: x, y: y });
+                    if (!!targetUnit) {
+                        unit.useAbility(_this);
+                        UnitUtils_1.heavyAttack(unit, targetUnit)
+                            .then(resolve);
+                    }
+                    else {
+                        resolve();
+                    }
+                }
+            });
+        };
+        return HeavyAttack;
+    }(Ability));
+    var KnockbackAttack = /** @class */ (function (_super) {
+        __extends(KnockbackAttack, _super);
+        function KnockbackAttack() {
+            return _super.call(this, 'KNOCKBACK_ATTACK', 10, 'knockback_icon') || this;
+        }
+        KnockbackAttack.prototype.use = function (unit, direction) {
+            var _this = this;
+            if (!direction) {
+                throw 'KnockbackAttack requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
+            return new Promise(function (resolve) {
+                var _a;
+                if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                    if (unit === playerUnit) {
+                        SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                    }
+                    resolve();
+                }
+                else {
+                    var targetUnit_1 = map.getUnit({ x: x, y: y });
+                    if (!!targetUnit_1) {
+                        unit.useAbility(_this);
+                        UnitUtils_1.attack(unit, targetUnit_1)
+                            .then(function () {
+                            var _a;
+                            var targetCoordinates = { x: x, y: y };
+                            for (var i = 0; i < 2; i++) {
+                                var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+                                if (!map.isBlocked(oneTileBack)) {
+                                    targetCoordinates = oneTileBack;
+                                }
+                            }
+                            _a = [targetCoordinates.x, targetCoordinates.y], targetUnit_1.x = _a[0], targetUnit_1.y = _a[1];
+                        })
+                            .then(resolve);
+                    }
+                    else {
+                        resolve();
+                    }
+                }
+            });
+        };
+        return KnockbackAttack;
+    }(Ability));
+    var ShootArrow = /** @class */ (function (_super) {
+        __extends(ShootArrow, _super);
+        function ShootArrow() {
+            return _super.call(this, 'SHOOT_ARROW', 0) || this;
+        }
+        ShootArrow.prototype.use = function (unit, direction) {
+            if (!direction) {
+                throw 'ShootArrow requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            unit.direction = { dx: dx, dy: dy };
+            return unit.sprite.update()
+                .then(function () { return jwb.renderer.render(); })
+                .then(function () { return new Promise(function (resolve) {
+                if (!unit.equipment.get(types_3.EquipmentSlot.RANGED_WEAPON)) {
+                    // change direction and re-render, but don't do anything (don't spend a turn)
+                    resolve();
+                    return;
+                }
+                var map = jwb.state.getMap();
+                var coordinatesList = [];
+                var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+                while (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    coordinatesList.push({ x: x, y: y });
+                    x += dx;
+                    y += dy;
+                }
+                var targetUnit = map.getUnit({ x: x, y: y });
+                if (!!targetUnit) {
+                    var messages = jwb.state.messages;
+                    var damage_1 = unit.getRangedDamage();
+                    messages.push(unit.name + " hit " + targetUnit.name);
                     messages.push("for " + damage_1 + " damage!");
-                    Animations_1.playAttackingAnimation(unit, targetUnit_1)
-                        .then(function () { return targetUnit_1.takeDamage(damage_1, unit); })
+                    Animations_2.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
+                        .then(function () { return targetUnit.takeDamage(damage_1, unit); })
                         .then(function () { return resolve(); });
                 }
                 else {
-                    resolve();
+                    Animations_2.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, null)
+                        .then(function () { return resolve(); });
                 }
-            }
-        });
-    }
-    exports.moveOrAttack = moveOrAttack;
-    function fireProjectile(unit, _a) {
-        var dx = _a.dx, dy = _a.dy;
-        unit.direction = { dx: dx, dy: dy };
-        return unit.sprite.update()
-            .then(function () { return jwb.renderer.render(); })
-            .then(function () { return new Promise(function (resolve) {
-            if (!unit.equipment.get(types_3.EquipmentSlot.RANGED_WEAPON)) {
-                // change direction and re-render, but don't do anything (don't spend a turn)
-                resolve();
-                return;
-            }
-            var map = jwb.state.getMap();
-            var coordinatesList = [];
-            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
-            while (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
-                coordinatesList.push({ x: x, y: y });
-                x += dx;
-                y += dy;
-            }
-            var targetUnit = map.getUnit({ x: x, y: y });
-            if (!!targetUnit) {
-                var messages = jwb.state.messages;
-                var damage_2 = unit.getRangedDamage();
-                messages.push(unit.name + " hit " + targetUnit.name);
-                messages.push("for " + damage_2 + " damage!");
-                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
-                    .then(function () { return targetUnit.takeDamage(damage_2, unit); })
-                    .then(function () { return resolve(); });
-            }
-            else {
-                Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, null)
-                    .then(function () { return resolve(); });
-            }
-        }); });
-    }
-    exports.fireProjectile = fireProjectile;
+            }); });
+        };
+        return ShootArrow;
+    }(Ability));
+    var UnitAbilities = {
+        ATTACK: new NormalAttack(),
+        HEAVY_ATTACK: new HeavyAttack(),
+        KNOCKBACK_ATTACK: new KnockbackAttack(),
+        SHOOT_ARROW: new ShootArrow(),
+    };
+    exports.default = UnitAbilities;
 });
-define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "units/UnitUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions"], function (require, exports, Pathfinder_1, RandomUtils_3, UnitUtils_1, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3) {
+define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions", "units/UnitAbilities"], function (require, exports, Pathfinder_1, RandomUtils_3, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3, UnitAbilities_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function _wanderAndAttack(unit) {
@@ -1272,7 +1412,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         });
         if (tiles.length > 0) {
             var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
-            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1290,7 +1431,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         });
         if (tiles.length > 0) {
             var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
-            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1317,7 +1459,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
             var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
             var unitAtPoint = map.getUnit({ x: x, y: y });
             if (!unitAtPoint || unitAtPoint === playerUnit) {
-                return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+                var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+                return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
             }
         }
         return PromiseUtils_3.resolvedPromise();
@@ -1343,7 +1486,8 @@ define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/
         if (tiles.length > 0) {
             var orderedTiles = tiles.sort(ArrayUtils_2.comparingReversed(function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); }));
             var _a = orderedTiles[0], x = _a.x, y = _a.y;
-            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
         return PromiseUtils_3.resolvedPromise();
     }
@@ -1655,7 +1799,7 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
         stop: stop
     };
 });
-define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2) {
+define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX", "units/UnitAbilities"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2, UnitAbilities_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1682,6 +1826,8 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.aiHandler = unitClass.aiHandler;
             this.activity = types_5.Activity.STANDING;
             this.direction = null;
+            this.remainingCooldowns = new Map();
+            this.abilities = [UnitAbilities_2.default.ATTACK, UnitAbilities_2.default.HEAVY_ATTACK, UnitAbilities_2.default.KNOCKBACK_ATTACK];
             while (this.level < level) {
                 this._levelUp(false);
             }
@@ -1694,10 +1840,17 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.life = Math.min(this.life + deltaLife, this.maxLife);
         };
         ;
+        Unit.prototype._updateCooldowns = function () {
+            // I hate javascript, wtf is this callback signature
+            this.remainingCooldowns.forEach(function (cooldown, ability, map) {
+                map.set(ability, Math.max(cooldown - 1, 0));
+            });
+        };
         Unit.prototype.update = function () {
             var _this = this;
             return new Promise(function (resolve) {
                 _this._regenLife();
+                _this._updateCooldowns();
                 if (!!_this.queuedOrder) {
                     var queuedOrder = _this.queuedOrder;
                     _this.queuedOrder = null;
@@ -1803,6 +1956,12 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             });
         };
         ;
+        Unit.prototype.getCooldown = function (ability) {
+            return this.remainingCooldowns.get(ability) || 0;
+        };
+        Unit.prototype.useAbility = function (ability) {
+            this.remainingCooldowns.set(ability, ability.cooldown);
+        };
         return Unit;
     }());
     exports.default = Unit;
@@ -1951,6 +2110,7 @@ define("core/GameState", ["require", "exports", "types/types"], function (requir
             this._map = null;
             this.messages = [];
             this.turn = 1;
+            this.queuedAbility = null;
         }
         GameState.prototype.getMap = function () {
             if (!this._map) {
@@ -2197,15 +2357,22 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
     var HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
     var HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
     var HUD_MARGIN = 5;
+    var HUD_BORDER_MARGIN = 3;
     var INVENTORY_LEFT = 2 * TILE_WIDTH;
     var INVENTORY_TOP = 2 * TILE_HEIGHT;
     var INVENTORY_WIDTH = 16 * TILE_WIDTH;
     var INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
+    var INVENTORY_MARGIN = 12;
+    var ABILITIES_PANEL_HEIGHT = 48;
+    var ABILITIES_OUTER_MARGIN = 13;
+    var ABILITIES_INNER_MARGIN = 10;
+    var ABILITY_ICON_WIDTH = 20;
+    var ABILITIES_Y_MARGIN = 4;
     var LINE_HEIGHT = 16;
     var GAME_OVER_FILENAME = 'gameover';
     var TITLE_FILENAME = 'title';
     var VICTORY_FILENAME = 'victory';
-    var HUD_FILENAME = 'HUD';
+    var HUD_FILENAME = 'HUD2';
     var INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
     var SHADOW_FILENAME = 'shadow';
     var SpriteRenderer = /** @class */ (function () {
@@ -2261,11 +2428,13 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             actions_1.revealTiles();
             this._bufferContext.fillStyle = Colors_6.default.BLACK;
             this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+            // can't pass direct references to the functions because `this` won't be defined
             return PromiseUtils_7.chainPromises([
                 function () { return _this._renderTiles(); },
                 function () { return _this._renderItems(); },
                 function () { return _this._renderProjectiles(); },
                 function () { return _this._renderUnits(); },
+                function () { return _this._renderMessages(); },
                 function () { return _this._renderHUD(); }
             ]);
         };
@@ -2392,11 +2561,11 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT); })
                 .then(function () {
                 // draw equipment
-                var equipmentLeft = INVENTORY_LEFT + TILE_WIDTH;
-                var inventoryLeft = (_bufferCanvas.width + TILE_WIDTH) / 2;
+                var equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+                var itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
                 var promises = [];
-                promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + 12 }, Colors_6.default.WHITE, 'center'));
-                promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + 12 }, Colors_6.default.WHITE, 'center'));
+                promises.push(_this._drawText('EQUIPMENT', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors_6.default.WHITE, 'center'));
+                promises.push(_this._drawText('INVENTORY', FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors_6.default.WHITE, 'center'));
                 // draw equipment items
                 // for now, just display them all in one list
                 var y = INVENTORY_TOP + 64;
@@ -2410,7 +2579,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 var categoryWidth = 60;
                 var xOffset = 4;
                 for (var i = 0; i < inventoryCategories.length; i++) {
-                    var x = inventoryLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+                    var x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
                     var top_3 = INVENTORY_TOP + 40;
                     promises.push(_this._drawText(inventoryCategories[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: x, y: top_3 }, Colors_6.default.WHITE, 'center'));
                     if (inventoryCategories[i] === inventory.selectedCategory) {
@@ -2421,7 +2590,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 // draw inventory items
                 if (inventory.selectedCategory) {
                     var items = inventory.get(inventory.selectedCategory);
-                    var x = inventoryLeft + 8;
+                    var x = itemsLeft + 8;
                     for (var i = 0; i < items.length; i++) {
                         var y_1 = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
                         var color = void 0;
@@ -2461,6 +2630,22 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return sprite.getImage()
                 .then(function (image) { return _this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy); });
         };
+        SpriteRenderer.prototype._renderMessages = function () {
+            var _bufferContext = this._bufferContext;
+            var messages = jwb.state.messages;
+            _bufferContext.fillStyle = Colors_6.default.BLACK;
+            _bufferContext.strokeStyle = Colors_6.default.BLACK;
+            var left = 0;
+            var top = 0;
+            var promises = [];
+            for (var i = 0; i < messages.length; i++) {
+                var y = top + (LINE_HEIGHT * i);
+                _bufferContext.fillStyle = Colors_6.default.BLACK;
+                _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
+            }
+            return Promise.all(promises);
+        };
         SpriteRenderer.prototype._renderHUD = function () {
             var _this = this;
             return this._renderHUDFrame()
@@ -2473,6 +2658,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
         SpriteRenderer.prototype._renderHUDFrame = function () {
             var _this = this;
             return ImageUtils_4.loadImage(HUD_FILENAME)
+                .then(function (imageData) { return ImageUtils_4.applyTransparentColor(imageData, Colors_6.default.WHITE); })
                 .then(createImageBitmap)
                 .then(function (imageBitmap) { return _this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT); });
         };
@@ -2497,16 +2683,19 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderHUDMiddlePanel = function () {
-            var _bufferContext = this._bufferContext;
-            var messages = jwb.state.messages;
-            _bufferContext.fillStyle = Colors_6.default.BLACK;
-            _bufferContext.strokeStyle = Colors_6.default.WHITE;
-            var left = HUD_LEFT_WIDTH + HUD_MARGIN;
-            var top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            var left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+            var top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+            var playerUnit = jwb.state.playerUnit;
             var promises = [];
-            for (var i = 0; i < messages.length; i++) {
-                var y = top + (LINE_HEIGHT * i);
-                promises.push(this._drawText(messages[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
+            var keyNumber = 1;
+            for (var i = 0; i < playerUnit.abilities.length; i++) {
+                var ability = playerUnit.abilities[i];
+                if (!!ability.icon) {
+                    promises.push(this._renderAbility(ability, left, top));
+                    promises.push(this._drawText("" + keyNumber, FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors_6.default.WHITE, 'center'));
+                    left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
+                    keyNumber++;
+                }
             }
             return Promise.all(promises);
         };
@@ -2528,14 +2717,6 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
                 promises.push(this._drawText(lines[i], FontRenderer_1.Fonts.PERFECT_DOS_VGA, { x: left, y: y }, Colors_6.default.WHITE, 'left'));
             }
             return Promise.all(promises);
-        };
-        SpriteRenderer.prototype._drawRect = function (_a) {
-            var left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-            var _bufferContext = this._bufferContext;
-            _bufferContext.fillStyle = Colors_6.default.BLACK;
-            _bufferContext.fillRect(left, top, width, height);
-            _bufferContext.strokeStyle = Colors_6.default.WHITE;
-            _bufferContext.strokeRect(left, top, width, height);
         };
         /**
          * @return the top left pixel
@@ -2583,6 +2764,28 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/
             var minimapRenderer = new MinimapRenderer_1.default();
             return minimapRenderer.render()
                 .then(function (bitmap) { return _this._bufferContext.drawImage(bitmap, 0, 0); });
+        };
+        SpriteRenderer.prototype._renderAbility = function (ability, left, top) {
+            var _this = this;
+            var borderColor;
+            var _a = jwb.state, queuedAbility = _a.queuedAbility, playerUnit = _a.playerUnit;
+            if (queuedAbility === ability) {
+                borderColor = Colors_6.default.GREEN;
+            }
+            else if (playerUnit.getCooldown(ability) === 0) {
+                borderColor = Colors_6.default.WHITE;
+            }
+            else {
+                borderColor = Colors_6.default.DARK_GRAY;
+            }
+            return ImageUtils_4.loadImage("abilities/" + ability.icon)
+                .then(function (image) {
+                var _a;
+                return ImageUtils_4.replaceColors(image, (_a = {}, _a[Colors_6.default.DARK_GRAY] = borderColor, _a));
+            })
+                .then(createImageBitmap)
+                .then(function (image) { return _this._bufferContext.drawImage(image, left, top); })
+                .then(function () { left += ABILITIES_INNER_MARGIN; });
         };
         SpriteRenderer.SCREEN_WIDTH = SCREEN_WIDTH;
         SpriteRenderer.SCREEN_HEIGHT = SCREEN_HEIGHT;
@@ -2682,7 +2885,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_11, SoundFX_4, Animations_2) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_11, SoundFX_4, Animations_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2721,7 +2924,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                     && ([-1, 0, 1].indexOf(dy) > -1)
                     && !(dx === 0 && dy === 0);
             });
-            promises.push(function () { return Animations_2.playFloorFireAnimation(unit, adjacentUnits); });
+            promises.push(function () { return Animations_3.playFloorFireAnimation(unit, adjacentUnits); });
             adjacentUnits.forEach(function (u) {
                 promises.push(function () { return u.takeDamage(damage, unit); });
             });
@@ -4103,9 +4306,9 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function _initState() {
         var playerUnit = new Unit_2.default(UnitClasses_2.default.PLAYER, 'player', 1, { x: 0, y: 0 });
         jwb.state = new GameState_1.default(playerUnit, [
-            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 40, 30, 12, 5); },
-            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 40, 30, 13, 4); },
-            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 40, 30, 14, 3); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 1, 32, 24, 10, 5); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 2, 32, 24, 11, 4); },
+            function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.ROOMS_AND_CORRIDORS, TileSets_1.default.DUNGEON, 3, 32, 24, 12, 3); },
             function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 4, 34, 25, 12, 3); },
             function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 5, 36, 26, 13, 3); },
             function () { return MapFactory_1.default.createRandomMap(types_19.MapLayout.BLOB, TileSets_1.default.CAVE, 6, 38, 27, 14, 3); }
@@ -4151,7 +4354,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "units/UnitUtils", "sounds/SoundFX", "core/actions", "types/types"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, UnitUtils_2, SoundFX_5, actions_2, types_20) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, SoundFX_5, actions_2, types_20, UnitAbilities_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -4168,6 +4371,8 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         KeyCommand["ENTER"] = "ENTER";
         KeyCommand["SPACEBAR"] = "SPACEBAR";
         KeyCommand["M"] = "M";
+        KeyCommand["KEY_1"] = "1";
+        KeyCommand["KEY_2"] = "2";
     })(KeyCommand || (KeyCommand = {}));
     function _mapToCommand(e) {
         switch (e.key) {
@@ -4196,9 +4401,14 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
             case 'm':
             case 'M':
                 return KeyCommand.M;
+            case '1':
+                return KeyCommand.KEY_1;
+            case '2':
+                return KeyCommand.KEY_2;
         }
         return null;
     }
+    // global state
     var BUSY = false;
     function keyHandlerWrapper(e) {
         if (!BUSY) {
@@ -4228,6 +4438,9 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return _handleTab();
             case KeyCommand.M:
                 return _handleMap();
+            case KeyCommand.KEY_1:
+            case KeyCommand.KEY_2:
+                return _handleAbility(command);
             default:
         }
         return PromiseUtils_9.resolvedPromise();
@@ -4266,9 +4479,14 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                         case KeyCommand.SHIFT_DOWN:
                         case KeyCommand.SHIFT_LEFT:
                         case KeyCommand.SHIFT_RIGHT:
-                            return function (u) { return UnitUtils_2.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
+                            return function (u) { return UnitAbilities_3.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                         default:
-                            return function (u) { return UnitUtils_2.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
+                            if (!!jwb.state.queuedAbility) {
+                                var ability_1 = jwb.state.queuedAbility;
+                                jwb.state.queuedAbility = null;
+                                return function (u) { return ability_1.use(u, { dx: dx_1, dy: dy_1 }); };
+                            }
+                            return function (u) { return UnitAbilities_3.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                     }
                 })();
                 return TurnHandler_1.default.playTurn(queuedOrder);
@@ -4371,6 +4589,31 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 break;
         }
         return renderer.render();
+    }
+    function _handleAbility(command) {
+        var renderer = jwb.renderer;
+        var playerUnit = jwb.state.playerUnit;
+        switch (command) {
+            case KeyCommand.KEY_1:
+                if (playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK) <= 0) {
+                    jwb.state.queuedAbility = UnitAbilities_3.default.HEAVY_ATTACK;
+                    return renderer.render();
+                }
+                else {
+                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK));
+                }
+                break;
+            case KeyCommand.KEY_2:
+                if (playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK) <= 0) {
+                    jwb.state.queuedAbility = UnitAbilities_3.default.KNOCKBACK_ATTACK;
+                    return renderer.render();
+                }
+                else {
+                    console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK));
+                }
+                break;
+        }
+        return PromiseUtils_9.resolvedPromise();
     }
     function attachEvents() {
         window.onkeydown = keyHandlerWrapper;

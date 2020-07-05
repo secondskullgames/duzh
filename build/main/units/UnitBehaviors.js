@@ -2,11 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Pathfinder_1 = require("../utils/Pathfinder");
 var RandomUtils_1 = require("../utils/RandomUtils");
-var UnitUtils_1 = require("./UnitUtils");
 var PromiseUtils_1 = require("../utils/PromiseUtils");
 var ArrayUtils_1 = require("../utils/ArrayUtils");
 var MapUtils_1 = require("../maps/MapUtils");
 var Directions_1 = require("../types/Directions");
+var UnitAbilities_1 = require("./UnitAbilities");
 function _wanderAndAttack(unit) {
     var playerUnit = jwb.state.playerUnit;
     var map = jwb.state.getMap();
@@ -27,7 +27,8 @@ function _wanderAndAttack(unit) {
     });
     if (tiles.length > 0) {
         var _a = RandomUtils_1.randChoice(tiles), x = _a.x, y = _a.y;
-        return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+        return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
     }
     return PromiseUtils_1.resolvedPromise();
 }
@@ -45,7 +46,8 @@ function _wander(unit) {
     });
     if (tiles.length > 0) {
         var _a = RandomUtils_1.randChoice(tiles), x = _a.x, y = _a.y;
-        return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+        return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
     }
     return PromiseUtils_1.resolvedPromise();
 }
@@ -72,7 +74,8 @@ function _attackPlayerUnit_withPath(unit) {
         var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
         var unitAtPoint = map.getUnit({ x: x, y: y });
         if (!unitAtPoint || unitAtPoint === playerUnit) {
-            return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
         }
     }
     return PromiseUtils_1.resolvedPromise();
@@ -98,7 +101,8 @@ function _fleeFromPlayerUnit(unit) {
     if (tiles.length > 0) {
         var orderedTiles = tiles.sort(ArrayUtils_1.comparingReversed(function (coordinates) { return MapUtils_1.manhattanDistance(coordinates, playerUnit); }));
         var _a = orderedTiles[0], x = _a.x, y = _a.y;
-        return UnitUtils_1.moveOrAttack(unit, { x: x, y: y });
+        var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+        return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
     }
     return PromiseUtils_1.resolvedPromise();
 }

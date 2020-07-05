@@ -4,10 +4,10 @@ var TurnHandler_1 = require("./TurnHandler");
 var Sounds_1 = require("../sounds/Sounds");
 var ItemUtils_1 = require("../items/ItemUtils");
 var PromiseUtils_1 = require("../utils/PromiseUtils");
-var UnitUtils_1 = require("../units/UnitUtils");
 var SoundFX_1 = require("../sounds/SoundFX");
 var actions_1 = require("./actions");
 var types_1 = require("../types/types");
+var UnitAbilities_1 = require("../units/UnitAbilities");
 var KeyCommand;
 (function (KeyCommand) {
     KeyCommand["UP"] = "UP";
@@ -22,6 +22,8 @@ var KeyCommand;
     KeyCommand["ENTER"] = "ENTER";
     KeyCommand["SPACEBAR"] = "SPACEBAR";
     KeyCommand["M"] = "M";
+    KeyCommand["KEY_1"] = "1";
+    KeyCommand["KEY_2"] = "2";
 })(KeyCommand || (KeyCommand = {}));
 function _mapToCommand(e) {
     switch (e.key) {
@@ -50,9 +52,14 @@ function _mapToCommand(e) {
         case 'm':
         case 'M':
             return KeyCommand.M;
+        case '1':
+            return KeyCommand.KEY_1;
+        case '2':
+            return KeyCommand.KEY_2;
     }
     return null;
 }
+// global state
 var BUSY = false;
 function keyHandlerWrapper(e) {
     if (!BUSY) {
@@ -82,6 +89,9 @@ function keyHandler(e) {
             return _handleTab();
         case KeyCommand.M:
             return _handleMap();
+        case KeyCommand.KEY_1:
+        case KeyCommand.KEY_2:
+            return _handleAbility(command);
         default:
     }
     return PromiseUtils_1.resolvedPromise();
@@ -120,9 +130,14 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_DOWN:
                     case KeyCommand.SHIFT_LEFT:
                     case KeyCommand.SHIFT_RIGHT:
-                        return function (u) { return UnitUtils_1.fireProjectile(u, { dx: dx_1, dy: dy_1 }); };
+                        return function (u) { return UnitAbilities_1.default.SHOOT_ARROW.use(u, { dx: dx_1, dy: dy_1 }); };
                     default:
-                        return function (u) { return UnitUtils_1.moveOrAttack(u, { x: u.x + dx_1, y: u.y + dy_1 }); };
+                        if (!!jwb.state.queuedAbility) {
+                            var ability_1 = jwb.state.queuedAbility;
+                            jwb.state.queuedAbility = null;
+                            return function (u) { return ability_1.use(u, { dx: dx_1, dy: dy_1 }); };
+                        }
+                        return function (u) { return UnitAbilities_1.default.ATTACK.use(u, { dx: dx_1, dy: dy_1 }); };
                 }
             })();
             return TurnHandler_1.default.playTurn(queuedOrder);
@@ -225,6 +240,31 @@ function _handleMap() {
             break;
     }
     return renderer.render();
+}
+function _handleAbility(command) {
+    var renderer = jwb.renderer;
+    var playerUnit = jwb.state.playerUnit;
+    switch (command) {
+        case KeyCommand.KEY_1:
+            if (playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK) <= 0) {
+                jwb.state.queuedAbility = UnitAbilities_1.default.HEAVY_ATTACK;
+                return renderer.render();
+            }
+            else {
+                console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));
+            }
+            break;
+        case KeyCommand.KEY_2:
+            if (playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK) <= 0) {
+                jwb.state.queuedAbility = UnitAbilities_1.default.KNOCKBACK_ATTACK;
+                return renderer.render();
+            }
+            else {
+                console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK));
+            }
+            break;
+    }
+    return PromiseUtils_1.resolvedPromise();
 }
 function attachEvents() {
     window.onkeydown = keyHandlerWrapper;

@@ -8,6 +8,7 @@ import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 import MinimapRenderer from './MinimapRenderer';
+import { Ability } from '../units/UnitAbilities';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -22,6 +23,7 @@ const HUD_HEIGHT = 3 * TILE_HEIGHT;
 const HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
 const HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
 const HUD_MARGIN = 5;
+const HUD_BORDER_MARGIN = 3;
 
 const INVENTORY_LEFT = 2 * TILE_WIDTH;
 const INVENTORY_TOP = 2 * TILE_HEIGHT;
@@ -29,12 +31,18 @@ const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 const INVENTORY_MARGIN = 12;
 
+const ABILITIES_PANEL_HEIGHT = 48;
+const ABILITIES_OUTER_MARGIN = 13;
+const ABILITIES_INNER_MARGIN = 10;
+const ABILITY_ICON_WIDTH = 20;
+const ABILITIES_Y_MARGIN = 4;
+
 const LINE_HEIGHT = 16;
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
-const HUD_FILENAME = 'HUD';
+const HUD_FILENAME = 'HUD2';
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 const SHADOW_FILENAME = 'shadow';
 
@@ -101,11 +109,13 @@ class SpriteRenderer implements Renderer {
     this._bufferContext.fillStyle = Colors.BLACK;
     this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
 
+    // can't pass direct references to the functions because `this` won't be defined
     return chainPromises([
       () => this._renderTiles(),
       () => this._renderItems(),
       () => this._renderProjectiles(),
       () => this._renderUnits(),
+      () => this._renderMessages(),
       () => this._renderHUD()
     ]);
   }
@@ -287,6 +297,25 @@ class SpriteRenderer implements Renderer {
       .then(image => this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy));
   }
 
+  private _renderMessages(): Promise<any> {
+    const { _bufferContext } = this;
+    const { messages } = jwb.state;
+    _bufferContext.fillStyle = Colors.BLACK;
+    _bufferContext.strokeStyle = Colors.BLACK;
+
+    const left = 0;
+    const top = 0;
+
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      let y = top + (LINE_HEIGHT * i);
+      _bufferContext.fillStyle = Colors.BLACK;
+      _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+    }
+    return Promise.all(promises);
+  }
+
   private _renderHUD(): Promise<any> {
     return this._renderHUDFrame()
       .then(() => Promise.all([
@@ -298,6 +327,7 @@ class SpriteRenderer implements Renderer {
 
   private _renderHUDFrame(): Promise<any> {
     return loadImage(HUD_FILENAME)
+      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
   }
@@ -326,19 +356,22 @@ class SpriteRenderer implements Renderer {
   }
 
   private _renderHUDMiddlePanel(): Promise<any> {
-    const { _bufferContext } = this;
-    const { messages } = jwb.state;
-    _bufferContext.fillStyle = Colors.BLACK;
-    _bufferContext.strokeStyle = Colors.WHITE;
-
-    const left = HUD_LEFT_WIDTH + HUD_MARGIN;
-    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-
+    let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+    const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+    let { playerUnit } = jwb.state;
     const promises: Promise<any>[] = [];
-    for (let i = 0; i < messages.length; i++) {
-      let y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+
+    let keyNumber = 1;
+    for (let i = 0; i < playerUnit.abilities.length; i++) {
+      const ability = playerUnit.abilities[i];
+      if (!!ability.icon) {
+        promises.push(this._renderAbility(ability, left, top));
+        promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center'));
+        left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
+        keyNumber++;
+      }
     }
+
     return Promise.all(promises);
   }
 
@@ -364,15 +397,6 @@ class SpriteRenderer implements Renderer {
       promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
     }
     return Promise.all(promises);
-  }
-
-  private _drawRect({ left, top, width, height }: Rect) {
-    const { _bufferContext } = this;
-
-    _bufferContext.fillStyle = Colors.BLACK;
-    _bufferContext.fillRect(left, top, width, height);
-    _bufferContext.strokeStyle = Colors.WHITE;
-    _bufferContext.strokeRect(left, top, width, height);
   }
 
   /**
@@ -419,6 +443,24 @@ class SpriteRenderer implements Renderer {
     const minimapRenderer = new MinimapRenderer();
     return minimapRenderer.render()
       .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
+  }
+
+  private _renderAbility(ability: Ability, left: number, top: number) {
+    let borderColor: Colors;
+    const { queuedAbility, playerUnit } = jwb.state;
+    if (queuedAbility === ability) {
+      borderColor = Colors.GREEN;
+    } else if (playerUnit.getCooldown(ability) === 0) {
+      borderColor = Colors.WHITE;
+    } else {
+      borderColor = Colors.DARK_GRAY;
+    }
+
+    return loadImage(`abilities/${ability.icon}`)
+      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }))
+      .then(createImageBitmap)
+      .then(image => this._bufferContext.drawImage(image, left, top))
+      .then(() => { left += ABILITIES_INNER_MARGIN });
   }
 }
 
