@@ -68,7 +68,7 @@ var NormalAttack = /** @class */ (function (_super) {
 var HeavyAttack = /** @class */ (function (_super) {
     __extends(HeavyAttack, _super);
     function HeavyAttack() {
-        return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
+        return _super.call(this, 'HEAVY_ATTACK', 15, 'strong_icon') || this;
     }
     HeavyAttack.prototype.use = function (unit, direction) {
         var _this = this;
@@ -107,7 +107,7 @@ var HeavyAttack = /** @class */ (function (_super) {
 var KnockbackAttack = /** @class */ (function (_super) {
     __extends(KnockbackAttack, _super);
     function KnockbackAttack() {
-        return _super.call(this, 'KNOCKBACK_ATTACK', 10, 'knockback_icon') || this;
+        return _super.call(this, 'KNOCKBACK_ATTACK', 15, 'knockback_icon') || this;
     }
     KnockbackAttack.prototype.use = function (unit, direction) {
         var _this = this;
@@ -136,16 +136,14 @@ var KnockbackAttack = /** @class */ (function (_super) {
                         .then(function () {
                         var _a;
                         var targetCoordinates = { x: x, y: y };
-                        // TODO: This is implemented as a two-tile knockback, but since (in most cases) the target will
-                        // get a move immediately afterward, it will look like only one tile.
-                        // In the future, this should be one tile with a one-turn stun.
-                        for (var i = 0; i < 2; i++) {
-                            var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-                            if (!map.isBlocked(oneTileBack)) {
-                                targetCoordinates = oneTileBack;
-                            }
+                        // knockback by one tile
+                        var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+                        if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
+                            targetCoordinates = oneTileBack;
                         }
                         _a = [targetCoordinates.x, targetCoordinates.y], targetUnit_1.x = _a[0], targetUnit_1.y = _a[1];
+                        // stun for 1 turn (if they're already stunned, just leave it)
+                        targetUnit_1.stunDuration = Math.max(targetUnit_1.stunDuration, 1);
                     })
                         .then(resolve);
                 }
@@ -156,6 +154,49 @@ var KnockbackAttack = /** @class */ (function (_super) {
         });
     };
     return KnockbackAttack;
+}(Ability));
+var StunAttack = /** @class */ (function (_super) {
+    __extends(StunAttack, _super);
+    function StunAttack() {
+        return _super.call(this, 'STUN_ATTACK', 15, 'knockback_icon') || this;
+    }
+    StunAttack.prototype.use = function (unit, direction) {
+        var _this = this;
+        if (!direction) {
+            throw 'StunAttack requires a direction!';
+        }
+        var dx = direction.dx, dy = direction.dy;
+        var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+        var playerUnit = jwb.state.playerUnit;
+        var map = jwb.state.getMap();
+        unit.direction = { dx: x - unit.x, dy: y - unit.y };
+        return new Promise(function (resolve) {
+            var _a;
+            if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                if (unit === playerUnit) {
+                    SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                }
+                resolve();
+            }
+            else {
+                var targetUnit_2 = map.getUnit({ x: x, y: y });
+                if (!!targetUnit_2) {
+                    unit.useAbility(_this);
+                    UnitUtils_1.attack(unit, targetUnit_2)
+                        .then(function () {
+                        // stun for 2 turns (if they're already stunned, just leave it)
+                        targetUnit_2.stunDuration = Math.max(targetUnit_2.stunDuration, 2);
+                    })
+                        .then(resolve);
+                }
+                else {
+                    resolve();
+                }
+            }
+        });
+    };
+    return StunAttack;
 }(Ability));
 var ShootArrow = /** @class */ (function (_super) {
     __extends(ShootArrow, _super);
@@ -205,7 +246,8 @@ var UnitAbilities = {
     ATTACK: new NormalAttack(),
     HEAVY_ATTACK: new HeavyAttack(),
     KNOCKBACK_ATTACK: new KnockbackAttack(),
-    SHOOT_ARROW: new ShootArrow(),
+    STUN_ATTACK: new StunAttack(),
+    SHOOT_ARROW: new ShootArrow()
 };
 exports.default = UnitAbilities;
 //# sourceMappingURL=UnitAbilities.js.map

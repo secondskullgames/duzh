@@ -58,7 +58,7 @@ class NormalAttack extends Ability {
 
 class HeavyAttack extends Ability {
   constructor() {
-    super('HEAVY_ATTACK', 10, 'strong_icon');
+    super('HEAVY_ATTACK', 15, 'strong_icon');
   }
 
   use(unit: Unit, direction: Direction | null): Promise<any> {
@@ -96,7 +96,7 @@ class HeavyAttack extends Ability {
 
 class KnockbackAttack extends Ability {
   constructor() {
-    super('KNOCKBACK_ATTACK', 10, 'knockback_icon');
+    super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
   }
 
   use(unit: Unit, direction: Direction | null): Promise<any> {
@@ -126,16 +126,57 @@ class KnockbackAttack extends Ability {
             .then(() => {
               let targetCoordinates = { x, y };
 
-              // TODO: This is implemented as a two-tile knockback, but since (in most cases) the target will
-              // get a move immediately afterward, it will look like only one tile.
-              // In the future, this should be one tile with a one-turn stun.
-              for (let i = 0; i < 2; i++) {
-                const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-                if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
-                  targetCoordinates = oneTileBack;
-                }
+              // knockback by one tile
+              const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+              if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
+                targetCoordinates = oneTileBack;
               }
               [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
+
+              // stun for 1 turn (if they're already stunned, just leave it)
+              targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
+            })
+            .then(resolve);
+        } else {
+          resolve();
+        }
+      }
+    });
+  }
+}
+
+class StunAttack extends Ability {
+  constructor() {
+    super('STUN_ATTACK', 15, 'knockback_icon');
+  }
+
+  use(unit: Unit, direction: Direction | null): Promise<any> {
+    if (!direction) {
+      throw 'StunAttack requires a direction!';
+    }
+
+    const { dx, dy } = direction;
+    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+
+    const { playerUnit } = jwb.state;
+    const map = jwb.state.getMap();
+    unit.direction = { dx: x - unit.x, dy: y - unit.y };
+
+    return new Promise(resolve => {
+      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+        [unit.x, unit.y] = [x, y];
+        if (unit === playerUnit) {
+          playSound(Sounds.FOOTSTEP);
+        }
+        resolve();
+      } else {
+        const targetUnit = map.getUnit({ x, y });
+        if (!!targetUnit) {
+          unit.useAbility(this);
+          attack(unit, targetUnit)
+            .then(() => {
+              // stun for 2 turns (if they're already stunned, just leave it)
+              targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
             })
             .then(resolve);
         } else {
@@ -197,7 +238,8 @@ const UnitAbilities = {
   ATTACK: new NormalAttack(),
   HEAVY_ATTACK: new HeavyAttack(),
   KNOCKBACK_ATTACK: new KnockbackAttack(),
-  SHOOT_ARROW: new ShootArrow(),
+  STUN_ATTACK: new StunAttack(),
+  SHOOT_ARROW: new ShootArrow()
 };
 
 export default UnitAbilities;

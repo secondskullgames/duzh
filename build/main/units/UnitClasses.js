@@ -4,7 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var SpriteFactory_1 = require("../graphics/sprites/SpriteFactory");
 var Colors_1 = require("../types/Colors");
 var types_1 = require("../types/types");
-var UnitAI_1 = require("./UnitAI");
+var AIUnitControllers_1 = require("./controllers/AIUnitControllers");
+var PlayerUnitController_1 = require("./controllers/PlayerUnitController");
 var PLAYER = {
     name: 'PLAYER',
     type: types_1.UnitType.HUMAN,
@@ -32,6 +33,7 @@ var PLAYER = {
     manaPerLevel: function (level) { return 0; },
     damagePerLevel: function (level) { return 1; },
     experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 2 : null; },
+    controller: new PlayerUnitController_1.default()
 };
 var ENEMY_SNAKE = {
     name: 'ENEMY_SNAKE',
@@ -46,9 +48,9 @@ var ENEMY_SNAKE = {
     lifePerLevel: function () { return 15; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 1; },
-    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+    controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
     aiParams: {
-        speed: 0.95,
+        speed: 0.98,
         visionRange: 10,
         fleeThreshold: 0.2
     }
@@ -66,9 +68,9 @@ var ENEMY_GRUNT = {
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
     damagePerLevel: function () { return 1; },
-    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+    controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
     aiParams: {
-        speed: 0.90,
+        speed: 0.95,
         visionRange: 8,
         fleeThreshold: 0.1
     }
@@ -80,15 +82,15 @@ var ENEMY_SOLDIER = {
     paletteSwaps: {},
     startingLife: 60,
     startingMana: null,
-    startingDamage: 6,
+    startingDamage: 8,
     minLevel: 3,
     maxLevel: 6,
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
-    damagePerLevel: function () { return 2; },
-    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+    damagePerLevel: function () { return 1; },
+    controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
     aiParams: {
-        speed: 0.90,
+        speed: 0.95,
         visionRange: 10,
         fleeThreshold: 0.1
     }
@@ -101,17 +103,17 @@ var ENEMY_GOLEM = {
         _b[Colors_1.default.DARK_GRAY] = Colors_1.default.DARKER_GRAY,
         _b[Colors_1.default.LIGHT_GRAY] = Colors_1.default.DARKER_GRAY,
         _b),
-    startingLife: 80,
+    startingLife: 60,
     startingMana: null,
     startingDamage: 10,
     minLevel: 5,
     maxLevel: 9,
     lifePerLevel: function () { return 20; },
     manaPerLevel: function () { return null; },
-    damagePerLevel: function () { return 2; },
-    aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+    damagePerLevel: function () { return 1; },
+    controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
     aiParams: {
-        speed: 0.88,
+        speed: 0.92,
         visionRange: 12,
         fleeThreshold: 0
     }

@@ -4,11 +4,11 @@ import Sounds from '../sounds/Sounds';
 import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 import Music from '../sounds/Music';
-import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
-import { UnitAI } from './UnitAI';
-import { resolvedPromise } from '../utils/PromiseUtils';
-import { playSound } from '../sounds/SoundFX';
+import UnitController from './controllers/UnitController';
 import UnitAbilities, { Ability } from './UnitAbilities';
+import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
+import { playSound } from '../sounds/SoundFX';
+import { resolvedPromise } from '../utils/PromiseUtils';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.005;
 
@@ -29,12 +29,12 @@ class Unit implements Entity {
   maxMana: number | null;
   lifeRemainder: number;
   private _damage: number;
-  queuedOrder: (() => Promise<void>) | null;
-  aiHandler?: UnitAI;
+  controller: UnitController;
   activity: Activity;
   direction: Direction | null;
   private readonly remainingCooldowns: Map<Ability, number>;
   readonly abilities: Ability[];
+  stunDuration: number;
 
   constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
     this.unitClass = unitClass;
@@ -53,53 +53,51 @@ class Unit implements Entity {
     this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
     this._damage = unitClass.startingDamage;
-    this.queuedOrder = null;
-    this.aiHandler = unitClass.aiHandler;
+    this.controller = unitClass.controller;
     this.activity = Activity.STANDING;
     this.direction = null;
     this.remainingCooldowns = new Map();
-    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK];
+    // TODO: this needs to be specifid to the player unit
+    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
+    this.stunDuration = 0;
 
     while (this.level < level) {
       this._levelUp(false);
     }
   }
 
-  private _regenLife() {
+  private _upkeep() {
+    // life regeneration
     const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
     this.lifeRemainder += lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
     this.life = Math.min(this.life + deltaLife, this.maxLife);
-  };
 
-  private _updateCooldowns() {
     // I hate javascript, wtf is this callback signature
     this.remainingCooldowns.forEach((cooldown, ability, map) => {
       map.set(ability, Math.max(cooldown - 1, 0));
     });
   }
 
+  private _endOfTurn() {
+    // decrement stun duration
+    this.stunDuration = Math.max(this.stunDuration - 1, 0)
+  }
+
   update(): Promise<void> {
     return new Promise(resolve => {
-      this._regenLife();
-      this._updateCooldowns();
-      if (!!this.queuedOrder) {
-        const { queuedOrder } = this;
-        this.queuedOrder = null;
-        return queuedOrder()
-          .then(() => resolve());
-      }
+      this._upkeep();
       return resolve();
     })
       .then(() => {
-        if (!!this.aiHandler) {
-          return this.aiHandler(this);
+        if (this.stunDuration === 0) {
+          return this.controller.issueOrder(this);
         }
-
         return resolvedPromise();
       })
-      .then(() => this.sprite.update());
+      .then(() => this.sprite.update())
+      .then(() => this._endOfTurn());
   }
 
   getDamage(): number {

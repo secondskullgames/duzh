@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PromiseUtils_1 = require("../utils/PromiseUtils");
 function playTurn(playerUnitOrder) {
     var playerUnit = jwb.state.playerUnit;
-    playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
+    var playerController = (playerUnit.controller);
+    playerController.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
     return _update();
 }
 function _update() {

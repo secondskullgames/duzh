@@ -4,10 +4,10 @@ var Sounds_1 = require("../sounds/Sounds");
 var InventoryMap_1 = require("../items/InventoryMap");
 var EquipmentMap_1 = require("../items/equipment/EquipmentMap");
 var Music_1 = require("../sounds/Music");
-var types_1 = require("../types/types");
-var PromiseUtils_1 = require("../utils/PromiseUtils");
-var SoundFX_1 = require("../sounds/SoundFX");
 var UnitAbilities_1 = require("./UnitAbilities");
+var types_1 = require("../types/types");
+var SoundFX_1 = require("../sounds/SoundFX");
+var PromiseUtils_1 = require("../utils/PromiseUtils");
 var LIFE_PER_TURN_MULTIPLIER = 0.005;
 var Unit = /** @class */ (function () {
     function Unit(unitClass, name, level, _a) {
@@ -28,50 +28,47 @@ var Unit = /** @class */ (function () {
         this.maxMana = unitClass.startingMana;
         this.lifeRemainder = 0;
         this._damage = unitClass.startingDamage;
-        this.queuedOrder = null;
-        this.aiHandler = unitClass.aiHandler;
+        this.controller = unitClass.controller;
         this.activity = types_1.Activity.STANDING;
         this.direction = null;
         this.remainingCooldowns = new Map();
-        this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK];
+        // TODO: this needs to be specifid to the player unit
+        this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK, UnitAbilities_1.default.STUN_ATTACK];
+        this.stunDuration = 0;
         while (this.level < level) {
             this._levelUp(false);
         }
     }
-    Unit.prototype._regenLife = function () {
+    Unit.prototype._upkeep = function () {
+        // life regeneration
         var lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
         this.lifeRemainder += lifePerTurn;
         var deltaLife = Math.floor(this.lifeRemainder);
         this.lifeRemainder -= deltaLife;
         this.life = Math.min(this.life + deltaLife, this.maxLife);
-    };
-    ;
-    Unit.prototype._updateCooldowns = function () {
         // I hate javascript, wtf is this callback signature
         this.remainingCooldowns.forEach(function (cooldown, ability, map) {
             map.set(ability, Math.max(cooldown - 1, 0));
         });
     };
+    Unit.prototype._endOfTurn = function () {
+        // decrement stun duration
+        this.stunDuration = Math.max(this.stunDuration - 1, 0);
+    };
     Unit.prototype.update = function () {
         var _this = this;
         return new Promise(function (resolve) {
-            _this._regenLife();
-            _this._updateCooldowns();
-            if (!!_this.queuedOrder) {
-                var queuedOrder = _this.queuedOrder;
-                _this.queuedOrder = null;
-                return queuedOrder()
-                    .then(function () { return resolve(); });
-            }
+            _this._upkeep();
             return resolve();
         })
             .then(function () {
-            if (!!_this.aiHandler) {
-                return _this.aiHandler(_this);
+            if (_this.stunDuration === 0) {
+                return _this.controller.issueOrder(_this);
             }
             return PromiseUtils_1.resolvedPromise();
         })
-            .then(function () { return _this.sprite.update(); });
+            .then(function () { return _this.sprite.update(); })
+            .then(function () { return _this._endOfTurn(); });
     };
     Unit.prototype.getDamage = function () {
         var damage = this._damage;

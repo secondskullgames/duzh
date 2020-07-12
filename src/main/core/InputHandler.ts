@@ -22,7 +22,15 @@ enum KeyCommand {
   SPACEBAR = 'SPACEBAR',
   M = 'M',
   KEY_1 = '1',
-  KEY_2 = '2'
+  KEY_2 = '2',
+  KEY_3 = '3',
+  KEY_4 = '4',
+  KEY_5 = '5',
+  KEY_6 = '6',
+  KEY_7 = '7',
+  KEY_8 = '8',
+  KEY_9 = '9',
+  KEY_0 = '0'
 }
 
 function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
@@ -56,6 +64,22 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
       return KeyCommand.KEY_1;
     case '2':
       return KeyCommand.KEY_2;
+    case '3':
+      return KeyCommand.KEY_3;
+    case '4':
+      return KeyCommand.KEY_4;
+    case '5':
+      return KeyCommand.KEY_5;
+    case '6':
+      return KeyCommand.KEY_6;
+    case '7':
+      return KeyCommand.KEY_7;
+    case '8':
+      return KeyCommand.KEY_8;
+    case '9':
+      return KeyCommand.KEY_9;
+    case '0':
+      return KeyCommand.KEY_0;
   }
   return null;
 }
@@ -96,6 +120,14 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
       return _handleMap();
     case KeyCommand.KEY_1:
     case KeyCommand.KEY_2:
+    case KeyCommand.KEY_3:
+    case KeyCommand.KEY_4:
+    case KeyCommand.KEY_5:
+    case KeyCommand.KEY_6:
+    case KeyCommand.KEY_7:
+    case KeyCommand.KEY_8:
+    case KeyCommand.KEY_9:
+    case KeyCommand.KEY_0:
       return _handleAbility(command);
     default:
   }
@@ -259,24 +291,18 @@ function _handleMap(): Promise<void> {
 function _handleAbility(command: KeyCommand): Promise<void> {
   const { renderer } = jwb;
   const { playerUnit } = jwb.state;
-  switch (command) {
-    case KeyCommand.KEY_1:
-      if (playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK) <= 0) {
-        jwb.state.queuedAbility = UnitAbilities.HEAVY_ATTACK;
-        return renderer.render();
-      } else {
-        console.log(`HEAVY_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
-      }
-      break;
-    case KeyCommand.KEY_2:
-      if (playerUnit.getCooldown(UnitAbilities.KNOCKBACK_ATTACK) <= 0) {
-        jwb.state.queuedAbility = UnitAbilities.KNOCKBACK_ATTACK;
-        return renderer.render();
-      } else {
-        console.log(`KNOCKBACK_ATTACK is on cooldown: ${playerUnit.getCooldown(UnitAbilities.KNOCKBACK_ATTACK)}`);
-      }
-      break;
+
+  // sketchy - recall KEY_1 = '1', etc.
+  // player abilities are indexed as (0 => attack, others => specials)
+  const index = parseInt(command.toString());
+  const ability = playerUnit.abilities[index];
+  if (playerUnit.getCooldown(ability) <= 0) {
+    jwb.state.queuedAbility = ability;
+    return renderer.render();
+  } else {
+    console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
   }
+
   return resolvedPromise();
 }
 

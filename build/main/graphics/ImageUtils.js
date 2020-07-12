@@ -31,7 +31,7 @@ function loadImage(filename) {
 }
 exports.loadImage = loadImage;
 function applyTransparentColor(imageData, transparentColor) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         var _a = hex2rgb(transparentColor), tr = _a[0], tg = _a[1], tb = _a[2];
         var array = new Uint8ClampedArray(imageData.data.length);
         for (var i = 0; i < imageData.data.length; i += 4) {

@@ -1,7 +1,7 @@
 import Unit from './Unit';
 import Sprite from '../graphics/sprites/Sprite';
+import UnitController from './controllers/UnitController';
 import { PaletteSwaps, UnitType } from '../types/types';
-import { UnitAI } from './UnitAI';
 
 interface AIParameters {
   /**
@@ -31,7 +31,7 @@ interface UnitClass {
   readonly manaPerLevel: (level: number) => (number | null);
   readonly damagePerLevel: (level: number) => number;
   readonly experienceToNextLevel?: (level: number) => (number | null);
-  readonly aiHandler?: UnitAI;
+  readonly controller: UnitController;
   readonly sprite: (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
   readonly aiParams?: AIParameters
 }

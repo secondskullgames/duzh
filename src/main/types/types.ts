@@ -66,6 +66,8 @@ interface Projectile extends Entity, Coordinates {
   direction: Direction
 }
 
+type PromiseSupplier<T> = (t?: T) => Promise<T>
+
 interface Rect {
   left: number,
   top: number,
@@ -121,6 +123,7 @@ export {
   MapSection,
   PaletteSwaps,
   Projectile,
+  PromiseSupplier,
   Rect,
   Room,
   SpriteSupplier,

@@ -24,6 +24,14 @@ var KeyCommand;
     KeyCommand["M"] = "M";
     KeyCommand["KEY_1"] = "1";
     KeyCommand["KEY_2"] = "2";
+    KeyCommand["KEY_3"] = "3";
+    KeyCommand["KEY_4"] = "4";
+    KeyCommand["KEY_5"] = "5";
+    KeyCommand["KEY_6"] = "6";
+    KeyCommand["KEY_7"] = "7";
+    KeyCommand["KEY_8"] = "8";
+    KeyCommand["KEY_9"] = "9";
+    KeyCommand["KEY_0"] = "0";
 })(KeyCommand || (KeyCommand = {}));
 function _mapToCommand(e) {
     switch (e.key) {
@@ -56,6 +64,22 @@ function _mapToCommand(e) {
             return KeyCommand.KEY_1;
         case '2':
             return KeyCommand.KEY_2;
+        case '3':
+            return KeyCommand.KEY_3;
+        case '4':
+            return KeyCommand.KEY_4;
+        case '5':
+            return KeyCommand.KEY_5;
+        case '6':
+            return KeyCommand.KEY_6;
+        case '7':
+            return KeyCommand.KEY_7;
+        case '8':
+            return KeyCommand.KEY_8;
+        case '9':
+            return KeyCommand.KEY_9;
+        case '0':
+            return KeyCommand.KEY_0;
     }
     return null;
 }
@@ -91,6 +115,14 @@ function keyHandler(e) {
             return _handleMap();
         case KeyCommand.KEY_1:
         case KeyCommand.KEY_2:
+        case KeyCommand.KEY_3:
+        case KeyCommand.KEY_4:
+        case KeyCommand.KEY_5:
+        case KeyCommand.KEY_6:
+        case KeyCommand.KEY_7:
+        case KeyCommand.KEY_8:
+        case KeyCommand.KEY_9:
+        case KeyCommand.KEY_0:
             return _handleAbility(command);
         default:
     }
@@ -244,25 +276,16 @@ function _handleMap() {
 function _handleAbility(command) {
     var renderer = jwb.renderer;
     var playerUnit = jwb.state.playerUnit;
-    switch (command) {
-        case KeyCommand.KEY_1:
-            if (playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK) <= 0) {
-                jwb.state.queuedAbility = UnitAbilities_1.default.HEAVY_ATTACK;
-                return renderer.render();
-            }
-            else {
-                console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));
-            }
-            break;
-        case KeyCommand.KEY_2:
-            if (playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK) <= 0) {
-                jwb.state.queuedAbility = UnitAbilities_1.default.KNOCKBACK_ATTACK;
-                return renderer.render();
-            }
-            else {
-                console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.KNOCKBACK_ATTACK));
-            }
-            break;
+    // sketchy - recall KEY_1 = '1', etc.
+    // player abilities are indexed as (0 => attack, others => specials)
+    var index = parseInt(command.toString());
+    var ability = playerUnit.abilities[index];
+    if (playerUnit.getCooldown(ability) <= 0) {
+        jwb.state.queuedAbility = ability;
+        return renderer.render();
+    }
+    else {
+        console.log(ability.name + " is on cooldown: " + playerUnit.getCooldown(UnitAbilities_1.default.HEAVY_ATTACK));
     }
     return PromiseUtils_1.resolvedPromise();
 }

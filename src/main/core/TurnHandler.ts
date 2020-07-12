@@ -1,11 +1,13 @@
 import Unit from '../units/Unit';
 import { chainPromises } from '../utils/PromiseUtils';
+import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
 type UpdateProc = () => Promise<any>;
 
 function playTurn(playerUnitOrder: ((unit: Unit) => Promise<void>) | null): Promise<void> {
   const { playerUnit } = jwb.state;
-  playerUnit.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
+  const playerController = <PlayerUnitController>(playerUnit.controller);
+  playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
   return _update();
 }
 

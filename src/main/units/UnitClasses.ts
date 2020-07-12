@@ -2,7 +2,8 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitClass from './UnitClass';
 import Colors from '../types/Colors';
 import { UnitType } from '../types/types';
-import { HUMAN_DETERMINISTIC } from './UnitAI';
+import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
+import PlayerUnitController from './controllers/PlayerUnitController';
 
 const PLAYER: UnitClass = {
   name: 'PLAYER',
@@ -30,6 +31,7 @@ const PLAYER: UnitClass = {
   manaPerLevel: level => 0,
   damagePerLevel: level => 1,
   experienceToNextLevel: currentLevel => (currentLevel < 10) ? 2 * currentLevel + 2: null, // 4, 6, 8, 10, 12, 14...
+  controller: new PlayerUnitController()
 };
 
 const ENEMY_SNAKE: UnitClass = {
@@ -45,7 +47,7 @@ const ENEMY_SNAKE: UnitClass = {
   lifePerLevel: () => 15,
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
-  aiHandler: HUMAN_DETERMINISTIC,
+  controller: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.98,
     visionRange: 10,
@@ -66,7 +68,7 @@ const ENEMY_GRUNT: UnitClass = {
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
-  aiHandler: HUMAN_DETERMINISTIC,
+  controller: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.95,
     visionRange: 8,
@@ -87,7 +89,7 @@ const ENEMY_SOLDIER: UnitClass = {
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
-  aiHandler: HUMAN_DETERMINISTIC,
+  controller: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.95,
     visionRange: 10,
@@ -111,7 +113,7 @@ const ENEMY_GOLEM: UnitClass = {
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
-  aiHandler: HUMAN_DETERMINISTIC,
+  controller: HUMAN_DETERMINISTIC,
   aiParams: {
     speed: 0.92,
     visionRange: 12,

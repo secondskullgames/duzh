@@ -1,3 +1,10 @@
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11,13 +18,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -160,7 +160,7 @@ define("graphics/ImageUtils", ["require", "exports"], function (require, exports
     }
     exports.loadImage = loadImage;
     function applyTransparentColor(imageData, transparentColor) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             var _a = hex2rgb(transparentColor), tr = _a[0], tg = _a[1], tb = _a[2];
             var array = new Uint8ClampedArray(imageData.data.length);
             for (var i = 0; i < imageData.data.length; i += 4) {
@@ -339,354 +339,13 @@ define("graphics/sprites/Sprite", ["require", "exports"], function (require, exp
     }());
     exports.default = Sprite;
 });
-define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
+define("units/controllers/UnitController", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    function sortBy(list, mapFunction) {
-        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
-    }
-    exports.sortBy = sortBy;
-    function sortByReversed(list, mapFunction) {
-        return list.sort(function (a, b) { return mapFunction(b) - mapFunction(a); });
-    }
-    exports.sortByReversed = sortByReversed;
-    function comparing(mapFunction) {
-        return function (a, b) { return mapFunction(a) - mapFunction(b); };
-    }
-    exports.comparing = comparing;
-    function comparingReversed(mapFunction) {
-        return function (a, b) { return mapFunction(b) - mapFunction(a); };
-    }
-    exports.comparingReversed = comparingReversed;
-    function average(list) {
-        var sum = list.reduce(function (a, b) { return a + b; });
-        return sum / list.length;
-    }
-    exports.average = average;
 });
-define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
+define("units/UnitClass", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * @param max inclusive
-     */
-    function randInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    }
-    exports.randInt = randInt;
-    function randChoice(list) {
-        return list[randInt(0, list.length - 1)];
-    }
-    exports.randChoice = randChoice;
-    /**
-     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
-     */
-    function shuffle(list) {
-        var n = list.length;
-        // While there remain elements to shuffle...
-        while (n > 0) {
-            // Pick a remaining element...
-            var i = randInt(0, n - 1);
-            n--;
-            // And swap it with the current element.
-            var tmp = list[n];
-            list[n] = list[i];
-            list[i] = tmp;
-        }
-    }
-    exports.shuffle = shuffle;
-    function weightedRandom(probabilities, mappedObjects) {
-        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
-        var rand = Math.random() * total;
-        var counter = 0;
-        var entries = Object.entries(probabilities);
-        for (var i = 0; i < entries.length; i++) {
-            var _a = entries[i], key = _a[0], value = _a[1];
-            counter += value;
-            if (counter > rand) {
-                return mappedObjects[key];
-            }
-        }
-        throw 'Error in weightedRandom()!';
-    }
-    exports.weightedRandom = weightedRandom;
-});
-define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types", "utils/RandomUtils"], function (require, exports, ArrayUtils_1, types_1, RandomUtils_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
-     *         which do not collide with `occupiedLocations`
-     */
-    function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
-        var unoccupiedLocations = [];
-        var _loop_1 = function (y) {
-            var _loop_2 = function (x) {
-                if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
-                    if (occupiedLocations.filter(function (loc) { return coordinatesEquals(loc, { x: x, y: y }); }).length === 0) {
-                        unoccupiedLocations.push({ x: x, y: y });
-                    }
-                }
-            };
-            for (var x = 0; x < tiles[y].length; x++) {
-                _loop_2(x);
-            }
-        };
-        for (var y = 0; y < tiles.length; y++) {
-            _loop_1(y);
-        }
-        var chosenLocations = [];
-        for (var i = 0; i < numToChoose; i++) {
-            if (unoccupiedLocations.length > 0) {
-                ArrayUtils_1.sortBy(unoccupiedLocations, function (_a) {
-                    var x = _a.x, y = _a.y;
-                    return -1 * Math.min.apply(Math, chosenLocations.map(function (loc) { return hypotenuse(loc, { x: x, y: y }); }));
-                });
-                var index = 0;
-                var _a = unoccupiedLocations[index], x = _a.x, y = _a.y;
-                chosenLocations.push({ x: x, y: y });
-                occupiedLocations.push({ x: x, y: y });
-                unoccupiedLocations.splice(index, 1);
-            }
-        }
-        return chosenLocations;
-    }
-    exports.pickUnoccupiedLocations = pickUnoccupiedLocations;
-    function coordinatesEquals(first, second) {
-        return (first.x === second.x && first.y === second.y);
-    }
-    exports.coordinatesEquals = coordinatesEquals;
-    function contains(rect, coordinates) {
-        return coordinates.x >= rect.left
-            && coordinates.x < (rect.left + rect.width)
-            && coordinates.y >= rect.top
-            && coordinates.y < (rect.top + rect.height);
-    }
-    exports.contains = contains;
-    function manhattanDistance(first, second) {
-        return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
-    }
-    exports.manhattanDistance = manhattanDistance;
-    function hypotenuse(first, second) {
-        var dx = second.x - first.x;
-        var dy = second.y - first.y;
-        return Math.pow(((dx * dx) + (dy * dy)), 0.5);
-    }
-    exports.hypotenuse = hypotenuse;
-    function civDistance(first, second) {
-        var dx = Math.abs(first.x - second.x);
-        var dy = Math.abs(first.y - second.y);
-        return Math.max(dx, dy) + Math.min(dx, dy) / 2;
-    }
-    exports.civDistance = civDistance;
-    function isAdjacent(first, second) {
-        var dx = Math.abs(first.x - second.x);
-        var dy = Math.abs(first.y - second.y);
-        return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
-    }
-    exports.isAdjacent = isAdjacent;
-    function isTileRevealed(_a) {
-        var x = _a.x, y = _a.y;
-        if (jwb.DEBUG) {
-            return true;
-        }
-        return jwb.state.getMap().revealedTiles.some(function (tile) { return coordinatesEquals({ x: x, y: y }, tile); });
-    }
-    exports.isTileRevealed = isTileRevealed;
-    function isBlocking(tileType) {
-        switch (tileType) {
-            case types_1.TileType.FLOOR:
-            case types_1.TileType.FLOOR_HALL:
-            case types_1.TileType.STAIRS_DOWN:
-                return false;
-            default:
-                return true;
-        }
-    }
-    exports.isBlocking = isBlocking;
-    function createTile(type, tileSet) {
-        return {
-            type: type,
-            sprite: RandomUtils_1.randChoice(tileSet[type]),
-            isBlocking: isBlocking(type)
-        };
-    }
-    exports.createTile = createTile;
-    function areAdjacent(first, second, minBorderLength) {
-        // right-left
-        if (first.left + first.width === second.left) {
-            var top_1 = Math.max(first.top, second.top);
-            var bottom = Math.min(first.top + first.height, second.top + second.height); // exclusive
-            return (bottom - top_1) >= minBorderLength;
-        }
-        // bottom-top
-        if (first.top + first.height === second.top) {
-            var left = Math.max(first.left, second.left);
-            var right = Math.min(first.left + first.width, second.left + second.width); // exclusive
-            return (right - left) >= minBorderLength;
-        }
-        // left-right
-        if (first.left === second.left + second.width) {
-            var top_2 = Math.max(first.top, second.top);
-            var bottom = Math.min(first.top + first.height, second.top + second.height); // exclusive
-            return (bottom - top_2) >= minBorderLength;
-        }
-        // top-bottom
-        if (first.top === second.top + second.height) {
-            var left = Math.max(first.left, second.left);
-            var right = Math.min(first.left + first.width, second.left + second.width); // exclusive
-            return (right - left) >= minBorderLength;
-        }
-        return false;
-    }
-    exports.areAdjacent = areAdjacent;
-});
-define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_1, RandomUtils_2) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-    /**
-     * @return the exact cost of the path from `start` to `coordinates`
-     */
-    function g(node, start) {
-        return node.cost;
-    }
-    /**
-     * @return the heuristic estimated cost from `coordinates` to `goal`
-     */
-    function h(coordinates, goal) {
-        // return civDistance(coordinates, goal);
-        return MapUtils_1.manhattanDistance(coordinates, goal);
-    }
-    /**
-     * @return an estimate of the best cost from `start` to `goal` combining both `g` and `h`
-     */
-    function f(node, start, goal) {
-        return g(node, start) + h(node, goal);
-    }
-    function traverseParents(node) {
-        var path = [];
-        for (var currentNode = node; !!currentNode; currentNode = currentNode.parent) {
-            var coordinates = { x: currentNode.x, y: currentNode.y };
-            path.splice(0, 0, coordinates); // add it at the beginning of the list
-        }
-        return path;
-    }
-    /**
-     * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
-     */
-    var Pathfinder = /** @class */ (function () {
-        /**
-         * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
-         */
-        function Pathfinder(tileCostCalculator) {
-            this._tileCostCalculator = tileCostCalculator;
-        }
-        /**
-         * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
-         *
-         * @param tiles All allowable unblocked tiles
-         */
-        Pathfinder.prototype.findPath = function (start, goal, tiles) {
-            var _this = this;
-            var open = [
-                { x: start.x, y: start.y, cost: 0, parent: null }
-            ];
-            var closed = [];
-            var _loop_3 = function () {
-                if (open.length === 0) {
-                    return { value: [] };
-                }
-                var nodeCosts = open.map(function (node) { return ({ node: node, cost: f(node, start, goal) }); })
-                    .sort(function (a, b) { return a.cost - b.cost; });
-                var bestNode = nodeCosts[0].node;
-                if (MapUtils_1.coordinatesEquals(bestNode, goal)) {
-                    return { value: traverseParents(bestNode) };
-                }
-                else {
-                    var bestNodes = nodeCosts.filter(function (_a) {
-                        var node = _a.node, cost = _a.cost;
-                        return cost === nodeCosts[0].cost;
-                    });
-                    var _a = RandomUtils_2.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
-                    open.splice(open.indexOf(chosenNode_1), 1);
-                    closed.push(chosenNode_1);
-                    this_1._findNeighbors(chosenNode_1, tiles).forEach(function (neighbor) {
-                        if (closed.some(function (coordinates) { return MapUtils_1.coordinatesEquals(coordinates, neighbor); })) {
-                            // already been seen, don't need to look at it*
-                        }
-                        else if (open.some(function (coordinates) { return MapUtils_1.coordinatesEquals(coordinates, neighbor); })) {
-                            // don't need to look at it now, will look later?
-                        }
-                        else {
-                            var movementCost = _this._tileCostCalculator(chosenNode_1, neighbor);
-                            open.push({
-                                x: neighbor.x,
-                                y: neighbor.y,
-                                cost: chosenNodeCost_1 + movementCost,
-                                parent: chosenNode_1
-                            });
-                        }
-                    });
-                }
-            };
-            var this_1 = this;
-            while (true) {
-                var state_1 = _loop_3();
-                if (typeof state_1 === "object")
-                    return state_1.value;
-            }
-        };
-        Pathfinder.prototype._findNeighbors = function (tile, tiles) {
-            return CARDINAL_DIRECTIONS
-                .map(function (_a) {
-                var dx = _a[0], dy = _a[1];
-                return ({ x: tile.x + dx, y: tile.y + dy });
-            })
-                .filter(function (_a) {
-                var x = _a.x, y = _a.y;
-                return tiles.some(function (tile) { return MapUtils_1.coordinatesEquals(tile, { x: x, y: y }); });
-            });
-        };
-        return Pathfinder;
-    }());
-    exports.default = Pathfinder;
-});
-define("types/Directions", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var Directions = {
-        N: { dx: 0, dy: -1 },
-        E: { dx: 1, dy: 0 },
-        S: { dx: 0, dy: 1 },
-        W: { dx: -1, dy: 0 }
-    };
-    function _equals(first, second) {
-        return first.dx === second.dx && first.dy === second.dy;
-    }
-    function _directionToString(direction) {
-        if (_equals(direction, Directions.N)) {
-            return 'N';
-        }
-        else if (_equals(direction, Directions.E)) {
-            return 'E';
-        }
-        else if (_equals(direction, Directions.S)) {
-            return 'S';
-        }
-        else if (_equals(direction, Directions.W)) {
-            return 'W';
-        }
-        throw "Invalid direction " + direction;
-    }
-    exports.default = {
-        N: Directions.N,
-        E: Directions.E,
-        S: Directions.S,
-        W: Directions.W,
-        values: function () { return [Directions.N, Directions.E, Directions.S, Directions.W]; },
-        toString: _directionToString
-    };
 });
 define("sounds/Sounds", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -705,6 +364,128 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
         DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
     };
     exports.default = Sounds;
+});
+define("items/InventoryItem", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var InventoryItem = /** @class */ (function () {
+        function InventoryItem(name, category, onUse) {
+            var _this = this;
+            this.name = name;
+            this.category = category;
+            this._onUse = function (unit) { return onUse(_this, unit); };
+        }
+        InventoryItem.prototype.use = function (unit) {
+            return this._onUse(unit);
+        };
+        return InventoryItem;
+    }());
+    exports.default = InventoryItem;
+});
+define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var categories = Object.values(types_1.ItemCategory);
+    /**
+     * Contains information about all items held by a particular unit, grouped by category,
+     * as well as data about the selected item/category in the inventory menu
+     * (although this is only applicable to the player unit)
+     */
+    var InventoryMap = /** @class */ (function () {
+        function InventoryMap() {
+            // @ts-ignore
+            this._map = {};
+            for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
+                var category = categories_1[_i];
+                this._map[category] = [];
+            }
+            this.selectedCategory = categories[0];
+            this.selectedItem = null;
+        }
+        InventoryMap.prototype.add = function (item) {
+            this._map[item.category].push(item);
+            if (this.selectedCategory === item.category && this.selectedItem === null) {
+                this.selectedItem = item;
+            }
+        };
+        InventoryMap.prototype.remove = function (item) {
+            var items = this._map[item.category];
+            var index = items.indexOf(item);
+            items.splice(index, 1);
+            if (this.selectedItem === item) {
+                this.selectedItem = items[index % items.length] || null;
+            }
+        };
+        InventoryMap.prototype.nextCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index + 1) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
+        InventoryMap.prototype.previousCategory = function () {
+            var index = categories.indexOf(this.selectedCategory);
+            this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
+            this.selectedItem = this._map[this.selectedCategory][0] || null;
+        };
+        InventoryMap.prototype.get = function (category) {
+            return __spreadArrays(this._map[category]);
+        };
+        InventoryMap.prototype.nextItem = function () {
+            var items = this._map[this.selectedCategory];
+            if (items.length > 0 && this.selectedItem !== null) {
+                var index = items.indexOf(this.selectedItem);
+                this.selectedItem = items[(index + 1) % items.length];
+            }
+        };
+        InventoryMap.prototype.previousItem = function () {
+            var items = this._map[this.selectedCategory];
+            if (items.length > 0 && this.selectedItem !== null) {
+                var index = items.indexOf(this.selectedItem);
+                this.selectedItem = items[(index - 1 + items.length) % items.length];
+            }
+        };
+        return InventoryMap;
+    }());
+    exports.default = InventoryMap;
+});
+define("items/equipment/EquippedItem", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var EquippedItem = /** @class */ (function () {
+        function EquippedItem(name, slot, inventoryItem, damage) {
+            this.name = name;
+            this.slot = slot;
+            this.inventoryItem = inventoryItem;
+            this.damage = damage;
+        }
+        return EquippedItem;
+    }());
+    exports.default = EquippedItem;
+});
+define("items/equipment/EquipmentMap", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * Represent's a unit's equipment, mapped by slot.
+     */
+    var EquipmentMap = /** @class */ (function () {
+        function EquipmentMap() {
+            this._map = {};
+        }
+        EquipmentMap.prototype.add = function (item) {
+            this._map[item.slot] = item;
+        };
+        EquipmentMap.prototype.remove = function (item) {
+            this._map[item.slot] = undefined;
+        };
+        EquipmentMap.prototype.get = function (category) {
+            return this._map[category] || null;
+        };
+        EquipmentMap.prototype.getEntries = function () {
+            return __spreadArrays(Object.entries(this._map));
+        };
+        return EquipmentMap;
+    }());
+    exports.default = EquipmentMap;
 });
 define("sounds/types", ["require", "exports"], function (require, exports) {
     "use strict";
@@ -793,13 +574,132 @@ define("sounds/SoundPlayer", ["require", "exports", "sounds/CustomOscillator"], 
     }());
     exports.default = SoundPlayer;
 });
-define("sounds/SoundFX", ["require", "exports", "sounds/SoundPlayer"], function (require, exports, SoundPlayer_1) {
+define("utils/RandomUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * @param max inclusive
+     */
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+    exports.randInt = randInt;
+    function randChoice(list) {
+        return list[randInt(0, list.length - 1)];
+    }
+    exports.randChoice = randChoice;
+    /**
+     * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
+     */
+    function shuffle(list) {
+        var n = list.length;
+        // While there remain elements to shuffle...
+        while (n > 0) {
+            // Pick a remaining element...
+            var i = randInt(0, n - 1);
+            n--;
+            // And swap it with the current element.
+            var tmp = list[n];
+            list[n] = list[i];
+            list[i] = tmp;
+        }
+    }
+    exports.shuffle = shuffle;
+    function weightedRandom(probabilities, mappedObjects) {
+        var total = Object.values(probabilities).reduce(function (a, b) { return a + b; });
+        var rand = Math.random() * total;
+        var counter = 0;
+        var entries = Object.entries(probabilities);
+        for (var i = 0; i < entries.length; i++) {
+            var _a = entries[i], key = _a[0], value = _a[1];
+            counter += value;
+            if (counter > rand) {
+                return mappedObjects[key];
+            }
+        }
+        throw 'Error in weightedRandom()!';
+    }
+    exports.weightedRandom = weightedRandom;
+});
+define("sounds/AudioUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function transpose8va(_a) {
+        var freq = _a[0], ms = _a[1];
+        return [freq * 2, ms];
+    }
+    exports.transpose8va = transpose8va;
+    function transpose8vb(_a) {
+        var freq = _a[0], ms = _a[1];
+        return [freq / 2, ms];
+    }
+    exports.transpose8vb = transpose8vb;
+});
+define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, SoundPlayer_1, RandomUtils_1, AudioUtils_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    // TODO very hacky memoizing
+    var PLAYER = null;
+    var ACTIVE_SUITE = null;
+    var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.12); };
+    function playSuite(suite) {
+        ACTIVE_SUITE = suite;
+        var sections = Object.values(suite.sections);
+        var numRepeats = 4;
+        var _loop_1 = function (i) {
+            var section = sections[i];
+            var bass = (!!section.bass) ? RandomUtils_1.randChoice(section.bass) : null;
+            var lead;
+            if (!!section.lead) {
+                do {
+                    lead = RandomUtils_1.randChoice(section.lead);
+                } while (lead === bass);
+            }
+            for (var j = 0; j < numRepeats; j++) {
+                setTimeout(function () {
+                    if (suite === ACTIVE_SUITE) {
+                        var figures = __spreadArrays((!!bass ? [bass.map(AudioUtils_1.transpose8vb)] : []), (!!lead ? [lead] : []));
+                        figures.forEach(function (figure) { return playMusic(figure); });
+                    }
+                }, ((numRepeats * i) + j) * suite.length);
+            }
+        };
+        for (var i = 0; i < sections.length; i++) {
+            _loop_1(i);
+        }
+        setTimeout(function () {
+            if (suite === ACTIVE_SUITE) {
+                playSuite(suite);
+            }
+        }, sections.length * suite.length * numRepeats);
+    }
+    function playMusic(samples) {
+        if (!PLAYER) {
+            PLAYER = _getMusicPlayer();
+        }
+        PLAYER.playSound(samples, false);
+    }
+    function stopMusic() {
+        if (PLAYER) {
+            PLAYER.stop();
+        }
+    }
+    function stop() {
+        stopMusic();
+        ACTIVE_SUITE = null;
+    }
+    exports.default = {
+        playSuite: playSuite,
+        stop: stop
+    };
+});
+define("sounds/SoundFX", ["require", "exports", "sounds/SoundPlayer"], function (require, exports, SoundPlayer_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // TODO very hacky memoizing
     var PLAYER = null;
     function _getSoundPlayer() {
-        return new SoundPlayer_1.default(4, 0.20);
+        return new SoundPlayer_2.default(4, 0.20);
     }
     function playSound(samples) {
         if (!PLAYER) {
@@ -808,6 +708,42 @@ define("sounds/SoundFX", ["require", "exports", "sounds/SoundPlayer"], function 
         PLAYER.playSound(samples, false);
     }
     exports.playSound = playSound;
+});
+define("types/Directions", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var Directions = {
+        N: { dx: 0, dy: -1 },
+        E: { dx: 1, dy: 0 },
+        S: { dx: 0, dy: 1 },
+        W: { dx: -1, dy: 0 }
+    };
+    function _equals(first, second) {
+        return first.dx === second.dx && first.dy === second.dy;
+    }
+    function _directionToString(direction) {
+        if (_equals(direction, Directions.N)) {
+            return 'N';
+        }
+        else if (_equals(direction, Directions.E)) {
+            return 'E';
+        }
+        else if (_equals(direction, Directions.S)) {
+            return 'S';
+        }
+        else if (_equals(direction, Directions.W)) {
+            return 'W';
+        }
+        throw "Invalid direction " + direction;
+    }
+    exports.default = {
+        N: Directions.N,
+        E: Directions.E,
+        S: Directions.S,
+        W: Directions.W,
+        values: function () { return [Directions.N, Directions.E, Directions.S, Directions.W]; },
+        toString: _directionToString
+    };
 });
 define("graphics/sprites/units/UnitSprite", ["require", "exports", "graphics/ImageSupplier", "graphics/sprites/Sprite", "types/Colors", "types/Directions", "graphics/ImageUtils"], function (require, exports, ImageSupplier_1, Sprite_1, Colors_1, Directions_1, ImageUtils_2) {
     "use strict";
@@ -1134,7 +1070,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
     function _playAnimation(animation) {
         var delay = animation.delay, frames = animation.frames;
         var promises = [];
-        var _loop_4 = function (i) {
+        var _loop_2 = function (i) {
             var frame = frames[i];
             var map = jwb.state.getMap();
             promises.push(function () {
@@ -1170,7 +1106,7 @@ define("graphics/animations/Animations", ["require", "exports", "types/types", "
             });
         };
         for (var i = 0; i < frames.length; i++) {
-            _loop_4(i);
+            _loop_2(i);
         }
         return PromiseUtils_2.chainPromises(promises);
     }
@@ -1246,7 +1182,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
     var HeavyAttack = /** @class */ (function (_super) {
         __extends(HeavyAttack, _super);
         function HeavyAttack() {
-            return _super.call(this, 'HEAVY_ATTACK', 10, 'strong_icon') || this;
+            return _super.call(this, 'HEAVY_ATTACK', 15, 'strong_icon') || this;
         }
         HeavyAttack.prototype.use = function (unit, direction) {
             var _this = this;
@@ -1285,7 +1221,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
     var KnockbackAttack = /** @class */ (function (_super) {
         __extends(KnockbackAttack, _super);
         function KnockbackAttack() {
-            return _super.call(this, 'KNOCKBACK_ATTACK', 10, 'knockback_icon') || this;
+            return _super.call(this, 'KNOCKBACK_ATTACK', 15, 'knockback_icon') || this;
         }
         KnockbackAttack.prototype.use = function (unit, direction) {
             var _this = this;
@@ -1314,16 +1250,14 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
                             .then(function () {
                             var _a;
                             var targetCoordinates = { x: x, y: y };
-                            // TODO: This is implemented as a two-tile knockback, but since (in most cases) the target will
-                            // get a move immediately afterward, it will look like only one tile.
-                            // In the future, this should be one tile with a one-turn stun.
-                            for (var i = 0; i < 2; i++) {
-                                var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-                                if (!map.isBlocked(oneTileBack)) {
-                                    targetCoordinates = oneTileBack;
-                                }
+                            // knockback by one tile
+                            var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+                            if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
+                                targetCoordinates = oneTileBack;
                             }
                             _a = [targetCoordinates.x, targetCoordinates.y], targetUnit_1.x = _a[0], targetUnit_1.y = _a[1];
+                            // stun for 1 turn (if they're already stunned, just leave it)
+                            targetUnit_1.stunDuration = Math.max(targetUnit_1.stunDuration, 1);
                         })
                             .then(resolve);
                     }
@@ -1334,6 +1268,49 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
             });
         };
         return KnockbackAttack;
+    }(Ability));
+    var StunAttack = /** @class */ (function (_super) {
+        __extends(StunAttack, _super);
+        function StunAttack() {
+            return _super.call(this, 'STUN_ATTACK', 15, 'knockback_icon') || this;
+        }
+        StunAttack.prototype.use = function (unit, direction) {
+            var _this = this;
+            if (!direction) {
+                throw 'StunAttack requires a direction!';
+            }
+            var dx = direction.dx, dy = direction.dy;
+            var _a = { x: unit.x + dx, y: unit.y + dy }, x = _a.x, y = _a.y;
+            var playerUnit = jwb.state.playerUnit;
+            var map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
+            return new Promise(function (resolve) {
+                var _a;
+                if (map.contains({ x: x, y: y }) && !map.isBlocked({ x: x, y: y })) {
+                    _a = [x, y], unit.x = _a[0], unit.y = _a[1];
+                    if (unit === playerUnit) {
+                        SoundFX_1.playSound(Sounds_1.default.FOOTSTEP);
+                    }
+                    resolve();
+                }
+                else {
+                    var targetUnit_2 = map.getUnit({ x: x, y: y });
+                    if (!!targetUnit_2) {
+                        unit.useAbility(_this);
+                        UnitUtils_1.attack(unit, targetUnit_2)
+                            .then(function () {
+                            // stun for 2 turns (if they're already stunned, just leave it)
+                            targetUnit_2.stunDuration = Math.max(targetUnit_2.stunDuration, 2);
+                        })
+                            .then(resolve);
+                    }
+                    else {
+                        resolve();
+                    }
+                }
+            });
+        };
+        return StunAttack;
     }(Ability));
     var ShootArrow = /** @class */ (function (_super) {
         __extends(ShootArrow, _super);
@@ -1383,421 +1360,12 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
         ATTACK: new NormalAttack(),
         HEAVY_ATTACK: new HeavyAttack(),
         KNOCKBACK_ATTACK: new KnockbackAttack(),
-        SHOOT_ARROW: new ShootArrow(),
+        STUN_ATTACK: new StunAttack(),
+        SHOOT_ARROW: new ShootArrow()
     };
     exports.default = UnitAbilities;
 });
-define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions", "units/UnitAbilities"], function (require, exports, Pathfinder_1, RandomUtils_3, PromiseUtils_3, ArrayUtils_2, MapUtils_2, Directions_3, UnitAbilities_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function _wanderAndAttack(unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var map = jwb.state.getMap();
-        var tiles = [];
-        Directions_3.default.values().forEach(function (_a) {
-            var dx = _a.dx, dy = _a.dy;
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-                else if (map.getUnit({ x: x, y: y })) {
-                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
-                        tiles.push({ x: x, y: y });
-                    }
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
-            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
-        }
-        return PromiseUtils_3.resolvedPromise();
-    }
-    function _wander(unit) {
-        var map = jwb.state.getMap();
-        var tiles = [];
-        Directions_3.default.values().forEach(function (_a) {
-            var dx = _a.dx, dy = _a.dy;
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var _a = RandomUtils_3.randChoice(tiles), x = _a.x, y = _a.y;
-            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
-        }
-        return PromiseUtils_3.resolvedPromise();
-    }
-    function _attackPlayerUnit_withPath(unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var map = jwb.state.getMap();
-        var mapRect = map.getRect();
-        var unblockedTiles = [];
-        for (var y = 0; y < mapRect.height; y++) {
-            for (var x = 0; x < mapRect.width; x++) {
-                if (!map.getTile({ x: x, y: y }).isBlocking) {
-                    unblockedTiles.push({ x: x, y: y });
-                }
-                else if (MapUtils_2.coordinatesEquals({ x: x, y: y }, playerUnit)) {
-                    unblockedTiles.push({ x: x, y: y });
-                }
-                else {
-                    // blocked
-                }
-            }
-        }
-        var path = new Pathfinder_1.default(function () { return 1; }).findPath(unit, playerUnit, unblockedTiles);
-        if (path.length > 1) {
-            var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
-            var unitAtPoint = map.getUnit({ x: x, y: y });
-            if (!unitAtPoint || unitAtPoint === playerUnit) {
-                var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-                return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
-            }
-        }
-        return PromiseUtils_3.resolvedPromise();
-    }
-    function _fleeFromPlayerUnit(unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var map = jwb.state.getMap();
-        var tiles = [];
-        Directions_3.default.values().forEach(function (_a) {
-            var dx = _a.dx, dy = _a.dy;
-            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
-            if (map.contains({ x: x, y: y })) {
-                if (!map.isBlocked({ x: x, y: y })) {
-                    tiles.push({ x: x, y: y });
-                }
-                else if (map.getUnit({ x: x, y: y })) {
-                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
-                        tiles.push({ x: x, y: y });
-                    }
-                }
-            }
-        });
-        if (tiles.length > 0) {
-            var orderedTiles = tiles.sort(ArrayUtils_2.comparingReversed(function (coordinates) { return MapUtils_2.manhattanDistance(coordinates, playerUnit); }));
-            var _a = orderedTiles[0], x = _a.x, y = _a.y;
-            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
-            return UnitAbilities_1.default.ATTACK.use(unit, { dx: dx, dy: dy });
-        }
-        return PromiseUtils_3.resolvedPromise();
-    }
-    var UnitBehaviors = {
-        WANDER: _wander,
-        ATTACK_PLAYER: _attackPlayerUnit_withPath,
-        FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
-        STAY: function () { return PromiseUtils_3.resolvedPromise(); }
-    };
-    exports.default = UnitBehaviors;
-});
-define("units/UnitAI", ["require", "exports", "units/UnitBehaviors", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, UnitBehaviors_1, MapUtils_3, RandomUtils_4) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var behaviorMap = {
-        'ATTACK_PLAYER': UnitBehaviors_1.default.ATTACK_PLAYER,
-        'WANDER': UnitBehaviors_1.default.WANDER,
-        'FLEE_FROM_PLAYER': UnitBehaviors_1.default.FLEE_FROM_PLAYER,
-        'STAY': UnitBehaviors_1.default.STAY
-    };
-    var HUMAN_CAUTIOUS = function (unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var behavior;
-        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
-        if (distanceToPlayer === 1) {
-            if ((unit.life / unit.maxLife) >= 0.4) {
-                behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
-            }
-            else {
-                behavior = RandomUtils_4.weightedRandom({
-                    'ATTACK_PLAYER': 0.2,
-                    'WANDER': 0.5,
-                    'FLEE_FROM_PLAYER': 0.3
-                }, behaviorMap);
-            }
-        }
-        else if (distanceToPlayer >= 5) {
-            behavior = RandomUtils_4.weightedRandom({
-                'WANDER': 0.3,
-                'ATTACK_PLAYER': 0.1,
-                'STAY': 0.6
-            }, behaviorMap);
-        }
-        else {
-            behavior = RandomUtils_4.weightedRandom({
-                'ATTACK_PLAYER': 0.6,
-                'WANDER': 0.2,
-                'STAY': 0.2
-            }, behaviorMap);
-        }
-        return behavior(unit);
-    };
-    exports.HUMAN_CAUTIOUS = HUMAN_CAUTIOUS;
-    var HUMAN_AGGRESSIVE = function (unit) {
-        var playerUnit = jwb.state.playerUnit;
-        var behavior;
-        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
-        if (distanceToPlayer === 1) {
-            behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
-        }
-        else if (distanceToPlayer >= 6) {
-            behavior = RandomUtils_4.weightedRandom({
-                'WANDER': 0.4,
-                'STAY': 0.4,
-                'ATTACK_PLAYER': 0.2
-            }, behaviorMap);
-        }
-        else {
-            behavior = RandomUtils_4.weightedRandom({
-                'ATTACK_PLAYER': 0.9,
-                'STAY': 0.1
-            }, behaviorMap);
-        }
-        return behavior(unit);
-    };
-    exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
-    var HUMAN_DETERMINISTIC = function (unit) {
-        var _a = jwb.state, playerUnit = _a.playerUnit, turn = _a.turn;
-        var aiParams = unit.unitClass.aiParams;
-        if (!aiParams) {
-            throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
-        }
-        var speed = aiParams.speed, visionRange = aiParams.visionRange, fleeThreshold = aiParams.fleeThreshold;
-        var behavior;
-        var distanceToPlayer = MapUtils_3.manhattanDistance(unit, playerUnit);
-        if (!_canMove(speed)) {
-            behavior = UnitBehaviors_1.default.STAY;
-        }
-        else if ((unit.life / unit.maxLife) < fleeThreshold) {
-            behavior = UnitBehaviors_1.default.FLEE_FROM_PLAYER;
-        }
-        else if (distanceToPlayer <= visionRange) {
-            behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
-        }
-        else {
-            if (RandomUtils_4.randInt(0, 1) === 1) {
-                behavior = UnitBehaviors_1.default.STAY;
-            }
-            else {
-                behavior = UnitBehaviors_1.default.WANDER;
-            }
-        }
-        return behavior(unit);
-    };
-    exports.HUMAN_DETERMINISTIC = HUMAN_DETERMINISTIC;
-    function _canMove(speed) {
-        // deterministic version
-        // const { turn } = jwb.state;
-        // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
-        // random version
-        return Math.random() < speed;
-    }
-});
-define("units/UnitClass", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
-define("items/InventoryItem", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var InventoryItem = /** @class */ (function () {
-        function InventoryItem(name, category, onUse) {
-            var _this = this;
-            this.name = name;
-            this.category = category;
-            this._onUse = function (unit) { return onUse(_this, unit); };
-        }
-        InventoryItem.prototype.use = function (unit) {
-            return this._onUse(unit);
-        };
-        return InventoryItem;
-    }());
-    exports.default = InventoryItem;
-});
-define("items/InventoryMap", ["require", "exports", "types/types"], function (require, exports, types_4) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var categories = Object.values(types_4.ItemCategory);
-    /**
-     * Contains information about all items held by a particular unit, grouped by category,
-     * as well as data about the selected item/category in the inventory menu
-     * (although this is only applicable to the player unit)
-     */
-    var InventoryMap = /** @class */ (function () {
-        function InventoryMap() {
-            // @ts-ignore
-            this._map = {};
-            for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
-                var category = categories_1[_i];
-                this._map[category] = [];
-            }
-            this.selectedCategory = categories[0];
-            this.selectedItem = null;
-        }
-        InventoryMap.prototype.add = function (item) {
-            this._map[item.category].push(item);
-            if (this.selectedCategory === item.category && this.selectedItem === null) {
-                this.selectedItem = item;
-            }
-        };
-        InventoryMap.prototype.remove = function (item) {
-            var items = this._map[item.category];
-            var index = items.indexOf(item);
-            items.splice(index, 1);
-            if (this.selectedItem === item) {
-                this.selectedItem = items[index % items.length] || null;
-            }
-        };
-        InventoryMap.prototype.nextCategory = function () {
-            var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index + 1) % categories.length];
-            this.selectedItem = this._map[this.selectedCategory][0] || null;
-        };
-        InventoryMap.prototype.previousCategory = function () {
-            var index = categories.indexOf(this.selectedCategory);
-            this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
-            this.selectedItem = this._map[this.selectedCategory][0] || null;
-        };
-        InventoryMap.prototype.get = function (category) {
-            return __spreadArrays(this._map[category]);
-        };
-        InventoryMap.prototype.nextItem = function () {
-            var items = this._map[this.selectedCategory];
-            if (items.length > 0 && this.selectedItem !== null) {
-                var index = items.indexOf(this.selectedItem);
-                this.selectedItem = items[(index + 1) % items.length];
-            }
-        };
-        InventoryMap.prototype.previousItem = function () {
-            var items = this._map[this.selectedCategory];
-            if (items.length > 0 && this.selectedItem !== null) {
-                var index = items.indexOf(this.selectedItem);
-                this.selectedItem = items[(index - 1 + items.length) % items.length];
-            }
-        };
-        return InventoryMap;
-    }());
-    exports.default = InventoryMap;
-});
-define("items/equipment/EquippedItem", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var EquippedItem = /** @class */ (function () {
-        function EquippedItem(name, slot, inventoryItem, damage) {
-            this.name = name;
-            this.slot = slot;
-            this.inventoryItem = inventoryItem;
-            this.damage = damage;
-        }
-        return EquippedItem;
-    }());
-    exports.default = EquippedItem;
-});
-define("items/equipment/EquipmentMap", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    /**
-     * Represent's a unit's equipment, mapped by slot.
-     */
-    var EquipmentMap = /** @class */ (function () {
-        function EquipmentMap() {
-            this._map = {};
-        }
-        EquipmentMap.prototype.add = function (item) {
-            this._map[item.slot] = item;
-        };
-        EquipmentMap.prototype.remove = function (item) {
-            this._map[item.slot] = undefined;
-        };
-        EquipmentMap.prototype.get = function (category) {
-            return this._map[category] || null;
-        };
-        EquipmentMap.prototype.getEntries = function () {
-            return __spreadArrays(Object.entries(this._map));
-        };
-        return EquipmentMap;
-    }());
-    exports.default = EquipmentMap;
-});
-define("sounds/AudioUtils", ["require", "exports"], function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    function transpose8va(_a) {
-        var freq = _a[0], ms = _a[1];
-        return [freq * 2, ms];
-    }
-    exports.transpose8va = transpose8va;
-    function transpose8vb(_a) {
-        var freq = _a[0], ms = _a[1];
-        return [freq / 2, ms];
-    }
-    exports.transpose8vb = transpose8vb;
-});
-define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/RandomUtils", "sounds/AudioUtils"], function (require, exports, SoundPlayer_2, RandomUtils_5, AudioUtils_1) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    // TODO very hacky memoizing
-    var PLAYER = null;
-    var ACTIVE_SUITE = null;
-    var _getMusicPlayer = function () { return new SoundPlayer_2.default(4, 0.12); };
-    function playSuite(suite) {
-        ACTIVE_SUITE = suite;
-        var sections = Object.values(suite.sections);
-        var numRepeats = 4;
-        var _loop_5 = function (i) {
-            var section = sections[i];
-            var bass = (!!section.bass) ? RandomUtils_5.randChoice(section.bass) : null;
-            var lead;
-            if (!!section.lead) {
-                do {
-                    lead = RandomUtils_5.randChoice(section.lead);
-                } while (lead === bass);
-            }
-            for (var j = 0; j < numRepeats; j++) {
-                setTimeout(function () {
-                    if (suite === ACTIVE_SUITE) {
-                        var figures = __spreadArrays((!!bass ? [bass.map(AudioUtils_1.transpose8vb)] : []), (!!lead ? [lead] : []));
-                        figures.forEach(function (figure) { return playMusic(figure); });
-                    }
-                }, ((numRepeats * i) + j) * suite.length);
-            }
-        };
-        for (var i = 0; i < sections.length; i++) {
-            _loop_5(i);
-        }
-        setTimeout(function () {
-            if (suite === ACTIVE_SUITE) {
-                playSuite(suite);
-            }
-        }, sections.length * suite.length * numRepeats);
-    }
-    function playMusic(samples) {
-        if (!PLAYER) {
-            PLAYER = _getMusicPlayer();
-        }
-        PLAYER.playSound(samples, false);
-    }
-    function stopMusic() {
-        if (PLAYER) {
-            PLAYER.stop();
-        }
-    }
-    function stop() {
-        stopMusic();
-        ACTIVE_SUITE = null;
-    }
-    exports.default = {
-        playSuite: playSuite,
-        stop: stop
-    };
-});
-define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "types/types", "utils/PromiseUtils", "sounds/SoundFX", "units/UnitAbilities"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, types_5, PromiseUtils_4, SoundFX_2, UnitAbilities_2) {
+define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap", "items/equipment/EquipmentMap", "sounds/Music", "units/UnitAbilities", "types/types", "sounds/SoundFX", "utils/PromiseUtils"], function (require, exports, Sounds_2, InventoryMap_1, EquipmentMap_1, Music_1, UnitAbilities_1, types_4, SoundFX_2, PromiseUtils_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var LIFE_PER_TURN_MULTIPLIER = 0.005;
@@ -1820,57 +1388,54 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.maxMana = unitClass.startingMana;
             this.lifeRemainder = 0;
             this._damage = unitClass.startingDamage;
-            this.queuedOrder = null;
-            this.aiHandler = unitClass.aiHandler;
-            this.activity = types_5.Activity.STANDING;
+            this.controller = unitClass.controller;
+            this.activity = types_4.Activity.STANDING;
             this.direction = null;
             this.remainingCooldowns = new Map();
-            this.abilities = [UnitAbilities_2.default.ATTACK, UnitAbilities_2.default.HEAVY_ATTACK, UnitAbilities_2.default.KNOCKBACK_ATTACK];
+            // TODO: this needs to be specifid to the player unit
+            this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK, UnitAbilities_1.default.STUN_ATTACK];
+            this.stunDuration = 0;
             while (this.level < level) {
                 this._levelUp(false);
             }
         }
-        Unit.prototype._regenLife = function () {
+        Unit.prototype._upkeep = function () {
+            // life regeneration
             var lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
             this.lifeRemainder += lifePerTurn;
             var deltaLife = Math.floor(this.lifeRemainder);
             this.lifeRemainder -= deltaLife;
             this.life = Math.min(this.life + deltaLife, this.maxLife);
-        };
-        ;
-        Unit.prototype._updateCooldowns = function () {
             // I hate javascript, wtf is this callback signature
             this.remainingCooldowns.forEach(function (cooldown, ability, map) {
                 map.set(ability, Math.max(cooldown - 1, 0));
             });
         };
+        Unit.prototype._endOfTurn = function () {
+            // decrement stun duration
+            this.stunDuration = Math.max(this.stunDuration - 1, 0);
+        };
         Unit.prototype.update = function () {
             var _this = this;
             return new Promise(function (resolve) {
-                _this._regenLife();
-                _this._updateCooldowns();
-                if (!!_this.queuedOrder) {
-                    var queuedOrder = _this.queuedOrder;
-                    _this.queuedOrder = null;
-                    return queuedOrder()
-                        .then(function () { return resolve(); });
-                }
+                _this._upkeep();
                 return resolve();
             })
                 .then(function () {
-                if (!!_this.aiHandler) {
-                    return _this.aiHandler(_this);
+                if (_this.stunDuration === 0) {
+                    return _this.controller.issueOrder(_this);
                 }
-                return PromiseUtils_4.resolvedPromise();
+                return PromiseUtils_3.resolvedPromise();
             })
-                .then(function () { return _this.sprite.update(); });
+                .then(function () { return _this.sprite.update(); })
+                .then(function () { return _this._endOfTurn(); });
         };
         Unit.prototype.getDamage = function () {
             var damage = this._damage;
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_5.EquipmentSlot.RANGED_WEAPON);
+                return (slot !== types_4.EquipmentSlot.RANGED_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
@@ -1883,11 +1448,11 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.equipment.getEntries()
                 .filter(function (_a) {
                 var slot = _a[0], item = _a[1];
-                return (slot !== types_5.EquipmentSlot.MELEE_WEAPON);
+                return (slot !== types_4.EquipmentSlot.MELEE_WEAPON);
             })
                 .forEach(function (_a) {
                 var slot = _a[0], item = _a[1];
-                if (slot === types_5.EquipmentSlot.RANGED_WEAPON) {
+                if (slot === types_4.EquipmentSlot.RANGED_WEAPON) {
                     damage += (item.damage || 0);
                 }
                 else {
@@ -1931,7 +1496,7 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
                 if (_this.life === 0) {
                     map.removeUnit(_this);
                     if (_this === playerUnit) {
-                        jwb.state.screen = types_5.GameScreen.GAME_OVER;
+                        jwb.state.screen = types_4.GameScreen.GAME_OVER;
                         Music_1.default.stop();
                         SoundFX_2.playSound(Sounds_2.default.PLAYER_DIES);
                     }
@@ -1979,6 +1544,161 @@ define("items/MapItem", ["require", "exports"], function (require, exports) {
         return MapItem;
     }());
     exports.default = MapItem;
+});
+define("utils/ArrayUtils", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function sortBy(list, mapFunction) {
+        return list.sort(function (a, b) { return mapFunction(a) - mapFunction(b); });
+    }
+    exports.sortBy = sortBy;
+    function sortByReversed(list, mapFunction) {
+        return list.sort(function (a, b) { return mapFunction(b) - mapFunction(a); });
+    }
+    exports.sortByReversed = sortByReversed;
+    function comparing(mapFunction) {
+        return function (a, b) { return mapFunction(a) - mapFunction(b); };
+    }
+    exports.comparing = comparing;
+    function comparingReversed(mapFunction) {
+        return function (a, b) { return mapFunction(b) - mapFunction(a); };
+    }
+    exports.comparingReversed = comparingReversed;
+    function average(list) {
+        var sum = list.reduce(function (a, b) { return a + b; });
+        return sum / list.length;
+    }
+    exports.average = average;
+});
+define("maps/MapUtils", ["require", "exports", "utils/ArrayUtils", "types/types", "utils/RandomUtils"], function (require, exports, ArrayUtils_1, types_5, RandomUtils_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    /**
+     * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
+     *         which do not collide with `occupiedLocations`
+     */
+    function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
+        var unoccupiedLocations = [];
+        var _loop_3 = function (y) {
+            var _loop_4 = function (x) {
+                if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
+                    if (occupiedLocations.filter(function (loc) { return coordinatesEquals(loc, { x: x, y: y }); }).length === 0) {
+                        unoccupiedLocations.push({ x: x, y: y });
+                    }
+                }
+            };
+            for (var x = 0; x < tiles[y].length; x++) {
+                _loop_4(x);
+            }
+        };
+        for (var y = 0; y < tiles.length; y++) {
+            _loop_3(y);
+        }
+        var chosenLocations = [];
+        for (var i = 0; i < numToChoose; i++) {
+            if (unoccupiedLocations.length > 0) {
+                ArrayUtils_1.sortBy(unoccupiedLocations, function (_a) {
+                    var x = _a.x, y = _a.y;
+                    return -1 * Math.min.apply(Math, chosenLocations.map(function (loc) { return hypotenuse(loc, { x: x, y: y }); }));
+                });
+                var index = 0;
+                var _a = unoccupiedLocations[index], x = _a.x, y = _a.y;
+                chosenLocations.push({ x: x, y: y });
+                occupiedLocations.push({ x: x, y: y });
+                unoccupiedLocations.splice(index, 1);
+            }
+        }
+        return chosenLocations;
+    }
+    exports.pickUnoccupiedLocations = pickUnoccupiedLocations;
+    function coordinatesEquals(first, second) {
+        return (first.x === second.x && first.y === second.y);
+    }
+    exports.coordinatesEquals = coordinatesEquals;
+    function contains(rect, coordinates) {
+        return coordinates.x >= rect.left
+            && coordinates.x < (rect.left + rect.width)
+            && coordinates.y >= rect.top
+            && coordinates.y < (rect.top + rect.height);
+    }
+    exports.contains = contains;
+    function manhattanDistance(first, second) {
+        return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
+    }
+    exports.manhattanDistance = manhattanDistance;
+    function hypotenuse(first, second) {
+        var dx = second.x - first.x;
+        var dy = second.y - first.y;
+        return Math.pow(((dx * dx) + (dy * dy)), 0.5);
+    }
+    exports.hypotenuse = hypotenuse;
+    function civDistance(first, second) {
+        var dx = Math.abs(first.x - second.x);
+        var dy = Math.abs(first.y - second.y);
+        return Math.max(dx, dy) + Math.min(dx, dy) / 2;
+    }
+    exports.civDistance = civDistance;
+    function isAdjacent(first, second) {
+        var dx = Math.abs(first.x - second.x);
+        var dy = Math.abs(first.y - second.y);
+        return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
+    }
+    exports.isAdjacent = isAdjacent;
+    function isTileRevealed(_a) {
+        var x = _a.x, y = _a.y;
+        if (jwb.DEBUG) {
+            return true;
+        }
+        return jwb.state.getMap().revealedTiles.some(function (tile) { return coordinatesEquals({ x: x, y: y }, tile); });
+    }
+    exports.isTileRevealed = isTileRevealed;
+    function isBlocking(tileType) {
+        switch (tileType) {
+            case types_5.TileType.FLOOR:
+            case types_5.TileType.FLOOR_HALL:
+            case types_5.TileType.STAIRS_DOWN:
+                return false;
+            default:
+                return true;
+        }
+    }
+    exports.isBlocking = isBlocking;
+    function createTile(type, tileSet) {
+        return {
+            type: type,
+            sprite: RandomUtils_2.randChoice(tileSet[type]),
+            isBlocking: isBlocking(type)
+        };
+    }
+    exports.createTile = createTile;
+    function areAdjacent(first, second, minBorderLength) {
+        // right-left
+        if (first.left + first.width === second.left) {
+            var top_1 = Math.max(first.top, second.top);
+            var bottom = Math.min(first.top + first.height, second.top + second.height); // exclusive
+            return (bottom - top_1) >= minBorderLength;
+        }
+        // bottom-top
+        if (first.top + first.height === second.top) {
+            var left = Math.max(first.left, second.left);
+            var right = Math.min(first.left + first.width, second.left + second.width); // exclusive
+            return (right - left) >= minBorderLength;
+        }
+        // left-right
+        if (first.left === second.left + second.width) {
+            var top_2 = Math.max(first.top, second.top);
+            var bottom = Math.min(first.top + first.height, second.top + second.height); // exclusive
+            return (bottom - top_2) >= minBorderLength;
+        }
+        // top-bottom
+        if (first.top === second.top + second.height) {
+            var left = Math.max(first.left, second.left);
+            var right = Math.min(first.left + first.width, second.left + second.width); // exclusive
+            return (right - left) >= minBorderLength;
+        }
+        return false;
+    }
+    exports.areAdjacent = areAdjacent;
 });
 define("maps/MapInstance", ["require", "exports", "types/types"], function (require, exports, types_6) {
     "use strict";
@@ -2123,12 +1843,32 @@ define("core/GameState", ["require", "exports", "types/types"], function (requir
     }());
     exports.default = GameState;
 });
+define("units/controllers/PlayerUnitController", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_4) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var PlayerUnitController = /** @class */ (function () {
+        function PlayerUnitController() {
+            this.queuedOrder = null;
+        }
+        PlayerUnitController.prototype.issueOrder = function (unit) {
+            if (!!this.queuedOrder) {
+                var queuedOrder = this.queuedOrder;
+                this.queuedOrder = null;
+                return queuedOrder();
+            }
+            return PromiseUtils_4.resolvedPromise();
+        };
+        return PlayerUnitController;
+    }());
+    exports.default = PlayerUnitController;
+});
 define("core/TurnHandler", ["require", "exports", "utils/PromiseUtils"], function (require, exports, PromiseUtils_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function playTurn(playerUnitOrder) {
         var playerUnit = jwb.state.playerUnit;
-        playerUnit.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
+        var playerController = (playerUnit.controller);
+        playerController.queuedOrder = !!playerUnitOrder ? (function () { return playerUnitOrder(playerUnit); }) : null;
         return _update();
     }
     function _update() {
@@ -2171,7 +1911,7 @@ define("items/ItemUtils", ["require", "exports", "sounds/SoundFX", "sounds/Sound
     }
     exports.useItem = useItem;
 });
-define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRenderer", "types/Colors", "types/types", "maps/MapUtils"], function (require, exports, SpriteRenderer_1, Colors_4, types_8, MapUtils_4) {
+define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRenderer", "types/Colors", "types/types", "maps/MapUtils"], function (require, exports, SpriteRenderer_1, Colors_4, types_8, MapUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MinimapRenderer = /** @class */ (function () {
@@ -2190,7 +1930,7 @@ define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRender
             for (var y = 0; y < map.height; y++) {
                 for (var x = 0; x < map.width; x++) {
                     var color = void 0;
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                    if (MapUtils_1.isTileRevealed({ x: x, y: y })) {
                         var tileType = map.getTile({ x: x, y: y }).type;
                         switch (tileType) {
                             case types_8.TileType.FLOOR:
@@ -2208,7 +1948,7 @@ define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRender
                                 color = Colors_4.default.BLACK;
                                 break;
                         }
-                        if (MapUtils_4.coordinatesEquals(jwb.state.playerUnit, { x: x, y: y })) {
+                        if (MapUtils_1.coordinatesEquals(jwb.state.playerUnit, { x: x, y: y })) {
                             color = Colors_4.default.RED;
                         }
                     }
@@ -2342,7 +2082,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
     }());
     exports.default = FontRenderer;
 });
-define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphics/MinimapRenderer", "graphics/FontRenderer", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils"], function (require, exports, Colors_6, MinimapRenderer_1, FontRenderer_1, PromiseUtils_7, MapUtils_5, types_9, actions_1, ImageUtils_4) {
+define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphics/MinimapRenderer", "graphics/FontRenderer", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils"], function (require, exports, Colors_6, MinimapRenderer_1, FontRenderer_1, PromiseUtils_7, MapUtils_2, types_9, actions_1, ImageUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -2441,7 +2181,7 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphi
             var map = jwb.state.getMap();
             for (var y = 0; y < map.height; y++) {
                 for (var x = 0; x < map.width; x++) {
-                    if (MapUtils_5.isTileRevealed({ x: x, y: y })) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
                         var tile = map.getTile({ x: x, y: y });
                         if (!!tile) {
                             promises.push(this._renderElement(tile, { x: x, y: y }));
@@ -2455,46 +2195,46 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphi
             var _this = this;
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_6 = function (y) {
-                var _loop_7 = function (x) {
-                    if (MapUtils_5.isTileRevealed({ x: x, y: y })) {
+            var _loop_5 = function (y) {
+                var _loop_6 = function (x) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
                         var item_1 = map.getItem({ x: x, y: y });
                         if (!!item_1) {
-                            promises.push(this_2._drawEllipse({ x: x, y: y }, Colors_6.default.DARK_GRAY)
+                            promises.push(this_1._drawEllipse({ x: x, y: y }, Colors_6.default.DARK_GRAY)
                                 .then(function () { return _this._renderElement(item_1, { x: x, y: y }); }));
                         }
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_7(x);
+                    _loop_6(x);
                 }
             };
-            var this_2 = this;
+            var this_1 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_6(y);
+                _loop_5(y);
             }
             return Promise.all(promises);
         };
         SpriteRenderer.prototype._renderProjectiles = function () {
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_8 = function (y) {
-                var _loop_9 = function (x) {
-                    if (MapUtils_5.isTileRevealed({ x: x, y: y })) {
+            var _loop_7 = function (y) {
+                var _loop_8 = function (x) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
                         var projectile = map.projectiles
-                            .filter(function (p) { return MapUtils_5.coordinatesEquals(p, { x: x, y: y }); })[0];
+                            .filter(function (p) { return MapUtils_2.coordinatesEquals(p, { x: x, y: y }); })[0];
                         if (!!projectile) {
-                            promises.push(this_3._renderElement(projectile, { x: x, y: y }));
+                            promises.push(this_2._renderElement(projectile, { x: x, y: y }));
                         }
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_9(x);
+                    _loop_8(x);
                 }
             };
-            var this_3 = this;
+            var this_2 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_8(y);
+                _loop_7(y);
             }
             return Promise.all(promises);
         };
@@ -2503,9 +2243,9 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphi
             var playerUnit = jwb.state.playerUnit;
             var map = jwb.state.getMap();
             var promises = [];
-            var _loop_10 = function (y) {
-                var _loop_11 = function (x) {
-                    if (MapUtils_5.isTileRevealed({ x: x, y: y })) {
+            var _loop_9 = function (y) {
+                var _loop_10 = function (x) {
+                    if (MapUtils_2.isTileRevealed({ x: x, y: y })) {
                         var unit_1 = map.getUnit({ x: x, y: y });
                         if (!!unit_1) {
                             var shadowColor = void 0;
@@ -2515,18 +2255,18 @@ define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphi
                             else {
                                 shadowColor = Colors_6.default.DARK_GRAY;
                             }
-                            promises.push(this_4._drawEllipse({ x: x, y: y }, shadowColor)
+                            promises.push(this_3._drawEllipse({ x: x, y: y }, shadowColor)
                                 .then(function () { return _this._renderElement(unit_1, { x: x, y: y }); }));
                         }
                     }
                 };
                 for (var x = 0; x < map.width; x++) {
-                    _loop_11(x);
+                    _loop_10(x);
                 }
             };
-            var this_4 = this;
+            var this_3 = this;
             for (var y = 0; y < map.height; y++) {
-                _loop_10(y);
+                _loop_9(y);
             }
             return Promise.all(promises);
         };
@@ -2883,7 +2623,7 @@ define("items/equipment/EquipmentClasses", ["require", "exports", "types/types",
     }
     exports.getWeaponClasses = getWeaponClasses;
 });
-define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_6, EquipmentClasses_1, types_11, SoundFX_4, Animations_3) {
+define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/InventoryItem", "items/MapItem", "graphics/sprites/SpriteFactory", "utils/PromiseUtils", "utils/RandomUtils", "items/equipment/EquipmentClasses", "types/types", "sounds/SoundFX", "graphics/animations/Animations"], function (require, exports, Sounds_4, InventoryItem_1, MapItem_1, SpriteFactory_3, PromiseUtils_8, RandomUtils_3, EquipmentClasses_1, types_11, SoundFX_4, Animations_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function createPotion(lifeRestored) {
@@ -2966,13 +2706,342 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
     function createRandomItem(_a, level) {
         var x = _a.x, y = _a.y;
         var suppliers = __spreadArrays(_getItemSuppliers(level), _getWeaponSuppliers(level));
-        return RandomUtils_6.randChoice(suppliers)({ x: x, y: y });
+        return RandomUtils_3.randChoice(suppliers)({ x: x, y: y });
     }
     exports.default = {
         createRandomItem: createRandomItem
     };
 });
-define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/UnitAI"], function (require, exports, SpriteFactory_4, Colors_8, types_12, UnitAI_1) {
+define("utils/Pathfinder", ["require", "exports", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, MapUtils_3, RandomUtils_4) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+    /**
+     * @return the exact cost of the path from `start` to `coordinates`
+     */
+    function g(node, start) {
+        return node.cost;
+    }
+    /**
+     * @return the heuristic estimated cost from `coordinates` to `goal`
+     */
+    function h(coordinates, goal) {
+        // return civDistance(coordinates, goal);
+        return MapUtils_3.manhattanDistance(coordinates, goal);
+    }
+    /**
+     * @return an estimate of the best cost from `start` to `goal` combining both `g` and `h`
+     */
+    function f(node, start, goal) {
+        return g(node, start) + h(node, goal);
+    }
+    function traverseParents(node) {
+        var path = [];
+        for (var currentNode = node; !!currentNode; currentNode = currentNode.parent) {
+            var coordinates = { x: currentNode.x, y: currentNode.y };
+            path.splice(0, 0, coordinates); // add it at the beginning of the list
+        }
+        return path;
+    }
+    /**
+     * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
+     */
+    var Pathfinder = /** @class */ (function () {
+        /**
+         * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
+         */
+        function Pathfinder(tileCostCalculator) {
+            this._tileCostCalculator = tileCostCalculator;
+        }
+        /**
+         * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
+         *
+         * @param tiles All allowable unblocked tiles
+         */
+        Pathfinder.prototype.findPath = function (start, goal, tiles) {
+            var _this = this;
+            var open = [
+                { x: start.x, y: start.y, cost: 0, parent: null }
+            ];
+            var closed = [];
+            var _loop_11 = function () {
+                if (open.length === 0) {
+                    return { value: [] };
+                }
+                var nodeCosts = open.map(function (node) { return ({ node: node, cost: f(node, start, goal) }); })
+                    .sort(function (a, b) { return a.cost - b.cost; });
+                var bestNode = nodeCosts[0].node;
+                if (MapUtils_3.coordinatesEquals(bestNode, goal)) {
+                    return { value: traverseParents(bestNode) };
+                }
+                else {
+                    var bestNodes = nodeCosts.filter(function (_a) {
+                        var node = _a.node, cost = _a.cost;
+                        return cost === nodeCosts[0].cost;
+                    });
+                    var _a = RandomUtils_4.randChoice(bestNodes), chosenNode_1 = _a.node, chosenNodeCost_1 = _a.cost;
+                    open.splice(open.indexOf(chosenNode_1), 1);
+                    closed.push(chosenNode_1);
+                    this_4._findNeighbors(chosenNode_1, tiles).forEach(function (neighbor) {
+                        if (closed.some(function (coordinates) { return MapUtils_3.coordinatesEquals(coordinates, neighbor); })) {
+                            // already been seen, don't need to look at it*
+                        }
+                        else if (open.some(function (coordinates) { return MapUtils_3.coordinatesEquals(coordinates, neighbor); })) {
+                            // don't need to look at it now, will look later?
+                        }
+                        else {
+                            var movementCost = _this._tileCostCalculator(chosenNode_1, neighbor);
+                            open.push({
+                                x: neighbor.x,
+                                y: neighbor.y,
+                                cost: chosenNodeCost_1 + movementCost,
+                                parent: chosenNode_1
+                            });
+                        }
+                    });
+                }
+            };
+            var this_4 = this;
+            while (true) {
+                var state_1 = _loop_11();
+                if (typeof state_1 === "object")
+                    return state_1.value;
+            }
+        };
+        Pathfinder.prototype._findNeighbors = function (tile, tiles) {
+            return CARDINAL_DIRECTIONS
+                .map(function (_a) {
+                var dx = _a[0], dy = _a[1];
+                return ({ x: tile.x + dx, y: tile.y + dy });
+            })
+                .filter(function (_a) {
+                var x = _a.x, y = _a.y;
+                return tiles.some(function (tile) { return MapUtils_3.coordinatesEquals(tile, { x: x, y: y }); });
+            });
+        };
+        return Pathfinder;
+    }());
+    exports.default = Pathfinder;
+});
+define("units/UnitBehaviors", ["require", "exports", "utils/Pathfinder", "utils/RandomUtils", "utils/PromiseUtils", "utils/ArrayUtils", "maps/MapUtils", "types/Directions", "units/UnitAbilities"], function (require, exports, Pathfinder_1, RandomUtils_5, PromiseUtils_9, ArrayUtils_2, MapUtils_4, Directions_3, UnitAbilities_2) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    function _wanderAndAttack(unit) {
+        var playerUnit = jwb.state.playerUnit;
+        var map = jwb.state.getMap();
+        var tiles = [];
+        Directions_3.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+                else if (map.getUnit({ x: x, y: y })) {
+                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
+                        tiles.push({ x: x, y: y });
+                    }
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var _a = RandomUtils_5.randChoice(tiles), x = _a.x, y = _a.y;
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+        }
+        return PromiseUtils_9.resolvedPromise();
+    }
+    function _wander(unit) {
+        var map = jwb.state.getMap();
+        var tiles = [];
+        Directions_3.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var _a = RandomUtils_5.randChoice(tiles), x = _a.x, y = _a.y;
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+        }
+        return PromiseUtils_9.resolvedPromise();
+    }
+    function _attackPlayerUnit_withPath(unit) {
+        var playerUnit = jwb.state.playerUnit;
+        var map = jwb.state.getMap();
+        var mapRect = map.getRect();
+        var unblockedTiles = [];
+        for (var y = 0; y < mapRect.height; y++) {
+            for (var x = 0; x < mapRect.width; x++) {
+                if (!map.getTile({ x: x, y: y }).isBlocking) {
+                    unblockedTiles.push({ x: x, y: y });
+                }
+                else if (MapUtils_4.coordinatesEquals({ x: x, y: y }, playerUnit)) {
+                    unblockedTiles.push({ x: x, y: y });
+                }
+                else {
+                    // blocked
+                }
+            }
+        }
+        var path = new Pathfinder_1.default(function () { return 1; }).findPath(unit, playerUnit, unblockedTiles);
+        if (path.length > 1) {
+            var _a = path[1], x = _a.x, y = _a.y; // first tile is the unit's own tile
+            var unitAtPoint = map.getUnit({ x: x, y: y });
+            if (!unitAtPoint || unitAtPoint === playerUnit) {
+                var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+                return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+            }
+        }
+        return PromiseUtils_9.resolvedPromise();
+    }
+    function _fleeFromPlayerUnit(unit) {
+        var playerUnit = jwb.state.playerUnit;
+        var map = jwb.state.getMap();
+        var tiles = [];
+        Directions_3.default.values().forEach(function (_a) {
+            var dx = _a.dx, dy = _a.dy;
+            var _b = [unit.x + dx, unit.y + dy], x = _b[0], y = _b[1];
+            if (map.contains({ x: x, y: y })) {
+                if (!map.isBlocked({ x: x, y: y })) {
+                    tiles.push({ x: x, y: y });
+                }
+                else if (map.getUnit({ x: x, y: y })) {
+                    if (map.getUnit({ x: x, y: y }) === playerUnit) {
+                        tiles.push({ x: x, y: y });
+                    }
+                }
+            }
+        });
+        if (tiles.length > 0) {
+            var orderedTiles = tiles.sort(ArrayUtils_2.comparingReversed(function (coordinates) { return MapUtils_4.manhattanDistance(coordinates, playerUnit); }));
+            var _a = orderedTiles[0], x = _a.x, y = _a.y;
+            var _b = { dx: x - unit.x, dy: y - unit.y }, dx = _b.dx, dy = _b.dy;
+            return UnitAbilities_2.default.ATTACK.use(unit, { dx: dx, dy: dy });
+        }
+        return PromiseUtils_9.resolvedPromise();
+    }
+    var UnitBehaviors = {
+        WANDER: _wander,
+        ATTACK_PLAYER: _attackPlayerUnit_withPath,
+        FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
+        STAY: function () { return PromiseUtils_9.resolvedPromise(); }
+    };
+    exports.default = UnitBehaviors;
+});
+define("units/controllers/AIUnitControllers", ["require", "exports", "units/UnitBehaviors", "maps/MapUtils", "utils/RandomUtils"], function (require, exports, UnitBehaviors_1, MapUtils_5, RandomUtils_6) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var behaviorMap = {
+        'ATTACK_PLAYER': UnitBehaviors_1.default.ATTACK_PLAYER,
+        'WANDER': UnitBehaviors_1.default.WANDER,
+        'FLEE_FROM_PLAYER': UnitBehaviors_1.default.FLEE_FROM_PLAYER,
+        'STAY': UnitBehaviors_1.default.STAY
+    };
+    var HUMAN_CAUTIOUS = {
+        issueOrder: function (unit) {
+            var playerUnit = jwb.state.playerUnit;
+            var behavior;
+            var distanceToPlayer = MapUtils_5.manhattanDistance(unit, playerUnit);
+            if (distanceToPlayer === 1) {
+                if ((unit.life / unit.maxLife) >= 0.4) {
+                    behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
+                }
+                else {
+                    behavior = RandomUtils_6.weightedRandom({
+                        'ATTACK_PLAYER': 0.2,
+                        'WANDER': 0.5,
+                        'FLEE_FROM_PLAYER': 0.3
+                    }, behaviorMap);
+                }
+            }
+            else if (distanceToPlayer >= 5) {
+                behavior = RandomUtils_6.weightedRandom({
+                    'WANDER': 0.3,
+                    'ATTACK_PLAYER': 0.1,
+                    'STAY': 0.6
+                }, behaviorMap);
+            }
+            else {
+                behavior = RandomUtils_6.weightedRandom({
+                    'ATTACK_PLAYER': 0.6,
+                    'WANDER': 0.2,
+                    'STAY': 0.2
+                }, behaviorMap);
+            }
+            return behavior(unit);
+        }
+    };
+    exports.HUMAN_CAUTIOUS = HUMAN_CAUTIOUS;
+    var HUMAN_AGGRESSIVE = {
+        issueOrder: function (unit) {
+            var playerUnit = jwb.state.playerUnit;
+            var behavior;
+            var distanceToPlayer = MapUtils_5.manhattanDistance(unit, playerUnit);
+            if (distanceToPlayer === 1) {
+                behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
+            }
+            else if (distanceToPlayer >= 6) {
+                behavior = RandomUtils_6.weightedRandom({
+                    'WANDER': 0.4,
+                    'STAY': 0.4,
+                    'ATTACK_PLAYER': 0.2
+                }, behaviorMap);
+            }
+            else {
+                behavior = RandomUtils_6.weightedRandom({
+                    'ATTACK_PLAYER': 0.9,
+                    'STAY': 0.1
+                }, behaviorMap);
+            }
+            return behavior(unit);
+        }
+    };
+    exports.HUMAN_AGGRESSIVE = HUMAN_AGGRESSIVE;
+    var HUMAN_DETERMINISTIC = {
+        issueOrder: function (unit) {
+            var _a = jwb.state, playerUnit = _a.playerUnit, turn = _a.turn;
+            var aiParams = unit.unitClass.aiParams;
+            if (!aiParams) {
+                throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
+            }
+            var speed = aiParams.speed, visionRange = aiParams.visionRange, fleeThreshold = aiParams.fleeThreshold;
+            var behavior;
+            var distanceToPlayer = MapUtils_5.manhattanDistance(unit, playerUnit);
+            if (!_canMove(speed)) {
+                behavior = UnitBehaviors_1.default.STAY;
+            }
+            else if ((unit.life / unit.maxLife) < fleeThreshold) {
+                behavior = UnitBehaviors_1.default.FLEE_FROM_PLAYER;
+            }
+            else if (distanceToPlayer <= visionRange) {
+                behavior = UnitBehaviors_1.default.ATTACK_PLAYER;
+            }
+            else {
+                if (RandomUtils_6.randInt(0, 1) === 1) {
+                    behavior = UnitBehaviors_1.default.STAY;
+                }
+                else {
+                    behavior = UnitBehaviors_1.default.WANDER;
+                }
+            }
+            return behavior(unit);
+        }
+    };
+    exports.HUMAN_DETERMINISTIC = HUMAN_DETERMINISTIC;
+    function _canMove(speed) {
+        // deterministic version
+        // const { turn } = jwb.state;
+        // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
+        // random version
+        return Math.random() < speed;
+    }
+});
+define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFactory", "types/Colors", "types/types", "units/controllers/AIUnitControllers", "units/controllers/PlayerUnitController"], function (require, exports, SpriteFactory_4, Colors_8, types_12, AIUnitControllers_1, PlayerUnitController_1) {
     "use strict";
     var _a, _b;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -3003,6 +3072,7 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         manaPerLevel: function (level) { return 0; },
         damagePerLevel: function (level) { return 1; },
         experienceToNextLevel: function (currentLevel) { return (currentLevel < 10) ? 2 * currentLevel + 2 : null; },
+        controller: new PlayerUnitController_1.default()
     };
     var ENEMY_SNAKE = {
         name: 'ENEMY_SNAKE',
@@ -3017,9 +3087,9 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         lifePerLevel: function () { return 15; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 1; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.95,
+            speed: 0.98,
             visionRange: 10,
             fleeThreshold: 0.2
         }
@@ -3037,9 +3107,9 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
         damagePerLevel: function () { return 1; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.90,
+            speed: 0.95,
             visionRange: 8,
             fleeThreshold: 0.1
         }
@@ -3051,15 +3121,15 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
         paletteSwaps: {},
         startingLife: 60,
         startingMana: null,
-        startingDamage: 6,
+        startingDamage: 8,
         minLevel: 3,
         maxLevel: 6,
         lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        damagePerLevel: function () { return 1; },
+        controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.90,
+            speed: 0.95,
             visionRange: 10,
             fleeThreshold: 0.1
         }
@@ -3072,17 +3142,17 @@ define("units/UnitClasses", ["require", "exports", "graphics/sprites/SpriteFacto
             _b[Colors_8.default.DARK_GRAY] = Colors_8.default.DARKER_GRAY,
             _b[Colors_8.default.LIGHT_GRAY] = Colors_8.default.DARKER_GRAY,
             _b),
-        startingLife: 80,
+        startingLife: 60,
         startingMana: null,
         startingDamage: 10,
         minLevel: 5,
         maxLevel: 9,
         lifePerLevel: function () { return 20; },
         manaPerLevel: function () { return null; },
-        damagePerLevel: function () { return 2; },
-        aiHandler: UnitAI_1.HUMAN_DETERMINISTIC,
+        damagePerLevel: function () { return 1; },
+        controller: AIUnitControllers_1.HUMAN_DETERMINISTIC,
         aiParams: {
-            speed: 0.88,
+            speed: 0.92,
             visionRange: 12,
             fleeThreshold: 0
         }
@@ -4351,7 +4421,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     }
     exports.revealTiles = revealTiles;
 });
-define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_9, SoundFX_5, actions_2, types_20, UnitAbilities_3) {
+define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/Sounds", "items/ItemUtils", "utils/PromiseUtils", "sounds/SoundFX", "core/actions", "types/types", "units/UnitAbilities"], function (require, exports, TurnHandler_1, Sounds_5, ItemUtils_1, PromiseUtils_10, SoundFX_5, actions_2, types_20, UnitAbilities_3) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var KeyCommand;
@@ -4370,6 +4440,14 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
         KeyCommand["M"] = "M";
         KeyCommand["KEY_1"] = "1";
         KeyCommand["KEY_2"] = "2";
+        KeyCommand["KEY_3"] = "3";
+        KeyCommand["KEY_4"] = "4";
+        KeyCommand["KEY_5"] = "5";
+        KeyCommand["KEY_6"] = "6";
+        KeyCommand["KEY_7"] = "7";
+        KeyCommand["KEY_8"] = "8";
+        KeyCommand["KEY_9"] = "9";
+        KeyCommand["KEY_0"] = "0";
     })(KeyCommand || (KeyCommand = {}));
     function _mapToCommand(e) {
         switch (e.key) {
@@ -4402,6 +4480,22 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return KeyCommand.KEY_1;
             case '2':
                 return KeyCommand.KEY_2;
+            case '3':
+                return KeyCommand.KEY_3;
+            case '4':
+                return KeyCommand.KEY_4;
+            case '5':
+                return KeyCommand.KEY_5;
+            case '6':
+                return KeyCommand.KEY_6;
+            case '7':
+                return KeyCommand.KEY_7;
+            case '8':
+                return KeyCommand.KEY_8;
+            case '9':
+                return KeyCommand.KEY_9;
+            case '0':
+                return KeyCommand.KEY_0;
         }
         return null;
     }
@@ -4437,10 +4531,18 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                 return _handleMap();
             case KeyCommand.KEY_1:
             case KeyCommand.KEY_2:
+            case KeyCommand.KEY_3:
+            case KeyCommand.KEY_4:
+            case KeyCommand.KEY_5:
+            case KeyCommand.KEY_6:
+            case KeyCommand.KEY_7:
+            case KeyCommand.KEY_8:
+            case KeyCommand.KEY_9:
+            case KeyCommand.KEY_0:
                 return _handleAbility(command);
             default:
         }
-        return PromiseUtils_9.resolvedPromise();
+        return PromiseUtils_10.resolvedPromise();
     }
     exports.simulateKeyPress = keyHandler;
     function _handleArrowKey(command) {
@@ -4512,7 +4614,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
             case types_20.GameScreen.VICTORY:
             case types_20.GameScreen.GAME_OVER:
             case types_20.GameScreen.MINIMAP:
-                return PromiseUtils_9.resolvedPromise();
+                return PromiseUtils_10.resolvedPromise();
             default:
                 throw "Invalid game screen " + state.screen;
         }
@@ -4547,7 +4649,7 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
                     return ItemUtils_1.useItem(playerUnit_1, selectedItem)
                         .then(function () { return jwb.renderer.render(); });
                 }
-                return PromiseUtils_9.resolvedPromise();
+                return PromiseUtils_10.resolvedPromise();
             }
             case types_20.GameScreen.TITLE:
                 state.screen = types_20.GameScreen.GAME;
@@ -4590,27 +4692,18 @@ define("core/InputHandler", ["require", "exports", "core/TurnHandler", "sounds/S
     function _handleAbility(command) {
         var renderer = jwb.renderer;
         var playerUnit = jwb.state.playerUnit;
-        switch (command) {
-            case KeyCommand.KEY_1:
-                if (playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK) <= 0) {
-                    jwb.state.queuedAbility = UnitAbilities_3.default.HEAVY_ATTACK;
-                    return renderer.render();
-                }
-                else {
-                    console.log("HEAVY_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK));
-                }
-                break;
-            case KeyCommand.KEY_2:
-                if (playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK) <= 0) {
-                    jwb.state.queuedAbility = UnitAbilities_3.default.KNOCKBACK_ATTACK;
-                    return renderer.render();
-                }
-                else {
-                    console.log("KNOCKBACK_ATTACK is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.KNOCKBACK_ATTACK));
-                }
-                break;
+        // sketchy - recall KEY_1 = '1', etc.
+        // player abilities are indexed as (0 => attack, others => specials)
+        var index = parseInt(command.toString());
+        var ability = playerUnit.abilities[index];
+        if (playerUnit.getCooldown(ability) <= 0) {
+            jwb.state.queuedAbility = ability;
+            return renderer.render();
         }
-        return PromiseUtils_9.resolvedPromise();
+        else {
+            console.log(ability.name + " is on cooldown: " + playerUnit.getCooldown(UnitAbilities_3.default.HEAVY_ATTACK));
+        }
+        return PromiseUtils_10.resolvedPromise();
     }
     function attachEvents() {
         window.onkeydown = keyHandlerWrapper;
