@@ -131,7 +131,7 @@ class KnockbackAttack extends Ability {
               // In the future, this should be one tile with a one-turn stun.
               for (let i = 0; i < 2; i++) {
                 const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-                if (!map.isBlocked(oneTileBack)) {
+                if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
                   targetCoordinates = oneTileBack;
                 }
               }

@@ -23,8 +23,7 @@ function createPotion(lifeRestored) {
             SoundFX_1.playSound(Sounds_1.default.USE_POTION);
             var prevLife = unit.life;
             unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-            jwb.state.messages.push(unit.name + " used " + item.name);
-            jwb.state.messages.push("and gained " + (unit.life - prevLife) + " life.");
+            jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
             resolve();
         });
     };

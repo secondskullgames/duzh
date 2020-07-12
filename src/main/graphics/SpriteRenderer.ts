@@ -1,13 +1,13 @@
 import Sprite from './sprites/Sprite';
 import Colors from '../types/Colors';
+import MinimapRenderer from './MinimapRenderer';
 import Renderer from './Renderer';
+import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
-import { Coordinates, Entity, GameScreen, ItemCategory, Rect, Tile } from '../types/types';
+import { Coordinates, Entity, GameScreen, ItemCategory, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
-import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
-import MinimapRenderer from './MinimapRenderer';
 import { Ability } from '../units/UnitAbilities';
 
 const TILE_WIDTH = 32;

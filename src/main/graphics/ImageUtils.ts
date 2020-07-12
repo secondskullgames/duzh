@@ -37,7 +37,7 @@ function loadImage(filename: string): Promise<ImageData> {
 }
 
 function applyTransparentColor(imageData: ImageData, transparentColor: string): Promise<ImageData> {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const [tr, tg, tb] = hex2rgb(transparentColor);
     const array = new Uint8ClampedArray(imageData.data.length);
     for (let i = 0; i < imageData.data.length; i += 4) {

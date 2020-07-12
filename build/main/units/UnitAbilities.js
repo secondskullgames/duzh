@@ -136,6 +136,9 @@ var KnockbackAttack = /** @class */ (function (_super) {
                         .then(function () {
                         var _a;
                         var targetCoordinates = { x: x, y: y };
+                        // TODO: This is implemented as a two-tile knockback, but since (in most cases) the target will
+                        // get a move immediately afterward, it will look like only one tile.
+                        // In the future, this should be one tile with a one-turn stun.
                         for (var i = 0; i < 2; i++) {
                             var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
                             if (!map.isBlocked(oneTileBack)) {
@@ -185,8 +188,7 @@ var ShootArrow = /** @class */ (function (_super) {
             if (!!targetUnit) {
                 var messages = jwb.state.messages;
                 var damage_1 = unit.getRangedDamage();
-                messages.push(unit.name + " hit " + targetUnit.name);
-                messages.push("for " + damage_1 + " damage!");
+                messages.push(unit.name + " hit " + targetUnit.name + " for " + damage_1 + " damage!");
                 Animations_1.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
                     .then(function () { return targetUnit.takeDamage(damage_1, unit); })
                     .then(function () { return resolve(); });

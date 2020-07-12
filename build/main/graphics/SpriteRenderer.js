@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Colors_1 = require("../types/Colors");
+var MinimapRenderer_1 = require("./MinimapRenderer");
+var FontRenderer_1 = require("./FontRenderer");
 var PromiseUtils_1 = require("../utils/PromiseUtils");
 var MapUtils_1 = require("../maps/MapUtils");
 var types_1 = require("../types/types");
 var actions_1 = require("../core/actions");
 var ImageUtils_1 = require("./ImageUtils");
-var FontRenderer_1 = require("./FontRenderer");
-var MinimapRenderer_1 = require("./MinimapRenderer");
 var TILE_WIDTH = 32;
 var TILE_HEIGHT = 24;
 var WIDTH = 20; // in tiles

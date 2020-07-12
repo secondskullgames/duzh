@@ -9,18 +9,14 @@ var ImageSupplier = /** @class */ (function () {
     function ImageSupplier(filename, transparentColor, paletteSwaps, effects) {
         if (paletteSwaps === void 0) { paletteSwaps = {}; }
         if (effects === void 0) { effects = []; }
-        this._image = null;
-        this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
+        this._image = ImageUtils_1.loadImage(filename)
             .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
             .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
             // @ts-ignore
             .then(function (imageData) { return PromiseUtils_1.chainPromises(effects, imageData); })
-            .then(function (imageData) { return createImageBitmap(imageData); }); };
+            .then(function (imageData) { return createImageBitmap(imageData); });
     }
     ImageSupplier.prototype.get = function () {
-        if (!this._image) {
-            this._image = this._imageSupplier();
-        }
         return this._image;
     };
     return ImageSupplier;

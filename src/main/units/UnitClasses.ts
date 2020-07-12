@@ -47,7 +47,7 @@ const ENEMY_SNAKE: UnitClass = {
   damagePerLevel: () => 1,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.95,
+    speed: 0.98,
     visionRange: 10,
     fleeThreshold: 0.2
   }
@@ -68,7 +68,7 @@ const ENEMY_GRUNT: UnitClass = {
   damagePerLevel: () => 1,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.90,
+    speed: 0.95,
     visionRange: 8,
     fleeThreshold: 0.1
   }
@@ -81,15 +81,15 @@ const ENEMY_SOLDIER: UnitClass = {
   paletteSwaps: {},
   startingLife: 60,
   startingMana: null,
-  startingDamage: 6,
+  startingDamage: 8,
   minLevel: 3,
   maxLevel: 6,
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
-  damagePerLevel: () => 2,
+  damagePerLevel: () => 1,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.90,
+    speed: 0.95,
     visionRange: 10,
     fleeThreshold: 0.1
   }
@@ -103,17 +103,17 @@ const ENEMY_GOLEM: UnitClass = {
     [Colors.DARK_GRAY]: Colors.DARKER_GRAY,
     [Colors.LIGHT_GRAY]: Colors.DARKER_GRAY,
   },
-  startingLife: 80,
+  startingLife: 60,
   startingMana: null,
   startingDamage: 10,
   minLevel: 5,
   maxLevel: 9,
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
-  damagePerLevel: () => 2,
+  damagePerLevel: () => 1,
   aiHandler: HUMAN_DETERMINISTIC,
   aiParams: {
-    speed: 0.88,
+    speed: 0.92,
     visionRange: 12,
     fleeThreshold: 0
   }

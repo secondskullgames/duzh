@@ -291,18 +291,14 @@ define("graphics/ImageSupplier", ["require", "exports", "graphics/ImageUtils", "
         function ImageSupplier(filename, transparentColor, paletteSwaps, effects) {
             if (paletteSwaps === void 0) { paletteSwaps = {}; }
             if (effects === void 0) { effects = []; }
-            this._image = null;
-            this._imageSupplier = function () { return ImageUtils_1.loadImage(filename)
+            this._image = ImageUtils_1.loadImage(filename)
                 .then(function (imageData) { return ImageUtils_1.applyTransparentColor(imageData, transparentColor); })
                 .then(function (imageData) { return ImageUtils_1.replaceColors(imageData, paletteSwaps); })
                 // @ts-ignore
                 .then(function (imageData) { return PromiseUtils_1.chainPromises(effects, imageData); })
-                .then(function (imageData) { return createImageBitmap(imageData); }); };
+                .then(function (imageData) { return createImageBitmap(imageData); });
         }
         ImageSupplier.prototype.get = function () {
-            if (!this._image) {
-                this._image = this._imageSupplier();
-            }
             return this._image;
         };
         return ImageSupplier;
@@ -1318,6 +1314,9 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
                             .then(function () {
                             var _a;
                             var targetCoordinates = { x: x, y: y };
+                            // TODO: This is implemented as a two-tile knockback, but since (in most cases) the target will
+                            // get a move immediately afterward, it will look like only one tile.
+                            // In the future, this should be one tile with a one-turn stun.
                             for (var i = 0; i < 2; i++) {
                                 var oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
                                 if (!map.isBlocked(oneTileBack)) {
@@ -1367,8 +1366,7 @@ define("units/UnitAbilities", ["require", "exports", "sounds/Sounds", "types/typ
                 if (!!targetUnit) {
                     var messages = jwb.state.messages;
                     var damage_1 = unit.getRangedDamage();
-                    messages.push(unit.name + " hit " + targetUnit.name);
-                    messages.push("for " + damage_1 + " damage!");
+                    messages.push(unit.name + " hit " + targetUnit.name + " for " + damage_1 + " damage!");
                     Animations_2.playArrowAnimation(unit, { dx: dx, dy: dy }, coordinatesList, targetUnit)
                         .then(function () { return targetUnit.takeDamage(damage_1, unit); })
                         .then(function () { return resolve(); });
@@ -2173,6 +2171,61 @@ define("items/ItemUtils", ["require", "exports", "sounds/SoundFX", "sounds/Sound
     }
     exports.useItem = useItem;
 });
+define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRenderer", "types/Colors", "types/types", "maps/MapUtils"], function (require, exports, SpriteRenderer_1, Colors_4, types_8, MapUtils_4) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var MinimapRenderer = /** @class */ (function () {
+        function MinimapRenderer() {
+            this._canvas = document.createElement('canvas');
+            this._context = this._canvas.getContext('2d');
+            this._canvas.width = SpriteRenderer_1.default.SCREEN_WIDTH;
+            this._canvas.height = SpriteRenderer_1.default.SCREEN_HEIGHT;
+            this._context.imageSmoothingEnabled = false;
+        }
+        MinimapRenderer.prototype.render = function () {
+            this._context.fillStyle = Colors_4.default.BLACK;
+            this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+            var map = jwb.state.getMap();
+            var m = Math.floor(Math.min(this._canvas.width / map.width, this._canvas.height / map.height));
+            for (var y = 0; y < map.height; y++) {
+                for (var x = 0; x < map.width; x++) {
+                    var color = void 0;
+                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
+                        var tileType = map.getTile({ x: x, y: y }).type;
+                        switch (tileType) {
+                            case types_8.TileType.FLOOR:
+                            case types_8.TileType.FLOOR_HALL:
+                            case types_8.TileType.STAIRS_DOWN:
+                                color = Colors_4.default.LIGHT_GRAY;
+                                break;
+                            case types_8.TileType.WALL:
+                            case types_8.TileType.WALL_HALL:
+                                color = Colors_4.default.DARK_GRAY;
+                                break;
+                            case types_8.TileType.NONE:
+                            case types_8.TileType.WALL_TOP:
+                            default:
+                                color = Colors_4.default.BLACK;
+                                break;
+                        }
+                        if (MapUtils_4.coordinatesEquals(jwb.state.playerUnit, { x: x, y: y })) {
+                            color = Colors_4.default.RED;
+                        }
+                    }
+                    else {
+                        color = Colors_4.default.BLACK;
+                    }
+                    this._context.fillStyle = color;
+                    this._context.fillRect(x * m, y * m, m, m);
+                }
+            }
+            var imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
+            return createImageBitmap(imageData);
+        };
+        return MinimapRenderer;
+    }());
+    exports.default = MinimapRenderer;
+});
 define("graphics/Renderer", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -2183,7 +2236,7 @@ define("graphics/Renderer", ["require", "exports"], function (require, exports) 
     }());
     exports.default = Renderer;
 });
-define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "utils/PromiseUtils", "types/Colors"], function (require, exports, ImageUtils_3, PromiseUtils_6, Colors_4) {
+define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "utils/PromiseUtils", "types/Colors"], function (require, exports, ImageUtils_3, PromiseUtils_6, Colors_5) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
@@ -2235,7 +2288,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
                 .then(function () { return PromiseUtils_6.resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)); })
                 .then(function (imageData) {
                 var _a;
-                return ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_4.default.BLACK] = color, _a));
+                return ImageUtils_3.replaceColors(imageData, (_a = {}, _a[Colors_5.default.BLACK] = color, _a));
             })
                 .then(function (imageData) { return createImageBitmap(imageData); })
                 .then(function (imageBitmap) { _this._imageMemos[key] = imageBitmap; return imageBitmap; });
@@ -2274,7 +2327,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
         FontRenderer.prototype._getCharacterData = function (definition, context, char) {
             var offset = this._getCharOffset(char);
             var imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
-            return ImageUtils_3.applyTransparentColor(imageData, Colors_4.default.WHITE);
+            return ImageUtils_3.applyTransparentColor(imageData, Colors_5.default.WHITE);
         };
         FontRenderer.prototype._getCharOffset = function (char) {
             if (char >= MIN_CHARACTER_CODE && char <= MAX_CHARACTER_CODE) {
@@ -2289,62 +2342,7 @@ define("graphics/FontRenderer", ["require", "exports", "graphics/ImageUtils", "u
     }());
     exports.default = FontRenderer;
 });
-define("graphics/MinimapRenderer", ["require", "exports", "graphics/SpriteRenderer", "types/Colors", "types/types", "maps/MapUtils"], function (require, exports, SpriteRenderer_1, Colors_5, types_8, MapUtils_4) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var MinimapRenderer = /** @class */ (function () {
-        function MinimapRenderer() {
-            this._canvas = document.createElement('canvas');
-            this._context = this._canvas.getContext('2d');
-            this._canvas.width = SpriteRenderer_1.default.SCREEN_WIDTH;
-            this._canvas.height = SpriteRenderer_1.default.SCREEN_HEIGHT;
-            this._context.imageSmoothingEnabled = false;
-        }
-        MinimapRenderer.prototype.render = function () {
-            this._context.fillStyle = Colors_5.default.BLACK;
-            this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-            var map = jwb.state.getMap();
-            var m = Math.floor(Math.min(this._canvas.width / map.width, this._canvas.height / map.height));
-            for (var y = 0; y < map.height; y++) {
-                for (var x = 0; x < map.width; x++) {
-                    var color = void 0;
-                    if (MapUtils_4.isTileRevealed({ x: x, y: y })) {
-                        var tileType = map.getTile({ x: x, y: y }).type;
-                        switch (tileType) {
-                            case types_8.TileType.FLOOR:
-                            case types_8.TileType.FLOOR_HALL:
-                            case types_8.TileType.STAIRS_DOWN:
-                                color = Colors_5.default.LIGHT_GRAY;
-                                break;
-                            case types_8.TileType.WALL:
-                            case types_8.TileType.WALL_HALL:
-                                color = Colors_5.default.DARK_GRAY;
-                                break;
-                            case types_8.TileType.NONE:
-                            case types_8.TileType.WALL_TOP:
-                            default:
-                                color = Colors_5.default.BLACK;
-                                break;
-                        }
-                        if (MapUtils_4.coordinatesEquals(jwb.state.playerUnit, { x: x, y: y })) {
-                            color = Colors_5.default.RED;
-                        }
-                    }
-                    else {
-                        color = Colors_5.default.BLACK;
-                    }
-                    this._context.fillStyle = color;
-                    this._context.fillRect(x * m, y * m, m, m);
-                }
-            }
-            var imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
-            return createImageBitmap(imageData);
-        };
-        return MinimapRenderer;
-    }());
-    exports.default = MinimapRenderer;
-});
-define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils", "graphics/FontRenderer", "graphics/MinimapRenderer"], function (require, exports, Colors_6, PromiseUtils_7, MapUtils_5, types_9, actions_1, ImageUtils_4, FontRenderer_1, MinimapRenderer_1) {
+define("graphics/SpriteRenderer", ["require", "exports", "types/Colors", "graphics/MinimapRenderer", "graphics/FontRenderer", "utils/PromiseUtils", "maps/MapUtils", "types/types", "core/actions", "graphics/ImageUtils"], function (require, exports, Colors_6, MinimapRenderer_1, FontRenderer_1, PromiseUtils_7, MapUtils_5, types_9, actions_1, ImageUtils_4) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var TILE_WIDTH = 32;
@@ -2894,8 +2892,7 @@ define("items/ItemFactory", ["require", "exports", "sounds/Sounds", "items/Inven
                 SoundFX_4.playSound(Sounds_4.default.USE_POTION);
                 var prevLife = unit.life;
                 unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-                jwb.state.messages.push(unit.name + " used " + item.name);
-                jwb.state.messages.push("and gained " + (unit.life - prevLife) + " life.");
+                jwb.state.messages.push(unit.name + " used " + item.name + " and gained " + (unit.life - prevLife) + " life.");
                 resolve();
             });
         };
