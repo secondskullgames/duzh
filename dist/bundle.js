@@ -697,7 +697,8 @@ class ImageSupplier {
      * @param effects A list of custom transformations to be applied to the image, in order
      */
     constructor(filename, transparentColor, paletteSwaps = {}, effects = []) {
-        this._image = (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.loadImage)(filename)
+        const filenames = (Array.isArray(filename) ? filename : [filename]);
+        this._image = this._loadFirst(filenames)
             .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, transparentColor))
             .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, paletteSwaps))
             // @ts-ignore
@@ -706,6 +707,21 @@ class ImageSupplier {
     }
     get() {
         return this._image;
+    }
+    _loadFirst(filenames) {
+        const promises = filenames.map(filename => this._loadOptional(filename));
+        return Promise.all(promises)
+            .then(results => {
+            const imageData = results.filter(p => !!p)[0];
+            if (!imageData) {
+                throw `Failed to load images: ${filenames}`;
+            }
+            return imageData;
+        });
+    }
+    _loadOptional(filename) {
+        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.loadImage)(filename)
+            .catch(e => null);
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ImageSupplier);
@@ -1540,7 +1556,6 @@ __webpack_require__.r(__webpack_exports__);
 class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     constructor(equipment, spriteName, paletteSwaps, spriteOffsets) {
         super(spriteOffsets);
-        this._template = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
         this._equipment = equipment;
         this._spriteName = spriteName;
         this._paletteSwaps = paletteSwaps;
@@ -1556,17 +1571,20 @@ class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
             sprite: this._spriteName,
             activity: _activityToString(unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction),
-            number: 1
+            number: (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.ATTACKING ? 2 : 1) // HACK HACK HACK
         };
-        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
+        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.TEMPLATE, variables);
+        const behindFilename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.BEHIND_TEMPLATE, variables);
         // TODO can we get this into the yaml?
         const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
             ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
             : [];
         console.log('in getImage()');
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
+        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default([behindFilename, filename], _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
     }
 }
+EquipmentSprite.TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
+EquipmentSprite.BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
 function _activityToString(activity) {
     return (activity === 'DAMAGED' ? _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.STANDING : activity).toLowerCase();
 }
@@ -1785,7 +1803,7 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
             sprite: this._spriteName,
             activity: _activityToString(this._unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(this._unit.direction),
-            number: 1
+            number: (this._unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.ATTACKING ? 2 : 1) // HACK HACK HACK
         };
         const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
         // TODO can we get this into the yaml?

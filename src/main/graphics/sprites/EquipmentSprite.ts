@@ -10,7 +10,8 @@ import Equipment from '../../items/equipment/Equipment';
 class EquipmentSprite extends Sprite {
   private _equipment: Equipment;
   private readonly _spriteName: string;
-  private readonly _template = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
+  private static readonly TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
+  private static readonly BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
   private readonly _paletteSwaps: PaletteSwaps;
 
   constructor(equipment: Equipment, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: Offsets) {
@@ -33,13 +34,14 @@ class EquipmentSprite extends Sprite {
       direction: Directions.toLegacyDirection(unit.direction!!),
       number: 1
     };
-    const filename = fillTemplate(this._template, variables);
+    const filename = fillTemplate(EquipmentSprite.TEMPLATE, variables);
+    const behindFilename = fillTemplate(EquipmentSprite.BEHIND_TEMPLATE, variables);
     // TODO can we get this into the yaml?
     const effects = (unit.activity === Activity.DAMAGED)
       ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
       : [];
     console.log('in getImage()');
-    return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps, effects).get();
+    return new ImageSupplier([behindFilename, filename], Colors.WHITE, this._paletteSwaps, effects).get();
   }
 }
 
