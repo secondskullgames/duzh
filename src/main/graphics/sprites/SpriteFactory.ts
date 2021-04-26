@@ -1,6 +1,4 @@
-import ImageSupplier from '../ImageSupplier';
 import Sprite from './Sprite';
-import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
 import PlayerSprite from './units/PlayerSprite';
 import GolemSprite from './units/GolemSprite';
@@ -9,29 +7,24 @@ import SnakeSprite from './units/SnakeSprite';
 import SoldierSprite from './units/SoldierSprite';
 import { Direction, PaletteSwaps, SpriteSupplier } from '../../types/types';
 import ArrowSprite from './projectiles/ArrowSprite';
-
-const DEFAULT_SPRITE_KEY = 'default';
+import StaticSprite from './StaticSprite';
 
 type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
 
-function createStaticSprite(imageLoader: ImageSupplier, { dx, dy }: { dx: number, dy: number }): Sprite {
-  return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
-}
-
 const StaticSprites: { [name: string]: SpriteSupplier } = {
-  MAP_SWORD: (paletteSwaps) => createStaticSprite(new ImageSupplier('sword_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
-  MAP_POTION: (paletteSwaps) => createStaticSprite(new ImageSupplier('potion_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
-  MAP_SCROLL: (paletteSwaps) => createStaticSprite(new ImageSupplier('scroll_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
-  MAP_BOW: (paletteSwaps) => createStaticSprite(new ImageSupplier('bow_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 })
+  MAP_SWORD: paletteSwaps => new StaticSprite('sword_icon', { dx: 0, dy: -8 }, paletteSwaps),
+  MAP_POTION: paletteSwaps => new StaticSprite('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
+  MAP_SCROLL: paletteSwaps => new StaticSprite('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
+  MAP_BOW: paletteSwaps => new StaticSprite('bow_icon', { dx: 0, dy: 0 }, paletteSwaps)
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
   PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
   GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps),
-  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new GruntSprite(unit, paletteSwaps),
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
   SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new SnakeSprite(unit, paletteSwaps),
-  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new SoldierSprite(unit, paletteSwaps)
+  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps)
 };
 
 const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
@@ -52,5 +45,3 @@ export default {
   SOLDIER: UnitSprites.SOLDIER,
   ARROW: ProjectileSprites.ARROW
 };
-
-export { createStaticSprite };

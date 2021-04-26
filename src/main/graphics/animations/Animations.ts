@@ -144,7 +144,7 @@ function _playAnimation(animation: Animation): Promise<any> {
       for (let j = 0; j < frame.units.length; j++) {
         const { unit, activity } = frame.units[j];
         unit.activity = activity;
-        updatePromises.push(unit.sprite.update());
+        updatePromises.push(unit.sprite.getImage());
       }
       return Promise.all(updatePromises);
     };

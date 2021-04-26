@@ -2,18 +2,19 @@ import Sprite from '../graphics/sprites/Sprite';
 import ImageSupplier from '../graphics/ImageSupplier';
 import Colors from '../types/Colors';
 import { PaletteSwaps, TileType, TileSet } from '../types/types';
-import { createStaticSprite } from '../graphics/sprites/SpriteFactory';
+import StaticSprite from '../graphics/sprites/StaticSprite';
 
 type TileFilenames = {
   [tileType in TileType]: (string | null)[]
 }
 
-type SpriteSupplier = (paletteSwaps: PaletteSwaps) => Sprite;
-
-function _getTileSprite(filename: string): SpriteSupplier {
-  return (paletteSwaps: PaletteSwaps) => createStaticSprite(new ImageSupplier(filename, Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 });
+function _getTileSprite(filename: string): Sprite {
+  return new StaticSprite(filename, { dx: 0, dy: 0 }, {});
 }
 
+/**
+ * TODO: learn to TypeScript
+ */
 function _mapFilenames(filenames: TileFilenames): TileSet {
   // @ts-ignore
   const tileSet: TileSet = {};
@@ -21,7 +22,7 @@ function _mapFilenames(filenames: TileFilenames): TileSet {
     // @ts-ignore
     tileSet[tileType] = [];
     filenames.forEach(filename => {
-      const sprite: (Sprite | null) = !!filename ? _getTileSprite(filename)({}) : null;
+      const sprite: (Sprite | null) = !!filename ? _getTileSprite(filename) : null;
       // @ts-ignore
       tileSet[tileType].push(sprite);
     });

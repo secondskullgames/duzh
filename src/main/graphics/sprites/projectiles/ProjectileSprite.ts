@@ -1,8 +1,9 @@
 import ImageSupplier from '../../ImageSupplier';
-import Sprite from '../Sprite';
+import Sprite, { Offsets } from '../Sprite';
 import Colors from '../../../types/Colors';
 import Directions from '../../../types/Directions';
 import { Direction, PaletteSwaps, Projectile } from '../../../types/types';
+import { fillTemplate } from '../../../utils/TemplateUtils';
 
 enum SpriteKey {
   N = 'N',
@@ -15,21 +16,26 @@ enum SpriteKey {
  * Projectiles have a direction but no activity or frame numbers
  */
 abstract class ProjectileSprite extends Sprite {
+  private static readonly TEMPLATE = '${sprite}/${sprite}_${direction}_{number}';
+  private readonly _spriteName: string;
   private readonly _direction: Direction;
+  private readonly _paletteSwaps: PaletteSwaps;
 
-  protected constructor(direction: Direction, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
-    const imageMap = {
-      [SpriteKey.N]: new ImageSupplier(`${spriteName}/${spriteName}_N_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.E]: new ImageSupplier(`${spriteName}/${spriteName}_E_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.S]: new ImageSupplier(`${spriteName}/${spriteName}_S_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.W]: new ImageSupplier(`${spriteName}/${spriteName}_W_1`, Colors.WHITE, paletteSwaps),
-    };
-    super(imageMap, Directions.toString(direction), spriteOffsets);
+  protected constructor(direction: Direction, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: Offsets) {
+    super(spriteOffsets);
+    this._spriteName = spriteName;
     this._direction = direction;
+    this._paletteSwaps = paletteSwaps;
   }
 
-  update(): Promise<any> {
-    return this.getImage();
+  getImage(): Promise<ImageBitmap> {
+    const variables = {
+      sprite: this._spriteName,
+      direction: Directions.toString(this._direction),
+      number: 1
+    };
+    const filename = fillTemplate(ProjectileSprite.TEMPLATE, variables);
+    return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps).get();
   }
 }
 

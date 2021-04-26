@@ -2,56 +2,40 @@ import ImageSupplier from '../../ImageSupplier';
 import Sprite from '../Sprite';
 import Colors from '../../../types/Colors';
 import Unit from '../../../units/Unit';
-import Directions from '../../../types/Directions';
-import { PaletteSwaps } from '../../../types/types';
+import { Activity, PaletteSwaps } from '../../../types/types';
+import { fillTemplate } from '../../../utils/TemplateUtils';
 import { replaceAll } from '../../ImageUtils';
+import Directions from '../../../types/Directions';
 
-enum SpriteKey {
-  STANDING_N = 'STANDING_N',
-  STANDING_E = 'STANDING_E',
-  STANDING_S = 'STANDING_S',
-  STANDING_W = 'STANDING_W',
-  ATTACKING_N = 'ATTACKING_N',
-  ATTACKING_E = 'ATTACKING_E',
-  ATTACKING_S = 'ATTACKING_S',
-  ATTACKING_W = 'ATTACKING_W',
-  DAMAGED_N = 'DAMAGED_N',
-  DAMAGED_E = 'DAMAGED_E',
-  DAMAGED_S = 'DAMAGED_S',
-  DAMAGED_W = 'DAMAGED_W',
-}
-
-abstract class UnitSprite extends Sprite {
+class UnitSprite extends Sprite {
   private _unit: Unit;
+  private readonly _spriteName: string;
+  private readonly _template = '${sprite}/${sprite}_${activity}_${direction}_${number}';
+  private readonly _paletteSwaps: PaletteSwaps;
 
   protected constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
-    const imageMap = {
-      [SpriteKey.STANDING_N]: new ImageSupplier(`${spriteName}/${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_E]: new ImageSupplier(`${spriteName}/${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_S]: new ImageSupplier(`${spriteName}/${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.STANDING_W]: new ImageSupplier(`${spriteName}/${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.ATTACKING_N]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_N_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.ATTACKING_E]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_E_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.ATTACKING_S]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_S_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.ATTACKING_W]: new ImageSupplier(`${spriteName}/${spriteName}_attacking_W_1`, Colors.WHITE, paletteSwaps),
-      [SpriteKey.DAMAGED_N]: new ImageSupplier(`${spriteName}/${spriteName}_standing_N_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_E]: new ImageSupplier(`${spriteName}/${spriteName}_standing_E_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_S]: new ImageSupplier(`${spriteName}/${spriteName}_standing_S_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)]),
-      [SpriteKey.DAMAGED_W]: new ImageSupplier(`${spriteName}/${spriteName}_standing_W_1`, Colors.WHITE, paletteSwaps, [img => replaceAll(img, Colors.WHITE)])
-    };
-    super(imageMap, SpriteKey.STANDING_S, spriteOffsets);
+    super(spriteOffsets);
     this._unit = unit;
+    this._spriteName = spriteName;
+    this._paletteSwaps = paletteSwaps;
   }
 
-  update(): Promise<any> {
-    this.key = this._getKey();
-    return this.getImage();
-  }
-
-  private _getKey(): SpriteKey {
-    const direction = this._unit.direction || Directions.S;
-    const key = `${this._unit.activity}_${Directions.toString(direction)}`;
-    return <SpriteKey>key;
+  /**
+   * @override {@link Sprite#getImage}
+   */
+  getImage(): Promise<ImageBitmap> {
+    const variables = {
+      sprite: this._spriteName,
+      activity: (this._unit.activity === 'DAMAGED' ? Activity.STANDING : this._unit.activity).toLowerCase(),
+      direction: Directions.toString(this._unit.direction!!),
+      number: 1
+    };
+    const filename = fillTemplate(this._template, variables);
+    // TODO can we get this into the yaml?
+    const effects = (this._unit.activity === Activity.DAMAGED)
+      ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
+      : [];
+    return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps, effects).get();
   }
 }
 

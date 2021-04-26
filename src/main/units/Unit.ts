@@ -9,6 +9,7 @@ import UnitAbilities, { Ability } from './UnitAbilities';
 import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { resolvedPromise } from '../utils/PromiseUtils';
+import Directions from '../types/Directions';
 
 const LIFE_PER_TURN_MULTIPLIER = 0.001;
 
@@ -31,7 +32,7 @@ class Unit implements Entity {
   private _damage: number;
   controller: UnitController;
   activity: Activity;
-  direction: Direction | null;
+  direction: Direction;
   private readonly remainingCooldowns: Map<Ability, number>;
   readonly abilities: Ability[];
   stunDuration: number;
@@ -55,7 +56,7 @@ class Unit implements Entity {
     this._damage = unitClass.startingDamage;
     this.controller = unitClass.controller;
     this.activity = Activity.STANDING;
-    this.direction = null;
+    this.direction = Directions.S;
     this.remainingCooldowns = new Map();
     // TODO: this needs to be specific to the player unit
     this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
@@ -96,7 +97,7 @@ class Unit implements Entity {
         }
         return resolvedPromise();
       })
-      .then(() => this.sprite.update())
+      .then(() => this.sprite.getImage())
       .then(() => this._endOfTurn());
   }
 
