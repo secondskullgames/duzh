@@ -4,7 +4,7 @@ import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import { playSound } from '../sounds/SoundFX';
-import { loadMap, restartGame, startGame } from './actions';
+import { loadMap, returnToTitle, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
 import UnitAbilities from '../units/UnitAbilities';
 
@@ -250,8 +250,7 @@ function _handleEnter(): Promise<void> {
       return startGame();
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
-      state.screen = GameScreen.GAME;
-      return restartGame();
+      return returnToTitle();
     default:
       throw `Unknown game screen: ${state.screen}`;
   }
@@ -311,6 +310,5 @@ function attachEvents() {
 }
 
 export {
-  attachEvents,
-  keyHandler as simulateKeyPress
+  attachEvents
 };

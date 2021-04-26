@@ -10,7 +10,7 @@ import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } f
 import { playSound } from '../sounds/SoundFX';
 import { resolvedPromise } from '../utils/PromiseUtils';
 
-const LIFE_PER_TURN_MULTIPLIER = 0.005;
+const LIFE_PER_TURN_MULTIPLIER = 0.001;
 
 class Unit implements Entity {
   readonly unitClass: UnitClass;
@@ -153,7 +153,7 @@ class Unit implements Entity {
     return null;
   }
 
-  takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<void> {
+  takeDamage(damage: number, sourceUnit?: Unit): Promise<void> {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 

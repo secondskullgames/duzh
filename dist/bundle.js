@@ -51,8 +51,7 @@ class GameState {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "attachEvents": () => (/* binding */ attachEvents),
-/* harmony export */   "simulateKeyPress": () => (/* binding */ keyHandler)
+/* harmony export */   "attachEvents": () => (/* binding */ attachEvents)
 /* harmony export */ });
 /* harmony import */ var _TurnHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TurnHandler */ "./src/main/core/TurnHandler.ts");
 /* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
@@ -300,8 +299,7 @@ function _handleEnter() {
             return (0,_actions__WEBPACK_IMPORTED_MODULE_5__.startGame)();
         case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.VICTORY:
         case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME_OVER:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME;
-            return (0,_actions__WEBPACK_IMPORTED_MODULE_5__.restartGame)();
+            return (0,_actions__WEBPACK_IMPORTED_MODULE_5__.returnToTitle)();
         default:
             throw `Unknown game screen: ${state.screen}`;
     }
@@ -411,7 +409,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "initialize": () => (/* binding */ initialize),
 /* harmony export */   "loadMap": () => (/* binding */ loadMap),
-/* harmony export */   "restartGame": () => (/* binding */ restartGame),
+/* harmony export */   "returnToTitle": () => (/* binding */ returnToTitle),
 /* harmony export */   "revealTiles": () => (/* binding */ revealTiles),
 /* harmony export */   "startGame": () => (/* binding */ startGame)
 /* harmony export */ });
@@ -477,9 +475,11 @@ function startGame() {
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
 }
-function restartGame() {
-    _initState();
-    return startGame();
+function returnToTitle() {
+    _initState(); // will set state.screen = TITLE
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
+    return jwb.renderer.render();
 }
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
@@ -520,9 +520,8 @@ function revealTiles() {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "revealMap": () => (/* binding */ revealMap),
-/* harmony export */   "killEnemies": () => (/* binding */ killEnemies),
-/* harmony export */   "renderMinimap": () => (/* binding */ renderMinimap)
+/* harmony export */   "initDebug": () => (/* binding */ initDebug),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /*
@@ -539,16 +538,25 @@ function killEnemies() {
     map.units = map.units.filter(u => u === jwb.state.playerUnit);
     jwb.renderer.render();
 }
+function killPlayer() {
+    const map = jwb.state.getMap();
+    const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
+    playerUnit.takeDamage(playerUnit.life);
+    jwb.renderer.render();
+}
 function renderMinimap() {
     jwb.state.screen = _types_types__WEBPACK_IMPORTED_MODULE_0__.GameScreen.MINIMAP;
 }
-// @ts-ignore
-window.jwb = window.jwb || {};
-jwb.debug = jwb.debug || {
-    revealMap,
-    killEnemies
-};
-
+function initDebug() {
+    // @ts-ignore
+    window.jwb = window.jwb || {};
+    jwb.debug = jwb.debug || {
+        revealMap,
+        killEnemies,
+        killPlayer
+    };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ initDebug });
 
 
 /***/ }),
@@ -4063,7 +4071,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const LIFE_PER_TURN_MULTIPLIER = 0.005;
+const LIFE_PER_TURN_MULTIPLIER = 0.001;
 class Unit {
     constructor(unitClass, name, level, { x, y }) {
         this.char = '@';
@@ -4171,7 +4179,7 @@ class Unit {
         }
         return null;
     }
-    takeDamage(damage, sourceUnit = undefined) {
+    takeDamage(damage, sourceUnit) {
         const { playerUnit } = jwb.state;
         const map = jwb.state.getMap();
         return new Promise(resolve => {
@@ -5237,18 +5245,12 @@ var __webpack_exports__ = {};
   !*** ./src/main/index.ts ***!
   \***************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "initialize": () => (/* reexport safe */ _core_actions__WEBPACK_IMPORTED_MODULE_0__.initialize),
-/* harmony export */   "restartGame": () => (/* reexport safe */ _core_actions__WEBPACK_IMPORTED_MODULE_0__.restartGame),
-/* harmony export */   "killEnemies": () => (/* reexport safe */ _core_debug__WEBPACK_IMPORTED_MODULE_1__.killEnemies),
-/* harmony export */   "revealMap": () => (/* reexport safe */ _core_debug__WEBPACK_IMPORTED_MODULE_1__.revealMap)
-/* harmony export */ });
 /* harmony import */ var _core_actions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./core/actions */ "./src/main/core/actions.ts");
 /* harmony import */ var _core_debug__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core/debug */ "./src/main/core/debug.ts");
 
 
 (0,_core_actions__WEBPACK_IMPORTED_MODULE_0__.initialize)();
-
+(0,_core_debug__WEBPACK_IMPORTED_MODULE_1__.initDebug)();
 
 })();
 

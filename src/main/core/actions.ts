@@ -6,10 +6,9 @@ import UnitClasses from '../units/UnitClasses';
 import Music from '../sounds/Music';
 import TileSets from '../maps/TileSets';
 import { attachEvents } from './InputHandler';
-import { randChoice } from '../utils/RandomUtils';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
-import { SUITE_1, SUITE_2, SUITE_3 } from '../sounds/Suites';
+import { resolvedPromise } from '../utils/PromiseUtils';
 
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
@@ -57,9 +56,11 @@ function startGame(): Promise<any> {
   return jwb.renderer.render();
 }
 
-function restartGame(): Promise<any> {
-  _initState();
-  return startGame();
+function returnToTitle(): Promise<void> {
+  _initState(); // will set state.screen = TITLE
+  Music.stop();
+  Music.playFigure(Music.TITLE_THEME);
+  return jwb.renderer.render();
 }
 
 /**
@@ -95,7 +96,7 @@ function revealTiles(): void {
 export {
   initialize,
   loadMap,
-  restartGame,
+  returnToTitle,
   revealTiles,
   startGame
 };

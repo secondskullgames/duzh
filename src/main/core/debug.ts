@@ -16,26 +16,33 @@ function killEnemies() {
   jwb.renderer.render();
 }
 
+function killPlayer() {
+  const map = jwb.state.getMap();
+  const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
+  playerUnit.takeDamage(playerUnit.life);
+  jwb.renderer.render();
+}
+
 function renderMinimap() {
   jwb.state.screen = GameScreen.MINIMAP;
 }
 
 type DebugShape = {
   revealMap: () => void,
-  killEnemies: () => void
+  killEnemies: () => void,
+  killPlayer: () => void
 };
 
-// @ts-ignore
-window.jwb = window.jwb || {};
-jwb.debug = jwb.debug || {
-  revealMap,
-  killEnemies
-};
+export function initDebug() {
+  // @ts-ignore
+  window.jwb = window.jwb || {};
+  jwb.debug = jwb.debug || {
+    revealMap,
+    killEnemies,
+    killPlayer
+  };
+}
 
-export {
-  revealMap,
-  killEnemies,
-  renderMinimap
-};
+export default { initDebug };
 
 export type { DebugShape };
