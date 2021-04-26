@@ -41,7 +41,6 @@ abstract class UnitSprite extends Sprite {
     };
     super(imageMap, SpriteKey.STANDING_S, spriteOffsets);
     this._unit = unit;
-    Object.values(imageMap).forEach(imageSupplier => imageSupplier.get());
   }
 
   update(): Promise<any> {

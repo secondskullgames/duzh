@@ -7,11 +7,15 @@
     "lib": "lib"
   },
   "dependencies": {
+    "ts-loader": "^9.1.1",
     "typescript": "3.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "copy-webpack-plugin": "^8.1.1",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0"
+  },
   "scripts": {
-    "prepare": "tsc -b",
     "test": "node build/test"
   },
   "repository": {
