@@ -1510,6 +1510,59 @@ function _playAnimation(animation) {
 
 /***/ }),
 
+/***/ "./src/main/graphics/sprites/ProjectileSprite.ts":
+/*!*******************************************************!*\
+  !*** ./src/main/graphics/sprites/ProjectileSprite.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
+/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../types/Directions */ "./src/main/types/Directions.ts");
+/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
+
+
+
+
+
+var SpriteKey;
+(function (SpriteKey) {
+    SpriteKey["N"] = "N";
+    SpriteKey["E"] = "E";
+    SpriteKey["S"] = "S";
+    SpriteKey["W"] = "W";
+})(SpriteKey || (SpriteKey = {}));
+/**
+ * Projectiles have a direction but no activity or frame numbers
+ */
+class ProjectileSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
+    constructor(direction, spriteName, paletteSwaps, spriteOffsets) {
+        super(spriteOffsets);
+        this._spriteName = spriteName;
+        this._direction = direction;
+        this._paletteSwaps = paletteSwaps;
+    }
+    getImage() {
+        const variables = {
+            sprite: this._spriteName,
+            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_3__.default.toString(this._direction),
+            number: 1
+        };
+        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(ProjectileSprite.TEMPLATE, variables);
+        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps).get();
+    }
+}
+ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_{number}';
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ProjectileSprite);
+
+
+/***/ }),
+
 /***/ "./src/main/graphics/sprites/Sprite.ts":
 /*!*********************************************!*\
   !*** ./src/main/graphics/sprites/Sprite.ts ***!
@@ -1545,31 +1598,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _units_PlayerSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./units/PlayerSprite */ "./src/main/graphics/sprites/units/PlayerSprite.ts");
-/* harmony import */ var _units_GolemSprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./units/GolemSprite */ "./src/main/graphics/sprites/units/GolemSprite.ts");
-/* harmony import */ var _units_SnakeSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./units/SnakeSprite */ "./src/main/graphics/sprites/units/SnakeSprite.ts");
-/* harmony import */ var _projectiles_ArrowSprite__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./projectiles/ArrowSprite */ "./src/main/graphics/sprites/projectiles/ArrowSprite.ts");
-/* harmony import */ var _StaticSprite__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
-
-
+/* harmony import */ var _StaticSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
+/* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/UnitSprite.ts");
+/* harmony import */ var _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProjectileSprite */ "./src/main/graphics/sprites/ProjectileSprite.ts");
 
 
 
 const StaticSprites = {
-    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_4__.default('sword_icon', { dx: 0, dy: -8 }, paletteSwaps),
-    MAP_POTION: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_4__.default('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
-    MAP_SCROLL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_4__.default('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
-    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_4__.default('bow_icon', { dx: 0, dy: 0 }, paletteSwaps)
+    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('sword_icon', { dx: 0, dy: -8 }, paletteSwaps),
+    MAP_POTION: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
+    MAP_SCROLL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
+    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('bow_icon', { dx: 0, dy: 0 }, paletteSwaps)
 };
 const UnitSprites = {
-    PLAYER: (unit, paletteSwaps) => new _units_PlayerSprite__WEBPACK_IMPORTED_MODULE_0__.default(unit, paletteSwaps),
-    GOLEM: (unit, paletteSwaps) => new _units_GolemSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, paletteSwaps),
-    GRUNT: (unit, paletteSwaps) => new _units_PlayerSprite__WEBPACK_IMPORTED_MODULE_0__.default(unit, paletteSwaps),
-    SNAKE: (unit, paletteSwaps) => new _units_SnakeSprite__WEBPACK_IMPORTED_MODULE_2__.default(unit, paletteSwaps),
-    SOLDIER: (unit, paletteSwaps) => new _units_PlayerSprite__WEBPACK_IMPORTED_MODULE_0__.default(unit, paletteSwaps)
+    PLAYER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
+    GOLEM: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'golem', paletteSwaps, { dx: -4, dy: -20 }),
+    GRUNT: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+    SNAKE: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 }),
+    SOLDIER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
 };
 const ProjectileSprites = {
-    ARROW: (direction, paletteSwaps) => new _projectiles_ArrowSprite__WEBPACK_IMPORTED_MODULE_3__.default(direction, paletteSwaps)
+    ARROW: (direction, paletteSwaps) => new _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__.default(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
 };
 // the following does not work: { ...StaticSprites, ...UnitSprites }
 // :(
@@ -1622,164 +1671,23 @@ class StaticSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_0__.default {
 
 /***/ }),
 
-/***/ "./src/main/graphics/sprites/projectiles/ArrowSprite.ts":
-/*!**************************************************************!*\
-  !*** ./src/main/graphics/sprites/projectiles/ArrowSprite.ts ***!
-  \**************************************************************/
+/***/ "./src/main/graphics/sprites/UnitSprite.ts":
+/*!*************************************************!*\
+  !*** ./src/main/graphics/sprites/UnitSprite.ts ***!
+  \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _ProjectileSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProjectileSprite */ "./src/main/graphics/sprites/projectiles/ProjectileSprite.ts");
-
-class ArrowSprite extends _ProjectileSprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor(direction, paletteSwaps) {
-        super(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 });
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ArrowSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/projectiles/ProjectileSprite.ts":
-/*!*******************************************************************!*\
-  !*** ./src/main/graphics/sprites/projectiles/ProjectileSprite.ts ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../types/Colors */ "./src/main/types/Colors.ts");
-/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../types/Directions */ "./src/main/types/Directions.ts");
-/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
-
-
-
-
-
-var SpriteKey;
-(function (SpriteKey) {
-    SpriteKey["N"] = "N";
-    SpriteKey["E"] = "E";
-    SpriteKey["S"] = "S";
-    SpriteKey["W"] = "W";
-})(SpriteKey || (SpriteKey = {}));
-/**
- * Projectiles have a direction but no activity or frame numbers
- */
-class ProjectileSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
-    constructor(direction, spriteName, paletteSwaps, spriteOffsets) {
-        super(spriteOffsets);
-        this._spriteName = spriteName;
-        this._direction = direction;
-        this._paletteSwaps = paletteSwaps;
-    }
-    getImage() {
-        const variables = {
-            sprite: this._spriteName,
-            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_3__.default.toString(this._direction),
-            number: 1
-        };
-        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(ProjectileSprite.TEMPLATE, variables);
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps).get();
-    }
-}
-ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_{number}';
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ProjectileSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/units/GolemSprite.ts":
-/*!********************************************************!*\
-  !*** ./src/main/graphics/sprites/units/GolemSprite.ts ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/units/UnitSprite.ts");
-
-class GolemSprite extends _UnitSprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor(unit, paletteSwaps) {
-        super(unit, 'golem', paletteSwaps, { dx: -4, dy: -20 });
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (GolemSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/units/PlayerSprite.ts":
-/*!*********************************************************!*\
-  !*** ./src/main/graphics/sprites/units/PlayerSprite.ts ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/units/UnitSprite.ts");
-
-class PlayerSprite extends _UnitSprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor(unit, paletteSwaps) {
-        super(unit, 'player', paletteSwaps, { dx: -4, dy: -20 });
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PlayerSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/units/SnakeSprite.ts":
-/*!********************************************************!*\
-  !*** ./src/main/graphics/sprites/units/SnakeSprite.ts ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/units/UnitSprite.ts");
-
-class SnakeSprite extends _UnitSprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor(unit, paletteSwaps) {
-        super(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 });
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SnakeSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/units/UnitSprite.ts":
-/*!*******************************************************!*\
-  !*** ./src/main/graphics/sprites/units/UnitSprite.ts ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../types/Colors */ "./src/main/types/Colors.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
-/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../types/Directions */ "./src/main/types/Directions.ts");
+/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
+/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
+/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../types/Directions */ "./src/main/types/Directions.ts");
 
 
 
@@ -1801,7 +1709,7 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     getImage() {
         const variables = {
             sprite: this._spriteName,
-            activity: (this._unit.activity === 'DAMAGED' ? _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.STANDING : this._unit.activity).toLowerCase(),
+            activity: _activityToString(this._unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toString(this._unit.direction),
             number: 1
         };
@@ -1812,6 +1720,9 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
             : [];
         return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
     }
+}
+function _activityToString(activity) {
+    return (activity === 'DAMAGED' ? _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.STANDING : activity).toLowerCase();
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UnitSprite);
 

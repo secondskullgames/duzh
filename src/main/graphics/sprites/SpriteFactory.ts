@@ -1,13 +1,9 @@
 import Sprite from './Sprite';
 import Unit from '../../units/Unit';
-import PlayerSprite from './units/PlayerSprite';
-import GolemSprite from './units/GolemSprite';
-import GruntSprite from './units/GruntSprite';
-import SnakeSprite from './units/SnakeSprite';
-import SoldierSprite from './units/SoldierSprite';
 import { Direction, PaletteSwaps, SpriteSupplier } from '../../types/types';
-import ArrowSprite from './projectiles/ArrowSprite';
 import StaticSprite from './StaticSprite';
+import UnitSprite from './UnitSprite';
+import ProjectileSprite from './ProjectileSprite';
 
 type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
@@ -20,15 +16,15 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
-  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
-  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps),
-  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
-  SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new SnakeSprite(unit, paletteSwaps),
-  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps)
+  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
+  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'golem', paletteSwaps, { dx: -4, dy: -20 }),
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+  SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 }),
+  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
 };
 
 const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
-  ARROW: (direction: Direction, paletteSwaps: PaletteSwaps) => new ArrowSprite(direction, paletteSwaps)
+  ARROW: (direction: Direction, paletteSwaps: PaletteSwaps) => new ProjectileSprite(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
 };
 
 // the following does not work: { ...StaticSprites, ...UnitSprites }

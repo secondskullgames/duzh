@@ -1,11 +1,11 @@
-import ImageSupplier from '../../ImageSupplier';
-import Sprite from '../Sprite';
-import Colors from '../../../types/Colors';
-import Unit from '../../../units/Unit';
-import { Activity, PaletteSwaps } from '../../../types/types';
-import { fillTemplate } from '../../../utils/TemplateUtils';
-import { replaceAll } from '../../ImageUtils';
-import Directions from '../../../types/Directions';
+import ImageSupplier from '../ImageSupplier';
+import Sprite from './Sprite';
+import Colors from '../../types/Colors';
+import Unit from '../../units/Unit';
+import { Activity, PaletteSwaps } from '../../types/types';
+import { fillTemplate } from '../../utils/TemplateUtils';
+import { replaceAll } from '../ImageUtils';
+import Directions from '../../types/Directions';
 
 class UnitSprite extends Sprite {
   private _unit: Unit;
@@ -13,7 +13,7 @@ class UnitSprite extends Sprite {
   private readonly _template = '${sprite}/${sprite}_${activity}_${direction}_${number}';
   private readonly _paletteSwaps: PaletteSwaps;
 
-  protected constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
+  constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
     super(spriteOffsets);
     this._unit = unit;
     this._spriteName = spriteName;
@@ -26,7 +26,7 @@ class UnitSprite extends Sprite {
   getImage(): Promise<ImageBitmap> {
     const variables = {
       sprite: this._spriteName,
-      activity: (this._unit.activity === 'DAMAGED' ? Activity.STANDING : this._unit.activity).toLowerCase(),
+      activity: _activityToString(this._unit.activity),
       direction: Directions.toString(this._unit.direction!!),
       number: 1
     };
@@ -37,6 +37,10 @@ class UnitSprite extends Sprite {
       : [];
     return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps, effects).get();
   }
+}
+
+function _activityToString(activity: Activity): string {
+  return (activity === 'DAMAGED' ? Activity.STANDING : activity).toLowerCase();
 }
 
 export default UnitSprite;
