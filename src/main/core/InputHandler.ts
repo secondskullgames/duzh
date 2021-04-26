@@ -6,7 +6,7 @@ import { resolvedPromise } from '../utils/PromiseUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, restartGame, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
-import UnitAbilities, { Ability } from '../units/UnitAbilities';
+import UnitAbilities from '../units/UnitAbilities';
 
 enum KeyCommand {
   UP = 'UP',

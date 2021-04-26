@@ -361,7 +361,7 @@ define("sounds/Sounds", ["require", "exports"], function (require, exports) {
         USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
         OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
         FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
-        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]]
+        DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]],
     };
     exports.default = Sounds;
 });
@@ -641,6 +641,8 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
     // TODO very hacky memoizing
     var PLAYER = null;
     var ACTIVE_SUITE = null;
+    var TITLE_THEME = [[600, 500], [300, 250], [150, 250], [900, 500], [450, 250], [300, 250], [500, 500], [300, 250], [200, 250], [200, 500], [300, 125], [600, 125], [900, 125], [1200, 125], [1500, 250]];
+    var GAME_OVER = [[400, 150], [300, 150], [238, 150], [200, 150], [300, 160], [238, 160], [200, 160], [150, 160], [238, 200], [200, 200], [150, 240], [100, 280], [75, 1000]];
     var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.12); };
     function playSuite(suite) {
         ACTIVE_SUITE = suite;
@@ -659,7 +661,7 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
                 setTimeout(function () {
                     if (suite === ACTIVE_SUITE) {
                         var figures = __spreadArrays((!!bass ? [bass.map(AudioUtils_1.transpose8vb)] : []), (!!lead ? [lead] : []));
-                        figures.forEach(function (figure) { return playMusic(figure); });
+                        figures.forEach(function (figure) { return playFigure(figure); });
                     }
                 }, ((numRepeats * i) + j) * suite.length);
             }
@@ -673,7 +675,7 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
             }
         }, sections.length * suite.length * numRepeats);
     }
-    function playMusic(samples) {
+    function playFigure(samples) {
         if (!PLAYER) {
             PLAYER = _getMusicPlayer();
         }
@@ -689,6 +691,9 @@ define("sounds/Music", ["require", "exports", "sounds/SoundPlayer", "utils/Rando
         ACTIVE_SUITE = null;
     }
     exports.default = {
+        TITLE_THEME: TITLE_THEME,
+        GAME_OVER: GAME_OVER,
+        playFigure: playFigure,
         playSuite: playSuite,
         stop: stop
     };
@@ -784,6 +789,7 @@ define("graphics/sprites/units/UnitSprite", ["require", "exports", "graphics/Ima
                 _a);
             _this = _super.call(this, imageMap, SpriteKey.STANDING_S, spriteOffsets) || this;
             _this._unit = unit;
+            Object.values(imageMap).forEach(function (imageSupplier) { return imageSupplier.get(); });
             return _this;
         }
         UnitSprite.prototype.update = function () {
@@ -1392,7 +1398,7 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
             this.activity = types_4.Activity.STANDING;
             this.direction = null;
             this.remainingCooldowns = new Map();
-            // TODO: this needs to be specifid to the player unit
+            // TODO: this needs to be specific to the player unit
             this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK, UnitAbilities_1.default.STUN_ATTACK];
             this.stunDuration = 0;
             while (this.level < level) {
@@ -1498,7 +1504,7 @@ define("units/Unit", ["require", "exports", "sounds/Sounds", "items/InventoryMap
                     if (_this === playerUnit) {
                         jwb.state.screen = types_4.GameScreen.GAME_OVER;
                         Music_1.default.stop();
-                        SoundFX_2.playSound(Sounds_2.default.PLAYER_DIES);
+                        Music_1.default.playFigure(Music_1.default.GAME_OVER);
                     }
                     else {
                         SoundFX_2.playSound(Sounds_2.default.ENEMY_DIES);
@@ -3745,7 +3751,7 @@ define("maps/generation/RoomCorridorDungeonGenerator2", ["require", "exports", "
                     connectedSections.forEach(function (x) { return console.log(x); });
                     console.log('unconnected:');
                     unconnectedSections.forEach(function (x) { return console.log(x); });
-                    'Failed to generate minimal spanning tree';
+                    throw 'Failed to generate minimal spanning tree';
                 }
             }
             return connections;
@@ -4341,7 +4347,7 @@ define("sounds/Suites", ["require", "exports", "sounds/AudioUtils"], function (r
     })();
     exports.SUITE_4 = SUITE_4;
 });
-define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "utils/RandomUtils", "types/types", "maps/MapUtils", "sounds/Suites"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_2, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, RandomUtils_10, types_19, MapUtils_10, Suites_1) {
+define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "graphics/SpriteRenderer", "maps/MapFactory", "units/UnitClasses", "sounds/Music", "maps/TileSets", "core/InputHandler", "types/types", "maps/MapUtils"], function (require, exports, GameState_1, Unit_2, SpriteRenderer_2, MapFactory_1, UnitClasses_2, Music_2, TileSets_1, InputHandler_1, types_19, MapUtils_10) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /*
@@ -4367,6 +4373,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
         jwb.renderer = new SpriteRenderer_2.default();
         InputHandler_1.attachEvents();
         _initState();
+        Music_2.default.playFigure(Music_2.default.TITLE_THEME);
         return jwb.renderer.render();
     }
     exports.initialize = initialize;
@@ -4384,7 +4391,7 @@ define("core/actions", ["require", "exports", "core/GameState", "units/Unit", "g
     function startGame() {
         loadMap(0);
         Music_2.default.stop();
-        Music_2.default.playSuite(RandomUtils_10.randChoice([Suites_1.SUITE_1, Suites_1.SUITE_2, Suites_1.SUITE_3]));
+        // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
         return jwb.renderer.render();
     }
     exports.startGame = startGame;
@@ -4741,7 +4748,7 @@ define("core/main", ["require", "exports", "core/actions", "core/debug"], functi
     exports.revealMap = debug_1.revealMap;
     exports.killEnemies = debug_1.killEnemies;
 });
-define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "utils/Pathfinder", "maps/generation/TileEligibilityChecker", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, Pathfinder_3, TileEligibilityChecker_2, types_22, RandomUtils_11, ArrayUtils_5, MapUtils_11) {
+define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "maps/generation/DungeonGenerator", "utils/Pathfinder", "maps/generation/TileEligibilityChecker", "types/types", "utils/RandomUtils", "utils/ArrayUtils", "maps/MapUtils"], function (require, exports, DungeonGenerator_3, Pathfinder_3, TileEligibilityChecker_2, types_22, RandomUtils_10, ArrayUtils_5, MapUtils_11) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     /**
@@ -4832,7 +4839,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             // @ts-ignore
             var splitDirections = __spreadArrays((canSplitHorizontally ? ['HORIZONTAL'] : []), (canSplitVertically ? ['VERTICAL'] : []), ((!canSplitHorizontally && !canSplitVertically) ? ['NONE'] : []));
             if (splitDirections.length > 0) {
-                return RandomUtils_11.randChoice(splitDirections);
+                return RandomUtils_10.randChoice(splitDirections);
             }
             return 'NONE';
         };
@@ -4845,11 +4852,11 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
             var maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
             console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
-            var roomWidth = RandomUtils_11.randInt(this._minRoomDimension, maxRoomWidth);
-            var roomHeight = RandomUtils_11.randInt(this._minRoomDimension, maxRoomHeight);
+            var roomWidth = RandomUtils_10.randInt(this._minRoomDimension, maxRoomWidth);
+            var roomHeight = RandomUtils_10.randInt(this._minRoomDimension, maxRoomHeight);
             var roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
-            var roomLeft = RandomUtils_11.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
-            var roomTop = RandomUtils_11.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
+            var roomLeft = RandomUtils_10.randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
+            var roomTop = RandomUtils_10.randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
             var tiles = [];
             // x, y are relative to the section's origin
             // roomX, roomY are relative to the room's origin
@@ -4901,7 +4908,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
             var minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
             var minSplitPoint = minSectionDimension;
             var maxSplitPoint = dimension - minSectionDimension;
-            return RandomUtils_11.randInt(minSplitPoint, maxSplitPoint);
+            return RandomUtils_10.randInt(minSplitPoint, maxSplitPoint);
         };
         RoomCorridorDungeonGenerator.prototype._joinSection = function (section, existingRoomPairs, logError) {
             var _this = this;
@@ -4926,7 +4933,7 @@ define("maps/generation/RoomCorridorDungeonGenerator", ["require", "exports", "m
                     var connectedRoom = _a[0], unconnectedRoom = _a[1];
                     return _this._canJoinRooms(connectedRoom, unconnectedRoom);
                 });
-                RandomUtils_11.shuffle(candidatePairs);
+                RandomUtils_10.shuffle(candidatePairs);
                 var joinedAnyRooms = false;
                 for (var _i = 0, candidatePairs_1 = candidatePairs; _i < candidatePairs_1.length; _i++) {
                     var _a = candidatePairs_1[_i], connectedRoom = _a[0], unconnectedRoom = _a[1];

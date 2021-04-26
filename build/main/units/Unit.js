@@ -32,7 +32,7 @@ var Unit = /** @class */ (function () {
         this.activity = types_1.Activity.STANDING;
         this.direction = null;
         this.remainingCooldowns = new Map();
-        // TODO: this needs to be specifid to the player unit
+        // TODO: this needs to be specific to the player unit
         this.abilities = [UnitAbilities_1.default.ATTACK, UnitAbilities_1.default.HEAVY_ATTACK, UnitAbilities_1.default.KNOCKBACK_ATTACK, UnitAbilities_1.default.STUN_ATTACK];
         this.stunDuration = 0;
         while (this.level < level) {
@@ -138,7 +138,7 @@ var Unit = /** @class */ (function () {
                 if (_this === playerUnit) {
                     jwb.state.screen = types_1.GameScreen.GAME_OVER;
                     Music_1.default.stop();
-                    SoundFX_1.playSound(Sounds_1.default.PLAYER_DIES);
+                    Music_1.default.playFigure(Music_1.default.GAME_OVER);
                 }
                 else {
                     SoundFX_1.playSound(Sounds_1.default.ENEMY_DIES);
