@@ -20,8 +20,22 @@ function renderMinimap() {
   jwb.state.screen = GameScreen.MINIMAP;
 }
 
+type DebugShape = {
+  revealMap: () => void,
+  killEnemies: () => void
+};
+
+// @ts-ignore
+window.jwb = window.jwb || {};
+jwb.debug = jwb.debug || {
+  revealMap,
+  killEnemies
+};
+
 export {
   revealMap,
   killEnemies,
   renderMinimap
 };
+
+export type { DebugShape };

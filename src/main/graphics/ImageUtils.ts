@@ -32,7 +32,7 @@ function loadImage(filename: string): Promise<ImageData> {
     img.onerror = () => {
       reject(`Failed to load image ${img.src}`);
     };
-    img.src = `png/${filename}.png`;
+    img.src = `dist/png/${filename}.png`;
   });
 }
 
