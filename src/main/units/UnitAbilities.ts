@@ -24,7 +24,7 @@ class NormalAttack extends Ability {
     super('ATTACK', 0);
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<any> {
+  use(unit: Unit, direction: Direction | null): Promise<void> {
     if (!direction) {
       throw 'NormalAttack requires a direction!';
     }
@@ -61,7 +61,7 @@ class HeavyAttack extends Ability {
     super('HEAVY_ATTACK', 15, 'strong_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<any> {
+  use(unit: Unit, direction: Direction | null): Promise<void> {
     if (!direction) {
       throw 'HeavyAttack requires a direction!';
     }
@@ -99,7 +99,7 @@ class KnockbackAttack extends Ability {
     super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<any> {
+  use(unit: Unit, direction: Direction | null): Promise<void> {
     if (!direction) {
       throw 'KnockbackAttack requires a direction!';
     }
@@ -150,7 +150,7 @@ class StunAttack extends Ability {
     super('STUN_ATTACK', 15, 'knockback_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<any> {
+  use(unit: Unit, direction: Direction | null): Promise<void> {
     if (!direction) {
       throw 'StunAttack requires a direction!';
     }
@@ -192,7 +192,7 @@ class ShootArrow extends Ability {
     super('SHOOT_ARROW', 0);
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<any> {
+  use(unit: Unit, direction: Direction | null): Promise<void> {
     if (!direction) {
       throw 'ShootArrow requires a direction!';
     }

@@ -10,10 +10,5 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "noImplicitAny": true
-  },
-  "files": [],
-  "references": [
-    { "path": "./src/main" },
-    { "path": "./src/test" }
-  ]
+  }
 }
