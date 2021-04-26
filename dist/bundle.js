@@ -1101,13 +1101,16 @@ class SpriteRenderer {
                         else {
                             shadowColor = _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
                         }
-                        promises.push(this._drawEllipse({ x, y }, shadowColor)
-                            .then(() => this._renderElement(unit, { x, y })));
+                        promises.push(() => this._drawEllipse({ x, y }, shadowColor));
+                        promises.push(() => this._renderElement(unit, { x, y }));
+                        unit.equipment.getValues()
+                            .map(item => () => this._renderElement(item, { x, y }))
+                            .forEach(promise => promises.push(promise));
                     }
                 }
             }
         }
-        return Promise.all(promises);
+        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.chainPromises)(promises);
     }
     /**
      * TODO memoize
@@ -1510,6 +1513,68 @@ function _playAnimation(animation) {
 
 /***/ }),
 
+/***/ "./src/main/graphics/sprites/EquipmentSprite.ts":
+/*!******************************************************!*\
+  !*** ./src/main/graphics/sprites/EquipmentSprite.ts ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
+/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
+/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../types/Directions */ "./src/main/types/Directions.ts");
+
+
+
+
+
+
+
+class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
+    constructor(equipment, spriteName, paletteSwaps, spriteOffsets) {
+        super(spriteOffsets);
+        this._template = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
+        this._equipment = equipment;
+        this._spriteName = spriteName;
+        this._paletteSwaps = paletteSwaps;
+    }
+    /**
+     * NOTE: This is mostly copy-pasted from {@link UnitSprite#getImage}
+     *
+     * @override {@link Sprite#getImage}
+     */
+    getImage() {
+        const unit = this._equipment.unit;
+        const variables = {
+            sprite: this._spriteName,
+            activity: _activityToString(unit.activity),
+            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction),
+            number: 1
+        };
+        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
+        // TODO can we get this into the yaml?
+        const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
+            ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
+            : [];
+        console.log('in getImage()');
+        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
+    }
+}
+function _activityToString(activity) {
+    return (activity === 'DAMAGED' ? _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.STANDING : activity).toLowerCase();
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentSprite);
+
+
+/***/ }),
+
 /***/ "./src/main/graphics/sprites/ProjectileSprite.ts":
 /*!*******************************************************!*\
   !*** ./src/main/graphics/sprites/ProjectileSprite.ts ***!
@@ -1557,7 +1622,7 @@ class ProjectileSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
         return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps).get();
     }
 }
-ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_{number}';
+ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_${number}';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ProjectileSprite);
 
 
@@ -1601,6 +1666,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _StaticSprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
 /* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/UnitSprite.ts");
 /* harmony import */ var _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProjectileSprite */ "./src/main/graphics/sprites/ProjectileSprite.ts");
+/* harmony import */ var _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./EquipmentSprite */ "./src/main/graphics/sprites/EquipmentSprite.ts");
+
 
 
 
@@ -1612,10 +1679,15 @@ const StaticSprites = {
 };
 const UnitSprites = {
     PLAYER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
-    GOLEM: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'golem', paletteSwaps, { dx: -4, dy: -20 }),
-    GRUNT: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+    GOLEM: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'zombie', paletteSwaps, { dx: -4, dy: -20 }),
+    GRUNT: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
     SNAKE: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 }),
-    SOLDIER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+    SOLDIER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
+};
+// TODO - check offsets
+const EquipmentSprites = {
+    SWORD: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, 'sword', paletteSwaps, { dx: -4, dy: -20 }),
+    BOW: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, 'bow', paletteSwaps, { dx: -4, dy: -20 })
 };
 const ProjectileSprites = {
     ARROW: (direction, paletteSwaps) => new _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__.default(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
@@ -1632,6 +1704,8 @@ const ProjectileSprites = {
     GRUNT: UnitSprites.GRUNT,
     SNAKE: UnitSprites.SNAKE,
     SOLDIER: UnitSprites.SOLDIER,
+    SWORD: EquipmentSprites.SWORD,
+    BOW: EquipmentSprites.BOW,
     ARROW: ProjectileSprites.ARROW
 });
 
@@ -1698,7 +1772,7 @@ __webpack_require__.r(__webpack_exports__);
 class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     constructor(unit, spriteName, paletteSwaps, spriteOffsets) {
         super(spriteOffsets);
-        this._template = '${sprite}/${sprite}_${activity}_${direction}_${number}';
+        this._template = 'units/${sprite}/${sprite}_${activity}_${direction}_${number}';
         this._unit = unit;
         this._spriteName = spriteName;
         this._paletteSwaps = paletteSwaps;
@@ -1710,7 +1784,7 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
         const variables = {
             sprite: this._spriteName,
             activity: _activityToString(this._unit.activity),
-            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toString(this._unit.direction),
+            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(this._unit.direction),
             number: 1
         };
         const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
@@ -1849,6 +1923,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
 /* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
+/* harmony import */ var _ItemUtils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ItemUtils */ "./src/main/items/ItemUtils.ts");
+
 
 
 
@@ -1871,18 +1947,6 @@ function createPotion(lifeRestored) {
     };
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.POTION, onUse);
 }
-function _equipEquipment(equipmentClass, item, unit) {
-    return new Promise(resolve => {
-        const equippedItem = {
-            name: equipmentClass.name,
-            slot: equipmentClass.equipmentCategory,
-            inventoryItem: item,
-            damage: equipmentClass.damage
-        };
-        unit.equipment.add(equippedItem);
-        resolve();
-    });
-}
 function createScrollOfFloorFire(damage) {
     const onUse = (item, unit) => {
         const map = jwb.state.getMap();
@@ -1902,14 +1966,16 @@ function createScrollOfFloorFire(damage) {
     };
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.SCROLL, onUse);
 }
-function _createInventoryWeapon(weaponClass) {
-    const onUse = (item, unit) => _equipEquipment(weaponClass, item, unit);
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(weaponClass.name, weaponClass.itemCategory, onUse);
-}
 function _createMapEquipment(equipmentClass, { x, y }) {
     const sprite = equipmentClass.mapIcon(equipmentClass.paletteSwaps);
     const inventoryItem = _createInventoryWeapon(equipmentClass);
     return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
+}
+function _createInventoryWeapon(weaponClass) {
+    const onUse = (item, unit) => {
+        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, weaponClass, unit);
+    };
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(weaponClass.name, weaponClass.itemCategory, onUse);
 }
 function _getItemSuppliers(level) {
     const createMapPotion = ({ x, y }) => {
@@ -1950,10 +2016,13 @@ function createRandomItem({ x, y }, level) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "pickupItem": () => (/* binding */ pickupItem),
-/* harmony export */   "useItem": () => (/* binding */ useItem)
+/* harmony export */   "useItem": () => (/* binding */ useItem),
+/* harmony export */   "equipItem": () => (/* binding */ equipItem)
 /* harmony export */ });
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
 /* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
+/* harmony import */ var _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./equipment/Equipment */ "./src/main/items/equipment/Equipment.ts");
+
 
 
 function pickupItem(unit, mapItem) {
@@ -1966,6 +2035,14 @@ function pickupItem(unit, mapItem) {
 function useItem(unit, item) {
     return item.use(unit)
         .then(() => unit.inventory.remove(item));
+}
+function equipItem(item, equipmentClass, unit) {
+    return new Promise(resolve => {
+        const equipment = new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass, item, equipmentClass.paletteSwaps);
+        unit.equipment.add(equipment);
+        equipment.attach(unit);
+        resolve();
+    });
 }
 
 
@@ -2022,6 +2099,33 @@ function createArrow({ x, y }, direction) {
 
 /***/ }),
 
+/***/ "./src/main/items/equipment/Equipment.ts":
+/*!***********************************************!*\
+  !*** ./src/main/items/equipment/Equipment.ts ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+class Equipment {
+    constructor(equipmentClass, inventoryItem, paletteSwaps) {
+        this.name = equipmentClass.name;
+        this.slot = equipmentClass.slot;
+        this.inventoryItem = inventoryItem;
+        this.damage = equipmentClass.damage;
+        this.sprite = equipmentClass.sprite(this, paletteSwaps);
+    }
+    attach(unit) {
+        this.unit = unit;
+    }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Equipment);
+
+
+/***/ }),
+
 /***/ "./src/main/items/equipment/EquipmentClasses.ts":
 /*!******************************************************!*\
   !*** ./src/main/items/equipment/EquipmentClasses.ts ***!
@@ -2033,21 +2137,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getWeaponClasses": () => (/* binding */ getWeaponClasses)
 /* harmony export */ });
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
 
 
 
 const BRONZE_SWORD = {
     name: 'Bronze Sword',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.SWORD,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_SWORD,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_SWORD,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
     paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.BLACK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_BROWN
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_BROWN,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_BROWN
     },
     damage: 2,
     minLevel: 1,
@@ -2055,13 +2160,14 @@ const BRONZE_SWORD = {
 };
 const IRON_SWORD = {
     name: 'Iron Sword',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.SWORD,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_SWORD,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_SWORD,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
     paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.BLACK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY
     },
     damage: 4,
     minLevel: 3,
@@ -2069,13 +2175,14 @@ const IRON_SWORD = {
 };
 const STEEL_SWORD = {
     name: 'Steel Sword',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.SWORD,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_SWORD,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_SWORD,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
     paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_GRAY
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY
     },
     damage: 6,
     minLevel: 4,
@@ -2083,14 +2190,15 @@ const STEEL_SWORD = {
 };
 const FIRE_SWORD = {
     name: 'Fire Sword',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.SWORD,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_SWORD,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_SWORD,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
     paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.YELLOW,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.RED,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_RED
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.YELLOW,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_RED
     },
     damage: 8,
     minLevel: 5,
@@ -2098,10 +2206,11 @@ const FIRE_SWORD = {
 };
 const SHORT_BOW = {
     name: 'Short Bow',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.BOW,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_BOW,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_BOW,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
     paletteSwaps: {},
     damage: 2,
     minLevel: 2,
@@ -2109,13 +2218,14 @@ const SHORT_BOW = {
 };
 const LONG_BOW = {
     name: 'Long Bow',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.BOW,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_BOW,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    equipmentCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
-    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_1__.default.MAP_BOW,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
     paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.DARK_RED,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.RED,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_RED,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED,
     },
     damage: 4,
     minLevel: 5,
@@ -2157,6 +2267,9 @@ class EquipmentMap {
     }
     getEntries() {
         return [...Object.entries(this._map)];
+    }
+    getValues() {
+        return [...Object.values(this._map)];
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentMap);
@@ -3819,13 +3932,26 @@ function _directionToString(direction) {
     }
     throw `Invalid direction ${direction}`;
 }
+function _toLegacyDirection(direction) {
+    const lookup = {
+        'N': 'NW',
+        'E': 'NE',
+        'S': 'SE',
+        'W': 'SW'
+    };
+    return Object.entries(lookup)
+        // @ts-ignore
+        .filter(([from, to]) => _equals(direction, Directions[from]))
+        .map(([from, to]) => to)[0];
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     N: Directions.N,
     E: Directions.E,
     S: Directions.S,
     W: Directions.W,
     values: () => [Directions.N, Directions.E, Directions.S, Directions.W],
-    toString: _directionToString
+    toString: _directionToString,
+    toLegacyDirection: _toLegacyDirection
 });
 
 

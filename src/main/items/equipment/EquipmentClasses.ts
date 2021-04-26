@@ -1,14 +1,15 @@
 import { EquipmentSlot, ItemCategory, PaletteSwaps, SpriteSupplier } from '../../types/types';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Colors from '../../types/Colors';
+import SpriteFactory, { EquipmentSpriteSupplier } from '../../graphics/sprites/SpriteFactory';
 
 interface EquipmentClass {
   name: string,
-  itemCategory: ItemCategory,
-  equipmentCategory: EquipmentSlot,
+  sprite: EquipmentSpriteSupplier,
   mapIcon: SpriteSupplier,
+  itemCategory: ItemCategory,
+  slot: EquipmentSlot,
   char: string,
-  paletteSwaps?: PaletteSwaps,
+  paletteSwaps: PaletteSwaps
   minLevel: number,
   maxLevel: number,
   damage: number
@@ -16,10 +17,11 @@ interface EquipmentClass {
 
 const BRONZE_SWORD: EquipmentClass = {
   name: 'Bronze Sword',
+  sprite: SpriteFactory.SWORD,
+  mapIcon: SpriteFactory.MAP_SWORD,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  slot: EquipmentSlot.MELEE_WEAPON,
   paletteSwaps: {
     [Colors.BLACK]: Colors.BLACK,
     [Colors.DARK_GRAY]: Colors.LIGHT_BROWN,
@@ -32,10 +34,11 @@ const BRONZE_SWORD: EquipmentClass = {
 
 const IRON_SWORD: EquipmentClass = {
   name: 'Iron Sword',
+  sprite: SpriteFactory.SWORD,
+  mapIcon: SpriteFactory.MAP_SWORD,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  slot: EquipmentSlot.MELEE_WEAPON,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.BLACK,
     [Colors.LIGHT_GRAY]: Colors.DARK_GRAY
@@ -47,10 +50,11 @@ const IRON_SWORD: EquipmentClass = {
 
 const STEEL_SWORD: EquipmentClass = {
   name: 'Steel Sword',
+  sprite: SpriteFactory.SWORD,
+  mapIcon: SpriteFactory.MAP_SWORD,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  slot: EquipmentSlot.MELEE_WEAPON,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.DARK_GRAY,
     [Colors.LIGHT_GRAY]: Colors.LIGHT_GRAY
@@ -62,10 +66,11 @@ const STEEL_SWORD: EquipmentClass = {
 
 const FIRE_SWORD: EquipmentClass = {
   name: 'Fire Sword',
+  sprite: SpriteFactory.SWORD,
+  mapIcon: SpriteFactory.MAP_SWORD,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.MELEE_WEAPON,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  slot: EquipmentSlot.MELEE_WEAPON,
   paletteSwaps: {
     [Colors.DARK_GRAY]: Colors.YELLOW,
     [Colors.LIGHT_GRAY]: Colors.RED,
@@ -78,10 +83,11 @@ const FIRE_SWORD: EquipmentClass = {
 
 const SHORT_BOW: EquipmentClass = {
   name: 'Short Bow',
+  sprite: SpriteFactory.BOW,
+  mapIcon: SpriteFactory.MAP_BOW,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.RANGED_WEAPON,
-  mapIcon: SpriteFactory.MAP_BOW,
+  slot: EquipmentSlot.RANGED_WEAPON,
   paletteSwaps: {},
   damage: 2,
   minLevel: 2,
@@ -90,10 +96,11 @@ const SHORT_BOW: EquipmentClass = {
 
 const LONG_BOW: EquipmentClass = {
   name: 'Long Bow',
+  sprite: SpriteFactory.BOW,
+  mapIcon: SpriteFactory.MAP_BOW,
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
-  equipmentCategory: EquipmentSlot.RANGED_WEAPON,
-  mapIcon: SpriteFactory.MAP_BOW,
+  slot: EquipmentSlot.RANGED_WEAPON,
   paletteSwaps: {
     [Colors.DARK_GREEN]: Colors.DARK_RED,
     [Colors.GREEN]: Colors.RED,

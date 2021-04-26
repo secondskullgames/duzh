@@ -16,7 +16,7 @@ enum SpriteKey {
  * Projectiles have a direction but no activity or frame numbers
  */
 class ProjectileSprite extends Sprite {
-  private static readonly TEMPLATE = '${sprite}/${sprite}_${direction}_{number}';
+  private static readonly TEMPLATE = '${sprite}/${sprite}_${direction}_${number}';
   private readonly _spriteName: string;
   private readonly _direction: Direction;
   private readonly _paletteSwaps: PaletteSwaps;

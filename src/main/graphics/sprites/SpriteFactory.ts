@@ -4,8 +4,11 @@ import { Direction, PaletteSwaps, SpriteSupplier } from '../../types/types';
 import StaticSprite from './StaticSprite';
 import UnitSprite from './UnitSprite';
 import ProjectileSprite from './ProjectileSprite';
+import Equipment from '../../items/equipment/Equipment';
+import EquipmentSprite from './EquipmentSprite';
 
 type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
+type EquipmentSpriteSupplier = (equipment: Equipment, paletteSwaps: PaletteSwaps) => Sprite;
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
 
 const StaticSprites: { [name: string]: SpriteSupplier } = {
@@ -17,11 +20,17 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
   PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
-  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'golem', paletteSwaps, { dx: -4, dy: -20 }),
-  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'zombie', paletteSwaps, { dx: -4, dy: -20 }),
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
   SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 }),
-  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'grunt', paletteSwaps, { dx: -4, dy: -20 }),
+  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
 };
+
+// TODO - check offsets
+const EquipmentSprites: { [name: string]: EquipmentSpriteSupplier } = {
+  SWORD: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, 'sword', paletteSwaps, { dx: -4, dy: -20 }),
+  BOW: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, 'bow', paletteSwaps, { dx: -4, dy: -20 })
+}
 
 const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
   ARROW: (direction: Direction, paletteSwaps: PaletteSwaps) => new ProjectileSprite(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
@@ -39,5 +48,11 @@ export default {
   GRUNT: UnitSprites.GRUNT,
   SNAKE: UnitSprites.SNAKE,
   SOLDIER: UnitSprites.SOLDIER,
+  SWORD: EquipmentSprites.SWORD,
+  BOW: EquipmentSprites.BOW,
   ARROW: ProjectileSprites.ARROW
+};
+
+export type {
+  EquipmentSpriteSupplier
 };

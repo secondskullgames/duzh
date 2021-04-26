@@ -10,7 +10,7 @@ import Directions from '../../types/Directions';
 class UnitSprite extends Sprite {
   private _unit: Unit;
   private readonly _spriteName: string;
-  private readonly _template = '${sprite}/${sprite}_${activity}_${direction}_${number}';
+  private readonly _template = 'units/${sprite}/${sprite}_${activity}_${direction}_${number}';
   private readonly _paletteSwaps: PaletteSwaps;
 
   constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
@@ -27,7 +27,7 @@ class UnitSprite extends Sprite {
     const variables = {
       sprite: this._spriteName,
       activity: _activityToString(this._unit.activity),
-      direction: Directions.toString(this._unit.direction!!),
+      direction: Directions.toLegacyDirection(this._unit.direction!!),
       number: 1
     };
     const filename = fillTemplate(this._template, variables);

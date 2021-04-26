@@ -5,10 +5,11 @@ import Renderer from './Renderer';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
 import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
-import { Coordinates, Entity, GameScreen, ItemCategory, Tile } from '../types/types';
+import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import { Ability } from '../units/UnitAbilities';
+import Equipment from '../items/equipment/Equipment';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -174,25 +175,29 @@ class SpriteRenderer implements Renderer {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
-    const promises: Promise<any>[] = [];
+    const promises: PromiseSupplier<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
           const unit = map.getUnit({ x, y });
           if (!!unit) {
-            let shadowColor;
+            let shadowColor: Colors;
             if (unit === playerUnit) {
               shadowColor = Colors.GREEN;
             } else {
               shadowColor = Colors.DARK_GRAY;
             }
-            promises.push(this._drawEllipse({ x, y }, shadowColor)
-              .then(() => this._renderElement(unit, { x, y })));
+
+            promises.push(() => this._drawEllipse({ x, y }, shadowColor));
+            promises.push(() => this._renderElement(unit, { x, y }));
+            unit.equipment.getValues()
+              .map(item => () => this._renderElement(item, { x, y }))
+              .forEach(promise => promises.push(promise));
           }
         }
       }
     }
-    return Promise.all(promises);
+    return chainPromises(promises);
   }
 
   /**
@@ -280,7 +285,7 @@ class SpriteRenderer implements Renderer {
     );
   }
 
-  private _renderElement(element: (Entity | Tile), { x, y }: Coordinates): Promise<any> {
+  private _renderElement(element: (Entity | Tile | Equipment), { x, y }: Coordinates): Promise<any> {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
