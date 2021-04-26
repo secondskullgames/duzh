@@ -8,10 +8,8 @@ var UnitClasses_1 = require("../units/UnitClasses");
 var Music_1 = require("../sounds/Music");
 var TileSets_1 = require("../maps/TileSets");
 var InputHandler_1 = require("./InputHandler");
-var RandomUtils_1 = require("../utils/RandomUtils");
 var types_1 = require("../types/types");
 var MapUtils_1 = require("../maps/MapUtils");
-var Suites_1 = require("../sounds/Suites");
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
  */
@@ -35,6 +33,7 @@ function initialize() {
     jwb.renderer = new SpriteRenderer_1.default();
     InputHandler_1.attachEvents();
     _initState();
+    Music_1.default.playFigure(Music_1.default.TITLE_THEME);
     return jwb.renderer.render();
 }
 exports.initialize = initialize;
@@ -52,7 +51,7 @@ function _initState() {
 function startGame() {
     loadMap(0);
     Music_1.default.stop();
-    Music_1.default.playSuite(RandomUtils_1.randChoice([Suites_1.SUITE_1, Suites_1.SUITE_2, Suites_1.SUITE_3]));
+    // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
 }
 exports.startGame = startGame;

@@ -54,6 +54,7 @@ var UnitSprite = /** @class */ (function (_super) {
             _a);
         _this = _super.call(this, imageMap, SpriteKey.STANDING_S, spriteOffsets) || this;
         _this._unit = unit;
+        Object.values(imageMap).forEach(function (imageSupplier) { return imageSupplier.get(); });
         return _this;
     }
     UnitSprite.prototype.update = function () {

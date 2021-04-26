@@ -13,6 +13,8 @@ var AudioUtils_1 = require("./AudioUtils");
 // TODO very hacky memoizing
 var PLAYER = null;
 var ACTIVE_SUITE = null;
+var TITLE_THEME = [[600, 500], [300, 250], [150, 250], [900, 500], [450, 250], [300, 250], [500, 500], [300, 250], [200, 250], [200, 500], [300, 125], [600, 125], [900, 125], [1200, 125], [1500, 250]];
+var GAME_OVER = [[400, 150], [300, 150], [238, 150], [200, 150], [300, 160], [238, 160], [200, 160], [150, 160], [238, 200], [200, 200], [150, 240], [100, 280], [75, 1000]];
 var _getMusicPlayer = function () { return new SoundPlayer_1.default(4, 0.12); };
 function playSuite(suite) {
     ACTIVE_SUITE = suite;
@@ -31,7 +33,7 @@ function playSuite(suite) {
             setTimeout(function () {
                 if (suite === ACTIVE_SUITE) {
                     var figures = __spreadArrays((!!bass ? [bass.map(AudioUtils_1.transpose8vb)] : []), (!!lead ? [lead] : []));
-                    figures.forEach(function (figure) { return playMusic(figure); });
+                    figures.forEach(function (figure) { return playFigure(figure); });
                 }
             }, ((numRepeats * i) + j) * suite.length);
         }
@@ -45,7 +47,7 @@ function playSuite(suite) {
         }
     }, sections.length * suite.length * numRepeats);
 }
-function playMusic(samples) {
+function playFigure(samples) {
     if (!PLAYER) {
         PLAYER = _getMusicPlayer();
     }
@@ -61,6 +63,9 @@ function stop() {
     ACTIVE_SUITE = null;
 }
 exports.default = {
+    TITLE_THEME: TITLE_THEME,
+    GAME_OVER: GAME_OVER,
+    playFigure: playFigure,
     playSuite: playSuite,
     stop: stop
 };

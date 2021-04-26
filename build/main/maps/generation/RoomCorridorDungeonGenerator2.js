@@ -188,7 +188,7 @@ var RoomCorridorDungeonGenerator2 = /** @class */ (function (_super) {
                 connectedSections.forEach(function (x) { return console.log(x); });
                 console.log('unconnected:');
                 unconnectedSections.forEach(function (x) { return console.log(x); });
-                'Failed to generate minimal spanning tree';
+                throw 'Failed to generate minimal spanning tree';
             }
         }
         return connections;

@@ -1,5 +1,6 @@
 type Figure = Sample[];
 
+type SoundEffect = Sample[];
 type Sample = [number, number];
 
 type Suite = {

@@ -34,6 +34,7 @@ function initialize(): Promise<any> {
   jwb.renderer = new SpriteRenderer();
   attachEvents();
   _initState();
+  Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();
 }
 
@@ -52,7 +53,7 @@ function _initState() {
 function startGame(): Promise<any> {
   loadMap(0);
   Music.stop();
-  Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
+  // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   return jwb.renderer.render();
 }
 

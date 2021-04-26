@@ -214,7 +214,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         connectedSections.forEach(x => console.log(x));
         console.log('unconnected:');
         unconnectedSections.forEach(x => console.log(x));
-        'Failed to generate minimal spanning tree';
+        throw 'Failed to generate minimal spanning tree';
       }
     }
 

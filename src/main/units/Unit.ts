@@ -57,7 +57,7 @@ class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = null;
     this.remainingCooldowns = new Map();
-    // TODO: this needs to be specifid to the player unit
+    // TODO: this needs to be specific to the player unit
     this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
     this.stunDuration = 0;
 
@@ -86,7 +86,7 @@ class Unit implements Entity {
   }
 
   update(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       this._upkeep();
       return resolve();
     })
@@ -153,7 +153,7 @@ class Unit implements Entity {
     return null;
   }
 
-  takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<any> {
+  takeDamage(damage: number, sourceUnit: (Unit | undefined) = undefined): Promise<void> {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
@@ -164,7 +164,7 @@ class Unit implements Entity {
         if (this === playerUnit) {
           jwb.state.screen = GameScreen.GAME_OVER;
           Music.stop();
-          playSound(Sounds.PLAYER_DIES);
+          Music.playFigure(Music.GAME_OVER)
         } else {
           playSound(Sounds.ENEMY_DIES);
         }
