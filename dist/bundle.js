@@ -1571,7 +1571,7 @@ class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
             sprite: this._spriteName,
             activity: _activityToString(unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction),
-            number: (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.ATTACKING ? 2 : 1) // HACK HACK HACK
+            number: 1
         };
         const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.TEMPLATE, variables);
         const behindFilename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.BEHIND_TEMPLATE, variables);
@@ -1803,7 +1803,7 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
             sprite: this._spriteName,
             activity: _activityToString(this._unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(this._unit.direction),
-            number: (this._unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.ATTACKING ? 2 : 1) // HACK HACK HACK
+            number: 1
         };
         const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
         // TODO can we get this into the yaml?
@@ -4076,7 +4076,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const LIFE_PER_TURN_MULTIPLIER = 0.001;
+// Regenerate 1% life every 50 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.0002;
 class Unit {
     constructor(unitClass, name, level, { x, y }) {
         this.char = '@';

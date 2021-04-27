@@ -11,7 +11,8 @@ import { playSound } from '../sounds/SoundFX';
 import { resolvedPromise } from '../utils/PromiseUtils';
 import Directions from '../types/Directions';
 
-const LIFE_PER_TURN_MULTIPLIER = 0.001;
+// Regenerate 1% of life every 50 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.0002;
 
 class Unit implements Entity {
   readonly unitClass: UnitClass;

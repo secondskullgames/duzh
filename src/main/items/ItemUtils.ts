@@ -14,7 +14,7 @@ function pickupItem(unit: Unit, mapItem: MapItem) {
   playSound(Sounds.PICK_UP_ITEM);
 }
 
-function useItem(unit: Unit, item: InventoryItem): Promise<any> {
+function useItem(unit: Unit, item: InventoryItem): Promise<void> {
   return item.use(unit)
     .then(() => unit.inventory.remove(item));
 }
