@@ -2,7 +2,6 @@ import TurnHandler from './TurnHandler';
 import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
-import { resolvedPromise } from '../utils/PromiseUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, returnToTitle, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
@@ -131,7 +130,7 @@ function keyHandler(e: KeyboardEvent): Promise<void> {
       return _handleAbility(command);
     default:
   }
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 function _handleArrowKey(command: KeyCommand): Promise<void> {
@@ -206,7 +205,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
     case GameScreen.MINIMAP:
-      return resolvedPromise();
+      return Promise.resolve();
     default:
       throw `Invalid game screen ${state.screen}`;
   }
@@ -243,7 +242,7 @@ function _handleEnter(): Promise<void> {
         return useItem(playerUnit, selectedItem)
           .then(() => jwb.renderer.render());
       }
-      return resolvedPromise();
+      return Promise.resolve();
     }
     case GameScreen.TITLE:
       state.screen = GameScreen.GAME;
@@ -302,7 +301,7 @@ function _handleAbility(command: KeyCommand): Promise<void> {
     console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
   }
 
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 function attachEvents() {

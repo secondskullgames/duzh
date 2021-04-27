@@ -8,7 +8,6 @@ import UnitController from './controllers/UnitController';
 import UnitAbilities, { Ability } from './UnitAbilities';
 import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
-import { resolvedPromise } from '../utils/PromiseUtils';
 import Directions from '../types/Directions';
 
 // Regenerate 1% of life every 50 turns
@@ -96,7 +95,7 @@ class Unit implements Entity {
         if (this.stunDuration === 0) {
           return this.controller.issueOrder(this);
         }
-        return resolvedPromise();
+        return Promise.resolve();
       })
       .then(() => this.sprite.getImage())
       .then(() => this._endOfTurn());

@@ -56,12 +56,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TurnHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TurnHandler */ "./src/main/core/TurnHandler.ts");
 /* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
 /* harmony import */ var _items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../items/ItemUtils */ "./src/main/items/ItemUtils.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
-/* harmony import */ var _actions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./actions */ "./src/main/core/actions.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../units/UnitAbilities */ "./src/main/units/UnitAbilities.ts");
-
+/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+/* harmony import */ var _actions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./actions */ "./src/main/core/actions.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../units/UnitAbilities */ "./src/main/units/UnitAbilities.ts");
 
 
 
@@ -187,12 +185,12 @@ function keyHandler(e) {
             return _handleAbility(command);
         default:
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+    return Promise.resolve();
 }
 function _handleArrowKey(command) {
     const { state } = jwb;
     switch (state.screen) {
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME:
             let dx;
             let dy;
             switch (command) {
@@ -221,18 +219,18 @@ function _handleArrowKey(command) {
                     case KeyCommand.SHIFT_DOWN:
                     case KeyCommand.SHIFT_LEFT:
                     case KeyCommand.SHIFT_RIGHT:
-                        return (u) => _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_7__.default.SHOOT_ARROW.use(u, { dx, dy });
+                        return (u) => _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.SHOOT_ARROW.use(u, { dx, dy });
                     default:
                         if (!!jwb.state.queuedAbility) {
                             const ability = jwb.state.queuedAbility;
                             jwb.state.queuedAbility = null;
                             return (u) => ability.use(u, { dx, dy });
                         }
-                        return (u) => _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_7__.default.ATTACK.use(u, { dx, dy });
+                        return (u) => _units_UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.ATTACK.use(u, { dx, dy });
                 }
             })();
             return _TurnHandler__WEBPACK_IMPORTED_MODULE_0__.default.playTurn(queuedOrder);
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.INVENTORY:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY:
             const { inventory } = state.playerUnit;
             switch (command) {
                 case KeyCommand.UP:
@@ -253,11 +251,11 @@ function _handleArrowKey(command) {
                     break;
             }
             return jwb.renderer.render();
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.TITLE:
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.VICTORY:
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME_OVER:
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.MINIMAP:
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.TITLE:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.VICTORY:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME_OVER:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.MINIMAP:
+            return Promise.resolve();
         default:
             throw `Invalid game screen ${state.screen}`;
     }
@@ -266,7 +264,7 @@ function _handleEnter() {
     const { state } = jwb;
     const { playerUnit } = state;
     switch (state.screen) {
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME: {
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME: {
             const { mapIndex } = state;
             const map = state.getMap();
             const { x, y } = playerUnit;
@@ -278,28 +276,28 @@ function _handleEnter() {
                 (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.pickupItem)(playerUnit, item);
                 map.removeItem({ x, y });
             }
-            else if (map.getTile({ x, y }).type === _types_types__WEBPACK_IMPORTED_MODULE_6__.TileType.STAIRS_DOWN) {
-                (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_4__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.DESCEND_STAIRS);
-                (0,_actions__WEBPACK_IMPORTED_MODULE_5__.loadMap)(mapIndex + 1);
+            else if (map.getTile({ x, y }).type === _types_types__WEBPACK_IMPORTED_MODULE_5__.TileType.STAIRS_DOWN) {
+                (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_3__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.DESCEND_STAIRS);
+                (0,_actions__WEBPACK_IMPORTED_MODULE_4__.loadMap)(mapIndex + 1);
             }
             return _TurnHandler__WEBPACK_IMPORTED_MODULE_0__.default.playTurn(null);
         }
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.INVENTORY: {
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY: {
             const { playerUnit } = state;
             const { selectedItem } = playerUnit.inventory;
             if (!!selectedItem) {
-                state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME;
+                state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME;
                 return (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.useItem)(playerUnit, selectedItem)
                     .then(() => jwb.renderer.render());
             }
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+            return Promise.resolve();
         }
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.TITLE:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME;
-            return (0,_actions__WEBPACK_IMPORTED_MODULE_5__.startGame)();
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.VICTORY:
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME_OVER:
-            return (0,_actions__WEBPACK_IMPORTED_MODULE_5__.returnToTitle)();
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.TITLE:
+            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME;
+            return (0,_actions__WEBPACK_IMPORTED_MODULE_4__.startGame)();
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.VICTORY:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME_OVER:
+            return (0,_actions__WEBPACK_IMPORTED_MODULE_4__.returnToTitle)();
         default:
             throw `Unknown game screen: ${state.screen}`;
     }
@@ -307,11 +305,11 @@ function _handleEnter() {
 function _handleTab() {
     const { state, renderer } = jwb;
     switch (state.screen) {
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.INVENTORY:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME;
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY:
+            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME;
             break;
         default:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.INVENTORY;
+            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY;
             break;
     }
     return renderer.render();
@@ -319,12 +317,12 @@ function _handleTab() {
 function _handleMap() {
     const { state, renderer } = jwb;
     switch (state.screen) {
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.MINIMAP:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME;
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.MINIMAP:
+            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME;
             break;
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME:
-        case _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.INVENTORY:
-            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.MINIMAP;
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME:
+        case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY:
+            state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.MINIMAP;
             break;
         default:
             break;
@@ -343,9 +341,9 @@ function _handleAbility(command) {
         return renderer.render();
     }
     else {
-        console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(_units_UnitAbilities__WEBPACK_IMPORTED_MODULE_7__.default.HEAVY_ATTACK)}`);
+        console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(_units_UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.HEAVY_ATTACK)}`);
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+    return Promise.resolve();
 }
 function attachEvents() {
     window.onkeydown = keyHandlerWrapper;
@@ -573,9 +571,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Fonts": () => (/* binding */ Fonts)
 /* harmony export */ });
 /* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../types/Colors */ "./src/main/types/Colors.ts");
-
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/Colors */ "./src/main/types/Colors.ts");
 
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
@@ -606,7 +602,7 @@ class FontRenderer {
     render(text, font, color) {
         const key = this._getMemoKey(text, font, color);
         if (!!this._imageMemos[key]) {
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)(this._imageMemos[key]);
+            return Promise.resolve(this._imageMemos[key]);
         }
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
@@ -620,16 +616,16 @@ class FontRenderer {
                 const imageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[DEFAULT_CHAR]; // TODO hacky placeholder
                 context.drawImage(imageBitmap, x, 0, font.width, font.height);
             }
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)();
+            return Promise.resolve();
         })
-            .then(() => (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)(context.getImageData(0, 0, canvas.width, canvas.height)))
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, { [_types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.BLACK]: color }))
+            .then(() => Promise.resolve(context.getImageData(0, 0, canvas.width, canvas.height)))
+            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, { [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK]: color }))
             .then(imageData => createImageBitmap(imageData))
             .then(imageBitmap => { this._imageMemos[key] = imageBitmap; return imageBitmap; });
     }
     _loadFont(definition) {
         if (this._loadedFonts[definition.name]) {
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)(this._loadedFonts[definition.name]);
+            return Promise.resolve(this._loadedFonts[definition.name]);
         }
         const width = NUM_CHARACTERS * definition.width;
         return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.loadImage)(`fonts/${definition.src}`)
@@ -660,7 +656,7 @@ class FontRenderer {
     _getCharacterData(definition, context, char) {
         const offset = this._getCharOffset(char);
         const imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE);
+        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.WHITE);
     }
     _getCharOffset(char) {
         if (char >= MIN_CHARACTER_CODE && char <= MAX_CHARACTER_CODE) {
@@ -1209,7 +1205,7 @@ class SpriteRenderer {
                 return this._drawSprite(sprite, pixel);
             }
         }
-        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+        return Promise.resolve();
     }
     _drawSprite(sprite, { x, y }) {
         return sprite.getImage()
@@ -1335,7 +1331,7 @@ class SpriteRenderer {
                     throw 'fux';
             }
             this._bufferContext.drawImage(imageBitmap, left, y);
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.resolvedPromise)();
+            return Promise.resolve();
         });
     }
     _renderMinimap() {
@@ -1495,7 +1491,7 @@ function _playAnimation(animation) {
             if (!!frame.projectiles) {
                 map.projectiles.push(...frame.projectiles);
             }
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)();
+            return Promise.resolve();
         });
         const updatePromise = () => {
             const updatePromises = [];
@@ -1519,7 +1515,7 @@ function _playAnimation(animation) {
             if (!!frame.projectiles) {
                 frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
             }
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.resolvedPromise)();
+            return Promise.resolve();
         });
     }
     return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.chainPromises)(promises);
@@ -4065,8 +4061,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./UnitAbilities */ "./src/main/units/UnitAbilities.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/Directions */ "./src/main/types/Directions.ts");
+/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/Directions */ "./src/main/types/Directions.ts");
 
 
 
@@ -4075,8 +4070,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-// Regenerate 1% life every 50 turns
+// Regenerate 1% of life every 50 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.0002;
 class Unit {
     constructor(unitClass, name, level, { x, y }) {
@@ -4098,7 +4092,7 @@ class Unit {
         this._damage = unitClass.startingDamage;
         this.controller = unitClass.controller;
         this.activity = _types_types__WEBPACK_IMPORTED_MODULE_5__.Activity.STANDING;
-        this.direction = _types_Directions__WEBPACK_IMPORTED_MODULE_8__.default.S;
+        this.direction = _types_Directions__WEBPACK_IMPORTED_MODULE_7__.default.S;
         this.remainingCooldowns = new Map();
         // TODO: this needs to be specific to the player unit
         this.abilities = [_UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.HEAVY_ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.KNOCKBACK_ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.STUN_ATTACK];
@@ -4132,7 +4126,7 @@ class Unit {
             if (this.stunDuration === 0) {
                 return this.controller.issueOrder(this);
             }
-            return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_7__.resolvedPromise)();
+            return Promise.resolve();
         })
             .then(() => this.sprite.getImage())
             .then(() => this._endOfTurn());
@@ -4477,12 +4471,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _utils_Pathfinder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/Pathfinder */ "./src/main/utils/Pathfinder.ts");
 /* harmony import */ var _utils_RandomUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/RandomUtils */ "./src/main/utils/RandomUtils.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
-/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
-/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/Directions */ "./src/main/types/Directions.ts");
-/* harmony import */ var _UnitAbilities__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./UnitAbilities */ "./src/main/units/UnitAbilities.ts");
-
+/* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
+/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
+/* harmony import */ var _types_Directions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../types/Directions */ "./src/main/types/Directions.ts");
+/* harmony import */ var _UnitAbilities__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./UnitAbilities */ "./src/main/units/UnitAbilities.ts");
 
 
 
@@ -4493,7 +4485,7 @@ function _wanderAndAttack(unit) {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
     const tiles = [];
-    _types_Directions__WEBPACK_IMPORTED_MODULE_5__.default.values().forEach(({ dx, dy }) => {
+    _types_Directions__WEBPACK_IMPORTED_MODULE_4__.default.values().forEach(({ dx, dy }) => {
         const [x, y] = [unit.x + dx, unit.y + dy];
         if (map.contains({ x, y })) {
             if (!map.isBlocked({ x, y })) {
@@ -4509,14 +4501,14 @@ function _wanderAndAttack(unit) {
     if (tiles.length > 0) {
         const { x, y } = (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_1__.randChoice)(tiles);
         const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.ATTACK.use(unit, { dx, dy });
+        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_5__.default.ATTACK.use(unit, { dx, dy });
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__.resolvedPromise)();
+    return Promise.resolve();
 }
 function _wander(unit) {
     const map = jwb.state.getMap();
     const tiles = [];
-    _types_Directions__WEBPACK_IMPORTED_MODULE_5__.default.values().forEach(({ dx, dy }) => {
+    _types_Directions__WEBPACK_IMPORTED_MODULE_4__.default.values().forEach(({ dx, dy }) => {
         const [x, y] = [unit.x + dx, unit.y + dy];
         if (map.contains({ x, y })) {
             if (!map.isBlocked({ x, y })) {
@@ -4527,9 +4519,9 @@ function _wander(unit) {
     if (tiles.length > 0) {
         const { x, y } = (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_1__.randChoice)(tiles);
         const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.ATTACK.use(unit, { dx, dy });
+        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_5__.default.ATTACK.use(unit, { dx, dy });
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__.resolvedPromise)();
+    return Promise.resolve();
 }
 function _attackPlayerUnit_withPath(unit) {
     const { playerUnit } = jwb.state;
@@ -4541,7 +4533,7 @@ function _attackPlayerUnit_withPath(unit) {
             if (!map.getTile({ x, y }).isBlocking) {
                 unblockedTiles.push({ x, y });
             }
-            else if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.coordinatesEquals)({ x, y }, playerUnit)) {
+            else if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)({ x, y }, playerUnit)) {
                 unblockedTiles.push({ x, y });
             }
             else {
@@ -4555,16 +4547,16 @@ function _attackPlayerUnit_withPath(unit) {
         const unitAtPoint = map.getUnit({ x, y });
         if (!unitAtPoint || unitAtPoint === playerUnit) {
             const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-            return _UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.ATTACK.use(unit, { dx, dy });
+            return _UnitAbilities__WEBPACK_IMPORTED_MODULE_5__.default.ATTACK.use(unit, { dx, dy });
         }
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__.resolvedPromise)();
+    return Promise.resolve();
 }
 function _fleeFromPlayerUnit(unit) {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
     const tiles = [];
-    _types_Directions__WEBPACK_IMPORTED_MODULE_5__.default.values().forEach(({ dx, dy }) => {
+    _types_Directions__WEBPACK_IMPORTED_MODULE_4__.default.values().forEach(({ dx, dy }) => {
         const [x, y] = [unit.x + dx, unit.y + dy];
         if (map.contains({ x, y })) {
             if (!map.isBlocked({ x, y })) {
@@ -4578,18 +4570,18 @@ function _fleeFromPlayerUnit(unit) {
         }
     });
     if (tiles.length > 0) {
-        const orderedTiles = tiles.sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.comparingReversed)(coordinates => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.manhattanDistance)(coordinates, playerUnit)));
+        const orderedTiles = tiles.sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_2__.comparingReversed)(coordinates => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.manhattanDistance)(coordinates, playerUnit)));
         const { x, y } = orderedTiles[0];
         const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_6__.default.ATTACK.use(unit, { dx, dy });
+        return _UnitAbilities__WEBPACK_IMPORTED_MODULE_5__.default.ATTACK.use(unit, { dx, dy });
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__.resolvedPromise)();
+    return Promise.resolve();
 }
 const UnitBehaviors = {
     WANDER: _wander,
     ATTACK_PLAYER: _attackPlayerUnit_withPath,
     FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
-    STAY: () => (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_2__.resolvedPromise)()
+    STAY: () => Promise.resolve()
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UnitBehaviors);
 
@@ -4934,8 +4926,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-
 class PlayerUnitController {
     constructor() {
         this.queuedOrder = null;
@@ -4946,7 +4936,7 @@ class PlayerUnitController {
             this.queuedOrder = null;
             return queuedOrder();
         }
-        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_0__.resolvedPromise)();
+        return Promise.resolve();
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PlayerUnitController);
@@ -5107,17 +5097,13 @@ class Pathfinder {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "chainPromises": () => (/* binding */ chainPromises),
-/* harmony export */   "resolvedPromise": () => (/* binding */ resolvedPromise),
 /* harmony export */   "wait": () => (/* binding */ wait)
 /* harmony export */ });
-function resolvedPromise(value) {
-    return new Promise(resolve => resolve(value));
-}
 function chainPromises([first, ...rest], input) {
     if (!!first) {
         return first(input).then(output => chainPromises(rest, output));
     }
-    return resolvedPromise(input);
+    return Promise.resolve(input);
 }
 function wait(milliseconds) {
     return new Promise(resolve => {

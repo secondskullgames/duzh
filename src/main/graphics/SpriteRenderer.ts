@@ -3,7 +3,7 @@ import Colors from '../types/Colors';
 import MinimapRenderer from './MinimapRenderer';
 import Renderer from './Renderer';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
-import { chainPromises, resolvedPromise } from '../utils/PromiseUtils';
+import { chainPromises } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
@@ -294,7 +294,7 @@ class SpriteRenderer implements Renderer {
         return this._drawSprite(sprite, pixel);
       }
     }
-    return resolvedPromise();
+    return Promise.resolve();
   }
 
   private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
@@ -440,7 +440,7 @@ class SpriteRenderer implements Renderer {
             throw 'fux';
         }
         this._bufferContext.drawImage(imageBitmap, left, y);
-        return resolvedPromise();
+        return Promise.resolve();
       });
   }
 

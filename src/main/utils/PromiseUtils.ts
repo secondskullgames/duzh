@@ -1,14 +1,10 @@
 import { PromiseSupplier } from '../types/types';
 
-function resolvedPromise(value?: any): Promise<any> {
-  return new Promise(resolve => resolve(value));
-}
-
 function chainPromises<T>([first, ...rest]: PromiseSupplier<T>[], input?: T): Promise<any> {
   if (!!first) {
     return first(input).then(output => chainPromises(rest, output));
   }
-  return resolvedPromise(input);
+  return Promise.resolve(input);
 }
 
 function wait(milliseconds: number): Promise<void> {
@@ -21,6 +17,5 @@ function wait(milliseconds: number): Promise<void> {
 
 export {
   chainPromises,
-  resolvedPromise,
   wait
 };

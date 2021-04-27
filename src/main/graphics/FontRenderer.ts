@@ -1,5 +1,4 @@
-import { applyTransparentColor, loadImage, replaceAll, replaceColors } from './ImageUtils';
-import { resolvedPromise } from '../utils/PromiseUtils';
+import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
 import Colors from '../types/Colors';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
@@ -48,7 +47,7 @@ class FontRenderer {
   render(text: string, font: FontDefinition, color: Colors): Promise<ImageBitmap> {
     const key = this._getMemoKey(text, font, color);
     if (!!this._imageMemos[key]) {
-      return resolvedPromise(this._imageMemos[key]);
+      return Promise.resolve(this._imageMemos[key]);
     }
 
     const canvas = document.createElement('canvas');
@@ -64,9 +63,9 @@ class FontRenderer {
           const imageBitmap : ImageBitmap = fontInstance.imageMap[c] || fontInstance.imageMap[DEFAULT_CHAR]; // TODO hacky placeholder
           context.drawImage(imageBitmap, x, 0, font.width, font.height);
         }
-        return resolvedPromise();
+        return Promise.resolve();
       })
-      .then(() => resolvedPromise(context.getImageData(0, 0, canvas.width, canvas.height)))
+      .then(() => Promise.resolve(context.getImageData(0, 0, canvas.width, canvas.height)))
       .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
       .then(imageData => createImageBitmap(imageData))
       .then(imageBitmap => { this._imageMemos[key] = imageBitmap; return imageBitmap; });
@@ -74,7 +73,7 @@ class FontRenderer {
 
   private _loadFont(definition: FontDefinition): Promise<FontInstance> {
     if (this._loadedFonts[definition.name]) {
-      return resolvedPromise(this._loadedFonts[definition.name]);
+      return Promise.resolve(this._loadedFonts[definition.name]);
     }
 
     const width = NUM_CHARACTERS * definition.width;

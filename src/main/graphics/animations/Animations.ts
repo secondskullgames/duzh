@@ -1,6 +1,6 @@
 import Unit from '../../units/Unit';
 import { Activity, Coordinates, Direction, Projectile } from '../../types/types';
-import { chainPromises, resolvedPromise, wait } from '../../utils/PromiseUtils';
+import { chainPromises, wait } from '../../utils/PromiseUtils';
 import { createArrow } from '../../items/ProjectileFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
@@ -137,7 +137,7 @@ function _playAnimation(animation: Animation): Promise<any> {
       if (!!frame.projectiles) {
         map.projectiles.push(...frame.projectiles);
       }
-      return resolvedPromise();
+      return Promise.resolve();
     });
     const updatePromise = () => {
       const updatePromises: Promise<any>[] = [];
@@ -161,7 +161,7 @@ function _playAnimation(animation: Animation): Promise<any> {
       if (!!frame.projectiles) {
         frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
       }
-      return resolvedPromise();
+      return Promise.resolve();
     });
   }
 

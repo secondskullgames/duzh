@@ -8,7 +8,6 @@ import TileSets from '../maps/TileSets';
 import { attachEvents } from './InputHandler';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
-import { resolvedPromise } from '../utils/PromiseUtils';
 
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).

@@ -1,7 +1,6 @@
 import UnitController from './UnitController';
 import Unit from '../Unit';
 import { PromiseSupplier } from '../../types/types';
-import { resolvedPromise } from '../../utils/PromiseUtils';
 
 class PlayerUnitController implements UnitController {
   queuedOrder: PromiseSupplier<void> | null;
@@ -16,7 +15,7 @@ class PlayerUnitController implements UnitController {
       this.queuedOrder = null;
       return queuedOrder();
     }
-    return resolvedPromise();
+    return Promise.resolve();
   }
 }
 

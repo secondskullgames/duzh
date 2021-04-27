@@ -2,7 +2,6 @@ import Pathfinder from '../utils/Pathfinder';
 import Unit from './Unit';
 import { randChoice } from '../utils/RandomUtils';
 import { Coordinates, Rect } from '../types/types';
-import { resolvedPromise } from '../utils/PromiseUtils';
 import { comparingReversed } from '../utils/ArrayUtils';
 import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 import Directions from '../types/Directions';
@@ -32,7 +31,7 @@ function _wanderAndAttack(unit: Unit): Promise<void> {
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
     return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 function _wander(unit: Unit): Promise<void> {
@@ -52,7 +51,7 @@ function _wander(unit: Unit): Promise<void> {
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
     return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
@@ -84,7 +83,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
       return UnitAbilities.ATTACK.use(unit, { dx, dy });
     }
   }
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
@@ -111,14 +110,14 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
     return UnitAbilities.ATTACK.use(unit, { dx, dy });
   }
-  return resolvedPromise();
+  return Promise.resolve();
 }
 
 const UnitBehaviors = {
   WANDER: _wander,
   ATTACK_PLAYER: _attackPlayerUnit_withPath,
   FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
-  STAY: () => resolvedPromise()
+  STAY: () => Promise.resolve()
 };
 
 export default UnitBehaviors;
