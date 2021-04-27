@@ -1,41 +1,39 @@
-import ImageSupplier from '../ImageSupplier';
 import Sprite from './Sprite';
-import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
-import PlayerSprite from './units/PlayerSprite';
-import GolemSprite from './units/GolemSprite';
-import GruntSprite from './units/GruntSprite';
-import SnakeSprite from './units/SnakeSprite';
-import SoldierSprite from './units/SoldierSprite';
 import { Direction, PaletteSwaps, SpriteSupplier } from '../../types/types';
-import ArrowSprite from './projectiles/ArrowSprite';
-
-const DEFAULT_SPRITE_KEY = 'default';
+import StaticSprite from './StaticSprite';
+import UnitSprite from './UnitSprite';
+import ProjectileSprite from './ProjectileSprite';
+import Equipment from '../../items/equipment/Equipment';
+import EquipmentSprite from './EquipmentSprite';
 
 type UnitSpriteSupplier = (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
+type EquipmentSpriteSupplier = (equipment: Equipment, paletteSwaps: PaletteSwaps) => Sprite;
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
 
-function createStaticSprite(imageLoader: ImageSupplier, { dx, dy }: { dx: number, dy: number }): Sprite {
-  return new Sprite({ [DEFAULT_SPRITE_KEY]: imageLoader }, DEFAULT_SPRITE_KEY, { dx, dy });
-}
-
 const StaticSprites: { [name: string]: SpriteSupplier } = {
-  MAP_SWORD: (paletteSwaps) => createStaticSprite(new ImageSupplier('sword_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
-  MAP_POTION: (paletteSwaps) => createStaticSprite(new ImageSupplier('potion_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: -8 }),
-  MAP_SCROLL: (paletteSwaps) => createStaticSprite(new ImageSupplier('scroll_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 }),
-  MAP_BOW: (paletteSwaps) => createStaticSprite(new ImageSupplier('bow_icon', Colors.WHITE, paletteSwaps), { dx: 0, dy: 0 })
+  MAP_SWORD: paletteSwaps => new StaticSprite('sword_icon', { dx: 0, dy: -8 }, paletteSwaps),
+  MAP_POTION: paletteSwaps => new StaticSprite('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
+  MAP_SCROLL: paletteSwaps => new StaticSprite('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
+  MAP_BOW: paletteSwaps => new StaticSprite('bow_icon', { dx: 0, dy: 0 }, paletteSwaps)
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
-  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new PlayerSprite(unit, paletteSwaps),
-  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new GolemSprite(unit, paletteSwaps),
-  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new GruntSprite(unit, paletteSwaps),
-  SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new SnakeSprite(unit, paletteSwaps),
-  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new SoldierSprite(unit, paletteSwaps)
+  PLAYER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
+  GOLEM: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'zombie', paletteSwaps, { dx: -4, dy: -20 }),
+  GRUNT: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
+  SNAKE: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'snake', paletteSwaps, { dx: 0, dy: 0 }),
+  SOLDIER: (unit: Unit, paletteSwaps: PaletteSwaps) => new UnitSprite(unit, 'player', paletteSwaps, { dx: -4, dy: -20 }),
 };
 
+// TODO - check offsets
+const EquipmentSprites: { [name: string]: EquipmentSpriteSupplier } = {
+  SWORD: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, 'sword', paletteSwaps, { dx: -4, dy: -20 }),
+  BOW: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, 'bow', paletteSwaps, { dx: -4, dy: -20 })
+}
+
 const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
-  ARROW: (direction: Direction, paletteSwaps: PaletteSwaps) => new ArrowSprite(direction, paletteSwaps)
+  ARROW: (direction: Direction, paletteSwaps: PaletteSwaps) => new ProjectileSprite(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
 };
 
 // the following does not work: { ...StaticSprites, ...UnitSprites }
@@ -50,7 +48,11 @@ export default {
   GRUNT: UnitSprites.GRUNT,
   SNAKE: UnitSprites.SNAKE,
   SOLDIER: UnitSprites.SOLDIER,
+  SWORD: EquipmentSprites.SWORD,
+  BOW: EquipmentSprites.BOW,
   ARROW: ProjectileSprites.ARROW
 };
 
-export { createStaticSprite };
+export type {
+  EquipmentSpriteSupplier
+};

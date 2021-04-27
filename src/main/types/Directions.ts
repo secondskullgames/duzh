@@ -24,11 +24,26 @@ function _directionToString(direction: Direction) {
   throw `Invalid direction ${direction}`;
 }
 
+function _toLegacyDirection(direction: Direction): string {
+  const lookup = {
+    'N': 'NW',
+    'E': 'NE',
+    'S': 'SE',
+    'W': 'SW'
+  }
+  return Object.entries(lookup)
+    // @ts-ignore
+    .filter(([from, to]) => _equals(direction, Directions[from]))
+    .map(([from, to]) => to)
+    [0];
+}
+
 export default {
   N: Directions.N,
   E: Directions.E,
   S: Directions.S,
   W: Directions.W,
   values: () => [Directions.N, Directions.E, Directions.S, Directions.W],
-  toString: _directionToString
+  toString: _directionToString,
+  toLegacyDirection: _toLegacyDirection
 };

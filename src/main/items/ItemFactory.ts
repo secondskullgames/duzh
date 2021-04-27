@@ -1,6 +1,5 @@
 import Sounds from '../sounds/Sounds';
 import InventoryItem from './InventoryItem';
-import EquippedItem from './equipment/EquippedItem';
 import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
@@ -10,6 +9,7 @@ import { EquipmentClass, getWeaponClasses } from './equipment/EquipmentClasses';
 import { ItemCategory, Coordinates } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
+import { equipItem } from './ItemUtils';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -24,19 +24,6 @@ function createPotion(lifeRestored: number): InventoryItem {
     });
   };
   return new InventoryItem('Potion', ItemCategory.POTION, onUse);
-}
-
-function _equipEquipment(equipmentClass: EquipmentClass, item: InventoryItem, unit: Unit): Promise<void> {
-  return new Promise(resolve => {
-    const equippedItem: EquippedItem = {
-      name: equipmentClass.name,
-      slot: equipmentClass.equipmentCategory,
-      inventoryItem: item,
-      damage: equipmentClass.damage
-    };
-    unit.equipment.add(equippedItem);
-    resolve();
-  });
 }
 
 function createScrollOfFloorFire(damage: number): InventoryItem {
@@ -62,15 +49,17 @@ function createScrollOfFloorFire(damage: number): InventoryItem {
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
 }
 
-function _createInventoryWeapon(weaponClass: EquipmentClass): InventoryItem {
-  const onUse: ItemProc = (item: InventoryItem, unit: Unit) => _equipEquipment(weaponClass, item, unit);
-  return new InventoryItem(weaponClass.name, weaponClass.itemCategory, onUse);
-}
-
 function _createMapEquipment(equipmentClass: EquipmentClass, { x, y }: Coordinates): MapItem {
   const sprite = equipmentClass.mapIcon(equipmentClass.paletteSwaps);
   const inventoryItem: InventoryItem = _createInventoryWeapon(equipmentClass);
   return new MapItem({ x, y }, equipmentClass.char, sprite, inventoryItem);
+}
+
+function _createInventoryWeapon(weaponClass: EquipmentClass): InventoryItem {
+  const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
+    return equipItem(item, weaponClass, unit);
+  };
+  return new InventoryItem(weaponClass.name, weaponClass.itemCategory, onUse);
 }
 
 type MapItemSupplier = ({ x, y }: Coordinates) => MapItem;

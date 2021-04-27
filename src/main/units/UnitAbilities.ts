@@ -200,7 +200,7 @@ class ShootArrow extends Ability {
     const { dx, dy } = direction;
     unit.direction = { dx, dy };
 
-    return unit.sprite.update()
+    return unit.sprite.getImage()
       .then(() => jwb.renderer.render())
       .then(() => new Promise(resolve => {
         if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {

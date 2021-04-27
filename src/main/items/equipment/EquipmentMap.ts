@@ -1,30 +1,34 @@
 import { EquipmentSlot } from '../../types/types';
-import EquippedItem from './EquippedItem';
+import Equipment from './Equipment';
 
 /**
  * Represent's a unit's equipment, mapped by slot.
  */
 class EquipmentMap {
-  private readonly _map: { [slot in EquipmentSlot]?: EquippedItem };
+  private readonly _map: { [slot in EquipmentSlot]?: Equipment };
 
   constructor() {
     this._map = {};
   }
 
-  add(item: EquippedItem) {
+  add(item: Equipment) {
     this._map[item.slot] = item;
   }
 
-  remove(item: EquippedItem) {
+  remove(item: Equipment) {
     this._map[item.slot] = undefined;
   }
 
-  get(category: EquipmentSlot): EquippedItem | null {
+  get(category: EquipmentSlot): Equipment | null {
     return this._map[category] || null;
   }
 
-  getEntries(): [EquipmentSlot, EquippedItem][] {
-    return [...(<[EquipmentSlot, EquippedItem][]>Object.entries(this._map))];
+  getEntries(): [EquipmentSlot, Equipment][] {
+    return [...(<[EquipmentSlot, Equipment][]>Object.entries(this._map))];
+  }
+
+  getValues(): Equipment[] {
+    return [...(<Equipment[]>Object.values(this._map))];
   }
 }
 
