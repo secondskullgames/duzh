@@ -1565,25 +1565,33 @@ class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
         const unit = this._equipment.unit;
         const variables = {
             sprite: this._spriteName,
-            activity: _activityToString(unit.activity),
+            activity: this._activityToString(unit.activity),
             direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction),
             number: 1
         };
         const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.TEMPLATE, variables);
         const behindFilename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.BEHIND_TEMPLATE, variables);
-        // TODO can we get this into the yaml?
         const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
             ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
             : [];
-        console.log('in getImage()');
         return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default([behindFilename, filename], _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
+    }
+    /**
+     * TODO - a collection of hacks until we can get better config files for these
+     */
+    _activityToString(activity) {
+        switch (true) {
+            case (this._spriteName === 'bow' && activity === 'ATTACKING'):
+                return 'shooting';
+            case activity === 'DAMAGED':
+                return 'standing';
+            default:
+                return activity.toLowerCase();
+        }
     }
 }
 EquipmentSprite.TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
 EquipmentSprite.BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
-function _activityToString(activity) {
-    return (activity === 'DAMAGED' ? _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.STANDING : activity).toLowerCase();
-}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentSprite);
 
 

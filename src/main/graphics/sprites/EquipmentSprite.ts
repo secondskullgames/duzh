@@ -8,10 +8,11 @@ import Directions from '../../types/Directions';
 import Equipment from '../../items/equipment/Equipment';
 
 class EquipmentSprite extends Sprite {
-  private _equipment: Equipment;
-  private readonly _spriteName: string;
   private static readonly TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
   private static readonly BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
+
+  private _equipment: Equipment;
+  private readonly _spriteName: string;
   private readonly _paletteSwaps: PaletteSwaps;
 
   constructor(equipment: Equipment, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: Offsets) {
@@ -30,23 +31,31 @@ class EquipmentSprite extends Sprite {
     const unit = this._equipment.unit!!;
     const variables = {
       sprite: this._spriteName,
-      activity: _activityToString(unit.activity),
+      activity: this._activityToString(unit.activity),
       direction: Directions.toLegacyDirection(unit.direction!!),
       number: 1
     };
     const filename = fillTemplate(EquipmentSprite.TEMPLATE, variables);
     const behindFilename = fillTemplate(EquipmentSprite.BEHIND_TEMPLATE, variables);
-    // TODO can we get this into the yaml?
     const effects = (unit.activity === Activity.DAMAGED)
       ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
       : [];
-    console.log('in getImage()');
     return new ImageSupplier([behindFilename, filename], Colors.WHITE, this._paletteSwaps, effects).get();
   }
-}
 
-function _activityToString(activity: Activity): string {
-  return (activity === 'DAMAGED' ? Activity.STANDING : activity).toLowerCase();
+  /**
+   * TODO - a collection of hacks until we can get better config files for these
+   */
+  private _activityToString(activity: Activity): string {
+    switch (true) {
+      case (this._spriteName === 'bow' && activity === 'ATTACKING'):
+        return 'shooting';
+      case activity === 'DAMAGED':
+        return 'standing';
+      default:
+        return activity.toLowerCase();
+    }
+  }
 }
 
 export default EquipmentSprite;
