@@ -2,6 +2,116 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./data/sounds/deflected_hit.json":
+/*!****************************************!*\
+  !*** ./data/sounds/deflected_hit.json ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[400,10],[0,10],[500,15],[0,5],[400,10],[0,5],[400,10],[0,10],[100,10],[0,15],[200,5]]');
+
+/***/ }),
+
+/***/ "./data/sounds/descend_stairs.json":
+/*!*****************************************!*\
+  !*** ./data/sounds/descend_stairs.json ***!
+  \*****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[30,10],[0,5],[80,10],[0,10],[30,10],[0,175],[25,10],[0,5],[75,10],[0,10],[25,10],[0,175],[20,10],[0,5],[70,10],[0,10],[20,10],[0,175],[15,10],[0,5],[65,10],[0,10],[15,10],[0,175],[10,10],[0,5],[60,10],[0,10],[10,10]]');
+
+/***/ }),
+
+/***/ "./data/sounds/enemy_dies.json":
+/*!*************************************!*\
+  !*** ./data/sounds/enemy_dies.json ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[20,20],[0,10],[30,20],[0,10],[25,20],[0,10],[25,20],[0,5],[40,20],[0,5],[35,20],[0,5],[45,20],[0,5],[25,20],[0,10],[35,20],[0,10],[25,20],[0,10],[30,20],[0,20],[40,10],[0,20],[35,10],[0,20],[45,10],[0,20],[25,5],[0,30],[35,5],[0,30],[20,5],[0,30],[30,5]]');
+
+/***/ }),
+
+/***/ "./data/sounds/enemy_hits_player.json":
+/*!********************************************!*\
+  !*** ./data/sounds/enemy_hits_player.json ***!
+  \********************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],[0,5],[350,5],[0,10],[100,5],[0,10],[350,5],[0,10],[125,5],[0,10],[300,5],[0,15],[150,5],[0,15],[175,5],[0,20],[150,5],[0,20],[125,5],[0,25],[100,5],[1,25],[100,5]]');
+
+/***/ }),
+
+/***/ "./data/sounds/footstep.json":
+/*!***********************************!*\
+  !*** ./data/sounds/footstep.json ***!
+  \***********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[10,10],[0,5],[50,10],[0,10],[10,10],[0,15],[50,10],[0,20],[10,10]]');
+
+/***/ }),
+
+/***/ "./data/sounds/level_up.json":
+/*!***********************************!*\
+  !*** ./data/sounds/level_up.json ***!
+  \***********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[1000,50],[800,50],[600,50],[400,50],[200,100],[100,100],[50,150],[150,150],[250,200],[500,500]]');
+
+/***/ }),
+
+/***/ "./data/sounds/open_door.json":
+/*!************************************!*\
+  !*** ./data/sounds/open_door.json ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[25,40],[50,40],[75,60],[100,60],[125,80],[100,80]]');
+
+/***/ }),
+
+/***/ "./data/sounds/pick_up_item.json":
+/*!***************************************!*\
+  !*** ./data/sounds/pick_up_item.json ***!
+  \***************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[50,50],[0,5],[100,50],[0,10],[200,50],[0,20],[400,50]]');
+
+/***/ }),
+
+/***/ "./data/sounds/player_dies.json":
+/*!**************************************!*\
+  !*** ./data/sounds/player_dies.json ***!
+  \**************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[30,20],[0,10],[40,20],[0,10],[25,20],[0,10],[35,20],[0,5],[80,20],[0,5],[45,20],[0,5],[115,20],[0,5],[35,20],[0,10],[75,20],[0,10],[25,20],[0,10],[60,20],[0,20],[50,10],[0,20],[65,10],[0,20],[55,10],[0,20],[35,5],[0,30],[45,5],[0,30],[30,5],[0,30],[40,5]]');
+
+/***/ }),
+
+/***/ "./data/sounds/player_hits_enemy.json":
+/*!********************************************!*\
+  !*** ./data/sounds/player_hits_enemy.json ***!
+  \********************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],[0,5],[350,5],[0,10],[100,5],[0,10],[350,5],[0,10],[125,5],[0,10],[300,5],[0,15],[150,5],[0,15],[175,5],[0,20],[150,5],[0,20],[125,5],[0,25],[100,5],[1,25],[100,5]]');
+
+/***/ }),
+
+/***/ "./data/sounds/use_potion.json":
+/*!*************************************!*\
+  !*** ./data/sounds/use_potion.json ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[150,50],[200,50],[250,50],[175,50],[225,50],[275,50],[200,50],[250,50],[300,50]]');
+
+/***/ }),
+
 /***/ "./data/sprites/bow.json":
 /*!*******************************!*\
   !*** ./data/sprites/bow.json ***!
@@ -2190,8 +2300,14 @@ function _getEquipmentSuppliers(level) {
         .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
 }
 function createRandomItem({ x, y }, level) {
-    const suppliers = [..._getItemSuppliers(level), ..._getEquipmentSuppliers(level)];
-    return (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_5__.randChoice)(suppliers)({ x, y });
+    let supplier;
+    if ((0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) == 0) {
+        supplier = (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getItemSuppliers(level));
+    }
+    else {
+        supplier = (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getEquipmentSuppliers(level));
+    }
+    return supplier({ x, y });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     createRandomItem
@@ -4001,7 +4117,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _SoundPlayer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SoundPlayer */ "./src/main/sounds/SoundPlayer.ts");
 
-// TODO very hacky memoizing
 let PLAYER = null;
 function _getSoundPlayer() {
     return new _SoundPlayer__WEBPACK_IMPORTED_MODULE_0__.default(4, 0.20);
@@ -4072,18 +4187,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/sounds/player_hits_enemy.json */ "./data/sounds/player_hits_enemy.json");
+/* harmony import */ var _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/sounds/enemy_hits_player.json */ "./data/sounds/enemy_hits_player.json");
+/* harmony import */ var _data_sounds_enemy_dies_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../data/sounds/enemy_dies.json */ "./data/sounds/enemy_dies.json");
+/* harmony import */ var _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../data/sounds/player_dies.json */ "./data/sounds/player_dies.json");
+/* harmony import */ var _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/sounds/level_up.json */ "./data/sounds/level_up.json");
+/* harmony import */ var _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/sounds/deflected_hit.json */ "./data/sounds/deflected_hit.json");
+/* harmony import */ var _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/sounds/pick_up_item.json */ "./data/sounds/pick_up_item.json");
+/* harmony import */ var _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../data/sounds/use_potion.json */ "./data/sounds/use_potion.json");
+/* harmony import */ var _data_sounds_open_door_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../data/sounds/open_door.json */ "./data/sounds/open_door.json");
+/* harmony import */ var _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../data/sounds/footstep.json */ "./data/sounds/footstep.json");
+/* harmony import */ var _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../data/sounds/descend_stairs.json */ "./data/sounds/descend_stairs.json");
+
+
+
+
+
+
+
+
+
+
+
 const Sounds = {
-    PLAYER_HITS_ENEMY: [[175, 5], [0, 5], [150, 5], [0, 5], [300, 5], [0, 5], [125, 5], [0, 5], [350, 5], [0, 10], [100, 5], [0, 10], [350, 5], [0, 10], [125, 5], [0, 10], [300, 5], [0, 15], [150, 5], [0, 15], [175, 5], [0, 20], [150, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-    ENEMY_HITS_PLAYER: [[100, 5], [0, 5], [125, 5], [0, 5], [300, 5], [0, 5], [150, 5], [0, 5], [350, 5], [0, 10], [175, 5], [0, 10], [350, 5], [0, 10], [150, 5], [0, 10], [300, 5], [0, 15], [125, 5], [0, 15], [175, 5], [0, 20], [100, 5], [0, 20], [125, 5], [0, 25], [100, 5], [1, 25], [100, 5]],
-    ENEMY_DIES: [[20, 20], [0, 10], [30, 20], [0, 10], [25, 20], [0, 10], [25, 20], [0, 5], [40, 20], [0, 5], [35, 20], [0, 5], [45, 20], [0, 5], [25, 20], [0, 10], [35, 20], [0, 10], [25, 20], [0, 10], [30, 20], [0, 20], [40, 10], [0, 20], [35, 10], [0, 20], [45, 10], [0, 20], [25, 5], [0, 30], [35, 5], [0, 30], [20, 5], [0, 30], [30, 5]],
-    PLAYER_DIES: [[30, 20], [0, 10], [40, 20], [0, 10], [25, 20], [0, 10], [35, 20], [0, 5], [80, 20], [0, 5], [45, 20], [0, 5], [115, 20], [0, 5], [35, 20], [0, 10], [75, 20], [0, 10], [25, 20], [0, 10], [60, 20], [0, 20], [50, 10], [0, 20], [65, 10], [0, 20], [55, 10], [0, 20], [35, 5], [0, 30], [45, 5], [0, 30], [30, 5], [0, 30], [40, 5]],
-    LEVEL_UP: [[1000, 50], [800, 50], [600, 50], [400, 50], [200, 100], [100, 100], [50, 150], [150, 150], [250, 200], [500, 500]],
-    DEFLECTED_HIT: [[400, 10], [0, 10], [500, 15], [0, 5], [400, 10], [0, 5], [400, 10], [0, 10], [100, 10], [0, 15], [200, 5]],
-    PICK_UP_ITEM: [[50, 50], [0, 5], [100, 50], [0, 10], [200, 50], [0, 20], [400, 50]],
-    USE_POTION: [[150, 50], [200, 50], [250, 50], [175, 50], [225, 50], [275, 50], [200, 50], [250, 50], [300, 50]],
-    OPEN_DOOR: [[25, 40], [50, 40], [75, 60], [100, 60], [125, 80], [100, 80]],
-    FOOTSTEP: [[10, 10], [0, 5], [50, 10], [0, 10], [10, 10], [0, 15], [50, 10], [0, 20], [10, 10]],
-    DESCEND_STAIRS: [[30, 10], [0, 5], [80, 10], [0, 10], [30, 10], [0, 175], [25, 10], [0, 5], [75, 10], [0, 10], [25, 10], [0, 175], [20, 10], [0, 5], [70, 10], [0, 10], [20, 10], [0, 175], [15, 10], [0, 5], [65, 10], [0, 10], [15, 10], [0, 175], [10, 10], [0, 5], [60, 10], [0, 10], [10, 10]],
+    PLAYER_HITS_ENEMY: _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_0__,
+    ENEMY_HITS_PLAYER: _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_1__,
+    ENEMY_DIES: _data_sounds_enemy_dies_json__WEBPACK_IMPORTED_MODULE_2__,
+    PLAYER_DIES: _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_3__,
+    LEVEL_UP: _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_4__,
+    DEFLECTED_HIT: _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_5__,
+    PICK_UP_ITEM: _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_6__,
+    USE_POTION: _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_7__,
+    OPEN_DOOR: _data_sounds_open_door_json__WEBPACK_IMPORTED_MODULE_8__,
+    FOOTSTEP: _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_9__,
+    DESCEND_STAIRS: _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_10__,
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Sounds);
 

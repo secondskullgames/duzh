@@ -1,7 +1,6 @@
 import SoundPlayer from './SoundPlayer';
 import { Sample } from './types';
 
-// TODO very hacky memoizing
 let PLAYER: SoundPlayer | null = null;
 
 function _getSoundPlayer() {
