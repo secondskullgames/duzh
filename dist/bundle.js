@@ -4924,7 +4924,11 @@ const ENEMY_SOLDIER = {
     name: 'ENEMY_SOLDIER',
     type: _types_types__WEBPACK_IMPORTED_MODULE_2__.UnitType.HUMAN,
     sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.SOLDIER,
-    paletteSwaps: {},
+    paletteSwaps: {
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.CYAN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.ORANGE // Hands
+    },
     startingLife: 60,
     startingMana: null,
     startingDamage: 4,

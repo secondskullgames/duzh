@@ -91,7 +91,11 @@ const ENEMY_SOLDIER: UnitClass = {
   name: 'ENEMY_SOLDIER',
   type: UnitType.HUMAN,
   sprite: SpriteFactory.SOLDIER,
-  paletteSwaps: {},
+  paletteSwaps: {
+    [Colors.DARK_GREEN]: Colors.DARK_GRAY, // Socks
+    [Colors.GREEN]: Colors.DARK_GRAY, // Shoes
+    [Colors.CYAN]: Colors.ORANGE // Hands
+  },
   startingLife: 60,
   startingMana: null,
   startingDamage: 4,

@@ -4,7 +4,7 @@ import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { chainPromises } from '../utils/PromiseUtils';
-import { randChoice } from '../utils/RandomUtils';
+import { randChoice, randInt } from '../utils/RandomUtils';
 import { EquipmentClass, EquipmentClasses } from './equipment/EquipmentClasses';
 import { ItemCategory, Coordinates } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
@@ -88,8 +88,13 @@ function _getEquipmentSuppliers(level: number): MapItemSupplier[] {
 }
 
 function createRandomItem({ x, y }: Coordinates, level: number): MapItem {
-  const suppliers: MapItemSupplier[] = [..._getItemSuppliers(level), ..._getEquipmentSuppliers(level)];
-  return randChoice(suppliers)({ x, y });
+  let supplier: MapItemSupplier;
+  if (randInt(0, 2) == 0) {
+    supplier = randChoice(_getItemSuppliers(level))!!;
+  } else {
+    supplier = randChoice(_getEquipmentSuppliers(level))!!;
+  }
+  return supplier({ x, y });
 }
 
 export default {
