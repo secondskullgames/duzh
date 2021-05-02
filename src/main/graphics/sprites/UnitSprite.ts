@@ -6,17 +6,18 @@ import { Activity, PaletteSwaps } from '../../types/types';
 import { fillTemplate } from '../../utils/TemplateUtils';
 import { replaceAll } from '../ImageUtils';
 import Directions from '../../types/Directions';
+import { SpriteConfig } from './SpriteConfig';
 
 class UnitSprite extends Sprite {
   private _unit: Unit;
-  private readonly _spriteName: string;
+  private readonly _spriteConfig: SpriteConfig;
   private readonly _template = 'units/${sprite}/${sprite}_${activity}_${direction}_${number}';
   private readonly _paletteSwaps: PaletteSwaps;
 
-  constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
+  constructor(unit: Unit, spriteConfig: SpriteConfig, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
     super(spriteOffsets);
     this._unit = unit;
-    this._spriteName = spriteName;
+    this._spriteConfig = spriteConfig;
     this._paletteSwaps = paletteSwaps;
   }
 
@@ -24,12 +25,19 @@ class UnitSprite extends Sprite {
    * @override {@link Sprite#getImage}
    */
   getImage(): Promise<ImageBitmap> {
+    let activity = this._unit.activity.toLowerCase();
+    const direction = Directions.toLegacyDirection(this._unit.direction!!);
+    const animation = this._spriteConfig.animations[activity];
+    const frame = animation.frames[0];
+    activity = frame.activity || activity;
+
     const variables = {
-      sprite: this._spriteName,
-      activity: _activityToString(this._unit.activity),
-      direction: Directions.toLegacyDirection(this._unit.direction!!),
-      number: 1
+      sprite: this._spriteConfig.name,
+      activity,
+      direction,
+      number: animation.frames[0].number
     };
+
     const filename = fillTemplate(this._template, variables);
     // TODO can we get this into the yaml?
     const effects = (this._unit.activity === Activity.DAMAGED)
@@ -37,10 +45,6 @@ class UnitSprite extends Sprite {
       : [];
     return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps, effects).get();
   }
-}
-
-function _activityToString(activity: Activity): string {
-  return (activity === 'DAMAGED' ? Activity.STANDING : activity).toLowerCase();
 }
 
 export default UnitSprite;

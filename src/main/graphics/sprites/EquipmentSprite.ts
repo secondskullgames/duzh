@@ -6,19 +6,20 @@ import { fillTemplate } from '../../utils/TemplateUtils';
 import { replaceAll } from '../ImageUtils';
 import Directions from '../../types/Directions';
 import Equipment from '../../items/equipment/Equipment';
+import type { SpriteConfig } from './SpriteConfig';
 
 class EquipmentSprite extends Sprite {
   private static readonly TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
   private static readonly BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
 
   private _equipment: Equipment;
-  private readonly _spriteName: string;
+  private readonly _spriteConfig: SpriteConfig;
   private readonly _paletteSwaps: PaletteSwaps;
 
-  constructor(equipment: Equipment, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: Offsets) {
+  constructor(equipment: Equipment, spriteConfig: SpriteConfig, paletteSwaps: PaletteSwaps, spriteOffsets: Offsets) {
     super(spriteOffsets);
     this._equipment = equipment;
-    this._spriteName = spriteName;
+    this._spriteConfig = spriteConfig;
     this._paletteSwaps = paletteSwaps;
   }
 
@@ -30,7 +31,7 @@ class EquipmentSprite extends Sprite {
   getImage(): Promise<ImageBitmap> {
     const unit = this._equipment.unit!!;
     const variables = {
-      sprite: this._spriteName,
+      sprite: this._spriteConfig.name,
       activity: this._activityToString(unit.activity),
       direction: Directions.toLegacyDirection(unit.direction!!),
       number: 1
@@ -48,8 +49,6 @@ class EquipmentSprite extends Sprite {
    */
   private _activityToString(activity: Activity): string {
     switch (true) {
-      case (this._spriteName === 'bow' && activity === 'ATTACKING'):
-        return 'shooting';
       case activity === 'DAMAGED':
         return 'standing';
       default:

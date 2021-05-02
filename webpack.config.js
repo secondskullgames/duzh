@@ -17,7 +17,7 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: 'png', to: 'png' },
+        { from: 'png', to: 'png' }
       ],
       options: {
         concurrency: 100,
@@ -30,5 +30,8 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+  },
+  stats: {
+    errorDetails: true
   }
 };

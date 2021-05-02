@@ -1,6 +1,6 @@
-import GameState from './GameState';
+import GameState from '../core/GameState';
 import Renderer from '../graphics/Renderer';
-import { DebugShape } from './debug';
+import { DebugShape } from '../core/debug';
 
 declare global {
   let jwb: {

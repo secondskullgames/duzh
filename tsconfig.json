@@ -1,7 +1,22 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./src/main" },
-    { "path": "./src/test" }
-  ]
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "baseUrl": ".",
+    "lib": ["dom", "es5", "es6", "es2015", "es2017", "es2019.array"],
+    "module": "es2015",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "target": "es2015"
+  },
+  "paths": {
+    "data": ["./data", "./dist/data"],
+    "*": ["*"]
+  }
 }
