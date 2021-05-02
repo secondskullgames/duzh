@@ -1763,6 +1763,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+var SpriteName;
+(function (SpriteName) {
+    SpriteName["BOW"] = "BOW";
+    SpriteName["MAIL"] = "MAIL";
+    SpriteName["SHIELD"] = "SHIELD";
+    SpriteName["SNAKE"] = "SNAKE";
+    SpriteName["SWORD"] = "SWORD";
+    SpriteName["PLAYER"] = "PLAYER";
+    SpriteName["ZOMBIE"] = "ZOMBIE";
+})(SpriteName || (SpriteName = {}));
 const SpriteConfigs = {
     BOW: _data_sprites_bow_json__WEBPACK_IMPORTED_MODULE_2__,
     MAIL: _data_sprites_mail_json__WEBPACK_IMPORTED_MODULE_3__,
@@ -1772,7 +1782,6 @@ const SpriteConfigs = {
     PLAYER: _data_sprites_player_json__WEBPACK_IMPORTED_MODULE_0__,
     ZOMBIE: _data_sprites_zombie_json__WEBPACK_IMPORTED_MODULE_1__
 };
-console.log(SpriteConfigs);
 
 
 
@@ -1799,10 +1808,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const StaticSprites = {
-    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('sword_icon', { dx: 0, dy: -8 }, paletteSwaps),
+    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/sword/sword_icon_small', { dx: 0, dy: -8 }, paletteSwaps),
     MAP_POTION: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
     MAP_SCROLL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
-    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('bow_icon', { dx: 0, dy: 0 }, paletteSwaps)
+    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/bow/bow_icon_small', { dx: 0, dy: 0 }, paletteSwaps),
+    MAP_MAIL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/mail/mail_icon_small', { dx: 0, dy: -8 }, paletteSwaps)
 };
 const UnitSprites = {
     PLAYER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.PLAYER, paletteSwaps, { dx: -4, dy: -20 }),
@@ -1814,7 +1824,8 @@ const UnitSprites = {
 // TODO - check offsets
 const EquipmentSprites = {
     SWORD: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.SWORD, paletteSwaps, { dx: -4, dy: -20 }),
-    BOW: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.BOW, paletteSwaps, { dx: -4, dy: -20 })
+    BOW: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.BOW, paletteSwaps, { dx: -4, dy: -20 }),
+    MAIL: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.MAIL, paletteSwaps, { dx: -4, dy: -20 })
 };
 const ProjectileSprites = {
     ARROW: (direction, paletteSwaps) => new _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__.default(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
@@ -1826,6 +1837,7 @@ const ProjectileSprites = {
     MAP_POTION: StaticSprites.MAP_POTION,
     MAP_SCROLL: StaticSprites.MAP_SCROLL,
     MAP_BOW: StaticSprites.MAP_BOW,
+    MAP_MAIL: StaticSprites.MAP_MAIL,
     PLAYER: UnitSprites.PLAYER,
     GOLEM: UnitSprites.GOLEM,
     GRUNT: UnitSprites.GRUNT,
@@ -1833,7 +1845,8 @@ const ProjectileSprites = {
     SOLDIER: UnitSprites.SOLDIER,
     SWORD: EquipmentSprites.SWORD,
     BOW: EquipmentSprites.BOW,
-    ARROW: ProjectileSprites.ARROW
+    ARROW: ProjectileSprites.ARROW,
+    MAIL: EquipmentSprites.MAIL
 });
 
 
@@ -2100,11 +2113,11 @@ function _createMapEquipment(equipmentClass, { x, y }) {
     const inventoryItem = _createInventoryWeapon(equipmentClass);
     return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
 }
-function _createInventoryWeapon(weaponClass) {
+function _createInventoryWeapon(equipmentClass) {
     const onUse = (item, unit) => {
-        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, weaponClass, unit);
+        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, equipmentClass, unit);
     };
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(weaponClass.name, weaponClass.itemCategory, onUse);
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
 }
 function _getItemSuppliers(level) {
     const createMapPotion = ({ x, y }) => {
@@ -2119,14 +2132,14 @@ function _getItemSuppliers(level) {
     };
     return [createMapPotion, createFloorFireScroll];
 }
-function _getWeaponSuppliers(level) {
-    return (0,_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_6__.getWeaponClasses)()
-        .filter(weaponClass => level >= weaponClass.minLevel)
-        .filter(weaponClass => level <= weaponClass.maxLevel)
-        .map(weaponClass => ({ x, y }) => _createMapEquipment(weaponClass, { x, y }));
+function _getEquipmentSuppliers(level) {
+    return Object.values(_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_6__.EquipmentClasses)
+        .filter(equipmentClass => level >= equipmentClass.minLevel)
+        .filter(equipmentClass => level <= equipmentClass.maxLevel)
+        .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
 }
 function createRandomItem({ x, y }, level) {
-    const suppliers = [..._getItemSuppliers(level), ..._getWeaponSuppliers(level)];
+    const suppliers = [..._getItemSuppliers(level), ..._getEquipmentSuppliers(level)];
     return (0,_utils_RandomUtils__WEBPACK_IMPORTED_MODULE_5__.randChoice)(suppliers)({ x, y });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2263,7 +2276,7 @@ class Equipment {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getWeaponClasses": () => (/* binding */ getWeaponClasses)
+/* harmony export */   "EquipmentClasses": () => (/* binding */ EquipmentClasses)
 /* harmony export */ });
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
@@ -2360,9 +2373,26 @@ const LONG_BOW = {
     minLevel: 5,
     maxLevel: 6
 };
-function getWeaponClasses() {
-    return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW, LONG_BOW];
-}
+const CHAIN_MAIL = {
+    name: 'Chain Mail',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAIL,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_MAIL,
+    char: 'S',
+    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.ARMOR,
+    paletteSwaps: {},
+    minLevel: 1,
+    maxLevel: 6
+};
+const EquipmentClasses = {
+    BRONZE_SWORD,
+    IRON_SWORD,
+    STEEL_SWORD,
+    FIRE_SWORD,
+    SHORT_BOW,
+    LONG_BOW,
+    CHAIN_MAIL
+};
 
 
 
@@ -4130,6 +4160,7 @@ var ItemCategory;
     ItemCategory["POTION"] = "POTION";
     ItemCategory["SCROLL"] = "SCROLL";
     ItemCategory["WEAPON"] = "WEAPON";
+    ItemCategory["ARMOR"] = "ARMOR";
 })(ItemCategory || (ItemCategory = {}));
 var MapLayout;
 (function (MapLayout) {

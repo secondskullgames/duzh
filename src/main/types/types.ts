@@ -27,36 +27,37 @@ interface Entity extends Coordinates {
 }
 
 enum EquipmentSlot {
-  MELEE_WEAPON = 'MELEE_WEAPON',
+  MELEE_WEAPON  = 'MELEE_WEAPON',
   RANGED_WEAPON = 'RANGED_WEAPON',
-  ARMOR = 'ARMOR'
+  ARMOR         = 'ARMOR'
 }
 
 enum GameScreen {
-  GAME = 'GAME',
+  GAME      = 'GAME',
   INVENTORY = 'INVENTORY',
-  TITLE = 'TITLE',
-  VICTORY = 'VICTORY',
+  TITLE     = 'TITLE',
+  VICTORY   = 'VICTORY',
   GAME_OVER = 'GAME_OVER',
-  MINIMAP = 'MINIMAP'
+  MINIMAP   = 'MINIMAP'
 }
 
 enum ItemCategory {
   POTION = 'POTION',
   SCROLL = 'SCROLL',
-  WEAPON = 'WEAPON'
+  WEAPON = 'WEAPON',
+  ARMOR  = 'ARMOR'
 }
 
 interface MapSection {
-  width: number,
+  width:  number,
   height: number,
-  rooms: Room[],
-  tiles: TileType[][]
+  rooms:  Room[],
+  tiles:  TileType[][]
 }
 
 enum MapLayout {
   ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
-  BLOB = 'BLOB'
+  BLOB                = 'BLOB'
 }
 
 type PaletteSwaps = {

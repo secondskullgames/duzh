@@ -21,7 +21,17 @@ type SpriteConfig = {
   }
 }
 
-const SpriteConfigs: ({ [name: string]: SpriteConfig }) = {
+enum SpriteName {
+  BOW = 'BOW',
+  MAIL = 'MAIL',
+  SHIELD = 'SHIELD',
+  SNAKE = 'SNAKE',
+  SWORD = 'SWORD',
+  PLAYER = 'PLAYER',
+  ZOMBIE = 'ZOMBIE'
+}
+
+const SpriteConfigs: ({ [name in SpriteName]: SpriteConfig }) = {
   BOW:     bow,
   MAIL:    mail,
   SHIELD:  shield2,
@@ -30,8 +40,6 @@ const SpriteConfigs: ({ [name: string]: SpriteConfig }) = {
   PLAYER:  player,
   ZOMBIE:  zombie
 };
-
-console.log(SpriteConfigs);
 
 export { SpriteConfigs };
 export type { SpriteConfig };

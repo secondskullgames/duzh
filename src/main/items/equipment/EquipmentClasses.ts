@@ -12,7 +12,7 @@ interface EquipmentClass {
   paletteSwaps: PaletteSwaps
   minLevel: number,
   maxLevel: number,
-  damage: number
+  damage?: number
 }
 
 const BRONZE_SWORD: EquipmentClass = {
@@ -110,11 +110,30 @@ const LONG_BOW: EquipmentClass = {
   maxLevel: 6
 };
 
-function getWeaponClasses() {
-  return [BRONZE_SWORD, IRON_SWORD, STEEL_SWORD, FIRE_SWORD, SHORT_BOW, LONG_BOW];
+const CHAIN_MAIL: EquipmentClass = {
+  name: 'Chain Mail',
+  sprite: SpriteFactory.MAIL,
+  mapIcon: SpriteFactory.MAP_MAIL,
+  char: 'S',
+  itemCategory: ItemCategory.ARMOR,
+  slot: EquipmentSlot.ARMOR,
+  paletteSwaps: {
+  },
+  minLevel: 1,
+  maxLevel: 6
+};
+
+const EquipmentClasses: { [name: string]: EquipmentClass } = {
+  BRONZE_SWORD,
+  IRON_SWORD,
+  STEEL_SWORD,
+  FIRE_SWORD,
+  SHORT_BOW,
+  LONG_BOW,
+  CHAIN_MAIL
 }
 
 export {
   EquipmentClass,
-  getWeaponClasses
+  EquipmentClasses
 };
