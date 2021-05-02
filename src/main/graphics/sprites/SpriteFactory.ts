@@ -13,11 +13,11 @@ type EquipmentSpriteSupplier = (equipment: Equipment, paletteSwaps: PaletteSwaps
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
 
 const StaticSprites: { [name: string]: SpriteSupplier } = {
-  MAP_SWORD: paletteSwaps  => new StaticSprite('equipment/sword/sword_icon_small', { dx: 8, dy: -8 }, paletteSwaps),
+  MAP_SWORD: paletteSwaps  => new StaticSprite('equipment/sword/sword_icon_small', { dx: 8, dy: 0 }, paletteSwaps),
   MAP_POTION: paletteSwaps => new StaticSprite('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
   MAP_SCROLL: paletteSwaps => new StaticSprite('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
   MAP_BOW: paletteSwaps    => new StaticSprite('bow_icon', { dx: 0, dy: 0 }, paletteSwaps),
-  MAP_MAIL: paletteSwaps   => new StaticSprite('equipment/mail/mail_icon_small', { dx: 8, dy: -8 }, paletteSwaps)
+  MAP_MAIL: paletteSwaps   => new StaticSprite('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {

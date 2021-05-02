@@ -4,6 +4,8 @@ import Colors from '../types/Colors';
 import { UnitType } from '../types/types';
 import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import PlayerUnitController from './controllers/PlayerUnitController';
+import { EquipmentClasses } from '../items/equipment/EquipmentClasses';
+import Equipment from '../items/equipment/Equipment';
 
 const PLAYER: UnitClass = {
   name: 'PLAYER',
@@ -59,7 +61,11 @@ const ENEMY_GRUNT: UnitClass = {
   name: 'ENEMY_GRUNT',
   type: UnitType.HUMAN,
   sprite: SpriteFactory.GRUNT,
-  paletteSwaps: {},
+  paletteSwaps: {
+    [Colors.DARK_GREEN]: Colors.DARK_BROWN, // Socks
+    [Colors.GREEN]: Colors.DARK_BROWN, // Shoes
+    [Colors.CYAN]: Colors.ORANGE // Hands
+  },
   startingLife: 50,
   startingMana: null,
   startingDamage: 5,
@@ -69,6 +75,11 @@ const ENEMY_GRUNT: UnitClass = {
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
   controller: HUMAN_DETERMINISTIC,
+  equipment: [
+    () => new Equipment(EquipmentClasses.CHAIN_MAIL, null, {
+      [Colors.DARK_GRAY]: Colors.DARK_BROWN, // Skirt
+    })
+  ],
   aiParams: {
     speed: 0.95,
     visionRange: 8,

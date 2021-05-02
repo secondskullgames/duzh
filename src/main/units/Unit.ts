@@ -62,6 +62,12 @@ class Unit implements Entity {
     this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
     this.stunDuration = 0;
 
+    unitClass.equipment?.forEach(supplier => {
+      const equipment = supplier();
+      this.equipment.add(equipment);
+      equipment.attach(this);
+    })
+
     while (this.level < level) {
       this._levelUp(false);
     }

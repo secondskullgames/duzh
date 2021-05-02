@@ -9,9 +9,6 @@ import Equipment from '../../items/equipment/Equipment';
 import type { SpriteConfig } from './SpriteConfig';
 
 class EquipmentSprite extends Sprite {
-  private static readonly TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
-  private static readonly BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
-
   private _equipment: Equipment;
   private readonly _spriteConfig: SpriteConfig;
   private readonly _paletteSwaps: PaletteSwaps;
@@ -30,30 +27,28 @@ class EquipmentSprite extends Sprite {
    */
   getImage(): Promise<ImageBitmap> {
     const unit = this._equipment.unit!!;
+    const spriteConfig = this._spriteConfig;
+
+    let activity = unit.activity.toLowerCase();
+    const direction = Directions.toLegacyDirection(unit.direction!!);
+    const animation = spriteConfig.animations[activity];
+    const frame = animation.frames[0];
+    activity = frame.activity || activity;
+
     const variables = {
-      sprite: this._spriteConfig.name,
-      activity: this._activityToString(unit.activity),
-      direction: Directions.toLegacyDirection(unit.direction!!),
-      number: 1
+      sprite: spriteConfig.name,
+      activity,
+      direction,
+      number: animation.frames[0].number
     };
-    const filename = fillTemplate(EquipmentSprite.TEMPLATE, variables);
-    const behindFilename = fillTemplate(EquipmentSprite.BEHIND_TEMPLATE, variables);
+
+    const patterns = spriteConfig.patterns || [spriteConfig.pattern!!];
+    const filenames = patterns.map(pattern => `equipment/${spriteConfig.name}/${pattern}`)
+      .map(pattern => fillTemplate(pattern, variables));
     const effects = (unit.activity === Activity.DAMAGED)
       ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
       : [];
-    return new ImageSupplier([behindFilename, filename], Colors.WHITE, this._paletteSwaps, effects).get();
-  }
-
-  /**
-   * TODO - a collection of hacks until we can get better config files for these
-   */
-  private _activityToString(activity: Activity): string {
-    switch (true) {
-      case activity === 'DAMAGED':
-        return 'standing';
-      default:
-        return activity.toLowerCase();
-    }
+    return new ImageSupplier(filenames, Colors.WHITE, this._paletteSwaps, effects).get();
   }
 }
 

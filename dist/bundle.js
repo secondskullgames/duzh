@@ -1629,33 +1629,27 @@ class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
      */
     getImage() {
         const unit = this._equipment.unit;
+        const spriteConfig = this._spriteConfig;
+        let activity = unit.activity.toLowerCase();
+        const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
+        const animation = spriteConfig.animations[activity];
+        const frame = animation.frames[0];
+        activity = frame.activity || activity;
         const variables = {
-            sprite: this._spriteConfig.name,
-            activity: this._activityToString(unit.activity),
-            direction: _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction),
-            number: 1
+            sprite: spriteConfig.name,
+            activity,
+            direction,
+            number: animation.frames[0].number
         };
-        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.TEMPLATE, variables);
-        const behindFilename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(EquipmentSprite.BEHIND_TEMPLATE, variables);
+        const patterns = spriteConfig.patterns || [spriteConfig.pattern];
+        const filenames = patterns.map(pattern => `equipment/${spriteConfig.name}/${pattern}`)
+            .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(pattern, variables));
         const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
             ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
             : [];
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default([behindFilename, filename], _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
-    }
-    /**
-     * TODO - a collection of hacks until we can get better config files for these
-     */
-    _activityToString(activity) {
-        switch (true) {
-            case activity === 'DAMAGED':
-                return 'standing';
-            default:
-                return activity.toLowerCase();
-        }
+        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filenames, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
     }
 }
-EquipmentSprite.TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}';
-EquipmentSprite.BEHIND_TEMPLATE = 'equipment/${sprite}/${sprite}_${activity}_${direction}_${number}_B';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentSprite);
 
 
@@ -1808,11 +1802,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const StaticSprites = {
-    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/sword/sword_icon_small', { dx: 0, dy: -8 }, paletteSwaps),
+    MAP_SWORD: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/sword/sword_icon_small', { dx: 8, dy: 0 }, paletteSwaps),
     MAP_POTION: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
     MAP_SCROLL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
-    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/bow/bow_icon_small', { dx: 0, dy: 0 }, paletteSwaps),
-    MAP_MAIL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/mail/mail_icon_small', { dx: 0, dy: -8 }, paletteSwaps)
+    MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('bow_icon', { dx: 0, dy: 0 }, paletteSwaps),
+    MAP_MAIL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
 };
 const UnitSprites = {
     PLAYER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.PLAYER, paletteSwaps, { dx: -4, dy: -20 }),
@@ -1912,7 +1906,6 @@ __webpack_require__.r(__webpack_exports__);
 class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     constructor(unit, spriteConfig, paletteSwaps, spriteOffsets) {
         super(spriteOffsets);
-        this._template = 'units/${sprite}/${sprite}_${activity}_${direction}_${number}';
         this._unit = unit;
         this._spriteConfig = spriteConfig;
         this._paletteSwaps = paletteSwaps;
@@ -1921,23 +1914,26 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
      * @override {@link Sprite#getImage}
      */
     getImage() {
-        let activity = this._unit.activity.toLowerCase();
-        const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(this._unit.direction);
-        const animation = this._spriteConfig.animations[activity];
+        const unit = this._unit;
+        const spriteConfig = this._spriteConfig;
+        let activity = unit.activity.toLowerCase();
+        const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
+        const animation = spriteConfig.animations[activity];
         const frame = animation.frames[0];
         activity = frame.activity || activity;
         const variables = {
-            sprite: this._spriteConfig.name,
+            sprite: spriteConfig.name,
             activity,
             direction,
             number: animation.frames[0].number
         };
-        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(this._template, variables);
-        // TODO can we get this into the yaml?
-        const effects = (this._unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
+        const patterns = spriteConfig.patterns || [spriteConfig.pattern];
+        const filenames = patterns.map(pattern => `units/${spriteConfig.name}/${pattern}`)
+            .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(pattern, variables));
+        const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
             ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
             : [];
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filename, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
+        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filenames, _types_Colors__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UnitSprite);
@@ -4221,6 +4217,7 @@ __webpack_require__.r(__webpack_exports__);
 const LIFE_PER_TURN_MULTIPLIER = 0.0002;
 class Unit {
     constructor(unitClass, name, level, { x, y }) {
+        var _a;
         this.char = '@';
         this.unitClass = unitClass;
         this.sprite = unitClass.sprite(this, unitClass.paletteSwaps);
@@ -4244,6 +4241,11 @@ class Unit {
         // TODO: this needs to be specific to the player unit
         this.abilities = [_UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.HEAVY_ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.KNOCKBACK_ATTACK, _UnitAbilities__WEBPACK_IMPORTED_MODULE_4__.default.STUN_ATTACK];
         this.stunDuration = 0;
+        (_a = unitClass.equipment) === null || _a === void 0 ? void 0 : _a.forEach(supplier => {
+            const equipment = supplier();
+            this.equipment.add(equipment);
+            equipment.attach(this);
+        });
         while (this.level < level) {
             this._levelUp(false);
         }
@@ -4750,6 +4752,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controllers/AIUnitControllers */ "./src/main/units/controllers/AIUnitControllers.ts");
 /* harmony import */ var _controllers_PlayerUnitController__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controllers/PlayerUnitController */ "./src/main/units/controllers/PlayerUnitController.ts");
+/* harmony import */ var _items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../items/equipment/EquipmentClasses */ "./src/main/items/equipment/EquipmentClasses.ts");
+/* harmony import */ var _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../items/equipment/Equipment */ "./src/main/items/equipment/Equipment.ts");
+
+
 
 
 
@@ -4807,7 +4813,10 @@ const ENEMY_GRUNT = {
     name: 'ENEMY_GRUNT',
     type: _types_types__WEBPACK_IMPORTED_MODULE_2__.UnitType.HUMAN,
     sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.GRUNT,
-    paletteSwaps: {},
+    paletteSwaps: {
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
+    },
     startingLife: 50,
     startingMana: null,
     startingDamage: 5,
@@ -4817,6 +4826,11 @@ const ENEMY_GRUNT = {
     manaPerLevel: () => null,
     damagePerLevel: () => 1,
     controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__.HUMAN_DETERMINISTIC,
+    equipment: [
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.CHAIN_MAIL, null, {
+            [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
+        })
+    ],
     aiParams: {
         speed: 0.95,
         visionRange: 8,
