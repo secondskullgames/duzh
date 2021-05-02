@@ -17,7 +17,8 @@ const StaticSprites: { [name: string]: SpriteSupplier } = {
   MAP_POTION: paletteSwaps => new StaticSprite('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
   MAP_SCROLL: paletteSwaps => new StaticSprite('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
   MAP_BOW: paletteSwaps    => new StaticSprite('bow_icon', { dx: 0, dy: 0 }, paletteSwaps),
-  MAP_MAIL: paletteSwaps   => new StaticSprite('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
+  MAP_MAIL: paletteSwaps   => new StaticSprite('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps),
+  MAP_HELMET: paletteSwaps   => new StaticSprite('equipment/helmet/helmet_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
 };
 
 const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
@@ -32,7 +33,8 @@ const UnitSprites: { [name: string]: UnitSpriteSupplier } = {
 const EquipmentSprites: { [name: string]: EquipmentSpriteSupplier } = {
   SWORD: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, SpriteConfigs.SWORD, paletteSwaps, { dx: -4, dy: -20 }),
   BOW: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, SpriteConfigs.BOW, paletteSwaps, { dx: -4, dy: -20 }),
-  MAIL: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, SpriteConfigs.MAIL, paletteSwaps, { dx: -4, dy: -20 })
+  MAIL: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, SpriteConfigs.MAIL, paletteSwaps, { dx: -4, dy: -20 }),
+  HELMET: (equipment: Equipment, paletteSwaps: PaletteSwaps) => new EquipmentSprite(equipment, SpriteConfigs.HELMET, paletteSwaps, { dx: -4, dy: -20 })
 }
 
 const ProjectileSprites: { [name: string]: ProjectileSpriteSupplier } = {
@@ -47,6 +49,7 @@ export default {
   MAP_SCROLL: StaticSprites.MAP_SCROLL,
   MAP_BOW: StaticSprites.MAP_BOW,
   MAP_MAIL: StaticSprites.MAP_MAIL,
+  MAP_HELMET: StaticSprites.MAP_HELMET,
   PLAYER: UnitSprites.PLAYER,
   GOLEM: UnitSprites.GOLEM,
   GRUNT: UnitSprites.GRUNT,
@@ -55,7 +58,8 @@ export default {
   SWORD: EquipmentSprites.SWORD,
   BOW: EquipmentSprites.BOW,
   ARROW: ProjectileSprites.ARROW,
-  MAIL: EquipmentSprites.MAIL
+  MAIL: EquipmentSprites.MAIL,
+  HELMET: EquipmentSprites.HELMET
 };
 
 export type {

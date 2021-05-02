@@ -110,15 +110,40 @@ const LONG_BOW: EquipmentClass = {
   maxLevel: 6
 };
 
-const CHAIN_MAIL: EquipmentClass = {
-  name: 'Chain Mail',
+const BRONZE_CHAIN_MAIL: EquipmentClass = {
+  name: 'Bronze Chain Mail',
   sprite: SpriteFactory.MAIL,
   mapIcon: SpriteFactory.MAP_MAIL,
   char: 'S',
   itemCategory: ItemCategory.ARMOR,
-  slot: EquipmentSlot.ARMOR,
+  slot: EquipmentSlot.CHEST,
   paletteSwaps: {
+    [Colors.DARK_GRAY]: Colors.DARK_BROWN
   },
+  minLevel: 1,
+  maxLevel: 2
+};
+
+const IRON_CHAIN_MAIL: EquipmentClass = {
+  name: 'Iron Chain Mail',
+  sprite: SpriteFactory.MAIL,
+  mapIcon: SpriteFactory.MAP_MAIL,
+  char: 'S',
+  itemCategory: ItemCategory.ARMOR,
+  slot: EquipmentSlot.CHEST,
+  paletteSwaps: {},
+  minLevel: 3,
+  maxLevel: 6
+};
+
+const IRON_HELMET: EquipmentClass = {
+  name: 'Iron Helmet',
+  sprite: SpriteFactory.HELMET,
+  mapIcon: SpriteFactory.MAP_HELMET,
+  char: 'S',
+  itemCategory: ItemCategory.ARMOR,
+  slot: EquipmentSlot.HEAD,
+  paletteSwaps: {},
   minLevel: 1,
   maxLevel: 6
 };
@@ -130,7 +155,9 @@ const EquipmentClasses: { [name: string]: EquipmentClass } = {
   FIRE_SWORD,
   SHORT_BOW,
   LONG_BOW,
-  CHAIN_MAIL
+  BRONZE_CHAIN_MAIL,
+  IRON_CHAIN_MAIL,
+  IRON_HELMET
 }
 
 export {

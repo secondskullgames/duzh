@@ -11,7 +11,7 @@ abstract class Sprite {
     this.dy = dy;
   }
 
-  abstract getImage(): Promise<ImageBitmap>;
+  abstract getImage(): Promise<ImageBitmap | null>;
 }
 
 type Offsets = { dx: number, dy: number };

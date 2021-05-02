@@ -12,13 +12,23 @@ module.exports = JSON.parse('{"name":"bow","patterns":["${sprite}_${activity}_${
 
 /***/ }),
 
+/***/ "./data/sprites/helmet.json":
+/*!**********************************!*\
+  !*** ./data/sprites/helmet.json ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"helmet","patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"shooting":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
+
+/***/ }),
+
 /***/ "./data/sprites/mail.json":
 /*!********************************!*\
   !*** ./data/sprites/mail.json ***!
   \********************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"name":"mail","patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
+module.exports = JSON.parse('{"name":"mail","patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"shooting":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
 
 /***/ }),
 
@@ -1279,7 +1289,11 @@ class SpriteRenderer {
     }
     _drawSprite(sprite, { x, y }) {
         return sprite.getImage()
-            .then(image => this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy));
+            .then(image => {
+            if (image) {
+                this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+            }
+        });
     }
     _renderMessages() {
         const { _bufferContext } = this;
@@ -1615,12 +1629,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function _memoize(key, valueSupplier, cache) {
+    if (cache[key]) {
+        return cache[key];
+    }
+    const value = valueSupplier(key);
+    cache[key] = value;
+    return value;
+}
 class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     constructor(equipment, spriteConfig, paletteSwaps, spriteOffsets) {
         super(spriteOffsets);
         this._equipment = equipment;
         this._spriteConfig = spriteConfig;
         this._paletteSwaps = paletteSwaps;
+        this._imageCache = {};
     }
     /**
      * NOTE: This is mostly copy-pasted from {@link UnitSprite#getImage}
@@ -1629,10 +1652,19 @@ class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
      */
     getImage() {
         const unit = this._equipment.unit;
+        const activity = unit.activity.toLowerCase();
+        const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
+        return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
+    }
+    _getImage() {
+        const unit = this._equipment.unit;
         const spriteConfig = this._spriteConfig;
         let activity = unit.activity.toLowerCase();
         const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
         const animation = spriteConfig.animations[activity];
+        if (!animation) {
+            return Promise.resolve(null);
+        }
         const frame = animation.frames[0];
         activity = frame.activity || activity;
         const variables = {
@@ -1743,13 +1775,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "SpriteConfigs": () => (/* binding */ SpriteConfigs)
 /* harmony export */ });
-/* harmony import */ var _data_sprites_player_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/sprites/player.json */ "./data/sprites/player.json");
-/* harmony import */ var _data_sprites_zombie_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/sprites/zombie.json */ "./data/sprites/zombie.json");
-/* harmony import */ var _data_sprites_bow_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/sprites/bow.json */ "./data/sprites/bow.json");
-/* harmony import */ var _data_sprites_mail_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/sprites/mail.json */ "./data/sprites/mail.json");
+/* harmony import */ var _data_sprites_bow_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/sprites/bow.json */ "./data/sprites/bow.json");
+/* harmony import */ var _data_sprites_helmet_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/sprites/helmet.json */ "./data/sprites/helmet.json");
+/* harmony import */ var _data_sprites_mail_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/sprites/mail.json */ "./data/sprites/mail.json");
+/* harmony import */ var _data_sprites_player_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/sprites/player.json */ "./data/sprites/player.json");
 /* harmony import */ var _data_sprites_shield2_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../data/sprites/shield2.json */ "./data/sprites/shield2.json");
 /* harmony import */ var _data_sprites_snake_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../data/sprites/snake.json */ "./data/sprites/snake.json");
 /* harmony import */ var _data_sprites_sword_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../data/sprites/sword.json */ "./data/sprites/sword.json");
+/* harmony import */ var _data_sprites_zombie_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../data/sprites/zombie.json */ "./data/sprites/zombie.json");
+
 
 
 
@@ -1760,6 +1794,7 @@ __webpack_require__.r(__webpack_exports__);
 var SpriteName;
 (function (SpriteName) {
     SpriteName["BOW"] = "BOW";
+    SpriteName["HELMET"] = "HELMET";
     SpriteName["MAIL"] = "MAIL";
     SpriteName["SHIELD"] = "SHIELD";
     SpriteName["SNAKE"] = "SNAKE";
@@ -1768,13 +1803,14 @@ var SpriteName;
     SpriteName["ZOMBIE"] = "ZOMBIE";
 })(SpriteName || (SpriteName = {}));
 const SpriteConfigs = {
-    BOW: _data_sprites_bow_json__WEBPACK_IMPORTED_MODULE_2__,
-    MAIL: _data_sprites_mail_json__WEBPACK_IMPORTED_MODULE_3__,
+    BOW: _data_sprites_bow_json__WEBPACK_IMPORTED_MODULE_0__,
+    HELMET: _data_sprites_helmet_json__WEBPACK_IMPORTED_MODULE_1__,
+    MAIL: _data_sprites_mail_json__WEBPACK_IMPORTED_MODULE_2__,
     SHIELD: _data_sprites_shield2_json__WEBPACK_IMPORTED_MODULE_4__,
     SNAKE: _data_sprites_snake_json__WEBPACK_IMPORTED_MODULE_5__,
     SWORD: _data_sprites_sword_json__WEBPACK_IMPORTED_MODULE_6__,
-    PLAYER: _data_sprites_player_json__WEBPACK_IMPORTED_MODULE_0__,
-    ZOMBIE: _data_sprites_zombie_json__WEBPACK_IMPORTED_MODULE_1__
+    PLAYER: _data_sprites_player_json__WEBPACK_IMPORTED_MODULE_3__,
+    ZOMBIE: _data_sprites_zombie_json__WEBPACK_IMPORTED_MODULE_7__
 };
 
 
@@ -1806,7 +1842,8 @@ const StaticSprites = {
     MAP_POTION: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('potion_icon', { dx: 0, dy: -8 }, paletteSwaps),
     MAP_SCROLL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('scroll_icon', { dx: 0, dy: 0 }, paletteSwaps),
     MAP_BOW: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('bow_icon', { dx: 0, dy: 0 }, paletteSwaps),
-    MAP_MAIL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
+    MAP_MAIL: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/mail/mail_icon_small', { dx: 8, dy: 0 }, paletteSwaps),
+    MAP_HELMET: paletteSwaps => new _StaticSprite__WEBPACK_IMPORTED_MODULE_0__.default('equipment/helmet/helmet_icon_small', { dx: 8, dy: 0 }, paletteSwaps)
 };
 const UnitSprites = {
     PLAYER: (unit, paletteSwaps) => new _UnitSprite__WEBPACK_IMPORTED_MODULE_1__.default(unit, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.PLAYER, paletteSwaps, { dx: -4, dy: -20 }),
@@ -1819,7 +1856,8 @@ const UnitSprites = {
 const EquipmentSprites = {
     SWORD: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.SWORD, paletteSwaps, { dx: -4, dy: -20 }),
     BOW: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.BOW, paletteSwaps, { dx: -4, dy: -20 }),
-    MAIL: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.MAIL, paletteSwaps, { dx: -4, dy: -20 })
+    MAIL: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.MAIL, paletteSwaps, { dx: -4, dy: -20 }),
+    HELMET: (equipment, paletteSwaps) => new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_3__.default(equipment, _SpriteConfig__WEBPACK_IMPORTED_MODULE_4__.SpriteConfigs.HELMET, paletteSwaps, { dx: -4, dy: -20 })
 };
 const ProjectileSprites = {
     ARROW: (direction, paletteSwaps) => new _ProjectileSprite__WEBPACK_IMPORTED_MODULE_2__.default(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
@@ -1832,6 +1870,7 @@ const ProjectileSprites = {
     MAP_SCROLL: StaticSprites.MAP_SCROLL,
     MAP_BOW: StaticSprites.MAP_BOW,
     MAP_MAIL: StaticSprites.MAP_MAIL,
+    MAP_HELMET: StaticSprites.MAP_HELMET,
     PLAYER: UnitSprites.PLAYER,
     GOLEM: UnitSprites.GOLEM,
     GRUNT: UnitSprites.GRUNT,
@@ -1840,7 +1879,8 @@ const ProjectileSprites = {
     SWORD: EquipmentSprites.SWORD,
     BOW: EquipmentSprites.BOW,
     ARROW: ProjectileSprites.ARROW,
-    MAIL: EquipmentSprites.MAIL
+    MAIL: EquipmentSprites.MAIL,
+    HELMET: EquipmentSprites.HELMET
 });
 
 
@@ -1903,17 +1943,32 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function _memoize(key, valueSupplier, cache) {
+    if (cache[key]) {
+        return cache[key];
+    }
+    const value = valueSupplier(key);
+    cache[key] = value;
+    return value;
+}
 class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
     constructor(unit, spriteConfig, paletteSwaps, spriteOffsets) {
         super(spriteOffsets);
         this._unit = unit;
         this._spriteConfig = spriteConfig;
         this._paletteSwaps = paletteSwaps;
+        this._imageCache = {};
     }
     /**
      * @override {@link Sprite#getImage}
      */
     getImage() {
+        const unit = this._unit;
+        const activity = unit.activity.toLowerCase();
+        const direction = _types_Directions__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
+        return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
+    }
+    _getImage() {
         const unit = this._unit;
         const spriteConfig = this._spriteConfig;
         let activity = unit.activity.toLowerCase();
@@ -2176,7 +2231,7 @@ function useItem(unit, item) {
 }
 function equipItem(item, equipmentClass, unit) {
     return new Promise(resolve => {
-        const equipment = new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass, item, equipmentClass.paletteSwaps);
+        const equipment = new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass, item);
         unit.equipment.add(equipment);
         equipment.attach(unit);
         resolve();
@@ -2248,12 +2303,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 class Equipment {
-    constructor(equipmentClass, inventoryItem, paletteSwaps) {
+    constructor(equipmentClass, inventoryItem) {
         this.name = equipmentClass.name;
         this.slot = equipmentClass.slot;
         this.inventoryItem = inventoryItem;
         this.damage = equipmentClass.damage;
-        this.sprite = equipmentClass.sprite(this, paletteSwaps);
+        this.sprite = equipmentClass.sprite(this, equipmentClass.paletteSwaps);
     }
     attach(unit) {
         this.unit = unit;
@@ -2369,13 +2424,37 @@ const LONG_BOW = {
     minLevel: 5,
     maxLevel: 6
 };
-const CHAIN_MAIL = {
-    name: 'Chain Mail',
+const BRONZE_CHAIN_MAIL = {
+    name: 'Bronze Chain Mail',
     sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAIL,
     mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_MAIL,
     char: 'S',
     itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.ARMOR,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.CHEST,
+    paletteSwaps: {
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN
+    },
+    minLevel: 1,
+    maxLevel: 2
+};
+const IRON_CHAIN_MAIL = {
+    name: 'Iron Chain Mail',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAIL,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_MAIL,
+    char: 'S',
+    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.CHEST,
+    paletteSwaps: {},
+    minLevel: 3,
+    maxLevel: 6
+};
+const IRON_HELMET = {
+    name: 'Iron Helmet',
+    sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.HELMET,
+    mapIcon: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_2__.default.MAP_HELMET,
+    char: 'S',
+    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
+    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.HEAD,
     paletteSwaps: {},
     minLevel: 1,
     maxLevel: 6
@@ -2387,7 +2466,9 @@ const EquipmentClasses = {
     FIRE_SWORD,
     SHORT_BOW,
     LONG_BOW,
-    CHAIN_MAIL
+    BRONZE_CHAIN_MAIL,
+    IRON_CHAIN_MAIL,
+    IRON_HELMET
 };
 
 
@@ -4140,7 +4221,8 @@ var EquipmentSlot;
 (function (EquipmentSlot) {
     EquipmentSlot["MELEE_WEAPON"] = "MELEE_WEAPON";
     EquipmentSlot["RANGED_WEAPON"] = "RANGED_WEAPON";
-    EquipmentSlot["ARMOR"] = "ARMOR";
+    EquipmentSlot["CHEST"] = "CHEST";
+    EquipmentSlot["HEAD"] = "HEAD";
 })(EquipmentSlot || (EquipmentSlot = {}));
 var GameScreen;
 (function (GameScreen) {
@@ -4816,10 +4898,11 @@ const ENEMY_GRUNT = {
     paletteSwaps: {
         [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
         [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
+        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.CYAN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.ORANGE // Hands
     },
     startingLife: 50,
     startingMana: null,
-    startingDamage: 5,
+    startingDamage: 3,
     minLevel: 1,
     maxLevel: 4,
     lifePerLevel: () => 20,
@@ -4827,9 +4910,9 @@ const ENEMY_GRUNT = {
     damagePerLevel: () => 1,
     controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__.HUMAN_DETERMINISTIC,
     equipment: [
-        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.CHAIN_MAIL, null, {
-            [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN,
-        })
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.BRONZE_CHAIN_MAIL, null),
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.IRON_HELMET, null),
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.BRONZE_SWORD, null)
     ],
     aiParams: {
         speed: 0.95,
@@ -4844,13 +4927,18 @@ const ENEMY_SOLDIER = {
     paletteSwaps: {},
     startingLife: 60,
     startingMana: null,
-    startingDamage: 8,
+    startingDamage: 4,
     minLevel: 3,
     maxLevel: 6,
     lifePerLevel: () => 20,
     manaPerLevel: () => null,
     damagePerLevel: () => 1,
     controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__.HUMAN_DETERMINISTIC,
+    equipment: [
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.IRON_CHAIN_MAIL, null),
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.IRON_HELMET, null),
+        () => new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_6__.default(_items_equipment_EquipmentClasses__WEBPACK_IMPORTED_MODULE_5__.EquipmentClasses.STEEL_SWORD, null)
+    ],
     aiParams: {
         speed: 0.95,
         visionRange: 10,

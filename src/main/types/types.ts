@@ -29,7 +29,8 @@ interface Entity extends Coordinates {
 enum EquipmentSlot {
   MELEE_WEAPON  = 'MELEE_WEAPON',
   RANGED_WEAPON = 'RANGED_WEAPON',
-  ARMOR         = 'ARMOR'
+  CHEST         = 'CHEST',
+  HEAD          = 'HEAD'
 }
 
 enum GameScreen {

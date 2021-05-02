@@ -68,7 +68,7 @@ const ENEMY_GRUNT: UnitClass = {
   },
   startingLife: 50,
   startingMana: null,
-  startingDamage: 5,
+  startingDamage: 3,
   minLevel: 1,
   maxLevel: 4,
   lifePerLevel: () => 20,
@@ -76,9 +76,9 @@ const ENEMY_GRUNT: UnitClass = {
   damagePerLevel: () => 1,
   controller: HUMAN_DETERMINISTIC,
   equipment: [
-    () => new Equipment(EquipmentClasses.CHAIN_MAIL, null, {
-      [Colors.DARK_GRAY]: Colors.DARK_BROWN, // Skirt
-    })
+    () => new Equipment(EquipmentClasses.BRONZE_CHAIN_MAIL, null),
+    () => new Equipment(EquipmentClasses.IRON_HELMET, null),
+    () => new Equipment(EquipmentClasses.BRONZE_SWORD, null)
   ],
   aiParams: {
     speed: 0.95,
@@ -94,13 +94,18 @@ const ENEMY_SOLDIER: UnitClass = {
   paletteSwaps: {},
   startingLife: 60,
   startingMana: null,
-  startingDamage: 8,
+  startingDamage: 4,
   minLevel: 3,
   maxLevel: 6,
   lifePerLevel: () => 20,
   manaPerLevel: () => null,
   damagePerLevel: () => 1,
   controller: HUMAN_DETERMINISTIC,
+  equipment: [
+    () => new Equipment(EquipmentClasses.IRON_CHAIN_MAIL, null),
+    () => new Equipment(EquipmentClasses.IRON_HELMET, null),
+    () => new Equipment(EquipmentClasses.STEEL_SWORD, null)
+  ],
   aiParams: {
     speed: 0.95,
     visionRange: 10,
