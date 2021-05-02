@@ -1,0 +1,30 @@
+{
+  "name": "snake",
+  "pattern": "${sprite}_${activity}_${direction}_${number}",
+  "animations": {
+    "standing": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "walking": {
+      "frames": [{
+        "activity": "walking",
+        "number": "1"
+      }]
+    },
+    "attacking": {
+      "frames": [{
+        "activity": "attacking",
+        "number": "1"
+      }]
+    },
+    "damaged": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    }
+  }
+}

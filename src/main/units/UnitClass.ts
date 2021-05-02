@@ -2,6 +2,7 @@ import Unit from './Unit';
 import Sprite from '../graphics/sprites/Sprite';
 import UnitController from './controllers/UnitController';
 import { PaletteSwaps, UnitType } from '../types/types';
+import Equipment from '../items/equipment/Equipment';
 
 interface AIParameters {
   /**
@@ -33,6 +34,7 @@ interface UnitClass {
   readonly experienceToNextLevel?: (level: number) => (number | null);
   readonly controller: UnitController;
   readonly sprite: (unit: Unit, paletteSwaps: PaletteSwaps) => Sprite;
+  readonly equipment?: (() => Equipment)[];
   readonly aiParams?: AIParameters
 }
 

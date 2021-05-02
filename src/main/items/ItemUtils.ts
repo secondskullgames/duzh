@@ -21,11 +21,7 @@ function useItem(unit: Unit, item: InventoryItem): Promise<void> {
 
 function equipItem(item: InventoryItem, equipmentClass: EquipmentClass, unit: Unit): Promise<void> {
   return new Promise(resolve => {
-    const equipment: Equipment = new Equipment(
-      equipmentClass,
-      item,
-      equipmentClass.paletteSwaps
-    );
+    const equipment: Equipment = new Equipment(equipmentClass, item);
     unit.equipment.add(equipment);
     equipment.attach(unit);
     resolve();

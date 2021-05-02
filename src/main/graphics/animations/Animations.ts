@@ -46,9 +46,7 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
   // first frame
   {
     const frame: AnimationFrame = {
-      units: [
-        { unit: source, activity: Activity.ATTACKING }
-      ]
+      units: [{ unit: source, activity: Activity.SHOOTING }]
     };
     if (target) {
       frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -60,7 +58,7 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
   coordinatesList.forEach(({ x, y }: Coordinates) => {
     const projectile = createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
-      units: [{ unit: source, activity: Activity.ATTACKING }],
+      units: [{ unit: source, activity: Activity.SHOOTING }],
       projectiles: [projectile]
     };
     if (target) {
@@ -85,9 +83,7 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
   }
   {
     const frame: AnimationFrame = {
-      units: [
-        { unit: source, activity: Activity.STANDING }
-      ]
+      units: [{ unit: source, activity: Activity.STANDING }]
     };
     if (target) {
       frame.units.push({ unit: target, activity: Activity.STANDING });

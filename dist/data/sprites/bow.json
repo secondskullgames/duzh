@@ -1,0 +1,15 @@
+{
+  "name": "bow",
+  "patterns": [
+    "${sprite}_${activity}_${direction}_${number}_B",
+    "${sprite}_${activity}_${direction}_${number}"
+  ],
+  "animations": {
+    "shooting": {
+      "frames": [{
+        "activity": "attacking",
+        "number": "2"
+      }]
+    }
+  }
+}

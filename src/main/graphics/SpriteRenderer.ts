@@ -299,7 +299,11 @@ class SpriteRenderer implements Renderer {
 
   private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
     return sprite.getImage()
-      .then(image => this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy));
+      .then(image => {
+        if (image) {
+          this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+        }
+      });
   }
 
   private _renderMessages(): Promise<any> {

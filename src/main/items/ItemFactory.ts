@@ -4,8 +4,8 @@ import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { chainPromises } from '../utils/PromiseUtils';
-import { randChoice } from '../utils/RandomUtils';
-import { EquipmentClass, getWeaponClasses } from './equipment/EquipmentClasses';
+import { randChoice, randInt } from '../utils/RandomUtils';
+import { EquipmentClass, EquipmentClasses } from './equipment/EquipmentClasses';
 import { ItemCategory, Coordinates } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
@@ -55,11 +55,11 @@ function _createMapEquipment(equipmentClass: EquipmentClass, { x, y }: Coordinat
   return new MapItem({ x, y }, equipmentClass.char, sprite, inventoryItem);
 }
 
-function _createInventoryWeapon(weaponClass: EquipmentClass): InventoryItem {
+function _createInventoryWeapon(equipmentClass: EquipmentClass): InventoryItem {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
-    return equipItem(item, weaponClass, unit);
+    return equipItem(item, equipmentClass, unit);
   };
-  return new InventoryItem(weaponClass.name, weaponClass.itemCategory, onUse);
+  return new InventoryItem(equipmentClass.name, equipmentClass.itemCategory, onUse);
 }
 
 type MapItemSupplier = ({ x, y }: Coordinates) => MapItem;
@@ -80,16 +80,21 @@ function _getItemSuppliers(level: number): MapItemSupplier[] {
   return [createMapPotion, createFloorFireScroll];
 }
 
-function _getWeaponSuppliers(level: number): MapItemSupplier[] {
-  return getWeaponClasses()
-    .filter(weaponClass => level >= weaponClass.minLevel)
-    .filter(weaponClass => level <= weaponClass.maxLevel)
-    .map(weaponClass => ({ x, y }) => _createMapEquipment(weaponClass, { x, y }));
+function _getEquipmentSuppliers(level: number): MapItemSupplier[] {
+  return Object.values(EquipmentClasses)
+    .filter(equipmentClass => level >= equipmentClass.minLevel)
+    .filter(equipmentClass => level <= equipmentClass.maxLevel)
+    .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
 }
 
 function createRandomItem({ x, y }: Coordinates, level: number): MapItem {
-  const suppliers: MapItemSupplier[] = [..._getItemSuppliers(level), ..._getWeaponSuppliers(level)];
-  return randChoice(suppliers)({ x, y });
+  let supplier: MapItemSupplier;
+  if (randInt(0, 2) == 0) {
+    supplier = randChoice(_getItemSuppliers(level))!!;
+  } else {
+    supplier = randChoice(_getEquipmentSuppliers(level))!!;
+  }
+  return supplier({ x, y });
 }
 
 export default {

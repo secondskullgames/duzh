@@ -6,12 +6,12 @@ abstract class Sprite {
   dx: number;
   dy: number;
 
-  constructor({ dx, dy }: Offsets) {
+  protected constructor({ dx, dy }: Offsets) {
     this.dx = dx;
     this.dy = dy;
   }
 
-  abstract getImage(): Promise<ImageBitmap>;
+  abstract getImage(): Promise<ImageBitmap | null>;
 }
 
 type Offsets = { dx: number, dy: number };

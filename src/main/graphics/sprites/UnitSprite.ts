@@ -6,41 +6,67 @@ import { Activity, PaletteSwaps } from '../../types/types';
 import { fillTemplate } from '../../utils/TemplateUtils';
 import { replaceAll } from '../ImageUtils';
 import Directions from '../../types/Directions';
+import { SpriteConfig } from './SpriteConfig';
+
+function _memoize<V>(key: string, valueSupplier: (k: string) => V, cache: { [k: string]: V }): V {
+  if (cache[key]) {
+    return cache[key];
+  }
+
+  const value = valueSupplier(key);
+  cache[key] = value;
+  return value;
+}
 
 class UnitSprite extends Sprite {
-  private _unit: Unit;
-  private readonly _spriteName: string;
-  private readonly _template = 'units/${sprite}/${sprite}_${activity}_${direction}_${number}';
+  private readonly _unit: Unit;
+  private readonly _spriteConfig: SpriteConfig;
   private readonly _paletteSwaps: PaletteSwaps;
+  private readonly _imageCache: { [key: string]: Promise<ImageBitmap> };
 
-  constructor(unit: Unit, spriteName: string, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
+  constructor(unit: Unit, spriteConfig: SpriteConfig, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
     super(spriteOffsets);
     this._unit = unit;
-    this._spriteName = spriteName;
+    this._spriteConfig = spriteConfig;
     this._paletteSwaps = paletteSwaps;
+    this._imageCache = {};
   }
 
   /**
    * @override {@link Sprite#getImage}
    */
   getImage(): Promise<ImageBitmap> {
+    const unit = this._unit;
+    const activity = unit.activity.toLowerCase();
+    const direction = Directions.toLegacyDirection(unit.direction!!);
+    return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
+  }
+
+  _getImage(): Promise<ImageBitmap> {
+    const unit = this._unit;
+    const spriteConfig = this._spriteConfig;
+
+    let activity = unit.activity.toLowerCase();
+    const direction = Directions.toLegacyDirection(unit.direction!!);
+    const animation = spriteConfig.animations[activity];
+    const frame = animation.frames[0];
+    activity = frame.activity || activity;
+
     const variables = {
-      sprite: this._spriteName,
-      activity: _activityToString(this._unit.activity),
-      direction: Directions.toLegacyDirection(this._unit.direction!!),
-      number: 1
+      sprite: spriteConfig.name,
+      activity,
+      direction,
+      number: animation.frames[0].number
     };
-    const filename = fillTemplate(this._template, variables);
-    // TODO can we get this into the yaml?
-    const effects = (this._unit.activity === Activity.DAMAGED)
+
+    const patterns = spriteConfig.patterns || [spriteConfig.pattern!!];
+    const filenames = patterns.map(pattern => `units/${spriteConfig.name}/${pattern}`)
+      .map(pattern => fillTemplate(pattern, variables));
+    const effects = (unit.activity === Activity.DAMAGED)
       ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
       : [];
-    return new ImageSupplier(filename, Colors.WHITE, this._paletteSwaps, effects).get();
+    return new ImageSupplier(filenames, Colors.WHITE, this._paletteSwaps, effects).get();
   }
-}
-
-function _activityToString(activity: Activity): string {
-  return (activity === 'DAMAGED' ? Activity.STANDING : activity).toLowerCase();
 }
 
 export default UnitSprite;
