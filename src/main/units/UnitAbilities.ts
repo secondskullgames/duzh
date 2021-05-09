@@ -47,6 +47,7 @@ class NormalAttack extends Ability {
         const targetUnit = map.getUnit({ x, y });
         if (!!targetUnit) {
           attack(unit, targetUnit)
+            .then(() => playSound(Sounds.PLAYER_HITS_ENEMY))
             .then(resolve);
         } else {
           resolve();
@@ -85,6 +86,7 @@ class HeavyAttack extends Ability {
         if (!!targetUnit) {
           unit.useAbility(this);
           heavyAttack(unit, targetUnit)
+            .then(() => playSound(Sounds.SPECIAL_ATTACK))
             .then(resolve);
         } else {
           resolve();
@@ -136,6 +138,7 @@ class KnockbackAttack extends Ability {
               // stun for 1 turn (if they're already stunned, just leave it)
               targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
             })
+            .then(() => playSound(Sounds.SPECIAL_ATTACK))
             .then(resolve);
         } else {
           resolve();
@@ -178,6 +181,7 @@ class StunAttack extends Ability {
               // stun for 2 turns (if they're already stunned, just leave it)
               targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
             })
+            .then(() => playSound(Sounds.SPECIAL_ATTACK))
             .then(resolve);
         } else {
           resolve();
@@ -225,6 +229,7 @@ class ShootArrow extends Ability {
 
           playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit)
             .then(() => targetUnit.takeDamage(damage, unit))
+            .then(() => playSound(Sounds.PLAYER_HITS_ENEMY))
             .then(() => resolve());
         } else {
           playArrowAnimation(unit, { dx, dy }, coordinatesList, null)
