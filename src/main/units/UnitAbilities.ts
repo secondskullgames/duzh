@@ -2,8 +2,17 @@ import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
 import { Direction, EquipmentSlot } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
-import { attack, heavyAttack } from './UnitUtils';
-import { playArrowAnimation } from '../graphics/animations/Animations';
+import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
+
+/**
+ * Helper function for most melee attacks
+ */
+function attack(unit: Unit, target: Unit, damage: number): Promise<void> {
+  jwb.state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
+
+  return playAttackingAnimation(unit, target)
+    .then(() => target.takeDamage(damage, unit));
+}
 
 abstract class Ability {
   readonly name: string;
@@ -46,7 +55,9 @@ class NormalAttack extends Ability {
       } else {
         const targetUnit = map.getUnit({ x, y });
         if (!!targetUnit) {
-          attack(unit, targetUnit)
+          const damage = unit.getDamage();
+          attack(unit, targetUnit, damage)
+            .then(() => playSound(Sounds.PLAYER_HITS_ENEMY))
             .then(resolve);
         } else {
           resolve();
@@ -84,7 +95,9 @@ class HeavyAttack extends Ability {
         const targetUnit = map.getUnit({ x, y });
         if (!!targetUnit) {
           unit.useAbility(this);
-          heavyAttack(unit, targetUnit)
+          const damage = unit.getDamage() * 2;
+          attack(unit, targetUnit, damage)
+            .then(() => playSound(Sounds.SPECIAL_ATTACK))
             .then(resolve);
         } else {
           resolve();
@@ -122,7 +135,8 @@ class KnockbackAttack extends Ability {
         const targetUnit = map.getUnit({ x, y });
         if (!!targetUnit) {
           unit.useAbility(this);
-          attack(unit, targetUnit)
+          const damage = unit.getDamage();
+          attack(unit, targetUnit, damage)
             .then(() => {
               let targetCoordinates = { x, y };
 
@@ -173,7 +187,8 @@ class StunAttack extends Ability {
         const targetUnit = map.getUnit({ x, y });
         if (!!targetUnit) {
           unit.useAbility(this);
-          attack(unit, targetUnit)
+          const damage = unit.getDamage();
+          attack(unit, targetUnit, damage)
             .then(() => {
               // stun for 2 turns (if they're already stunned, just leave it)
               targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
@@ -243,6 +258,4 @@ const UnitAbilities = {
 };
 
 export default UnitAbilities;
-export {
-  Ability
-};
+export { Ability };
