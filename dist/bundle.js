@@ -102,6 +102,16 @@ module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],
 
 /***/ }),
 
+/***/ "./data/sounds/special_attack.json":
+/*!*****************************************!*\
+  !*** ./data/sounds/special_attack.json ***!
+  \*****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('[[375,10],[0,5],[150,10],[0,5],[400,10],[0,5],[125,10],[0,5],[550,5],[0,10],[100,5],[0,10],[1000,5],[0,10],[125,5],[0,10],[750,5],[0,15],[150,5],[0,15],[375,5],[0,20],[150,10],[0,20],[125,10],[0,25],[100,10],[0,25],[100,10],[0,25],[50,10]]');
+
+/***/ }),
+
 /***/ "./data/sounds/use_potion.json":
 /*!*************************************!*\
   !*** ./data/sounds/use_potion.json ***!
@@ -4187,17 +4197,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/sounds/player_hits_enemy.json */ "./data/sounds/player_hits_enemy.json");
-/* harmony import */ var _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/sounds/enemy_hits_player.json */ "./data/sounds/enemy_hits_player.json");
+/* harmony import */ var _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/sounds/deflected_hit.json */ "./data/sounds/deflected_hit.json");
+/* harmony import */ var _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/sounds/descend_stairs.json */ "./data/sounds/descend_stairs.json");
 /* harmony import */ var _data_sounds_enemy_dies_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../data/sounds/enemy_dies.json */ "./data/sounds/enemy_dies.json");
-/* harmony import */ var _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../data/sounds/player_dies.json */ "./data/sounds/player_dies.json");
-/* harmony import */ var _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/sounds/level_up.json */ "./data/sounds/level_up.json");
-/* harmony import */ var _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/sounds/deflected_hit.json */ "./data/sounds/deflected_hit.json");
-/* harmony import */ var _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/sounds/pick_up_item.json */ "./data/sounds/pick_up_item.json");
-/* harmony import */ var _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../data/sounds/use_potion.json */ "./data/sounds/use_potion.json");
+/* harmony import */ var _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../data/sounds/enemy_hits_player.json */ "./data/sounds/enemy_hits_player.json");
+/* harmony import */ var _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/sounds/footstep.json */ "./data/sounds/footstep.json");
+/* harmony import */ var _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../data/sounds/pick_up_item.json */ "./data/sounds/pick_up_item.json");
+/* harmony import */ var _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../data/sounds/player_dies.json */ "./data/sounds/player_dies.json");
+/* harmony import */ var _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../data/sounds/level_up.json */ "./data/sounds/level_up.json");
 /* harmony import */ var _data_sounds_open_door_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../data/sounds/open_door.json */ "./data/sounds/open_door.json");
-/* harmony import */ var _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../data/sounds/footstep.json */ "./data/sounds/footstep.json");
-/* harmony import */ var _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../data/sounds/descend_stairs.json */ "./data/sounds/descend_stairs.json");
+/* harmony import */ var _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../data/sounds/player_hits_enemy.json */ "./data/sounds/player_hits_enemy.json");
+/* harmony import */ var _data_sounds_special_attack_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../data/sounds/special_attack.json */ "./data/sounds/special_attack.json");
+/* harmony import */ var _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../data/sounds/use_potion.json */ "./data/sounds/use_potion.json");
+
 
 
 
@@ -4210,17 +4222,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const Sounds = {
-    PLAYER_HITS_ENEMY: _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_0__,
-    ENEMY_HITS_PLAYER: _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_1__,
+    DEFLECTED_HIT: _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_0__,
+    DESCEND_STAIRS: _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_1__,
+    ENEMY_HITS_PLAYER: _data_sounds_enemy_hits_player_json__WEBPACK_IMPORTED_MODULE_3__,
     ENEMY_DIES: _data_sounds_enemy_dies_json__WEBPACK_IMPORTED_MODULE_2__,
-    PLAYER_DIES: _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_3__,
-    LEVEL_UP: _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_4__,
-    DEFLECTED_HIT: _data_sounds_deflected_hit_json__WEBPACK_IMPORTED_MODULE_5__,
-    PICK_UP_ITEM: _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_6__,
-    USE_POTION: _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_7__,
+    FOOTSTEP: _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_4__,
+    LEVEL_UP: _data_sounds_level_up_json__WEBPACK_IMPORTED_MODULE_7__,
+    PICK_UP_ITEM: _data_sounds_pick_up_item_json__WEBPACK_IMPORTED_MODULE_5__,
+    PLAYER_DIES: _data_sounds_player_dies_json__WEBPACK_IMPORTED_MODULE_6__,
+    PLAYER_HITS_ENEMY: _data_sounds_player_hits_enemy_json__WEBPACK_IMPORTED_MODULE_9__,
     OPEN_DOOR: _data_sounds_open_door_json__WEBPACK_IMPORTED_MODULE_8__,
-    FOOTSTEP: _data_sounds_footstep_json__WEBPACK_IMPORTED_MODULE_9__,
-    DESCEND_STAIRS: _data_sounds_descend_stairs_json__WEBPACK_IMPORTED_MODULE_10__,
+    SPECIAL_ATTACK: _data_sounds_special_attack_json__WEBPACK_IMPORTED_MODULE_10__,
+    USE_POTION: _data_sounds_use_potion_json__WEBPACK_IMPORTED_MODULE_11__
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Sounds);
 
@@ -4566,14 +4579,6 @@ class Unit {
                     sourceUnit.gainExperience(1);
                 }
             }
-            else {
-                if (this === playerUnit) {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_6__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY);
-                }
-                else {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_6__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.ENEMY_HITS_PLAYER);
-                }
-            }
             resolve();
         });
     }
@@ -4643,6 +4648,7 @@ class NormalAttack extends Ability {
                 const targetUnit = map.getUnit({ x, y });
                 if (!!targetUnit) {
                     (0,_UnitUtils__WEBPACK_IMPORTED_MODULE_3__.attack)(unit, targetUnit)
+                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY))
                         .then(resolve);
                 }
                 else {
@@ -4678,6 +4684,7 @@ class HeavyAttack extends Ability {
                 if (!!targetUnit) {
                     unit.useAbility(this);
                     (0,_UnitUtils__WEBPACK_IMPORTED_MODULE_3__.heavyAttack)(unit, targetUnit)
+                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
                         .then(resolve);
                 }
                 else {
@@ -4724,6 +4731,7 @@ class KnockbackAttack extends Ability {
                         // stun for 1 turn (if they're already stunned, just leave it)
                         targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
                     })
+                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
                         .then(resolve);
                 }
                 else {
@@ -4763,6 +4771,7 @@ class StunAttack extends Ability {
                         // stun for 2 turns (if they're already stunned, just leave it)
                         targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
                     })
+                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
                         .then(resolve);
                 }
                 else {
@@ -4805,6 +4814,7 @@ class ShootArrow extends Ability {
                 messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
                 (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_4__.playArrowAnimation)(unit, { dx, dy }, coordinatesList, targetUnit)
                     .then(() => targetUnit.takeDamage(damage, unit))
+                    .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY))
                     .then(() => resolve());
             }
             else {
