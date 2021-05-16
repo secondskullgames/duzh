@@ -93,7 +93,7 @@ function isBlocking(tileType: TileType) {
 function createTile(type: TileType, tileSet: TileSet): Tile {
   return {
     type,
-    sprite: randChoice(tileSet[type]),
+    sprite: randChoice(tileSet[type]!!),
     isBlocking: isBlocking(type)
   }
 }

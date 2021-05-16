@@ -362,6 +362,26 @@ module.exports = JSON.parse('{"name":"zombie","offsets":{"dx":-4,"dy":-20},"patt
 
 /***/ }),
 
+/***/ "./data/tilesets/cave.json":
+/*!*********************************!*\
+  !*** ./data/tilesets/cave.json ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"cave","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor","tile_floor_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
+
+/***/ }),
+
+/***/ "./data/tilesets/dungeon.json":
+/*!************************************!*\
+  !*** ./data/tilesets/dungeon.json ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"dungeon","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor_hall","tile_floor_hall_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall_hall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
+
+/***/ }),
+
 /***/ "./data/units/golem.json":
 /*!*******************************!*\
   !*** ./data/units/golem.json ***!
@@ -3070,57 +3090,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../graphics/sprites/StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
+/* harmony import */ var _data_tilesets_cave_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/tilesets/cave.json */ "./data/tilesets/cave.json");
+/* harmony import */ var _data_tilesets_dungeon_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/tilesets/dungeon.json */ "./data/tilesets/dungeon.json");
+/* harmony import */ var _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../graphics/sprites/StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 
 
-function _getTileSprite(filename) {
-    // TODO JSONify these too
+
+
+function _getTileSprite(tilesetName, filename) {
+    if (!filename) {
+        return null;
+    }
     const spriteConfig = {
         name: filename,
-        filename,
+        filename: `tiles/${tilesetName}/${filename}`,
         offsets: { dx: 0, dy: 0 }
     };
-    return new _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_1__.default(spriteConfig);
+    return new _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_2__.default(spriteConfig);
 }
-/**
- * TODO: learn to TypeScript
- */
-function _mapFilenames(filenames) {
-    // @ts-ignore
+function _buildTileSet(json) {
     const tileSet = {};
-    Object.entries(filenames).forEach(([tileType, filenames]) => {
-        // @ts-ignore
-        tileSet[tileType] = [];
+    Object.entries(json.tiles).forEach(([key, filenames]) => {
+        const tiles = [];
         filenames.forEach(filename => {
-            const sprite = !!filename ? _getTileSprite(filename) : null;
-            // @ts-ignore
-            tileSet[tileType].push(sprite);
+            const sprite = _getTileSprite(json.name, filename);
+            if (sprite) {
+                tiles.push(sprite);
+            }
         });
+        // Wow this is ugly.
+        const tileType = _types_types__WEBPACK_IMPORTED_MODULE_3__.TileType[key];
+        tileSet[tileType] = tiles;
     });
     return tileSet;
 }
-const dungeonFilenames = {
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR]: ['dungeon/tile_floor', 'dungeon/tile_floor_2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR_HALL]: ['dungeon/tile_floor_hall', 'dungeon/tile_floor_hall_2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_TOP]: [null],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_HALL]: ['dungeon/tile_wall_hall'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL]: ['dungeon/tile_wall'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.STAIRS_DOWN]: ['stairs_down2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.NONE]: [null]
-};
-const caveFilenames = {
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR]: ['cave/tile_floor', 'cave/tile_floor_2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR_HALL]: ['cave/tile_floor', 'cave/tile_floor_2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_TOP]: [],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_HALL]: ['cave/tile_wall'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL]: ['cave/tile_wall'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.STAIRS_DOWN]: ['stairs_down2'],
-    [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.NONE]: [null]
-};
 const TileSets = {
-    DUNGEON: _mapFilenames(dungeonFilenames),
-    CAVE: _mapFilenames(caveFilenames),
+    DUNGEON: _buildTileSet(_data_tilesets_dungeon_json__WEBPACK_IMPORTED_MODULE_1__),
+    CAVE: _buildTileSet(_data_tilesets_cave_json__WEBPACK_IMPORTED_MODULE_0__),
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TileSets);
 

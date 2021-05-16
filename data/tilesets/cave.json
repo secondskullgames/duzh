@@ -1,0 +1,12 @@
+{
+  "name": "cave",
+  "tiles": {
+    "FLOOR": ["tile_floor", "tile_floor_2"],
+    "FLOOR_HALL": ["tile_floor", "tile_floor_2"],
+    "WALL_TOP": [null],
+    "WALL_HALL": ["tile_wall"],
+    "WALL": ["tile_wall"],
+    "STAIRS_DOWN": ["stairs_down2"],
+    "NONE": [null]
+  }
+}

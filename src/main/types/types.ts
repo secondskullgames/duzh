@@ -82,8 +82,6 @@ interface Room extends Rect {
   exits: Coordinates[]
 }
 
-type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
-
 interface Tile {
   type: TileType,
   sprite: Sprite | null,
@@ -91,7 +89,7 @@ interface Tile {
 }
 
 type TileSet = {
-  [tileType in TileType]: (Sprite | null)[]
+  [tileType in TileType]?: (Sprite | null)[]
 };
 
 enum TileType {
@@ -122,7 +120,6 @@ export {
   PromiseSupplier,
   Rect,
   Room,
-  SpriteSupplier,
   Tile,
   TileSet,
   TileType,
