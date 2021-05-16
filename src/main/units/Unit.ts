@@ -179,12 +179,6 @@ class Unit implements Entity {
         if (sourceUnit) {
           sourceUnit.gainExperience(1);
         }
-      } else {
-        if (this === playerUnit) {
-          playSound(Sounds.PLAYER_HITS_ENEMY);
-        } else {
-          playSound(Sounds.ENEMY_HITS_PLAYER);
-        }
       }
       resolve();
     });
