@@ -7,9 +7,10 @@ import { chainPromises } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
-import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
+import { applyTransparentColor, replaceColors } from './ImageUtils';
 import { Ability } from '../units/UnitAbilities';
 import Equipment from '../items/equipment/Equipment';
+import ImageLoader from './ImageLoader';
 
 const TILE_WIDTH = 32;
 const TILE_HEIGHT = 24;
@@ -201,12 +202,11 @@ class SpriteRenderer implements Renderer {
   }
 
   /**
-   * TODO memoize
    * @param color (in hex form)
    */
   private _drawEllipse({ x, y }: Coordinates, color: Color): Promise<any> {
     const { x: left, y: top } = this._gridToPixel({ x, y });
-    return loadImage(SHADOW_FILENAME)
+    return ImageLoader.loadImage(SHADOW_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
       .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
       .then(createImageBitmap)
@@ -220,7 +220,7 @@ class SpriteRenderer implements Renderer {
     const { inventory } = playerUnit;
     const { _bufferCanvas, _bufferContext } = this;
 
-    return loadImage(INVENTORY_BACKGROUND_FILENAME)
+    return ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME)
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
       .then(() => {
@@ -335,7 +335,7 @@ class SpriteRenderer implements Renderer {
   }
 
   private _renderHUDFrame(): Promise<any> {
-    return loadImage(HUD_FILENAME)
+    return ImageLoader.loadImage(HUD_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
@@ -420,7 +420,7 @@ class SpriteRenderer implements Renderer {
   }
 
   private _renderSplashScreen(filename: string, text: string): Promise<any> {
-    return loadImage(filename)
+    return ImageLoader.loadImage(filename)
       .then(imageData => createImageBitmap(imageData))
       .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
       .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center'));
@@ -465,7 +465,7 @@ class SpriteRenderer implements Renderer {
       borderColor = Colors.DARK_GRAY;
     }
 
-    return loadImage(`abilities/${ability.icon}`)
+    return ImageLoader.loadImage(`abilities/${ability.icon}`)
       .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }))
       .then(createImageBitmap)
       .then(image => this._bufferContext.drawImage(image, left, top))
