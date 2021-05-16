@@ -1,0 +1,15 @@
+{
+  "name": "Iron Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "char": "S",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "DARK_GRAY": "BLACK",
+    "LIGHT_GRAY": "DARK_GRAY"
+  },
+  "damage": 4,
+  "minLevel": 3,
+  "maxLevel": 4
+}

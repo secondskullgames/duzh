@@ -1,0 +1,19 @@
+{
+  "name": "snake",
+  "type": "ANIMAL",
+  "sprite": "snake",
+  "paletteSwaps": {},
+  "startingLife": 40,
+  "startingMana": null,
+  "startingDamage": 4,
+  "minLevel": 1,
+  "maxLevel": 2,
+  "lifePerLevel": 15,
+  "manaPerLevel": null,
+  "damagePerLevel": 1,
+  "aiParameters": {
+    "speed": 0.98,
+    "visionRange": 10,
+    "fleeThreshold": 0.2
+  }
+}

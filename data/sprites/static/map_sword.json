@@ -1,0 +1,8 @@
+{
+  "name": "map_sword",
+  "filename": "equipment/sword/sword_icon_small",
+  "offsets": {
+    "dx": 8,
+    "dy": 0
+  }
+}

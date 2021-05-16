@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Colors from './Colors';
+import Colors, { Color } from './Colors';
 
 enum Activity {
   STANDING = 'STANDING',
@@ -62,7 +62,7 @@ enum MapLayout {
 }
 
 type PaletteSwaps = {
-  [src in Colors]?: Colors
+  [src: string]: Color
 }
 
 interface Projectile extends Entity, Coordinates {
@@ -82,8 +82,6 @@ interface Room extends Rect {
   exits: Coordinates[]
 }
 
-type SpriteSupplier = (paletteSwaps?: PaletteSwaps) => Sprite;
-
 interface Tile {
   type: TileType,
   sprite: Sprite | null,
@@ -91,7 +89,7 @@ interface Tile {
 }
 
 type TileSet = {
-  [tileType in TileType]: (Sprite | null)[]
+  [tileType in TileType]?: (Sprite | null)[]
 };
 
 enum TileType {
@@ -104,14 +102,7 @@ enum TileType {
   STAIRS_DOWN
 }
 
-enum UnitType {
-  HUMAN = 'HUMAN',
-  ELEMENTAL = 'ELEMENTAL',
-  GHOST = 'GHOST',
-  GOLEM = 'GOLEM',
-  WIZARD = 'WIZARD',
-  ANIMAL = 'ANIMAL'
-}
+type UnitType = 'ANIMAL' | 'ELEMENTAL' | 'GHOST' | 'GOLEM' | 'HUMAN' | 'WIZARD';
 
 export {
   Activity,
@@ -129,7 +120,6 @@ export {
   PromiseSupplier,
   Rect,
   Room,
-  SpriteSupplier,
   Tile,
   TileSet,
   TileType,

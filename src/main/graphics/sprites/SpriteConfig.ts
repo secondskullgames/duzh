@@ -1,14 +1,16 @@
-import bow from '../../../../data/sprites/bow.json';
-import helmet from '../../../../data/sprites/helmet.json';
-import mail from '../../../../data/sprites/mail.json';
-import player from '../../../../data/sprites/player.json';
-import shield2 from '../../../../data/sprites/shield2.json';
-import snake from '../../../../data/sprites/snake.json';
-import sword from '../../../../data/sprites/sword.json';
-import zombie from '../../../../data/sprites/zombie.json';
+import bow from '../../../../data/sprites/equipment/bow.json';
+import helmet from '../../../../data/sprites/equipment/helmet.json';
+import mail from '../../../../data/sprites/equipment/mail.json';
+import player from '../../../../data/sprites/units/player.json';
+import shield2 from '../../../../data/sprites/equipment/shield2.json';
+import snake from '../../../../data/sprites/units/snake.json';
+import sword from '../../../../data/sprites/equipment/sword.json';
+import zombie from '../../../../data/sprites/units/zombie.json';
+import { Offsets } from './Sprite';
 
 type SpriteConfig = {
   name: string,
+  offsets: Offsets,
   pattern?: string,
   patterns?: string[],
   animations: {
@@ -22,26 +24,15 @@ type SpriteConfig = {
   }
 }
 
-enum SpriteName {
-  BOW = 'BOW',
-  HELMET = 'HELMET',
-  MAIL = 'MAIL',
-  SHIELD = 'SHIELD',
-  SNAKE = 'SNAKE',
-  SWORD = 'SWORD',
-  PLAYER = 'PLAYER',
-  ZOMBIE = 'ZOMBIE'
-}
-
-const SpriteConfigs: ({ [name in SpriteName]: SpriteConfig }) = {
-  BOW:     bow,
-  HELMET:  helmet,
-  MAIL:    mail,
-  SHIELD:  shield2,
-  SNAKE:   snake,
-  SWORD:   sword,
-  PLAYER:  player,
-  ZOMBIE:  zombie
+const SpriteConfigs: ({ [name: string]: SpriteConfig }) = {
+  bow,
+  helmet,
+  mail,
+  shield2,
+  snake,
+  sword,
+  player,
+  zombie
 };
 
 export { SpriteConfigs };

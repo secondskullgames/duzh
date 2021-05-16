@@ -3,6 +3,7 @@ import Unit from '../../units/Unit';
 import { EquipmentClass } from './EquipmentClasses';
 import { EquipmentSlot } from '../../types/types';
 import Sprite from '../../graphics/sprites/Sprite';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 class Equipment {
   readonly inventoryItem: InventoryItem | null;
@@ -17,7 +18,7 @@ class Equipment {
     this.slot = equipmentClass.slot;
     this.inventoryItem = inventoryItem;
     this.damage = equipmentClass.damage;
-    this.sprite = equipmentClass.sprite(this, equipmentClass.paletteSwaps);
+    this.sprite = SpriteFactory.createEquipmentSprite(equipmentClass.sprite, this, equipmentClass.paletteSwaps);
   }
 
   attach(unit: Unit) {

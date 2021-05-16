@@ -2,6 +2,7 @@ import { Coordinates } from '../types/types';
 import UnitClasses from './UnitClasses';
 import { randChoice } from '../utils/RandomUtils';
 import Unit from './Unit';
+import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 
 function createRandomEnemy({ x, y }: Coordinates, level: number): Unit {
   const candidates = UnitClasses.getEnemyClasses()
@@ -9,7 +10,7 @@ function createRandomEnemy({ x, y }: Coordinates, level: number): Unit {
     .filter(unitClass => level <= unitClass.maxLevel);
 
   const unitClass = randChoice(candidates);
-  return new Unit(unitClass, unitClass.name, level, { x, y });
+  return new Unit(unitClass, unitClass.name, HUMAN_DETERMINISTIC, level, { x, y });
 }
 
 export default {

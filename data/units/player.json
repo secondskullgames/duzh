@@ -1,0 +1,26 @@
+{
+  "name": "player",
+  "type": "HUMAN",
+  "sprite": "player",
+  "paletteSwaps": {
+    "DARK_PURPLE": "DARK_BROWN",
+    "MAGENTA": "DARK_GREEN",
+    "DARK_BLUE": "DARK_GREEN",
+    "CYAN": "LIGHT_PINK",
+    "BLACK": "BLACK",
+    "DARK_GRAY": "DARK_BROWN",
+    "LIGHT_GRAY": "LIGHT_BROWN",
+    "DARK_GREEN": "DARK_BROWN",
+    "GREEN": "DARK_BROWN",
+    "ORANGE": "LIGHT_PINK"
+  },
+  "startingLife": 100,
+  "startingMana": 100,
+  "startingDamage": 10,
+  "minLevel": 1,
+  "maxLevel": 20,
+  "lifePerLevel": 10,
+  "manaPerLevel": 0,
+  "damagePerLevel": 1,
+  "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20]
+}

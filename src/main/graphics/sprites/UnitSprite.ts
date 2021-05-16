@@ -1,11 +1,11 @@
 import ImageSupplier from '../ImageSupplier';
-import Sprite from './Sprite';
+import Sprite, { Offsets } from './Sprite';
 import Colors from '../../types/Colors';
 import Unit from '../../units/Unit';
+import Directions from '../../types/Directions';
 import { Activity, PaletteSwaps } from '../../types/types';
 import { fillTemplate } from '../../utils/TemplateUtils';
 import { replaceAll } from '../ImageUtils';
-import Directions from '../../types/Directions';
 import { SpriteConfig } from './SpriteConfig';
 
 function _memoize<V>(key: string, valueSupplier: (k: string) => V, cache: { [k: string]: V }): V {
@@ -24,10 +24,10 @@ class UnitSprite extends Sprite {
   private readonly _paletteSwaps: PaletteSwaps;
   private readonly _imageCache: { [key: string]: Promise<ImageBitmap> };
 
-  constructor(unit: Unit, spriteConfig: SpriteConfig, paletteSwaps: PaletteSwaps, spriteOffsets: { dx: number, dy: number }) {
-    super(spriteOffsets);
-    this._unit = unit;
+  constructor(spriteConfig: SpriteConfig, unit: Unit, paletteSwaps: PaletteSwaps) {
+    super(spriteConfig.offsets);
     this._spriteConfig = spriteConfig;
+    this._unit = unit;
     this._paletteSwaps = paletteSwaps;
     this._imageCache = {};
   }
