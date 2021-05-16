@@ -104,14 +104,7 @@ enum TileType {
   STAIRS_DOWN
 }
 
-enum UnitType {
-  HUMAN = 'HUMAN',
-  ELEMENTAL = 'ELEMENTAL',
-  GHOST = 'GHOST',
-  GOLEM = 'GOLEM',
-  WIZARD = 'WIZARD',
-  ANIMAL = 'ANIMAL'
-}
+type UnitType = 'ANIMAL' | 'ELEMENTAL' | 'GHOST' | 'GOLEM' | 'HUMAN' | 'WIZARD';
 
 export {
   Activity,

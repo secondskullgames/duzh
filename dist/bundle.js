@@ -272,6 +272,56 @@ module.exports = JSON.parse('{"name":"zombie","offsets":{"dx":-4,"dy":-20},"patt
 
 /***/ }),
 
+/***/ "./data/units/golem.json":
+/*!*******************************!*\
+  !*** ./data/units/golem.json ***!
+  \*******************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"golem","type":"GOLEM","sprite":"zombie","paletteSwaps":{"DARK_GRAY":"DARKER_GRAY","LIGHT_GRAY":"DARKER_GRAY"},"startingLife":60,"startingMana":null,"startingDamage":10,"minLevel":5,"maxLevel":9,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"aiParameters":{"speed":0.92,"visionRange":12,"fleeThreshold":0}}');
+
+/***/ }),
+
+/***/ "./data/units/grunt.json":
+/*!*******************************!*\
+  !*** ./data/units/grunt.json ***!
+  \*******************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"grunt","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","CYAN":"ORANGE"},"startingLife":50,"startingMana":null,"startingDamage":3,"minLevel":1,"maxLevel":4,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["BRONZE_CHAIN_MAIL","IRON_HELMET","BRONZE_SWORD"],"aiParameters":{"speed":0.95,"visionRange":8,"fleeThreshold":0.1}}');
+
+/***/ }),
+
+/***/ "./data/units/player.json":
+/*!********************************!*\
+  !*** ./data/units/player.json ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"player","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_PURPLE":"DARK_BROWN","MAGENTA":"DARK_GREEN","DARK_BLUE":"DARK_GREEN","CYAN":"LIGHT_PINK","BLACK":"BLACK","DARK_GRAY":"DARK_BROWN","LIGHT_GRAY":"LIGHT_BROWN","DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","ORANGE":"LIGHT_PINK"},"startingLife":100,"startingMana":100,"startingDamage":10,"minLevel":1,"maxLevel":20,"lifePerLevel":10,"manaPerLevel":0,"damagePerLevel":1,"experienceToNextLevel":[4,6,8,10,12,14,16,18,20]}');
+
+/***/ }),
+
+/***/ "./data/units/snake.json":
+/*!*******************************!*\
+  !*** ./data/units/snake.json ***!
+  \*******************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"snake","type":"ANIMAL","sprite":"snake","paletteSwaps":{},"startingLife":40,"startingMana":null,"startingDamage":4,"minLevel":1,"maxLevel":2,"lifePerLevel":15,"manaPerLevel":null,"damagePerLevel":1,"aiParameters":{"speed":0.98,"visionRange":10,"fleeThreshold":0.2}}');
+
+/***/ }),
+
+/***/ "./data/units/soldier.json":
+/*!*********************************!*\
+  !*** ./data/units/soldier.json ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"ENEMY_SOLDIER","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BLUE","GREEN":"DARK_BLUE","CYAN":"ORANGE"},"startingLife":60,"startingMana":null,"startingDamage":4,"minLevel":3,"maxLevel":6,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["IRON_CHAIN_MAIL","IRON_HELMET","STEEL_SWORD"],"aiParameters":{"speed":0.95,"visionRange":10,"fleeThreshold":0.1}}');
+
+/***/ }),
+
 /***/ "./src/main/core/GameState.ts":
 /*!************************************!*\
   !*** ./src/main/core/GameState.ts ***!
@@ -4412,8 +4462,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "GameScreen": () => (/* binding */ GameScreen),
 /* harmony export */   "ItemCategory": () => (/* binding */ ItemCategory),
 /* harmony export */   "MapLayout": () => (/* binding */ MapLayout),
-/* harmony export */   "TileType": () => (/* binding */ TileType),
-/* harmony export */   "UnitType": () => (/* binding */ UnitType)
+/* harmony export */   "TileType": () => (/* binding */ TileType)
 /* harmony export */ });
 var Activity;
 (function (Activity) {
@@ -4461,15 +4510,6 @@ var TileType;
     TileType[TileType["NONE"] = 5] = "NONE";
     TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
 })(TileType || (TileType = {}));
-var UnitType;
-(function (UnitType) {
-    UnitType["HUMAN"] = "HUMAN";
-    UnitType["ELEMENTAL"] = "ELEMENTAL";
-    UnitType["GHOST"] = "GHOST";
-    UnitType["GOLEM"] = "GOLEM";
-    UnitType["WIZARD"] = "WIZARD";
-    UnitType["ANIMAL"] = "ANIMAL";
-})(UnitType || (UnitType = {}));
 
 
 
@@ -5048,141 +5088,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/Colors */ "./src/main/types/Colors.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _data_units_grunt_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/units/grunt.json */ "./data/units/grunt.json");
+/* harmony import */ var _data_units_player_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/units/player.json */ "./data/units/player.json");
+/* harmony import */ var _data_units_snake_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../data/units/snake.json */ "./data/units/snake.json");
+/* harmony import */ var _data_units_soldier_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../data/units/soldier.json */ "./data/units/soldier.json");
+/* harmony import */ var _data_units_golem_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../data/units/golem.json */ "./data/units/golem.json");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/Colors */ "./src/main/types/Colors.ts");
 
 
-const PLAYER = {
-    name: 'PLAYER',
-    type: _types_types__WEBPACK_IMPORTED_MODULE_1__.UnitType.HUMAN,
-    sprite: 'player',
-    // Green/brown colors
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_PURPLE]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.MAGENTA]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GREEN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BLUE]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GREEN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.CYAN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.LIGHT_PINK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.BLACK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.LIGHT_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.ORANGE]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.LIGHT_PINK // Face
-    },
-    startingLife: 100,
-    startingMana: 100,
-    startingDamage: 10,
-    minLevel: 1,
-    maxLevel: 20,
-    lifePerLevel: 10,
-    manaPerLevel: 0,
-    damagePerLevel: 1,
-    experienceToNextLevel: [4, 6, 8, 10, 12, 14, 16, 18, 20]
-};
-const ENEMY_SNAKE = {
-    name: 'ENEMY_SNAKE',
-    type: _types_types__WEBPACK_IMPORTED_MODULE_1__.UnitType.ANIMAL,
-    sprite: 'snake',
-    paletteSwaps: {},
-    startingLife: 40,
-    startingMana: null,
-    startingDamage: 4,
-    minLevel: 1,
-    maxLevel: 2,
-    lifePerLevel: 15,
-    manaPerLevel: null,
-    damagePerLevel: 1,
-    aiParameters: {
-        speed: 0.98,
-        visionRange: 10,
-        fleeThreshold: 0.2
-    }
-};
-const ENEMY_GRUNT = {
-    name: 'ENEMY_GRUNT',
-    type: _types_types__WEBPACK_IMPORTED_MODULE_1__.UnitType.HUMAN,
-    sprite: 'player',
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.CYAN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.ORANGE // Hands
-    },
-    startingLife: 50,
-    startingMana: null,
-    startingDamage: 3,
-    minLevel: 1,
-    maxLevel: 4,
-    lifePerLevel: 20,
-    manaPerLevel: null,
-    damagePerLevel: 1,
-    equipment: [
-        'BRONZE_CHAIN_MAIL',
-        'IRON_HELMET',
-        'BRONZE_SWORD'
-    ],
-    aiParameters: {
-        speed: 0.95,
-        visionRange: 8,
-        fleeThreshold: 0.1
-    }
-};
-const ENEMY_SOLDIER = {
-    name: 'ENEMY_SOLDIER',
-    type: _types_types__WEBPACK_IMPORTED_MODULE_1__.UnitType.HUMAN,
-    sprite: 'player',
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.CYAN]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.ORANGE // Hands
-    },
-    startingLife: 60,
-    startingMana: null,
-    startingDamage: 4,
-    minLevel: 3,
-    maxLevel: 6,
-    lifePerLevel: 20,
-    manaPerLevel: null,
-    damagePerLevel: 1,
-    equipment: [
-        'IRON_CHAIN_MAIL',
-        'IRON_HELMET',
-        'STEEL_SWORD'
-    ],
-    aiParameters: {
-        speed: 0.95,
-        visionRange: 10,
-        fleeThreshold: 0.1
-    }
-};
-const ENEMY_GOLEM = {
-    name: 'ENEMY_GOLEM',
-    type: _types_types__WEBPACK_IMPORTED_MODULE_1__.UnitType.GOLEM,
-    sprite: 'zombie',
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARKER_GRAY,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARKER_GRAY,
-    },
-    startingLife: 60,
-    startingMana: null,
-    startingDamage: 10,
-    minLevel: 5,
-    maxLevel: 9,
-    lifePerLevel: 20,
-    manaPerLevel: null,
-    damagePerLevel: 1,
-    aiParameters: {
-        speed: 0.92,
-        visionRange: 12,
-        fleeThreshold: 0
-    }
-};
+
+
+
+
+function _mapPaletteSwaps(paletteSwaps) {
+    const map = {};
+    Object.entries(paletteSwaps).forEach(([src, dest]) => {
+        const srcHex = _types_Colors__WEBPACK_IMPORTED_MODULE_5__.default[src];
+        const destHex = _types_Colors__WEBPACK_IMPORTED_MODULE_5__.default[dest];
+        map[srcHex] = destHex;
+    });
+    return map;
+}
+const PLAYER = _loadUnitClass(_data_units_player_json__WEBPACK_IMPORTED_MODULE_1__);
+const ENEMY_CLASSES = [_data_units_grunt_json__WEBPACK_IMPORTED_MODULE_0__, _data_units_golem_json__WEBPACK_IMPORTED_MODULE_4__, _data_units_soldier_json__WEBPACK_IMPORTED_MODULE_3__, _data_units_snake_json__WEBPACK_IMPORTED_MODULE_2__].map(json => _loadUnitClass(json));
 function getEnemyClasses() {
-    return [ENEMY_SNAKE, ENEMY_GRUNT, ENEMY_SOLDIER, ENEMY_GOLEM];
+    return ENEMY_CLASSES;
+}
+function _loadUnitClass(json) {
+    return Object.assign(Object.assign({}, json), { 
+        // We're using "friendly" color names, convert them to hex now
+        paletteSwaps: _mapPaletteSwaps(json.paletteSwaps), 
+        // JSON parsing doesn't like indexed types, so just assume this is valid
+        type: json.type });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     PLAYER,
-    ENEMY_GRUNT,
-    ENEMY_GOLEM,
     getEnemyClasses
 });
 

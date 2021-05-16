@@ -1,0 +1,28 @@
+{
+  "name": "ENEMY_SOLDIER",
+  "type": "HUMAN",
+  "sprite": "player",
+  "paletteSwaps": {
+    "DARK_GREEN": "DARK_BLUE",
+    "GREEN": "DARK_BLUE",
+    "CYAN": "ORANGE"
+  },
+  "startingLife": 60,
+  "startingMana": null,
+  "startingDamage": 4,
+  "minLevel": 3,
+  "maxLevel": 6,
+  "lifePerLevel": 20,
+  "manaPerLevel": null,
+  "damagePerLevel": 1,
+  "equipment": [
+    "IRON_CHAIN_MAIL",
+    "IRON_HELMET",
+    "STEEL_SWORD"
+  ],
+  "aiParameters": {
+    "speed": 0.95,
+    "visionRange": 10,
+    "fleeThreshold": 0.1
+  }
+}
