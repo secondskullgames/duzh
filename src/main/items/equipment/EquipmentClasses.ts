@@ -1,15 +1,14 @@
-import { EquipmentSlot, ItemCategory, PaletteSwaps, SpriteSupplier } from '../../types/types';
+import { EquipmentSlot, ItemCategory, PaletteSwaps } from '../../types/types';
 import Colors from '../../types/Colors';
-import SpriteFactory, { EquipmentSpriteSupplier } from '../../graphics/sprites/SpriteFactory';
 
 interface EquipmentClass {
   name: string,
-  sprite: EquipmentSpriteSupplier,
-  mapIcon: SpriteSupplier,
+  sprite: string,
+  mapIcon: string,
   itemCategory: ItemCategory,
   slot: EquipmentSlot,
   char: string,
-  paletteSwaps: PaletteSwaps
+  paletteSwaps: PaletteSwaps,
   minLevel: number,
   maxLevel: number,
   damage?: number
@@ -17,8 +16,8 @@ interface EquipmentClass {
 
 const BRONZE_SWORD: EquipmentClass = {
   name: 'Bronze Sword',
-  sprite: SpriteFactory.SWORD,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  sprite: 'sword',
+  mapIcon: 'map_sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.MELEE_WEAPON,
@@ -34,8 +33,8 @@ const BRONZE_SWORD: EquipmentClass = {
 
 const IRON_SWORD: EquipmentClass = {
   name: 'Iron Sword',
-  sprite: SpriteFactory.SWORD,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  sprite: 'sword',
+  mapIcon: 'map_sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.MELEE_WEAPON,
@@ -50,8 +49,8 @@ const IRON_SWORD: EquipmentClass = {
 
 const STEEL_SWORD: EquipmentClass = {
   name: 'Steel Sword',
-  sprite: SpriteFactory.SWORD,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  sprite: 'sword',
+  mapIcon: 'map_sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.MELEE_WEAPON,
@@ -66,8 +65,8 @@ const STEEL_SWORD: EquipmentClass = {
 
 const FIRE_SWORD: EquipmentClass = {
   name: 'Fire Sword',
-  sprite: SpriteFactory.SWORD,
-  mapIcon: SpriteFactory.MAP_SWORD,
+  sprite: 'sword',
+  mapIcon: 'map_sword',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.MELEE_WEAPON,
@@ -83,8 +82,8 @@ const FIRE_SWORD: EquipmentClass = {
 
 const SHORT_BOW: EquipmentClass = {
   name: 'Short Bow',
-  sprite: SpriteFactory.BOW,
-  mapIcon: SpriteFactory.MAP_BOW,
+  sprite: 'bow',
+  mapIcon: 'map_bow',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.RANGED_WEAPON,
@@ -96,8 +95,8 @@ const SHORT_BOW: EquipmentClass = {
 
 const LONG_BOW: EquipmentClass = {
   name: 'Long Bow',
-  sprite: SpriteFactory.BOW,
-  mapIcon: SpriteFactory.MAP_BOW,
+  sprite: 'bow',
+  mapIcon: 'map_bow',
   char: 'S',
   itemCategory: ItemCategory.WEAPON,
   slot: EquipmentSlot.RANGED_WEAPON,
@@ -112,8 +111,8 @@ const LONG_BOW: EquipmentClass = {
 
 const BRONZE_CHAIN_MAIL: EquipmentClass = {
   name: 'Bronze Chain Mail',
-  sprite: SpriteFactory.MAIL,
-  mapIcon: SpriteFactory.MAP_MAIL,
+  sprite: 'mail',
+  mapIcon: 'map_mail',
   char: 'S',
   itemCategory: ItemCategory.ARMOR,
   slot: EquipmentSlot.CHEST,
@@ -126,8 +125,8 @@ const BRONZE_CHAIN_MAIL: EquipmentClass = {
 
 const IRON_CHAIN_MAIL: EquipmentClass = {
   name: 'Iron Chain Mail',
-  sprite: SpriteFactory.MAIL,
-  mapIcon: SpriteFactory.MAP_MAIL,
+  sprite: 'mail',
+  mapIcon: 'map_mail',
   char: 'S',
   itemCategory: ItemCategory.ARMOR,
   slot: EquipmentSlot.CHEST,
@@ -138,8 +137,8 @@ const IRON_CHAIN_MAIL: EquipmentClass = {
 
 const IRON_HELMET: EquipmentClass = {
   name: 'Iron Helmet',
-  sprite: SpriteFactory.HELMET,
-  mapIcon: SpriteFactory.MAP_HELMET,
+  sprite: 'helmet',
+  mapIcon: 'map_helmet',
   char: 'S',
   itemCategory: ItemCategory.ARMOR,
   slot: EquipmentSlot.HEAD,

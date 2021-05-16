@@ -74,11 +74,11 @@ const HUMAN_DETERMINISTIC = {
   issueOrder(unit: Unit) {
     const { playerUnit, turn } = jwb.state;
 
-    const { aiParams } = unit.unitClass;
-    if (!aiParams) {
+    const { aiParameters } = unit.unitClass;
+    if (!aiParameters) {
       throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
     }
-    const { speed, visionRange, fleeThreshold } = aiParams;
+    const { speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);

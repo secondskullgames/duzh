@@ -1,5 +1,9 @@
 {
   "name": "bow",
+  "offsets": {
+    "dx": -4,
+    "dy": -20
+  },
   "patterns": [
     "${sprite}_${activity}_${direction}_${number}_B",
     "${sprite}_${activity}_${direction}_${number}"

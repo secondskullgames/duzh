@@ -1,9 +1,10 @@
 {
-  "name": "helmet",
-  "patterns": [
-    "${sprite}_${activity}_${direction}_${number}_B",
-    "${sprite}_${activity}_${direction}_${number}"
-  ],
+  "name": "player",
+  "offsets": {
+    "dx": -4,
+    "dy": -20
+  },
+  "pattern": "${sprite}_${activity}_${direction}_${number}",
   "animations": {
     "standing": {
       "frames": [{

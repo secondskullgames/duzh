@@ -8,6 +8,7 @@ import TileSets from '../maps/TileSets';
 import { attachEvents } from './InputHandler';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
+import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
@@ -37,7 +38,8 @@ function initialize(): Promise<any> {
 }
 
 function _initState() {
-  const playerUnit = new Unit(UnitClasses.PLAYER, 'player', 1, { x: 0, y: 0 });
+  const playerUnitController = new PlayerUnitController();
+  const playerUnit = new Unit(UnitClasses.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
   jwb.state = new GameState(playerUnit, [
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 1, 32, 24, 10, 5),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSets.DUNGEON, 2, 32, 24, 11, 4),

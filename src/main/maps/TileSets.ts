@@ -1,15 +1,20 @@
 import Sprite from '../graphics/sprites/Sprite';
-import ImageSupplier from '../graphics/ImageSupplier';
-import Colors from '../types/Colors';
-import { PaletteSwaps, TileType, TileSet } from '../types/types';
+import { TileType, TileSet } from '../types/types';
 import StaticSprite from '../graphics/sprites/StaticSprite';
+import { StaticSpriteConfig } from '../graphics/sprites/StaticSpriteConfig';
 
 type TileFilenames = {
   [tileType in TileType]: (string | null)[]
 }
 
 function _getTileSprite(filename: string): Sprite {
-  return new StaticSprite(filename, { dx: 0, dy: 0 }, {});
+  // TODO JSONify these too
+  const spriteConfig: StaticSpriteConfig = {
+    name: filename,
+    filename,
+    offsets: { dx: 0, dy: 0 }
+  };
+  return new StaticSprite(spriteConfig);
 }
 
 /**

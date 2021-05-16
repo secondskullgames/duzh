@@ -9,9 +9,12 @@ import UnitAbilities, { Ability } from './UnitAbilities';
 import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import Directions from '../types/Directions';
+import { EquipmentClasses } from '../items/equipment/EquipmentClasses';
+import Equipment from '../items/equipment/Equipment';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
-// Regenerate 1% of life every 50 turns
-const LIFE_PER_TURN_MULTIPLIER = 0.0002;
+// Regenerate 1% of life every 20 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.0005;
 
 class Unit implements Entity {
   readonly unitClass: UnitClass;
@@ -37,9 +40,9 @@ class Unit implements Entity {
   readonly abilities: Ability[];
   stunDuration: number;
 
-  constructor(unitClass: UnitClass, name: string, level: number, { x, y }: Coordinates) {
+  constructor(unitClass: UnitClass, name: string, controller: UnitController, level: number, { x, y }: Coordinates) {
     this.unitClass = unitClass;
-    this.sprite = unitClass.sprite(this, unitClass.paletteSwaps);
+    this.sprite = SpriteFactory.createUnitSprite(unitClass.sprite, this, unitClass.paletteSwaps);
     this.inventory = new InventoryMap();
     this.equipment = new EquipmentMap();
 
@@ -54,7 +57,7 @@ class Unit implements Entity {
     this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
     this._damage = unitClass.startingDamage;
-    this.controller = unitClass.controller;
+    this.controller = controller;
     this.activity = Activity.STANDING;
     this.direction = Directions.S;
     this.remainingCooldowns = new Map();
@@ -62,8 +65,8 @@ class Unit implements Entity {
     this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
     this.stunDuration = 0;
 
-    unitClass.equipment?.forEach(supplier => {
-      const equipment = supplier();
+    unitClass.equipment?.forEach(equipmentName => {
+      const equipment = new Equipment(EquipmentClasses[equipmentName]!!, null); // TODO deal with InventoryItem
       this.equipment.add(equipment);
       equipment.attach(this);
     })
@@ -134,10 +137,10 @@ class Unit implements Entity {
 
   private _levelUp(withSound: boolean) {
     this.level++;
-    const lifePerLevel = this.unitClass.lifePerLevel(this.level);
+    const lifePerLevel = this.unitClass.lifePerLevel;
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
-    this._damage += this.unitClass.damagePerLevel(this.level);
+    this._damage += this.unitClass.damagePerLevel;
     if (withSound) {
       playSound(Sounds.LEVEL_UP);
     }
@@ -155,7 +158,7 @@ class Unit implements Entity {
   experienceToNextLevel(): (number | null) {
     const { unitClass } = this;
     if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
-      return unitClass.experienceToNextLevel(this.level);
+      return unitClass.experienceToNextLevel[this.level];
     }
     return null;
   }
