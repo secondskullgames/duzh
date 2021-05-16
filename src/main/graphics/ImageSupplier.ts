@@ -1,6 +1,7 @@
-import { loadImage, applyTransparentColor, replaceColors } from './ImageUtils';
+import { applyTransparentColor, replaceColors } from './ImageUtils';
 import { chainPromises } from '../utils/PromiseUtils';
 import { PaletteSwaps } from '../types/types';
+import ImageLoader from './ImageLoader';
 
 type ImageDataFunc = (imageData: ImageData) => Promise<ImageData>;
 
@@ -37,7 +38,7 @@ class ImageSupplier {
   }
 
   private _loadOptional(filename: string): Promise<ImageData | null> {
-    return loadImage(filename)
+    return ImageLoader.loadImage(filename)
       .catch(e => null);
   }
 }

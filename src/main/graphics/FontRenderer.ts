@@ -1,5 +1,6 @@
-import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
+import { applyTransparentColor, replaceColors } from './ImageUtils';
 import Colors, { Color } from '../types/Colors';
+import ImageLoader from './ImageLoader';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
 const MIN_CHARACTER_CODE = 32;  // ' '
@@ -77,7 +78,7 @@ class FontRenderer {
     }
 
     const width = NUM_CHARACTERS * definition.width;
-    return loadImage(`fonts/${definition.src}`)
+    return ImageLoader.loadImage(`fonts/${definition.src}`)
       .then(imageData => createImageBitmap(imageData))
       .then(imageBitmap => {
         const canvas: HTMLCanvasElement = document.createElement('canvas');

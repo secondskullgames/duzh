@@ -1005,6 +1005,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
 /* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+
 
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
@@ -1061,7 +1063,7 @@ class FontRenderer {
             return Promise.resolve(this._loadedFonts[definition.name]);
         }
         const width = NUM_CHARACTERS * definition.width;
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.loadImage)(`fonts/${definition.src}`)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_2__.default.loadImage(`fonts/${definition.src}`)
             .then(imageData => createImageBitmap(imageData))
             .then(imageBitmap => {
             const canvas = document.createElement('canvas');
@@ -1107,6 +1109,61 @@ class FontRenderer {
 
 /***/ }),
 
+/***/ "./src/main/graphics/ImageLoader.ts":
+/*!******************************************!*\
+  !*** ./src/main/graphics/ImageLoader.ts ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const CACHE = {};
+function _loadImage(filename) {
+    return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        canvas.style.display = 'none';
+        const img = document.createElement('img');
+        img.addEventListener('load', () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const context = canvas.getContext('2d');
+            if (!context) {
+                throw 'Couldn\'t get rendering context!';
+            }
+            context.drawImage(img, 0, 0);
+            const imageData = context.getImageData(0, 0, img.width, img.height);
+            if (img.parentElement) {
+                img.parentElement.removeChild(img);
+            }
+            if (canvas.parentElement) {
+                canvas.parentElement.removeChild(canvas);
+            }
+            resolve(imageData);
+        });
+        img.style.display = 'none';
+        img.onerror = () => {
+            reject(`Failed to load image ${img.src}`);
+        };
+        img.src = `dist/png/${filename}.png`;
+    });
+}
+function loadImage(filename) {
+    if (CACHE[filename] != null) {
+        return CACHE[filename];
+    }
+    const image = _loadImage(filename);
+    CACHE[filename] = image;
+    return image;
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+    loadImage
+});
+
+
+/***/ }),
+
 /***/ "./src/main/graphics/ImageSupplier.ts":
 /*!********************************************!*\
   !*** ./src/main/graphics/ImageSupplier.ts ***!
@@ -1119,6 +1176,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
 /* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+
 
 
 class ImageSupplier {
@@ -1149,7 +1208,7 @@ class ImageSupplier {
         });
     }
     _loadOptional(filename) {
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.loadImage)(filename)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_2__.default.loadImage(filename)
             .catch(e => null);
     }
 }
@@ -1166,41 +1225,11 @@ class ImageSupplier {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "loadImage": () => (/* binding */ loadImage),
 /* harmony export */   "applyTransparentColor": () => (/* binding */ applyTransparentColor),
 /* harmony export */   "replaceColors": () => (/* binding */ replaceColors),
 /* harmony export */   "replaceAll": () => (/* binding */ replaceAll),
 /* harmony export */   "hex2rgb": () => (/* binding */ hex2rgb)
 /* harmony export */ });
-function loadImage(filename) {
-    return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        canvas.style.display = 'none';
-        const img = document.createElement('img');
-        img.addEventListener('load', () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const context = canvas.getContext('2d');
-            if (!context) {
-                throw 'Couldn\'t get rendering context!';
-            }
-            context.drawImage(img, 0, 0);
-            const imageData = context.getImageData(0, 0, img.width, img.height);
-            if (img.parentElement) {
-                img.parentElement.removeChild(img);
-            }
-            if (canvas.parentElement) {
-                canvas.parentElement.removeChild(canvas);
-            }
-            resolve(imageData);
-        });
-        img.style.display = 'none';
-        img.onerror = () => {
-            reject(`Failed to load image ${img.src}`);
-        };
-        img.src = `dist/png/${filename}.png`;
-    });
-}
 function applyTransparentColor(imageData, transparentColor) {
     return new Promise(resolve => {
         const [tr, tg, tb] = hex2rgb(transparentColor);
@@ -1387,6 +1416,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _core_actions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/actions */ "./src/main/core/actions.ts");
 /* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+
 
 
 
@@ -1557,12 +1588,11 @@ class SpriteRenderer {
         return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.chainPromises)(promises);
     }
     /**
-     * TODO memoize
      * @param color (in hex form)
      */
     _drawEllipse({ x, y }, color) {
         const { x: left, y: top } = this._gridToPixel({ x, y });
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.loadImage)(SHADOW_FILENAME)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(SHADOW_FILENAME)
             .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.applyTransparentColor)(imageData, _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
             .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.replaceColors)(imageData, { [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }))
             .then(createImageBitmap)
@@ -1574,7 +1604,7 @@ class SpriteRenderer {
         const { playerUnit } = jwb.state;
         const { inventory } = playerUnit;
         const { _bufferCanvas, _bufferContext } = this;
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.loadImage)(INVENTORY_BACKGROUND_FILENAME)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(INVENTORY_BACKGROUND_FILENAME)
             .then(createImageBitmap)
             .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
             .then(() => {
@@ -1672,7 +1702,7 @@ class SpriteRenderer {
         ]));
     }
     _renderHUDFrame() {
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.loadImage)(HUD_FILENAME)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(HUD_FILENAME)
             .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.applyTransparentColor)(imageData, _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
             .then(createImageBitmap)
             .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
@@ -1744,7 +1774,7 @@ class SpriteRenderer {
         };
     }
     _renderSplashScreen(filename, text) {
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.loadImage)(filename)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(filename)
             .then(imageData => createImageBitmap(imageData))
             .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
             .then(() => this._drawText(text, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
@@ -1787,7 +1817,7 @@ class SpriteRenderer {
         else {
             borderColor = _types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
         }
-        return (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.loadImage)(`abilities/${ability.icon}`)
+        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(`abilities/${ability.icon}`)
             .then(image => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.replaceColors)(image, { [_types_Colors__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: borderColor }))
             .then(createImageBitmap)
             .then(image => this._bufferContext.drawImage(image, left, top))
