@@ -1,0 +1,15 @@
+{
+  "name": "Steel Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "char": "S",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "DARK_GRAY": "DARK_GRAY",
+    "LIGHT_GRAY": "LIGHT_GRAY"
+  },
+  "damage": 6,
+  "minLevel": 4,
+  "maxLevel": 6
+}

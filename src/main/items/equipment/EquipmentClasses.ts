@@ -1,162 +1,62 @@
+import bronze_sword from '../../../../data/equipment/bronze_sword.json';
+import iron_sword from '../../../../data/equipment/iron_sword.json';
+import steel_sword from '../../../../data/equipment/steel_sword.json';
+import fire_sword from '../../../../data/equipment/fire_sword.json';
+import short_bow from '../../../../data/equipment/short_bow.json';
+import long_bow from '../../../../data/equipment/long_bow.json';
+import bronze_chain_mail from '../../../../data/equipment/bronze_chain_mail.json';
+import iron_chain_mail from '../../../../data/equipment/iron_chain_mail.json';
+import iron_helmet from '../../../../data/equipment/iron_helmet.json';
 import { EquipmentSlot, ItemCategory, PaletteSwaps } from '../../types/types';
-import Colors from '../../types/Colors';
+import Colors, { Color } from '../../types/Colors';
+import UnitClasses from '../../units/UnitClasses';
 
 interface EquipmentClass {
-  name: string,
-  sprite: string,
-  mapIcon: string,
-  itemCategory: ItemCategory,
-  slot: EquipmentSlot,
-  char: string,
-  paletteSwaps: PaletteSwaps,
-  minLevel: number,
-  maxLevel: number,
-  damage?: number
+  readonly name: string,
+  readonly sprite: string,
+  readonly mapIcon: string,
+  readonly itemCategory: ItemCategory,
+  readonly slot: EquipmentSlot,
+  readonly char: string,
+  readonly paletteSwaps: PaletteSwaps,
+  readonly damage?: number,
+  // TODO move these somewhere else - just used to control item spawns
+  readonly minLevel: number,
+  readonly maxLevel: number,
 }
 
-const BRONZE_SWORD: EquipmentClass = {
-  name: 'Bronze Sword',
-  sprite: 'sword',
-  mapIcon: 'map_sword',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.MELEE_WEAPON,
-  paletteSwaps: {
-    [Colors.BLACK]: Colors.BLACK,
-    [Colors.DARK_GRAY]: Colors.LIGHT_BROWN,
-    [Colors.LIGHT_GRAY]: Colors.LIGHT_BROWN
-  },
-  damage: 2,
-  minLevel: 1,
-  maxLevel: 2
-};
+function _load(json: any): EquipmentClass {
+  // ugh
+  return {
+    ...json,
+    // We're using "friendly" color names, convert them to hex now
+    paletteSwaps: _mapPaletteSwaps(json.paletteSwaps),
+  };
+}
 
-const IRON_SWORD: EquipmentClass = {
-  name: 'Iron Sword',
-  sprite: 'sword',
-  mapIcon: 'map_sword',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.MELEE_WEAPON,
-  paletteSwaps: {
-    [Colors.DARK_GRAY]: Colors.BLACK,
-    [Colors.LIGHT_GRAY]: Colors.DARK_GRAY
-  },
-  damage: 4,
-  minLevel: 3,
-  maxLevel: 4
-};
-
-const STEEL_SWORD: EquipmentClass = {
-  name: 'Steel Sword',
-  sprite: 'sword',
-  mapIcon: 'map_sword',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.MELEE_WEAPON,
-  paletteSwaps: {
-    [Colors.DARK_GRAY]: Colors.DARK_GRAY,
-    [Colors.LIGHT_GRAY]: Colors.LIGHT_GRAY
-  },
-  damage: 6,
-  minLevel: 4,
-  maxLevel: 6
-};
-
-const FIRE_SWORD: EquipmentClass = {
-  name: 'Fire Sword',
-  sprite: 'sword',
-  mapIcon: 'map_sword',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.MELEE_WEAPON,
-  paletteSwaps: {
-    [Colors.DARK_GRAY]: Colors.YELLOW,
-    [Colors.LIGHT_GRAY]: Colors.RED,
-    [Colors.BLACK]: Colors.DARK_RED
-  },
-  damage: 8,
-  minLevel: 5,
-  maxLevel: 6
-};
-
-const SHORT_BOW: EquipmentClass = {
-  name: 'Short Bow',
-  sprite: 'bow',
-  mapIcon: 'map_bow',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.RANGED_WEAPON,
-  paletteSwaps: {},
-  damage: 2,
-  minLevel: 2,
-  maxLevel: 4
-};
-
-const LONG_BOW: EquipmentClass = {
-  name: 'Long Bow',
-  sprite: 'bow',
-  mapIcon: 'map_bow',
-  char: 'S',
-  itemCategory: ItemCategory.WEAPON,
-  slot: EquipmentSlot.RANGED_WEAPON,
-  paletteSwaps: {
-    [Colors.DARK_GREEN]: Colors.DARK_RED,
-    [Colors.GREEN]: Colors.RED,
-  },
-  damage: 4,
-  minLevel: 5,
-  maxLevel: 6
-};
-
-const BRONZE_CHAIN_MAIL: EquipmentClass = {
-  name: 'Bronze Chain Mail',
-  sprite: 'mail',
-  mapIcon: 'map_mail',
-  char: 'S',
-  itemCategory: ItemCategory.ARMOR,
-  slot: EquipmentSlot.CHEST,
-  paletteSwaps: {
-    [Colors.DARK_GRAY]: Colors.DARK_BROWN
-  },
-  minLevel: 1,
-  maxLevel: 2
-};
-
-const IRON_CHAIN_MAIL: EquipmentClass = {
-  name: 'Iron Chain Mail',
-  sprite: 'mail',
-  mapIcon: 'map_mail',
-  char: 'S',
-  itemCategory: ItemCategory.ARMOR,
-  slot: EquipmentSlot.CHEST,
-  paletteSwaps: {},
-  minLevel: 3,
-  maxLevel: 6
-};
-
-const IRON_HELMET: EquipmentClass = {
-  name: 'Iron Helmet',
-  sprite: 'helmet',
-  mapIcon: 'map_helmet',
-  char: 'S',
-  itemCategory: ItemCategory.ARMOR,
-  slot: EquipmentSlot.HEAD,
-  paletteSwaps: {},
-  minLevel: 1,
-  maxLevel: 6
-};
+/**
+ * TODO copy-pasted from {@link UnitClasses}
+ */
+function _mapPaletteSwaps(paletteSwaps: { [src: string]: Color }) {
+  const map: { [src: string]: Color } = {};
+  Object.entries(paletteSwaps).forEach(([src, dest]) => {
+    const srcHex : string = Colors[src]!!;
+    const destHex : string = Colors[dest]!!;
+    map[srcHex] = destHex;
+  });
+  return map;
+}
 
 const EquipmentClasses: { [name: string]: EquipmentClass } = {
-  BRONZE_SWORD,
-  IRON_SWORD,
-  STEEL_SWORD,
-  FIRE_SWORD,
-  SHORT_BOW,
-  LONG_BOW,
-  BRONZE_CHAIN_MAIL,
-  IRON_CHAIN_MAIL,
-  IRON_HELMET
+  bronze_sword: _load(bronze_sword),
+  iron_sword: _load(iron_sword),
+  steel_sword: _load(steel_sword),
+  fire_sword: _load(fire_sword),
+  short_bow: _load(short_bow),
+  long_bow: _load(long_bow),
+  bronze_chain_mail: _load(bronze_chain_mail),
+  iron_chain_mail: _load(iron_chain_mail),
+  iron_helmet: _load(iron_helmet)
 }
 
 export {

@@ -16,9 +16,9 @@
   "manaPerLevel": null,
   "damagePerLevel": 1,
   "equipment": [
-    "IRON_CHAIN_MAIL",
-    "IRON_HELMET",
-    "STEEL_SWORD"
+    "iron_chain_mail",
+    "iron_helmet",
+    "steel_sword"
   ],
   "aiParameters": {
     "speed": 0.95,

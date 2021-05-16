@@ -12,6 +12,96 @@ module.exports = JSON.parse('{"BLACK":"#000000","WHITE":"#FFFFFF","DARK_GRAY":"#
 
 /***/ }),
 
+/***/ "./data/equipment/bronze_chain_mail.json":
+/*!***********************************************!*\
+  !*** ./data/equipment/bronze_chain_mail.json ***!
+  \***********************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Bronze Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{"DARK_GRAY":"DARK_BROWN"},"minLevel":-1,"maxLevel":-1}');
+
+/***/ }),
+
+/***/ "./data/equipment/bronze_sword.json":
+/*!******************************************!*\
+  !*** ./data/equipment/bronze_sword.json ***!
+  \******************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Bronze Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"BLACK":"BLACK","DARK_GRAY":"LIGHT_BROWN","LIGHT_GRAY":"LIGHT_BROWN"},"damage":2,"minLevel":1,"maxLevel":2}');
+
+/***/ }),
+
+/***/ "./data/equipment/fire_sword.json":
+/*!****************************************!*\
+  !*** ./data/equipment/fire_sword.json ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Fire Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"ItemCategory.WEAPON","slot":"EquipmentSlot.MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"Colors.YELLOW","LIGHT_GRAY":"Colors.RED","BLACK":"Colors.DARK_RED"},"damage":8,"minLevel":5,"maxLevel":6}');
+
+/***/ }),
+
+/***/ "./data/equipment/iron_chain_mail.json":
+/*!*********************************************!*\
+  !*** ./data/equipment/iron_chain_mail.json ***!
+  \*********************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Iron Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
+
+/***/ }),
+
+/***/ "./data/equipment/iron_helmet.json":
+/*!*****************************************!*\
+  !*** ./data/equipment/iron_helmet.json ***!
+  \*****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Iron Helmet","sprite":"helmet","mapIcon":"map_helmet","char":"S","itemCategory":"ARMOR","slot":"HEAD","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
+
+/***/ }),
+
+/***/ "./data/equipment/iron_sword.json":
+/*!****************************************!*\
+  !*** ./data/equipment/iron_sword.json ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Iron Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"BLACK","LIGHT_GRAY":"DARK_GRAY"},"damage":4,"minLevel":3,"maxLevel":4}');
+
+/***/ }),
+
+/***/ "./data/equipment/long_bow.json":
+/*!**************************************!*\
+  !*** ./data/equipment/long_bow.json ***!
+  \**************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Long Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":4,"minLevel":5,"maxLevel":6}');
+
+/***/ }),
+
+/***/ "./data/equipment/short_bow.json":
+/*!***************************************!*\
+  !*** ./data/equipment/short_bow.json ***!
+  \***************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Short Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":2,"minLevel":2,"maxLevel":4}');
+
+/***/ }),
+
+/***/ "./data/equipment/steel_sword.json":
+/*!*****************************************!*\
+  !*** ./data/equipment/steel_sword.json ***!
+  \*****************************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"name":"Steel Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"DARK_GRAY","LIGHT_GRAY":"LIGHT_GRAY"},"damage":6,"minLevel":4,"maxLevel":6}');
+
+/***/ }),
+
 /***/ "./data/sounds/deflected_hit.json":
 /*!****************************************!*\
   !*** ./data/sounds/deflected_hit.json ***!
@@ -288,7 +378,7 @@ module.exports = JSON.parse('{"name":"golem","type":"GOLEM","sprite":"zombie","p
   \*******************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"name":"grunt","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","CYAN":"ORANGE"},"startingLife":50,"startingMana":null,"startingDamage":3,"minLevel":1,"maxLevel":4,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["BRONZE_CHAIN_MAIL","IRON_HELMET","BRONZE_SWORD"],"aiParameters":{"speed":0.95,"visionRange":8,"fleeThreshold":0.1}}');
+module.exports = JSON.parse('{"name":"grunt","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","CYAN":"ORANGE"},"startingLife":50,"startingMana":null,"startingDamage":3,"minLevel":1,"maxLevel":4,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["bronze_chain_mail","iron_helmet","bronze_sword"],"aiParameters":{"speed":0.95,"visionRange":8,"fleeThreshold":0.1}}');
 
 /***/ }),
 
@@ -318,7 +408,7 @@ module.exports = JSON.parse('{"name":"snake","type":"ANIMAL","sprite":"snake","p
   \*********************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"name":"ENEMY_SOLDIER","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BLUE","GREEN":"DARK_BLUE","CYAN":"ORANGE"},"startingLife":60,"startingMana":null,"startingDamage":4,"minLevel":3,"maxLevel":6,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["IRON_CHAIN_MAIL","IRON_HELMET","STEEL_SWORD"],"aiParameters":{"speed":0.95,"visionRange":10,"fleeThreshold":0.1}}');
+module.exports = JSON.parse('{"name":"ENEMY_SOLDIER","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BLUE","GREEN":"DARK_BLUE","CYAN":"ORANGE"},"startingLife":60,"startingMana":null,"startingDamage":4,"minLevel":3,"maxLevel":6,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["iron_chain_mail","iron_helmet","steel_sword"],"aiParameters":{"speed":0.95,"visionRange":10,"fleeThreshold":0.1}}');
 
 /***/ }),
 
@@ -2583,144 +2673,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "EquipmentClasses": () => (/* binding */ EquipmentClasses)
 /* harmony export */ });
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
+/* harmony import */ var _data_equipment_bronze_sword_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/equipment/bronze_sword.json */ "./data/equipment/bronze_sword.json");
+/* harmony import */ var _data_equipment_iron_sword_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/equipment/iron_sword.json */ "./data/equipment/iron_sword.json");
+/* harmony import */ var _data_equipment_steel_sword_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/equipment/steel_sword.json */ "./data/equipment/steel_sword.json");
+/* harmony import */ var _data_equipment_fire_sword_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/equipment/fire_sword.json */ "./data/equipment/fire_sword.json");
+/* harmony import */ var _data_equipment_short_bow_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../data/equipment/short_bow.json */ "./data/equipment/short_bow.json");
+/* harmony import */ var _data_equipment_long_bow_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../data/equipment/long_bow.json */ "./data/equipment/long_bow.json");
+/* harmony import */ var _data_equipment_bronze_chain_mail_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../data/equipment/bronze_chain_mail.json */ "./data/equipment/bronze_chain_mail.json");
+/* harmony import */ var _data_equipment_iron_chain_mail_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../data/equipment/iron_chain_mail.json */ "./data/equipment/iron_chain_mail.json");
+/* harmony import */ var _data_equipment_iron_helmet_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../data/equipment/iron_helmet.json */ "./data/equipment/iron_helmet.json");
+/* harmony import */ var _types_Colors__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../types/Colors */ "./src/main/types/Colors.ts");
 
 
-const BRONZE_SWORD = {
-    name: 'Bronze Sword',
-    sprite: 'sword',
-    mapIcon: 'map_sword',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_BROWN,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_BROWN
-    },
-    damage: 2,
-    minLevel: 1,
-    maxLevel: 2
-};
-const IRON_SWORD = {
-    name: 'Iron Sword',
-    sprite: 'sword',
-    mapIcon: 'map_sword',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY
-    },
-    damage: 4,
-    minLevel: 3,
-    maxLevel: 4
-};
-const STEEL_SWORD = {
-    name: 'Steel Sword',
-    sprite: 'sword',
-    mapIcon: 'map_sword',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY
-    },
-    damage: 6,
-    minLevel: 4,
-    maxLevel: 6
-};
-const FIRE_SWORD = {
-    name: 'Fire Sword',
-    sprite: 'sword',
-    mapIcon: 'map_sword',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.MELEE_WEAPON,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.YELLOW,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_RED
-    },
-    damage: 8,
-    minLevel: 5,
-    maxLevel: 6
-};
-const SHORT_BOW = {
-    name: 'Short Bow',
-    sprite: 'bow',
-    mapIcon: 'map_bow',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
-    paletteSwaps: {},
-    damage: 2,
-    minLevel: 2,
-    maxLevel: 4
-};
-const LONG_BOW = {
-    name: 'Long Bow',
-    sprite: 'bow',
-    mapIcon: 'map_bow',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.WEAPON,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.RANGED_WEAPON,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_RED,
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.GREEN]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED,
-    },
-    damage: 4,
-    minLevel: 5,
-    maxLevel: 6
-};
-const BRONZE_CHAIN_MAIL = {
-    name: 'Bronze Chain Mail',
-    sprite: 'mail',
-    mapIcon: 'map_mail',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.CHEST,
-    paletteSwaps: {
-        [_types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY]: _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_BROWN
-    },
-    minLevel: 1,
-    maxLevel: 2
-};
-const IRON_CHAIN_MAIL = {
-    name: 'Iron Chain Mail',
-    sprite: 'mail',
-    mapIcon: 'map_mail',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.CHEST,
-    paletteSwaps: {},
-    minLevel: 3,
-    maxLevel: 6
-};
-const IRON_HELMET = {
-    name: 'Iron Helmet',
-    sprite: 'helmet',
-    mapIcon: 'map_helmet',
-    char: 'S',
-    itemCategory: _types_types__WEBPACK_IMPORTED_MODULE_0__.ItemCategory.ARMOR,
-    slot: _types_types__WEBPACK_IMPORTED_MODULE_0__.EquipmentSlot.HEAD,
-    paletteSwaps: {},
-    minLevel: 1,
-    maxLevel: 6
-};
+
+
+
+
+
+
+
+
+function _load(json) {
+    // ugh
+    return Object.assign(Object.assign({}, json), { 
+        // We're using "friendly" color names, convert them to hex now
+        paletteSwaps: _mapPaletteSwaps(json.paletteSwaps) });
+}
+/**
+ * TODO copy-pasted from {@link UnitClasses}
+ */
+function _mapPaletteSwaps(paletteSwaps) {
+    const map = {};
+    Object.entries(paletteSwaps).forEach(([src, dest]) => {
+        const srcHex = _types_Colors__WEBPACK_IMPORTED_MODULE_9__.default[src];
+        const destHex = _types_Colors__WEBPACK_IMPORTED_MODULE_9__.default[dest];
+        map[srcHex] = destHex;
+    });
+    return map;
+}
 const EquipmentClasses = {
-    BRONZE_SWORD,
-    IRON_SWORD,
-    STEEL_SWORD,
-    FIRE_SWORD,
-    SHORT_BOW,
-    LONG_BOW,
-    BRONZE_CHAIN_MAIL,
-    IRON_CHAIN_MAIL,
-    IRON_HELMET
+    bronze_sword: _load(_data_equipment_bronze_sword_json__WEBPACK_IMPORTED_MODULE_0__),
+    iron_sword: _load(_data_equipment_iron_sword_json__WEBPACK_IMPORTED_MODULE_1__),
+    steel_sword: _load(_data_equipment_steel_sword_json__WEBPACK_IMPORTED_MODULE_2__),
+    fire_sword: _load(_data_equipment_fire_sword_json__WEBPACK_IMPORTED_MODULE_3__),
+    short_bow: _load(_data_equipment_short_bow_json__WEBPACK_IMPORTED_MODULE_4__),
+    long_bow: _load(_data_equipment_long_bow_json__WEBPACK_IMPORTED_MODULE_5__),
+    bronze_chain_mail: _load(_data_equipment_bronze_chain_mail_json__WEBPACK_IMPORTED_MODULE_6__),
+    iron_chain_mail: _load(_data_equipment_iron_chain_mail_json__WEBPACK_IMPORTED_MODULE_7__),
+    iron_helmet: _load(_data_equipment_iron_helmet_json__WEBPACK_IMPORTED_MODULE_8__)
 };
 
 
@@ -5109,17 +5109,15 @@ function _mapPaletteSwaps(paletteSwaps) {
     });
     return map;
 }
-const PLAYER = _loadUnitClass(_data_units_player_json__WEBPACK_IMPORTED_MODULE_1__);
-const ENEMY_CLASSES = [_data_units_grunt_json__WEBPACK_IMPORTED_MODULE_0__, _data_units_golem_json__WEBPACK_IMPORTED_MODULE_4__, _data_units_soldier_json__WEBPACK_IMPORTED_MODULE_3__, _data_units_snake_json__WEBPACK_IMPORTED_MODULE_2__].map(json => _loadUnitClass(json));
+const PLAYER = _load(_data_units_player_json__WEBPACK_IMPORTED_MODULE_1__);
+const ENEMY_CLASSES = [_data_units_grunt_json__WEBPACK_IMPORTED_MODULE_0__, _data_units_golem_json__WEBPACK_IMPORTED_MODULE_4__, _data_units_soldier_json__WEBPACK_IMPORTED_MODULE_3__, _data_units_snake_json__WEBPACK_IMPORTED_MODULE_2__].map(json => _load(json));
 function getEnemyClasses() {
     return ENEMY_CLASSES;
 }
-function _loadUnitClass(json) {
+function _load(json) {
     return Object.assign(Object.assign({}, json), { 
         // We're using "friendly" color names, convert them to hex now
-        paletteSwaps: _mapPaletteSwaps(json.paletteSwaps), 
-        // JSON parsing doesn't like indexed types, so just assume this is valid
-        type: json.type });
+        paletteSwaps: _mapPaletteSwaps(json.paletteSwaps) });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     PLAYER,

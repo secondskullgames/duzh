@@ -1,0 +1,11 @@
+{
+  "name": "Iron Chain Mail",
+  "sprite": "mail",
+  "mapIcon": "map_mail",
+  "char": "S",
+  "itemCategory": "ARMOR",
+  "slot": "CHEST",
+  "paletteSwaps": {},
+  "minLevel": -1,
+  "maxLevel": -1
+}

@@ -4,7 +4,6 @@ import snake from '../../../data/units/snake.json';
 import soldier from '../../../data/units/soldier.json';
 import golem from '../../../data/units/golem.json';
 import UnitClass from './UnitClass';
-import { UnitType } from '../types/types';
 import Colors, { Color } from '../types/Colors';
 
 function _mapPaletteSwaps(paletteSwaps: { [src: string]: Color }) {
@@ -17,20 +16,18 @@ function _mapPaletteSwaps(paletteSwaps: { [src: string]: Color }) {
   return map;
 }
 
-const PLAYER: UnitClass = _loadUnitClass(player);
-const ENEMY_CLASSES: UnitClass[] = [grunt, golem, soldier, snake].map(json => _loadUnitClass(json));
+const PLAYER: UnitClass = _load(player);
+const ENEMY_CLASSES: UnitClass[] = [grunt, golem, soldier, snake].map(json => _load(json));
 
 function getEnemyClasses(): UnitClass[] {
   return ENEMY_CLASSES;
 }
 
-function _loadUnitClass(json: any): UnitClass {
-  return {
+function _load(json: any): UnitClass {
+  return <UnitClass>{
     ...json,
     // We're using "friendly" color names, convert them to hex now
     paletteSwaps: _mapPaletteSwaps(json.paletteSwaps),
-    // JSON parsing doesn't like indexed types, so just assume this is valid
-    type: <UnitType>json.type
   };
 }
 
