@@ -1,5 +1,5 @@
 import ImageSupplier from '../ImageSupplier';
-import Sprite, { Offsets } from './Sprite';
+import Sprite from './Sprite';
 import Colors from '../../types/Colors';
 import { Activity, PaletteSwaps } from '../../types/types';
 import { fillTemplate } from '../../utils/TemplateUtils';

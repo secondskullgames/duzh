@@ -1,6 +1,6 @@
 import SpriteRenderer from './SpriteRenderer';
 import Colors from '../types/Colors';
-import { TileType } from '../types/types';
+import { Coordinates, TileType } from '../types/types';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 
 class MinimapRenderer {
@@ -9,9 +9,9 @@ class MinimapRenderer {
 
   constructor() {
     this._canvas = document.createElement('canvas');
-    this._context = <any>this._canvas.getContext('2d');
     this._canvas.width = SpriteRenderer.SCREEN_WIDTH;
     this._canvas.height = SpriteRenderer.SCREEN_HEIGHT;
+    this._context = <any>this._canvas.getContext('2d');
     this._context.imageSmoothingEnabled = false;
   }
 
@@ -26,37 +26,39 @@ class MinimapRenderer {
     ));
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        let color: Colors;
-        if (isTileRevealed({ x, y })) {
-          const tileType = map.getTile({ x, y }).type;
-          switch (tileType) {
-            case TileType.FLOOR:
-            case TileType.FLOOR_HALL:
-            case TileType.STAIRS_DOWN:
-              color = Colors.LIGHT_GRAY;
-              break;
-            case TileType.WALL:
-            case TileType.WALL_HALL:
-              color = Colors.DARK_GRAY;
-              break;
-            case TileType.NONE:
-            case TileType.WALL_TOP:
-            default:
-              color = Colors.BLACK;
-              break;
-          }
-          if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
-            color = Colors.RED;
-          }
-        } else {
-          color = Colors.BLACK;
-        }
-        this._context.fillStyle = color;
+        this._context.fillStyle = this._getColor({ x, y });
         this._context.fillRect(x * m, y * m, m, m);
       }
     }
     const imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
     return createImageBitmap(imageData);
+  }
+
+  private _getColor({ x, y }: Coordinates) {
+    if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
+      return Colors.RED;
+    }
+
+    const map = jwb.state.getMap();
+    if (isTileRevealed({ x, y })) {
+      const tileType = map.getTile({ x, y }).type;
+      switch (tileType) {
+        case TileType.FLOOR:
+        case TileType.FLOOR_HALL:
+        case TileType.STAIRS_DOWN:
+          return Colors.LIGHT_GRAY;
+        case TileType.WALL:
+        case TileType.WALL_HALL:
+          return Colors.DARK_GRAY;
+        case TileType.NONE:
+        case TileType.WALL_TOP:
+        default:
+          return Colors.BLACK;
+      }
+
+    } else {
+      return Colors.BLACK;
+    }
   }
 }
 

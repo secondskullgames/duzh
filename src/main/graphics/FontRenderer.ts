@@ -1,5 +1,5 @@
 import { applyTransparentColor, loadImage, replaceColors } from './ImageUtils';
-import Colors from '../types/Colors';
+import Colors, { Color } from '../types/Colors';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
 const MIN_CHARACTER_CODE = 32;  // ' '
@@ -44,7 +44,7 @@ class FontRenderer {
     this._imageMemos = {};
   }
 
-  render(text: string, font: FontDefinition, color: Colors): Promise<ImageBitmap> {
+  render(text: string, font: FontDefinition, color: Color): Promise<ImageBitmap> {
     const key = this._getMemoKey(text, font, color);
     if (!!this._imageMemos[key]) {
       return Promise.resolve(this._imageMemos[key]);
@@ -120,7 +120,7 @@ class FontRenderer {
     throw `invalid character code ${char}`;
   }
 
-  private _getMemoKey(text: string, font: FontDefinition, color: Colors) {
+  private _getMemoKey(text: string, font: FontDefinition, color: Color) {
     return `${font.name}_${color}_${text}`;
   }
 }

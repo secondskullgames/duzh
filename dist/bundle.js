@@ -2,6 +2,16 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./data/colors.json":
+/*!**************************!*\
+  !*** ./data/colors.json ***!
+  \**************************/
+/***/ ((module) => {
+
+module.exports = JSON.parse('{"BLACK":"#000000","WHITE":"#FFFFFF","DARK_GRAY":"#808080","LIGHT_GRAY":"#C0C0C0","DARK_RED":"#800000","RED":"#FF0000","DARK_YELLOW":"#808000","YELLOW":"#FFFF00","DARK_GREEN":"#008000","GREEN":"#00FF00","DARK_TEAL":"#004040","CYAN":"#00FFFF","DARK_BLUE":"#000080","BLUE":"#0000FF","DARK_PURPLE":"#800080","MAGENTA":"#FF00FF","DARK_BROWN":"#804000","LIGHT_BROWN":"#c08040","ORANGE":"#ff8040","LIGHT_PINK":"#ffc0c0","MEDIUM_RED":"#c00000","MEDIUM_BLUE":"#0000c0","DARKER_GRAY":"#404040","TEAL":"#008080"}');
+
+/***/ }),
+
 /***/ "./data/sounds/deflected_hit.json":
 /*!****************************************!*\
   !*** ./data/sounds/deflected_hit.json ***!
@@ -128,7 +138,7 @@ module.exports = JSON.parse('[[150,50],[200,50],[250,50],[175,50],[225,50],[275,
   \*****************************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"name":"bow","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"shooting":{"frames":[{"activity":"attacking","number":"2"}]}}}');
+module.exports = JSON.parse('{"name":"bow","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"shooting":{"frames":[{"activity":"shooting","number":"2"}]}}}');
 
 /***/ }),
 
@@ -1149,9 +1159,9 @@ __webpack_require__.r(__webpack_exports__);
 class MinimapRenderer {
     constructor() {
         this._canvas = document.createElement('canvas');
-        this._context = this._canvas.getContext('2d');
         this._canvas.width = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_WIDTH;
         this._canvas.height = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_HEIGHT;
+        this._context = this._canvas.getContext('2d');
         this._context.imageSmoothingEnabled = false;
     }
     render() {
@@ -1161,38 +1171,37 @@ class MinimapRenderer {
         const m = Math.floor(Math.min(this._canvas.width / map.width, this._canvas.height / map.height));
         for (let y = 0; y < map.height; y++) {
             for (let x = 0; x < map.width; x++) {
-                let color;
-                if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
-                    const tileType = map.getTile({ x, y }).type;
-                    switch (tileType) {
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR:
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR_HALL:
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.STAIRS_DOWN:
-                            color = _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY;
-                            break;
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL:
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_HALL:
-                            color = _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY;
-                            break;
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.NONE:
-                        case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_TOP:
-                        default:
-                            color = _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
-                            break;
-                    }
-                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
-                        color = _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED;
-                    }
-                }
-                else {
-                    color = _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
-                }
-                this._context.fillStyle = color;
+                this._context.fillStyle = this._getColor({ x, y });
                 this._context.fillRect(x * m, y * m, m, m);
             }
         }
         const imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
         return createImageBitmap(imageData);
+    }
+    _getColor({ x, y }) {
+        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
+            return _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.RED;
+        }
+        const map = jwb.state.getMap();
+        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+            const tileType = map.getTile({ x, y }).type;
+            switch (tileType) {
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR:
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR_HALL:
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.STAIRS_DOWN:
+                    return _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY;
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL:
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_HALL:
+                    return _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY;
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.NONE:
+                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_TOP:
+                default:
+                    return _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
+            }
+        }
+        else {
+            return _types_Colors__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
+        }
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MinimapRenderer);
@@ -4323,35 +4332,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var Colors;
-(function (Colors) {
-    // Original 16 MS Paint colors from Will
-    Colors["BLACK"] = "#000000";
-    Colors["WHITE"] = "#FFFFFF";
-    Colors["DARK_GRAY"] = "#808080";
-    Colors["LIGHT_GRAY"] = "#C0C0C0";
-    Colors["DARK_RED"] = "#800000";
-    Colors["RED"] = "#FF0000";
-    Colors["DARK_YELLOW"] = "#808000";
-    Colors["YELLOW"] = "#FFFF00";
-    Colors["DARK_GREEN"] = "#008000";
-    Colors["GREEN"] = "#00FF00";
-    Colors["DARK_TEAL"] = "#004040";
-    Colors["CYAN"] = "#00FFFF";
-    Colors["DARK_BLUE"] = "#000080";
-    Colors["BLUE"] = "#0000FF";
-    Colors["DARK_PURPLE"] = "#800080";
-    Colors["MAGENTA"] = "#FF00FF";
-    // some extended colors
-    Colors["DARK_BROWN"] = "#804000";
-    Colors["LIGHT_BROWN"] = "#c08040";
-    Colors["ORANGE"] = "#ff8040";
-    Colors["LIGHT_PINK"] = "#ffc0c0";
-    Colors["MEDIUM_RED"] = "#c00000";
-    Colors["MEDIUM_BLUE"] = "#0000c0";
-    Colors["DARKER_GRAY"] = "#404040";
-    Colors["TEAL"] = "#008080";
-})(Colors || (Colors = {}));
+/* harmony import */ var _data_colors_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/colors.json */ "./data/colors.json");
+
+const Colors = _data_colors_json__WEBPACK_IMPORTED_MODULE_0__;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Colors);
 
 

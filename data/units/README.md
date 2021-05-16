@@ -1,0 +1,1 @@
+For sanity, "paletteSwaps" uses the named colors defined in Colors.ts.  We'll JSONify those as well at some point.

@@ -11,7 +11,7 @@
   "animations": {
     "shooting": {
       "frames": [{
-        "activity": "attacking",
+        "activity": "shooting",
         "number": "2"
       }]
     }

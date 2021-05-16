@@ -1,5 +1,5 @@
 import Sprite from './sprites/Sprite';
-import Colors from '../types/Colors';
+import Colors, { Color } from '../types/Colors';
 import MinimapRenderer from './MinimapRenderer';
 import Renderer from './Renderer';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
@@ -181,7 +181,7 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const unit = map.getUnit({ x, y });
           if (!!unit) {
-            let shadowColor: Colors;
+            let shadowColor: Color;
             if (unit === playerUnit) {
               shadowColor = Colors.GREEN;
             } else {
@@ -204,7 +204,7 @@ class SpriteRenderer implements Renderer {
    * TODO memoize
    * @param color (in hex form)
    */
-  private _drawEllipse({ x, y }: Coordinates, color: Colors): Promise<any> {
+  private _drawEllipse({ x, y }: Coordinates, color: Color): Promise<any> {
     const { x: left, y: top } = this._gridToPixel({ x, y });
     return loadImage(SHADOW_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
@@ -426,7 +426,7 @@ class SpriteRenderer implements Renderer {
       .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center'));
   }
 
-  private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Colors, textAlign: 'left' | 'center' | 'right'): Promise<any> {
+  private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: 'left' | 'center' | 'right'): Promise<any> {
     return this._fontRenderer.render(text, font, color)
       .then(imageBitmap => {
         let left;
@@ -455,7 +455,7 @@ class SpriteRenderer implements Renderer {
   }
 
   private _renderAbility(ability: Ability, left: number, top: number) {
-    let borderColor: Colors;
+    let borderColor: Color;
     const { queuedAbility, playerUnit } = jwb.state;
     if (queuedAbility === ability) {
       borderColor = Colors.GREEN;

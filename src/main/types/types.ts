@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Colors from './Colors';
+import Colors, { Color } from './Colors';
 
 enum Activity {
   STANDING = 'STANDING',
@@ -62,7 +62,7 @@ enum MapLayout {
 }
 
 type PaletteSwaps = {
-  [src in Colors]?: Colors
+  [src: string]: Color
 }
 
 interface Projectile extends Entity, Coordinates {
