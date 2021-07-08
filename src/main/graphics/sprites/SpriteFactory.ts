@@ -1,28 +1,29 @@
+import Direction from '../../types/Direction';
+import PaletteSwaps from '../../types/PaletteSwaps';
 import Sprite from './Sprite';
 import Unit from '../../units/Unit';
-import { Direction, PaletteSwaps } from '../../types/types';
+import SpriteConfig from './SpriteConfig';
 import StaticSprite from './StaticSprite';
 import UnitSprite from './UnitSprite';
 import ProjectileSprite from './ProjectileSprite';
 import Equipment from '../../items/equipment/Equipment';
-import EquipmentSprite from './EquipmentSprite';
-import { SpriteConfigs } from './SpriteConfig';
-import { StaticSpriteConfigs } from './StaticSpriteConfig';
+import EquipmentSprite from './EquipmentSprite'
+import StaticSpriteConfig from './StaticSpriteConfig';
 
 type ProjectileSpriteSupplier = (direction: Direction, paletteSwaps: PaletteSwaps) => Sprite;
 
 function createStaticSprite(spriteName: string, paletteSwaps: PaletteSwaps={}) {
-  const spriteConfig = StaticSpriteConfigs[spriteName]!!;
+  const spriteConfig = StaticSpriteConfig[spriteName]!!;
   return new StaticSprite(spriteConfig, paletteSwaps);
 }
 
 function createUnitSprite(spriteName: string, unit: Unit, paletteSwaps: PaletteSwaps={}) {
-  const spriteConfig = SpriteConfigs[spriteName]!!;
+  const spriteConfig = SpriteConfig[spriteName]!!;
   return new UnitSprite(spriteConfig, unit, paletteSwaps);
 }
 
 function createEquipmentSprite(spriteName: string, equipment: Equipment, paletteSwaps: PaletteSwaps={}) {
-  const spriteConfig = SpriteConfigs[spriteName]!!;
+  const spriteConfig = SpriteConfig[spriteName]!!;
   return new EquipmentSprite(spriteConfig, equipment, paletteSwaps);
 }
 

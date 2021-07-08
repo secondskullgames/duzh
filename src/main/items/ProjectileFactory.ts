@@ -1,4 +1,5 @@
-import { Coordinates, Direction, Projectile } from '../types/types';
+import Direction from '../types/Direction';
+import { Coordinates, Projectile } from '../types/types';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 function createArrow({ x, y }: Coordinates, direction: Direction): Projectile {

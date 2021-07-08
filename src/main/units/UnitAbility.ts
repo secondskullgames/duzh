@@ -1,6 +1,7 @@
+import Direction from '../types/Direction';
 import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
-import { Direction, EquipmentSlot } from '../types/types';
+import { EquipmentSlot } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
 
@@ -14,7 +15,7 @@ function attack(unit: Unit, target: Unit, damage: number): Promise<void> {
     .then(() => target.takeDamage(damage, unit));
 }
 
-abstract class Ability {
+abstract class UnitAbility {
   readonly name: string;
   readonly cooldown: number;
   readonly icon: string | null;
@@ -28,7 +29,7 @@ abstract class Ability {
   abstract use(unit: Unit, direction: Direction | null): Promise<any>
 }
 
-class NormalAttack extends Ability {
+class NormalAttack extends UnitAbility {
   constructor() {
     super('ATTACK', 0);
   }
@@ -67,7 +68,7 @@ class NormalAttack extends Ability {
   }
 }
 
-class HeavyAttack extends Ability {
+class HeavyAttack extends UnitAbility {
   constructor() {
     super('HEAVY_ATTACK', 15, 'strong_icon');
   }
@@ -107,7 +108,7 @@ class HeavyAttack extends Ability {
   }
 }
 
-class KnockbackAttack extends Ability {
+class KnockbackAttack extends UnitAbility {
   constructor() {
     super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
   }
@@ -160,7 +161,7 @@ class KnockbackAttack extends Ability {
   }
 }
 
-class StunAttack extends Ability {
+class StunAttack extends UnitAbility {
   constructor() {
     super('STUN_ATTACK', 15, 'knockback_icon');
   }
@@ -204,7 +205,7 @@ class StunAttack extends Ability {
   }
 }
 
-class ShootArrow extends Ability {
+class ShootArrow extends UnitAbility {
   constructor() {
     super('SHOOT_ARROW', 0);
   }
@@ -252,13 +253,12 @@ class ShootArrow extends Ability {
   }
 }
 
-const UnitAbilities = {
-  ATTACK: new NormalAttack(),
-  HEAVY_ATTACK: new HeavyAttack(),
-  KNOCKBACK_ATTACK: new KnockbackAttack(),
-  STUN_ATTACK: new StunAttack(),
-  SHOOT_ARROW: new ShootArrow()
-};
+namespace UnitAbility {
+  export const ATTACK = new NormalAttack();
+  export const HEAVY_ATTACK = new HeavyAttack();
+  export const KNOCKBACK_ATTACK = new KnockbackAttack();
+  export const STUN_ATTACK = new StunAttack();
+  export const SHOOT_ARROW = new ShootArrow();
+}
 
-export default UnitAbilities;
-export { Ability };
+export default UnitAbility;

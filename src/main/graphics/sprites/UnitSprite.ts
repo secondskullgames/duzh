@@ -1,12 +1,13 @@
+import PaletteSwaps from '../../types/PaletteSwaps';
 import ImageSupplier from '../ImageSupplier';
-import Sprite, { Offsets } from './Sprite';
-import Colors from '../../types/Colors';
+import Sprite from './Sprite';
+import Color from '../../types/Color';
 import Unit from '../../units/Unit';
-import Directions from '../../types/Directions';
-import { Activity, PaletteSwaps } from '../../types/types';
+import Direction from '../../types/Direction';
+import { Activity } from '../../types/types';
 import { fillTemplate } from '../../utils/TemplateUtils';
 import { replaceAll } from '../ImageUtils';
-import { SpriteConfig } from './SpriteConfig';
+import SpriteConfig from './SpriteConfig';
 
 function _memoize<V>(key: string, valueSupplier: (k: string) => V, cache: { [k: string]: V }): V {
   if (cache[key]) {
@@ -38,7 +39,7 @@ class UnitSprite extends Sprite {
   getImage(): Promise<ImageBitmap> {
     const unit = this._unit;
     const activity = unit.activity.toLowerCase();
-    const direction = Directions.toLegacyDirection(unit.direction!!);
+    const direction = Direction.toLegacyDirection(unit.direction!!);
     return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
   }
 
@@ -47,7 +48,7 @@ class UnitSprite extends Sprite {
     const spriteConfig = this._spriteConfig;
 
     let activity = unit.activity.toLowerCase();
-    const direction = Directions.toLegacyDirection(unit.direction!!);
+    const direction = Direction.toLegacyDirection(unit.direction!!);
     const animation = spriteConfig.animations[activity];
     const frame = animation.frames[0];
     activity = frame.activity || activity;
@@ -63,9 +64,9 @@ class UnitSprite extends Sprite {
     const filenames = patterns.map(pattern => `units/${spriteConfig.name}/${pattern}`)
       .map(pattern => fillTemplate(pattern, variables));
     const effects = (unit.activity === Activity.DAMAGED)
-      ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
+      ? [(img: ImageData) => replaceAll(img, Color.WHITE)]
       : [];
-    return new ImageSupplier(filenames, Colors.WHITE, this._paletteSwaps, effects).get();
+    return new ImageSupplier(filenames, Color.WHITE, this._paletteSwaps, effects).get();
   }
 }
 

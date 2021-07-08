@@ -4,8 +4,8 @@ import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { chainPromises } from '../utils/PromiseUtils';
-import { randChoice, randInt } from '../utils/RandomUtils';
-import { EquipmentClass, EquipmentClasses } from './equipment/EquipmentClasses';
+import { randChoice, randInt } from '../utils/random';
+import EquipmentClass from './equipment/EquipmentClass';
 import { ItemCategory, Coordinates } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
@@ -81,7 +81,7 @@ function _getItemSuppliers(level: number): MapItemSupplier[] {
 }
 
 function _getEquipmentSuppliers(level: number): MapItemSupplier[] {
-  return Object.values(EquipmentClasses)
+  return EquipmentClass.values()
     .filter(equipmentClass => level >= equipmentClass.minLevel)
     .filter(equipmentClass => level <= equipmentClass.maxLevel)
     .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));

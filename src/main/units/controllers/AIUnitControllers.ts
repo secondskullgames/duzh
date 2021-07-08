@@ -1,15 +1,8 @@
 import Unit from '../Unit';
-import UnitBehaviors, { UnitBehavior } from '../UnitBehaviors';
-import { manhattanDistance } from '../../maps/MapUtils';
-import { randInt, weightedRandom } from '../../utils/RandomUtils';
 import UnitController from './UnitController';
-
-const behaviorMap = {
-  'ATTACK_PLAYER': UnitBehaviors.ATTACK_PLAYER,
-  'WANDER': UnitBehaviors.WANDER,
-  'FLEE_FROM_PLAYER': UnitBehaviors.FLEE_FROM_PLAYER,
-  'STAY': UnitBehaviors.STAY
-};
+import UnitBehavior from '../UnitBehaviors';
+import { manhattanDistance } from '../../maps/MapUtils';
+import { randInt, weightedRandom } from '../../utils/random';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder(unit: Unit) {
@@ -20,26 +13,26 @@ const HUMAN_CAUTIOUS: UnitController = {
 
     if (distanceToPlayer === 1) {
       if ((unit.life / unit.maxLife) >= 0.4) {
-        behavior = UnitBehaviors.ATTACK_PLAYER;
+        behavior = UnitBehavior.ATTACK_PLAYER;
       } else {
         behavior = weightedRandom({
           'ATTACK_PLAYER': 0.2,
           'WANDER': 0.5,
           'FLEE_FROM_PLAYER': 0.3
-        }, behaviorMap);
+        }, UnitBehavior);
       }
     } else if (distanceToPlayer >= 5) {
       behavior = weightedRandom({
         'WANDER': 0.3,
         'ATTACK_PLAYER': 0.1,
         'STAY': 0.6
-      }, behaviorMap);
+      }, UnitBehavior);
     } else {
       behavior = weightedRandom({
         'ATTACK_PLAYER': 0.6,
         'WANDER': 0.2,
         'STAY': 0.2
-      }, behaviorMap);
+      }, UnitBehavior);
     }
     return behavior(unit);
   }
@@ -53,18 +46,18 @@ const HUMAN_AGGRESSIVE = {
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
 
     if (distanceToPlayer === 1) {
-      behavior = UnitBehaviors.ATTACK_PLAYER;
+      behavior = UnitBehavior.ATTACK_PLAYER;
     } else if (distanceToPlayer >= 6) {
       behavior = weightedRandom({
         'WANDER': 0.4,
         'STAY': 0.4,
         'ATTACK_PLAYER': 0.2
-      }, behaviorMap);
+      }, UnitBehavior);
     } else {
       behavior = weightedRandom({
         'ATTACK_PLAYER': 0.9,
         'STAY': 0.1
-      }, behaviorMap);
+      }, UnitBehavior);
     }
     return behavior(unit);
   }
@@ -84,16 +77,16 @@ const HUMAN_DETERMINISTIC = {
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
 
     if (!_canMove(speed)) {
-      behavior = UnitBehaviors.STAY;
+      behavior = UnitBehavior.STAY;
     } else if ((unit.life / unit.maxLife) < fleeThreshold) {
-      behavior = UnitBehaviors.FLEE_FROM_PLAYER;
+      behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
-      behavior = UnitBehaviors.ATTACK_PLAYER;
+      behavior = UnitBehavior.ATTACK_PLAYER;
     } else {
       if (randInt(0, 1) === 1) {
-        behavior = UnitBehaviors.STAY;
+        behavior = UnitBehavior.STAY;
       } else {
-        behavior = UnitBehaviors.WANDER;
+        behavior = UnitBehavior.WANDER;
       }
     }
     return behavior(unit);

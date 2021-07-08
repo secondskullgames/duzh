@@ -5,7 +5,7 @@ import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, returnToTitle, startGame } from './actions';
 import { Coordinates, GameScreen, TileType } from '../types/types';
-import UnitAbilities from '../units/UnitAbilities';
+import UnitAbility from '../units/UnitAbility';
 
 enum KeyCommand {
   UP = 'UP',
@@ -168,14 +168,14 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
           case KeyCommand.SHIFT_DOWN:
           case KeyCommand.SHIFT_LEFT:
           case KeyCommand.SHIFT_RIGHT:
-            return (u: Unit) => UnitAbilities.SHOOT_ARROW.use(u, { dx, dy });
+            return (u: Unit) => UnitAbility.SHOOT_ARROW.use(u, { dx, dy });
           default:
             if (!!jwb.state.queuedAbility) {
               const ability = jwb.state.queuedAbility;
               jwb.state.queuedAbility = null;
               return (u: Unit) => ability.use(u, { dx, dy });
             }
-            return (u: Unit) => UnitAbilities.ATTACK.use(u, { dx, dy });
+            return (u: Unit) => UnitAbility.ATTACK.use(u, { dx, dy });
         }
       })();
       return TurnHandler.playTurn(queuedOrder);
@@ -298,7 +298,7 @@ function _handleAbility(command: KeyCommand): Promise<void> {
     jwb.state.queuedAbility = ability;
     return renderer.render();
   } else {
-    console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbilities.HEAVY_ATTACK)}`);
+    console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);
   }
 
   return Promise.resolve();

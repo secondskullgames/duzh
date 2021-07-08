@@ -12,7 +12,7 @@ type StaticSpriteConfig = {
   offsets: Offsets
 }
 
-const StaticSpriteConfigs: ({ [name: string]: StaticSpriteConfig }) = {
+const StaticSpriteConfig: Record<string, StaticSpriteConfig> = {
   map_bow,
   map_helmet,
   map_mail,
@@ -21,6 +21,5 @@ const StaticSpriteConfigs: ({ [name: string]: StaticSpriteConfig }) = {
   map_sword,
 };
 
-export { StaticSpriteConfigs };
-export type { StaticSpriteConfig };
+export default StaticSpriteConfig;
 

@@ -1,7 +1,8 @@
+import TileSet from '../../types/TileSet';
 import Unit from '../../units/Unit';
 import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
-import { Coordinates, MapSection, TileSet, TileType } from '../../types/types';
+import { Coordinates, MapSection, TileType } from '../../types/types';
 import { coordinatesEquals, createTile, hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';

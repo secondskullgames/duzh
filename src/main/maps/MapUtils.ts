@@ -1,7 +1,8 @@
-import { Coordinates, Rect, Tile, TileSet } from '../types/types';
+import TileSet from '../types/TileSet';
+import { Coordinates, Rect, Tile } from '../types/types';
 import { sortBy } from '../utils/ArrayUtils';
 import { TileType } from '../types/types';
-import { randChoice } from '../utils/RandomUtils';
+import { randChoice } from '../utils/random';
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,

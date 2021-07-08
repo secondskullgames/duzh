@@ -1,5 +1,5 @@
 import Sprite from './sprites/Sprite';
-import Colors, { Color } from '../types/Colors';
+import Color from '../types/Color';
 import MinimapRenderer from './MinimapRenderer';
 import Renderer from './Renderer';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
@@ -8,7 +8,7 @@ import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
-import { Ability } from '../units/UnitAbilities';
+import UnitAbility from '../units/UnitAbility';
 import Equipment from '../items/equipment/Equipment';
 import ImageLoader from './ImageLoader';
 
@@ -108,7 +108,7 @@ class SpriteRenderer implements Renderer {
 
   private _renderGameScreen(): Promise<any> {
     revealTiles();
-    this._bufferContext.fillStyle = Colors.BLACK;
+    this._bufferContext.fillStyle = Color.BLACK;
     this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
 
     // can't pass direct references to the functions because `this` won't be defined
@@ -146,7 +146,7 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (!!item) {
-            promises.push(this._drawEllipse({ x, y }, Colors.DARK_GRAY)
+            promises.push(this._drawEllipse({ x, y }, Color.DARK_GRAY)
               .then(() => this._renderElement(item, { x, y })));
           }
         }
@@ -184,9 +184,9 @@ class SpriteRenderer implements Renderer {
           if (!!unit) {
             let shadowColor: Color;
             if (unit === playerUnit) {
-              shadowColor = Colors.GREEN;
+              shadowColor = Color.GREEN;
             } else {
-              shadowColor = Colors.DARK_GRAY;
+              shadowColor = Color.DARK_GRAY;
             }
 
             promises.push(() => this._drawEllipse({ x, y }, shadowColor));
@@ -207,8 +207,8 @@ class SpriteRenderer implements Renderer {
   private _drawEllipse({ x, y }: Coordinates, color: Color): Promise<any> {
     const { x: left, y: top } = this._gridToPixel({ x, y });
     return ImageLoader.loadImage(SHADOW_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
-      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
+      .then(imageData => applyTransparentColor(imageData, Color.WHITE))
+      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }))
       .then(createImageBitmap)
       .then(imageBitmap => {
         this._bufferContext.drawImage(imageBitmap, left, top)
@@ -229,15 +229,15 @@ class SpriteRenderer implements Renderer {
         const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
 
         const promises: Promise<any>[] = [];
-        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
-        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
+        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
 
         // draw equipment items
         // for now, just display them all in one list
 
         let y = INVENTORY_TOP + 64;
         playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
-          promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+          promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Color.WHITE, 'left'));
           y += LINE_HEIGHT;
         });
 
@@ -249,9 +249,9 @@ class SpriteRenderer implements Renderer {
         for (let i = 0; i < inventoryCategories.length; i++) {
           const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
           const top = INVENTORY_TOP + 40;
-          promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
+          promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Color.WHITE, 'center'));
           if (inventoryCategories[i] === inventory.selectedCategory) {
-            _bufferContext.fillStyle = Colors.WHITE;
+            _bufferContext.fillStyle = Color.WHITE;
             _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
           }
         }
@@ -264,9 +264,9 @@ class SpriteRenderer implements Renderer {
             const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
             let color;
             if (items[i] === inventory.selectedItem) {
-              color = Colors.YELLOW;
+              color = Color.YELLOW;
             } else {
-              color = Colors.WHITE;
+              color = Color.WHITE;
             }
             promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
           }
@@ -309,8 +309,8 @@ class SpriteRenderer implements Renderer {
   private _renderMessages(): Promise<any> {
     const { _bufferContext } = this;
     const { messages } = jwb.state;
-    _bufferContext.fillStyle = Colors.BLACK;
-    _bufferContext.strokeStyle = Colors.BLACK;
+    _bufferContext.fillStyle = Color.BLACK;
+    _bufferContext.strokeStyle = Color.BLACK;
 
     const left = 0;
     const top = 0;
@@ -318,9 +318,9 @@ class SpriteRenderer implements Renderer {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < messages.length; i++) {
       let y = top + (LINE_HEIGHT * i);
-      _bufferContext.fillStyle = Colors.BLACK;
+      _bufferContext.fillStyle = Color.BLACK;
       _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
-      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
     }
     return Promise.all(promises);
   }
@@ -336,7 +336,7 @@ class SpriteRenderer implements Renderer {
 
   private _renderHUDFrame(): Promise<any> {
     return ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+      .then(imageData => applyTransparentColor(imageData, Color.WHITE))
       .then(createImageBitmap)
       .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
   }
@@ -359,7 +359,7 @@ class SpriteRenderer implements Renderer {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < lines.length; i++) {
       let y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
     }
     return Promise.all(promises);
   }
@@ -375,7 +375,7 @@ class SpriteRenderer implements Renderer {
       const ability = playerUnit.abilities[i];
       if (!!ability.icon) {
         promises.push(this._renderAbility(ability, left, top));
-        promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center'));
+        promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Color.WHITE, 'center'));
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
@@ -403,7 +403,7 @@ class SpriteRenderer implements Renderer {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < lines.length; i++) {
       let y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
     }
     return Promise.all(promises);
   }
@@ -423,7 +423,7 @@ class SpriteRenderer implements Renderer {
     return ImageLoader.loadImage(filename)
       .then(imageData => createImageBitmap(imageData))
       .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
-      .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center'));
+      .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Color.WHITE, 'center'));
   }
 
   private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: 'left' | 'center' | 'right'): Promise<any> {
@@ -454,19 +454,19 @@ class SpriteRenderer implements Renderer {
       .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
   }
 
-  private _renderAbility(ability: Ability, left: number, top: number) {
+  private _renderAbility(ability: UnitAbility, left: number, top: number) {
     let borderColor: Color;
     const { queuedAbility, playerUnit } = jwb.state;
     if (queuedAbility === ability) {
-      borderColor = Colors.GREEN;
+      borderColor = Color.GREEN;
     } else if (playerUnit.getCooldown(ability) === 0) {
-      borderColor = Colors.WHITE;
+      borderColor = Color.WHITE;
     } else {
-      borderColor = Colors.DARK_GRAY;
+      borderColor = Color.DARK_GRAY;
     }
 
     return ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }))
+      .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }))
       .then(createImageBitmap)
       .then(image => this._bufferContext.drawImage(image, left, top))
       .then(() => { left += ABILITIES_INNER_MARGIN });

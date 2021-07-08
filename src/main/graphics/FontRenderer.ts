@@ -1,5 +1,5 @@
 import { applyTransparentColor, replaceColors } from './ImageUtils';
-import Colors, { Color } from '../types/Colors';
+import Color from '../types/Color';
 import ImageLoader from './ImageLoader';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
@@ -67,7 +67,7 @@ class FontRenderer {
         return Promise.resolve();
       })
       .then(() => Promise.resolve(context.getImageData(0, 0, canvas.width, canvas.height)))
-      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }))
+      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }))
       .then(imageData => createImageBitmap(imageData))
       .then(imageBitmap => { this._imageMemos[key] = imageBitmap; return imageBitmap; });
   }
@@ -111,7 +111,7 @@ class FontRenderer {
   private _getCharacterData(definition: FontDefinition, context: CanvasRenderingContext2D, char: number): Promise<ImageData> {
     const offset = this._getCharOffset(char);
     const imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
-    return applyTransparentColor(imageData, Colors.WHITE);
+    return applyTransparentColor(imageData, Color.WHITE);
   }
 
   private _getCharOffset(char: number) {
