@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Colors, { Color } from './Colors';
+import Direction from './Direction';
 
 enum Activity {
   STANDING = 'STANDING',
@@ -15,11 +15,6 @@ interface Coordinates {
 }
 
 type CoordinatePair = [Coordinates, Coordinates];
-
-interface Direction {
-  dx: number,
-  dy: number
-}
 
 interface Entity extends Coordinates {
   char: string,
@@ -61,11 +56,7 @@ enum MapLayout {
   BLOB                = 'BLOB'
 }
 
-type PaletteSwaps = {
-  [src: string]: Color
-}
-
-interface Projectile extends Entity, Coordinates {
+interface Projectile extends Entity {
   direction: Direction
 }
 
@@ -88,10 +79,6 @@ interface Tile {
   isBlocking: boolean
 }
 
-type TileSet = {
-  [tileType in TileType]?: (Sprite | null)[]
-};
-
 enum TileType {
   FLOOR,
   FLOOR_HALL,
@@ -108,20 +95,17 @@ export {
   Activity,
   Coordinates,
   CoordinatePair,
-  Direction,
   Entity,
   EquipmentSlot,
   GameScreen,
   ItemCategory,
   MapLayout,
   MapSection,
-  PaletteSwaps,
   Projectile,
   PromiseSupplier,
   Rect,
   Room,
   Tile,
-  TileSet,
   TileType,
   UnitType
 };

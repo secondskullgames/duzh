@@ -1,15 +1,15 @@
+import PaletteSwaps from '../../types/PaletteSwaps';
 import Sprite from './Sprite';
-import { PaletteSwaps } from '../../types/types';
 import ImageSupplier from '../ImageSupplier';
-import Colors from '../../types/Colors';
-import { StaticSpriteConfig } from './StaticSpriteConfig';
+import Color from '../../types/Color';
+import StaticSpriteConfig from './StaticSpriteConfig';
 
 class StaticSprite extends Sprite {
   private readonly _image: ImageSupplier;
 
   constructor(spriteConfig: StaticSpriteConfig, paletteSwaps?: PaletteSwaps) {
     super(spriteConfig.offsets);
-    this._image = new ImageSupplier(spriteConfig.filename, Colors.WHITE, paletteSwaps);
+    this._image = new ImageSupplier(spriteConfig.filename, Color.WHITE, paletteSwaps);
   }
 
   /**

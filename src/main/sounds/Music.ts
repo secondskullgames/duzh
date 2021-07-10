@@ -1,5 +1,5 @@
 import SoundPlayer from './SoundPlayer';
-import { randChoice } from '../utils/RandomUtils';
+import { randChoice } from '../utils/random';
 import { transpose8vb } from './AudioUtils';
 import { Figure, Suite } from './types';
 

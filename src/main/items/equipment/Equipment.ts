@@ -1,6 +1,6 @@
 import InventoryItem from '../InventoryItem';
 import Unit from '../../units/Unit';
-import { EquipmentClass } from './EquipmentClasses';
+import EquipmentClass from './EquipmentClass';
 import { EquipmentSlot } from '../../types/types';
 import Sprite from '../../graphics/sprites/Sprite';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';

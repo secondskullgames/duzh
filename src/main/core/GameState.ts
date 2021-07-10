@@ -2,7 +2,7 @@ import Unit from '../units/Unit';
 import MapBuilder from '../maps/MapBuilder';
 import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
-import { Ability } from '../units/UnitAbilities';
+import UnitAbility from '../units/UnitAbility';
 
 /**
  * Global mutable state
@@ -15,7 +15,7 @@ class GameState {
   private _map: MapInstance | null;
   messages: string[];
   turn: number;
-  queuedAbility: Ability | null;
+  queuedAbility: UnitAbility | null;
 
   constructor(playerUnit: Unit, maps: (() => MapBuilder)[]) {
     this.screen = GameScreen.TITLE;

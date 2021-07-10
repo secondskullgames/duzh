@@ -1,6 +1,6 @@
+import PaletteSwaps from '../types/PaletteSwaps';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import { chainPromises } from '../utils/PromiseUtils';
-import { PaletteSwaps } from '../types/types';
 import ImageLoader from './ImageLoader';
 
 type ImageDataFunc = (imageData: ImageData) => Promise<ImageData>;

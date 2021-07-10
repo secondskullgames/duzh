@@ -1,6 +1,6 @@
-import { civDistance, contains, coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
-import { Coordinates, Rect } from '../types/types';
-import { randChoice } from './RandomUtils';
+import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
+import { Coordinates } from '../types/types';
+import { randChoice } from './random';
 
 const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 

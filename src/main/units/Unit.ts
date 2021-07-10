@@ -5,13 +5,13 @@ import InventoryMap from '../items/InventoryMap';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 import Music from '../sounds/Music';
 import UnitController from './controllers/UnitController';
-import UnitAbilities, { Ability } from './UnitAbilities';
-import { Activity, Coordinates, Direction, Entity, EquipmentSlot, GameScreen } from '../types/types';
-import { playSound } from '../sounds/SoundFX';
-import Directions from '../types/Directions';
-import { EquipmentClasses } from '../items/equipment/EquipmentClasses';
+import UnitAbility from './UnitAbility';
+import Direction from '../types/Direction';
+import EquipmentClass from '../items/equipment/EquipmentClass';
 import Equipment from '../items/equipment/Equipment';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
+import { playSound } from '../sounds/SoundFX';
 
 // Regenerate 1% of life every 20 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.0005;
@@ -36,8 +36,8 @@ class Unit implements Entity {
   controller: UnitController;
   activity: Activity;
   direction: Direction;
-  private readonly remainingCooldowns: Map<Ability, number>;
-  readonly abilities: Ability[];
+  private readonly remainingCooldowns: Map<UnitAbility, number>;
+  readonly abilities: UnitAbility[];
   stunDuration: number;
 
   constructor(unitClass: UnitClass, name: string, controller: UnitController, level: number, { x, y }: Coordinates) {
@@ -59,14 +59,14 @@ class Unit implements Entity {
     this._damage = unitClass.startingDamage;
     this.controller = controller;
     this.activity = Activity.STANDING;
-    this.direction = Directions.S;
+    this.direction = Direction.S;
     this.remainingCooldowns = new Map();
     // TODO: this needs to be specific to the player unit
-    this.abilities = [UnitAbilities.ATTACK, UnitAbilities.HEAVY_ATTACK, UnitAbilities.KNOCKBACK_ATTACK, UnitAbilities.STUN_ATTACK];
+    this.abilities = [UnitAbility.ATTACK, UnitAbility.HEAVY_ATTACK, UnitAbility.KNOCKBACK_ATTACK, UnitAbility.STUN_ATTACK];
     this.stunDuration = 0;
 
     unitClass.equipment?.forEach(equipmentName => {
-      const equipment = new Equipment(EquipmentClasses[equipmentName]!!, null); // TODO deal with InventoryItem
+      const equipment = new Equipment(EquipmentClass.forName(equipmentName), null); // TODO deal with InventoryItem
       this.equipment.add(equipment);
       equipment.attach(this);
     })
@@ -187,11 +187,11 @@ class Unit implements Entity {
     });
   };
 
-  getCooldown(ability: Ability): number {
+  getCooldown(ability: UnitAbility): number {
     return this.remainingCooldowns.get(ability) || 0
   }
 
-  useAbility(ability: Ability) {
+  useAbility(ability: UnitAbility) {
     this.remainingCooldowns.set(ability, ability.cooldown);
   }
 }

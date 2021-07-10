@@ -1,8 +1,9 @@
 import DungeonGenerator from './DungeonGenerator';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
-import { CoordinatePair, Coordinates, MapSection, Room, TileSet, TileType } from '../../types/types';
-import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
+import { CoordinatePair, Coordinates, MapSection, Room, TileType } from '../../types/types';
+import TileSet from '../../types/TileSet';
+import { randChoice, randInt, shuffle } from '../../utils/random';
 import { sortBy } from '../../utils/ArrayUtils';
 import { hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
 

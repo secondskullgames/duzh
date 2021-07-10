@@ -3,7 +3,7 @@ import MapItem from './MapItem';
 import InventoryItem from './InventoryItem';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import { EquipmentClass } from './equipment/EquipmentClasses';
+import EquipmentClass from './equipment/EquipmentClass';
 import Equipment from './equipment/Equipment';
 
 function pickupItem(unit: Unit, mapItem: MapItem) {

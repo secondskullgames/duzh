@@ -1,11 +1,11 @@
+import Direction from '../types/Direction';
 import Pathfinder from '../utils/Pathfinder';
 import Unit from './Unit';
-import { randChoice } from '../utils/RandomUtils';
+import UnitAbility from './UnitAbility'
+import { randChoice } from '../utils/random';
 import { Coordinates, Rect } from '../types/types';
 import { comparingReversed } from '../utils/ArrayUtils';
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
-import Directions from '../types/Directions';
-import UnitAbilities from './UnitAbilities';
+import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';;
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
@@ -13,7 +13,7 @@ function _wanderAndAttack(unit: Unit): Promise<void> {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
-  Directions.values().forEach(({ dx, dy }) => {
+  Direction.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -29,7 +29,7 @@ function _wanderAndAttack(unit: Unit): Promise<void> {
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    return UnitAbilities.ATTACK.use(unit, { dx, dy });
+    return UnitAbility.ATTACK.use(unit, { dx, dy });
   }
   return Promise.resolve();
 }
@@ -37,7 +37,7 @@ function _wanderAndAttack(unit: Unit): Promise<void> {
 function _wander(unit: Unit): Promise<void> {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
-  Directions.values().forEach(({ dx, dy }) => {
+  Direction.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -49,7 +49,7 @@ function _wander(unit: Unit): Promise<void> {
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    return UnitAbilities.ATTACK.use(unit, { dx, dy });
+    return UnitAbility.ATTACK.use(unit, { dx, dy });
   }
   return Promise.resolve();
 }
@@ -80,7 +80,7 @@ function _attackPlayerUnit_withPath(unit: Unit): Promise<void> {
     const unitAtPoint = map.getUnit({ x, y });
     if (!unitAtPoint || unitAtPoint === playerUnit) {
       const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-      return UnitAbilities.ATTACK.use(unit, { dx, dy });
+      return UnitAbility.ATTACK.use(unit, { dx, dy });
     }
   }
   return Promise.resolve();
@@ -91,7 +91,7 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
   const map = jwb.state.getMap();
 
   const tiles: Coordinates[] = [];
-  Directions.values().forEach(({ dx, dy }) => {
+  Direction.values().forEach(({ dx, dy }) => {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -108,17 +108,16 @@ function _fleeFromPlayerUnit(unit: Unit): Promise<void> {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
     const { x, y } = orderedTiles[0];
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    return UnitAbilities.ATTACK.use(unit, { dx, dy });
+    return UnitAbility.ATTACK.use(unit, { dx, dy });
   }
   return Promise.resolve();
 }
 
-const UnitBehaviors = {
-  WANDER: _wander,
-  ATTACK_PLAYER: _attackPlayerUnit_withPath,
-  FLEE_FROM_PLAYER: _fleeFromPlayerUnit,
-  STAY: () => Promise.resolve()
-};
+namespace UnitBehavior {
+  export const WANDER = _wander;
+  export const ATTACK_PLAYER = _attackPlayerUnit_withPath;
+  export const FLEE_FROM_PLAYER = _fleeFromPlayerUnit;
+  export const STAY = () => Promise.resolve();
+}
 
-export default UnitBehaviors;
-export { UnitBehavior };
+export default UnitBehavior;

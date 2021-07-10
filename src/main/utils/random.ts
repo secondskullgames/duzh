@@ -1,18 +1,14 @@
 /**
  * @param max inclusive
  */
-function randInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
+const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 
-function randChoice<T>(list: T[]): T {
-  return list[randInt(0, list.length - 1)];
-}
+const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
 
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
  */
-function shuffle<T>(list: T[]): void {
+const shuffle = <T>(list: T[]) => {
   let n = list.length;
 
   // While there remain elements to shuffle...
@@ -28,10 +24,10 @@ function shuffle<T>(list: T[]): void {
   }
 }
 
-function weightedRandom<T>(
+const weightedRandom = <T>(
   probabilities: { [key: string]: number },
   mappedObjects: { [key: string]: T }
-): T {
+): T => {
   const total = Object.values(probabilities).reduce((a, b) => a + b);
   const rand = Math.random() * total;
   let counter = 0;

@@ -1,5 +1,6 @@
+import Direction from '../../types/Direction';
 import Unit from '../../units/Unit';
-import { Activity, Coordinates, Direction, Projectile } from '../../types/types';
+import { Activity, Coordinates, Projectile } from '../../types/types';
 import { chainPromises, wait } from '../../utils/PromiseUtils';
 import { createArrow } from '../../items/ProjectileFactory';
 

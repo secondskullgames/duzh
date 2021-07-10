@@ -24,7 +24,7 @@ type SpriteConfig = {
   }
 }
 
-const SpriteConfigs: ({ [name: string]: SpriteConfig }) = {
+const SpriteConfig: Record<string, SpriteConfig> = {
   bow,
   helmet,
   mail,
@@ -35,6 +35,5 @@ const SpriteConfigs: ({ [name: string]: SpriteConfig }) = {
   zombie
 };
 
-export { SpriteConfigs };
-export type { SpriteConfig };
+export default SpriteConfig;
 

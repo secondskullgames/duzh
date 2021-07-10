@@ -1,9 +1,10 @@
+import TileSet from '../types/TileSet';
 import MapBuilder from './MapBuilder';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
 import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
-import { MapLayout, TileSet } from '../types/types';
+import { MapLayout } from '../types/types';
 import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
 
 function createRandomMap(

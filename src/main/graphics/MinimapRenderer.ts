@@ -1,5 +1,5 @@
 import SpriteRenderer from './SpriteRenderer';
-import Colors from '../types/Colors';
+import Color from '../types/Color';
 import { Coordinates, TileType } from '../types/types';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 
@@ -16,7 +16,7 @@ class MinimapRenderer {
   }
 
   render(): Promise<ImageBitmap> {
-    this._context.fillStyle = Colors.BLACK;
+    this._context.fillStyle = Color.BLACK;
     this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
     const map = jwb.state.getMap();
@@ -36,7 +36,7 @@ class MinimapRenderer {
 
   private _getColor({ x, y }: Coordinates) {
     if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
-      return Colors.RED;
+      return Color.RED;
     }
 
     const map = jwb.state.getMap();
@@ -46,18 +46,18 @@ class MinimapRenderer {
         case TileType.FLOOR:
         case TileType.FLOOR_HALL:
         case TileType.STAIRS_DOWN:
-          return Colors.LIGHT_GRAY;
+          return Color.LIGHT_GRAY;
         case TileType.WALL:
         case TileType.WALL_HALL:
-          return Colors.DARK_GRAY;
+          return Color.DARK_GRAY;
         case TileType.NONE:
         case TileType.WALL_TOP:
         default:
-          return Colors.BLACK;
+          return Color.BLACK;
       }
 
     } else {
-      return Colors.BLACK;
+      return Color.BLACK;
     }
   }
 }

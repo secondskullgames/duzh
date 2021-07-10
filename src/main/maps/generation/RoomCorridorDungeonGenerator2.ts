@@ -1,6 +1,7 @@
 import DungeonGenerator from './DungeonGenerator';
-import { Coordinates, MapSection, Rect, TileSet, TileType } from '../../types/types';
-import { randChoice, randInt, shuffle } from '../../utils/RandomUtils';
+import { Coordinates, MapSection, Rect, TileType } from '../../types/types';
+import TileSet from '../../types/TileSet';
+import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent, coordinatesEquals } from '../MapUtils';
 
 type Direction = 'HORIZONTAL' | 'VERTICAL';

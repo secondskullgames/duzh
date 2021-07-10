@@ -7,9 +7,8 @@ import long_bow from '../../../../data/equipment/long_bow.json';
 import bronze_chain_mail from '../../../../data/equipment/bronze_chain_mail.json';
 import iron_chain_mail from '../../../../data/equipment/iron_chain_mail.json';
 import iron_helmet from '../../../../data/equipment/iron_helmet.json';
-import { EquipmentSlot, ItemCategory, PaletteSwaps } from '../../types/types';
-import Colors, { Color } from '../../types/Colors';
-import UnitClasses from '../../units/UnitClasses';
+import PaletteSwaps from '../../types/PaletteSwaps';
+import { EquipmentSlot, ItemCategory } from '../../types/types';
 
 interface EquipmentClass {
   readonly name: string,
@@ -30,24 +29,11 @@ function _load(json: any): EquipmentClass {
   return {
     ...json,
     // We're using "friendly" color names, convert them to hex now
-    paletteSwaps: _mapPaletteSwaps(json.paletteSwaps),
+    paletteSwaps: PaletteSwaps.create(json.paletteSwaps),
   };
 }
 
-/**
- * TODO copy-pasted from {@link UnitClasses}
- */
-function _mapPaletteSwaps(paletteSwaps: { [src: string]: Color }) {
-  const map: { [src: string]: Color } = {};
-  Object.entries(paletteSwaps).forEach(([src, dest]) => {
-    const srcHex : string = Colors[src]!!;
-    const destHex : string = Colors[dest]!!;
-    map[srcHex] = destHex;
-  });
-  return map;
-}
-
-const EquipmentClasses: { [name: string]: EquipmentClass } = {
+const _map: Record<string, EquipmentClass> = {
   bronze_sword: _load(bronze_sword),
   iron_sword: _load(iron_sword),
   steel_sword: _load(steel_sword),
@@ -57,9 +43,17 @@ const EquipmentClasses: { [name: string]: EquipmentClass } = {
   bronze_chain_mail: _load(bronze_chain_mail),
   iron_chain_mail: _load(iron_chain_mail),
   iron_helmet: _load(iron_helmet)
+};
+
+namespace EquipmentClass {
+  export const forName = (name: string): EquipmentClass => {
+    if (_map.hasOwnProperty(name)) {
+      return _load(_map[name]);
+    }
+    throw `Unknown equipment "${name}"!`;
+  }
+
+  export const values = (): EquipmentClass[] => Object.values(_map);
 }
 
-export {
-  EquipmentClass,
-  EquipmentClasses
-};
+export default EquipmentClass;
