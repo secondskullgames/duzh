@@ -903,6 +903,7 @@ function _initState() {
 function startGame() {
     loadMap(0);
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
 }
@@ -2757,7 +2758,7 @@ var EquipmentClass;
 (function (EquipmentClass) {
     EquipmentClass.forName = (name) => {
         if (_map.hasOwnProperty(name)) {
-            return _load(name);
+            return _load(_map[name]);
         }
         throw `Unknown equipment "${name}"!`;
     };
@@ -4383,6 +4384,12 @@ var Direction;
     Direction.E = { dx: 1, dy: 0 };
     Direction.S = { dx: 0, dy: 1 };
     Direction.W = { dx: -1, dy: 0 };
+    const _map = new Map([
+        ['N', Direction.N],
+        ['E', Direction.E],
+        ['S', Direction.S],
+        ['W', Direction.W]
+    ]);
     Direction.values = () => [Direction.N, Direction.E, Direction.S, Direction.W];
     Direction.equals = (first, second) => first.dx === second.dx && first.dy === second.dy;
     Direction.toString = (direction) => {
@@ -4401,15 +4408,14 @@ var Direction;
         throw `Invalid direction ${direction}`;
     };
     Direction.toLegacyDirection = (direction) => {
-        const lookup = {
-            'N': 'NW',
-            'E': 'NE',
-            'S': 'SE',
-            'W': 'SW'
-        };
-        return Object.entries(lookup)
-            // @ts-ignore
-            .filter(([from, to]) => _equals(direction, Direction[from]))
+        const lookup = new Map([
+            ['N', 'NW'],
+            ['E', 'NE'],
+            ['S', 'SE'],
+            ['W', 'SW']
+        ]);
+        return [...lookup.entries()]
+            .filter(([from, to]) => Direction.equals(direction, _map.get(from)))
             .map(([from, to]) => to)[0];
     };
 })(Direction || (Direction = {}));

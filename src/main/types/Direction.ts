@@ -7,11 +7,20 @@ interface Direction {
   dy: number
 }
 
+type DirectionName = 'N' | 'E' | 'S' | 'W';
+
 namespace Direction {
   export const N: Direction = { dx: 0, dy: -1 };
   export const E: Direction = { dx: 1, dy: 0 };
   export const S: Direction = { dx: 0, dy: 1 };
   export const W: Direction = { dx: -1, dy: 0 };
+
+  const _map = new Map<DirectionName, Direction>([
+    ['N', N],
+    ['E', E],
+    ['S', S],
+    ['W', W]
+  ]);
 
   export const values = () => [N, E, S, W];
 
@@ -31,15 +40,14 @@ namespace Direction {
   };
 
   export const toLegacyDirection = (direction: Direction): string => {
-    const lookup = {
-      'N': 'NW',
-      'E': 'NE',
-      'S': 'SE',
-      'W': 'SW'
-    }
-    return Object.entries(lookup)
-      // @ts-ignore
-      .filter(([from, to]) => _equals(direction, Direction[from]))
+    const lookup = new Map<DirectionName, string>([
+      ['N', 'NW'],
+      ['E', 'NE'],
+      ['S', 'SE'],
+      ['W', 'SW']
+    ]);
+    return [...lookup.entries()]
+      .filter(([from, to]) => equals(direction, _map.get(from)!!))
       .map(([from, to]) => to)
       [0];
   };

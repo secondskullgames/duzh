@@ -48,7 +48,7 @@ const _map: Record<string, EquipmentClass> = {
 namespace EquipmentClass {
   export const forName = (name: string): EquipmentClass => {
     if (_map.hasOwnProperty(name)) {
-      return _load(name);
+      return _load(_map[name]);
     }
     throw `Unknown equipment "${name}"!`;
   }
