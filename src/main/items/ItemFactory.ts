@@ -3,7 +3,6 @@ import InventoryItem from './InventoryItem';
 import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import { chainPromises } from '../utils/PromiseUtils';
 import { randChoice, randInt } from '../utils/random';
 import EquipmentClass from './equipment/EquipmentClass';
 import { ItemCategory, Coordinates } from '../types/types';
@@ -26,10 +25,9 @@ function createPotion(lifeRestored: number): InventoryItem {
   return new InventoryItem('Potion', ItemCategory.POTION, onUse);
 }
 
-function createScrollOfFloorFire(damage: number): InventoryItem {
-  const onUse: ItemProc = (item, unit): Promise<void> => {
+const createScrollOfFloorFire = (damage: number): InventoryItem => {
+  const onUse: ItemProc = async (item, unit): Promise<void> => {
     const map = jwb.state.getMap();
-    const promises: (() => Promise<any>)[] = [];
 
     const adjacentUnits: Unit[] = map.units.filter(u => {
       const dx = unit.x - u.x;
@@ -39,12 +37,11 @@ function createScrollOfFloorFire(damage: number): InventoryItem {
         && !(dx === 0 && dy === 0);
     });
 
-    promises.push(() => playFloorFireAnimation(unit, adjacentUnits));
+    await playFloorFireAnimation(unit, adjacentUnits);
 
-    adjacentUnits.forEach(u => {
-      promises.push(() => u.takeDamage(damage, unit));
-    });
-    return chainPromises(promises);
+    for (const adjacentUnit of adjacentUnits) {
+      await adjacentUnit.takeDamage(damage, unit);
+    }
   };
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
 }

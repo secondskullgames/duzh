@@ -95,7 +95,7 @@ function keyHandlerWrapper(e: KeyboardEvent) {
   }
 }
 
-function keyHandler(e: KeyboardEvent): Promise<void> {
+const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
 
   switch (command) {
@@ -211,7 +211,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
   }
 }
 
-function _handleEnter(): Promise<void> {
+const _handleEnter = async () => {
   const { state } = jwb;
   const { playerUnit } = state;
 
@@ -229,7 +229,7 @@ function _handleEnter(): Promise<void> {
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }).type === TileType.STAIRS_DOWN) {
         playSound(Sounds.DESCEND_STAIRS);
-        loadMap(mapIndex + 1);
+        await loadMap(mapIndex + 1);
       }
       return TurnHandler.playTurn(null);
     }
@@ -239,8 +239,8 @@ function _handleEnter(): Promise<void> {
 
       if (!!selectedItem) {
         state.screen = GameScreen.GAME;
-        return useItem(playerUnit, selectedItem)
-          .then(() => jwb.renderer.render());
+        await useItem(playerUnit, selectedItem);
+        return jwb.renderer.render();
       }
       return Promise.resolve();
     }
@@ -269,7 +269,7 @@ function _handleTab(): Promise<void> {
   return renderer.render();
 }
 
-function _handleMap(): Promise<void> {
+const _handleMap = async () => {
   const { state, renderer } = jwb;
 
   switch (state.screen) {
@@ -286,7 +286,7 @@ function _handleMap(): Promise<void> {
   return renderer.render();
 }
 
-function _handleAbility(command: KeyCommand): Promise<void> {
+const _handleAbility = async (command: KeyCommand) => {
   const { renderer } = jwb;
   const { playerUnit } = jwb.state;
 
