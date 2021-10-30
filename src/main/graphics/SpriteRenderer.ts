@@ -58,28 +58,28 @@ class SpriteRenderer implements Renderer {
   private readonly _fontRenderer: FontRenderer;
 
   constructor() {
-    this._container = <any>document.getElementById('container');
+    this._container = document.getElementById('container') as HTMLElement;
     this._container.innerHTML = '';
     this._bufferCanvas = document.createElement('canvas');
     this._bufferCanvas.width = WIDTH * TILE_WIDTH;
     this._bufferCanvas.height = HEIGHT * TILE_HEIGHT;
-    this._bufferContext = <any>this._bufferCanvas.getContext('2d');
+    this._bufferContext = this._bufferCanvas.getContext('2d') as CanvasRenderingContext2D;
     this._bufferContext.imageSmoothingEnabled = false;
     this._fontRenderer = new FontRenderer();
     this._canvas = document.createElement('canvas');
     this._canvas.width = WIDTH * TILE_WIDTH;
     this._canvas.height = HEIGHT * TILE_HEIGHT;
-    this._context = <any>this._canvas.getContext('2d');
+    this._context = this._canvas.getContext('2d') as CanvasRenderingContext2D;
     this._bufferContext.imageSmoothingEnabled = false;
     this._container.appendChild(this._canvas);
   }
 
-  render(): Promise<any> {
-    return this._renderScreen()
-      .then(() => this._renderBuffer());
+  async render(): Promise<any> {
+    await this._renderScreen();
+    await this._renderBuffer();
   }
 
-  private _renderScreen(): Promise<any> {
+  private async _renderScreen() {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
@@ -110,13 +110,18 @@ class SpriteRenderer implements Renderer {
     this._bufferContext.fillStyle = Color.BLACK;
     this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
 
+    console.log('started rendering');
     // can't pass direct references to the functions because `this` won't be defined
     await this._renderTiles();
     await this._renderItems();
     await this._renderProjectiles();
+    console.log('rendering units');
     await this._renderUnits();
+    console.log('rendered units');
     await this._renderMessages();
     await this._renderHUD();
+
+    console.log('done rendering');
   }
 
   private async _renderTiles() {
@@ -211,7 +216,7 @@ class SpriteRenderer implements Renderer {
       .then(imageData => applyTransparentColor(imageData, Color.WHITE))
       .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }));
     const imageBitmap = await createImageBitmap(imageData);
-    this._bufferContext.drawImage(imageBitmap, left, top)
+    return this._bufferContext.drawImage(imageBitmap, left, top)
   }
 
   private async _renderInventory() {
@@ -296,7 +301,7 @@ class SpriteRenderer implements Renderer {
   private async _drawSprite(sprite: Sprite, { x, y }: Coordinates) {
     const image = await sprite.getImage();
     if (image) {
-      this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+      await this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
     }
   }
 

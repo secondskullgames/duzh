@@ -51,7 +51,7 @@ const _initState = async () => {
 }
 
 const startGame = async () => {
-  loadMap(0);
+  await loadMap(0);
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
@@ -59,7 +59,7 @@ const startGame = async () => {
 }
 
 const returnToTitle = async () => {
-  _initState(); // will set state.screen = TITLE
+  await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();

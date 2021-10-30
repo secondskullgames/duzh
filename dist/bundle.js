@@ -583,13 +583,13 @@ function _mapToCommand(e) {
 }
 // global state
 let BUSY = false;
-function keyHandlerWrapper(e) {
+const keyHandlerWrapper = (e) => __awaiter(void 0, void 0, void 0, function* () {
     if (!BUSY) {
         BUSY = true;
-        keyHandler(e)
-            .then(() => { BUSY = false; });
+        yield keyHandler(e);
+        BUSY = false;
     }
-}
+});
 const keyHandler = (e) => __awaiter(void 0, void 0, void 0, function* () {
     const command = _mapToCommand(e);
     switch (command) {
@@ -923,14 +923,14 @@ const _initState = () => __awaiter(void 0, void 0, void 0, function* () {
     ]);
 });
 const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
-    loadMap(0);
+    yield loadMap(0);
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
 });
 const returnToTitle = () => __awaiter(void 0, void 0, void 0, function* () {
-    _initState(); // will set state.screen = TITLE
+    yield _initState(); // will set state.screen = TITLE
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     return jwb.renderer.render();
@@ -1526,28 +1526,32 @@ class SpriteRenderer {
         this._container.appendChild(this._canvas);
     }
     render() {
-        return this._renderScreen()
-            .then(() => this._renderBuffer());
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._renderScreen();
+            yield this._renderBuffer();
+        });
     }
     _renderScreen() {
-        const { screen } = jwb.state;
-        switch (screen) {
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.TITLE:
-                return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME:
-                return this._renderGameScreen();
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.INVENTORY:
-                return this._renderGameScreen()
-                    .then(() => this._renderInventory());
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.VICTORY:
-                return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME_OVER:
-                return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.MINIMAP:
-                return this._renderMinimap();
-            default:
-                throw `Invalid screen ${screen}`;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const { screen } = jwb.state;
+            switch (screen) {
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.TITLE:
+                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME:
+                    return this._renderGameScreen();
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.INVENTORY:
+                    return this._renderGameScreen()
+                        .then(() => this._renderInventory());
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.VICTORY:
+                    return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME_OVER:
+                    return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.MINIMAP:
+                    return this._renderMinimap();
+                default:
+                    throw `Invalid screen ${screen}`;
+            }
+        });
     }
     _renderBuffer() {
         return createImageBitmap(this._bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -1558,66 +1562,77 @@ class SpriteRenderer {
             (0,_core_actions__WEBPACK_IMPORTED_MODULE_5__.revealTiles)();
             this._bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
             this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+            console.log('started rendering');
             // can't pass direct references to the functions because `this` won't be defined
             yield this._renderTiles();
             yield this._renderItems();
             yield this._renderProjectiles();
+            console.log('rendering units');
             yield this._renderUnits();
+            console.log('rendered units');
             yield this._renderMessages();
             yield this._renderHUD();
+            console.log('done rendering');
         });
     }
     _renderTiles() {
         return __awaiter(this, void 0, void 0, function* () {
             const map = jwb.state.getMap();
+            const promises = [];
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
                         const tile = map.getTile({ x, y });
                         if (!!tile) {
-                            yield this._renderElement(tile, { x, y });
+                            promises.push(this._renderElement(tile, { x, y }));
                         }
                     }
                 }
             }
+            return Promise.all(promises);
         });
     }
     _renderItems() {
         return __awaiter(this, void 0, void 0, function* () {
             const map = jwb.state.getMap();
+            const promises = [];
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
                         const item = map.getItem({ x, y });
                         if (!!item) {
-                            yield this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY);
-                            yield this._renderElement(item, { x, y });
+                            promises.push(this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY)
+                                .then(() => this._renderElement(item, { x, y })));
                         }
                     }
                 }
             }
+            return Promise.all(promises);
         });
     }
     _renderProjectiles() {
         return __awaiter(this, void 0, void 0, function* () {
             const map = jwb.state.getMap();
+            const promises = [];
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
                         const projectile = map.projectiles
                             .filter(p => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(p, { x, y }))[0];
                         if (!!projectile) {
-                            yield this._renderElement(projectile, { x, y });
+                            promises.push(this._renderElement(projectile, { x, y }));
                         }
                     }
                 }
             }
+            return Promise.all(promises);
         });
     }
     _renderUnits() {
         return __awaiter(this, void 0, void 0, function* () {
             const { playerUnit } = jwb.state;
             const map = jwb.state.getMap();
+            const promises = [];
             for (let y = 0; y < map.height; y++) {
                 for (let x = 0; x < map.width; x++) {
                     if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
@@ -1630,15 +1645,18 @@ class SpriteRenderer {
                             else {
                                 shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
                             }
-                            yield this._drawEllipse({ x, y }, shadowColor);
-                            yield this._renderElement(unit, { x, y });
-                            for (const item of unit.equipment.getValues()) {
-                                yield this._renderElement(item, { x, y });
-                            }
+                            promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
+                                yield this._drawEllipse({ x, y }, shadowColor);
+                                yield this._renderElement(unit, { x, y });
+                                for (const item of unit.equipment.getValues()) {
+                                    yield this._renderElement(item, { x, y });
+                                }
+                            })));
                         }
                     }
                 }
             }
+            return Promise.all(promises);
         });
     }
     /**
@@ -1651,7 +1669,7 @@ class SpriteRenderer {
                 .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
                 .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(imageData, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }));
             const imageBitmap = yield createImageBitmap(imageData);
-            this._bufferContext.drawImage(imageBitmap, left, top);
+            return this._bufferContext.drawImage(imageBitmap, left, top);
         });
     }
     _renderInventory() {
@@ -1665,13 +1683,14 @@ class SpriteRenderer {
             // draw equipment
             const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
             const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
-            yield this._drawText('EQUIPMENT', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
-            yield this._drawText('INVENTORY', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+            const promises = [];
+            promises.push(this._drawText('EQUIPMENT', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
+            promises.push(this._drawText('INVENTORY', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
             // draw equipment items
             // for now, just display them all in one list
             let y = INVENTORY_TOP + 64;
             for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
-                yield this._drawText(`${slot} - ${equipment.name}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+                promises.push(this._drawText(`${slot} - ${equipment.name}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
                 y += LINE_HEIGHT;
             }
             // draw inventory categories
@@ -1681,7 +1700,7 @@ class SpriteRenderer {
             for (let i = 0; i < inventoryCategories.length; i++) {
                 const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
                 const top = INVENTORY_TOP + 40;
-                yield this._drawText(inventoryCategories[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y: top }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+                promises.push(this._drawText(inventoryCategories[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y: top }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
                 if (inventoryCategories[i] === inventory.selectedCategory) {
                     _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
                     _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
@@ -1700,9 +1719,10 @@ class SpriteRenderer {
                     else {
                         color = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
                     }
-                    yield this._drawText(items[i].name, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left');
+                    promises.push(this._drawText(items[i].name, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
                 }
             }
+            return Promise.all(promises);
         });
     }
     _isPixelOnScreen({ x, y }) {
@@ -1726,7 +1746,7 @@ class SpriteRenderer {
         return __awaiter(this, void 0, void 0, function* () {
             const image = yield sprite.getImage();
             if (image) {
-                this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+                yield this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
             }
         });
     }
@@ -4652,6 +4672,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -4717,18 +4746,14 @@ class Unit {
         this.stunDuration = Math.max(this.stunDuration - 1, 0);
     }
     update() {
-        return new Promise(resolve => {
-            this._upkeep();
-            return resolve();
-        })
-            .then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._upkeep();
             if (this.stunDuration === 0) {
-                return this.controller.issueOrder(this);
+                yield this.controller.issueOrder(this);
             }
-            return Promise.resolve();
-        })
-            .then(() => this.sprite.getImage())
-            .then(() => this._endOfTurn());
+            yield this.sprite.getImage();
+            yield this._endOfTurn();
+        });
     }
     getDamage() {
         let damage = this._damage;

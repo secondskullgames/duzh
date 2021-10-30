@@ -87,11 +87,11 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
 
 let BUSY = false;
 
-function keyHandlerWrapper(e: KeyboardEvent) {
+const keyHandlerWrapper = async (e: KeyboardEvent) => {
   if (!BUSY) {
     BUSY = true;
-    keyHandler(e)
-      .then(() => { BUSY = false; });
+    await keyHandler(e);
+    BUSY = false;
   }
 }
 

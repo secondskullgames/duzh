@@ -95,19 +95,13 @@ class Unit implements Entity {
     this.stunDuration = Math.max(this.stunDuration - 1, 0)
   }
 
-  update(): Promise<void> {
-    return new Promise<void>(resolve => {
-      this._upkeep();
-      return resolve();
-    })
-      .then(() => {
-        if (this.stunDuration === 0) {
-          return this.controller.issueOrder(this);
-        }
-        return Promise.resolve();
-      })
-      .then(() => this.sprite.getImage())
-      .then(() => this._endOfTurn());
+  async update() {
+    await this._upkeep();
+    if (this.stunDuration === 0) {
+      await this.controller.issueOrder(this);
+    }
+    await this.sprite.getImage();
+    await this._endOfTurn();
   }
 
   getDamage(): number {
