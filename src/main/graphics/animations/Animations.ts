@@ -1,7 +1,7 @@
 import Direction from '../../types/Direction';
 import Unit from '../../units/Unit';
 import { Activity, Coordinates, Projectile } from '../../types/types';
-import { chainPromises, wait } from '../../utils/PromiseUtils';
+import { wait } from '../../utils/PromiseUtils';
 import { createArrow } from '../../items/ProjectileFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
@@ -123,46 +123,29 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
   });
 }
 
-function _playAnimation(animation: Animation): Promise<any> {
+const _playAnimation = async (animation: Animation) => {
   const { delay, frames } = animation;
 
-  const promises: (() => Promise<any>)[] = [];
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
     const map = jwb.state.getMap();
-    promises.push(() => {
-      if (!!frame.projectiles) {
-        map.projectiles.push(...frame.projectiles);
-      }
-      return Promise.resolve();
-    });
-    const updatePromise = () => {
-      const updatePromises: Promise<any>[] = [];
-      for (let j = 0; j < frame.units.length; j++) {
-        const { unit, activity } = frame.units[j];
-        unit.activity = activity;
-        updatePromises.push(unit.sprite.getImage());
-      }
-      return Promise.all(updatePromises);
-    };
-    promises.push(updatePromise);
-    promises.push(() => {
-      return jwb.renderer.render();
-    });
-    if (i < (frames.length - 1)) {
-      promises.push(() => {
-        return wait(delay);
-      });
+    if (!!frame.projectiles) {
+      map.projectiles.push(...frame.projectiles);
     }
-    promises.push(() => {
-      if (!!frame.projectiles) {
-        frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
-      }
-      return Promise.resolve();
-    });
-  }
+    for (let j = 0; j < frame.units.length; j++) {
+      const { unit, activity } = frame.units[j];
+      unit.activity = activity;
+      await unit.sprite.getImage();
+    }
+    await jwb.renderer.render();
+    if (i < (frames.length - 1)) {
+      await wait(delay);
+    }
 
-  return chainPromises(promises);
+    if (!!frame.projectiles) {
+      frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
+    }
+  }
 }
 
 export {

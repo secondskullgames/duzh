@@ -14,7 +14,7 @@ import PlayerUnitController from '../units/controllers/PlayerUnitController';
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
  */
 
-function loadMap(index: number) {
+const loadMap = async (index: number) => {
   const { state } = jwb;
   if (index >= state.maps.length) {
     Music.stop();
@@ -25,9 +25,9 @@ function loadMap(index: number) {
     const mapBuilder = state.maps[index]();
     state.setMap(mapBuilder.build());
   }
-}
+};
 
-function initialize(): Promise<any> {
+const initialize = async () => {
   // @ts-ignore
   window.jwb = window.jwb || {};
   jwb.renderer = new SpriteRenderer();
@@ -35,9 +35,9 @@ function initialize(): Promise<any> {
   _initState();
   Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();
-}
+};
 
-function _initState() {
+const _initState = async () => {
   const playerUnitController = new PlayerUnitController();
   const playerUnit = new Unit(UnitClass.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
   jwb.state = new GameState(playerUnit, [
@@ -50,16 +50,16 @@ function _initState() {
   ]);
 }
 
-function startGame(): Promise<any> {
-  loadMap(0);
+const startGame = async () => {
+  await loadMap(0);
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   return jwb.renderer.render();
 }
 
-function returnToTitle(): Promise<void> {
-  _initState(); // will set state.screen = TITLE
+const returnToTitle = async () => {
+  await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();
@@ -68,7 +68,7 @@ function returnToTitle(): Promise<void> {
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-function revealTiles(): void {
+const revealTiles = () => {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
 

@@ -1,31 +1,31 @@
 /*
  * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
- * that are only nitended for debugging purposes.
+ * that are only intended for debugging purposes.
  */
 
 import { GameScreen } from '../types/types';
 
-function revealMap() {
+const revealMap = async () => {
   jwb.DEBUG = true;
-  jwb.renderer.render();
-}
+  return jwb.renderer.render();
+};
 
-function killEnemies() {
+const killEnemies = async () => {
   const map = jwb.state.getMap();
   map.units = map.units.filter(u => u === jwb.state.playerUnit);
-  jwb.renderer.render();
-}
+  return jwb.renderer.render();
+};
 
-function killPlayer() {
+const killPlayer = async () => {
   const map = jwb.state.getMap();
   const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
-  playerUnit.takeDamage(playerUnit.life);
-  jwb.renderer.render();
-}
+  await playerUnit.takeDamage(playerUnit.life);
+  return jwb.renderer.render();
+};
 
-function renderMinimap() {
+const renderMinimap = () => {
   jwb.state.screen = GameScreen.MINIMAP;
-}
+};
 
 type DebugShape = {
   revealMap: () => void,

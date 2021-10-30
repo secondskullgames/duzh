@@ -3,7 +3,6 @@ import Color from '../types/Color';
 import MinimapRenderer from './MinimapRenderer';
 import Renderer from './Renderer';
 import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
-import { chainPromises } from '../utils/PromiseUtils';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
@@ -59,28 +58,28 @@ class SpriteRenderer implements Renderer {
   private readonly _fontRenderer: FontRenderer;
 
   constructor() {
-    this._container = <any>document.getElementById('container');
+    this._container = document.getElementById('container') as HTMLElement;
     this._container.innerHTML = '';
     this._bufferCanvas = document.createElement('canvas');
     this._bufferCanvas.width = WIDTH * TILE_WIDTH;
     this._bufferCanvas.height = HEIGHT * TILE_HEIGHT;
-    this._bufferContext = <any>this._bufferCanvas.getContext('2d');
+    this._bufferContext = this._bufferCanvas.getContext('2d') as CanvasRenderingContext2D;
     this._bufferContext.imageSmoothingEnabled = false;
     this._fontRenderer = new FontRenderer();
     this._canvas = document.createElement('canvas');
     this._canvas.width = WIDTH * TILE_WIDTH;
     this._canvas.height = HEIGHT * TILE_HEIGHT;
-    this._context = <any>this._canvas.getContext('2d');
+    this._context = this._canvas.getContext('2d') as CanvasRenderingContext2D;
     this._bufferContext.imageSmoothingEnabled = false;
     this._container.appendChild(this._canvas);
   }
 
-  render(): Promise<any> {
-    return this._renderScreen()
-      .then(() => this._renderBuffer());
+  async render(): Promise<any> {
+    await this._renderScreen();
+    await this._renderBuffer();
   }
 
-  private _renderScreen(): Promise<any> {
+  private async _renderScreen() {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
@@ -106,25 +105,28 @@ class SpriteRenderer implements Renderer {
       .then(imageBitmap => this._context.drawImage(imageBitmap, 0, 0));
   }
 
-  private _renderGameScreen(): Promise<any> {
+  private async _renderGameScreen() {
     revealTiles();
     this._bufferContext.fillStyle = Color.BLACK;
     this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
 
+    console.log('started rendering');
     // can't pass direct references to the functions because `this` won't be defined
-    return chainPromises([
-      () => this._renderTiles(),
-      () => this._renderItems(),
-      () => this._renderProjectiles(),
-      () => this._renderUnits(),
-      () => this._renderMessages(),
-      () => this._renderHUD()
-    ]);
+    await this._renderTiles();
+    await this._renderItems();
+    await this._renderProjectiles();
+    console.log('rendering units');
+    await this._renderUnits();
+    console.log('rendered units');
+    await this._renderMessages();
+    await this._renderHUD();
+
+    console.log('done rendering');
   }
 
-  private _renderTiles(): Promise<any> {
-    const promises: Promise<any>[] = [];
+  private async _renderTiles() {
     const map = jwb.state.getMap();
+    const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
@@ -138,7 +140,7 @@ class SpriteRenderer implements Renderer {
     return Promise.all(promises);
   }
 
-  private _renderItems(): Promise<any> {
+  private async _renderItems() {
     const map = jwb.state.getMap();
     const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
@@ -146,8 +148,10 @@ class SpriteRenderer implements Renderer {
         if (isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (!!item) {
-            promises.push(this._drawEllipse({ x, y }, Color.DARK_GRAY)
-              .then(() => this._renderElement(item, { x, y })));
+            promises.push(
+              this._drawEllipse({ x, y }, Color.DARK_GRAY)
+                .then(() => this._renderElement(item, { x, y }))
+            );
           }
         }
       }
@@ -155,7 +159,7 @@ class SpriteRenderer implements Renderer {
     return Promise.all(promises);
   }
 
-  private _renderProjectiles(): Promise<any> {
+  private async _renderProjectiles() {
     const map = jwb.state.getMap();
     const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
@@ -172,11 +176,11 @@ class SpriteRenderer implements Renderer {
     return Promise.all(promises);
   }
 
-  private _renderUnits(): Promise<any> {
+  private async _renderUnits() {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
+    const promises: Promise<any>[] = [];
 
-    const promises: PromiseSupplier<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
@@ -189,91 +193,89 @@ class SpriteRenderer implements Renderer {
               shadowColor = Color.DARK_GRAY;
             }
 
-            promises.push(() => this._drawEllipse({ x, y }, shadowColor));
-            promises.push(() => this._renderElement(unit, { x, y }));
-            unit.equipment.getValues()
-              .map(item => () => this._renderElement(item, { x, y }))
-              .forEach(promise => promises.push(promise));
+            promises.push(new Promise<any>(async () => {
+              await this._drawEllipse({ x, y }, shadowColor);
+              await this._renderElement(unit, { x, y });
+              for (const item of unit.equipment.getValues()) {
+                await this._renderElement(item, { x, y });
+              }
+            }));
           }
         }
       }
     }
-    return chainPromises(promises);
+    return Promise.all(promises);
   }
 
   /**
    * @param color (in hex form)
    */
-  private _drawEllipse({ x, y }: Coordinates, color: Color): Promise<any> {
+  private async _drawEllipse({ x, y }: Coordinates, color: Color) {
     const { x: left, y: top } = this._gridToPixel({ x, y });
-    return ImageLoader.loadImage(SHADOW_FILENAME)
+    const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Color.WHITE))
-      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }))
-      .then(createImageBitmap)
-      .then(imageBitmap => {
-        this._bufferContext.drawImage(imageBitmap, left, top)
-      });
+      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }));
+    const imageBitmap = await createImageBitmap(imageData);
+    return this._bufferContext.drawImage(imageBitmap, left, top)
   }
 
-  private _renderInventory(): Promise<any> {
+  private async _renderInventory() {
     const { playerUnit } = jwb.state;
     const { inventory } = playerUnit;
     const { _bufferCanvas, _bufferContext } = this;
 
-    return ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME)
-      .then(createImageBitmap)
-      .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
-      .then(() => {
-        // draw equipment
-        const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
-        const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
+    const imageData = await ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME);
+    const imageBitmap = await createImageBitmap(imageData);
+    await this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
-        const promises: Promise<any>[] = [];
-        promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
-        promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
+    // draw equipment
+    const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+    const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
 
-        // draw equipment items
-        // for now, just display them all in one list
+    const promises: Promise<any>[] = [];
+    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
 
-        let y = INVENTORY_TOP + 64;
-        playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
-          promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Color.WHITE, 'left'));
-          y += LINE_HEIGHT;
-        });
+    // draw equipment items
+    // for now, just display them all in one list
 
-        // draw inventory categories
-        const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
-        const categoryWidth = 60;
-        const xOffset = 4;
+    let y = INVENTORY_TOP + 64;
+    for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
+      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Color.WHITE, 'left'));
+      y += LINE_HEIGHT;
+    }
 
-        for (let i = 0; i < inventoryCategories.length; i++) {
-          const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-          const top = INVENTORY_TOP + 40;
-          promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Color.WHITE, 'center'));
-          if (inventoryCategories[i] === inventory.selectedCategory) {
-            _bufferContext.fillStyle = Color.WHITE;
-            _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
-          }
+    // draw inventory categories
+    const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
+    const categoryWidth = 60;
+    const xOffset = 4;
+
+    for (let i = 0; i < inventoryCategories.length; i++) {
+      const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+      const top = INVENTORY_TOP + 40;
+      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Color.WHITE, 'center'));
+      if (inventoryCategories[i] === inventory.selectedCategory) {
+        _bufferContext.fillStyle = Color.WHITE;
+        _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+      }
+    }
+
+    // draw inventory items
+    if (inventory.selectedCategory) {
+      const items = inventory.get(inventory.selectedCategory);
+      const x = itemsLeft + 8;
+      for (let i = 0; i < items.length; i++) {
+        const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+        let color;
+        if (items[i] === inventory.selectedItem) {
+          color = Color.YELLOW;
+        } else {
+          color = Color.WHITE;
         }
-
-        // draw inventory items
-        if (inventory.selectedCategory) {
-          const items = inventory.get(inventory.selectedCategory);
-          const x = itemsLeft + 8;
-          for (let i = 0; i < items.length; i++) {
-            const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-            let color;
-            if (items[i] === inventory.selectedItem) {
-              color = Color.YELLOW;
-            } else {
-              color = Color.WHITE;
-            }
-            promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
-          }
-        }
-
-        return Promise.all(promises);
-      });
+        promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
+      }
+    }
+    return Promise.all(promises);
   }
 
   private _isPixelOnScreen({ x, y }: Coordinates): boolean {
@@ -285,28 +287,25 @@ class SpriteRenderer implements Renderer {
     );
   }
 
-  private _renderElement(element: (Entity | Tile | Equipment), { x, y }: Coordinates): Promise<any> {
+  private async _renderElement(element: (Entity | Tile | Equipment), { x, y }: Coordinates) {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
       const { sprite } = element;
       if (!!sprite) {
-        return this._drawSprite(sprite, pixel);
+        await this._drawSprite(sprite, pixel);
       }
     }
-    return Promise.resolve();
   }
 
-  private _drawSprite(sprite: Sprite, { x, y }: Coordinates): Promise<any> {
-    return sprite.getImage()
-      .then(image => {
-        if (image) {
-          this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
-        }
-      });
+  private async _drawSprite(sprite: Sprite, { x, y }: Coordinates) {
+    const image = await sprite.getImage();
+    if (image) {
+      await this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+    }
   }
 
-  private _renderMessages(): Promise<any> {
+  private async _renderMessages() {
     const { _bufferContext } = this;
     const { messages } = jwb.state;
     _bufferContext.fillStyle = Color.BLACK;
@@ -315,36 +314,34 @@ class SpriteRenderer implements Renderer {
     const left = 0;
     const top = 0;
 
-    const promises: Promise<any>[] = [];
     for (let i = 0; i < messages.length; i++) {
-      let y = top + (LINE_HEIGHT * i);
+      const y = top + (LINE_HEIGHT * i);
       _bufferContext.fillStyle = Color.BLACK;
       _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
-      promises.push(this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
+      await this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
-    return Promise.all(promises);
   }
 
-  private _renderHUD(): Promise<any> {
-    return this._renderHUDFrame()
-      .then(() => Promise.all([
-        this._renderHUDLeftPanel(),
-        this._renderHUDMiddlePanel(),
-        this._renderHUDRightPanel(),
-      ]));
+  private async _renderHUD() {
+    await this._renderHUDFrame();
+    await Promise.all([
+      this._renderHUDLeftPanel(),
+      this._renderHUDMiddlePanel(),
+      this._renderHUDRightPanel(),
+    ]);
   }
 
-  private _renderHUDFrame(): Promise<any> {
-    return ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Color.WHITE))
-      .then(createImageBitmap)
-      .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
+  private async _renderHUDFrame() {
+    const imageData = await ImageLoader.loadImage(HUD_FILENAME)
+      .then(imageData => applyTransparentColor(imageData, Color.WHITE));
+    const imageBitmap = await createImageBitmap(imageData);
+    await this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT);
   }
 
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderHUDLeftPanel(): Promise<any> {
+  private async _renderHUDLeftPanel() {
     const { playerUnit } = jwb.state;
 
     const lines = [
@@ -356,35 +353,30 @@ class SpriteRenderer implements Renderer {
 
     const left = HUD_MARGIN;
     const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-    const promises: Promise<any>[] = [];
     for (let i = 0; i < lines.length; i++) {
-      let y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
+      const y = top + (LINE_HEIGHT * i);
+      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
-    return Promise.all(promises);
   }
 
-  private _renderHUDMiddlePanel(): Promise<any> {
+  private async _renderHUDMiddlePanel() {
     let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
     const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
-    let { playerUnit } = jwb.state;
-    const promises: Promise<any>[] = [];
+    const { playerUnit } = jwb.state;
 
     let keyNumber = 1;
     for (let i = 0; i < playerUnit.abilities.length; i++) {
       const ability = playerUnit.abilities[i];
       if (!!ability.icon) {
-        promises.push(this._renderAbility(ability, left, top));
-        promises.push(this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Color.WHITE, 'center'));
+        await this._renderAbility(ability, left, top);
+        await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Color.WHITE, 'center');
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
     }
-
-    return Promise.all(promises);
   }
 
-  private _renderHUDRightPanel(): Promise<any> {
+  private async _renderHUDRightPanel() {
     const { mapIndex, playerUnit, turn } = jwb.state;
 
     const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
@@ -400,12 +392,10 @@ class SpriteRenderer implements Renderer {
       lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
     }
 
-    const promises: Promise<any>[] = [];
     for (let i = 0; i < lines.length; i++) {
       let y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left'));
+      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
-    return Promise.all(promises);
   }
 
   /**
@@ -419,42 +409,39 @@ class SpriteRenderer implements Renderer {
     };
   }
 
-  private _renderSplashScreen(filename: string, text: string): Promise<any> {
-    return ImageLoader.loadImage(filename)
-      .then(imageData => createImageBitmap(imageData))
-      .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
-      .then(() => this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Color.WHITE, 'center'));
+  private async _renderSplashScreen(filename: string, text: string) {
+    const imageData = await ImageLoader.loadImage(filename);
+    const imageBitmap = await createImageBitmap(imageData);
+    await this._bufferContext.drawImage(imageBitmap, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+    await this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Color.WHITE, 'center');
   }
 
-  private _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: 'left' | 'center' | 'right'): Promise<any> {
-    return this._fontRenderer.render(text, font, color)
-      .then(imageBitmap => {
-        let left;
-        switch (textAlign) {
-          case 'left':
-            left = x;
-            break;
-          case 'center':
-            left = Math.floor(x - imageBitmap.width / 2);
-            break;
-          case 'right':
-            left = x + imageBitmap.width;
-            break;
-          default:
-            throw 'fux';
-        }
-        this._bufferContext.drawImage(imageBitmap, left, y);
-        return Promise.resolve();
-      });
+  private async _drawText(text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: 'left' | 'center' | 'right') {
+    const imageBitmap = await this._fontRenderer.render(text, font, color);
+    let left;
+    switch (textAlign) {
+      case 'left':
+        left = x;
+        break;
+      case 'center':
+        left = Math.floor(x - imageBitmap.width / 2);
+        break;
+      case 'right':
+        left = x + imageBitmap.width;
+        break;
+      default:
+        throw 'fux';
+    }
+    await this._bufferContext.drawImage(imageBitmap, left, y);
   }
 
-  private _renderMinimap(): Promise<any> {
+  private async _renderMinimap() {
     const minimapRenderer = new MinimapRenderer();
-    return minimapRenderer.render()
-      .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
+    const bitmap = await minimapRenderer.render();
+    await this._bufferContext.drawImage(bitmap, 0, 0);
   }
 
-  private _renderAbility(ability: UnitAbility, left: number, top: number) {
+  private async _renderAbility(ability: UnitAbility, left: number, top: number) {
     let borderColor: Color;
     const { queuedAbility, playerUnit } = jwb.state;
     if (queuedAbility === ability) {
@@ -465,11 +452,10 @@ class SpriteRenderer implements Renderer {
       borderColor = Color.DARK_GRAY;
     }
 
-    return ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }))
-      .then(createImageBitmap)
-      .then(image => this._bufferContext.drawImage(image, left, top))
-      .then(() => { left += ABILITIES_INNER_MARGIN });
+    const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
+      .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }));
+    const imageBitmap = await createImageBitmap(imageData);
+    await this._bufferContext.drawImage(imageBitmap, left, top);
   }
 }
 

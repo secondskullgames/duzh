@@ -490,6 +490,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./actions */ "./src/main/core/actions.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _units_UnitAbility__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../units/UnitAbility */ "./src/main/units/UnitAbility.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -574,14 +583,14 @@ function _mapToCommand(e) {
 }
 // global state
 let BUSY = false;
-function keyHandlerWrapper(e) {
+const keyHandlerWrapper = (e) => __awaiter(void 0, void 0, void 0, function* () {
     if (!BUSY) {
         BUSY = true;
-        keyHandler(e)
-            .then(() => { BUSY = false; });
+        yield keyHandler(e);
+        BUSY = false;
     }
-}
-function keyHandler(e) {
+});
+const keyHandler = (e) => __awaiter(void 0, void 0, void 0, function* () {
     const command = _mapToCommand(e);
     switch (command) {
         case KeyCommand.UP:
@@ -616,7 +625,7 @@ function keyHandler(e) {
         default:
     }
     return Promise.resolve();
-}
+});
 function _handleArrowKey(command) {
     const { state } = jwb;
     switch (state.screen) {
@@ -690,7 +699,7 @@ function _handleArrowKey(command) {
             throw `Invalid game screen ${state.screen}`;
     }
 }
-function _handleEnter() {
+const _handleEnter = () => __awaiter(void 0, void 0, void 0, function* () {
     const { state } = jwb;
     const { playerUnit } = state;
     switch (state.screen) {
@@ -708,7 +717,7 @@ function _handleEnter() {
             }
             else if (map.getTile({ x, y }).type === _types_types__WEBPACK_IMPORTED_MODULE_5__.TileType.STAIRS_DOWN) {
                 (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_3__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.DESCEND_STAIRS);
-                (0,_actions__WEBPACK_IMPORTED_MODULE_4__.loadMap)(mapIndex + 1);
+                yield (0,_actions__WEBPACK_IMPORTED_MODULE_4__.loadMap)(mapIndex + 1);
             }
             return _TurnHandler__WEBPACK_IMPORTED_MODULE_0__.default.playTurn(null);
         }
@@ -717,8 +726,8 @@ function _handleEnter() {
             const { selectedItem } = playerUnit.inventory;
             if (!!selectedItem) {
                 state.screen = _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME;
-                return (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.useItem)(playerUnit, selectedItem)
-                    .then(() => jwb.renderer.render());
+                yield (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.useItem)(playerUnit, selectedItem);
+                return jwb.renderer.render();
             }
             return Promise.resolve();
         }
@@ -731,7 +740,7 @@ function _handleEnter() {
         default:
             throw `Unknown game screen: ${state.screen}`;
     }
-}
+});
 function _handleTab() {
     const { state, renderer } = jwb;
     switch (state.screen) {
@@ -744,7 +753,7 @@ function _handleTab() {
     }
     return renderer.render();
 }
-function _handleMap() {
+const _handleMap = () => __awaiter(void 0, void 0, void 0, function* () {
     const { state, renderer } = jwb;
     switch (state.screen) {
         case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.MINIMAP:
@@ -758,8 +767,8 @@ function _handleMap() {
             break;
     }
     return renderer.render();
-}
-function _handleAbility(command) {
+});
+const _handleAbility = (command) => __awaiter(void 0, void 0, void 0, function* () {
     const { renderer } = jwb;
     const { playerUnit } = jwb.state;
     // sketchy - recall KEY_1 = '1', etc.
@@ -774,7 +783,7 @@ function _handleAbility(command) {
         console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(_units_UnitAbility__WEBPACK_IMPORTED_MODULE_6__.default.HEAVY_ATTACK)}`);
     }
     return Promise.resolve();
-}
+});
 function attachEvents() {
     window.onkeydown = keyHandlerWrapper;
 }
@@ -793,33 +802,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-
-function playTurn(playerUnitOrder) {
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const playTurn = (playerUnitOrder) => __awaiter(void 0, void 0, void 0, function* () {
     const { playerUnit } = jwb.state;
     const playerController = (playerUnit.controller);
     playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
     return _update();
-}
-function _update() {
-    const { state } = jwb;
+});
+const _update = () => __awaiter(void 0, void 0, void 0, function* () {
+    const { state, renderer } = jwb;
     const { playerUnit } = state;
     const map = state.getMap();
     // make sure the player unit's update happens first
-    const unitPromises = [];
-    unitPromises.push(() => playerUnit.update());
-    map.units.forEach(u => {
-        if (u !== playerUnit) {
-            unitPromises.push(() => u.update());
+    yield playerUnit.update();
+    // other units are processed in unspecified order
+    for (const unit of map.units) {
+        if (unit !== playerUnit) {
+            yield unit.update();
         }
-    });
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_0__.chainPromises)(unitPromises)
-        .then(() => jwb.renderer.render())
-        .then(() => {
-        state.turn++;
-        state.messages = [];
-    });
-}
+    }
+    yield renderer.render();
+    state.turn++;
+    state.messages = [];
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     playTurn
 });
@@ -852,6 +865,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
 /* harmony import */ var _units_controllers_PlayerUnitController__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../units/controllers/PlayerUnitController */ "./src/main/units/controllers/PlayerUnitController.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -866,7 +888,7 @@ __webpack_require__.r(__webpack_exports__);
 /*
  * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
  */
-function loadMap(index) {
+const loadMap = (index) => __awaiter(void 0, void 0, void 0, function* () {
     const { state } = jwb;
     if (index >= state.maps.length) {
         _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
@@ -878,8 +900,8 @@ function loadMap(index) {
         const mapBuilder = state.maps[index]();
         state.setMap(mapBuilder.build());
     }
-}
-function initialize() {
+});
+const initialize = () => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
     window.jwb = window.jwb || {};
     jwb.renderer = new _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_2__.default();
@@ -887,8 +909,8 @@ function initialize() {
     _initState();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     return jwb.renderer.render();
-}
-function _initState() {
+});
+const _initState = () => __awaiter(void 0, void 0, void 0, function* () {
     const playerUnitController = new _units_controllers_PlayerUnitController__WEBPACK_IMPORTED_MODULE_10__.default();
     const playerUnit = new _units_Unit__WEBPACK_IMPORTED_MODULE_1__.default(_units_UnitClass__WEBPACK_IMPORTED_MODULE_4__.default.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
     jwb.state = new _GameState__WEBPACK_IMPORTED_MODULE_0__.default(playerUnit, [
@@ -899,24 +921,24 @@ function _initState() {
         () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.CAVE, 5, 36, 26, 13, 3),
         () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.CAVE, 6, 38, 27, 14, 3)
     ]);
-}
-function startGame() {
-    loadMap(0);
+});
+const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield loadMap(0);
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
-}
-function returnToTitle() {
-    _initState(); // will set state.screen = TITLE
+});
+const returnToTitle = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield _initState(); // will set state.screen = TITLE
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     return jwb.renderer.render();
-}
+});
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-function revealTiles() {
+const revealTiles = () => {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
     map.rooms.forEach(room => {
@@ -938,7 +960,7 @@ function revealTiles() {
             }
         }
     }
-}
+};
 
 
 
@@ -958,27 +980,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /*
  * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
- * that are only nitended for debugging purposes.
+ * that are only intended for debugging purposes.
  */
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
-function revealMap() {
+const revealMap = () => __awaiter(void 0, void 0, void 0, function* () {
     jwb.DEBUG = true;
-    jwb.renderer.render();
-}
-function killEnemies() {
+    return jwb.renderer.render();
+});
+const killEnemies = () => __awaiter(void 0, void 0, void 0, function* () {
     const map = jwb.state.getMap();
     map.units = map.units.filter(u => u === jwb.state.playerUnit);
-    jwb.renderer.render();
-}
-function killPlayer() {
+    return jwb.renderer.render();
+});
+const killPlayer = () => __awaiter(void 0, void 0, void 0, function* () {
     const map = jwb.state.getMap();
     const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
-    playerUnit.takeDamage(playerUnit.life);
-    jwb.renderer.render();
-}
-function renderMinimap() {
+    yield playerUnit.takeDamage(playerUnit.life);
+    return jwb.renderer.render();
+});
+const renderMinimap = () => {
     jwb.state.screen = _types_types__WEBPACK_IMPORTED_MODULE_0__.GameScreen.MINIMAP;
-}
+};
 function initDebug() {
     // @ts-ignore
     window.jwb = window.jwb || {};
@@ -1176,9 +1207,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
-
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 class ImageSupplier {
@@ -1187,20 +1225,26 @@ class ImageSupplier {
      */
     constructor(filename, transparentColor, paletteSwaps = {}, effects = []) {
         const filenames = (Array.isArray(filename) ? filename : [filename]);
-        this._image = this._loadFirst(filenames)
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, transparentColor))
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, paletteSwaps))
-            // @ts-ignore
-            .then(imageData => (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.chainPromises)(effects, imageData))
-            .then(imageData => createImageBitmap(imageData));
+        this._image = this._load(filenames, paletteSwaps, transparentColor, effects);
     }
     get() {
         return this._image;
     }
+    _load(filenames, paletteSwaps, transparentColor, effects) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let imageData = yield this._loadFirst(filenames)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, transparentColor))
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, paletteSwaps));
+            for (const effect of effects) {
+                imageData = yield effect(imageData);
+            }
+            return createImageBitmap(imageData);
+        });
+    }
     _loadFirst(filenames) {
-        const promises = filenames.map(filename => this._loadOptional(filename));
-        return Promise.all(promises)
-            .then(results => {
+        return __awaiter(this, void 0, void 0, function* () {
+            const promises = filenames.map(filename => this._loadOptional(filename));
+            const results = yield Promise.all(promises);
             const imageData = results.filter(p => !!p)[0];
             if (!imageData) {
                 throw `Failed to load images: ${filenames}`;
@@ -1209,8 +1253,10 @@ class ImageSupplier {
         });
     }
     _loadOptional(filename) {
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_2__.default.loadImage(filename)
-            .catch(e => null);
+        return __awaiter(this, void 0, void 0, function* () {
+            return _ImageLoader__WEBPACK_IMPORTED_MODULE_1__.default.loadImage(filename)
+                .catch(e => null);
+        });
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ImageSupplier);
@@ -1412,13 +1458,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/Color */ "./src/main/types/Color.ts");
 /* harmony import */ var _MinimapRenderer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MinimapRenderer */ "./src/main/graphics/MinimapRenderer.ts");
 /* harmony import */ var _FontRenderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./FontRenderer */ "./src/main/graphics/FontRenderer.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _core_actions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../core/actions */ "./src/main/core/actions.ts");
-/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
-
+/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _core_actions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../core/actions */ "./src/main/core/actions.ts");
+/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -1473,142 +1526,160 @@ class SpriteRenderer {
         this._container.appendChild(this._canvas);
     }
     render() {
-        return this._renderScreen()
-            .then(() => this._renderBuffer());
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._renderScreen();
+            yield this._renderBuffer();
+        });
     }
     _renderScreen() {
-        const { screen } = jwb.state;
-        switch (screen) {
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.TITLE:
-                return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME:
-                return this._renderGameScreen();
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY:
-                return this._renderGameScreen()
-                    .then(() => this._renderInventory());
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.VICTORY:
-                return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME_OVER:
-                return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-            case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.MINIMAP:
-                return this._renderMinimap();
-            default:
-                throw `Invalid screen ${screen}`;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const { screen } = jwb.state;
+            switch (screen) {
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.TITLE:
+                    return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME:
+                    return this._renderGameScreen();
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.INVENTORY:
+                    return this._renderGameScreen()
+                        .then(() => this._renderInventory());
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.VICTORY:
+                    return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.GAME_OVER:
+                    return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+                case _types_types__WEBPACK_IMPORTED_MODULE_4__.GameScreen.MINIMAP:
+                    return this._renderMinimap();
+                default:
+                    throw `Invalid screen ${screen}`;
+            }
+        });
     }
     _renderBuffer() {
         return createImageBitmap(this._bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
             .then(imageBitmap => this._context.drawImage(imageBitmap, 0, 0));
     }
     _renderGameScreen() {
-        (0,_core_actions__WEBPACK_IMPORTED_MODULE_6__.revealTiles)();
-        this._bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-        this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
-        // can't pass direct references to the functions because `this` won't be defined
-        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.chainPromises)([
-            () => this._renderTiles(),
-            () => this._renderItems(),
-            () => this._renderProjectiles(),
-            () => this._renderUnits(),
-            () => this._renderMessages(),
-            () => this._renderHUD()
-        ]);
+        return __awaiter(this, void 0, void 0, function* () {
+            (0,_core_actions__WEBPACK_IMPORTED_MODULE_5__.revealTiles)();
+            this._bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+            this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+            console.log('started rendering');
+            // can't pass direct references to the functions because `this` won't be defined
+            yield this._renderTiles();
+            yield this._renderItems();
+            yield this._renderProjectiles();
+            console.log('rendering units');
+            yield this._renderUnits();
+            console.log('rendered units');
+            yield this._renderMessages();
+            yield this._renderHUD();
+            console.log('done rendering');
+        });
     }
     _renderTiles() {
-        const promises = [];
-        const map = jwb.state.getMap();
-        for (let y = 0; y < map.height; y++) {
-            for (let x = 0; x < map.width; x++) {
-                if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.isTileRevealed)({ x, y })) {
-                    const tile = map.getTile({ x, y });
-                    if (!!tile) {
-                        promises.push(this._renderElement(tile, { x, y }));
+        return __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const tile = map.getTile({ x, y });
+                        if (!!tile) {
+                            promises.push(this._renderElement(tile, { x, y }));
+                        }
                     }
                 }
             }
-        }
-        return Promise.all(promises);
+            return Promise.all(promises);
+        });
     }
     _renderItems() {
-        const map = jwb.state.getMap();
-        const promises = [];
-        for (let y = 0; y < map.height; y++) {
-            for (let x = 0; x < map.width; x++) {
-                if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.isTileRevealed)({ x, y })) {
-                    const item = map.getItem({ x, y });
-                    if (!!item) {
-                        promises.push(this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY)
-                            .then(() => this._renderElement(item, { x, y })));
+        return __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const item = map.getItem({ x, y });
+                        if (!!item) {
+                            promises.push(this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY)
+                                .then(() => this._renderElement(item, { x, y })));
+                        }
                     }
                 }
             }
-        }
-        return Promise.all(promises);
+            return Promise.all(promises);
+        });
     }
     _renderProjectiles() {
-        const map = jwb.state.getMap();
-        const promises = [];
-        for (let y = 0; y < map.height; y++) {
-            for (let x = 0; x < map.width; x++) {
-                if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.isTileRevealed)({ x, y })) {
-                    const projectile = map.projectiles
-                        .filter(p => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.coordinatesEquals)(p, { x, y }))[0];
-                    if (!!projectile) {
-                        promises.push(this._renderElement(projectile, { x, y }));
+        return __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const projectile = map.projectiles
+                            .filter(p => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(p, { x, y }))[0];
+                        if (!!projectile) {
+                            promises.push(this._renderElement(projectile, { x, y }));
+                        }
                     }
                 }
             }
-        }
-        return Promise.all(promises);
+            return Promise.all(promises);
+        });
     }
     _renderUnits() {
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        const promises = [];
-        for (let y = 0; y < map.height; y++) {
-            for (let x = 0; x < map.width; x++) {
-                if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_4__.isTileRevealed)({ x, y })) {
-                    const unit = map.getUnit({ x, y });
-                    if (!!unit) {
-                        let shadowColor;
-                        if (unit === playerUnit) {
-                            shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
+        return __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const unit = map.getUnit({ x, y });
+                        if (!!unit) {
+                            let shadowColor;
+                            if (unit === playerUnit) {
+                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
+                            }
+                            else {
+                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
+                            }
+                            promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
+                                yield this._drawEllipse({ x, y }, shadowColor);
+                                yield this._renderElement(unit, { x, y });
+                                for (const item of unit.equipment.getValues()) {
+                                    yield this._renderElement(item, { x, y });
+                                }
+                            })));
                         }
-                        else {
-                            shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
-                        }
-                        promises.push(() => this._drawEllipse({ x, y }, shadowColor));
-                        promises.push(() => this._renderElement(unit, { x, y }));
-                        unit.equipment.getValues()
-                            .map(item => () => this._renderElement(item, { x, y }))
-                            .forEach(promise => promises.push(promise));
                     }
                 }
             }
-        }
-        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_3__.chainPromises)(promises);
+            return Promise.all(promises);
+        });
     }
     /**
      * @param color (in hex form)
      */
     _drawEllipse({ x, y }, color) {
-        const { x: left, y: top } = this._gridToPixel({ x, y });
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(SHADOW_FILENAME)
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.replaceColors)(imageData, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }))
-            .then(createImageBitmap)
-            .then(imageBitmap => {
-            this._bufferContext.drawImage(imageBitmap, left, top);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { x: left, y: top } = this._gridToPixel({ x, y });
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(SHADOW_FILENAME)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(imageData, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }));
+            const imageBitmap = yield createImageBitmap(imageData);
+            return this._bufferContext.drawImage(imageBitmap, left, top);
         });
     }
     _renderInventory() {
-        const { playerUnit } = jwb.state;
-        const { inventory } = playerUnit;
-        const { _bufferCanvas, _bufferContext } = this;
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(INVENTORY_BACKGROUND_FILENAME)
-            .then(createImageBitmap)
-            .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT))
-            .then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            const { inventory } = playerUnit;
+            const { _bufferCanvas, _bufferContext } = this;
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(INVENTORY_BACKGROUND_FILENAME);
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
             // draw equipment
             const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
             const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
@@ -1618,12 +1689,12 @@ class SpriteRenderer {
             // draw equipment items
             // for now, just display them all in one list
             let y = INVENTORY_TOP + 64;
-            playerUnit.equipment.getEntries().forEach(([slot, equipment]) => {
+            for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
                 promises.push(this._drawText(`${slot} - ${equipment.name}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
                 y += LINE_HEIGHT;
-            });
+            }
             // draw inventory categories
-            const inventoryCategories = Object.values(_types_types__WEBPACK_IMPORTED_MODULE_5__.ItemCategory);
+            const inventoryCategories = Object.values(_types_types__WEBPACK_IMPORTED_MODULE_4__.ItemCategory);
             const categoryWidth = 60;
             const xOffset = 4;
             for (let i = 0; i < inventoryCategories.length; i++) {
@@ -1661,108 +1732,113 @@ class SpriteRenderer {
             (y <= SCREEN_HEIGHT + TILE_HEIGHT));
     }
     _renderElement(element, { x, y }) {
-        const pixel = this._gridToPixel({ x, y });
-        if (this._isPixelOnScreen(pixel)) {
-            const { sprite } = element;
-            if (!!sprite) {
-                return this._drawSprite(sprite, pixel);
+        return __awaiter(this, void 0, void 0, function* () {
+            const pixel = this._gridToPixel({ x, y });
+            if (this._isPixelOnScreen(pixel)) {
+                const { sprite } = element;
+                if (!!sprite) {
+                    yield this._drawSprite(sprite, pixel);
+                }
             }
-        }
-        return Promise.resolve();
+        });
     }
     _drawSprite(sprite, { x, y }) {
-        return sprite.getImage()
-            .then(image => {
+        return __awaiter(this, void 0, void 0, function* () {
+            const image = yield sprite.getImage();
             if (image) {
-                this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+                yield this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
             }
         });
     }
     _renderMessages() {
-        const { _bufferContext } = this;
-        const { messages } = jwb.state;
-        _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-        _bufferContext.strokeStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-        const left = 0;
-        const top = 0;
-        const promises = [];
-        for (let i = 0; i < messages.length; i++) {
-            let y = top + (LINE_HEIGHT * i);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { _bufferContext } = this;
+            const { messages } = jwb.state;
             _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-            _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
-            promises.push(this._drawText(messages[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
-        }
-        return Promise.all(promises);
+            _bufferContext.strokeStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+            const left = 0;
+            const top = 0;
+            for (let i = 0; i < messages.length; i++) {
+                const y = top + (LINE_HEIGHT * i);
+                _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+                _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+                yield this._drawText(messages[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+            }
+        });
     }
     _renderHUD() {
-        return this._renderHUDFrame()
-            .then(() => Promise.all([
-            this._renderHUDLeftPanel(),
-            this._renderHUDMiddlePanel(),
-            this._renderHUDRightPanel(),
-        ]));
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._renderHUDFrame();
+            yield Promise.all([
+                this._renderHUDLeftPanel(),
+                this._renderHUDMiddlePanel(),
+                this._renderHUDRightPanel(),
+            ]);
+        });
     }
     _renderHUDFrame() {
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(HUD_FILENAME)
-            .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
-            .then(createImageBitmap)
-            .then(imageBitmap => this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT));
+        return __awaiter(this, void 0, void 0, function* () {
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(HUD_FILENAME)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE));
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT);
+        });
     }
     /**
      * Renders the bottom-left area of the screen, showing information about the player
      */
     _renderHUDLeftPanel() {
-        const { playerUnit } = jwb.state;
-        const lines = [
-            playerUnit.name,
-            `Level ${playerUnit.level}`,
-            `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
-            `Damage: ${playerUnit.getDamage()}`,
-        ];
-        const left = HUD_MARGIN;
-        const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-        const promises = [];
-        for (let i = 0; i < lines.length; i++) {
-            let y = top + (LINE_HEIGHT * i);
-            promises.push(this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
-        }
-        return Promise.all(promises);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            const lines = [
+                playerUnit.name,
+                `Level ${playerUnit.level}`,
+                `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
+                `Damage: ${playerUnit.getDamage()}`,
+            ];
+            const left = HUD_MARGIN;
+            const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            for (let i = 0; i < lines.length; i++) {
+                const y = top + (LINE_HEIGHT * i);
+                yield this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+            }
+        });
     }
     _renderHUDMiddlePanel() {
-        let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
-        const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
-        let { playerUnit } = jwb.state;
-        const promises = [];
-        let keyNumber = 1;
-        for (let i = 0; i < playerUnit.abilities.length; i++) {
-            const ability = playerUnit.abilities[i];
-            if (!!ability.icon) {
-                promises.push(this._renderAbility(ability, left, top));
-                promises.push(this._drawText(`${keyNumber}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
-                left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
-                keyNumber++;
+        return __awaiter(this, void 0, void 0, function* () {
+            let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+            const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+            const { playerUnit } = jwb.state;
+            let keyNumber = 1;
+            for (let i = 0; i < playerUnit.abilities.length; i++) {
+                const ability = playerUnit.abilities[i];
+                if (!!ability.icon) {
+                    yield this._renderAbility(ability, left, top);
+                    yield this._drawText(`${keyNumber}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+                    left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
+                    keyNumber++;
+                }
             }
-        }
-        return Promise.all(promises);
+        });
     }
     _renderHUDRightPanel() {
-        const { mapIndex, playerUnit, turn } = jwb.state;
-        const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
-        const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-        const lines = [
-            `Turn: ${turn}`,
-            `Floor: ${(mapIndex || 0) + 1}`,
-        ];
-        const experienceToNextLevel = playerUnit.experienceToNextLevel();
-        if (experienceToNextLevel !== null) {
-            lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-        }
-        const promises = [];
-        for (let i = 0; i < lines.length; i++) {
-            let y = top + (LINE_HEIGHT * i);
-            promises.push(this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
-        }
-        return Promise.all(promises);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { mapIndex, playerUnit, turn } = jwb.state;
+            const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
+            const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            const lines = [
+                `Turn: ${turn}`,
+                `Floor: ${(mapIndex || 0) + 1}`,
+            ];
+            const experienceToNextLevel = playerUnit.experienceToNextLevel();
+            if (experienceToNextLevel !== null) {
+                lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+            }
+            for (let i = 0; i < lines.length; i++) {
+                let y = top + (LINE_HEIGHT * i);
+                yield this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+            }
+        });
     }
     /**
      * @return the top left pixel
@@ -1775,14 +1851,16 @@ class SpriteRenderer {
         };
     }
     _renderSplashScreen(filename, text) {
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(filename)
-            .then(imageData => createImageBitmap(imageData))
-            .then(image => this._bufferContext.drawImage(image, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height))
-            .then(() => this._drawText(text, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
+        return __awaiter(this, void 0, void 0, function* () {
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(filename);
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this._bufferContext.drawImage(imageBitmap, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
+            yield this._drawText(text, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+        });
     }
     _drawText(text, font, { x, y }, color, textAlign) {
-        return this._fontRenderer.render(text, font, color)
-            .then(imageBitmap => {
+        return __awaiter(this, void 0, void 0, function* () {
+            const imageBitmap = yield this._fontRenderer.render(text, font, color);
             let left;
             switch (textAlign) {
                 case 'left':
@@ -1797,32 +1875,34 @@ class SpriteRenderer {
                 default:
                     throw 'fux';
             }
-            this._bufferContext.drawImage(imageBitmap, left, y);
-            return Promise.resolve();
+            yield this._bufferContext.drawImage(imageBitmap, left, y);
         });
     }
     _renderMinimap() {
-        const minimapRenderer = new _MinimapRenderer__WEBPACK_IMPORTED_MODULE_1__.default();
-        return minimapRenderer.render()
-            .then(bitmap => this._bufferContext.drawImage(bitmap, 0, 0));
+        return __awaiter(this, void 0, void 0, function* () {
+            const minimapRenderer = new _MinimapRenderer__WEBPACK_IMPORTED_MODULE_1__.default();
+            const bitmap = yield minimapRenderer.render();
+            yield this._bufferContext.drawImage(bitmap, 0, 0);
+        });
     }
     _renderAbility(ability, left, top) {
-        let borderColor;
-        const { queuedAbility, playerUnit } = jwb.state;
-        if (queuedAbility === ability) {
-            borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
-        }
-        else if (playerUnit.getCooldown(ability) === 0) {
-            borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
-        }
-        else {
-            borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
-        }
-        return _ImageLoader__WEBPACK_IMPORTED_MODULE_8__.default.loadImage(`abilities/${ability.icon}`)
-            .then(image => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_7__.replaceColors)(image, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: borderColor }))
-            .then(createImageBitmap)
-            .then(image => this._bufferContext.drawImage(image, left, top))
-            .then(() => { left += ABILITIES_INNER_MARGIN; });
+        return __awaiter(this, void 0, void 0, function* () {
+            let borderColor;
+            const { queuedAbility, playerUnit } = jwb.state;
+            if (queuedAbility === ability) {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
+            }
+            else if (playerUnit.getCooldown(ability) === 0) {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
+            }
+            else {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
+            }
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(`abilities/${ability.icon}`)
+                .then(image => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(image, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: borderColor }));
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this._bufferContext.drawImage(imageBitmap, left, top);
+        });
     }
 }
 SpriteRenderer.SCREEN_WIDTH = SCREEN_WIDTH;
@@ -1847,6 +1927,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
 /* harmony import */ var _items_ProjectileFactory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../items/ProjectileFactory */ "./src/main/items/ProjectileFactory.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -1944,45 +2033,28 @@ function playFloorFireAnimation(source, targets) {
         delay: FRAME_LENGTH
     });
 }
-function _playAnimation(animation) {
+const _playAnimation = (animation) => __awaiter(void 0, void 0, void 0, function* () {
     const { delay, frames } = animation;
-    const promises = [];
     for (let i = 0; i < frames.length; i++) {
         const frame = frames[i];
         const map = jwb.state.getMap();
-        promises.push(() => {
-            if (!!frame.projectiles) {
-                map.projectiles.push(...frame.projectiles);
-            }
-            return Promise.resolve();
-        });
-        const updatePromise = () => {
-            const updatePromises = [];
-            for (let j = 0; j < frame.units.length; j++) {
-                const { unit, activity } = frame.units[j];
-                unit.activity = activity;
-                updatePromises.push(unit.sprite.getImage());
-            }
-            return Promise.all(updatePromises);
-        };
-        promises.push(updatePromise);
-        promises.push(() => {
-            return jwb.renderer.render();
-        });
-        if (i < (frames.length - 1)) {
-            promises.push(() => {
-                return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.wait)(delay);
-            });
+        if (!!frame.projectiles) {
+            map.projectiles.push(...frame.projectiles);
         }
-        promises.push(() => {
-            if (!!frame.projectiles) {
-                frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
-            }
-            return Promise.resolve();
-        });
+        for (let j = 0; j < frame.units.length; j++) {
+            const { unit, activity } = frame.units[j];
+            unit.activity = activity;
+            yield unit.sprite.getImage();
+        }
+        yield jwb.renderer.render();
+        if (i < (frames.length - 1)) {
+            yield (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.wait)(delay);
+        }
+        if (!!frame.projectiles) {
+            frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
+        }
     }
-    return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.chainPromises)(promises);
-}
+});
 
 
 
@@ -2490,14 +2562,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _InventoryItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InventoryItem */ "./src/main/items/InventoryItem.ts");
 /* harmony import */ var _MapItem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MapItem */ "./src/main/items/MapItem.ts");
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-/* harmony import */ var _utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/PromiseUtils */ "./src/main/utils/PromiseUtils.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
-/* harmony import */ var _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
-/* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
-/* harmony import */ var _ItemUtils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ItemUtils */ "./src/main/items/ItemUtils.ts");
-
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+/* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
+/* harmony import */ var _ItemUtils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ItemUtils */ "./src/main/items/ItemUtils.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -2511,19 +2590,18 @@ __webpack_require__.r(__webpack_exports__);
 function createPotion(lifeRestored) {
     const onUse = (item, unit) => {
         return new Promise(resolve => {
-            (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
+            (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
             const prevLife = unit.life;
             unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
             jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
             resolve();
         });
     };
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.POTION, onUse);
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.POTION, onUse);
 }
-function createScrollOfFloorFire(damage) {
-    const onUse = (item, unit) => {
+const createScrollOfFloorFire = (damage) => {
+    const onUse = (item, unit) => __awaiter(void 0, void 0, void 0, function* () {
         const map = jwb.state.getMap();
-        const promises = [];
         const adjacentUnits = map.units.filter(u => {
             const dx = unit.x - u.x;
             const dy = unit.y - u.y;
@@ -2531,14 +2609,13 @@ function createScrollOfFloorFire(damage) {
                 && ([-1, 0, 1].indexOf(dy) > -1)
                 && !(dx === 0 && dy === 0);
         });
-        promises.push(() => (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__.playFloorFireAnimation)(unit, adjacentUnits));
-        adjacentUnits.forEach(u => {
-            promises.push(() => u.takeDamage(damage, unit));
-        });
-        return (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_4__.chainPromises)(promises);
-    };
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.SCROLL, onUse);
-}
+        yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_8__.playFloorFireAnimation)(unit, adjacentUnits);
+        for (const adjacentUnit of adjacentUnits) {
+            yield adjacentUnit.takeDamage(damage, unit);
+        }
+    });
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.SCROLL, onUse);
+};
 function _createMapEquipment(equipmentClass, { x, y }) {
     const sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
     const inventoryItem = _createInventoryWeapon(equipmentClass);
@@ -2546,7 +2623,7 @@ function _createMapEquipment(equipmentClass, { x, y }) {
 }
 function _createInventoryWeapon(equipmentClass) {
     const onUse = (item, unit) => {
-        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, equipmentClass, unit);
+        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_9__.equipItem)(item, equipmentClass, unit);
     };
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
 }
@@ -2564,18 +2641,18 @@ function _getItemSuppliers(level) {
     return [createMapPotion, createFloorFireScroll];
 }
 function _getEquipmentSuppliers(level) {
-    return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.values()
+    return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_5__.default.values()
         .filter(equipmentClass => level >= equipmentClass.minLevel)
         .filter(equipmentClass => level <= equipmentClass.maxLevel)
         .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
 }
 function createRandomItem({ x, y }, level) {
     let supplier;
-    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) == 0) {
-        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getItemSuppliers(level));
+    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randInt)(0, 2) == 0) {
+        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getItemSuppliers(level));
     }
     else {
-        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getEquipmentSuppliers(level));
+        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getEquipmentSuppliers(level));
     }
     return supplier({ x, y });
 }
@@ -4595,6 +4672,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -4660,18 +4746,14 @@ class Unit {
         this.stunDuration = Math.max(this.stunDuration - 1, 0);
     }
     update() {
-        return new Promise(resolve => {
-            this._upkeep();
-            return resolve();
-        })
-            .then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this._upkeep();
             if (this.stunDuration === 0) {
-                return this.controller.issueOrder(this);
+                yield this.controller.issueOrder(this);
             }
-            return Promise.resolve();
-        })
-            .then(() => this.sprite.getImage())
-            .then(() => this._endOfTurn());
+            yield this.sprite.getImage();
+            yield this._endOfTurn();
+        });
     }
     getDamage() {
         let damage = this._damage;
@@ -5508,22 +5590,24 @@ class Pathfinder {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "chainPromises": () => (/* binding */ chainPromises),
 /* harmony export */   "wait": () => (/* binding */ wait)
 /* harmony export */ });
-function chainPromises([first, ...rest], input) {
-    if (!!first) {
-        return first(input).then(output => chainPromises(rest, output));
-    }
-    return Promise.resolve(input);
-}
-function wait(milliseconds) {
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const wait = (milliseconds) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve();
         }, milliseconds);
     });
-}
+});
 
 
 
