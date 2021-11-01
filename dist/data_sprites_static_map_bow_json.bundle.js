@@ -7,7 +7,7 @@
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"map_bow","filename":"bow_icon","offsets":{"dx":0,"dy":0}}');
+module.exports = JSON.parse('{"name":"map_bow","filename":"bow_icon","offsets":{"dx":0,"dy":0},"transparentColor":"#ffffff"}');
 
 /***/ })
 

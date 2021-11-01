@@ -110,18 +110,12 @@ class SpriteRenderer implements Renderer {
     this.bufferContext.fillStyle = Color.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
-    console.log('started rendering');
-    // can't pass direct references to the functions because `this` won't be defined
     await this._renderTiles();
     await this._renderItems();
     await this._renderProjectiles();
-    console.log('rendering units');
     await this._renderUnits();
-    console.log('rendered units');
     await this._renderMessages();
     await this._renderHUD();
-
-    console.log('done rendering');
   };
 
   private _renderTiles = async () => {

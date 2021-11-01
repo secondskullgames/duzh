@@ -2159,7 +2159,7 @@ const createStaticSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, 
 const createUnitSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'units');
     const imageMap = yield _loadAnimations('units', spriteModel, paletteSwaps);
-    const keyFunction = (unit) => `${unit.activity}_${_types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(unit.direction)}`;
+    const keyFunction = (unit) => `${unit.activity.toLowerCase()}_${_types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(unit.direction)}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
         paletteSwaps,
         imageMap,
@@ -2170,7 +2170,7 @@ const createUnitSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, vo
 const createEquipmentSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'equipment');
     const imageMap = yield _loadAnimations('equipment', spriteModel, paletteSwaps);
-    const keyFunction = (equipment) => `${equipment.unit.activity}_${equipment.unit.direction}`;
+    const keyFunction = (equipment) => `${equipment.unit.activity.toLowerCase()}_${_types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(equipment.unit.direction)}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
         paletteSwaps,
         imageMap,
@@ -2217,7 +2217,7 @@ const _loadAnimations = (spriteCategory, spriteModel, paletteSwaps) => __awaiter
                     paletteSwaps,
                     effects
                 }).build();
-                const frameKey = `${animationName}_${direction}`;
+                const frameKey = `${animationName}_${_types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(direction)}`;
                 imageMap[frameKey] = image;
             }
         }

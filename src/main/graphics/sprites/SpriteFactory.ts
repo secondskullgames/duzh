@@ -43,7 +43,7 @@ const createStaticSprite = async (spriteName: string, paletteSwaps: PaletteSwaps
 const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<DynamicSprite<Unit>> => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'units');
   const imageMap = await _loadAnimations('units', spriteModel, paletteSwaps);
-  const keyFunction = (unit: Unit) => `${unit.activity}_${Direction.toString(unit.direction)}`;
+  const keyFunction = (unit: Unit) => `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}`;
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
@@ -57,7 +57,7 @@ const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps =
 const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}) => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'equipment');
   const imageMap = await _loadAnimations('equipment', spriteModel, paletteSwaps);
-  const keyFunction = (equipment: Equipment) => `${equipment.unit!!.activity}_${equipment.unit!!.direction}`;
+  const keyFunction = (equipment: Equipment) => `${equipment.unit!!.activity.toLowerCase()}_${Direction.toString(equipment.unit!!.direction)}`;
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
@@ -117,7 +117,7 @@ const _loadAnimations = async (
           effects
         }).build();
 
-        const frameKey = `${animationName}_${direction}`;
+        const frameKey = `${animationName}_${Direction.toString(direction)}`;
         imageMap[frameKey] = image;
       }
     }
