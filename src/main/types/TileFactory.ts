@@ -24,7 +24,7 @@ const createTileSet = async (tileSetName: TileSetName): Promise<TileSet> => {
     const tiles: Sprite[] = [];
     for (const filename of filenames) {
       if (filename) {
-        const sprite = await SpriteFactory.createStaticSprite(filename);
+        const sprite = await SpriteFactory.createTileSprite(`${tileSetName}/${filename}`);
         tiles.push(sprite);
       }
     }

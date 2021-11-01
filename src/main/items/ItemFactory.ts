@@ -62,7 +62,9 @@ const _createInventoryWeapon = async (equipmentClass: EquipmentClass): Promise<I
 const createEquipment = async (name: string): Promise<Equipment> => {
   const equipmentClass = EquipmentClass.forName(name);
   const sprite = await SpriteFactory.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
-  return new Equipment(EquipmentClass.forName(name), sprite, null);
+  const equipment = await new Equipment(EquipmentClass.forName(name), sprite, null);
+  sprite.target = equipment;
+  return equipment;
 };
 
 type MapItemSupplier = ({ x, y }: Coordinates) => Promise<MapItem>;

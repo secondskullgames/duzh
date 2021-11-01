@@ -14,7 +14,7 @@
     },
     "walking": {
       "frames": [{
-        "activity": "walking",
+        "activity": "standing",
         "number": "1"
       }]
     },

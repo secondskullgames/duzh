@@ -7,7 +7,7 @@
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"snake","offsets":{"dx":0,"dy":0},"pattern":"${sprite}_${activity}_${direction}_${number}","animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"1"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
+module.exports = JSON.parse('{"name":"snake","offsets":{"dx":0,"dy":0},"pattern":"${sprite}_${activity}_${direction}_${number}","animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"standing","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"1"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
 
 /***/ })
 

@@ -519,7 +519,7 @@ var KeyCommand;
     KeyCommand["KEY_9"] = "9";
     KeyCommand["KEY_0"] = "0";
 })(KeyCommand || (KeyCommand = {}));
-function _mapToCommand(e) {
+const _mapToCommand = (e) => {
     switch (e.key) {
         case 'w':
         case 'W':
@@ -568,7 +568,7 @@ function _mapToCommand(e) {
             return KeyCommand.KEY_0;
     }
     return null;
-}
+};
 // global state
 let BUSY = false;
 const keyHandlerWrapper = (e) => __awaiter(void 0, void 0, void 0, function* () {
@@ -614,7 +614,7 @@ const keyHandler = (e) => __awaiter(void 0, void 0, void 0, function* () {
             return Promise.resolve();
     }
 });
-function _handleArrowKey(command) {
+const _handleArrowKey = (command) => __awaiter(void 0, void 0, void 0, function* () {
     const { state } = jwb;
     switch (state.screen) {
         case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.GAME:
@@ -686,7 +686,7 @@ function _handleArrowKey(command) {
         default:
             throw `Invalid game screen ${state.screen}`;
     }
-}
+});
 const _handleEnter = () => __awaiter(void 0, void 0, void 0, function* () {
     const { state } = jwb;
     const { playerUnit } = state;
@@ -1173,7 +1173,7 @@ const _loadFirst = (filenames) => __awaiter(void 0, void 0, void 0, function* ()
     const results = yield Promise.all(promises);
     const imageData = results.filter(p => !!p)[0];
     if (!imageData) {
-        throw `Failed to load images: ${filenames}`;
+        throw new Error(`Failed to load images: ${filenames}`);
     }
     return imageData;
 });
@@ -1525,20 +1525,317 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 const SHADOW_FILENAME = 'shadow';
 class SpriteRenderer {
     constructor() {
-        this._container = document.getElementById('container');
-        this._container.innerHTML = '';
-        this._bufferCanvas = document.createElement('canvas');
-        this._bufferCanvas.width = WIDTH * TILE_WIDTH;
-        this._bufferCanvas.height = HEIGHT * TILE_HEIGHT;
-        this._bufferContext = this._bufferCanvas.getContext('2d');
-        this._bufferContext.imageSmoothingEnabled = false;
-        this._fontRenderer = new _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.default();
-        this._canvas = document.createElement('canvas');
-        this._canvas.width = WIDTH * TILE_WIDTH;
-        this._canvas.height = HEIGHT * TILE_HEIGHT;
-        this._context = this._canvas.getContext('2d');
-        this._bufferContext.imageSmoothingEnabled = false;
-        this._container.appendChild(this._canvas);
+        this._renderBuffer = () => __awaiter(this, void 0, void 0, function* () {
+            const imageBitmap = yield createImageBitmap(this.bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+            yield this.context.drawImage(imageBitmap, 0, 0);
+        });
+        this._renderGameScreen = () => __awaiter(this, void 0, void 0, function* () {
+            (0,_core_actions__WEBPACK_IMPORTED_MODULE_5__.revealTiles)();
+            this.bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+            this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+            console.log('started rendering');
+            // can't pass direct references to the functions because `this` won't be defined
+            yield this._renderTiles();
+            yield this._renderItems();
+            yield this._renderProjectiles();
+            console.log('rendering units');
+            yield this._renderUnits();
+            console.log('rendered units');
+            yield this._renderMessages();
+            yield this._renderHUD();
+            console.log('done rendering');
+        });
+        this._renderTiles = () => __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const tile = map.getTile({ x, y });
+                        if (!!tile) {
+                            promises.push(this._renderElement(tile, { x, y }));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        });
+        this._renderItems = () => __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const item = map.getItem({ x, y });
+                        if (!!item) {
+                            promises.push(this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY)
+                                .then(() => this._renderElement(item, { x, y })));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        });
+        this._renderProjectiles = () => __awaiter(this, void 0, void 0, function* () {
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const projectile = map.projectiles
+                            .filter(p => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(p, { x, y }))[0];
+                        if (!!projectile) {
+                            promises.push(this._renderElement(projectile, { x, y }));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        });
+        this._renderUnits = () => __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            const promises = [];
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+                        const unit = map.getUnit({ x, y });
+                        if (!!unit) {
+                            let shadowColor;
+                            if (unit === playerUnit) {
+                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
+                            }
+                            else {
+                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
+                            }
+                            promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
+                                yield this._drawEllipse({ x, y }, shadowColor);
+                                yield this._renderElement(unit, { x, y });
+                                console.log('rendered a unit!');
+                                for (const item of unit.equipment.getValues()) {
+                                    yield this._renderElement(item, { x, y });
+                                    console.log('rendered an equipment!');
+                                }
+                            })));
+                        }
+                    }
+                }
+            }
+            return Promise.all(promises);
+        });
+        /**
+         * @param color (in hex form)
+         */
+        this._drawEllipse = ({ x, y }, color) => __awaiter(this, void 0, void 0, function* () {
+            const { x: left, y: top } = this._gridToPixel({ x, y });
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(SHADOW_FILENAME)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(imageData, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }));
+            const imageBitmap = yield createImageBitmap(imageData);
+            return this.bufferContext.drawImage(imageBitmap, left, top);
+        });
+        this._renderInventory = () => __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            const { inventory } = playerUnit;
+            const { bufferCanvas, bufferContext } = this;
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(INVENTORY_BACKGROUND_FILENAME);
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this.bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+            // draw equipment
+            const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
+            const itemsLeft = (bufferCanvas.width + INVENTORY_MARGIN) / 2;
+            const promises = [];
+            promises.push(this._drawText('EQUIPMENT', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
+            promises.push(this._drawText('INVENTORY', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
+            // draw equipment items
+            // for now, just display them all in one list
+            let y = INVENTORY_TOP + 64;
+            for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
+                promises.push(this._drawText(`${slot} - ${equipment.name}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
+                y += LINE_HEIGHT;
+            }
+            // draw inventory categories
+            const inventoryCategories = Object.values(_types_types__WEBPACK_IMPORTED_MODULE_4__.ItemCategory);
+            const categoryWidth = 60;
+            const xOffset = 4;
+            for (let i = 0; i < inventoryCategories.length; i++) {
+                const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+                const top = INVENTORY_TOP + 40;
+                promises.push(this._drawText(inventoryCategories[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y: top }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
+                if (inventoryCategories[i] === inventory.selectedCategory) {
+                    bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
+                    bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+                }
+            }
+            // draw inventory items
+            if (inventory.selectedCategory) {
+                const items = inventory.get(inventory.selectedCategory);
+                const x = itemsLeft + 8;
+                for (let i = 0; i < items.length; i++) {
+                    const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
+                    let color;
+                    if (items[i] === inventory.selectedItem) {
+                        color = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.YELLOW;
+                    }
+                    else {
+                        color = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
+                    }
+                    promises.push(this._drawText(items[i].name, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
+                }
+            }
+            return Promise.all(promises);
+        });
+        this._isPixelOnScreen = ({ x, y }) => {
+            return ((x >= -TILE_WIDTH) &&
+                (x <= SCREEN_WIDTH + TILE_WIDTH) &&
+                (y >= -TILE_HEIGHT) &&
+                (y <= SCREEN_HEIGHT + TILE_HEIGHT));
+        };
+        this._renderElement = (element, { x, y }) => __awaiter(this, void 0, void 0, function* () {
+            const pixel = this._gridToPixel({ x, y });
+            if (this._isPixelOnScreen(pixel)) {
+                const { sprite } = element;
+                if (!!sprite) {
+                    yield this._drawSprite(sprite, pixel);
+                }
+            }
+        });
+        this._drawSprite = (sprite, { x, y }) => __awaiter(this, void 0, void 0, function* () {
+            const image = sprite.getImage();
+            if (image) {
+                yield this.bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+            }
+        });
+        this._renderMessages = () => __awaiter(this, void 0, void 0, function* () {
+            const { bufferContext } = this;
+            const { messages } = jwb.state;
+            bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+            bufferContext.strokeStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+            const left = 0;
+            const top = 0;
+            for (let i = 0; i < messages.length; i++) {
+                const y = top + (LINE_HEIGHT * i);
+                bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
+                bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+                yield this._drawText(messages[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+            }
+        });
+        this._renderHUD = () => __awaiter(this, void 0, void 0, function* () {
+            yield this._renderHUDFrame();
+            yield Promise.all([
+                this._renderHUDLeftPanel(),
+                this._renderHUDMiddlePanel(),
+                this._renderHUDRightPanel(),
+            ]);
+        });
+        this._renderHUDFrame = () => __awaiter(this, void 0, void 0, function* () {
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(HUD_FILENAME)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE));
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this.bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT);
+        });
+        this._renderHUDMiddlePanel = () => __awaiter(this, void 0, void 0, function* () {
+            let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
+            const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
+            const { playerUnit } = jwb.state;
+            let keyNumber = 1;
+            for (let i = 0; i < playerUnit.abilities.length; i++) {
+                const ability = playerUnit.abilities[i];
+                if (!!ability.icon) {
+                    yield this._renderAbility(ability, left, top);
+                    yield this._drawText(`${keyNumber}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+                    left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
+                    keyNumber++;
+                }
+            }
+        });
+        this._renderHUDRightPanel = () => __awaiter(this, void 0, void 0, function* () {
+            const { mapIndex, playerUnit, turn } = jwb.state;
+            const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
+            const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
+            const lines = [
+                `Turn: ${turn}`,
+                `Floor: ${(mapIndex || 0) + 1}`,
+            ];
+            const experienceToNextLevel = playerUnit.experienceToNextLevel();
+            if (experienceToNextLevel !== null) {
+                lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+            }
+            for (let i = 0; i < lines.length; i++) {
+                const y = top + (LINE_HEIGHT * i);
+                yield this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
+            }
+        });
+        /**
+         * @return the top left pixel
+         */
+        this._gridToPixel = ({ x, y }) => {
+            const { playerUnit } = jwb.state;
+            return {
+                x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
+                y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+            };
+        };
+        this._renderSplashScreen = (filename, text) => __awaiter(this, void 0, void 0, function* () {
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(filename);
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this.bufferContext.drawImage(imageBitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+            yield this._drawText(text, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
+        });
+        this._drawText = (text, font, { x, y }, color, textAlign) => __awaiter(this, void 0, void 0, function* () {
+            const imageBitmap = yield this.fontRenderer.render(text, font, color);
+            let left;
+            switch (textAlign) {
+                case 'left':
+                    left = x;
+                    break;
+                case 'center':
+                    left = Math.floor(x - imageBitmap.width / 2);
+                    break;
+                case 'right':
+                    left = x + imageBitmap.width;
+                    break;
+                default:
+                    throw 'fux';
+            }
+            yield this.bufferContext.drawImage(imageBitmap, left, y);
+        });
+        this._renderMinimap = () => __awaiter(this, void 0, void 0, function* () {
+            const minimapRenderer = new _MinimapRenderer__WEBPACK_IMPORTED_MODULE_1__.default();
+            const bitmap = yield minimapRenderer.render();
+            yield this.bufferContext.drawImage(bitmap, 0, 0);
+        });
+        this._renderAbility = (ability, left, top) => __awaiter(this, void 0, void 0, function* () {
+            let borderColor;
+            const { queuedAbility, playerUnit } = jwb.state;
+            if (queuedAbility === ability) {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
+            }
+            else if (playerUnit.getCooldown(ability) === 0) {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
+            }
+            else {
+                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
+            }
+            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(`abilities/${ability.icon}`)
+                .then(image => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(image, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: borderColor }));
+            const imageBitmap = yield createImageBitmap(imageData);
+            yield this.bufferContext.drawImage(imageBitmap, left, top);
+        });
+        this.container = document.getElementById('container');
+        this.container.innerHTML = '';
+        this.bufferCanvas = document.createElement('canvas');
+        this.bufferCanvas.width = WIDTH * TILE_WIDTH;
+        this.bufferCanvas.height = HEIGHT * TILE_HEIGHT;
+        this.bufferContext = this.bufferCanvas.getContext('2d');
+        this.bufferContext.imageSmoothingEnabled = false;
+        this.fontRenderer = new _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.default();
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = WIDTH * TILE_WIDTH;
+        this.canvas.height = HEIGHT * TILE_HEIGHT;
+        this.context = this.canvas.getContext('2d');
+        this.bufferContext.imageSmoothingEnabled = false;
+        this.container.appendChild(this.canvas);
     }
     render() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -1568,237 +1865,6 @@ class SpriteRenderer {
             }
         });
     }
-    _renderBuffer() {
-        return createImageBitmap(this._bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
-            .then(imageBitmap => this._context.drawImage(imageBitmap, 0, 0));
-    }
-    _renderGameScreen() {
-        return __awaiter(this, void 0, void 0, function* () {
-            (0,_core_actions__WEBPACK_IMPORTED_MODULE_5__.revealTiles)();
-            this._bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-            this._bufferContext.fillRect(0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
-            console.log('started rendering');
-            // can't pass direct references to the functions because `this` won't be defined
-            yield this._renderTiles();
-            yield this._renderItems();
-            yield this._renderProjectiles();
-            console.log('rendering units');
-            yield this._renderUnits();
-            console.log('rendered units');
-            yield this._renderMessages();
-            yield this._renderHUD();
-            console.log('done rendering');
-        });
-    }
-    _renderTiles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const map = jwb.state.getMap();
-            const promises = [];
-            for (let y = 0; y < map.height; y++) {
-                for (let x = 0; x < map.width; x++) {
-                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
-                        const tile = map.getTile({ x, y });
-                        if (!!tile) {
-                            promises.push(this._renderElement(tile, { x, y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        });
-    }
-    _renderItems() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const map = jwb.state.getMap();
-            const promises = [];
-            for (let y = 0; y < map.height; y++) {
-                for (let x = 0; x < map.width; x++) {
-                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
-                        const item = map.getItem({ x, y });
-                        if (!!item) {
-                            promises.push(this._drawEllipse({ x, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY)
-                                .then(() => this._renderElement(item, { x, y })));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        });
-    }
-    _renderProjectiles() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const map = jwb.state.getMap();
-            const promises = [];
-            for (let y = 0; y < map.height; y++) {
-                for (let x = 0; x < map.width; x++) {
-                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
-                        const projectile = map.projectiles
-                            .filter(p => (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(p, { x, y }))[0];
-                        if (!!projectile) {
-                            promises.push(this._renderElement(projectile, { x, y }));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        });
-    }
-    _renderUnits() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { playerUnit } = jwb.state;
-            const map = jwb.state.getMap();
-            const promises = [];
-            for (let y = 0; y < map.height; y++) {
-                for (let x = 0; x < map.width; x++) {
-                    if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
-                        const unit = map.getUnit({ x, y });
-                        if (!!unit) {
-                            let shadowColor;
-                            if (unit === playerUnit) {
-                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
-                            }
-                            else {
-                                shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
-                            }
-                            promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
-                                yield this._drawEllipse({ x, y }, shadowColor);
-                                yield this._renderElement(unit, { x, y });
-                                for (const item of unit.equipment.getValues()) {
-                                    yield this._renderElement(item, { x, y });
-                                }
-                            })));
-                        }
-                    }
-                }
-            }
-            return Promise.all(promises);
-        });
-    }
-    /**
-     * @param color (in hex form)
-     */
-    _drawEllipse({ x, y }, color) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { x: left, y: top } = this._gridToPixel({ x, y });
-            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(SHADOW_FILENAME)
-                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE))
-                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(imageData, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK]: color }));
-            const imageBitmap = yield createImageBitmap(imageData);
-            return this._bufferContext.drawImage(imageBitmap, left, top);
-        });
-    }
-    _renderInventory() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { playerUnit } = jwb.state;
-            const { inventory } = playerUnit;
-            const { _bufferCanvas, _bufferContext } = this;
-            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(INVENTORY_BACKGROUND_FILENAME);
-            const imageBitmap = yield createImageBitmap(imageData);
-            yield this._bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
-            // draw equipment
-            const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
-            const itemsLeft = (_bufferCanvas.width + INVENTORY_MARGIN) / 2;
-            const promises = [];
-            promises.push(this._drawText('EQUIPMENT', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
-            promises.push(this._drawText('INVENTORY', _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: _bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
-            // draw equipment items
-            // for now, just display them all in one list
-            let y = INVENTORY_TOP + 64;
-            for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
-                promises.push(this._drawText(`${slot} - ${equipment.name}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left'));
-                y += LINE_HEIGHT;
-            }
-            // draw inventory categories
-            const inventoryCategories = Object.values(_types_types__WEBPACK_IMPORTED_MODULE_4__.ItemCategory);
-            const categoryWidth = 60;
-            const xOffset = 4;
-            for (let i = 0; i < inventoryCategories.length; i++) {
-                const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
-                const top = INVENTORY_TOP + 40;
-                promises.push(this._drawText(inventoryCategories[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y: top }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center'));
-                if (inventoryCategories[i] === inventory.selectedCategory) {
-                    _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
-                    _bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
-                }
-            }
-            // draw inventory items
-            if (inventory.selectedCategory) {
-                const items = inventory.get(inventory.selectedCategory);
-                const x = itemsLeft + 8;
-                for (let i = 0; i < items.length; i++) {
-                    const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
-                    let color;
-                    if (items[i] === inventory.selectedItem) {
-                        color = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.YELLOW;
-                    }
-                    else {
-                        color = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
-                    }
-                    promises.push(this._drawText(items[i].name, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
-                }
-            }
-            return Promise.all(promises);
-        });
-    }
-    _isPixelOnScreen({ x, y }) {
-        return ((x >= -TILE_WIDTH) &&
-            (x <= SCREEN_WIDTH + TILE_WIDTH) &&
-            (y >= -TILE_HEIGHT) &&
-            (y <= SCREEN_HEIGHT + TILE_HEIGHT));
-    }
-    _renderElement(element, { x, y }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const pixel = this._gridToPixel({ x, y });
-            if (this._isPixelOnScreen(pixel)) {
-                const { sprite } = element;
-                if (!!sprite) {
-                    yield this._drawSprite(sprite, pixel);
-                }
-            }
-        });
-    }
-    _drawSprite(sprite, { x, y }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const image = yield sprite.getImage();
-            if (image) {
-                yield this._bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
-            }
-        });
-    }
-    _renderMessages() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { _bufferContext } = this;
-            const { messages } = jwb.state;
-            _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-            _bufferContext.strokeStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-            const left = 0;
-            const top = 0;
-            for (let i = 0; i < messages.length; i++) {
-                const y = top + (LINE_HEIGHT * i);
-                _bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
-                _bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
-                yield this._drawText(messages[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
-            }
-        });
-    }
-    _renderHUD() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this._renderHUDFrame();
-            yield Promise.all([
-                this._renderHUDLeftPanel(),
-                this._renderHUDMiddlePanel(),
-                this._renderHUDRightPanel(),
-            ]);
-        });
-    }
-    _renderHUDFrame() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(HUD_FILENAME)
-                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.applyTransparentColor)(imageData, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE));
-            const imageBitmap = yield createImageBitmap(imageData);
-            yield this._bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT);
-        });
-    }
     /**
      * Renders the bottom-left area of the screen, showing information about the player
      */
@@ -1817,106 +1883,6 @@ class SpriteRenderer {
                 const y = top + (LINE_HEIGHT * i);
                 yield this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
             }
-        });
-    }
-    _renderHUDMiddlePanel() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
-            const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
-            const { playerUnit } = jwb.state;
-            let keyNumber = 1;
-            for (let i = 0; i < playerUnit.abilities.length; i++) {
-                const ability = playerUnit.abilities[i];
-                if (!!ability.icon) {
-                    yield this._renderAbility(ability, left, top);
-                    yield this._drawText(`${keyNumber}`, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
-                    left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
-                    keyNumber++;
-                }
-            }
-        });
-    }
-    _renderHUDRightPanel() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { mapIndex, playerUnit, turn } = jwb.state;
-            const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
-            const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-            const lines = [
-                `Turn: ${turn}`,
-                `Floor: ${(mapIndex || 0) + 1}`,
-            ];
-            const experienceToNextLevel = playerUnit.experienceToNextLevel();
-            if (experienceToNextLevel !== null) {
-                lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-            }
-            for (let i = 0; i < lines.length; i++) {
-                let y = top + (LINE_HEIGHT * i);
-                yield this._drawText(lines[i], _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: left, y }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'left');
-            }
-        });
-    }
-    /**
-     * @return the top left pixel
-     */
-    _gridToPixel({ x, y }) {
-        const { playerUnit } = jwb.state;
-        return {
-            x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-            y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
-        };
-    }
-    _renderSplashScreen(filename, text) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(filename);
-            const imageBitmap = yield createImageBitmap(imageData);
-            yield this._bufferContext.drawImage(imageBitmap, 0, 0, this._bufferCanvas.width, this._bufferCanvas.height);
-            yield this._drawText(text, _FontRenderer__WEBPACK_IMPORTED_MODULE_2__.Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, 'center');
-        });
-    }
-    _drawText(text, font, { x, y }, color, textAlign) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const imageBitmap = yield this._fontRenderer.render(text, font, color);
-            let left;
-            switch (textAlign) {
-                case 'left':
-                    left = x;
-                    break;
-                case 'center':
-                    left = Math.floor(x - imageBitmap.width / 2);
-                    break;
-                case 'right':
-                    left = x + imageBitmap.width;
-                    break;
-                default:
-                    throw 'fux';
-            }
-            yield this._bufferContext.drawImage(imageBitmap, left, y);
-        });
-    }
-    _renderMinimap() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const minimapRenderer = new _MinimapRenderer__WEBPACK_IMPORTED_MODULE_1__.default();
-            const bitmap = yield minimapRenderer.render();
-            yield this._bufferContext.drawImage(bitmap, 0, 0);
-        });
-    }
-    _renderAbility(ability, left, top) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let borderColor;
-            const { queuedAbility, playerUnit } = jwb.state;
-            if (queuedAbility === ability) {
-                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.GREEN;
-            }
-            else if (playerUnit.getCooldown(ability) === 0) {
-                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
-            }
-            else {
-                borderColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
-            }
-            const imageData = yield _ImageLoader__WEBPACK_IMPORTED_MODULE_7__.default.loadImage(`abilities/${ability.icon}`)
-                .then(image => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceColors)(image, { [_types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY]: borderColor }));
-            const imageBitmap = yield createImageBitmap(imageData);
-            yield this._bufferContext.drawImage(imageBitmap, left, top);
         });
     }
 }
@@ -2168,11 +2134,24 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const createStaticSprite = (filename, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
-    const model = yield loadSpriteModel(filename, 'static');
+/**
+ * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
+ */
+const createTileSprite = (filename, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const offsets = { dx: 0, dy: 0 };
+    const transparentColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE;
+    const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
+        filename: `tiles/${filename}`,
+        paletteSwaps,
+        transparentColor
+    }).build();
+    return new _StaticSprite__WEBPACK_IMPORTED_MODULE_7__.default(image, offsets);
+});
+const createStaticSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const model = yield loadSpriteModel(spriteName, 'static');
     const { offsets, transparentColor } = model;
     const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
-        filename,
+        filename: model.filename,
         paletteSwaps,
         transparentColor
     }).build();
@@ -2180,8 +2159,8 @@ const createStaticSprite = (filename, paletteSwaps = {}) => __awaiter(void 0, vo
 });
 const createUnitSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'units');
-    const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
-    const keyFunction = (unit) => `${unit.activity}_${unit.direction}`;
+    const imageMap = yield _loadAnimations('units', spriteModel, paletteSwaps);
+    const keyFunction = (unit) => `${unit.activity}_${_types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(unit.direction)}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
         paletteSwaps,
         imageMap,
@@ -2191,7 +2170,7 @@ const createUnitSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, vo
 });
 const createEquipmentSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'equipment');
-    const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
+    const imageMap = yield _loadAnimations('equipment', spriteModel, paletteSwaps);
     const keyFunction = (equipment) => `${equipment.unit.activity}_${equipment.unit.direction}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
         paletteSwaps,
@@ -2213,22 +2192,22 @@ const createProjectileSprite = (spriteName, direction, paletteSwaps = {}) => __a
     }).build();
     return new _StaticSprite__WEBPACK_IMPORTED_MODULE_7__.default(image, offsets);
 });
-const loadAnimations = (spriteModel, paletteSwaps) => __awaiter(void 0, void 0, void 0, function* () {
+const _loadAnimations = (spriteCategory, spriteModel, paletteSwaps) => __awaiter(void 0, void 0, void 0, function* () {
     const imageMap = {};
     for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
         for (const frame of animation.frames) {
             for (const direction of _types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.values()) {
                 const variables = {
                     sprite: spriteModel.name,
-                    activity: animationName,
-                    direction,
+                    activity: frame.activity,
+                    direction: _types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toLegacyDirection(direction),
                     number: frame.number
                 };
                 const patterns = animation.pattern ? [animation.pattern]
                     : spriteModel.patterns ? spriteModel.patterns
                         : spriteModel.pattern ? [spriteModel.pattern]
                             : [];
-                const filenames = patterns.map(pattern => `units/${spriteModel.name}/${pattern}`)
+                const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
                     .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_3__.fillTemplate)(pattern, variables));
                 const effects = (animationName === _types_types__WEBPACK_IMPORTED_MODULE_2__.Activity.DAMAGED.toString())
                     ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE)]
@@ -2250,6 +2229,7 @@ const loadSpriteModel = (name, category) => __awaiter(void 0, void 0, void 0, fu
     return (yield __webpack_require__("./data/sprites lazy recursive ^\\.\\/.*\\/.*\\.json$")(`./${category}/${name}.json`)).default;
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+    createTileSprite,
     createStaticSprite,
     createUnitSprite,
     createEquipmentSprite,
@@ -2471,7 +2451,9 @@ const _createInventoryWeapon = (equipmentClass) => __awaiter(void 0, void 0, voi
 const createEquipment = (name) => __awaiter(void 0, void 0, void 0, function* () {
     const equipmentClass = _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name);
     const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
-    return new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__.default(_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name), sprite, null);
+    const equipment = yield new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__.default(_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name), sprite, null);
+    sprite.target = equipment;
+    return equipment;
 });
 const _getItemSuppliers = (level) => {
     const createMapPotion = ({ x, y }) => __awaiter(void 0, void 0, void 0, function* () {
@@ -4431,7 +4413,7 @@ const createTileSet = (tileSetName) => __awaiter(void 0, void 0, void 0, functio
         const tiles = [];
         for (const filename of filenames) {
             if (filename) {
-                const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createStaticSprite(filename);
+                const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createTileSprite(`${tileSetName}/${filename}`);
                 tiles.push(sprite);
             }
         }

@@ -15,11 +15,25 @@ import Equipment from '../../items/equipment/Equipment';
 
 type SpriteCategory = 'units' | 'equipment' | 'static';
 
-const createStaticSprite = async (filename: string, paletteSwaps: PaletteSwaps = {}): Promise<Sprite> => {
-  const model: StaticSpriteModel = await loadSpriteModel(filename, 'static');
+/**
+ * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
+ */
+const createTileSprite = async (filename: string, paletteSwaps: PaletteSwaps = {}): Promise<Sprite> => {
+  const offsets = { dx: 0, dy: 0 };
+  const transparentColor = Color.WHITE;
+  const image = await new ImageBuilder({
+    filename: `tiles/${filename}`,
+    paletteSwaps,
+    transparentColor
+  }).build();
+  return new StaticSprite(image, offsets);
+};
+
+const createStaticSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<Sprite> => {
+  const model: StaticSpriteModel = await loadSpriteModel(spriteName, 'static');
   const { offsets, transparentColor } = model;
   const image = await new ImageBuilder({
-    filename,
+    filename: model.filename,
     paletteSwaps,
     transparentColor
   }).build();
@@ -28,8 +42,8 @@ const createStaticSprite = async (filename: string, paletteSwaps: PaletteSwaps =
 
 const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<DynamicSprite<Unit>> => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'units');
-  const imageMap = await loadAnimations(spriteModel, paletteSwaps);
-  const keyFunction = (unit: Unit) => `${unit.activity}_${unit.direction}`;
+  const imageMap = await _loadAnimations('units', spriteModel, paletteSwaps);
+  const keyFunction = (unit: Unit) => `${unit.activity}_${Direction.toString(unit.direction)}`;
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
@@ -42,7 +56,7 @@ const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps =
 
 const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}) => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'equipment');
-  const imageMap = await loadAnimations(spriteModel, paletteSwaps);
+  const imageMap = await _loadAnimations('equipment', spriteModel, paletteSwaps);
   const keyFunction = (equipment: Equipment) => `${equipment.unit!!.activity}_${equipment.unit!!.direction}`;
 
   return new DynamicSprite<Equipment>({
@@ -68,15 +82,19 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
   return new StaticSprite(image, offsets);
 };
 
-const loadAnimations = async (spriteModel: DynamicSpriteModel, paletteSwaps: PaletteSwaps): Promise<Record<string, ImageBitmap>> => {
+const _loadAnimations = async (
+  spriteCategory: SpriteCategory,
+  spriteModel: DynamicSpriteModel,
+  paletteSwaps: PaletteSwaps
+): Promise<Record<string, ImageBitmap>> => {
   const imageMap: Record<string, ImageBitmap> = {};
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
     for (const frame of animation.frames) {
       for (const direction of Direction.values()) {
         const variables = {
           sprite: spriteModel.name,
-          activity: animationName,
-          direction,
+          activity: frame.activity,
+          direction: Direction.toLegacyDirection(direction),
           number: frame.number
         };
 
@@ -85,7 +103,7 @@ const loadAnimations = async (spriteModel: DynamicSpriteModel, paletteSwaps: Pal
           : spriteModel.pattern ? [spriteModel.pattern]
           : [];
 
-        const filenames = patterns.map(pattern => `units/${spriteModel.name}/${pattern}`)
+        const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
           .map(pattern => fillTemplate(pattern, variables));
 
         const effects = (animationName === Activity.DAMAGED.toString())
@@ -112,6 +130,7 @@ const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Prom
 };
 
 export default {
+  createTileSprite,
   createStaticSprite,
   createUnitSprite,
   createEquipmentSprite,

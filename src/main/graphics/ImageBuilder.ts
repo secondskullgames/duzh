@@ -14,7 +14,7 @@ const _loadFirst = async (filenames: string[]): Promise<ImageData> => {
   const results = await Promise.all(promises);
   const imageData = results.filter(p => !!p)[0];
   if (!imageData) {
-    throw `Failed to load images: ${filenames}`;
+    throw new Error(`Failed to load images: ${filenames}`);
   }
   return imageData;
 };
