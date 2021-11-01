@@ -93,7 +93,7 @@ const keyHandlerWrapper = async (e: KeyboardEvent) => {
     await keyHandler(e);
     BUSY = false;
   }
-}
+};
 
 const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
@@ -129,9 +129,9 @@ const keyHandler = async (e: KeyboardEvent) => {
     case KeyCommand.KEY_0:
       return _handleAbility(command);
     default:
+      return Promise.resolve();
   }
-  return Promise.resolve();
-}
+};
 
 function _handleArrowKey(command: KeyCommand): Promise<void> {
   const { state } = jwb;
@@ -253,9 +253,9 @@ const _handleEnter = async () => {
     default:
       throw `Unknown game screen: ${state.screen}`;
   }
-}
+};
 
-function _handleTab(): Promise<void> {
+const _handleTab = async () => {
   const { state, renderer } = jwb;
 
   switch (state.screen) {
@@ -267,7 +267,7 @@ function _handleTab(): Promise<void> {
       break;
   }
   return renderer.render();
-}
+};
 
 const _handleMap = async () => {
   const { state, renderer } = jwb;
@@ -284,7 +284,7 @@ const _handleMap = async () => {
       break;
   }
   return renderer.render();
-}
+};
 
 const _handleAbility = async (command: KeyCommand) => {
   const { renderer } = jwb;
@@ -296,13 +296,11 @@ const _handleAbility = async (command: KeyCommand) => {
   const ability = playerUnit.abilities[index];
   if (playerUnit.getCooldown(ability) <= 0) {
     jwb.state.queuedAbility = ability;
-    return renderer.render();
+    await renderer.render();
   } else {
     console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);
   }
-
-  return Promise.resolve();
-}
+};
 
 function attachEvents() {
   window.onkeydown = keyHandlerWrapper;

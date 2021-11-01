@@ -1,5 +1,4 @@
 /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./data/colors.json":
@@ -8,6 +7,7 @@
   \**************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"BLACK":"#000000","WHITE":"#FFFFFF","DARK_GRAY":"#808080","LIGHT_GRAY":"#C0C0C0","DARK_RED":"#800000","RED":"#FF0000","DARK_YELLOW":"#808000","YELLOW":"#FFFF00","DARK_GREEN":"#008000","GREEN":"#00FF00","DARK_TEAL":"#004040","CYAN":"#00FFFF","DARK_BLUE":"#000080","BLUE":"#0000FF","DARK_PURPLE":"#800080","MAGENTA":"#FF00FF","DARK_BROWN":"#804000","LIGHT_BROWN":"#c08040","ORANGE":"#ff8040","LIGHT_PINK":"#ffc0c0","MEDIUM_RED":"#c00000","MEDIUM_BLUE":"#0000c0","DARKER_GRAY":"#404040","TEAL":"#008080"}');
 
 /***/ }),
@@ -18,6 +18,7 @@ module.exports = JSON.parse('{"BLACK":"#000000","WHITE":"#FFFFFF","DARK_GRAY":"#
   \***********************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Bronze Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{"DARK_GRAY":"DARK_BROWN"},"minLevel":-1,"maxLevel":-1}');
 
 /***/ }),
@@ -28,6 +29,7 @@ module.exports = JSON.parse('{"name":"Bronze Chain Mail","sprite":"mail","mapIco
   \******************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Bronze Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"BLACK":"BLACK","DARK_GRAY":"LIGHT_BROWN","LIGHT_GRAY":"LIGHT_BROWN"},"damage":2,"minLevel":1,"maxLevel":2}');
 
 /***/ }),
@@ -38,6 +40,7 @@ module.exports = JSON.parse('{"name":"Bronze Sword","sprite":"sword","mapIcon":"
   \****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Fire Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"ItemCategory.WEAPON","slot":"EquipmentSlot.MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"Colors.YELLOW","LIGHT_GRAY":"Colors.RED","BLACK":"Colors.DARK_RED"},"damage":8,"minLevel":5,"maxLevel":6}');
 
 /***/ }),
@@ -48,6 +51,7 @@ module.exports = JSON.parse('{"name":"Fire Sword","sprite":"sword","mapIcon":"ma
   \*********************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Iron Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
 
 /***/ }),
@@ -58,6 +62,7 @@ module.exports = JSON.parse('{"name":"Iron Chain Mail","sprite":"mail","mapIcon"
   \*****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Iron Helmet","sprite":"helmet","mapIcon":"map_helmet","char":"S","itemCategory":"ARMOR","slot":"HEAD","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
 
 /***/ }),
@@ -68,6 +73,7 @@ module.exports = JSON.parse('{"name":"Iron Helmet","sprite":"helmet","mapIcon":"
   \****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Iron Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"BLACK","LIGHT_GRAY":"DARK_GRAY"},"damage":4,"minLevel":3,"maxLevel":4}');
 
 /***/ }),
@@ -78,6 +84,7 @@ module.exports = JSON.parse('{"name":"Iron Sword","sprite":"sword","mapIcon":"ma
   \**************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Long Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":4,"minLevel":5,"maxLevel":6}');
 
 /***/ }),
@@ -88,6 +95,7 @@ module.exports = JSON.parse('{"name":"Long Bow","sprite":"bow","mapIcon":"map_bo
   \***************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Short Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":2,"minLevel":2,"maxLevel":4}');
 
 /***/ }),
@@ -98,6 +106,7 @@ module.exports = JSON.parse('{"name":"Short Bow","sprite":"bow","mapIcon":"map_b
   \*****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"Steel Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"DARK_GRAY","LIGHT_GRAY":"LIGHT_GRAY"},"damage":6,"minLevel":4,"maxLevel":6}');
 
 /***/ }),
@@ -108,6 +117,7 @@ module.exports = JSON.parse('{"name":"Steel Sword","sprite":"sword","mapIcon":"m
   \****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[400,10],[0,10],[500,15],[0,5],[400,10],[0,5],[400,10],[0,10],[100,10],[0,15],[200,5]]');
 
 /***/ }),
@@ -118,6 +128,7 @@ module.exports = JSON.parse('[[400,10],[0,10],[500,15],[0,5],[400,10],[0,5],[400
   \*****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[30,10],[0,5],[80,10],[0,10],[30,10],[0,175],[25,10],[0,5],[75,10],[0,10],[25,10],[0,175],[20,10],[0,5],[70,10],[0,10],[20,10],[0,175],[15,10],[0,5],[65,10],[0,10],[15,10],[0,175],[10,10],[0,5],[60,10],[0,10],[10,10]]');
 
 /***/ }),
@@ -128,6 +139,7 @@ module.exports = JSON.parse('[[30,10],[0,5],[80,10],[0,10],[30,10],[0,175],[25,1
   \*************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[20,20],[0,10],[30,20],[0,10],[25,20],[0,10],[25,20],[0,5],[40,20],[0,5],[35,20],[0,5],[45,20],[0,5],[25,20],[0,10],[35,20],[0,10],[25,20],[0,10],[30,20],[0,20],[40,10],[0,20],[35,10],[0,20],[45,10],[0,20],[25,5],[0,30],[35,5],[0,30],[20,5],[0,30],[30,5]]');
 
 /***/ }),
@@ -138,6 +150,7 @@ module.exports = JSON.parse('[[20,20],[0,10],[30,20],[0,10],[25,20],[0,10],[25,2
   \********************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],[0,5],[350,5],[0,10],[100,5],[0,10],[350,5],[0,10],[125,5],[0,10],[300,5],[0,15],[150,5],[0,15],[175,5],[0,20],[150,5],[0,20],[125,5],[0,25],[100,5],[1,25],[100,5]]');
 
 /***/ }),
@@ -148,6 +161,7 @@ module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],
   \***********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[10,10],[0,5],[50,10],[0,10],[10,10],[0,15],[50,10],[0,20],[10,10]]');
 
 /***/ }),
@@ -158,6 +172,7 @@ module.exports = JSON.parse('[[10,10],[0,5],[50,10],[0,10],[10,10],[0,15],[50,10
   \***********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[1000,50],[800,50],[600,50],[400,50],[200,100],[100,100],[50,150],[150,150],[250,200],[500,500]]');
 
 /***/ }),
@@ -168,6 +183,7 @@ module.exports = JSON.parse('[[1000,50],[800,50],[600,50],[400,50],[200,100],[10
   \************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[25,40],[50,40],[75,60],[100,60],[125,80],[100,80]]');
 
 /***/ }),
@@ -178,6 +194,7 @@ module.exports = JSON.parse('[[25,40],[50,40],[75,60],[100,60],[125,80],[100,80]
   \***************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[50,50],[0,5],[100,50],[0,10],[200,50],[0,20],[400,50]]');
 
 /***/ }),
@@ -188,6 +205,7 @@ module.exports = JSON.parse('[[50,50],[0,5],[100,50],[0,10],[200,50],[0,20],[400
   \**************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[30,20],[0,10],[40,20],[0,10],[25,20],[0,10],[35,20],[0,5],[80,20],[0,5],[45,20],[0,5],[115,20],[0,5],[35,20],[0,10],[75,20],[0,10],[25,20],[0,10],[60,20],[0,20],[50,10],[0,20],[65,10],[0,20],[55,10],[0,20],[35,5],[0,30],[45,5],[0,30],[30,5],[0,30],[40,5]]');
 
 /***/ }),
@@ -198,6 +216,7 @@ module.exports = JSON.parse('[[30,20],[0,10],[40,20],[0,10],[25,20],[0,10],[35,2
   \********************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],[0,5],[350,5],[0,10],[100,5],[0,10],[350,5],[0,10],[125,5],[0,10],[300,5],[0,15],[150,5],[0,15],[175,5],[0,20],[150,5],[0,20],[125,5],[0,25],[100,5],[1,25],[100,5]]');
 
 /***/ }),
@@ -208,6 +227,7 @@ module.exports = JSON.parse('[[175,5],[0,5],[150,5],[0,5],[300,5],[0,5],[125,5],
   \*****************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[375,10],[0,5],[150,10],[0,5],[400,10],[0,5],[125,10],[0,5],[550,5],[0,10],[100,5],[0,10],[1000,5],[0,10],[125,5],[0,10],[750,5],[0,15],[150,5],[0,15],[375,5],[0,20],[150,10],[0,20],[125,10],[0,25],[100,10],[0,25],[100,10],[0,25],[50,10]]');
 
 /***/ }),
@@ -218,147 +238,92 @@ module.exports = JSON.parse('[[375,10],[0,5],[150,10],[0,5],[400,10],[0,5],[125,
   \*************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('[[150,50],[200,50],[250,50],[175,50],[225,50],[275,50],[200,50],[250,50],[300,50]]');
 
 /***/ }),
 
-/***/ "./data/sprites/equipment/bow.json":
-/*!*****************************************!*\
-  !*** ./data/sprites/equipment/bow.json ***!
-  \*****************************************/
-/***/ ((module) => {
+/***/ "./data/sprites lazy recursive ^\\.\\/.*\\/.*\\.json$":
+/*!****************************************************************!*\
+  !*** ./data/sprites/ lazy ^\.\/.*\/.*\.json$ namespace object ***!
+  \****************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-module.exports = JSON.parse('{"name":"bow","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"shooting":{"frames":[{"activity":"shooting","number":"2"}]}}}');
+var map = {
+	"./equipment/bow.json": [
+		"./data/sprites/equipment/bow.json",
+		"data_sprites_equipment_bow_json"
+	],
+	"./equipment/helmet.json": [
+		"./data/sprites/equipment/helmet.json",
+		"data_sprites_equipment_helmet_json"
+	],
+	"./equipment/mail.json": [
+		"./data/sprites/equipment/mail.json",
+		"data_sprites_equipment_mail_json"
+	],
+	"./equipment/shield2.json": [
+		"./data/sprites/equipment/shield2.json",
+		"data_sprites_equipment_shield2_json"
+	],
+	"./equipment/sword.json": [
+		"./data/sprites/equipment/sword.json",
+		"data_sprites_equipment_sword_json"
+	],
+	"./static/map_bow.json": [
+		"./data/sprites/static/map_bow.json",
+		"data_sprites_static_map_bow_json"
+	],
+	"./static/map_helmet.json": [
+		"./data/sprites/static/map_helmet.json",
+		"data_sprites_static_map_helmet_json"
+	],
+	"./static/map_mail.json": [
+		"./data/sprites/static/map_mail.json",
+		"data_sprites_static_map_mail_json"
+	],
+	"./static/map_potion.json": [
+		"./data/sprites/static/map_potion.json",
+		"data_sprites_static_map_potion_json"
+	],
+	"./static/map_scroll.json": [
+		"./data/sprites/static/map_scroll.json",
+		"data_sprites_static_map_scroll_json"
+	],
+	"./static/map_sword.json": [
+		"./data/sprites/static/map_sword.json",
+		"data_sprites_static_map_sword_json"
+	],
+	"./units/player.json": [
+		"./data/sprites/units/player.json",
+		"data_sprites_units_player_json"
+	],
+	"./units/snake.json": [
+		"./data/sprites/units/snake.json",
+		"data_sprites_units_snake_json"
+	],
+	"./units/zombie.json": [
+		"./data/sprites/units/zombie.json",
+		"data_sprites_units_zombie_json"
+	]
+};
+function webpackAsyncContext(req) {
+	if(!__webpack_require__.o(map, req)) {
+		return Promise.resolve().then(() => {
+			var e = new Error("Cannot find module '" + req + "'");
+			e.code = 'MODULE_NOT_FOUND';
+			throw e;
+		});
+	}
 
-/***/ }),
-
-/***/ "./data/sprites/equipment/helmet.json":
-/*!********************************************!*\
-  !*** ./data/sprites/equipment/helmet.json ***!
-  \********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"helmet","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"shooting":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/equipment/mail.json":
-/*!******************************************!*\
-  !*** ./data/sprites/equipment/mail.json ***!
-  \******************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"mail","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"shooting":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/equipment/shield2.json":
-/*!*********************************************!*\
-  !*** ./data/sprites/equipment/shield2.json ***!
-  \*********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"shield2","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/equipment/sword.json":
-/*!*******************************************!*\
-  !*** ./data/sprites/equipment/sword.json ***!
-  \*******************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"sword","offsets":{"dx":-4,"dy":-20},"patterns":["${sprite}_${activity}_${direction}_${number}_B","${sprite}_${activity}_${direction}_${number}"],"animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_bow.json":
-/*!******************************************!*\
-  !*** ./data/sprites/static/map_bow.json ***!
-  \******************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_bow","filename":"bow_icon","offsets":{"dx":0,"dy":0}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_helmet.json":
-/*!*********************************************!*\
-  !*** ./data/sprites/static/map_helmet.json ***!
-  \*********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_helmet","filename":"equipment/helmet/helmet_icon_small","offsets":{"dx":8,"dy":0}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_mail.json":
-/*!*******************************************!*\
-  !*** ./data/sprites/static/map_mail.json ***!
-  \*******************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_mail","filename":"equipment/mail/mail_icon_small","offsets":{"dx":8,"dy":0}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_potion.json":
-/*!*********************************************!*\
-  !*** ./data/sprites/static/map_potion.json ***!
-  \*********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_potion","filename":"potion_icon","offsets":{"dx":0,"dy":-8}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_scroll.json":
-/*!*********************************************!*\
-  !*** ./data/sprites/static/map_scroll.json ***!
-  \*********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_scroll","filename":"scroll_icon","offsets":{"dx":0,"dy":0}}');
-
-/***/ }),
-
-/***/ "./data/sprites/static/map_sword.json":
-/*!********************************************!*\
-  !*** ./data/sprites/static/map_sword.json ***!
-  \********************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"map_sword","filename":"equipment/sword/sword_icon_small","offsets":{"dx":8,"dy":0}}');
-
-/***/ }),
-
-/***/ "./data/sprites/units/player.json":
-/*!****************************************!*\
-  !*** ./data/sprites/units/player.json ***!
-  \****************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"player","offsets":{"dx":-4,"dy":-20},"pattern":"${sprite}_${activity}_${direction}_${number}","animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"shooting":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/units/snake.json":
-/*!***************************************!*\
-  !*** ./data/sprites/units/snake.json ***!
-  \***************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"snake","offsets":{"dx":0,"dy":0},"pattern":"${sprite}_${activity}_${direction}_${number}","animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"1"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
-
-/***/ }),
-
-/***/ "./data/sprites/units/zombie.json":
-/*!****************************************!*\
-  !*** ./data/sprites/units/zombie.json ***!
-  \****************************************/
-/***/ ((module) => {
-
-module.exports = JSON.parse('{"name":"zombie","offsets":{"dx":-4,"dy":-20},"pattern":"${sprite}_${activity}_${direction}_${number}","animations":{"standing":{"frames":[{"activity":"standing","number":"1"}]},"walking":{"frames":[{"activity":"walking","number":"1"}]},"attacking":{"frames":[{"activity":"attacking","number":"2"}]},"damaged":{"frames":[{"activity":"standing","number":"1"}]}}}');
+	var ids = map[req], id = ids[0];
+	return __webpack_require__.e(ids[1]).then(() => {
+		return __webpack_require__.t(id, 3);
+	});
+}
+webpackAsyncContext.keys = () => (Object.keys(map));
+webpackAsyncContext.id = "./data/sprites lazy recursive ^\\.\\/.*\\/.*\\.json$";
+module.exports = webpackAsyncContext;
 
 /***/ }),
 
@@ -368,6 +333,7 @@ module.exports = JSON.parse('{"name":"zombie","offsets":{"dx":-4,"dy":-20},"patt
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"cave","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor","tile_floor_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
 
 /***/ }),
@@ -378,6 +344,7 @@ module.exports = JSON.parse('{"name":"cave","tiles":{"FLOOR":["tile_floor","tile
   \************************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"dungeon","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor_hall","tile_floor_hall_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall_hall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
 
 /***/ }),
@@ -388,6 +355,7 @@ module.exports = JSON.parse('{"name":"dungeon","tiles":{"FLOOR":["tile_floor","t
   \*******************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"golem","type":"GOLEM","sprite":"zombie","paletteSwaps":{"DARK_GRAY":"DARKER_GRAY","LIGHT_GRAY":"DARKER_GRAY"},"startingLife":60,"startingMana":null,"startingDamage":10,"minLevel":5,"maxLevel":9,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"aiParameters":{"speed":0.92,"visionRange":12,"fleeThreshold":0}}');
 
 /***/ }),
@@ -398,6 +366,7 @@ module.exports = JSON.parse('{"name":"golem","type":"GOLEM","sprite":"zombie","p
   \*******************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"grunt","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","CYAN":"ORANGE"},"startingLife":50,"startingMana":null,"startingDamage":3,"minLevel":1,"maxLevel":4,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["bronze_chain_mail","iron_helmet","bronze_sword"],"aiParameters":{"speed":0.95,"visionRange":8,"fleeThreshold":0.1}}');
 
 /***/ }),
@@ -408,6 +377,7 @@ module.exports = JSON.parse('{"name":"grunt","type":"HUMAN","sprite":"player","p
   \********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"player","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_PURPLE":"DARK_BROWN","MAGENTA":"DARK_GREEN","DARK_BLUE":"DARK_GREEN","CYAN":"LIGHT_PINK","BLACK":"BLACK","DARK_GRAY":"DARK_BROWN","LIGHT_GRAY":"LIGHT_BROWN","DARK_GREEN":"DARK_BROWN","GREEN":"DARK_BROWN","ORANGE":"LIGHT_PINK"},"startingLife":100,"startingMana":100,"startingDamage":10,"minLevel":1,"maxLevel":20,"lifePerLevel":10,"manaPerLevel":0,"damagePerLevel":1,"experienceToNextLevel":[4,6,8,10,12,14,16,18,20]}');
 
 /***/ }),
@@ -418,6 +388,7 @@ module.exports = JSON.parse('{"name":"player","type":"HUMAN","sprite":"player","
   \*******************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"snake","type":"ANIMAL","sprite":"snake","paletteSwaps":{},"startingLife":40,"startingMana":null,"startingDamage":4,"minLevel":1,"maxLevel":2,"lifePerLevel":15,"manaPerLevel":null,"damagePerLevel":1,"aiParameters":{"speed":0.98,"visionRange":10,"fleeThreshold":0.2}}');
 
 /***/ }),
@@ -428,6 +399,7 @@ module.exports = JSON.parse('{"name":"snake","type":"ANIMAL","sprite":"snake","p
   \*********************************/
 /***/ ((module) => {
 
+"use strict";
 module.exports = JSON.parse('{"name":"ENEMY_SOLDIER","type":"HUMAN","sprite":"player","paletteSwaps":{"DARK_GREEN":"DARK_BLUE","GREEN":"DARK_BLUE","CYAN":"ORANGE"},"startingLife":60,"startingMana":null,"startingDamage":4,"minLevel":3,"maxLevel":6,"lifePerLevel":20,"manaPerLevel":null,"damagePerLevel":1,"equipment":["iron_chain_mail","iron_helmet","steel_sword"],"aiParameters":{"speed":0.95,"visionRange":10,"fleeThreshold":0.1}}');
 
 /***/ }),
@@ -438,6 +410,7 @@ module.exports = JSON.parse('{"name":"ENEMY_SOLDIER","type":"HUMAN","sprite":"pl
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -479,6 +452,7 @@ class GameState {
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "attachEvents": () => (/* binding */ attachEvents)
@@ -623,8 +597,8 @@ const keyHandler = (e) => __awaiter(void 0, void 0, void 0, function* () {
         case KeyCommand.KEY_0:
             return _handleAbility(command);
         default:
+            return Promise.resolve();
     }
-    return Promise.resolve();
 });
 function _handleArrowKey(command) {
     const { state } = jwb;
@@ -741,7 +715,7 @@ const _handleEnter = () => __awaiter(void 0, void 0, void 0, function* () {
             throw `Unknown game screen: ${state.screen}`;
     }
 });
-function _handleTab() {
+const _handleTab = () => __awaiter(void 0, void 0, void 0, function* () {
     const { state, renderer } = jwb;
     switch (state.screen) {
         case _types_types__WEBPACK_IMPORTED_MODULE_5__.GameScreen.INVENTORY:
@@ -752,7 +726,7 @@ function _handleTab() {
             break;
     }
     return renderer.render();
-}
+});
 const _handleMap = () => __awaiter(void 0, void 0, void 0, function* () {
     const { state, renderer } = jwb;
     switch (state.screen) {
@@ -777,12 +751,11 @@ const _handleAbility = (command) => __awaiter(void 0, void 0, void 0, function* 
     const ability = playerUnit.abilities[index];
     if (playerUnit.getCooldown(ability) <= 0) {
         jwb.state.queuedAbility = ability;
-        return renderer.render();
+        yield renderer.render();
     }
     else {
         console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(_units_UnitAbility__WEBPACK_IMPORTED_MODULE_6__.default.HEAVY_ATTACK)}`);
     }
-    return Promise.resolve();
 });
 function attachEvents() {
     window.onkeydown = keyHandlerWrapper;
@@ -798,6 +771,7 @@ function attachEvents() {
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -846,6 +820,7 @@ const _update = () => __awaiter(void 0, void 0, void 0, function* () {
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "initialize": () => (/* binding */ initialize),
@@ -906,7 +881,7 @@ const initialize = () => __awaiter(void 0, void 0, void 0, function* () {
     window.jwb = window.jwb || {};
     jwb.renderer = new _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_2__.default();
     (0,_InputHandler__WEBPACK_IMPORTED_MODULE_7__.attachEvents)();
-    _initState();
+    yield _initState();
     _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
     return jwb.renderer.render();
 });
@@ -972,6 +947,7 @@ const revealTiles = () => {
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "initDebug": () => (/* binding */ initDebug),
@@ -1030,6 +1006,7 @@ function initDebug() {
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
@@ -1141,12 +1118,83 @@ class FontRenderer {
 
 /***/ }),
 
+/***/ "./src/main/graphics/ImageBuilder.ts":
+/*!*******************************************!*\
+  !*** ./src/main/graphics/ImageBuilder.ts ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+const _loadOptional = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+    return _ImageLoader__WEBPACK_IMPORTED_MODULE_1__.default.loadImage(filename)
+        .catch(e => null);
+});
+const _loadFirst = (filenames) => __awaiter(void 0, void 0, void 0, function* () {
+    const promises = filenames.map(filename => _loadOptional(filename));
+    const results = yield Promise.all(promises);
+    const imageData = results.filter(p => !!p)[0];
+    if (!imageData) {
+        throw `Failed to load images: ${filenames}`;
+    }
+    return imageData;
+});
+class ImageBuilder {
+    /**
+     * @param effects A list of custom transformations to be applied to the image, in order
+     */
+    constructor(props) {
+        this.build = () => __awaiter(this, void 0, void 0, function* () {
+            const { filename, transparentColor, paletteSwaps, effects } = this._props;
+            let filenames;
+            if (this._props.filenames) {
+                filenames = this._props.filenames;
+            }
+            else if (filename) {
+                filenames = [filename];
+            }
+            else {
+                throw new Error('No filenames were specified!');
+            }
+            let imageData = yield _loadFirst(filenames)
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, transparentColor))
+                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, (paletteSwaps || {})));
+            for (const effect of (effects || [])) {
+                imageData = yield effect(imageData);
+            }
+            return createImageBitmap(imageData);
+        });
+        this._props = props;
+    }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ImageBuilder);
+
+
+/***/ }),
+
 /***/ "./src/main/graphics/ImageLoader.ts":
 /*!******************************************!*\
   !*** ./src/main/graphics/ImageLoader.ts ***!
   \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -1196,80 +1244,13 @@ function loadImage(filename) {
 
 /***/ }),
 
-/***/ "./src/main/graphics/ImageSupplier.ts":
-/*!********************************************!*\
-  !*** ./src/main/graphics/ImageSupplier.ts ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _ImageLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ImageLoader */ "./src/main/graphics/ImageLoader.ts");
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-class ImageSupplier {
-    /**
-     * @param effects A list of custom transformations to be applied to the image, in order
-     */
-    constructor(filename, transparentColor, paletteSwaps = {}, effects = []) {
-        const filenames = (Array.isArray(filename) ? filename : [filename]);
-        this._image = this._load(filenames, paletteSwaps, transparentColor, effects);
-    }
-    get() {
-        return this._image;
-    }
-    _load(filenames, paletteSwaps, transparentColor, effects) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let imageData = yield this._loadFirst(filenames)
-                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.applyTransparentColor)(imageData, transparentColor))
-                .then(imageData => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_0__.replaceColors)(imageData, paletteSwaps));
-            for (const effect of effects) {
-                imageData = yield effect(imageData);
-            }
-            return createImageBitmap(imageData);
-        });
-    }
-    _loadFirst(filenames) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const promises = filenames.map(filename => this._loadOptional(filename));
-            const results = yield Promise.all(promises);
-            const imageData = results.filter(p => !!p)[0];
-            if (!imageData) {
-                throw `Failed to load images: ${filenames}`;
-            }
-            return imageData;
-        });
-    }
-    _loadOptional(filename) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return _ImageLoader__WEBPACK_IMPORTED_MODULE_1__.default.loadImage(filename)
-                .catch(e => null);
-        });
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ImageSupplier);
-
-
-/***/ }),
-
 /***/ "./src/main/graphics/ImageUtils.ts":
 /*!*****************************************!*\
   !*** ./src/main/graphics/ImageUtils.ts ***!
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "applyTransparentColor": () => (/* binding */ applyTransparentColor),
@@ -1380,6 +1361,7 @@ function hex2rgb(hex) {
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -1451,6 +1433,7 @@ class MinimapRenderer {
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -1918,6 +1901,7 @@ SpriteRenderer.SCREEN_HEIGHT = SCREEN_HEIGHT;
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "playAttackingAnimation": () => (/* binding */ playAttackingAnimation),
@@ -2060,130 +2044,36 @@ const _playAnimation = (animation) => __awaiter(void 0, void 0, void 0, function
 
 /***/ }),
 
-/***/ "./src/main/graphics/sprites/EquipmentSprite.ts":
-/*!******************************************************!*\
-  !*** ./src/main/graphics/sprites/EquipmentSprite.ts ***!
-  \******************************************************/
+/***/ "./src/main/graphics/sprites/DynamicSprite.ts":
+/*!****************************************************!*\
+  !*** ./src/main/graphics/sprites/DynamicSprite.ts ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/Color */ "./src/main/types/Color.ts");
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
-/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-/* harmony import */ var _types_Direction__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../types/Direction */ "./src/main/types/Direction.ts");
+/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
 
-
-
-
-
-
-
-function _memoize(key, valueSupplier, cache) {
-    if (cache[key]) {
-        return cache[key];
-    }
-    const value = valueSupplier(key);
-    cache[key] = value;
-    return value;
-}
-class EquipmentSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_2__.default {
-    constructor(spriteConfig, equipment, paletteSwaps) {
-        super(spriteConfig.offsets);
-        this._spriteConfig = spriteConfig;
-        this._equipment = equipment;
-        this._paletteSwaps = paletteSwaps;
-        this._imageCache = {};
-    }
-    /**
-     * NOTE: This is mostly copy-pasted from {@link UnitSprite#getImage}
-     *
-     * @override {@link Sprite#getImage}
-     */
-    getImage() {
-        const unit = this._equipment.unit;
-        const activity = unit.activity.toLowerCase();
-        const direction = _types_Direction__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
-        return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
-    }
-    _getImage() {
-        const unit = this._equipment.unit;
-        const spriteConfig = this._spriteConfig;
-        let activity = unit.activity.toLowerCase();
-        const direction = _types_Direction__WEBPACK_IMPORTED_MODULE_6__.default.toLegacyDirection(unit.direction);
-        const animation = spriteConfig.animations[activity];
-        if (!animation) {
-            return Promise.resolve(null);
-        }
-        const frame = animation.frames[0];
-        activity = frame.activity || activity;
-        const variables = {
-            sprite: spriteConfig.name,
-            activity,
-            direction,
-            number: animation.frames[0].number
+class DynamicSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_0__.default {
+    constructor({ offsets, target, paletteSwaps, imageMap, keyFunction }) {
+        super(offsets);
+        /**
+         * @override {@link Sprite#getImage}
+         */
+        this.getImage = () => {
+            const frameKey = this.keyFunction(this.target);
+            return this.imageMap[frameKey];
         };
-        const patterns = spriteConfig.patterns || [spriteConfig.pattern];
-        const filenames = patterns.map(pattern => `equipment/${spriteConfig.name}/${pattern}`)
-            .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(pattern, variables));
-        const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_3__.Activity.DAMAGED)
-            ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE)]
-            : [];
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_1__.default(filenames, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, this._paletteSwaps, effects).get();
+        this.target = target;
+        this.paletteSwaps = paletteSwaps;
+        this.imageMap = imageMap;
+        this.keyFunction = keyFunction;
     }
 }
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/ProjectileSprite.ts":
-/*!*******************************************************!*\
-  !*** ./src/main/graphics/sprites/ProjectileSprite.ts ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/Color */ "./src/main/types/Color.ts");
-/* harmony import */ var _types_Direction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/Direction */ "./src/main/types/Direction.ts");
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
-
-
-
-
-
-/**
- * Projectiles have a direction but no activity or frame numbers
- */
-class ProjectileSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_3__.default {
-    constructor(direction, spriteName, paletteSwaps, spriteOffsets) {
-        super(spriteOffsets);
-        this._spriteName = spriteName;
-        this._direction = direction;
-        this._paletteSwaps = paletteSwaps;
-    }
-    getImage() {
-        const variables = {
-            sprite: this._spriteName,
-            direction: _types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.toString(this._direction),
-            number: 1
-        };
-        const filename = (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_4__.fillTemplate)(ProjectileSprite.TEMPLATE, variables);
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_2__.default(filename, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE, this._paletteSwaps).get();
-    }
-}
-ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_${number}';
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ProjectileSprite);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (DynamicSprite);
 
 
 /***/ }),
@@ -2194,14 +2084,11 @@ ProjectileSprite.TEMPLATE = '${sprite}/${sprite}_${direction}_${number}';
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/**
- * Note: It's expected that a separate Sprite instance will be created
- * per entity, and frame caching will be handled... somewhere else
- */
 class Sprite {
     constructor({ dx, dy }) {
         this.dx = dx;
@@ -2213,91 +2100,132 @@ class Sprite {
 
 /***/ }),
 
-/***/ "./src/main/graphics/sprites/SpriteConfig.ts":
-/*!***************************************************!*\
-  !*** ./src/main/graphics/sprites/SpriteConfig.ts ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _data_sprites_equipment_bow_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/sprites/equipment/bow.json */ "./data/sprites/equipment/bow.json");
-/* harmony import */ var _data_sprites_equipment_helmet_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/sprites/equipment/helmet.json */ "./data/sprites/equipment/helmet.json");
-/* harmony import */ var _data_sprites_equipment_mail_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/sprites/equipment/mail.json */ "./data/sprites/equipment/mail.json");
-/* harmony import */ var _data_sprites_units_player_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/sprites/units/player.json */ "./data/sprites/units/player.json");
-/* harmony import */ var _data_sprites_equipment_shield2_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../data/sprites/equipment/shield2.json */ "./data/sprites/equipment/shield2.json");
-/* harmony import */ var _data_sprites_units_snake_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../data/sprites/units/snake.json */ "./data/sprites/units/snake.json");
-/* harmony import */ var _data_sprites_equipment_sword_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../data/sprites/equipment/sword.json */ "./data/sprites/equipment/sword.json");
-/* harmony import */ var _data_sprites_units_zombie_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../data/sprites/units/zombie.json */ "./data/sprites/units/zombie.json");
-
-
-
-
-
-
-
-
-const SpriteConfig = {
-    bow: _data_sprites_equipment_bow_json__WEBPACK_IMPORTED_MODULE_0__,
-    helmet: _data_sprites_equipment_helmet_json__WEBPACK_IMPORTED_MODULE_1__,
-    mail: _data_sprites_equipment_mail_json__WEBPACK_IMPORTED_MODULE_2__,
-    shield2: _data_sprites_equipment_shield2_json__WEBPACK_IMPORTED_MODULE_4__,
-    snake: _data_sprites_units_snake_json__WEBPACK_IMPORTED_MODULE_5__,
-    sword: _data_sprites_equipment_sword_json__WEBPACK_IMPORTED_MODULE_6__,
-    player: _data_sprites_units_player_json__WEBPACK_IMPORTED_MODULE_3__,
-    zombie: _data_sprites_units_zombie_json__WEBPACK_IMPORTED_MODULE_7__
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (SpriteConfig);
-
-
-/***/ }),
-
 /***/ "./src/main/graphics/sprites/SpriteFactory.ts":
 /*!****************************************************!*\
   !*** ./src/main/graphics/sprites/SpriteFactory.ts ***!
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _SpriteConfig__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SpriteConfig */ "./src/main/graphics/sprites/SpriteConfig.ts");
-/* harmony import */ var _StaticSprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
-/* harmony import */ var _UnitSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./UnitSprite */ "./src/main/graphics/sprites/UnitSprite.ts");
-/* harmony import */ var _ProjectileSprite__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ProjectileSprite */ "./src/main/graphics/sprites/ProjectileSprite.ts");
-/* harmony import */ var _EquipmentSprite__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./EquipmentSprite */ "./src/main/graphics/sprites/EquipmentSprite.ts");
-/* harmony import */ var _StaticSpriteConfig__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./StaticSpriteConfig */ "./src/main/graphics/sprites/StaticSpriteConfig.ts");
-
-
-
-
-
-
-function createStaticSprite(spriteName, paletteSwaps = {}) {
-    const spriteConfig = _StaticSpriteConfig__WEBPACK_IMPORTED_MODULE_5__.default[spriteName];
-    return new _StaticSprite__WEBPACK_IMPORTED_MODULE_1__.default(spriteConfig, paletteSwaps);
-}
-function createUnitSprite(spriteName, unit, paletteSwaps = {}) {
-    const spriteConfig = _SpriteConfig__WEBPACK_IMPORTED_MODULE_0__.default[spriteName];
-    return new _UnitSprite__WEBPACK_IMPORTED_MODULE_2__.default(spriteConfig, unit, paletteSwaps);
-}
-function createEquipmentSprite(spriteName, equipment, paletteSwaps = {}) {
-    const spriteConfig = _SpriteConfig__WEBPACK_IMPORTED_MODULE_0__.default[spriteName];
-    return new _EquipmentSprite__WEBPACK_IMPORTED_MODULE_4__.default(spriteConfig, equipment, paletteSwaps);
-}
-const ProjectileSprites = {
-    ARROW: (direction, paletteSwaps) => new _ProjectileSprite__WEBPACK_IMPORTED_MODULE_3__.default(direction, 'arrow', paletteSwaps, { dx: 0, dy: -8 })
+/* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/Color */ "./src/main/types/Color.ts");
+/* harmony import */ var _types_Direction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/Direction */ "./src/main/types/Direction.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
+/* harmony import */ var _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../ImageBuilder */ "./src/main/graphics/ImageBuilder.ts");
+/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
+/* harmony import */ var _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./DynamicSprite */ "./src/main/graphics/sprites/DynamicSprite.ts");
+/* harmony import */ var _StaticSprite__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
+
+
+
+
+
+
+
+
+const createStaticSprite = (filename, paletteSwaps) => __awaiter(void 0, void 0, void 0, function* () {
+    const model = yield loadSpriteModel(filename, 'static');
+    const { offsets, transparentColor } = model;
+    const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
+        filename,
+        paletteSwaps,
+        transparentColor
+    }).build();
+    return new _StaticSprite__WEBPACK_IMPORTED_MODULE_7__.default(image, offsets);
+});
+const createUnitSprite = (spriteName, unit, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const spriteModel = yield loadSpriteModel(spriteName, 'units');
+    const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
+    const keyFunction = (unit) => `${unit.activity}_${unit.direction}`;
+    return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
+        target: unit,
+        paletteSwaps,
+        imageMap,
+        offsets: spriteModel.offsets,
+        keyFunction
+    });
+});
+const createEquipmentSprite = (spriteName, equipment, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const spriteModel = yield loadSpriteModel(spriteName, 'equipment');
+    const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
+    const keyFunction = (equipment) => `${equipment.unit.activity}_${equipment.unit.direction}`;
+    return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
+        target: equipment,
+        paletteSwaps,
+        imageMap,
+        offsets: spriteModel.offsets,
+        keyFunction
+    });
+});
+/**
+ * TODO - these aren't in JSON but hardcoded here
+ */
+const createProjectileSprite = (spriteName, direction, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+    const filename = `${spriteName}/${spriteName}_${direction}_1`;
+    const offsets = { dx: 0, dy: -8 };
+    const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
+        filename,
+        paletteSwaps,
+        transparentColor: _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE
+    }).build();
+    return new _StaticSprite__WEBPACK_IMPORTED_MODULE_7__.default(image, offsets);
+});
+const loadAnimations = (spriteModel, paletteSwaps) => __awaiter(void 0, void 0, void 0, function* () {
+    const imageMap = {};
+    for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
+        for (const frame of animation.frames) {
+            for (const direction of _types_Direction__WEBPACK_IMPORTED_MODULE_1__.default.values()) {
+                const variables = {
+                    sprite: spriteModel.name,
+                    activity: animationName,
+                    direction,
+                    number: frame.number
+                };
+                const patterns = animation.pattern ? [animation.pattern]
+                    : spriteModel.patterns ? spriteModel.patterns
+                        : spriteModel.pattern ? [spriteModel.pattern]
+                            : [];
+                const filenames = patterns.map(pattern => `units/${spriteModel.name}/${pattern}`)
+                    .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_3__.fillTemplate)(pattern, variables));
+                const effects = (animationName === _types_types__WEBPACK_IMPORTED_MODULE_2__.Activity.DAMAGED.toString())
+                    ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_5__.replaceAll)(img, _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE)]
+                    : [];
+                const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
+                    filenames,
+                    transparentColor: _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.WHITE,
+                    paletteSwaps,
+                    effects
+                }).build();
+                const frameKey = `${animationName}_${direction}`;
+                imageMap[frameKey] = image;
+            }
+        }
+    }
+    return imageMap;
+});
+const loadSpriteModel = (name, category) => __awaiter(void 0, void 0, void 0, function* () {
+    return (yield __webpack_require__("./data/sprites lazy recursive ^\\.\\/.*\\/.*\\.json$")(`./${category}/${name}.json`)).default;
+});
 // the following does not work: { ...StaticSprites, ...UnitSprites }
 // :(
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-    ARROW: ProjectileSprites.ARROW,
     createStaticSprite,
     createUnitSprite,
-    createEquipmentSprite
+    createEquipmentSprite,
+    createProjectileSprite
 });
 
 
@@ -2309,141 +2237,24 @@ const ProjectileSprites = {
   \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Color */ "./src/main/types/Color.ts");
-
-
 
 class StaticSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor(spriteConfig, paletteSwaps) {
-        super(spriteConfig.offsets);
-        this._image = new _ImageSupplier__WEBPACK_IMPORTED_MODULE_1__.default(spriteConfig.filename, _types_Color__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, paletteSwaps);
-    }
-    /**
-     * @override {@link Sprite#getImage}
-     */
-    getImage() {
-        return this._image.get();
+    constructor(image, offsets) {
+        super(offsets);
+        /**
+         * @override {@link Sprite#getImage}
+         */
+        this.getImage = () => this.image;
+        this.image = image;
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StaticSprite);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/StaticSpriteConfig.ts":
-/*!*********************************************************!*\
-  !*** ./src/main/graphics/sprites/StaticSpriteConfig.ts ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _data_sprites_static_map_bow_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/sprites/static/map_bow.json */ "./data/sprites/static/map_bow.json");
-/* harmony import */ var _data_sprites_static_map_helmet_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/sprites/static/map_helmet.json */ "./data/sprites/static/map_helmet.json");
-/* harmony import */ var _data_sprites_static_map_mail_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/sprites/static/map_mail.json */ "./data/sprites/static/map_mail.json");
-/* harmony import */ var _data_sprites_static_map_potion_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/sprites/static/map_potion.json */ "./data/sprites/static/map_potion.json");
-/* harmony import */ var _data_sprites_static_map_scroll_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../data/sprites/static/map_scroll.json */ "./data/sprites/static/map_scroll.json");
-/* harmony import */ var _data_sprites_static_map_sword_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../data/sprites/static/map_sword.json */ "./data/sprites/static/map_sword.json");
-
-
-
-
-
-
-const StaticSpriteConfig = {
-    map_bow: _data_sprites_static_map_bow_json__WEBPACK_IMPORTED_MODULE_0__,
-    map_helmet: _data_sprites_static_map_helmet_json__WEBPACK_IMPORTED_MODULE_1__,
-    map_mail: _data_sprites_static_map_mail_json__WEBPACK_IMPORTED_MODULE_2__,
-    map_potion: _data_sprites_static_map_potion_json__WEBPACK_IMPORTED_MODULE_3__,
-    map_scroll: _data_sprites_static_map_scroll_json__WEBPACK_IMPORTED_MODULE_4__,
-    map_sword: _data_sprites_static_map_sword_json__WEBPACK_IMPORTED_MODULE_5__,
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StaticSpriteConfig);
-
-
-/***/ }),
-
-/***/ "./src/main/graphics/sprites/UnitSprite.ts":
-/*!*************************************************!*\
-  !*** ./src/main/graphics/sprites/UnitSprite.ts ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ImageSupplier */ "./src/main/graphics/ImageSupplier.ts");
-/* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
-/* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../types/Color */ "./src/main/types/Color.ts");
-/* harmony import */ var _types_Direction__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../types/Direction */ "./src/main/types/Direction.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/TemplateUtils */ "./src/main/utils/TemplateUtils.ts");
-/* harmony import */ var _ImageUtils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../ImageUtils */ "./src/main/graphics/ImageUtils.ts");
-
-
-
-
-
-
-
-function _memoize(key, valueSupplier, cache) {
-    if (cache[key]) {
-        return cache[key];
-    }
-    const value = valueSupplier(key);
-    cache[key] = value;
-    return value;
-}
-class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
-    constructor(spriteConfig, unit, paletteSwaps) {
-        super(spriteConfig.offsets);
-        this._spriteConfig = spriteConfig;
-        this._unit = unit;
-        this._paletteSwaps = paletteSwaps;
-        this._imageCache = {};
-    }
-    /**
-     * @override {@link Sprite#getImage}
-     */
-    getImage() {
-        const unit = this._unit;
-        const activity = unit.activity.toLowerCase();
-        const direction = _types_Direction__WEBPACK_IMPORTED_MODULE_3__.default.toLegacyDirection(unit.direction);
-        return _memoize(`${activity}_${direction}`, () => this._getImage(), this._imageCache);
-    }
-    _getImage() {
-        const unit = this._unit;
-        const spriteConfig = this._spriteConfig;
-        let activity = unit.activity.toLowerCase();
-        const direction = _types_Direction__WEBPACK_IMPORTED_MODULE_3__.default.toLegacyDirection(unit.direction);
-        const animation = spriteConfig.animations[activity];
-        const frame = animation.frames[0];
-        activity = frame.activity || activity;
-        const variables = {
-            sprite: spriteConfig.name,
-            activity,
-            direction,
-            number: animation.frames[0].number
-        };
-        const patterns = spriteConfig.patterns || [spriteConfig.pattern];
-        const filenames = patterns.map(pattern => `units/${spriteConfig.name}/${pattern}`)
-            .map(pattern => (0,_utils_TemplateUtils__WEBPACK_IMPORTED_MODULE_5__.fillTemplate)(pattern, variables));
-        const effects = (unit.activity === _types_types__WEBPACK_IMPORTED_MODULE_4__.Activity.DAMAGED)
-            ? [(img) => (0,_ImageUtils__WEBPACK_IMPORTED_MODULE_6__.replaceAll)(img, _types_Color__WEBPACK_IMPORTED_MODULE_2__.default.WHITE)]
-            : [];
-        return new _ImageSupplier__WEBPACK_IMPORTED_MODULE_0__.default(filenames, _types_Color__WEBPACK_IMPORTED_MODULE_2__.default.WHITE, this._paletteSwaps, effects).get();
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (UnitSprite);
 
 
 /***/ }),
@@ -2454,6 +2265,7 @@ class UnitSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_1__.default {
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2479,6 +2291,7 @@ class InventoryItem {
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2554,6 +2367,7 @@ class InventoryMap {
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2669,6 +2483,7 @@ function createRandomItem({ x, y }, level) {
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "pickupItem": () => (/* binding */ pickupItem),
@@ -2711,6 +2526,7 @@ function equipItem(item, equipmentClass, unit) {
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2735,6 +2551,7 @@ class MapItem {
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "createArrow": () => (/* binding */ createArrow)
@@ -2761,6 +2578,7 @@ function createArrow({ x, y }, direction) {
   \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2790,6 +2608,7 @@ class Equipment {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2852,6 +2671,7 @@ var EquipmentClass;
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2890,6 +2710,7 @@ class EquipmentMap {
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2929,6 +2750,7 @@ class MapBuilder {
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -2970,6 +2792,7 @@ function _getDungeonGenerator(mapLayout, tileSet) {
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -3049,6 +2872,7 @@ class MapInstance {
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "areAdjacent": () => (/* binding */ areAdjacent),
@@ -3185,6 +3009,7 @@ function areAdjacent(first, second, minBorderLength) {
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -3418,6 +3243,7 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
   \******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -3557,6 +3383,7 @@ class DungeonGenerator {
   \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4101,6 +3928,7 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4151,6 +3979,7 @@ class TileEligibilityChecker {
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "transpose8va": () => (/* binding */ transpose8va),
@@ -4173,6 +4002,7 @@ function transpose8vb([freq, ms]) {
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4226,6 +4056,7 @@ class CustomOscillator {
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4305,6 +4136,7 @@ function stop() {
   \************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "playSound": () => (/* binding */ playSound)
@@ -4332,6 +4164,7 @@ function playSound(samples) {
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4377,6 +4210,7 @@ class SoundPlayer {
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4430,12 +4264,14 @@ const Sounds = {
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _data_colors_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/colors.json */ "./data/colors.json");
 
+// I think this declaration merging works even though IntelliJ disagrees
 const Color = _data_colors_json__WEBPACK_IMPORTED_MODULE_0__;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Color);
 
@@ -4448,6 +4284,7 @@ const Color = _data_colors_json__WEBPACK_IMPORTED_MODULE_0__;
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4507,6 +4344,7 @@ var Direction;
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4536,6 +4374,7 @@ var PaletteSwaps;
   \***********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4591,6 +4430,7 @@ var TileSet;
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Activity": () => (/* binding */ Activity),
@@ -4607,6 +4447,14 @@ var Activity;
     Activity["ATTACKING"] = "ATTACKING";
     Activity["SHOOTING"] = "SHOOTING";
     Activity["DAMAGED"] = "DAMAGED";
+})(Activity || (Activity = {}));
+(function (Activity) {
+    Activity.values = () => [
+        Activity.STANDING,
+        Activity.WALKING,
+        Activity.ATTACKING,
+        Activity.SHOOTING
+    ];
 })(Activity || (Activity = {}));
 var EquipmentSlot;
 (function (EquipmentSlot) {
@@ -4657,6 +4505,7 @@ var TileType;
   \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4844,6 +4693,7 @@ class Unit {
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -4852,6 +4702,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
 /* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
+// TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
@@ -4859,11 +4719,11 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * Helper function for most melee attacks
  */
-function attack(unit, target, damage) {
+const attack = (unit, target, damage) => __awaiter(void 0, void 0, void 0, function* () {
     jwb.state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
-    return (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playAttackingAnimation)(unit, target)
-        .then(() => target.takeDamage(damage, unit));
-}
+    yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playAttackingAnimation)(unit, target);
+    yield target.takeDamage(damage, unit);
+});
 class UnitAbility {
     constructor(name, cooldown, icon = null) {
         this.name = name;
@@ -4874,34 +4734,27 @@ class UnitAbility {
 class NormalAttack extends UnitAbility {
     constructor() {
         super('ATTACK', 0);
-    }
-    use(unit, direction) {
-        if (!direction) {
-            throw 'NormalAttack requires a direction!';
-        }
-        const { dx, dy } = direction;
-        const { x, y } = { x: unit.x + dx, y: unit.y + dy };
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        unit.direction = { dx: x - unit.x, dy: y - unit.y };
-        return new Promise(resolve => {
+        this.use = (unit, direction) => __awaiter(this, void 0, void 0, function* () {
+            if (!direction) {
+                throw 'NormalAttack requires a direction!';
+            }
+            const { dx, dy } = direction;
+            const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
             if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
                 [unit.x, unit.y] = [x, y];
                 if (unit === playerUnit) {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
                 }
-                resolve();
             }
             else {
                 const targetUnit = map.getUnit({ x, y });
                 if (!!targetUnit) {
                     const damage = unit.getDamage();
-                    attack(unit, targetUnit, damage)
-                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY))
-                        .then(resolve);
-                }
-                else {
-                    resolve();
+                    yield attack(unit, targetUnit, damage);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY);
                 }
             }
         });
@@ -4910,35 +4763,28 @@ class NormalAttack extends UnitAbility {
 class HeavyAttack extends UnitAbility {
     constructor() {
         super('HEAVY_ATTACK', 15, 'strong_icon');
-    }
-    use(unit, direction) {
-        if (!direction) {
-            throw 'HeavyAttack requires a direction!';
-        }
-        const { dx, dy } = direction;
-        const { x, y } = { x: unit.x + dx, y: unit.y + dy };
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        unit.direction = { dx: x - unit.x, dy: y - unit.y };
-        return new Promise(resolve => {
+        this.use = (unit, direction) => __awaiter(this, void 0, void 0, function* () {
+            if (!direction) {
+                throw 'HeavyAttack requires a direction!';
+            }
+            const { dx, dy } = direction;
+            const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
             if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
                 [unit.x, unit.y] = [x, y];
                 if (unit === playerUnit) {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
                 }
-                resolve();
             }
             else {
                 const targetUnit = map.getUnit({ x, y });
                 if (!!targetUnit) {
                     unit.useAbility(this);
                     const damage = unit.getDamage() * 2;
-                    attack(unit, targetUnit, damage)
-                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
-                        .then(resolve);
-                }
-                else {
-                    resolve();
+                    yield attack(unit, targetUnit, damage);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK);
                 }
             }
         });
@@ -4947,46 +4793,37 @@ class HeavyAttack extends UnitAbility {
 class KnockbackAttack extends UnitAbility {
     constructor() {
         super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
-    }
-    use(unit, direction) {
-        if (!direction) {
-            throw 'KnockbackAttack requires a direction!';
-        }
-        const { dx, dy } = direction;
-        const { x, y } = { x: unit.x + dx, y: unit.y + dy };
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        unit.direction = { dx: x - unit.x, dy: y - unit.y };
-        return new Promise(resolve => {
+        this.use = (unit, direction) => __awaiter(this, void 0, void 0, function* () {
+            if (!direction) {
+                throw 'KnockbackAttack requires a direction!';
+            }
+            const { dx, dy } = direction;
+            const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
             if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
                 [unit.x, unit.y] = [x, y];
                 if (unit === playerUnit) {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
                 }
-                resolve();
             }
             else {
                 const targetUnit = map.getUnit({ x, y });
                 if (!!targetUnit) {
                     unit.useAbility(this);
                     const damage = unit.getDamage();
-                    attack(unit, targetUnit, damage)
-                        .then(() => {
-                        let targetCoordinates = { x, y };
-                        // knockback by one tile
-                        const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-                        if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
-                            targetCoordinates = oneTileBack;
-                        }
-                        [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
-                        // stun for 1 turn (if they're already stunned, just leave it)
-                        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
-                    })
-                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
-                        .then(resolve);
-                }
-                else {
-                    resolve();
+                    yield attack(unit, targetUnit, damage);
+                    let targetCoordinates = { x, y };
+                    // knockback by one tile
+                    const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+                    if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
+                        targetCoordinates = oneTileBack;
+                    }
+                    [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
+                    // stun for 1 turn (if they're already stunned, just leave it)
+                    targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK);
                 }
             }
         });
@@ -4995,39 +4832,30 @@ class KnockbackAttack extends UnitAbility {
 class StunAttack extends UnitAbility {
     constructor() {
         super('STUN_ATTACK', 15, 'knockback_icon');
-    }
-    use(unit, direction) {
-        if (!direction) {
-            throw 'StunAttack requires a direction!';
-        }
-        const { dx, dy } = direction;
-        const { x, y } = { x: unit.x + dx, y: unit.y + dy };
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        unit.direction = { dx: x - unit.x, dy: y - unit.y };
-        return new Promise(resolve => {
+        this.use = (unit, direction) => __awaiter(this, void 0, void 0, function* () {
+            if (!direction) {
+                throw 'StunAttack requires a direction!';
+            }
+            const { dx, dy } = direction;
+            const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            unit.direction = { dx: x - unit.x, dy: y - unit.y };
             if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
                 [unit.x, unit.y] = [x, y];
                 if (unit === playerUnit) {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.FOOTSTEP);
                 }
-                resolve();
             }
             else {
                 const targetUnit = map.getUnit({ x, y });
                 if (!!targetUnit) {
                     unit.useAbility(this);
                     const damage = unit.getDamage();
-                    attack(unit, targetUnit, damage)
-                        .then(() => {
-                        // stun for 2 turns (if they're already stunned, just leave it)
-                        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
-                    })
-                        .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK))
-                        .then(resolve);
-                }
-                else {
-                    resolve();
+                    yield attack(unit, targetUnit, damage);
+                    // stun for 2 turns (if they're already stunned, just leave it)
+                    targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
+                    yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.SPECIAL_ATTACK);
                 }
             }
         });
@@ -5036,19 +4864,15 @@ class StunAttack extends UnitAbility {
 class ShootArrow extends UnitAbility {
     constructor() {
         super('SHOOT_ARROW', 0);
-    }
-    use(unit, direction) {
-        if (!direction) {
-            throw 'ShootArrow requires a direction!';
-        }
-        const { dx, dy } = direction;
-        unit.direction = { dx, dy };
-        return unit.sprite.getImage()
-            .then(() => jwb.renderer.render())
-            .then(() => new Promise(resolve => {
+        this.use = (unit, direction) => __awaiter(this, void 0, void 0, function* () {
+            if (!direction) {
+                throw 'ShootArrow requires a direction!';
+            }
+            const { dx, dy } = direction;
+            unit.direction = { dx, dy };
+            yield jwb.renderer.render();
             if (!unit.equipment.get(_types_types__WEBPACK_IMPORTED_MODULE_1__.EquipmentSlot.RANGED_WEAPON)) {
                 // change direction and re-render, but don't do anything (don't spend a turn)
-                resolve();
                 return;
             }
             const map = jwb.state.getMap();
@@ -5064,16 +4888,14 @@ class ShootArrow extends UnitAbility {
                 const { messages } = jwb.state;
                 const damage = unit.getRangedDamage();
                 messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
-                (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playArrowAnimation)(unit, { dx, dy }, coordinatesList, targetUnit)
-                    .then(() => targetUnit.takeDamage(damage, unit))
-                    .then(() => (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY))
-                    .then(() => resolve());
+                yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playArrowAnimation)(unit, { dx, dy }, coordinatesList, targetUnit);
+                yield targetUnit.takeDamage(damage, unit);
+                yield (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_2__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.PLAYER_HITS_ENEMY);
             }
             else {
-                (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playArrowAnimation)(unit, { dx, dy }, coordinatesList, null)
-                    .then(() => resolve());
+                yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_3__.playArrowAnimation)(unit, { dx, dy }, coordinatesList, null);
             }
-        }));
+        });
     }
 }
 (function (UnitAbility) {
@@ -5094,6 +4916,7 @@ class ShootArrow extends UnitAbility {
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -5225,6 +5048,7 @@ var UnitBehavior;
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -5266,6 +5090,7 @@ var UnitClass;
   \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -5298,6 +5123,7 @@ function createRandomEnemy({ x, y }, level) {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HUMAN_CAUTIOUS": () => (/* binding */ HUMAN_CAUTIOUS),
@@ -5416,6 +5242,7 @@ function _canMove(speed) {
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -5444,6 +5271,7 @@ class PlayerUnitController {
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "sortBy": () => (/* binding */ sortBy),
@@ -5479,6 +5307,7 @@ function average(list) {
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
@@ -5588,6 +5417,7 @@ class Pathfinder {
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "wait": () => (/* binding */ wait)
@@ -5619,6 +5449,7 @@ const wait = (milliseconds) => __awaiter(void 0, void 0, void 0, function* () {
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "fillTemplate": () => (/* binding */ fillTemplate)
@@ -5643,6 +5474,7 @@ function fillTemplate(template, variables) {
   \**********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "randInt": () => (/* binding */ randInt),
@@ -5716,7 +5548,40 @@ const weightedRandom = (probabilities, mappedObjects) => {
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	(() => {
+/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 		var leafPrototypes;
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 16: return value when it's Promise-like
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if(typeof value === 'object' && value) {
+/******/ 				if((mode & 4) && value.__esModule) return value;
+/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 			}
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			var def = {};
+/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 			for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 			}
+/******/ 			def['default'] = () => (value);
+/******/ 			__webpack_require__.d(ns, def);
+/******/ 			return ns;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -5729,9 +5594,89 @@ const weightedRandom = (probabilities, mappedObjects) => {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".bundle.js";
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "roguelike-js:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			;
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -5745,10 +5690,119 @@ const weightedRandom = (probabilities, mappedObjects) => {
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript)
+/******/ 				scriptUrl = document.currentScript.src
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) scriptUrl = scripts[scripts.length - 1].src
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"main": 0
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		// no on chunks loaded
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkIds[i]] = 0;
+/******/ 			}
+/******/ 		
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunkroguelike_js"] = self["webpackChunkroguelike_js"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
+"use strict";
 /*!***************************!*\
   !*** ./src/main/index.ts ***!
   \***************************/

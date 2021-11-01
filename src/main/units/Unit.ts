@@ -65,18 +65,18 @@ class Unit implements Entity {
     this.abilities = [UnitAbility.ATTACK, UnitAbility.HEAVY_ATTACK, UnitAbility.KNOCKBACK_ATTACK, UnitAbility.STUN_ATTACK];
     this.stunDuration = 0;
 
-    unitClass.equipment?.forEach(equipmentName => {
+    for (const equipmentName of unitClass.equipment || []) {
       const equipment = new Equipment(EquipmentClass.forName(equipmentName), null); // TODO deal with InventoryItem
       this.equipment.add(equipment);
       equipment.attach(this);
-    })
+    }
 
     while (this.level < level) {
       this._levelUp(false);
     }
   }
 
-  private _upkeep() {
+  private _upkeep = () => {
     // life regeneration
     const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
     this.lifeRemainder += lifePerTurn;
@@ -88,23 +88,23 @@ class Unit implements Entity {
     this.remainingCooldowns.forEach((cooldown, ability, map) => {
       map.set(ability, Math.max(cooldown - 1, 0));
     });
-  }
+  };
 
-  private _endOfTurn() {
+  private _endOfTurn = () => {
     // decrement stun duration
     this.stunDuration = Math.max(this.stunDuration - 1, 0)
-  }
+  };
 
-  async update() {
+  update = async () => {
     await this._upkeep();
     if (this.stunDuration === 0) {
       await this.controller.issueOrder(this);
     }
     await this.sprite.getImage();
     await this._endOfTurn();
-  }
+  };
 
-  getDamage(): number {
+  getDamage = (): number => {
     let damage = this._damage;
     this.equipment.getEntries()
       .filter(([slot, item]) => (slot !== EquipmentSlot.RANGED_WEAPON))
@@ -112,9 +112,9 @@ class Unit implements Entity {
         damage += (item.damage || 0);
       });
     return damage;
-  }
+  };
 
-  getRangedDamage(): number {
+  getRangedDamage = (): number => {
     let damage = this._damage;
 
     this.equipment.getEntries()
@@ -127,9 +127,9 @@ class Unit implements Entity {
         }
       });
     return Math.round(damage);
-  }
+  };
 
-  private _levelUp(withSound: boolean) {
+  private _levelUp = (withSound: boolean) => {
     this.level++;
     const lifePerLevel = this.unitClass.lifePerLevel;
     this.maxLife += lifePerLevel;
@@ -138,56 +138,49 @@ class Unit implements Entity {
     if (withSound) {
       playSound(Sounds.LEVEL_UP);
     }
-  }
+  };
 
-  gainExperience(experience: number) {
+  gainExperience = (experience: number) => {
     this.experience += experience;
     const experienceToNextLevel = this.experienceToNextLevel();
     while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
       this._levelUp(true);
     }
-  }
+  };
 
-  experienceToNextLevel(): (number | null) {
+  experienceToNextLevel = (): (number | null) => {
     const { unitClass } = this;
     if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
       return unitClass.experienceToNextLevel[this.level];
     }
     return null;
-  }
+  };
 
-  takeDamage(damage: number, sourceUnit?: Unit): Promise<void> {
+  takeDamage = (damage: number, sourceUnit?: Unit) => {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
-    return new Promise(resolve => {
-      this.life = Math.max(this.life - damage, 0);
-      if (this.life === 0) {
-        map.removeUnit(this);
-        if (this === playerUnit) {
-          jwb.state.screen = GameScreen.GAME_OVER;
-          Music.stop();
-          Music.playFigure(Music.GAME_OVER)
-        } else {
-          playSound(Sounds.ENEMY_DIES);
-        }
-
-        if (sourceUnit) {
-          sourceUnit.gainExperience(1);
-        }
+    this.life = Math.max(this.life - damage, 0);
+    if (this.life === 0) {
+      map.removeUnit(this);
+      if (this === playerUnit) {
+        jwb.state.screen = GameScreen.GAME_OVER;
+        Music.stop();
+        Music.playFigure(Music.GAME_OVER);
+      } else {
+        playSound(Sounds.ENEMY_DIES);
       }
-      resolve();
-    });
+
+      if (sourceUnit) {
+        sourceUnit.gainExperience(1);
+      }
+    }
   };
 
-  getCooldown(ability: UnitAbility): number {
-    return this.remainingCooldowns.get(ability) || 0
-  }
+  getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
 
-  useAbility(ability: UnitAbility) {
-    this.remainingCooldowns.set(ability, ability.cooldown);
-  }
+  useAbility = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
 }
 
 export default Unit;

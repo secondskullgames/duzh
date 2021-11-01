@@ -9,6 +9,15 @@ enum Activity {
   DAMAGED = 'DAMAGED'
 }
 
+namespace Activity {
+  export const values = (): Activity[] => [
+    Activity.STANDING,
+    Activity.WALKING,
+    Activity.ATTACKING,
+    Activity.SHOOTING
+  ];
+}
+
 interface Coordinates {
   x: number,
   y: number
@@ -60,6 +69,8 @@ interface Projectile extends Entity {
   direction: Direction
 }
 
+type Offsets = { dx: number, dy: number };
+
 type PromiseSupplier<T> = (t?: T) => Promise<T>
 
 interface Rect {
@@ -101,6 +112,7 @@ export {
   ItemCategory,
   MapLayout,
   MapSection,
+  Offsets,
   Projectile,
   PromiseSupplier,
   Rect,

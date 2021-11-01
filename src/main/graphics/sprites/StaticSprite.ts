@@ -1,23 +1,18 @@
-import PaletteSwaps from '../../types/PaletteSwaps';
+import { Offsets } from '../../types/types';
 import Sprite from './Sprite';
-import ImageSupplier from '../ImageSupplier';
-import Color from '../../types/Color';
-import StaticSpriteConfig from './StaticSpriteConfig';
 
 class StaticSprite extends Sprite {
-  private readonly _image: ImageSupplier;
+  private readonly image: ImageBitmap;
 
-  constructor(spriteConfig: StaticSpriteConfig, paletteSwaps?: PaletteSwaps) {
-    super(spriteConfig.offsets);
-    this._image = new ImageSupplier(spriteConfig.filename, Color.WHITE, paletteSwaps);
+  constructor(image: ImageBitmap, offsets: Offsets) {
+    super(offsets);
+    this.image = image;
   }
 
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage(): Promise<ImageBitmap> {
-    return this._image.get();
-  }
+  getImage = () => this.image;
 }
 
 export default StaticSprite;

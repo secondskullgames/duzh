@@ -146,7 +146,7 @@ const _playAnimation = async (animation: Animation) => {
       frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
     }
   }
-}
+};
 
 export {
   playAttackingAnimation,

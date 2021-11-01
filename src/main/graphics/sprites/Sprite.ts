@@ -2,6 +2,8 @@
  * Note: It's expected that a separate Sprite instance will be created
  * per entity, and frame caching will be handled... somewhere else
  */
+import { Offsets } from '../../types/types';
+
 abstract class Sprite {
   dx: number;
   dy: number;
@@ -11,10 +13,7 @@ abstract class Sprite {
     this.dy = dy;
   }
 
-  abstract getImage(): Promise<ImageBitmap | null>;
+  abstract getImage(): ImageBitmap | null;
 }
 
-type Offsets = { dx: number, dy: number };
-
 export default Sprite;
-export { Offsets };

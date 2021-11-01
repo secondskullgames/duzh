@@ -32,7 +32,7 @@ const initialize = async () => {
   window.jwb = window.jwb || {};
   jwb.renderer = new SpriteRenderer();
   attachEvents();
-  _initState();
+  await _initState();
   Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();
 };
@@ -48,7 +48,7 @@ const _initState = async () => {
     () => MapFactory.createRandomMap(MapLayout.BLOB, TileSet.CAVE, 5, 36, 26, 13, 3),
     () => MapFactory.createRandomMap(MapLayout.BLOB, TileSet.CAVE, 6, 38, 27, 14, 3)
   ]);
-}
+};
 
 const startGame = async () => {
   await loadMap(0);
@@ -56,14 +56,14 @@ const startGame = async () => {
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   return jwb.renderer.render();
-}
+};
 
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   return jwb.renderer.render();
-}
+};
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
@@ -93,7 +93,7 @@ const revealTiles = () => {
       }
     }
   }
-}
+};
 
 export {
   initialize,

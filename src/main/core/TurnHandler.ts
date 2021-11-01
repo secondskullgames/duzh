@@ -6,7 +6,7 @@ const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null)
   const playerController = <PlayerUnitController>(playerUnit.controller);
   playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
   return _update();
-}
+};
 
 const _update = async () => {
   const { state, renderer } = jwb;
@@ -25,7 +25,7 @@ const _update = async () => {
   await renderer.render();
   state.turn++;
   state.messages = [];
-}
+};
 
 export default {
   playTurn
