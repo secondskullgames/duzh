@@ -194,6 +194,7 @@ class SpriteRenderer implements Renderer {
             }
 
             promises.push(new Promise<any>(async () => {
+              console.log('rendering a unit!');
               await this._drawEllipse({ x, y }, shadowColor);
               await this._renderElement(unit, { x, y });
               console.log('rendered a unit!');

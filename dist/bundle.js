@@ -1609,10 +1609,12 @@ class SpriteRenderer {
                                 shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
                             }
                             promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
+                                console.log('rendering a unit!');
                                 yield this._drawEllipse({ x, y }, shadowColor);
                                 yield this._renderElement(unit, { x, y });
                                 console.log('rendered a unit!');
                                 for (const item of unit.equipment.getValues()) {
+                                    console.log('rendering an equipment!');
                                     yield this._renderElement(item, { x, y });
                                     console.log('rendered an equipment!');
                                 }
