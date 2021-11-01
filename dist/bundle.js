@@ -703,9 +703,7 @@ const _handleEnter = () => __awaiter(void 0, void 0, void 0, function* () {
                 (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.pickupItem)(playerUnit, item);
                 map.removeItem({ x, y });
             }
-            else if (map.getTile({ x, y }).type === 'STAIRS')
-                _DOWN;
-            {
+            else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
                 (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_3__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.DESCEND_STAIRS);
                 yield (0,_actions__WEBPACK_IMPORTED_MODULE_4__.loadMap)(mapIndex + 1);
             }
@@ -845,13 +843,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "revealTiles": () => (/* binding */ revealTiles),
 /* harmony export */   "startGame": () => (/* binding */ startGame)
 /* harmony export */ });
-/* harmony import */ var _GameState__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GameState */ "./src/main/core/GameState.ts");
-/* harmony import */ var _units_Unit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../units/Unit */ "./src/main/units/Unit.ts");
-/* harmony import */ var _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../graphics/SpriteRenderer */ "./src/main/graphics/SpriteRenderer.ts");
-/* harmony import */ var _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../maps/MapFactory */ "./src/main/maps/MapFactory.ts");
-/* harmony import */ var _units_UnitClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../units/UnitClass */ "./src/main/units/UnitClass.ts");
-/* harmony import */ var _sounds_Music__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../sounds/Music */ "./src/main/sounds/Music.ts");
-Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* harmony import */ var _types_TileFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/TileFactory */ "./src/main/types/TileFactory.ts");
+/* harmony import */ var _units_UnitFactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../units/UnitFactory */ "./src/main/units/UnitFactory.ts");
+/* harmony import */ var _GameState__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GameState */ "./src/main/core/GameState.ts");
+/* harmony import */ var _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../graphics/SpriteRenderer */ "./src/main/graphics/SpriteRenderer.ts");
+/* harmony import */ var _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../maps/MapFactory */ "./src/main/maps/MapFactory.ts");
+/* harmony import */ var _units_UnitClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../units/UnitClass */ "./src/main/units/UnitClass.ts");
+/* harmony import */ var _sounds_Music__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../sounds/Music */ "./src/main/sounds/Music.ts");
 /* harmony import */ var _InputHandler__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./InputHandler */ "./src/main/core/InputHandler.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
@@ -882,48 +880,56 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 const loadMap = (index) => __awaiter(void 0, void 0, void 0, function* () {
     const { state } = jwb;
     if (index >= state.maps.length) {
-        _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
+        _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.stop();
         jwb.state.screen = _types_types__WEBPACK_IMPORTED_MODULE_8__.GameScreen.VICTORY;
     }
     else {
         state.mapIndex = index;
         // TODO - this isn't memoized
         const mapBuilder = state.maps[index]();
-        state.setMap(mapBuilder.build());
+        state.setMap(yield mapBuilder.build());
     }
 });
 const initialize = () => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore
     window.jwb = window.jwb || {};
-    jwb.renderer = new _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_2__.default();
+    jwb.renderer = new _graphics_SpriteRenderer__WEBPACK_IMPORTED_MODULE_3__.default();
     (0,_InputHandler__WEBPACK_IMPORTED_MODULE_7__.attachEvents)();
     yield _initState();
-    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.TITLE_THEME);
     return jwb.renderer.render();
 });
 const _initState = () => __awaiter(void 0, void 0, void 0, function* () {
     const playerUnitController = new _units_controllers_PlayerUnitController__WEBPACK_IMPORTED_MODULE_10__.default();
-    const playerUnit = new _units_Unit__WEBPACK_IMPORTED_MODULE_1__.default(_units_UnitClass__WEBPACK_IMPORTED_MODULE_4__.default.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
-    jwb.state = new _GameState__WEBPACK_IMPORTED_MODULE_0__.default(playerUnit, [
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 1, 32, 24, 10, 5),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 2, 32, 24, 11, 4),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 3, 32, 24, 12, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 4, 34, 25, 12, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 5, 36, 26, 13, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 6, 38, 27, 14, 3)
+    const playerUnit = yield _units_UnitFactory__WEBPACK_IMPORTED_MODULE_1__.default.createUnit({
+        name: 'player',
+        unitClass: _units_UnitClass__WEBPACK_IMPORTED_MODULE_5__.default.PLAYER,
+        controller: playerUnitController,
+        level: 1,
+        coordinates: { x: 0, y: 0 }
+    });
+    const dungeonTileSet = yield _types_TileFactory__WEBPACK_IMPORTED_MODULE_0__.default.createTileSet('dungeon');
+    const caveTileSet = yield _types_TileFactory__WEBPACK_IMPORTED_MODULE_0__.default.createTileSet('cave');
+    jwb.state = new _GameState__WEBPACK_IMPORTED_MODULE_2__.default(playerUnit, [
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 1, 32, 24, 10, 5),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 2, 32, 24, 11, 4),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 3, 32, 24, 12, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, caveTileSet, 4, 34, 25, 12, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, caveTileSet, 5, 36, 26, 13, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_4__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, caveTileSet, 6, 38, 27, 14, 3)
     ]);
 });
 const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
     yield loadMap(0);
-    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
-    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.stop();
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     return jwb.renderer.render();
 });
 const returnToTitle = () => __awaiter(void 0, void 0, void 0, function* () {
     yield _initState(); // will set state.screen = TITLE
-    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.stop();
-    _sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_5__.default.TITLE_THEME);
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.stop();
+    _sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_6__.default.TITLE_THEME);
     return jwb.renderer.render();
 });
 /**
@@ -1385,53 +1391,67 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SpriteRenderer */ "./src/main/graphics/SpriteRenderer.ts");
 /* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/Color */ "./src/main/types/Color.ts");
 /* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
+const LIGHT_GRAY = '#c0c0c0';
+const DARK_GRAY = '#808080';
+const BLACK = '#000000';
 class MinimapRenderer {
     constructor() {
-        this._canvas = document.createElement('canvas');
-        this._canvas.width = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_WIDTH;
-        this._canvas.height = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_HEIGHT;
-        this._context = this._canvas.getContext('2d');
-        this._context.imageSmoothingEnabled = false;
-    }
-    render() {
-        this._context.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
-        this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
-        const map = jwb.state.getMap();
-        const m = Math.floor(Math.min(this._canvas.width / map.width, this._canvas.height / map.height));
-        for (let y = 0; y < map.height; y++) {
-            for (let x = 0; x < map.width; x++) {
-                this._context.fillStyle = this._getColor({ x, y });
-                this._context.fillRect(x * m, y * m, m, m);
+        this.render = () => __awaiter(this, void 0, void 0, function* () {
+            this.context.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            const map = jwb.state.getMap();
+            const m = Math.floor(Math.min(this.canvas.width / map.width, this.canvas.height / map.height));
+            for (let y = 0; y < map.height; y++) {
+                for (let x = 0; x < map.width; x++) {
+                    this.context.fillStyle = this._getColor({ x, y });
+                    this.context.fillRect(x * m, y * m, m, m);
+                }
             }
-        }
-        const imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
-        return createImageBitmap(imageData);
-    }
-    _getColor({ x, y }) {
-        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
-            return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.RED;
-        }
-        const map = jwb.state.getMap();
-        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isTileRevealed)({ x, y })) {
-            const tileType = map.getTile({ x, y }).type;
-            switch (tileType) {
-                case 'FLOOR':
-                case 'FLOOR': _HALL: ;
-                case 'STAIRS': _DOWN: return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY;
-                case 'WALL':
-                case 'WALL': _HALL: return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY;
-                case 'NONE':
-                case 'WALL': _TOP: ;
-                default:
-                    return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
+            const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+            return createImageBitmap(imageData);
+        });
+        this._getColor = ({ x, y }) => {
+            if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
+                return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.RED;
             }
-        }
-        else {
-            return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
-        }
+            const map = jwb.state.getMap();
+            if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isTileRevealed)({ x, y })) {
+                const tileType = map.getTile({ x, y }).type;
+                switch (tileType) {
+                    case 'FLOOR':
+                    case 'FLOOR_HALL':
+                    case 'STAIRS_DOWN':
+                        return LIGHT_GRAY;
+                    case 'WALL':
+                    case 'WALL_HALL':
+                        return DARK_GRAY;
+                    case 'NONE':
+                    case 'WALL_TOP':
+                    default:
+                        return BLACK;
+                }
+            }
+            else {
+                return BLACK;
+            }
+        };
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_WIDTH;
+        this.canvas.height = _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__.default.SCREEN_HEIGHT;
+        this.context = this.canvas.getContext('2d');
+        this.context.imageSmoothingEnabled = false;
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MinimapRenderer);
@@ -1956,7 +1976,7 @@ function playAttackingAnimation(source, target) {
         delay: FRAME_LENGTH
     });
 }
-function playArrowAnimation(source, direction, coordinatesList, target) {
+const playArrowAnimation = (source, direction, coordinatesList, target) => __awaiter(void 0, void 0, void 0, function* () {
     const frames = [];
     // first frame
     {
@@ -1969,8 +1989,8 @@ function playArrowAnimation(source, direction, coordinatesList, target) {
         frames.push(frame);
     }
     // arrow movement frames
-    coordinatesList.forEach(({ x, y }) => {
-        const projectile = (0,_items_ProjectileFactory__WEBPACK_IMPORTED_MODULE_2__.createArrow)({ x, y }, direction);
+    for (const { x, y } of coordinatesList) {
+        const projectile = yield (0,_items_ProjectileFactory__WEBPACK_IMPORTED_MODULE_2__.createArrow)({ x, y }, direction);
         const frame = {
             units: [{ unit: source, activity: _types_types__WEBPACK_IMPORTED_MODULE_0__.Activity.SHOOTING }],
             projectiles: [projectile]
@@ -1979,7 +1999,7 @@ function playArrowAnimation(source, direction, coordinatesList, target) {
             frame.units.push({ unit: target, activity: _types_types__WEBPACK_IMPORTED_MODULE_0__.Activity.STANDING });
         }
         frames.push(frame);
-    });
+    }
     // last frames
     {
         const frame = {
@@ -2005,8 +2025,8 @@ function playArrowAnimation(source, direction, coordinatesList, target) {
         frames,
         delay: PROJECTILE_FRAME_LENGTH
     });
-}
-function playFloorFireAnimation(source, targets) {
+});
+const playFloorFireAnimation = (source, targets) => __awaiter(void 0, void 0, void 0, function* () {
     const frames = [];
     for (let i = 0; i < targets.length; i++) {
         const frame = [];
@@ -2028,7 +2048,7 @@ function playFloorFireAnimation(source, targets) {
         frames,
         delay: FRAME_LENGTH
     });
-}
+});
 const _playAnimation = (animation) => __awaiter(void 0, void 0, void 0, function* () {
     const { delay, frames } = animation;
     for (let i = 0; i < frames.length; i++) {
@@ -2046,8 +2066,8 @@ const _playAnimation = (animation) => __awaiter(void 0, void 0, void 0, function
         if (i < (frames.length - 1)) {
             yield (0,_utils_PromiseUtils__WEBPACK_IMPORTED_MODULE_1__.wait)(delay);
         }
-        if (!!frame.projectiles) {
-            frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
+        for (const projectile of (frame.projectiles || [])) {
+            map.removeProjectile(projectile);
         }
     }
 });
@@ -2381,15 +2401,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
-/* harmony import */ var _InventoryItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./InventoryItem */ "./src/main/items/InventoryItem.ts");
-/* harmony import */ var _MapItem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MapItem */ "./src/main/items/MapItem.ts");
-/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
-/* harmony import */ var _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
-/* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
-/* harmony import */ var _ItemUtils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ItemUtils */ "./src/main/items/ItemUtils.ts");
+/* harmony import */ var _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./equipment/Equipment */ "./src/main/items/equipment/Equipment.ts");
+/* harmony import */ var _InventoryItem__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./InventoryItem */ "./src/main/items/InventoryItem.ts");
+/* harmony import */ var _MapItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./MapItem */ "./src/main/items/MapItem.ts");
+/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+/* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
+/* harmony import */ var _ItemUtils__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ItemUtils */ "./src/main/items/ItemUtils.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -2409,14 +2430,15 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
 const createPotion = (lifeRestored) => {
     const onUse = (item, unit) => __awaiter(void 0, void 0, void 0, function* () {
-        (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
+        (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
         const prevLife = unit.life;
         unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
         jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
     });
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.POTION, onUse);
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.POTION, onUse);
 };
 const createScrollOfFloorFire = (damage) => __awaiter(void 0, void 0, void 0, function* () {
     const onUse = (item, unit) => __awaiter(void 0, void 0, void 0, function* () {
@@ -2428,54 +2450,60 @@ const createScrollOfFloorFire = (damage) => __awaiter(void 0, void 0, void 0, fu
                 && ([-1, 0, 1].indexOf(dy) > -1)
                 && !(dx === 0 && dy === 0);
         });
-        yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_8__.playFloorFireAnimation)(unit, adjacentUnits);
+        yield (0,_graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__.playFloorFireAnimation)(unit, adjacentUnits);
         for (const adjacentUnit of adjacentUnits) {
             yield adjacentUnit.takeDamage(damage, unit);
         }
     });
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.SCROLL, onUse);
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.SCROLL, onUse);
 });
 const _createMapEquipment = (equipmentClass, { x, y }) => __awaiter(void 0, void 0, void 0, function* () {
-    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
     const inventoryItem = yield _createInventoryWeapon(equipmentClass);
-    return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
+    return new _MapItem__WEBPACK_IMPORTED_MODULE_3__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
 });
-function _createInventoryWeapon(equipmentClass) {
+const _createInventoryWeapon = (equipmentClass) => __awaiter(void 0, void 0, void 0, function* () {
     const onUse = (item, unit) => {
-        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_9__.equipItem)(item, equipmentClass, unit);
+        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, equipmentClass, unit);
     };
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
-}
-function _getItemSuppliers(level) {
-    const createMapPotion = ({ x, y }) => __awaiter(this, void 0, void 0, function* () {
-        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_potion');
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
+});
+const createEquipment = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    const equipmentClass = _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name);
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
+    return new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__.default(_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name), sprite, null);
+});
+const _getItemSuppliers = (level) => {
+    const createMapPotion = ({ x, y }) => __awaiter(void 0, void 0, void 0, function* () {
+        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createStaticSprite('map_potion');
         const inventoryItem = createPotion(40);
-        return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, 'K', sprite, inventoryItem);
+        return new _MapItem__WEBPACK_IMPORTED_MODULE_3__.default({ x, y }, 'K', sprite, inventoryItem);
     });
-    const createFloorFireScroll = ({ x, y }) => __awaiter(this, void 0, void 0, function* () {
-        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_scroll');
+    const createFloorFireScroll = ({ x, y }) => __awaiter(void 0, void 0, void 0, function* () {
+        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createStaticSprite('map_scroll');
         const inventoryItem = yield createScrollOfFloorFire(80);
-        return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, 'K', sprite, inventoryItem);
+        return new _MapItem__WEBPACK_IMPORTED_MODULE_3__.default({ x, y }, 'K', sprite, inventoryItem);
     });
     return [createMapPotion, createFloorFireScroll];
-}
+};
 const _getEquipmentSuppliers = (level) => {
-    return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_5__.default.values()
+    return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.values()
         .filter(equipmentClass => level >= equipmentClass.minLevel)
         .filter(equipmentClass => level <= equipmentClass.maxLevel)
         .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
 };
 const createRandomItem = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
     let supplier;
-    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randInt)(0, 2) == 0) {
-        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getItemSuppliers(level));
+    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) == 0) {
+        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getItemSuppliers(level));
     }
     else {
-        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getEquipmentSuppliers(level));
+        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getEquipmentSuppliers(level));
     }
     return supplier({ x, y });
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+    createEquipment,
     createRandomItem
 });
 
@@ -2495,31 +2523,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "useItem": () => (/* binding */ useItem),
 /* harmony export */   "equipItem": () => (/* binding */ equipItem)
 /* harmony export */ });
-/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
-/* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
-/* harmony import */ var _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./equipment/Equipment */ "./src/main/items/equipment/Equipment.ts");
+/* harmony import */ var _ItemFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ItemFactory */ "./src/main/items/ItemFactory.ts");
+/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+/* harmony import */ var _sounds_Sounds__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../sounds/Sounds */ "./src/main/sounds/Sounds.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
-function pickupItem(unit, mapItem) {
+const pickupItem = (unit, mapItem) => {
     const { state } = jwb;
     const { inventoryItem } = mapItem;
     unit.inventory.add(inventoryItem);
     state.messages.push(`Picked up a ${inventoryItem.name}.`);
-    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_0__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.PICK_UP_ITEM);
-}
-function useItem(unit, item) {
-    return item.use(unit)
-        .then(() => unit.inventory.remove(item));
-}
-function equipItem(item, equipmentClass, unit) {
-    return new Promise(resolve => {
-        const equipment = new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass, item);
-        unit.equipment.add(equipment);
-        equipment.attach(unit);
-        resolve();
-    });
-}
+    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_1__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_2__.default.PICK_UP_ITEM);
+};
+const useItem = (unit, item) => __awaiter(void 0, void 0, void 0, function* () {
+    yield item.use(unit);
+    unit.inventory.remove(item);
+});
+const equipItem = (item, equipmentClass, unit) => __awaiter(void 0, void 0, void 0, function* () {
+    const equipment = yield _ItemFactory__WEBPACK_IMPORTED_MODULE_0__.default.createEquipment(equipmentClass.name);
+    unit.equipment.add(equipment);
+    equipment.attach(unit);
+});
 
 
 
@@ -2562,16 +2596,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createArrow": () => (/* binding */ createArrow)
 /* harmony export */ });
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
-function createArrow({ x, y }, direction) {
-    return {
+const createArrow = ({ x, y }, direction) => __awaiter(void 0, void 0, void 0, function* () {
+    return ({
         x,
         y,
         direction,
-        sprite: _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.ARROW(direction, {}),
+        sprite: yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createProjectileSprite('arrow', direction, {}),
         char: 'x'
-    };
-}
+    });
+});
 
 
 
@@ -2784,11 +2827,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function createRandomMap(mapLayout, tileSet, level, width, height, numEnemies, numItems) {
+const createRandomMap = (mapLayout, tileSet, level, width, height, numEnemies, numItems) => {
     const dungeonGenerator = _getDungeonGenerator(mapLayout, tileSet);
     return dungeonGenerator.generateDungeon(level, width, height, numEnemies, _units_UnitFactory__WEBPACK_IMPORTED_MODULE_1__.default.createRandomEnemy, numItems, _items_ItemFactory__WEBPACK_IMPORTED_MODULE_0__.default.createRandomItem);
-}
-function _getDungeonGenerator(mapLayout, tileSet) {
+};
+const _getDungeonGenerator = (mapLayout, tileSet) => {
     switch (mapLayout) {
         case _types_types__WEBPACK_IMPORTED_MODULE_3__.MapLayout.ROOMS_AND_CORRIDORS: {
             const minRoomDimension = 3;
@@ -2799,7 +2842,7 @@ function _getDungeonGenerator(mapLayout, tileSet) {
         case _types_types__WEBPACK_IMPORTED_MODULE_3__.MapLayout.BLOB:
             return new _generation_BlobDungeonGenerator__WEBPACK_IMPORTED_MODULE_2__.default(tileSet);
     }
-}
+};
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ createRandomMap });
 
 
@@ -3026,6 +3069,147 @@ __webpack_require__.r(__webpack_exports__);
 class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0__.default {
     constructor(tileSet) {
         super(tileSet);
+        this._placeInitialTile = (width, height, tiles) => {
+            const x = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(width * 3 / 8, width * 5 / 8);
+            const y = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(height * 3 / 8, height * 5 / 8);
+            tiles[y][x] = 'FLOOR';
+        };
+        this._getTargetNumFloorTiles = (max) => {
+            const minRatio = 0.4;
+            const maxRatio = 0.7;
+            return (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(Math.round(max * minRatio), Math.round(max * maxRatio));
+        };
+        this._getFloorTiles = (tiles) => {
+            const floorTiles = [];
+            for (let y = 0; y < tiles.length; y++) {
+                for (let x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === 'FLOOR') {
+                        floorTiles.push({ x, y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        this._getEmptyTiles = (tiles) => {
+            const floorTiles = [];
+            for (let y = 0; y < tiles.length; y++) {
+                for (let x = 0; x < tiles[y].length; x++) {
+                    if (tiles[y][x] === 'NONE') {
+                        floorTiles.push({ x, y });
+                    }
+                }
+            }
+            return floorTiles;
+        };
+        /**
+         * @return whether a tile was successfully added
+         */
+        this._addFloorTile = (tiles) => {
+            const floorTiles = this._getFloorTiles(tiles);
+            const candidates = this._getCandidates(tiles, floorTiles)
+                .sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.comparing)(tile => this._getSnakeScore(tile, tiles)));
+            if (candidates.length === 0) {
+                return false;
+            }
+            // change these ratios to adjust the "snakiness"
+            const minIndex = Math.floor((candidates.length - 1) * 0.6);
+            const maxIndex = Math.floor((candidates.length - 1) * 0.8);
+            const index = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(minIndex, maxIndex);
+            const { x, y } = candidates[index];
+            tiles[y][x] = 'FLOOR';
+            return true;
+        };
+        this._getCandidates = (tiles, floorTiles) => {
+            return this._getEmptyTiles(tiles)
+                .filter(({ x, y }) => y > 0)
+                .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
+                .filter(({ x, y }) => floorTiles.some(floorTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isAdjacent)({ x, y }, floorTile)));
+        };
+        this._hasKittyCornerFloorTile = ({ x, y }, tiles) => {
+            const height = tiles.length;
+            const width = tiles[0].length;
+            // one tile apart vertically
+            for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+                const [x2, y2] = [x + dx, y + dy];
+                if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
+                    // out of bounds
+                }
+                else if (tiles[y2][x2] === 'FLOOR') {
+                    if (tiles[y2][x] === 'NONE' && tiles[y][x2] === 'NONE') {
+                        return true;
+                    }
+                }
+            }
+            // two tiles apart vertically
+            // @X        ab
+            // XX        cd
+            //  F        ef
+            for (const [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
+                const a = { x, y };
+                const b = { x: x + dx, y };
+                const c = { x, y: y + (dy / 2) };
+                const d = { x: x + dx, y: y + (dy / 2) };
+                const e = { x, y: y + dy };
+                const f = { x: x + dx, y: y + dy };
+                if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {
+                    // out of bounds
+                }
+                else {
+                    if (tiles[b.y][b.x] === 'NONE'
+                        && tiles[c.y][c.x] === 'NONE'
+                        && tiles[d.y][d.x] === 'NONE'
+                        && tiles[f.y][f.x] === 'FLOOR') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+        this._addWalls = (tiles) => {
+            const height = tiles.length;
+            const width = tiles[0].length;
+            for (let y = 0; y < (height - 1); y++) {
+                for (let x = 0; x < width; x++) {
+                    if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
+                        tiles[y][x] = 'WALL_TOP';
+                    }
+                }
+            }
+        };
+        /**
+         * @param end inclusive
+         */
+        this._range = (start, end) => {
+            const range = [];
+            for (let i = start; i <= end; i++) {
+                range.push(i);
+            }
+            return range;
+        };
+        /**
+         * @return the number of nearby tiles
+         */
+        this._getSnakeScore = (tile, tiles) => {
+            let score = 0;
+            const offset = 1;
+            const height = tiles.length;
+            const width = tiles[0].length;
+            const minY = Math.max(0, tile.y - offset);
+            const maxY = Math.min(tile.y + offset, height - 1);
+            const minX = Math.max(0, tile.x - offset);
+            const maxX = Math.min(tile.x + offset, width - 1);
+            for (let y = minY; y <= maxY; y++) {
+                for (let x = minX; x <= maxX; x++) {
+                    if ((0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(tile, { x, y })) {
+                        continue;
+                    }
+                    if (tiles[y][x] === 'FLOOR') {
+                        score++;
+                    }
+                }
+            }
+            return score;
+        };
     }
     /**
      * Strategy:
@@ -3063,62 +3247,6 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         }
         return tiles;
     }
-    _placeInitialTile(width, height, tiles) {
-        const x = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(width * 3 / 8, width * 5 / 8);
-        const y = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(height * 3 / 8, height * 5 / 8);
-        tiles[y][x] = 'FLOOR';
-    }
-    _getTargetNumFloorTiles(max) {
-        const minRatio = 0.4;
-        const maxRatio = 0.7;
-        return (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(Math.round(max * minRatio), Math.round(max * maxRatio));
-    }
-    _getFloorTiles(tiles) {
-        const floorTiles = [];
-        for (let y = 0; y < tiles.length; y++) {
-            for (let x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === 'FLOOR') {
-                    floorTiles.push({ x, y });
-                }
-            }
-        }
-        return floorTiles;
-    }
-    _getEmptyTiles(tiles) {
-        const floorTiles = [];
-        for (let y = 0; y < tiles.length; y++) {
-            for (let x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === 'NONE') {
-                    floorTiles.push({ x, y });
-                }
-            }
-        }
-        return floorTiles;
-    }
-    /**
-     * @return whether a tile was successfully added
-     */
-    _addFloorTile(tiles) {
-        const floorTiles = this._getFloorTiles(tiles);
-        const candidates = this._getCandidates(tiles, floorTiles)
-            .sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.comparing)(tile => this._getSnakeScore(tile, tiles)));
-        if (candidates.length === 0) {
-            return false;
-        }
-        // change these ratios to adjust the "snakiness"
-        const minIndex = Math.floor((candidates.length - 1) * 0.6);
-        const maxIndex = Math.floor((candidates.length - 1) * 0.8);
-        const index = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(minIndex, maxIndex);
-        const { x, y } = candidates[index];
-        tiles[y][x] = 'FLOOR';
-        return true;
-    }
-    _getCandidates(tiles, floorTiles) {
-        return this._getEmptyTiles(tiles)
-            .filter(({ x, y }) => y > 0)
-            .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
-            .filter(({ x, y }) => floorTiles.some(floorTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isAdjacent)({ x, y }, floorTile)));
-    }
     _isLegalWallCoordinates({ x, y }, tiles) {
         // To facilitate wall generation, disallow some specific cases:
         // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
@@ -3144,91 +3272,6 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
             }
         }
         return true;
-    }
-    _hasKittyCornerFloorTile({ x, y }, tiles) {
-        const height = tiles.length;
-        const width = tiles[0].length;
-        // one tile apart vertically
-        for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-            const [x2, y2] = [x + dx, y + dy];
-            if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
-                // out of bounds
-            }
-            else if (tiles[y2][x2] === 'FLOOR') {
-                if (tiles[y2][x] === 'NONE' && tiles[y][x2] === 'NONE') {
-                    return true;
-                }
-            }
-        }
-        // two tiles apart vertically
-        // @X        ab
-        // XX        cd
-        //  F        ef
-        for (let [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
-            const a = { x, y };
-            const b = { x: x + dx, y };
-            const c = { x, y: y + (dy / 2) };
-            const d = { x: x + dx, y: y + (dy / 2) };
-            const e = { x, y: y + dy };
-            const f = { x: x + dx, y: y + dy };
-            if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {
-                // out of bounds
-            }
-            else {
-                if (tiles[b.y][b.x] === 'NONE'
-                    && tiles[c.y][c.x] === 'NONE'
-                    && tiles[d.y][d.x] === 'NONE'
-                    && tiles[f.y][f.x] === 'FLOOR') {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    _addWalls(tiles) {
-        const height = tiles.length;
-        const width = tiles[0].length;
-        for (let y = 0; y < (height - 1); y++) {
-            for (let x = 0; x < width; x++) {
-                if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
-                    tiles[y][x] = 'WALL_TOP';
-                }
-            }
-        }
-    }
-    /**
-     * @param end inclusive
-     */
-    _range(start, end) {
-        const range = [];
-        for (let i = start; i <= end; i++) {
-            range.push(i);
-        }
-        return range;
-    }
-    /**
-     * @return the number of nearby tiles
-     */
-    _getSnakeScore(tile, tiles) {
-        let score = 0;
-        const offset = 1;
-        const height = tiles.length;
-        const width = tiles[0].length;
-        const minY = Math.max(0, tile.y - offset);
-        const maxY = Math.min(tile.y + offset, height - 1);
-        const minX = Math.max(0, tile.x - offset);
-        const maxX = Math.min(tile.x + offset, width - 1);
-        for (let y = minY; y <= maxY; y++) {
-            for (let x = minX; x <= maxX; x++) {
-                if ((0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(tile, { x, y })) {
-                    continue;
-                }
-                if (tiles[y][x] === 'FLOOR') {
-                    score++;
-                }
-            }
-        }
-        return score;
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BlobDungeonGenerator);
@@ -3701,8 +3744,8 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
             const updated = array.filter(element => toRemove.indexOf(element) === -1);
             this._replace(array, updated);
         };
-        this._minRoomDimension = minRoomDimension;
-        this._maxRoomDimension = maxRoomDimension;
+        this.minRoomDimension = minRoomDimension;
+        this.maxRoomDimension = maxRoomDimension;
     }
     generateTiles(width, height) {
         // 1. Recursively subdivide the map into sections.
@@ -3791,8 +3834,8 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
     }
     _getSplitDirection(width, height) {
         // First, make sure the area is large enough to support two sections; if not, we're done
-        const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
-        const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+        const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+        const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
         const canSplitHorizontally = (width >= (2 * minWidth));
         const canSplitVertically = (height >= (2 * minHeight));
         if (canSplitHorizontally) {
@@ -3811,8 +3854,8 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
      * @returns the min X/Y coordinate of the *second* room
      */
     _getSplitPoint(start, dimension, direction) {
-        const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
-        const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+        const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+        const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
         const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
         const minSplitPoint = start + minSectionDimension;
         const maxSplitPoint = start + dimension - minSectionDimension;
@@ -5050,10 +5093,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-/* harmony import */ var _UnitClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UnitClass */ "./src/main/units/UnitClass.ts");
-/* harmony import */ var _Unit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Unit */ "./src/main/units/Unit.ts");
-/* harmony import */ var _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controllers/AIUnitControllers */ "./src/main/units/controllers/AIUnitControllers.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _items_ItemFactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../items/ItemFactory */ "./src/main/items/ItemFactory.ts");
+/* harmony import */ var _UnitClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./UnitClass */ "./src/main/units/UnitClass.ts");
+/* harmony import */ var _Unit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Unit */ "./src/main/units/Unit.ts");
+/* harmony import */ var _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./controllers/AIUnitControllers */ "./src/main/units/controllers/AIUnitControllers.ts");
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -5068,22 +5112,36 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
+
+const createUnit = ({ name, unitClass, controller, level, coordinates }) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
+    const equipment = yield Promise.all((_a = (unitClass.equipment || [])) === null || _a === void 0 ? void 0 : _a.map(_items_ItemFactory__WEBPACK_IMPORTED_MODULE_1__.default.createEquipment));
+    return new _Unit__WEBPACK_IMPORTED_MODULE_3__.default({
+        name,
+        unitClass,
+        controller,
+        level,
+        coordinates,
+        equipment,
+        sprite
+    });
+});
 const createRandomEnemy = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
-    const candidates = _UnitClass__WEBPACK_IMPORTED_MODULE_1__.default.getEnemyClasses()
+    const candidates = _UnitClass__WEBPACK_IMPORTED_MODULE_2__.default.getEnemyClasses()
         .filter(unitClass => level >= unitClass.minLevel)
         .filter(unitClass => level <= unitClass.maxLevel);
-    const unitClass = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(candidates);
-    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
-    return new _Unit__WEBPACK_IMPORTED_MODULE_2__.default({
-        unitClass,
-        sprite,
+    const unitClass = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(candidates);
+    return createUnit({
         name: unitClass.name,
-        coordinates: { x, y },
-        controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__.HUMAN_DETERMINISTIC,
-        level
+        unitClass,
+        controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_4__.HUMAN_DETERMINISTIC,
+        level,
+        coordinates: { x, y }
     });
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+    createUnit,
     createRandomEnemy
 });
 

@@ -1,6 +1,6 @@
 import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, Rect, TileType } from '../../types/types';
-import type { TileSetName } from '../../types/TileFactory';
+import type { TileSet } from '../../types/TileFactory';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent, coordinatesEquals } from '../MapUtils';
 
@@ -37,7 +37,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * @param minRoomDimension inner width, not including wall
    * @param maxRoomDimension inner width, not including wall
    */
-  constructor(tileSet: TileSetName, minRoomDimension: number, maxRoomDimension: number) {
+  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number) {
     super(tileSet);
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;

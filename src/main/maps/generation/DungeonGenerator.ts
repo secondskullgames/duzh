@@ -1,4 +1,4 @@
-import TileFactory, { TileSetName } from '../../types/TileFactory';
+import TileFactory, { TileSet } from '../../types/TileFactory';
 import Unit from '../../units/Unit';
 import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
@@ -9,9 +9,9 @@ import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
 abstract class DungeonGenerator {
-  protected readonly tileSet: TileSetName;
+  protected readonly tileSet: TileSet;
 
-  protected constructor(tileSet: TileSetName) {
+  protected constructor(tileSet: TileSet) {
     this.tileSet = tileSet;
   }
 

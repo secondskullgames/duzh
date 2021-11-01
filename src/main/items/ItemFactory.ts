@@ -1,4 +1,5 @@
 import Sounds from '../sounds/Sounds';
+import Equipment from './equipment/Equipment';
 import InventoryItem from './InventoryItem';
 import Unit from '../units/Unit';
 import MapItem from './MapItem';
@@ -51,30 +52,36 @@ const _createMapEquipment = async (equipmentClass: EquipmentClass, { x, y }: Coo
   return new MapItem({ x, y }, equipmentClass.char, sprite, inventoryItem);
 };
 
-function _createInventoryWeapon(equipmentClass: EquipmentClass): InventoryItem {
+const _createInventoryWeapon = async (equipmentClass: EquipmentClass): Promise<InventoryItem> => {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
     return equipItem(item, equipmentClass, unit);
   };
   return new InventoryItem(equipmentClass.name, equipmentClass.itemCategory, onUse);
-}
+};
+
+const createEquipment = async (name: string): Promise<Equipment> => {
+  const equipmentClass = EquipmentClass.forName(name);
+  const sprite = await SpriteFactory.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
+  return new Equipment(EquipmentClass.forName(name), sprite, null);
+};
 
 type MapItemSupplier = ({ x, y }: Coordinates) => Promise<MapItem>;
 
-function _getItemSuppliers(level: number): MapItemSupplier[] {
+const _getItemSuppliers = (level: number): MapItemSupplier[] => {
   const createMapPotion: MapItemSupplier = async ({ x, y }: Coordinates) => {
     const sprite = await SpriteFactory.createStaticSprite('map_potion');
     const inventoryItem = createPotion(40);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 
-  const createFloorFireScroll = async ({ x, y }: Coordinates) => {
+  const createFloorFireScroll = async ({ x, y }: Coordinates): Promise<MapItem> => {
     const sprite = await SpriteFactory.createStaticSprite('map_scroll');
     const inventoryItem = await createScrollOfFloorFire(80);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 
   return [createMapPotion, createFloorFireScroll];
-}
+};
 
 const _getEquipmentSuppliers = (level: number): MapItemSupplier[] => {
   return EquipmentClass.values()
@@ -94,5 +101,6 @@ const createRandomItem = async ({ x, y }: Coordinates, level: number): Promise<M
 };
 
 export default {
+  createEquipment,
   createRandomItem
 };

@@ -1,6 +1,7 @@
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Equipment from '../items/equipment/Equipment';
 import EquipmentClass from '../items/equipment/EquipmentClass';
+import ItemFactory from '../items/ItemFactory';
 import UnitController from './controllers/UnitController';
 import UnitClass from './UnitClass';
 import Unit from './Unit';
@@ -19,7 +20,7 @@ type CreateUnitProps = {
 const createUnit = async ({ name, unitClass, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
   const sprite = await SpriteFactory.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
   const equipment: Equipment[] = await Promise.all(
-    (unitClass.equipment || [])?.map(_createEquipment)
+    (unitClass.equipment || [])?.map(ItemFactory.createEquipment)
   );
 
   return new Unit({
@@ -46,12 +47,6 @@ const createRandomEnemy = async ({ x, y }: Coordinates, level: number): Promise<
     level,
     coordinates: { x, y }
   });
-};
-
-const _createEquipment = async (name: string) => {
-  const equipmentClass = EquipmentClass.forName(name);
-  const sprite = await SpriteFactory.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
-  return new Equipment(EquipmentClass.forName(name), sprite, null);
 };
 
 export default {

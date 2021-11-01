@@ -1,40 +1,44 @@
 import SpriteRenderer from './SpriteRenderer';
 import Color from '../types/Color';
-import { Coordinates, TileType } from '../types/types';
+import { Coordinates } from '../types/types';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 
+const LIGHT_GRAY = '#c0c0c0';
+const DARK_GRAY  = '#808080';
+const BLACK      = '#000000';
+
 class MinimapRenderer {
-  private readonly _canvas: HTMLCanvasElement;
-  private readonly _context: CanvasRenderingContext2D;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly context: CanvasRenderingContext2D;
 
   constructor() {
-    this._canvas = document.createElement('canvas');
-    this._canvas.width = SpriteRenderer.SCREEN_WIDTH;
-    this._canvas.height = SpriteRenderer.SCREEN_HEIGHT;
-    this._context = <any>this._canvas.getContext('2d');
-    this._context.imageSmoothingEnabled = false;
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = SpriteRenderer.SCREEN_WIDTH;
+    this.canvas.height = SpriteRenderer.SCREEN_HEIGHT;
+    this.context = <any>this.canvas.getContext('2d');
+    this.context.imageSmoothingEnabled = false;
   }
 
-  render(): Promise<ImageBitmap> {
-    this._context.fillStyle = Color.BLACK;
-    this._context.fillRect(0, 0, this._canvas.width, this._canvas.height);
+  render = async (): Promise<ImageBitmap> => {
+    this.context.fillStyle = Color.BLACK;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     const map = jwb.state.getMap();
     const m = Math.floor(Math.min(
-      this._canvas.width / map.width,
-      this._canvas.height / map.height
+      this.canvas.width / map.width,
+      this.canvas.height / map.height
     ));
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        this._context.fillStyle = this._getColor({ x, y });
-        this._context.fillRect(x * m, y * m, m, m);
+        this.context.fillStyle = this._getColor({ x, y });
+        this.context.fillRect(x * m, y * m, m, m);
       }
     }
-    const imageData = this._context.getImageData(0, 0, this._canvas.width, this._canvas.height);
+    const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
     return createImageBitmap(imageData);
-  }
+  };
 
-  private _getColor({ x, y }: Coordinates) {
+  private _getColor = ({ x, y }: Coordinates) => {
     if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
       return Color.RED;
     }
@@ -44,22 +48,22 @@ class MinimapRenderer {
       const tileType = map.getTile({ x, y }).type;
       switch (tileType) {
         case 'FLOOR':
-        case 'FLOOR'_HALL:
-        case 'STAIRS'_DOWN:
-          return Color.LIGHT_GRAY;
+        case 'FLOOR_HALL':
+        case 'STAIRS_DOWN':
+          return LIGHT_GRAY;
         case 'WALL':
-        case 'WALL'_HALL:
-          return Color.DARK_GRAY;
+        case 'WALL_HALL':
+          return DARK_GRAY;
         case 'NONE':
-        case 'WALL'_TOP:
+        case 'WALL_TOP':
         default:
-          return Color.BLACK;
+          return BLACK;
       }
 
     } else {
-      return Color.BLACK;
+      return BLACK;
     }
-  }
+  };
 }
 
 export default MinimapRenderer;
