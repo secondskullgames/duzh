@@ -135,7 +135,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
       if (y <= (height - 1 - n)) {
         if (
           this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
-          && (tiles[y + n][x] == 'FLOOR')
+          && (tiles[y + n][x] === 'FLOOR')
         ) {
           return false;
         }
@@ -152,7 +152,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
     const height = tiles.length;
     const width = tiles[0].length;
     // one tile apart vertically
-    for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
       const [x2, y2] = [x + dx, y + dy];
       if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
         // out of bounds

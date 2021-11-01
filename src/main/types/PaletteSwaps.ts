@@ -17,7 +17,7 @@ namespace PaletteSwaps {
       map[srcHex] = destHex;
     });
     return map;
-  }
+  };
 }
 
 export default PaletteSwaps;

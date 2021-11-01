@@ -7,7 +7,6 @@ import Music from '../sounds/Music';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import Direction from '../types/Direction';
-import EquipmentClass from '../items/equipment/EquipmentClass';
 import Equipment from '../items/equipment/Equipment';
 import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
@@ -101,7 +100,7 @@ class Unit implements Entity {
 
   private _endOfTurn = () => {
     // decrement stun duration
-    this.stunDuration = Math.max(this.stunDuration - 1, 0)
+    this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
   update = async () => {

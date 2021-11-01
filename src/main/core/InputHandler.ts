@@ -4,7 +4,7 @@ import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, returnToTitle, startGame } from './actions';
-import { Coordinates, GameScreen, TileType } from '../types/types';
+import { Coordinates, GameScreen} from '../types/types';
 import UnitAbility from '../units/UnitAbility';
 
 enum KeyCommand {

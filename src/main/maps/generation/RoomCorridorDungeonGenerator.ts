@@ -193,6 +193,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     }
 
     while (unconnectedRooms.length > 0) {
+      let connectedRoom;
+      let unconnectedRoom;
       const candidatePairs: RoomPair[] = connectedRooms
         .flatMap(connectedRoom => unconnectedRooms.map(unconnectedRoom => <RoomPair>[connectedRoom, unconnectedRoom]))
         .filter(([connectedRoom, unconnectedRoom]) => !existingRoomPairs.some(([firstExistingRoom, secondExistingRoom]) => (
@@ -250,8 +252,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     const firstExitCandidates = this._getExitCandidates(firstRoom);
     const secondExitCandidates = this._getExitCandidates(secondRoom);
     let exitPairs: CoordinatePair[] = [];
-    for (let firstExit of firstExitCandidates) {
-      for (let secondExit of secondExitCandidates) {
+    for (const firstExit of firstExitCandidates) {
+      for (const secondExit of secondExitCandidates) {
         exitPairs.push([firstExit, secondExit]);
       }
     }

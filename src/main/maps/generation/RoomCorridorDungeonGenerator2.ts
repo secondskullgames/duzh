@@ -561,7 +561,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     let startHasInternalConnection = false;
     let endHasInternalConnection = false;
 
-    for (let internalConnection of internalConnections) {
+    for (const internalConnection of internalConnections) {
       if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
         startHasInternalConnection = true;
       }

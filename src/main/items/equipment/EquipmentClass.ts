@@ -51,7 +51,7 @@ namespace EquipmentClass {
       return _load(_map[name]);
     }
     throw `Unknown equipment "${name}"!`;
-  }
+  };
 
   export const values = (): EquipmentClass[] => Object.values(_map);
 }

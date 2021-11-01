@@ -193,16 +193,13 @@ class SpriteRenderer implements Renderer {
               shadowColor = Color.DARK_GRAY;
             }
 
-            promises.push(new Promise<any>(async () => {
-              console.log('rendering a unit!');
+            promises.push(new Promise<void>(async (resolve) => {
               await this._drawEllipse({ x, y }, shadowColor);
               await this._renderElement(unit, { x, y });
-              console.log('rendered a unit!');
               for (const item of unit.equipment.getValues()) {
-                console.log('rendering an equipment!');
                 await this._renderElement(item, { x, y });
-                console.log('rendered an equipment!');
               }
+              resolve();
             }));
           }
         }
@@ -291,7 +288,7 @@ class SpriteRenderer implements Renderer {
     );
   };
 
-  private _renderElement =  async (element: (Entity | Tile | Equipment), { x, y }: Coordinates) => {
+  private _renderElement = async (element: (Entity | Tile | Equipment), { x, y }: Coordinates) => {
     const pixel: Coordinates = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {

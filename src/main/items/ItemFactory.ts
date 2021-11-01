@@ -94,7 +94,7 @@ const _getEquipmentSuppliers = (level: number): MapItemSupplier[] => {
 
 const createRandomItem = async ({ x, y }: Coordinates, level: number): Promise<MapItem> => {
   let supplier: MapItemSupplier;
-  if (randInt(0, 2) == 0) {
+  if (randInt(0, 2) === 0) {
     supplier = randChoice(_getItemSuppliers(level))!!;
   } else {
     supplier = randChoice(_getEquipmentSuppliers(level))!!;

@@ -1608,16 +1608,13 @@ class SpriteRenderer {
                             else {
                                 shadowColor = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.DARK_GRAY;
                             }
-                            promises.push(new Promise(() => __awaiter(this, void 0, void 0, function* () {
-                                console.log('rendering a unit!');
+                            promises.push(new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
                                 yield this._drawEllipse({ x, y }, shadowColor);
                                 yield this._renderElement(unit, { x, y });
-                                console.log('rendered a unit!');
                                 for (const item of unit.equipment.getValues()) {
-                                    console.log('rendering an equipment!');
                                     yield this._renderElement(item, { x, y });
-                                    console.log('rendered an equipment!');
                                 }
+                                resolve();
                             })));
                         }
                     }
@@ -2478,7 +2475,7 @@ const _getEquipmentSuppliers = (level) => {
 };
 const createRandomItem = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
     let supplier;
-    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) == 0) {
+    if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) === 0) {
         supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getItemSuppliers(level));
     }
     else {
@@ -3113,7 +3110,7 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
             const height = tiles.length;
             const width = tiles[0].length;
             // one tile apart vertically
-            for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+            for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
                 const [x2, y2] = [x + dx, y + dy];
                 if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
                     // out of bounds
@@ -3246,7 +3243,7 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
             // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
             if (y <= (height - 1 - n)) {
                 if (this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
-                    && (tiles[y + n][x] == 'FLOOR')) {
+                    && (tiles[y + n][x] === 'FLOOR')) {
                     return false;
                 }
             }
@@ -3678,7 +3675,7 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
             const { start, end } = connection;
             let startHasInternalConnection = false;
             let endHasInternalConnection = false;
-            for (let internalConnection of internalConnections) {
+            for (const internalConnection of internalConnections) {
                 if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
                     startHasInternalConnection = true;
                 }
@@ -3960,13 +3957,14 @@ class TileEligibilityChecker {
                 return false;
             }
             else if (section.tiles[y][x] === 'NONE' || section.tiles[y][x] === 'FLOOR_HALL') {
+                let dy;
                 // skip the check if we're within 1 tile vertically of an exit
                 const isNextToExit = [-2, -1, 1, 2].some(dy => (exits.some(exit => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_0__.coordinatesEquals)(exit, { x, y: y + dy }))));
                 if (isNextToExit) {
                     return false;
                 }
                 // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-                for (let dy of [-2, -1, 1, 2]) {
+                for (dy of [-2, -1, 1, 2]) {
                     if ((y + dy >= 0) && (y + dy < section.height)) {
                         const tile = section.tiles[y + dy][x];
                         if (blockedTileTypes.indexOf(tile) > -1) {
@@ -4094,7 +4092,7 @@ function playSuite(suite) {
     const sections = Object.values(suite.sections);
     const numRepeats = 4;
     for (let i = 0; i < sections.length; i++) {
-        let section = sections[i];
+        const section = sections[i];
         const bass = (!!section.bass) ? (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randChoice)(section.bass) : null;
         let lead;
         if (!!section.lead) {
@@ -4914,7 +4912,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-;
 function _wanderAndAttack(unit) {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();

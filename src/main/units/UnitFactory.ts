@@ -1,6 +1,5 @@
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Equipment from '../items/equipment/Equipment';
-import EquipmentClass from '../items/equipment/EquipmentClass';
 import ItemFactory from '../items/ItemFactory';
 import UnitController from './controllers/UnitController';
 import UnitClass from './UnitClass';

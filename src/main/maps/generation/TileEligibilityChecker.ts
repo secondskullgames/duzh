@@ -9,6 +9,7 @@ class TileEligibilityChecker {
     if (exits.some(exit => coordinatesEquals({ x, y }, exit))) {
       return false;
     } else if (section.tiles[y][x] === 'NONE' || section.tiles[y][x] === 'FLOOR_HALL') {
+      let dy;
       // skip the check if we're within 1 tile vertically of an exit
       const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
         exits.some(exit => coordinatesEquals(exit, { x, y: y + dy }))
@@ -19,7 +20,7 @@ class TileEligibilityChecker {
       }
 
       // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-      for (let dy of [-2, -1, 1, 2]) {
+      for (dy of [-2, -1, 1, 2]) {
         if ((y + dy >= 0) && (y + dy < section.height)) {
           const tile = section.tiles[y + dy][x];
           if (blockedTileTypes.indexOf(tile) > -1) {

@@ -22,7 +22,7 @@ const shuffle = <T>(list: T[]) => {
     list[n] = list[i];
     list[i] = tmp;
   }
-}
+};
 
 const weightedRandom = <T>(
   probabilities: { [key: string]: number },
@@ -41,7 +41,7 @@ const weightedRandom = <T>(
   }
 
   throw 'Error in weightedRandom()!';
-}
+};
 
 export {
   randInt,

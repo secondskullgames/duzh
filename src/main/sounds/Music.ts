@@ -9,7 +9,7 @@ let PLAYER: SoundPlayer | null = null;
 let ACTIVE_SUITE: Suite | null = null;
 
 const TITLE_THEME: Figure = [[600,500],[300,250],[150,250],[900,500],[450,250],[300,250],[500,500],[300,250],[200,250],[200,500],[300,125],[600,125],[900,125],[1200,125],[1500,250]];
-const GAME_OVER: Figure = [[400,150],[300,150],[238,150],[200,150],[300,160],[238,160],[200,160],[150,160],[238,200],[200,200],[150,240],[100,280],[75,1000]]
+const GAME_OVER: Figure = [[400,150],[300,150],[238,150],[200,150],[300,160],[238,160],[200,160],[150,160],[238,200],[200,200],[150,240],[100,280],[75,1000]];
 
 const _getMusicPlayer = () => new SoundPlayer(4, 0.12);
 
@@ -18,7 +18,7 @@ function playSuite(suite: Suite) {
   const sections = Object.values(suite.sections);
   const numRepeats = 4;
   for (let i = 0; i < sections.length; i++) {
-    let section = sections[i];
+    const section = sections[i];
     const bass = (!!section.bass) ? randChoice(section.bass) : null;
     let lead: Figure | null;
     if (!!section.lead) {
