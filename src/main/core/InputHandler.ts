@@ -227,7 +227,7 @@ const _handleEnter = async () => {
       if (!!item) {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
-      } else if (map.getTile({ x, y }).type === TileType.STAIRS_DOWN) {
+      } else if (map.getTile({ x, y }).type === 'STAIRS'_DOWN) {
         playSound(Sounds.DESCEND_STAIRS);
         await loadMap(mapIndex + 1);
       }

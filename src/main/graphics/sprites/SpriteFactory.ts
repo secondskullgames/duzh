@@ -15,7 +15,7 @@ import Equipment from '../../items/equipment/Equipment';
 
 type SpriteCategory = 'units' | 'equipment' | 'static';
 
-const createStaticSprite = async (filename: string, paletteSwaps: PaletteSwaps): Promise<Sprite> => {
+const createStaticSprite = async (filename: string, paletteSwaps: PaletteSwaps = {}): Promise<Sprite> => {
   const model: StaticSpriteModel = await loadSpriteModel(filename, 'static');
   const { offsets, transparentColor } = model;
   const image = await new ImageBuilder({
@@ -26,12 +26,12 @@ const createStaticSprite = async (filename: string, paletteSwaps: PaletteSwaps):
   return new StaticSprite(image, offsets);
 };
 
-const createUnitSprite = async (spriteName: string, unit: Unit, paletteSwaps: PaletteSwaps={}): Promise<Sprite> => {
+const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<DynamicSprite<Unit>> => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'units');
   const imageMap = await loadAnimations(spriteModel, paletteSwaps);
   const keyFunction = (unit: Unit) => `${unit.activity}_${unit.direction}`;
+
   return new DynamicSprite<Unit>({
-    target: unit,
     paletteSwaps,
     imageMap,
     offsets:
@@ -40,12 +40,12 @@ const createUnitSprite = async (spriteName: string, unit: Unit, paletteSwaps: Pa
   });
 };
 
-const createEquipmentSprite = async (spriteName: string, equipment: Equipment, paletteSwaps: PaletteSwaps={}) => {
+const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}) => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'equipment');
   const imageMap = await loadAnimations(spriteModel, paletteSwaps);
   const keyFunction = (equipment: Equipment) => `${equipment.unit!!.activity}_${equipment.unit!!.direction}`;
+
   return new DynamicSprite<Equipment>({
-    target: equipment,
     paletteSwaps,
     imageMap,
     offsets:
@@ -111,8 +111,6 @@ const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Prom
   return (await import(`../../../../data/sprites/${category}/${name}.json`)).default;
 };
 
-// the following does not work: { ...StaticSprites, ...UnitSprites }
-// :(
 export default {
   createStaticSprite,
   createUnitSprite,

@@ -1,7 +1,6 @@
 import Unit from '../units/Unit';
 import MapItem from '../items/MapItem';
 import { Coordinates, Entity, Rect, Room, TileType, Tile } from '../types/types';
-import { coordinatesEquals } from './MapUtils';
 
 class MapInstance {
   width: number;
@@ -36,7 +35,7 @@ class MapInstance {
 
   getTile({ x, y }: Coordinates): Tile {
     if (x < this.width && y < this.height) {
-      return (this._tiles[y] || [])[x] || TileType.NONE;
+      return (this._tiles[y] || [])[x] || 'NONE';
     }
     throw `Illegal coordinates ${x}, ${y}`;
   }

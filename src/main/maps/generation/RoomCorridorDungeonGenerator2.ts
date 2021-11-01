@@ -1,6 +1,6 @@
 import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, Rect, TileType } from '../../types/types';
-import TileSet from '../../types/TileSet';
+import type { TileSetName } from '../../types/TileFactory';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent, coordinatesEquals } from '../MapUtils';
 
@@ -31,16 +31,16 @@ const MIN_ROOM_FRACTION = 0.4;
 const MAX_ROOM_FRACTION = 0.8;
 
 class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
-  private readonly _minRoomDimension: number;
-  private readonly _maxRoomDimension: number;
+  private readonly minRoomDimension: number;
+  private readonly maxRoomDimension: number;
   /**
    * @param minRoomDimension inner width, not including wall
    * @param maxRoomDimension inner width, not including wall
    */
-  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number) {
+  constructor(tileSet: TileSetName, minRoomDimension: number, maxRoomDimension: number) {
     super(tileSet);
-    this._minRoomDimension = minRoomDimension;
-    this._maxRoomDimension = maxRoomDimension;
+    this.minRoomDimension = minRoomDimension;
+    this.maxRoomDimension = maxRoomDimension;
   }
 
   protected generateTiles(width: number, height: number): MapSection {
@@ -141,8 +141,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   private _getSplitDirection(width: number, height: number): Direction | null {
     // First, make sure the area is large enough to support two sections; if not, we're done
-    const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
-    const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+    const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+    const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
     const canSplitHorizontally = (width >= (2 * minWidth));
     const canSplitVertically = (height >= (2 * minHeight));
 
@@ -161,8 +161,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * @returns the min X/Y coordinate of the *second* room
    */
   private _getSplitPoint(start: number, dimension: number, direction: Direction): number {
-    const minWidth = this._minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
-    const minHeight = this._minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
+    const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
+    const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
     const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
     const minSplitPoint = start + minSectionDimension;
     const maxSplitPoint = start + dimension - minSectionDimension;
@@ -245,18 +245,18 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     optionalConnections: Connection[]
   ): InternalConnection[] {
     const internalConnections: InternalConnection[] = [];
-    sections.forEach(section => {
+    for (const section of sections) {
       if (!section.roomRect) {
         const connectedSections: Section[] = [];
         const neighbors = sections.filter(s => s !== section).filter(s => this._canConnect(section, s));
-        neighbors.forEach(neighbor => {
+        for (const neighbor of neighbors) {
           if (spanningConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
             connectedSections.push(neighbor);
           }
-        });
+        }
         if (connectedSections.length === 1) {
           shuffle(neighbors);
-          for (let neighbor of neighbors) {
+          for (const neighbor of neighbors) {
             if (optionalConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
               connectedSections.push(neighbor);
               break;
@@ -267,79 +267,78 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           internalConnections.push({ section, neighbors: connectedSections });
         }
       }
-    });
+    }
 
     return internalConnections;
   }
 
-  private _generateTiles(
+  private _generateTiles = (
     width: number,
     height: number,
     sections: Section[],
     connections: Connection[],
     internalConnections: InternalConnection[]
-  ): TileType[][] {
+  ): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
       for (let x = 0; x < width; x++) {
-        row.push(TileType.NONE);
+        row.push('NONE');
       }
       tiles.push(row);
     }
 
     // add floor tiles for rooms
-    sections.forEach(section => {
+    for (const section of sections) {
       if (!!section.roomRect) {
         for (let y = section.roomRect.top; y < section.roomRect.top + section.roomRect.height; y++) {
           for (let x = section.roomRect.left; x < section.roomRect.left + section.roomRect.width; x++) {
-            tiles[y][x] = TileType.FLOOR;
+            tiles[y][x] = 'FLOOR';
           }
         }
       }
-    });
+    }
 
     // add floor tiles for connections
-    connections.forEach(connection => {
+    for (const connection of connections) {
       const dx = Math.sign(connection.endCoordinates.x - connection.startCoordinates.x);
       const dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
 
       let { x, y } = connection.startCoordinates;
       while (!coordinatesEquals({ x, y }, connection.endCoordinates)) {
-        tiles[y][x] = TileType.FLOOR_HALL;
+        tiles[y][x] = 'FLOOR_HALL';
         x += dx;
         y += dy;
       }
-      tiles[y][x] = TileType.FLOOR_HALL;
-    });
+      tiles[y][x] = 'FLOOR_HALL';
+    }
 
     this._addTilesForInternalConnections(tiles, internalConnections, connections);
 
     return tiles;
-  }
+  };
 
-  private _addWalls(tiles: TileType[][]): void {
+  private _addWalls = (tiles: TileType[][]) => {
     const height = tiles.length;
     const width = tiles[0].length;
     for (let y = 0; y < height - 2; y++) {
       for (let x = 0; x < width; x++) {
         if (
-          tiles[y][x] === TileType.NONE
-          && tiles[y + 1][x] === TileType.NONE
-          && (tiles[y + 2][x] === TileType.FLOOR || tiles[y + 2][x] === TileType.FLOOR_HALL)
+          tiles[y][x] === 'NONE'
+          && tiles[y + 1][x] === 'NONE'
+          && (tiles[y + 2][x] === 'FLOOR' || tiles[y + 2][x] === 'FLOOR_HALL')
         ) {
-          tiles[y][x] = TileType.WALL_TOP;
-          tiles[y + 1][x] = (tiles[y + 2][x] === TileType.FLOOR) ? TileType.WALL : TileType.WALL_HALL;
+          tiles[y][x] = 'WALL_TOP';
+          tiles[y + 1][x] = (tiles[y + 2][x] === 'FLOOR') ? 'WALL' : 'WALL_HALL';
         }
       }
     }
-  }
+  };
 
-  private _canConnect(first: Section, second: Section): boolean {
-    return areAdjacent(first.rect, second.rect, 5);
-  }
+  private _canConnect = (first: Section, second: Section): boolean =>
+    areAdjacent(first.rect, second.rect, 5);
 
-  private _connectionMatches(connection: Connection, first: Section, second: Section) {
+  private _connectionMatches = (connection: Connection, first: Section, second: Section) => {
     // ref. equality should be fine
     if (connection.start === first && connection.end === second) {
       return true;
@@ -348,9 +347,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     } else {
       return false;
     }
-  }
+  };
 
-  private _buildConnection(first: Section, second: Section): Connection {
+  private _buildConnection = (first: Section, second: Section): Connection => {
     let connectionPoint : Coordinates; // on the starting edge of `second`
     let firstCoordinates: Coordinates;
     let secondCoordinates: Coordinates;
@@ -416,14 +415,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       middleCoordinates,
       direction
     };
-  }
+  };
 
-  private _connectionToString(connection: Connection) {
-    return `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
-  }
+  private _connectionToString = (connection: Connection): string =>
+    `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
 
-  private _addTilesForInternalConnections(tiles: TileType[][], internalConnections: InternalConnection[], connections: Connection[]) {
-    internalConnections.forEach(internalConnection => {
+  private _addTilesForInternalConnections = (tiles: TileType[][], internalConnections: InternalConnection[], connections: Connection[]) => {
+    for (const internalConnection of internalConnections) {
       const neighbors = [...internalConnection.neighbors];
       shuffle(neighbors);
       for (let i = 0; i < neighbors.length - 1; i++) {
@@ -451,10 +449,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
           this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
         }
       }
-    });
-  }
+    }
+  };
 
-  private _joinPerpendicularly(tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) {
+  private _joinPerpendicularly = (tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) => {
     const start = firstConnection.middleCoordinates;
     const end = secondConnection.middleCoordinates;
     const middle = {
@@ -467,7 +465,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
     let { x, y } = start;
     while (!coordinatesEquals({ x, y }, middle)) {
-      tiles[y][x] = TileType.FLOOR_HALL;
+      tiles[y][x] = 'FLOOR_HALL';
       x += dx;
       y += dy;
     }
@@ -475,13 +473,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     dx = Math.sign(end.x - middle.x);
     dy = Math.sign(end.y - middle.y);
     while (!coordinatesEquals({ x, y }, end)) {
-      tiles[y][x] = TileType.FLOOR_HALL;
+      tiles[y][x] = 'FLOOR_HALL';
       x += dx;
       y += dy;
     }
-  }
+  };
 
-  private _joinParallelConnections(tiles: TileType[][], internalConnection: InternalConnection, firstConnection: Connection, secondConnection: Connection) {
+  private _joinParallelConnections = (tiles: TileType[][], internalConnection: InternalConnection, firstConnection: Connection, secondConnection: Connection) => {
     const start = firstConnection.middleCoordinates;
     const end = secondConnection.middleCoordinates;
     const middle = {
@@ -500,34 +498,34 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     switch (majorDirection) {
       case 'HORIZONTAL':
         while (x !== middle.x) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           x += dx;
         }
         while (y !== end.y) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           y += dy;
         }
         while (x !== end.x) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           x += dx;
         }
         break;
       case 'VERTICAL':
         while (y !== middle.y) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           y += dy;
         }
         while (x !== end.x) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           x += dx;
         }
         while (y !== end.y) {
-          tiles[y][x] = TileType.FLOOR_HALL;
+          tiles[y][x] = 'FLOOR_HALL';
           y += dy;
         }
         break;
     }
-  }
+  };
 
   /**
    * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
@@ -535,10 +533,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    *
    * @return a copy of `externalConnections` with the desired elements removed
    */
-  private _stripOrphanedConnections(
-    externalConnections: Connection[],
-    internalConnections: InternalConnection[]
-  ) {
+  private _stripOrphanedConnections = (externalConnections: Connection[], internalConnections: InternalConnection[]) => {
     let removedAnyConnections = false;
     do {
       const orphanedConnections = externalConnections.filter(connection => {
@@ -547,9 +542,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
       this._subtract(externalConnections, orphanedConnections);
 
-      internalConnections.forEach(internalConnection => {
+      for (const internalConnection of internalConnections) {
         this._pruneInternalConnection(internalConnection, orphanedConnections);
-      });
+      }
 
       const orphanedInternalConnections = internalConnections.filter(internalConnection => {
         return this._isOrphanedInternalConnection(internalConnection, internalConnections);
@@ -559,9 +554,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
       console.log(`stripping: ${orphanedConnections.length}, ${orphanedInternalConnections.length}`);
     } while (removedAnyConnections);
-  }
+  };
 
-  private _isOrphanedConnection(connection: Connection, internalConnections: InternalConnection[]) {
+  private _isOrphanedConnection = (connection: Connection, internalConnections: InternalConnection[]) => {
     const { start, end } = connection;
     let startHasInternalConnection = false;
     let endHasInternalConnection = false;
@@ -579,10 +574,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       (!!start.roomRect || startHasInternalConnection)
       && (!!end.roomRect || endHasInternalConnection)
     );
-  }
+  };
 
-  private _pruneInternalConnection(internalConnection: InternalConnection, orphanedConnections: Connection[]) {
-    for (let connection of orphanedConnections) {
+  private _pruneInternalConnection = (internalConnection: InternalConnection, orphanedConnections: Connection[]) => {
+    for (const connection of orphanedConnections) {
       const { section, neighbors } = internalConnection;
       const { start, end } = connection;
       const updatedNeighbors: Section[] = neighbors.filter(neighbor => {
@@ -596,33 +591,33 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       });
       this._replace(neighbors, updatedNeighbors);
     }
-  }
+  };
 
   /**
    * An internal connection is orphaned if at most one of its neighbors has either a room or another
    * internal connection
    */
-  private _isOrphanedInternalConnection(internalConnection: InternalConnection, internalConnections: InternalConnection[]) {
+  private _isOrphanedInternalConnection = (internalConnection: InternalConnection, internalConnections: InternalConnection[]) => {
     let connectedNeighbors = 0;
     const { section, neighbors } = internalConnection;
-    neighbors.forEach(neighbor => {
+    for (const neighbor of neighbors) {
       const neighborHasInternalConnection = internalConnections.find(other => other.section === neighbor && other.neighbors.indexOf(section) > -1);
       if (!!neighbor.roomRect || neighborHasInternalConnection) {
         connectedNeighbors++;
       }
-    });
+    }
     return connectedNeighbors <= 1;
-  }
+  };
 
-  private _replace<T>(array: T[], contents: T[]) {
+  private _replace = <T>(array: T[], contents: T[]) => {
     array.splice(0, array.length);
     array.push(...contents);
-  }
+  };
 
-  private _subtract<T>(array: T[], toRemove: T[]) {
+  private _subtract = <T>(array: T[], toRemove: T[]) => {
     const updated = array.filter(element => toRemove.indexOf(element) === -1);
     this._replace(array, updated);
-  }
+  };
 }
 
 export default RoomCorridorDungeonGenerator2;

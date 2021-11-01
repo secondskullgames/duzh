@@ -327,25 +327,39 @@ module.exports = webpackAsyncContext;
 
 /***/ }),
 
-/***/ "./data/tilesets/cave.json":
-/*!*********************************!*\
-  !*** ./data/tilesets/cave.json ***!
-  \*********************************/
-/***/ ((module) => {
+/***/ "./data/tilesets lazy recursive ^\\.\\/.*\\.json$":
+/*!*************************************************************!*\
+  !*** ./data/tilesets/ lazy ^\.\/.*\.json$ namespace object ***!
+  \*************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-"use strict";
-module.exports = JSON.parse('{"name":"cave","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor","tile_floor_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
+var map = {
+	"./cave.json": [
+		"./data/tilesets/cave.json",
+		"data_tilesets_cave_json"
+	],
+	"./dungeon.json": [
+		"./data/tilesets/dungeon.json",
+		"data_tilesets_dungeon_json"
+	]
+};
+function webpackAsyncContext(req) {
+	if(!__webpack_require__.o(map, req)) {
+		return Promise.resolve().then(() => {
+			var e = new Error("Cannot find module '" + req + "'");
+			e.code = 'MODULE_NOT_FOUND';
+			throw e;
+		});
+	}
 
-/***/ }),
-
-/***/ "./data/tilesets/dungeon.json":
-/*!************************************!*\
-  !*** ./data/tilesets/dungeon.json ***!
-  \************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"dungeon","tiles":{"FLOOR":["tile_floor","tile_floor_2"],"FLOOR_HALL":["tile_floor_hall","tile_floor_hall_2"],"WALL_TOP":[null],"WALL_HALL":["tile_wall_hall"],"WALL":["tile_wall"],"STAIRS_DOWN":["stairs_down2"],"NONE":[null]}}');
+	var ids = map[req], id = ids[0];
+	return __webpack_require__.e(ids[1]).then(() => {
+		return __webpack_require__.t(id, 3);
+	});
+}
+webpackAsyncContext.keys = () => (Object.keys(map));
+webpackAsyncContext.id = "./data/tilesets lazy recursive ^\\.\\/.*\\.json$";
+module.exports = webpackAsyncContext;
 
 /***/ }),
 
@@ -689,7 +703,9 @@ const _handleEnter = () => __awaiter(void 0, void 0, void 0, function* () {
                 (0,_items_ItemUtils__WEBPACK_IMPORTED_MODULE_2__.pickupItem)(playerUnit, item);
                 map.removeItem({ x, y });
             }
-            else if (map.getTile({ x, y }).type === _types_types__WEBPACK_IMPORTED_MODULE_5__.TileType.STAIRS_DOWN) {
+            else if (map.getTile({ x, y }).type === 'STAIRS')
+                _DOWN;
+            {
                 (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_3__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_1__.default.DESCEND_STAIRS);
                 yield (0,_actions__WEBPACK_IMPORTED_MODULE_4__.loadMap)(mapIndex + 1);
             }
@@ -835,7 +851,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../maps/MapFactory */ "./src/main/maps/MapFactory.ts");
 /* harmony import */ var _units_UnitClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../units/UnitClass */ "./src/main/units/UnitClass.ts");
 /* harmony import */ var _sounds_Music__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../sounds/Music */ "./src/main/sounds/Music.ts");
-/* harmony import */ var _types_TileSet__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../types/TileSet */ "./src/main/types/TileSet.ts");
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /* harmony import */ var _InputHandler__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./InputHandler */ "./src/main/core/InputHandler.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
@@ -889,12 +905,12 @@ const _initState = () => __awaiter(void 0, void 0, void 0, function* () {
     const playerUnitController = new _units_controllers_PlayerUnitController__WEBPACK_IMPORTED_MODULE_10__.default();
     const playerUnit = new _units_Unit__WEBPACK_IMPORTED_MODULE_1__.default(_units_UnitClass__WEBPACK_IMPORTED_MODULE_4__.default.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
     jwb.state = new _GameState__WEBPACK_IMPORTED_MODULE_0__.default(playerUnit, [
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.DUNGEON, 1, 32, 24, 10, 5),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.DUNGEON, 2, 32, 24, 11, 4),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.DUNGEON, 3, 32, 24, 12, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.CAVE, 4, 34, 25, 12, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.CAVE, 5, 36, 26, 13, 3),
-        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, _types_TileSet__WEBPACK_IMPORTED_MODULE_6__.default.CAVE, 6, 38, 27, 14, 3)
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 1, 32, 24, 10, 5),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 2, 32, 24, 11, 4),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.ROOMS_AND_CORRIDORS, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 3, 32, 24, 12, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 4, 34, 25, 12, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 5, 36, 26, 13, 3),
+        () => _maps_MapFactory__WEBPACK_IMPORTED_MODULE_3__.default.createRandomMap(_types_types__WEBPACK_IMPORTED_MODULE_8__.MapLayout.BLOB, Object(function webpackMissingModule() { var e = new Error("Cannot find module '../types/TileSet'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()), 6, 38, 27, 14, 3)
     ]);
 });
 const startGame = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -1368,9 +1384,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _SpriteRenderer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SpriteRenderer */ "./src/main/graphics/SpriteRenderer.ts");
 /* harmony import */ var _types_Color__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/Color */ "./src/main/types/Color.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
-
+/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
 
 
 
@@ -1397,22 +1411,20 @@ class MinimapRenderer {
         return createImageBitmap(imageData);
     }
     _getColor({ x, y }) {
-        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
+        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(jwb.state.playerUnit, { x, y })) {
             return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.RED;
         }
         const map = jwb.state.getMap();
-        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isTileRevealed)({ x, y })) {
+        if ((0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isTileRevealed)({ x, y })) {
             const tileType = map.getTile({ x, y }).type;
             switch (tileType) {
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR:
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.FLOOR_HALL:
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.STAIRS_DOWN:
-                    return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY;
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL:
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_HALL:
-                    return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY;
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.NONE:
-                case _types_types__WEBPACK_IMPORTED_MODULE_2__.TileType.WALL_TOP:
+                case 'FLOOR':
+                case 'FLOOR': _HALL: ;
+                case 'STAIRS': _DOWN: return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.LIGHT_GRAY;
+                case 'WALL':
+                case 'WALL': _HALL: return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.DARK_GRAY;
+                case 'NONE':
+                case 'WALL': _TOP: ;
                 default:
                     return _types_Color__WEBPACK_IMPORTED_MODULE_1__.default.BLACK;
             }
@@ -2058,7 +2070,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Sprite__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Sprite */ "./src/main/graphics/sprites/Sprite.ts");
 
 class DynamicSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_0__.default {
-    constructor({ offsets, target, paletteSwaps, imageMap, keyFunction }) {
+    constructor({ offsets, paletteSwaps, imageMap, keyFunction }) {
         super(offsets);
         /**
          * @override {@link Sprite#getImage}
@@ -2067,7 +2079,7 @@ class DynamicSprite extends _Sprite__WEBPACK_IMPORTED_MODULE_0__.default {
             const frameKey = this.keyFunction(this.target);
             return this.imageMap[frameKey];
         };
-        this.target = target;
+        this.target = null;
         this.paletteSwaps = paletteSwaps;
         this.imageMap = imageMap;
         this.keyFunction = keyFunction;
@@ -2136,7 +2148,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-const createStaticSprite = (filename, paletteSwaps) => __awaiter(void 0, void 0, void 0, function* () {
+const createStaticSprite = (filename, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const model = yield loadSpriteModel(filename, 'static');
     const { offsets, transparentColor } = model;
     const image = yield new _ImageBuilder__WEBPACK_IMPORTED_MODULE_4__.default({
@@ -2146,24 +2158,22 @@ const createStaticSprite = (filename, paletteSwaps) => __awaiter(void 0, void 0,
     }).build();
     return new _StaticSprite__WEBPACK_IMPORTED_MODULE_7__.default(image, offsets);
 });
-const createUnitSprite = (spriteName, unit, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+const createUnitSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'units');
     const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
     const keyFunction = (unit) => `${unit.activity}_${unit.direction}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
-        target: unit,
         paletteSwaps,
         imageMap,
         offsets: spriteModel.offsets,
         keyFunction
     });
 });
-const createEquipmentSprite = (spriteName, equipment, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
+const createEquipmentSprite = (spriteName, paletteSwaps = {}) => __awaiter(void 0, void 0, void 0, function* () {
     const spriteModel = yield loadSpriteModel(spriteName, 'equipment');
     const imageMap = yield loadAnimations(spriteModel, paletteSwaps);
     const keyFunction = (equipment) => `${equipment.unit.activity}_${equipment.unit.direction}`;
     return new _DynamicSprite__WEBPACK_IMPORTED_MODULE_6__.default({
-        target: equipment,
         paletteSwaps,
         imageMap,
         offsets: spriteModel.offsets,
@@ -2219,8 +2229,6 @@ const loadAnimations = (spriteModel, paletteSwaps) => __awaiter(void 0, void 0, 
 const loadSpriteModel = (name, category) => __awaiter(void 0, void 0, void 0, function* () {
     return (yield __webpack_require__("./data/sprites lazy recursive ^\\.\\/.*\\/.*\\.json$")(`./${category}/${name}.json`)).default;
 });
-// the following does not work: { ...StaticSprites, ...UnitSprites }
-// :(
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     createStaticSprite,
     createUnitSprite,
@@ -2274,10 +2282,10 @@ class InventoryItem {
     constructor(name, category, onUse) {
         this.name = name;
         this.category = category;
-        this._onUse = (unit) => onUse(this, unit);
+        this.onUse = (unit) => onUse(this, unit);
     }
     use(unit) {
-        return this._onUse(unit);
+        return this.onUse(unit);
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (InventoryItem);
@@ -2401,19 +2409,16 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-function createPotion(lifeRestored) {
-    const onUse = (item, unit) => {
-        return new Promise(resolve => {
-            (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
-            const prevLife = unit.life;
-            unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-            jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
-            resolve();
-        });
-    };
+const createPotion = (lifeRestored) => {
+    const onUse = (item, unit) => __awaiter(void 0, void 0, void 0, function* () {
+        (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.USE_POTION);
+        const prevLife = unit.life;
+        unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
+        jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
+    });
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Potion', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.POTION, onUse);
-}
-const createScrollOfFloorFire = (damage) => {
+};
+const createScrollOfFloorFire = (damage) => __awaiter(void 0, void 0, void 0, function* () {
     const onUse = (item, unit) => __awaiter(void 0, void 0, void 0, function* () {
         const map = jwb.state.getMap();
         const adjacentUnits = map.units.filter(u => {
@@ -2429,12 +2434,12 @@ const createScrollOfFloorFire = (damage) => {
         }
     });
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_6__.ItemCategory.SCROLL, onUse);
-};
-function _createMapEquipment(equipmentClass, { x, y }) {
-    const sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
-    const inventoryItem = _createInventoryWeapon(equipmentClass);
+});
+const _createMapEquipment = (equipmentClass, { x, y }) => __awaiter(void 0, void 0, void 0, function* () {
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
+    const inventoryItem = yield _createInventoryWeapon(equipmentClass);
     return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
-}
+});
 function _createInventoryWeapon(equipmentClass) {
     const onUse = (item, unit) => {
         return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_9__.equipItem)(item, equipmentClass, unit);
@@ -2442,25 +2447,25 @@ function _createInventoryWeapon(equipmentClass) {
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_1__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
 }
 function _getItemSuppliers(level) {
-    const createMapPotion = ({ x, y }) => {
-        const sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_potion');
+    const createMapPotion = ({ x, y }) => __awaiter(this, void 0, void 0, function* () {
+        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_potion');
         const inventoryItem = createPotion(40);
         return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, 'K', sprite, inventoryItem);
-    };
-    const createFloorFireScroll = ({ x, y }) => {
-        const sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_scroll');
-        const inventoryItem = createScrollOfFloorFire(80);
+    });
+    const createFloorFireScroll = ({ x, y }) => __awaiter(this, void 0, void 0, function* () {
+        const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_3__.default.createStaticSprite('map_scroll');
+        const inventoryItem = yield createScrollOfFloorFire(80);
         return new _MapItem__WEBPACK_IMPORTED_MODULE_2__.default({ x, y }, 'K', sprite, inventoryItem);
-    };
+    });
     return [createMapPotion, createFloorFireScroll];
 }
-function _getEquipmentSuppliers(level) {
+const _getEquipmentSuppliers = (level) => {
     return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_5__.default.values()
         .filter(equipmentClass => level >= equipmentClass.minLevel)
         .filter(equipmentClass => level <= equipmentClass.maxLevel)
         .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
-}
-function createRandomItem({ x, y }, level) {
+};
+const createRandomItem = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
     let supplier;
     if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randInt)(0, 2) == 0) {
         supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getItemSuppliers(level));
@@ -2469,7 +2474,7 @@ function createRandomItem({ x, y }, level) {
         supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(_getEquipmentSuppliers(level));
     }
     return supplier({ x, y });
-}
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     createRandomItem
 });
@@ -2583,15 +2588,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-
 class Equipment {
-    constructor(equipmentClass, inventoryItem) {
+    constructor(equipmentClass, sprite, inventoryItem) {
         this.name = equipmentClass.name;
         this.slot = equipmentClass.slot;
         this.inventoryItem = inventoryItem;
         this.damage = equipmentClass.damage;
-        this.sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createEquipmentSprite(equipmentClass.sprite, this, equipmentClass.paletteSwaps);
+        this.sprite = sprite;
     }
     attach(unit) {
         this.unit = unit;
@@ -2716,27 +2719,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _MapInstance__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MapInstance */ "./src/main/maps/MapInstance.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 class MapBuilder {
     constructor(level, width, height, tiles, rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier) {
-        this._level = level;
-        this._width = width;
-        this._height = height;
-        this._tiles = tiles;
-        this._rooms = rooms;
-        this._playerUnitLocation = playerUnitLocation;
-        this._enemyUnitLocations = enemyUnitLocations;
-        this._itemLocations = itemLocations;
-        this._enemyUnitSupplier = enemyUnitSupplier;
-        this._itemSupplier = itemSupplier;
-    }
-    build() {
-        const { playerUnit } = jwb.state;
-        const units = [playerUnit];
-        [playerUnit.x, playerUnit.y] = [this._playerUnitLocation.x, this._playerUnitLocation.y];
-        units.push(...this._enemyUnitLocations.map(({ x, y }) => this._enemyUnitSupplier({ x, y }, this._level)));
-        const items = this._itemLocations.map(({ x, y }) => this._itemSupplier({ x, y }, this._level));
-        return new _MapInstance__WEBPACK_IMPORTED_MODULE_0__.default(this._width, this._height, this._tiles, this._rooms, units, items);
+        this.build = () => __awaiter(this, void 0, void 0, function* () {
+            const { playerUnit } = jwb.state;
+            [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
+            const units = [playerUnit];
+            for (const { x, y } of this.enemyUnitLocations) {
+                const enemyUnit = yield this.enemyUnitSupplier({ x, y }, this.level);
+                units.push(enemyUnit);
+            }
+            const items = [];
+            for (const { x, y } of this.itemLocations) {
+                const item = yield this.itemSupplier({ x, y }, this.level);
+                items.push(item);
+            }
+            return new _MapInstance__WEBPACK_IMPORTED_MODULE_0__.default(this.width, this.height, this.tiles, this.rooms, units, items);
+        });
+        this.level = level;
+        this.width = width;
+        this.height = height;
+        this.tiles = tiles;
+        this.rooms = rooms;
+        this.playerUnitLocation = playerUnitLocation;
+        this.enemyUnitLocations = enemyUnitLocations;
+        this.itemLocations = itemLocations;
+        this.enemyUnitSupplier = enemyUnitSupplier;
+        this.itemSupplier = itemSupplier;
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MapBuilder);
@@ -2797,8 +2816,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-
 class MapInstance {
     constructor(width, height, tiles, rooms, units, items) {
         this.width = width;
@@ -2812,7 +2829,7 @@ class MapInstance {
     }
     getTile({ x, y }) {
         if (x < this.width && y < this.height) {
-            return (this._tiles[y] || [])[x] || _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.NONE;
+            return (this._tiles[y] || [])[x] || 'NONE';
         }
         throw `Illegal coordinates ${x}, ${y}`;
     }
@@ -2879,7 +2896,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "civDistance": () => (/* binding */ civDistance),
 /* harmony export */   "contains": () => (/* binding */ contains),
 /* harmony export */   "coordinatesEquals": () => (/* binding */ coordinatesEquals),
-/* harmony export */   "createTile": () => (/* binding */ createTile),
 /* harmony export */   "hypotenuse": () => (/* binding */ hypotenuse),
 /* harmony export */   "isAdjacent": () => (/* binding */ isAdjacent),
 /* harmony export */   "isBlocking": () => (/* binding */ isBlocking),
@@ -2888,16 +2904,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "pickUnoccupiedLocations": () => (/* binding */ pickUnoccupiedLocations)
 /* harmony export */ });
 /* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
-
-
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
  *         which do not collide with `occupiedLocations`
  */
-function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, numToChoose) {
+const pickUnoccupiedLocations = (tiles, allowedTileTypes, occupiedLocations, numToChoose) => {
     const unoccupiedLocations = [];
     for (let y = 0; y < tiles.length; y++) {
         for (let x = 0; x < tiles[y].length; x++) {
@@ -2920,58 +2932,47 @@ function pickUnoccupiedLocations(tiles, allowedTileTypes, occupiedLocations, num
         }
     }
     return chosenLocations;
-}
-function coordinatesEquals(first, second) {
-    return (first.x === second.x && first.y === second.y);
-}
-function contains(rect, coordinates) {
-    return coordinates.x >= rect.left
-        && coordinates.x < (rect.left + rect.width)
-        && coordinates.y >= rect.top
-        && coordinates.y < (rect.top + rect.height);
-}
+};
+const coordinatesEquals = (first, second) => (first.x === second.x && first.y === second.y);
+const contains = (rect, coordinates) => coordinates.x >= rect.left
+    && coordinates.x < (rect.left + rect.width)
+    && coordinates.y >= rect.top
+    && coordinates.y < (rect.top + rect.height);
 function manhattanDistance(first, second) {
     return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
 }
-function hypotenuse(first, second) {
+const hypotenuse = (first, second) => {
     const dx = second.x - first.x;
     const dy = second.y - first.y;
     return Math.pow(((dx * dx) + (dy * dy)), 0.5);
-}
-function civDistance(first, second) {
+};
+const civDistance = (first, second) => {
     const dx = Math.abs(first.x - second.x);
     const dy = Math.abs(first.y - second.y);
     return Math.max(dx, dy) + Math.min(dx, dy) / 2;
-}
-function isAdjacent(first, second) {
+};
+const isAdjacent = (first, second) => {
     const dx = Math.abs(first.x - second.x);
     const dy = Math.abs(first.y - second.y);
     return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
-}
-function isTileRevealed({ x, y }) {
+};
+const isTileRevealed = ({ x, y }) => {
     if (jwb.DEBUG) {
         return true;
     }
     return jwb.state.getMap().revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
-}
-function isBlocking(tileType) {
+};
+const isBlocking = (tileType) => {
     switch (tileType) {
-        case _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR:
-        case _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL:
-        case _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.STAIRS_DOWN:
+        case 'FLOOR':
+        case 'FLOOR_HALL':
+        case 'STAIRS_DOWN':
             return false;
         default:
             return true;
     }
-}
-function createTile(type, tileSet) {
-    return {
-        type,
-        sprite: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randChoice)(tileSet[type]),
-        isBlocking: isBlocking(type)
-    };
-}
-function areAdjacent(first, second, minBorderLength) {
+};
+const areAdjacent = (first, second, minBorderLength) => {
     // right-left
     if (first.left + first.width === second.left) {
         const top = Math.max(first.top, second.top);
@@ -2997,7 +2998,7 @@ function areAdjacent(first, second, minBorderLength) {
         return (right - left) >= minBorderLength;
     }
     return false;
-}
+};
 
 
 
@@ -3015,11 +3016,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DungeonGenerator */ "./src/main/maps/generation/DungeonGenerator.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/random */ "./src/main/utils/random.ts");
-/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
-/* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
-
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
+/* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
 
 
 
@@ -3058,27 +3057,27 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         for (let y = 0; y < height; y++) {
             const row = [];
             for (let x = 0; x < width; x++) {
-                row.push(_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE);
+                row.push('NONE');
             }
             tiles.push(row);
         }
         return tiles;
     }
     _placeInitialTile(width, height, tiles) {
-        const x = (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(width * 3 / 8, width * 5 / 8);
-        const y = (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(height * 3 / 8, height * 5 / 8);
-        tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR;
+        const x = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(width * 3 / 8, width * 5 / 8);
+        const y = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(height * 3 / 8, height * 5 / 8);
+        tiles[y][x] = 'FLOOR';
     }
     _getTargetNumFloorTiles(max) {
         const minRatio = 0.4;
         const maxRatio = 0.7;
-        return (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(Math.round(max * minRatio), Math.round(max * maxRatio));
+        return (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(Math.round(max * minRatio), Math.round(max * maxRatio));
     }
     _getFloorTiles(tiles) {
         const floorTiles = [];
         for (let y = 0; y < tiles.length; y++) {
             for (let x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) {
+                if (tiles[y][x] === 'FLOOR') {
                     floorTiles.push({ x, y });
                 }
             }
@@ -3089,7 +3088,7 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         const floorTiles = [];
         for (let y = 0; y < tiles.length; y++) {
             for (let x = 0; x < tiles[y].length; x++) {
-                if (tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE) {
+                if (tiles[y][x] === 'NONE') {
                     floorTiles.push({ x, y });
                 }
             }
@@ -3102,23 +3101,23 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
     _addFloorTile(tiles) {
         const floorTiles = this._getFloorTiles(tiles);
         const candidates = this._getCandidates(tiles, floorTiles)
-            .sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_4__.comparing)(tile => this._getSnakeScore(tile, tiles)));
+            .sort((0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.comparing)(tile => this._getSnakeScore(tile, tiles)));
         if (candidates.length === 0) {
             return false;
         }
         // change these ratios to adjust the "snakiness"
         const minIndex = Math.floor((candidates.length - 1) * 0.6);
         const maxIndex = Math.floor((candidates.length - 1) * 0.8);
-        const index = (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(minIndex, maxIndex);
+        const index = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(minIndex, maxIndex);
         const { x, y } = candidates[index];
-        tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR;
+        tiles[y][x] = 'FLOOR';
         return true;
     }
     _getCandidates(tiles, floorTiles) {
         return this._getEmptyTiles(tiles)
             .filter(({ x, y }) => y > 0)
             .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
-            .filter(({ x, y }) => floorTiles.some(floorTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.isAdjacent)({ x, y }, floorTile)));
+            .filter(({ x, y }) => floorTiles.some(floorTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isAdjacent)({ x, y }, floorTile)));
     }
     _isLegalWallCoordinates({ x, y }, tiles) {
         // To facilitate wall generation, disallow some specific cases:
@@ -3127,15 +3126,15 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         const m = 3; // number of consecutive wall tiles required
         for (let n = 2; n <= m; n++) {
             if (y >= n) {
-                if (this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE)
-                    && (tiles[y - n][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR)) {
+                if (this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === 'NONE')
+                    && (tiles[y - n][x] === 'FLOOR')) {
                     return false;
                 }
             }
             // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
             if (y <= (height - 1 - n)) {
-                if (this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE)
-                    && (tiles[y + n][x] == _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR)) {
+                if (this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
+                    && (tiles[y + n][x] == 'FLOOR')) {
                     return false;
                 }
             }
@@ -3155,8 +3154,8 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
             if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
                 // out of bounds
             }
-            else if (tiles[y2][x2] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) {
-                if (tiles[y2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE && tiles[y][x2] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE) {
+            else if (tiles[y2][x2] === 'FLOOR') {
+                if (tiles[y2][x] === 'NONE' && tiles[y][x2] === 'NONE') {
                     return true;
                 }
             }
@@ -3176,10 +3175,10 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
                 // out of bounds
             }
             else {
-                if (tiles[b.y][b.x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE
-                    && tiles[c.y][c.x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE
-                    && tiles[d.y][d.x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE
-                    && tiles[f.y][f.x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) {
+                if (tiles[b.y][b.x] === 'NONE'
+                    && tiles[c.y][c.x] === 'NONE'
+                    && tiles[d.y][d.x] === 'NONE'
+                    && tiles[f.y][f.x] === 'FLOOR') {
                     return true;
                 }
             }
@@ -3191,8 +3190,8 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         const width = tiles[0].length;
         for (let y = 0; y < (height - 1); y++) {
             for (let x = 0; x < width; x++) {
-                if (tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE && tiles[y + 1][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL_TOP;
+                if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
+                    tiles[y][x] = 'WALL_TOP';
                 }
             }
         }
@@ -3221,10 +3220,10 @@ class BlobDungeonGenerator extends _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0_
         const maxX = Math.min(tile.x + offset, width - 1);
         for (let y = minY; y <= maxY; y++) {
             for (let x = minX; x <= maxX; x++) {
-                if ((0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)(tile, { x, y })) {
+                if ((0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(tile, { x, y })) {
                     continue;
                 }
-                if (tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) {
+                if (tiles[y][x] === 'FLOOR') {
                     score++;
                 }
             }
@@ -3248,8 +3247,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _MapBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../MapBuilder */ "./src/main/maps/MapBuilder.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _types_TileFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/TileFactory */ "./src/main/types/TileFactory.ts");
+/* harmony import */ var _MapBuilder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../MapBuilder */ "./src/main/maps/MapBuilder.ts");
 /* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
 /* harmony import */ var _utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils/ArrayUtils */ "./src/main/utils/ArrayUtils.ts");
 /* harmony import */ var _utils_Pathfinder__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/Pathfinder */ "./src/main/utils/Pathfinder.ts");
@@ -3262,114 +3261,110 @@ __webpack_require__.r(__webpack_exports__);
 
 class DungeonGenerator {
     constructor(tileSet) {
-        this._tileSet = tileSet;
-    }
-    generateDungeon(level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) {
-        let section;
-        let isValid = false;
-        let iterations = 0;
-        do {
-            const t1 = new Date().getTime();
-            section = this.generateTiles(width, height);
-            isValid = this._validateSection(section);
-            const t2 = new Date().getTime();
-            console.log(`Generated dungeon tiles for level ${level} in ${t2 - t1} ms`);
-            if (!isValid) {
-                console.error(`Generated invalid tiles for level ${level}, regenerating`);
-            }
-            iterations++;
-        } while (!isValid && (iterations < 100));
-        const tileTypes = section.tiles;
-        const [stairsLocation] = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, [_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR], [], 1);
-        tileTypes[stairsLocation.y][stairsLocation.x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.STAIRS_DOWN;
-        const enemyUnitLocations = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, [_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR], [stairsLocation], numEnemies);
-        const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
-        const itemLocations = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, [_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
-        const tiles = tileTypes.map((row) => {
-            return row.map(tileType => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.createTile)(tileType, this._tileSet));
-        });
-        return new _MapBuilder__WEBPACK_IMPORTED_MODULE_0__.default(level, width, height, tiles, section.rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier);
-    }
-    /**
-     * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
-     */
-    _pickPlayerLocation(tiles, blockedTiles) {
-        const candidates = [];
-        for (let y = 0; y < tiles.length; y++) {
-            for (let x = 0; x < tiles[y].length; x++) {
-                if (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isBlocking)(tiles[y][x]) && !blockedTiles.some(tile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(tile, { x, y }))) {
-                    const tileDistances = blockedTiles.map(blockedTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.hypotenuse)({ x, y }, blockedTile));
-                    candidates.push([{ x, y }, (0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.average)(tileDistances)]);
+        this.generateDungeon = (level, width, height, numEnemies, enemyUnitSupplier, numItems, itemSupplier) => {
+            let section;
+            let isValid = false;
+            let iterations = 0;
+            do {
+                const t1 = new Date().getTime();
+                section = this.generateTiles(width, height);
+                isValid = this._validateSection(section);
+                const t2 = new Date().getTime();
+                console.log(`Generated dungeon tiles for level ${level} in ${t2 - t1} ms`);
+                if (!isValid) {
+                    console.error(`Generated invalid tiles for level ${level}, regenerating`);
+                }
+                iterations++;
+            } while (!isValid && (iterations < 100));
+            const tileTypes = section.tiles;
+            const [stairsLocation] = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, ['FLOOR'], [], 1);
+            tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
+            const enemyUnitLocations = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, ['FLOOR'], [stairsLocation], numEnemies);
+            const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
+            const itemLocations = (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.pickUnoccupiedLocations)(tileTypes, ['FLOOR'], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
+            const tiles = tileTypes.map((row) => row.map(tileType => _types_TileFactory__WEBPACK_IMPORTED_MODULE_0__.default.createTile(tileType, this.tileSet)));
+            return new _MapBuilder__WEBPACK_IMPORTED_MODULE_1__.default(level, width, height, tiles, section.rooms, playerUnitLocation, enemyUnitLocations, enemyUnitSupplier, itemLocations, itemSupplier);
+        };
+        /**
+         * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
+         */
+        this._pickPlayerLocation = (tiles, blockedTiles) => {
+            const candidates = [];
+            for (let y = 0; y < tiles.length; y++) {
+                for (let x = 0; x < tiles[y].length; x++) {
+                    if (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.isBlocking)(tiles[y][x]) && !blockedTiles.some(tile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)(tile, { x, y }))) {
+                        const tileDistances = blockedTiles.map(blockedTile => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.hypotenuse)({ x, y }, blockedTile));
+                        candidates.push([{ x, y }, (0,_utils_ArrayUtils__WEBPACK_IMPORTED_MODULE_3__.average)(tileDistances)]);
+                    }
                 }
             }
-        }
-        console.assert(candidates.length > 0);
-        return candidates.sort((a, b) => (b[1] - a[1]))[0];
-    }
-    /**
-     * Verify that:
-     * - all rooms can be connected
-     * - wall placement is correct
-     *   (all floor tiles have either another floor tile, or a wall + wall top directly above them)
-     *
-     * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
-     * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
-     *
-     * @return true if the provided `section` is valid
-     */
-    _validateSection(section) {
-        return this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
-    }
-    _validateRoomConnectivity(section) {
-        const { rooms } = section;
-        const roomCenters = rooms.map(room => ({
-            x: Math.round(room.left + room.width) / 2,
-            y: Math.round(room.top + room.height) / 2
-        }));
-        const tileChecker = new _TileEligibilityChecker__WEBPACK_IMPORTED_MODULE_5__.default();
-        const unblockedTiles = [];
-        for (let y = 0; y < section.height; y++) {
-            for (let x = 0; x < section.width; x++) {
-                if (!tileChecker.isBlocked({ x, y }, section, [])) {
-                    unblockedTiles.push({ x, y });
+            console.assert(candidates.length > 0);
+            return candidates.sort((a, b) => (b[1] - a[1]))[0];
+        };
+        /**
+         * Verify that:
+         * - all rooms can be connected
+         * - wall placement is correct
+         *   (all floor tiles have either another floor tile, or a wall + wall top directly above them)
+         *
+         * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
+         * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
+         *
+         * @return true if the provided `section` is valid
+         */
+        this._validateSection = (section) => this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
+        this._validateRoomConnectivity = (section) => {
+            const { rooms } = section;
+            const roomCenters = rooms.map(room => ({
+                x: Math.round(room.left + room.width) / 2,
+                y: Math.round(room.top + room.height) / 2
+            }));
+            const tileChecker = new _TileEligibilityChecker__WEBPACK_IMPORTED_MODULE_5__.default();
+            const unblockedTiles = [];
+            for (let y = 0; y < section.height; y++) {
+                for (let x = 0; x < section.width; x++) {
+                    if (!tileChecker.isBlocked({ x, y }, section, [])) {
+                        unblockedTiles.push({ x, y });
+                    }
                 }
             }
-        }
-        const pathfinder = new _utils_Pathfinder__WEBPACK_IMPORTED_MODULE_4__.default(() => 1);
-        for (let i = 0; i < rooms.length; i++) {
-            for (let j = i + 1; j < rooms.length; j++) {
-                const path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
-                if (path.length === 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    _validateWallPlacement(section) {
-        const floorTypes = [_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR, _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL];
-        const wallTypes = [_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL, _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL_HALL];
-        for (let y = 0; y < section.height; y++) {
-            for (let x = 0; x < section.width; x++) {
-                const tileType = section.tiles[y][x];
-                if (floorTypes.indexOf(tileType) > -1) {
-                    if (y < 2) {
+            const pathfinder = new _utils_Pathfinder__WEBPACK_IMPORTED_MODULE_4__.default(() => 1);
+            for (let i = 0; i < rooms.length; i++) {
+                for (let j = i + 1; j < rooms.length; j++) {
+                    const path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
+                    if (path.length === 0) {
                         return false;
                     }
-                    const oneUp = section.tiles[y - 1][x];
-                    const twoUp = section.tiles[y - 2][x];
-                    if (floorTypes.indexOf(oneUp) > -1) {
-                        // continue
-                    }
-                    else if (wallTypes.indexOf(oneUp) > -1) {
-                        if (twoUp !== _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL_TOP) {
+                }
+            }
+            return true;
+        };
+        this._validateWallPlacement = (section) => {
+            const floorTypes = ['FLOOR', 'FLOOR_HALL'];
+            const wallTypes = ['WALL', 'WALL_HALL'];
+            for (let y = 0; y < section.height; y++) {
+                for (let x = 0; x < section.width; x++) {
+                    const tileType = section.tiles[y][x];
+                    if (floorTypes.indexOf(tileType) > -1) {
+                        if (y < 2) {
                             return false;
+                        }
+                        const oneUp = section.tiles[y - 1][x];
+                        const twoUp = section.tiles[y - 2][x];
+                        if (floorTypes.indexOf(oneUp) > -1) {
+                            // continue
+                        }
+                        else if (wallTypes.indexOf(oneUp) > -1) {
+                            if (twoUp !== 'WALL_TOP') {
+                                return false;
+                            }
                         }
                     }
                 }
             }
-        }
-        return true;
+            return true;
+        };
+        this.tileSet = tileSet;
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (DungeonGenerator);
@@ -3389,10 +3384,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _DungeonGenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DungeonGenerator */ "./src/main/maps/generation/DungeonGenerator.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils/random */ "./src/main/utils/random.ts");
-/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
-
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
 
 
 
@@ -3406,6 +3399,308 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
      */
     constructor(tileSet, minRoomDimension, maxRoomDimension) {
         super(tileSet);
+        this._generateTiles = (width, height, sections, connections, internalConnections) => {
+            const tiles = [];
+            for (let y = 0; y < height; y++) {
+                const row = [];
+                for (let x = 0; x < width; x++) {
+                    row.push('NONE');
+                }
+                tiles.push(row);
+            }
+            // add floor tiles for rooms
+            for (const section of sections) {
+                if (!!section.roomRect) {
+                    for (let y = section.roomRect.top; y < section.roomRect.top + section.roomRect.height; y++) {
+                        for (let x = section.roomRect.left; x < section.roomRect.left + section.roomRect.width; x++) {
+                            tiles[y][x] = 'FLOOR';
+                        }
+                    }
+                }
+            }
+            // add floor tiles for connections
+            for (const connection of connections) {
+                const dx = Math.sign(connection.endCoordinates.x - connection.startCoordinates.x);
+                const dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
+                let { x, y } = connection.startCoordinates;
+                while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)({ x, y }, connection.endCoordinates)) {
+                    tiles[y][x] = 'FLOOR_HALL';
+                    x += dx;
+                    y += dy;
+                }
+                tiles[y][x] = 'FLOOR_HALL';
+            }
+            this._addTilesForInternalConnections(tiles, internalConnections, connections);
+            return tiles;
+        };
+        this._addWalls = (tiles) => {
+            const height = tiles.length;
+            const width = tiles[0].length;
+            for (let y = 0; y < height - 2; y++) {
+                for (let x = 0; x < width; x++) {
+                    if (tiles[y][x] === 'NONE'
+                        && tiles[y + 1][x] === 'NONE'
+                        && (tiles[y + 2][x] === 'FLOOR' || tiles[y + 2][x] === 'FLOOR_HALL')) {
+                        tiles[y][x] = 'WALL_TOP';
+                        tiles[y + 1][x] = (tiles[y + 2][x] === 'FLOOR') ? 'WALL' : 'WALL_HALL';
+                    }
+                }
+            }
+        };
+        this._canConnect = (first, second) => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.areAdjacent)(first.rect, second.rect, 5);
+        this._connectionMatches = (connection, first, second) => {
+            // ref. equality should be fine
+            if (connection.start === first && connection.end === second) {
+                return true;
+            }
+            else if (connection.start === second && connection.end === first) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        };
+        this._buildConnection = (first, second) => {
+            let connectionPoint; // on the starting edge of `second`
+            let firstCoordinates;
+            let secondCoordinates;
+            // right-left
+            if (first.rect.left + first.rect.width === second.rect.left) {
+                const top = Math.max(first.rect.top, second.rect.top);
+                const bottom = Math.min(first.rect.top + first.rect.height, second.rect.top + second.rect.height); // exclusive
+                connectionPoint = {
+                    x: second.rect.left,
+                    y: (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(top + 2, bottom - 2) // should be in range since we checked _canConnect already
+                };
+                firstCoordinates = { x: connectionPoint.x - 1, y: connectionPoint.y };
+                secondCoordinates = { x: connectionPoint.x + 1, y: connectionPoint.y };
+            }
+            // bottom-top
+            else if (first.rect.top + first.rect.height === second.rect.top) {
+                const left = Math.max(first.rect.left, second.rect.left);
+                const right = Math.min(first.rect.left + first.rect.width, second.rect.left + second.rect.width); // exclusive
+                connectionPoint = {
+                    x: (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(left + 2, right - 2),
+                    y: second.rect.top
+                };
+                firstCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
+                secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y + 1 };
+            }
+            // left-right
+            else if (first.rect.left === second.rect.left + second.rect.width) {
+                const top = Math.max(first.rect.top, second.rect.top);
+                const bottom = Math.min(first.rect.top + first.rect.height, second.rect.top + second.rect.height); // exclusive
+                connectionPoint = {
+                    x: first.rect.left,
+                    y: (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(top + 2, bottom - 2) // should be in range since we checked _canConnect already
+                };
+                firstCoordinates = { x: connectionPoint.x + 1, y: connectionPoint.y };
+                secondCoordinates = { x: connectionPoint.x - 1, y: connectionPoint.y };
+            }
+            // top-bottom
+            else if (first.rect.top === second.rect.top + second.rect.height) {
+                const left = Math.max(first.rect.left, second.rect.left);
+                const right = Math.min(first.rect.left + first.rect.width, second.rect.left + second.rect.width); // exclusive
+                connectionPoint = {
+                    x: (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(left + 2, right - 2),
+                    y: first.rect.top
+                };
+                firstCoordinates = { x: connectionPoint.x, y: connectionPoint.y + 1 };
+                secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
+            }
+            else {
+                throw 'Failed to build connection';
+            }
+            const direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
+            const middleCoordinates = {
+                x: (firstCoordinates.x + secondCoordinates.x) / 2,
+                y: (firstCoordinates.y + secondCoordinates.y) / 2
+            };
+            return {
+                start: first,
+                end: second,
+                startCoordinates: firstCoordinates,
+                endCoordinates: secondCoordinates,
+                middleCoordinates,
+                direction
+            };
+        };
+        this._connectionToString = (connection) => `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
+        this._addTilesForInternalConnections = (tiles, internalConnections, connections) => {
+            for (const internalConnection of internalConnections) {
+                const neighbors = [...internalConnection.neighbors];
+                (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.shuffle)(neighbors);
+                for (let i = 0; i < neighbors.length - 1; i++) {
+                    const firstNeighbor = internalConnection.neighbors[i];
+                    const secondNeighbor = internalConnection.neighbors[i + 1];
+                    const firstConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, firstNeighbor))[0];
+                    const secondConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, secondNeighbor))[0];
+                    if (!firstConnection || !secondConnection) {
+                        console.error('fux3');
+                        console.log(connections.map(this._connectionToString).join(', '));
+                        console.log(neighbors.join(' '));
+                        console.log(firstNeighbor.rect);
+                        console.log(secondNeighbor.rect);
+                        return;
+                    }
+                    if (firstConnection.direction !== secondConnection.direction) {
+                        // join perpendicularly
+                        this._joinPerpendicularly(tiles, firstConnection, secondConnection);
+                    }
+                    else {
+                        // join parallel connections
+                        // TODO: This will also try to join U-shaped connections, and doesn't do it correctly!
+                        // For now, we're just going to run a validation step and regenerate if it fails.
+                        this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
+                    }
+                }
+            }
+        };
+        this._joinPerpendicularly = (tiles, firstConnection, secondConnection) => {
+            const start = firstConnection.middleCoordinates;
+            const end = secondConnection.middleCoordinates;
+            const middle = {
+                x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
+                y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
+            };
+            let dx = Math.sign(middle.x - start.x);
+            let dy = Math.sign(middle.y - start.y);
+            let { x, y } = start;
+            while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)({ x, y }, middle)) {
+                tiles[y][x] = 'FLOOR_HALL';
+                x += dx;
+                y += dy;
+            }
+            dx = Math.sign(end.x - middle.x);
+            dy = Math.sign(end.y - middle.y);
+            while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_2__.coordinatesEquals)({ x, y }, end)) {
+                tiles[y][x] = 'FLOOR_HALL';
+                x += dx;
+                y += dy;
+            }
+        };
+        this._joinParallelConnections = (tiles, internalConnection, firstConnection, secondConnection) => {
+            const start = firstConnection.middleCoordinates;
+            const end = secondConnection.middleCoordinates;
+            const middle = {
+                x: Math.round((start.x + end.x) / 2),
+                y: Math.round((start.y + end.y) / 2)
+            };
+            const xDistance = end.x - start.x;
+            const yDistance = end.y - start.y;
+            const dx = Math.sign(xDistance);
+            const dy = Math.sign(yDistance);
+            const majorDirection = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
+            let { x, y } = start;
+            switch (majorDirection) {
+                case 'HORIZONTAL':
+                    while (x !== middle.x) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        x += dx;
+                    }
+                    while (y !== end.y) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        y += dy;
+                    }
+                    while (x !== end.x) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        x += dx;
+                    }
+                    break;
+                case 'VERTICAL':
+                    while (y !== middle.y) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        y += dy;
+                    }
+                    while (x !== end.x) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        x += dx;
+                    }
+                    while (y !== end.y) {
+                        tiles[y][x] = 'FLOOR_HALL';
+                        y += dy;
+                    }
+                    break;
+            }
+        };
+        /**
+         * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
+         * internal connection that connects to that endpoint.
+         *
+         * @return a copy of `externalConnections` with the desired elements removed
+         */
+        this._stripOrphanedConnections = (externalConnections, internalConnections) => {
+            let removedAnyConnections = false;
+            do {
+                const orphanedConnections = externalConnections.filter(connection => {
+                    return this._isOrphanedConnection(connection, internalConnections);
+                });
+                this._subtract(externalConnections, orphanedConnections);
+                for (const internalConnection of internalConnections) {
+                    this._pruneInternalConnection(internalConnection, orphanedConnections);
+                }
+                const orphanedInternalConnections = internalConnections.filter(internalConnection => {
+                    return this._isOrphanedInternalConnection(internalConnection, internalConnections);
+                });
+                this._subtract(internalConnections, orphanedInternalConnections);
+                removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
+                console.log(`stripping: ${orphanedConnections.length}, ${orphanedInternalConnections.length}`);
+            } while (removedAnyConnections);
+        };
+        this._isOrphanedConnection = (connection, internalConnections) => {
+            const { start, end } = connection;
+            let startHasInternalConnection = false;
+            let endHasInternalConnection = false;
+            for (let internalConnection of internalConnections) {
+                if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+                    startHasInternalConnection = true;
+                }
+                if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+                    endHasInternalConnection = true;
+                }
+            }
+            return !((!!start.roomRect || startHasInternalConnection)
+                && (!!end.roomRect || endHasInternalConnection));
+        };
+        this._pruneInternalConnection = (internalConnection, orphanedConnections) => {
+            for (const connection of orphanedConnections) {
+                const { section, neighbors } = internalConnection;
+                const { start, end } = connection;
+                const updatedNeighbors = neighbors.filter(neighbor => {
+                    if (section === start && neighbor === end) {
+                        return false;
+                    }
+                    if (section === end && neighbor === start) {
+                        return false;
+                    }
+                    return true;
+                });
+                this._replace(neighbors, updatedNeighbors);
+            }
+        };
+        /**
+         * An internal connection is orphaned if at most one of its neighbors has either a room or another
+         * internal connection
+         */
+        this._isOrphanedInternalConnection = (internalConnection, internalConnections) => {
+            let connectedNeighbors = 0;
+            const { section, neighbors } = internalConnection;
+            for (const neighbor of neighbors) {
+                const neighborHasInternalConnection = internalConnections.find(other => other.section === neighbor && other.neighbors.indexOf(section) > -1);
+                if (!!neighbor.roomRect || neighborHasInternalConnection) {
+                    connectedNeighbors++;
+                }
+            }
+            return connectedNeighbors <= 1;
+        };
+        this._replace = (array, contents) => {
+            array.splice(0, array.length);
+            array.push(...contents);
+        };
+        this._subtract = (array, toRemove) => {
+            const updated = array.filter(element => toRemove.indexOf(element) === -1);
+            this._replace(array, updated);
+        };
         this._minRoomDimension = minRoomDimension;
         this._maxRoomDimension = maxRoomDimension;
     }
@@ -3521,7 +3816,7 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
         const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
         const minSplitPoint = start + minSectionDimension;
         const maxSplitPoint = start + dimension - minSectionDimension;
-        return (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(minSplitPoint, maxSplitPoint);
+        return (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(minSplitPoint, maxSplitPoint);
     }
     _removeRooms(sections) {
         const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
@@ -3529,21 +3824,21 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
         if (sections.length < minRooms) {
             throw 'Not enough sections';
         }
-        const numRooms = (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(minRooms, maxRooms);
+        const numRooms = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randInt)(minRooms, maxRooms);
         const shuffledSections = [...sections];
-        (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.shuffle)(shuffledSections);
+        (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.shuffle)(shuffledSections);
         for (let i = numRooms; i < shuffledSections.length; i++) {
             shuffledSections[i].roomRect = null;
         }
     }
     _generateMinimalSpanningTree(sections) {
-        const connectedSection = (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randChoice)(sections);
+        const connectedSection = (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.randChoice)(sections);
         const connectedSections = [connectedSection];
         const unconnectedSections = [...sections].filter(section => section !== connectedSection);
-        (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.shuffle)(unconnectedSections);
+        (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.shuffle)(unconnectedSections);
         const connections = [];
         while (unconnectedSections.length > 0) {
-            (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.shuffle)(connectedSections);
+            (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.shuffle)(connectedSections);
             let connectedAny = false;
             for (let i = 0; i < connectedSections.length; i++) {
                 const connectedSection = connectedSections[i];
@@ -3585,18 +3880,18 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
     }
     _addInternalConnections(sections, spanningConnections, optionalConnections) {
         const internalConnections = [];
-        sections.forEach(section => {
+        for (const section of sections) {
             if (!section.roomRect) {
                 const connectedSections = [];
                 const neighbors = sections.filter(s => s !== section).filter(s => this._canConnect(section, s));
-                neighbors.forEach(neighbor => {
+                for (const neighbor of neighbors) {
                     if (spanningConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
                         connectedSections.push(neighbor);
                     }
-                });
+                }
                 if (connectedSections.length === 1) {
-                    (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.shuffle)(neighbors);
-                    for (let neighbor of neighbors) {
+                    (0,_utils_random__WEBPACK_IMPORTED_MODULE_1__.shuffle)(neighbors);
+                    for (const neighbor of neighbors) {
                         if (optionalConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
                             connectedSections.push(neighbor);
                             break;
@@ -3607,314 +3902,8 @@ class RoomCorridorDungeonGenerator2 extends _DungeonGenerator__WEBPACK_IMPORTED_
                     internalConnections.push({ section, neighbors: connectedSections });
                 }
             }
-        });
+        }
         return internalConnections;
-    }
-    _generateTiles(width, height, sections, connections, internalConnections) {
-        const tiles = [];
-        for (let y = 0; y < height; y++) {
-            const row = [];
-            for (let x = 0; x < width; x++) {
-                row.push(_types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE);
-            }
-            tiles.push(row);
-        }
-        // add floor tiles for rooms
-        sections.forEach(section => {
-            if (!!section.roomRect) {
-                for (let y = section.roomRect.top; y < section.roomRect.top + section.roomRect.height; y++) {
-                    for (let x = section.roomRect.left; x < section.roomRect.left + section.roomRect.width; x++) {
-                        tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR;
-                    }
-                }
-            }
-        });
-        // add floor tiles for connections
-        connections.forEach(connection => {
-            const dx = Math.sign(connection.endCoordinates.x - connection.startCoordinates.x);
-            const dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
-            let { x, y } = connection.startCoordinates;
-            while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)({ x, y }, connection.endCoordinates)) {
-                tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                x += dx;
-                y += dy;
-            }
-            tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-        });
-        this._addTilesForInternalConnections(tiles, internalConnections, connections);
-        return tiles;
-    }
-    _addWalls(tiles) {
-        const height = tiles.length;
-        const width = tiles[0].length;
-        for (let y = 0; y < height - 2; y++) {
-            for (let x = 0; x < width; x++) {
-                if (tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE
-                    && tiles[y + 1][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.NONE
-                    && (tiles[y + 2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR || tiles[y + 2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL)) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL_TOP;
-                    tiles[y + 1][x] = (tiles[y + 2][x] === _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR) ? _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL : _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.WALL_HALL;
-                }
-            }
-        }
-    }
-    _canConnect(first, second) {
-        return (0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.areAdjacent)(first.rect, second.rect, 5);
-    }
-    _connectionMatches(connection, first, second) {
-        // ref. equality should be fine
-        if (connection.start === first && connection.end === second) {
-            return true;
-        }
-        else if (connection.start === second && connection.end === first) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    _buildConnection(first, second) {
-        let connectionPoint; // on the starting edge of `second`
-        let firstCoordinates;
-        let secondCoordinates;
-        // right-left
-        if (first.rect.left + first.rect.width === second.rect.left) {
-            const top = Math.max(first.rect.top, second.rect.top);
-            const bottom = Math.min(first.rect.top + first.rect.height, second.rect.top + second.rect.height); // exclusive
-            connectionPoint = {
-                x: second.rect.left,
-                y: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(top + 2, bottom - 2) // should be in range since we checked _canConnect already
-            };
-            firstCoordinates = { x: connectionPoint.x - 1, y: connectionPoint.y };
-            secondCoordinates = { x: connectionPoint.x + 1, y: connectionPoint.y };
-        }
-        // bottom-top
-        else if (first.rect.top + first.rect.height === second.rect.top) {
-            const left = Math.max(first.rect.left, second.rect.left);
-            const right = Math.min(first.rect.left + first.rect.width, second.rect.left + second.rect.width); // exclusive
-            connectionPoint = {
-                x: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(left + 2, right - 2),
-                y: second.rect.top
-            };
-            firstCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
-            secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y + 1 };
-        }
-        // left-right
-        else if (first.rect.left === second.rect.left + second.rect.width) {
-            const top = Math.max(first.rect.top, second.rect.top);
-            const bottom = Math.min(first.rect.top + first.rect.height, second.rect.top + second.rect.height); // exclusive
-            connectionPoint = {
-                x: first.rect.left,
-                y: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(top + 2, bottom - 2) // should be in range since we checked _canConnect already
-            };
-            firstCoordinates = { x: connectionPoint.x + 1, y: connectionPoint.y };
-            secondCoordinates = { x: connectionPoint.x - 1, y: connectionPoint.y };
-        }
-        // top-bottom
-        else if (first.rect.top === second.rect.top + second.rect.height) {
-            const left = Math.max(first.rect.left, second.rect.left);
-            const right = Math.min(first.rect.left + first.rect.width, second.rect.left + second.rect.width); // exclusive
-            connectionPoint = {
-                x: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randInt)(left + 2, right - 2),
-                y: first.rect.top
-            };
-            firstCoordinates = { x: connectionPoint.x, y: connectionPoint.y + 1 };
-            secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1 };
-        }
-        else {
-            throw 'Failed to build connection';
-        }
-        const direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
-        const middleCoordinates = {
-            x: (firstCoordinates.x + secondCoordinates.x) / 2,
-            y: (firstCoordinates.y + secondCoordinates.y) / 2
-        };
-        return {
-            start: first,
-            end: second,
-            startCoordinates: firstCoordinates,
-            endCoordinates: secondCoordinates,
-            middleCoordinates,
-            direction
-        };
-    }
-    _connectionToString(connection) {
-        return `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
-    }
-    _addTilesForInternalConnections(tiles, internalConnections, connections) {
-        internalConnections.forEach(internalConnection => {
-            const neighbors = [...internalConnection.neighbors];
-            (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.shuffle)(neighbors);
-            for (let i = 0; i < neighbors.length - 1; i++) {
-                const firstNeighbor = internalConnection.neighbors[i];
-                const secondNeighbor = internalConnection.neighbors[i + 1];
-                const firstConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, firstNeighbor))[0];
-                const secondConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, secondNeighbor))[0];
-                if (!firstConnection || !secondConnection) {
-                    console.error('fux3');
-                    console.log(connections.map(this._connectionToString).join(', '));
-                    console.log(neighbors.join(' '));
-                    console.log(firstNeighbor.rect);
-                    console.log(secondNeighbor.rect);
-                    return;
-                }
-                if (firstConnection.direction !== secondConnection.direction) {
-                    // join perpendicularly
-                    this._joinPerpendicularly(tiles, firstConnection, secondConnection);
-                }
-                else {
-                    // join parallel connections
-                    // TODO: This will also try to join U-shaped connections, and doesn't do it correctly!
-                    // For now, we're just going to run a validation step and regenerate if it fails.
-                    this._joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection);
-                }
-            }
-        });
-    }
-    _joinPerpendicularly(tiles, firstConnection, secondConnection) {
-        const start = firstConnection.middleCoordinates;
-        const end = secondConnection.middleCoordinates;
-        const middle = {
-            x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
-            y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
-        };
-        let dx = Math.sign(middle.x - start.x);
-        let dy = Math.sign(middle.y - start.y);
-        let { x, y } = start;
-        while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)({ x, y }, middle)) {
-            tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-            x += dx;
-            y += dy;
-        }
-        dx = Math.sign(end.x - middle.x);
-        dy = Math.sign(end.y - middle.y);
-        while (!(0,_MapUtils__WEBPACK_IMPORTED_MODULE_3__.coordinatesEquals)({ x, y }, end)) {
-            tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-            x += dx;
-            y += dy;
-        }
-    }
-    _joinParallelConnections(tiles, internalConnection, firstConnection, secondConnection) {
-        const start = firstConnection.middleCoordinates;
-        const end = secondConnection.middleCoordinates;
-        const middle = {
-            x: Math.round((start.x + end.x) / 2),
-            y: Math.round((start.y + end.y) / 2)
-        };
-        const xDistance = end.x - start.x;
-        const yDistance = end.y - start.y;
-        const dx = Math.sign(xDistance);
-        const dy = Math.sign(yDistance);
-        const majorDirection = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
-        let { x, y } = start;
-        switch (majorDirection) {
-            case 'HORIZONTAL':
-                while (x !== middle.x) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    x += dx;
-                }
-                while (y !== end.y) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    y += dy;
-                }
-                while (x !== end.x) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    x += dx;
-                }
-                break;
-            case 'VERTICAL':
-                while (y !== middle.y) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    y += dy;
-                }
-                while (x !== end.x) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    x += dx;
-                }
-                while (y !== end.y) {
-                    tiles[y][x] = _types_types__WEBPACK_IMPORTED_MODULE_1__.TileType.FLOOR_HALL;
-                    y += dy;
-                }
-                break;
-        }
-    }
-    /**
-     * A connection is orphaned if, for either of its endpoints, there is neither a room nor a connected
-     * internal connection that connects to that endpoint.
-     *
-     * @return a copy of `externalConnections` with the desired elements removed
-     */
-    _stripOrphanedConnections(externalConnections, internalConnections) {
-        let removedAnyConnections = false;
-        do {
-            const orphanedConnections = externalConnections.filter(connection => {
-                return this._isOrphanedConnection(connection, internalConnections);
-            });
-            this._subtract(externalConnections, orphanedConnections);
-            internalConnections.forEach(internalConnection => {
-                this._pruneInternalConnection(internalConnection, orphanedConnections);
-            });
-            const orphanedInternalConnections = internalConnections.filter(internalConnection => {
-                return this._isOrphanedInternalConnection(internalConnection, internalConnections);
-            });
-            this._subtract(internalConnections, orphanedInternalConnections);
-            removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
-            console.log(`stripping: ${orphanedConnections.length}, ${orphanedInternalConnections.length}`);
-        } while (removedAnyConnections);
-    }
-    _isOrphanedConnection(connection, internalConnections) {
-        const { start, end } = connection;
-        let startHasInternalConnection = false;
-        let endHasInternalConnection = false;
-        for (let internalConnection of internalConnections) {
-            if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
-                startHasInternalConnection = true;
-            }
-            if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
-                endHasInternalConnection = true;
-            }
-        }
-        return !((!!start.roomRect || startHasInternalConnection)
-            && (!!end.roomRect || endHasInternalConnection));
-    }
-    _pruneInternalConnection(internalConnection, orphanedConnections) {
-        for (let connection of orphanedConnections) {
-            const { section, neighbors } = internalConnection;
-            const { start, end } = connection;
-            const updatedNeighbors = neighbors.filter(neighbor => {
-                if (section === start && neighbor === end) {
-                    return false;
-                }
-                if (section === end && neighbor === start) {
-                    return false;
-                }
-                return true;
-            });
-            this._replace(neighbors, updatedNeighbors);
-        }
-    }
-    /**
-     * An internal connection is orphaned if at most one of its neighbors has either a room or another
-     * internal connection
-     */
-    _isOrphanedInternalConnection(internalConnection, internalConnections) {
-        let connectedNeighbors = 0;
-        const { section, neighbors } = internalConnection;
-        neighbors.forEach(neighbor => {
-            const neighborHasInternalConnection = internalConnections.find(other => other.section === neighbor && other.neighbors.indexOf(section) > -1);
-            if (!!neighbor.roomRect || neighborHasInternalConnection) {
-                connectedNeighbors++;
-            }
-        });
-        return connectedNeighbors <= 1;
-    }
-    _replace(array, contents) {
-        array.splice(0, array.length);
-        array.push(...contents);
-    }
-    _subtract(array, toRemove) {
-        const updated = array.filter(element => toRemove.indexOf(element) === -1);
-        this._replace(array, updated);
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RoomCorridorDungeonGenerator2);
@@ -3933,39 +3922,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
-
+/* harmony import */ var _MapUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../MapUtils */ "./src/main/maps/MapUtils.ts");
 
 class TileEligibilityChecker {
-    isBlocked({ x, y }, section, exits) {
-        // can't draw a path through an existing room or a wall
-        const blockedTileTypes = [_types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR, /*TileType.FLOOR_HALL,*/ _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL, _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_HALL, _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.WALL_TOP];
-        if (exits.some(exit => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_1__.coordinatesEquals)({ x, y }, exit))) {
-            return false;
-        }
-        else if (section.tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.NONE || section.tiles[y][x] === _types_types__WEBPACK_IMPORTED_MODULE_0__.TileType.FLOOR_HALL) {
-            // skip the check if we're within 1 tile vertically of an exit
-            const isNextToExit = [-2, -1, 1, 2].some(dy => (exits.some(exit => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_1__.coordinatesEquals)(exit, { x, y: y + dy }))));
-            if (isNextToExit) {
+    constructor() {
+        this.isBlocked = ({ x, y }, section, exits) => {
+            // can't draw a path through an existing room or a wall
+            const blockedTileTypes = ['FLOOR', /*'FLOOR_HALL',*/ 'WALL', 'WALL_HALL', 'WALL_TOP'];
+            if (exits.some(exit => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_0__.coordinatesEquals)({ x, y }, exit))) {
                 return false;
             }
-            // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
-            for (let dy of [-2, -1, 1, 2]) {
-                if ((y + dy >= 0) && (y + dy < section.height)) {
-                    const tile = section.tiles[y + dy][x];
-                    if (blockedTileTypes.indexOf(tile) > -1) {
-                        return true;
+            else if (section.tiles[y][x] === 'NONE' || section.tiles[y][x] === 'FLOOR_HALL') {
+                // skip the check if we're within 1 tile vertically of an exit
+                const isNextToExit = [-2, -1, 1, 2].some(dy => (exits.some(exit => (0,_MapUtils__WEBPACK_IMPORTED_MODULE_0__.coordinatesEquals)(exit, { x, y: y + dy }))));
+                if (isNextToExit) {
+                    return false;
+                }
+                // can't draw tiles within 2 tiles vertically of a wall tile, or a room floor tile
+                for (let dy of [-2, -1, 1, 2]) {
+                    if ((y + dy >= 0) && (y + dy < section.height)) {
+                        const tile = section.tiles[y + dy][x];
+                        if (blockedTileTypes.indexOf(tile) > -1) {
+                            return true;
+                        }
                     }
                 }
+                return false;
             }
-            return false;
-        }
-        else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+            else if (blockedTileTypes.indexOf(section.tiles[y][x]) > -1) {
+                return true;
+            }
+            console.error('how\'d we get here?');
             return true;
-        }
-        console.error('how\'d we get here?');
-        return true;
+        };
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TileEligibilityChecker);
@@ -4144,15 +4133,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SoundPlayer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SoundPlayer */ "./src/main/sounds/SoundPlayer.ts");
 
 let PLAYER = null;
-function _getSoundPlayer() {
-    return new _SoundPlayer__WEBPACK_IMPORTED_MODULE_0__.default(4, 0.20);
-}
-function playSound(samples) {
+const _getSoundPlayer = () => new _SoundPlayer__WEBPACK_IMPORTED_MODULE_0__.default(4, 0.20);
+const playSound = (samples) => {
     if (!PLAYER) {
         PLAYER = _getSoundPlayer();
     }
     PLAYER.playSound(samples, false);
-}
+};
 
 
 
@@ -4368,10 +4355,10 @@ var PaletteSwaps;
 
 /***/ }),
 
-/***/ "./src/main/types/TileSet.ts":
-/*!***********************************!*\
-  !*** ./src/main/types/TileSet.ts ***!
-  \***********************************/
+/***/ "./src/main/types/TileFactory.ts":
+/*!***************************************!*\
+  !*** ./src/main/types/TileFactory.ts ***!
+  \***************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -4379,47 +4366,42 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _data_tilesets_cave_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../data/tilesets/cave.json */ "./data/tilesets/cave.json");
-/* harmony import */ var _data_tilesets_dungeon_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../data/tilesets/dungeon.json */ "./data/tilesets/dungeon.json");
-/* harmony import */ var _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../graphics/sprites/StaticSprite */ "./src/main/graphics/sprites/StaticSprite.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./types */ "./src/main/types/types.ts");
-
-
-
-
-const _getTileSprite = (tilesetName, filename) => {
-    if (!filename) {
-        return null;
-    }
-    const spriteConfig = {
-        name: filename,
-        filename: `tiles/${tilesetName}/${filename}`,
-        offsets: { dx: 0, dy: 0 }
-    };
-    return new _graphics_sprites_StaticSprite__WEBPACK_IMPORTED_MODULE_2__.default(spriteConfig);
+/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
+/* harmony import */ var _maps_MapUtils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../maps/MapUtils */ "./src/main/maps/MapUtils.ts");
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-const _buildTileSet = (json) => {
+
+
+
+const createTileSet = (tileSetName) => __awaiter(void 0, void 0, void 0, function* () {
+    const json = yield __webpack_require__("./data/tilesets lazy recursive ^\\.\\/.*\\.json$")(`./${tileSetName}.json`);
     const tileSet = {};
-    Object.entries(json.tiles).forEach(([key, filenames]) => {
+    for (const [tileType, filenames] of Object.entries(json.tiles)) {
         const tiles = [];
-        filenames.forEach(filename => {
-            const sprite = _getTileSprite(json.name, filename);
-            if (sprite) {
+        for (const filename of filenames) {
+            if (filename) {
+                const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createStaticSprite(filename);
                 tiles.push(sprite);
             }
-        });
-        // Wow this is ugly.
-        const tileType = _types__WEBPACK_IMPORTED_MODULE_3__.TileType[key];
+        }
         tileSet[tileType] = tiles;
-    });
+    }
     return tileSet;
-};
-var TileSet;
-(function (TileSet) {
-    TileSet.DUNGEON = _buildTileSet(_data_tilesets_dungeon_json__WEBPACK_IMPORTED_MODULE_1__);
-    TileSet.CAVE = _buildTileSet(_data_tilesets_cave_json__WEBPACK_IMPORTED_MODULE_0__);
-})(TileSet || (TileSet = {}));
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TileSet);
+});
+const createTile = (type, tileSet) => ({
+    type,
+    sprite: (0,_utils_random__WEBPACK_IMPORTED_MODULE_2__.randChoice)(tileSet[type]),
+    isBlocking: (0,_maps_MapUtils__WEBPACK_IMPORTED_MODULE_1__.isBlocking)(type)
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ createTileSet, createTile });
 
 
 /***/ }),
@@ -4437,8 +4419,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "EquipmentSlot": () => (/* binding */ EquipmentSlot),
 /* harmony export */   "GameScreen": () => (/* binding */ GameScreen),
 /* harmony export */   "ItemCategory": () => (/* binding */ ItemCategory),
-/* harmony export */   "MapLayout": () => (/* binding */ MapLayout),
-/* harmony export */   "TileType": () => (/* binding */ TileType)
+/* harmony export */   "MapLayout": () => (/* binding */ MapLayout)
 /* harmony export */ });
 var Activity;
 (function (Activity) {
@@ -4484,16 +4465,6 @@ var MapLayout;
     MapLayout["ROOMS_AND_CORRIDORS"] = "ROOMS_AND_CORRIDORS";
     MapLayout["BLOB"] = "BLOB";
 })(MapLayout || (MapLayout = {}));
-var TileType;
-(function (TileType) {
-    TileType[TileType["FLOOR"] = 0] = "FLOOR";
-    TileType[TileType["FLOOR_HALL"] = 1] = "FLOOR_HALL";
-    TileType[TileType["WALL_TOP"] = 2] = "WALL_TOP";
-    TileType[TileType["WALL_HALL"] = 3] = "WALL_HALL";
-    TileType[TileType["WALL"] = 4] = "WALL";
-    TileType[TileType["NONE"] = 5] = "NONE";
-    TileType[TileType["STAIRS_DOWN"] = 6] = "STAIRS_DOWN";
-})(TileType || (TileType = {}));
 
 
 
@@ -4516,11 +4487,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sounds_Music__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../sounds/Music */ "./src/main/sounds/Music.ts");
 /* harmony import */ var _UnitAbility__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./UnitAbility */ "./src/main/units/UnitAbility.ts");
 /* harmony import */ var _types_Direction__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../types/Direction */ "./src/main/types/Direction.ts");
-/* harmony import */ var _items_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../items/equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
-/* harmony import */ var _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../items/equipment/Equipment */ "./src/main/items/equipment/Equipment.ts");
-/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
-/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
-/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
+/* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
+/* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -4538,19 +4506,108 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 
 
-
-
-
 // Regenerate 1% of life every 20 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.0005;
 class Unit {
-    constructor(unitClass, name, controller, level, { x, y }) {
-        var _a;
+    constructor({ name, unitClass, sprite, level, coordinates: { x, y }, controller, equipment }) {
         this.char = '@';
+        this._upkeep = () => {
+            // life regeneration
+            const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
+            this.lifeRemainder += lifePerTurn;
+            const deltaLife = Math.floor(this.lifeRemainder);
+            this.lifeRemainder -= deltaLife;
+            this.life = Math.min(this.life + deltaLife, this.maxLife);
+            // I hate javascript, wtf is this callback signature
+            this.remainingCooldowns.forEach((cooldown, ability, map) => {
+                map.set(ability, Math.max(cooldown - 1, 0));
+            });
+        };
+        this._endOfTurn = () => {
+            // decrement stun duration
+            this.stunDuration = Math.max(this.stunDuration - 1, 0);
+        };
+        this.update = () => __awaiter(this, void 0, void 0, function* () {
+            yield this._upkeep();
+            if (this.stunDuration === 0) {
+                yield this.controller.issueOrder(this);
+            }
+            yield this.sprite.getImage();
+            yield this._endOfTurn();
+        });
+        this.getDamage = () => {
+            let damage = this.damage;
+            this.equipment.getEntries()
+                .filter(([slot, item]) => (slot !== _types_types__WEBPACK_IMPORTED_MODULE_6__.EquipmentSlot.RANGED_WEAPON))
+                .forEach(([slot, item]) => {
+                damage += (item.damage || 0);
+            });
+            return damage;
+        };
+        this.getRangedDamage = () => {
+            let damage = this.damage;
+            this.equipment.getEntries()
+                .filter(([slot, item]) => (slot !== _types_types__WEBPACK_IMPORTED_MODULE_6__.EquipmentSlot.MELEE_WEAPON))
+                .forEach(([slot, item]) => {
+                if (slot === _types_types__WEBPACK_IMPORTED_MODULE_6__.EquipmentSlot.RANGED_WEAPON) {
+                    damage += (item.damage || 0);
+                }
+                else {
+                    damage += (item.damage || 0) / 2;
+                }
+            });
+            return Math.round(damage);
+        };
+        this._levelUp = (withSound) => {
+            this.level++;
+            const lifePerLevel = this.unitClass.lifePerLevel;
+            this.maxLife += lifePerLevel;
+            this.life += lifePerLevel;
+            this.damage += this.unitClass.damagePerLevel;
+            if (withSound) {
+                (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.LEVEL_UP);
+            }
+        };
+        this.gainExperience = (experience) => {
+            this.experience += experience;
+            const experienceToNextLevel = this.experienceToNextLevel();
+            while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
+                this.experience -= experienceToNextLevel;
+                this._levelUp(true);
+            }
+        };
+        this.experienceToNextLevel = () => {
+            const { unitClass } = this;
+            if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
+                return unitClass.experienceToNextLevel[this.level];
+            }
+            return null;
+        };
+        this.takeDamage = (damage, sourceUnit) => {
+            const { playerUnit } = jwb.state;
+            const map = jwb.state.getMap();
+            this.life = Math.max(this.life - damage, 0);
+            if (this.life === 0) {
+                map.removeUnit(this);
+                if (this === playerUnit) {
+                    jwb.state.screen = _types_types__WEBPACK_IMPORTED_MODULE_6__.GameScreen.GAME_OVER;
+                    _sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.stop();
+                    _sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.GAME_OVER);
+                }
+                else {
+                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_7__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.ENEMY_DIES);
+                }
+                if (sourceUnit) {
+                    sourceUnit.gainExperience(1);
+                }
+            }
+        };
+        this.getCooldown = (ability) => (this.remainingCooldowns.get(ability) || 0);
+        this.useAbility = (ability) => this.remainingCooldowns.set(ability, ability.cooldown);
         this.unitClass = unitClass;
-        this.sprite = _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_8__.default.createUnitSprite(unitClass.sprite, this, unitClass.paletteSwaps);
+        this.sprite = sprite;
+        sprite.target = this;
         this.inventory = new _items_InventoryMap__WEBPACK_IMPORTED_MODULE_1__.default();
-        this.equipment = new _items_equipment_EquipmentMap__WEBPACK_IMPORTED_MODULE_2__.default();
         this.x = x;
         this.y = y;
         this.name = name;
@@ -4561,125 +4618,22 @@ class Unit {
         this.mana = unitClass.startingMana;
         this.maxMana = unitClass.startingMana;
         this.lifeRemainder = 0;
-        this._damage = unitClass.startingDamage;
+        this.damage = unitClass.startingDamage;
         this.controller = controller;
-        this.activity = _types_types__WEBPACK_IMPORTED_MODULE_9__.Activity.STANDING;
+        this.activity = _types_types__WEBPACK_IMPORTED_MODULE_6__.Activity.STANDING;
         this.direction = _types_Direction__WEBPACK_IMPORTED_MODULE_5__.default.S;
         this.remainingCooldowns = new Map();
         // TODO: this needs to be specific to the player unit
         this.abilities = [_UnitAbility__WEBPACK_IMPORTED_MODULE_4__.default.ATTACK, _UnitAbility__WEBPACK_IMPORTED_MODULE_4__.default.HEAVY_ATTACK, _UnitAbility__WEBPACK_IMPORTED_MODULE_4__.default.KNOCKBACK_ATTACK, _UnitAbility__WEBPACK_IMPORTED_MODULE_4__.default.STUN_ATTACK];
         this.stunDuration = 0;
-        (_a = unitClass.equipment) === null || _a === void 0 ? void 0 : _a.forEach(equipmentName => {
-            const equipment = new _items_equipment_Equipment__WEBPACK_IMPORTED_MODULE_7__.default(_items_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(equipmentName), null); // TODO deal with InventoryItem
-            this.equipment.add(equipment);
-            equipment.attach(this);
-        });
+        this.equipment = new _items_equipment_EquipmentMap__WEBPACK_IMPORTED_MODULE_2__.default();
+        for (const eq of equipment) {
+            this.equipment.add(eq);
+            eq.attach(this);
+        }
         while (this.level < level) {
             this._levelUp(false);
         }
-    }
-    _upkeep() {
-        // life regeneration
-        const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
-        this.lifeRemainder += lifePerTurn;
-        const deltaLife = Math.floor(this.lifeRemainder);
-        this.lifeRemainder -= deltaLife;
-        this.life = Math.min(this.life + deltaLife, this.maxLife);
-        // I hate javascript, wtf is this callback signature
-        this.remainingCooldowns.forEach((cooldown, ability, map) => {
-            map.set(ability, Math.max(cooldown - 1, 0));
-        });
-    }
-    _endOfTurn() {
-        // decrement stun duration
-        this.stunDuration = Math.max(this.stunDuration - 1, 0);
-    }
-    update() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this._upkeep();
-            if (this.stunDuration === 0) {
-                yield this.controller.issueOrder(this);
-            }
-            yield this.sprite.getImage();
-            yield this._endOfTurn();
-        });
-    }
-    getDamage() {
-        let damage = this._damage;
-        this.equipment.getEntries()
-            .filter(([slot, item]) => (slot !== _types_types__WEBPACK_IMPORTED_MODULE_9__.EquipmentSlot.RANGED_WEAPON))
-            .forEach(([slot, item]) => {
-            damage += (item.damage || 0);
-        });
-        return damage;
-    }
-    getRangedDamage() {
-        let damage = this._damage;
-        this.equipment.getEntries()
-            .filter(([slot, item]) => (slot !== _types_types__WEBPACK_IMPORTED_MODULE_9__.EquipmentSlot.MELEE_WEAPON))
-            .forEach(([slot, item]) => {
-            if (slot === _types_types__WEBPACK_IMPORTED_MODULE_9__.EquipmentSlot.RANGED_WEAPON) {
-                damage += (item.damage || 0);
-            }
-            else {
-                damage += (item.damage || 0) / 2;
-            }
-        });
-        return Math.round(damage);
-    }
-    _levelUp(withSound) {
-        this.level++;
-        const lifePerLevel = this.unitClass.lifePerLevel;
-        this.maxLife += lifePerLevel;
-        this.life += lifePerLevel;
-        this._damage += this.unitClass.damagePerLevel;
-        if (withSound) {
-            (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_10__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.LEVEL_UP);
-        }
-    }
-    gainExperience(experience) {
-        this.experience += experience;
-        const experienceToNextLevel = this.experienceToNextLevel();
-        while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
-            this.experience -= experienceToNextLevel;
-            this._levelUp(true);
-        }
-    }
-    experienceToNextLevel() {
-        const { unitClass } = this;
-        if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
-            return unitClass.experienceToNextLevel[this.level];
-        }
-        return null;
-    }
-    takeDamage(damage, sourceUnit) {
-        const { playerUnit } = jwb.state;
-        const map = jwb.state.getMap();
-        return new Promise(resolve => {
-            this.life = Math.max(this.life - damage, 0);
-            if (this.life === 0) {
-                map.removeUnit(this);
-                if (this === playerUnit) {
-                    jwb.state.screen = _types_types__WEBPACK_IMPORTED_MODULE_9__.GameScreen.GAME_OVER;
-                    _sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.stop();
-                    _sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.playFigure(_sounds_Music__WEBPACK_IMPORTED_MODULE_3__.default.GAME_OVER);
-                }
-                else {
-                    (0,_sounds_SoundFX__WEBPACK_IMPORTED_MODULE_10__.playSound)(_sounds_Sounds__WEBPACK_IMPORTED_MODULE_0__.default.ENEMY_DIES);
-                }
-                if (sourceUnit) {
-                    sourceUnit.gainExperience(1);
-                }
-            }
-            resolve();
-        });
-    }
-    ;
-    getCooldown(ability) {
-        return this.remainingCooldowns.get(ability) || 0;
-    }
-    useAbility(ability) {
-        this.remainingCooldowns.set(ability, ability.cooldown);
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Unit);
@@ -5095,21 +5049,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _UnitClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UnitClass */ "./src/main/units/UnitClass.ts");
-/* harmony import */ var _Unit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Unit */ "./src/main/units/Unit.ts");
-/* harmony import */ var _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controllers/AIUnitControllers */ "./src/main/units/controllers/AIUnitControllers.ts");
-/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+/* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
+/* harmony import */ var _UnitClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UnitClass */ "./src/main/units/UnitClass.ts");
+/* harmony import */ var _Unit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Unit */ "./src/main/units/Unit.ts");
+/* harmony import */ var _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controllers/AIUnitControllers */ "./src/main/units/controllers/AIUnitControllers.ts");
+/* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 
 
 
 
-function createRandomEnemy({ x, y }, level) {
-    const candidates = _UnitClass__WEBPACK_IMPORTED_MODULE_0__.default.getEnemyClasses()
+
+const createRandomEnemy = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
+    const candidates = _UnitClass__WEBPACK_IMPORTED_MODULE_1__.default.getEnemyClasses()
         .filter(unitClass => level >= unitClass.minLevel)
         .filter(unitClass => level <= unitClass.maxLevel);
-    const unitClass = (0,_utils_random__WEBPACK_IMPORTED_MODULE_3__.randChoice)(candidates);
-    return new _Unit__WEBPACK_IMPORTED_MODULE_1__.default(unitClass, unitClass.name, _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_2__.HUMAN_DETERMINISTIC, level, { x, y });
-}
+    const unitClass = (0,_utils_random__WEBPACK_IMPORTED_MODULE_4__.randChoice)(candidates);
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_0__.default.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
+    return new _Unit__WEBPACK_IMPORTED_MODULE_2__.default({
+        unitClass,
+        sprite,
+        name: unitClass.name,
+        coordinates: { x, y },
+        controller: _controllers_AIUnitControllers__WEBPACK_IMPORTED_MODULE_3__.HUMAN_DETERMINISTIC,
+        level
+    });
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
     createRandomEnemy
 });

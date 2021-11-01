@@ -1,29 +1,29 @@
-import TileSet from '../../types/TileSet';
+import TileFactory, { TileSetName } from '../../types/TileFactory';
 import Unit from '../../units/Unit';
 import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
 import { Coordinates, MapSection, TileType } from '../../types/types';
-import { coordinatesEquals, createTile, hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
+import { coordinatesEquals, hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
 abstract class DungeonGenerator {
-  protected readonly _tileSet: TileSet;
+  protected readonly tileSet: TileSetName;
 
-  protected constructor(tileSet: TileSet) {
-    this._tileSet = tileSet;
+  protected constructor(tileSet: TileSetName) {
+    this.tileSet = tileSet;
   }
 
-  generateDungeon(
+  generateDungeon = (
     level: number,
     width: number,
     height: number,
     numEnemies: number,
-    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit,
+    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>,
     numItems: number,
-    itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
-  ): MapBuilder {
+    itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
+  ): MapBuilder => {
     let section;
     let isValid = false;
     let iterations = 0;
@@ -41,15 +41,15 @@ abstract class DungeonGenerator {
 
     const tileTypes = section.tiles;
 
-    const [stairsLocation] = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [], 1);
-    tileTypes[stairsLocation.y][stairsLocation.x] = TileType.STAIRS_DOWN;
-    const enemyUnitLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation], numEnemies);
+    const [stairsLocation] = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [], 1);
+    tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
+    const enemyUnitLocations = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [stairsLocation], numEnemies);
     const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
-    const itemLocations = pickUnoccupiedLocations(tileTypes, [TileType.FLOOR], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
+    const itemLocations = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
 
-    const tiles = tileTypes.map((row: TileType[]) => {
-      return row.map(tileType => createTile(tileType, this._tileSet));
-    });
+    const tiles = tileTypes.map((row: TileType[]) =>
+      row.map(tileType => TileFactory.createTile(tileType, this.tileSet))
+    );
 
     return new MapBuilder(
       level,
@@ -63,14 +63,14 @@ abstract class DungeonGenerator {
       itemLocations,
       itemSupplier
     );
-  }
+  };
 
   protected abstract generateTiles(width: number, height: number): MapSection;
 
   /**
    * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
    */
-  private _pickPlayerLocation(tiles: TileType[][], blockedTiles: Coordinates[]) {
+  private _pickPlayerLocation = (tiles: TileType[][], blockedTiles: Coordinates[]) => {
     const candidates: [Coordinates, number][] = [];
 
     for (let y = 0; y < tiles.length; y++) {
@@ -84,7 +84,7 @@ abstract class DungeonGenerator {
 
     console.assert(candidates.length > 0);
     return candidates.sort((a, b) => (b[1] - a[1]))[0];
-  }
+  };
 
   /**
    * Verify that:
@@ -97,11 +97,10 @@ abstract class DungeonGenerator {
    *
    * @return true if the provided `section` is valid
    */
-  private _validateSection(section: MapSection): boolean {
-    return this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
-  }
+  private _validateSection = (section: MapSection): boolean =>
+    this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
 
-  private _validateRoomConnectivity(section: MapSection): boolean {
+  private _validateRoomConnectivity = (section: MapSection): boolean => {
     const { rooms } = section;
     const roomCenters: Coordinates[] = rooms.map(room => ({
       x: Math.round(room.left + room.width) / 2,
@@ -127,11 +126,11 @@ abstract class DungeonGenerator {
       }
     }
     return true;
-  }
+  };
 
-  private _validateWallPlacement(section: MapSection) {
-    const floorTypes = [TileType.FLOOR, TileType.FLOOR_HALL];
-    const wallTypes = [TileType.WALL, TileType.WALL_HALL];
+  private _validateWallPlacement = (section: MapSection) => {
+    const floorTypes = ['FLOOR', 'FLOOR_HALL'];
+    const wallTypes = ['WALL', 'WALL_HALL'];
     for (let y = 0; y < section.height; y++) {
       for (let x = 0; x < section.width; x++) {
         const tileType = section.tiles[y][x];
@@ -144,7 +143,7 @@ abstract class DungeonGenerator {
           if (floorTypes.indexOf(oneUp) > -1) {
             // continue
           } else if (wallTypes.indexOf(oneUp) > -1) {
-            if (twoUp !== TileType.WALL_TOP) {
+            if (twoUp !== 'WALL_TOP') {
               return false;
             }
           }
@@ -152,7 +151,7 @@ abstract class DungeonGenerator {
       }
     }
     return true;
-  }
+  };
 }
 
 export default DungeonGenerator;

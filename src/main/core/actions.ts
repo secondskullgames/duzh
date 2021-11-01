@@ -1,10 +1,9 @@
+import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
-import Unit from '../units/Unit';
 import SpriteRenderer from '../graphics/SpriteRenderer';
 import MapFactory from '../maps/MapFactory';
 import UnitClass from '../units/UnitClass';
 import Music from '../sounds/Music';
-import TileSet from '../types/TileSet';
 import { attachEvents } from './InputHandler';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
@@ -23,7 +22,7 @@ const loadMap = async (index: number) => {
     state.mapIndex = index;
     // TODO - this isn't memoized
     const mapBuilder = state.maps[index]();
-    state.setMap(mapBuilder.build());
+    state.setMap(await mapBuilder.build());
   }
 };
 
@@ -39,14 +38,21 @@ const initialize = async () => {
 
 const _initState = async () => {
   const playerUnitController = new PlayerUnitController();
-  const playerUnit = new Unit(UnitClass.PLAYER, 'player', playerUnitController, 1, { x: 0, y: 0 });
+  const playerUnit = await UnitFactory.createUnit({
+    name: 'player',
+    unitClass: UnitClass.PLAYER,
+    controller: playerUnitController,
+    level: 1,
+    coordinates: { x: 0, y: 0 }
+  });
+
   jwb.state = new GameState(playerUnit, [
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSet.DUNGEON, 1, 32, 24, 10, 5),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSet.DUNGEON, 2, 32, 24, 11, 4),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, TileSet.DUNGEON, 3, 32, 24, 12, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSet.CAVE, 4, 34, 25, 12, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSet.CAVE, 5, 36, 26, 13, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, TileSet.CAVE, 6, 38, 27, 14, 3)
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, 'dungeon', 1, 32, 24, 10, 5),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, 'dungeon', 2, 32, 24, 11, 4),
+    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, 'dungeon', 3, 32, 24, 12, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, 'cave', 4, 34, 25, 12, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, 'cave', 5, 36, 26, 13, 3),
+    () => MapFactory.createRandomMap(MapLayout.BLOB, 'cave', 6, 38, 27, 14, 3)
   ]);
 };
 

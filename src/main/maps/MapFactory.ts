@@ -1,4 +1,4 @@
-import TileSet from '../types/TileSet';
+import { TileSetName } from '../types/TileFactory';
 import MapBuilder from './MapBuilder';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
@@ -9,7 +9,7 @@ import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGener
 
 function createRandomMap(
   mapLayout: MapLayout,
-  tileSet: TileSet,
+  tileSet: TileSetName,
   level: number,
   width: number,
   height: number,
@@ -20,7 +20,7 @@ function createRandomMap(
   return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
 }
 
-function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator {
+function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSetName): DungeonGenerator {
   switch (mapLayout) {
     case MapLayout.ROOMS_AND_CORRIDORS: {
       const minRoomDimension = 3;

@@ -90,17 +90,22 @@ interface Tile {
   isBlocking: boolean
 }
 
-enum TileType {
-  FLOOR,
-  FLOOR_HALL,
-  WALL_TOP,
-  WALL_HALL,
-  WALL,
-  NONE,
-  STAIRS_DOWN
-}
+type TileType =
+  'FLOOR'
+  | 'FLOOR_HALL'
+  | 'WALL_TOP'
+  | 'WALL_HALL'
+  | 'WALL'
+  | 'NONE'
+  | 'STAIRS_DOWN';
 
-type UnitType = 'ANIMAL' | 'ELEMENTAL' | 'GHOST' | 'GOLEM' | 'HUMAN' | 'WIZARD';
+type UnitType =
+  'ANIMAL'
+  | 'ELEMENTAL'
+  | 'GHOST'
+  | 'GOLEM'
+  | 'HUMAN'
+  | 'WIZARD';
 
 export {
   Activity,

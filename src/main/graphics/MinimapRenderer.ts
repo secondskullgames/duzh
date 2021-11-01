@@ -43,15 +43,15 @@ class MinimapRenderer {
     if (isTileRevealed({ x, y })) {
       const tileType = map.getTile({ x, y }).type;
       switch (tileType) {
-        case TileType.FLOOR:
-        case TileType.FLOOR_HALL:
-        case TileType.STAIRS_DOWN:
+        case 'FLOOR':
+        case 'FLOOR'_HALL:
+        case 'STAIRS'_DOWN:
           return Color.LIGHT_GRAY;
-        case TileType.WALL:
-        case TileType.WALL_HALL:
+        case 'WALL':
+        case 'WALL'_HALL:
           return Color.DARK_GRAY;
-        case TileType.NONE:
-        case TileType.WALL_TOP:
+        case 'NONE':
+        case 'WALL'_TOP:
         default:
           return Color.BLACK;
       }

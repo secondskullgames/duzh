@@ -1,8 +1,8 @@
+import { TileSet } from '../../types/TileFactory';
 import DungeonGenerator from './DungeonGenerator';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
 import { CoordinatePair, Coordinates, MapSection, Room, TileType } from '../../types/types';
-import TileSet from '../../types/TileSet';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { sortBy } from '../../utils/ArrayUtils';
 import { hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
@@ -12,6 +12,7 @@ type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
 
 /**
  * Based on http://www.roguebasin.com/index.php?title=Basic_BSP_Dungeon_generation
+ * TODO can we delete this?
  */
 class RoomCorridorDungeonGenerator extends DungeonGenerator {
   private readonly _minRoomDimension: number;
@@ -139,7 +140,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
         if (roomX >= 0 && roomX < roomWidth && roomY >= 0 && roomY < roomHeight) {
           tiles[y][x] = roomTiles[roomY][roomX];
         } else {
-          tiles[y][x] = TileType.NONE;
+          tiles[y][x] = 'NONE';
         }
       }
     }
@@ -160,11 +161,11 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       tiles[y] = [];
       for (let x = 0; x < width; x++) {
         if (x > 0 && x < (width - 1) && y === 0) {
-          tiles[y][x] = TileType.WALL_TOP;
+          tiles[y][x] = 'WALL_TOP';
         } else if (x === 0 || x === (width - 1) || y === 0 || y === (height - 1)) {
-          tiles[y][x] = TileType.WALL;
+          tiles[y][x] = 'WALL';
         } else {
-          tiles[y][x] = TileType.FLOOR;
+          tiles[y][x] = 'FLOOR';
         }
       }
     }
@@ -231,9 +232,9 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     for (let y = 0; y < section.height; y++) {
       for (let x = 0; x < section.width; x++) {
         if (y > 0) {
-          if (section.tiles[y][x] === TileType.FLOOR_HALL) {
-            if (section.tiles[y - 1][x] === TileType.NONE || section.tiles[y - 1][x] === TileType.WALL) {
-              section.tiles[y - 1][x] = TileType.WALL_HALL;
+          if (section.tiles[y][x] === 'FLOOR_HALL') {
+            if (section.tiles[y - 1][x] === 'NONE' || section.tiles[y - 1][x] === 'WALL') {
+              section.tiles[y - 1][x] = 'WALL_HALL';
             }
           }
         }
@@ -320,7 +321,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     const tileCostCalculator = (first: Coordinates, second: Coordinates) => this._calculateTileCost(section, first, second);
     const path = new Pathfinder(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
     path.forEach(({ x, y }) => {
-      section.tiles[y][x] = TileType.FLOOR_HALL;
+      section.tiles[y][x] = 'FLOOR_HALL';
     });
 
     return (path.length > 0);
@@ -328,13 +329,13 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
 
   private _calculateTileCost(section: MapSection, first: Coordinates, second: Coordinates) {
     // prefer reusing floor hall tiles
-    return (section.tiles[second.y][second.x] === TileType.FLOOR_HALL) ? 0.5 : 1;
+    return (section.tiles[second.y][second.x] === 'FLOOR_HALL') ? 0.5 : 1;
   };
 
   private _emptyRow(width: number): TileType[] {
     const row: TileType[] = [];
     for (let x = 0; x < width; x++) {
-      row.push(TileType.NONE);
+      row.push('NONE');
     }
     return row;
   }

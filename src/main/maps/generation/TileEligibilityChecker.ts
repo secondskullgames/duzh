@@ -2,13 +2,13 @@ import { Coordinates, MapSection, TileType } from '../../types/types';
 import { coordinatesEquals } from '../MapUtils';
 
 class TileEligibilityChecker {
-  isBlocked({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]) {
+  isBlocked = ({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]): boolean => {
     // can't draw a path through an existing room or a wall
-    const blockedTileTypes = [TileType.FLOOR, /*TileType.FLOOR_HALL,*/ TileType.WALL, TileType.WALL_HALL, TileType.WALL_TOP];
+    const blockedTileTypes: TileType[] = ['FLOOR', /*'FLOOR_HALL',*/ 'WALL', 'WALL_HALL', 'WALL_TOP'];
 
     if (exits.some(exit => coordinatesEquals({ x, y }, exit))) {
       return false;
-    } else if (section.tiles[y][x] === TileType.NONE || section.tiles[y][x] === TileType.FLOOR_HALL) {
+    } else if (section.tiles[y][x] === 'NONE' || section.tiles[y][x] === 'FLOOR_HALL') {
       // skip the check if we're within 1 tile vertically of an exit
       const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
         exits.some(exit => coordinatesEquals(exit, { x, y: y + dy }))
@@ -33,7 +33,7 @@ class TileEligibilityChecker {
     }
     console.error('how\'d we get here?');
     return true;
-  }
+  };
 }
 
 export default TileEligibilityChecker;
