@@ -72,7 +72,7 @@ const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSw
  * TODO - these aren't in JSON but hardcoded here
  */
 const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps={}) => {
-  const filename = `${spriteName}/${spriteName}_${direction}_1`;
+  const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
   const offsets = { dx: 0, dy: -8 };
   const image = await new ImageBuilder({
     filename,
