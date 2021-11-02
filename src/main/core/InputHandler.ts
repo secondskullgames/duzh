@@ -4,7 +4,7 @@ import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import { loadMap, returnToTitle, startGame } from './actions';
-import { Coordinates, GameScreen, TileType } from '../types/types';
+import { Coordinates, GameScreen} from '../types/types';
 import UnitAbility from '../units/UnitAbility';
 
 enum KeyCommand {
@@ -32,7 +32,7 @@ enum KeyCommand {
   KEY_0 = '0'
 }
 
-function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
+const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
   switch (e.key) {
     case 'w':
     case 'W':
@@ -81,7 +81,7 @@ function _mapToCommand(e: KeyboardEvent): (KeyCommand | null) {
       return KeyCommand.KEY_0;
   }
   return null;
-}
+};
 
 // global state
 
@@ -93,7 +93,7 @@ const keyHandlerWrapper = async (e: KeyboardEvent) => {
     await keyHandler(e);
     BUSY = false;
   }
-}
+};
 
 const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
@@ -129,11 +129,11 @@ const keyHandler = async (e: KeyboardEvent) => {
     case KeyCommand.KEY_0:
       return _handleAbility(command);
     default:
+      return Promise.resolve();
   }
-  return Promise.resolve();
-}
+};
 
-function _handleArrowKey(command: KeyCommand): Promise<void> {
+const _handleArrowKey = async (command: KeyCommand) => {
   const { state } = jwb;
 
   switch (state.screen) {
@@ -209,7 +209,7 @@ function _handleArrowKey(command: KeyCommand): Promise<void> {
     default:
       throw `Invalid game screen ${state.screen}`;
   }
-}
+};
 
 const _handleEnter = async () => {
   const { state } = jwb;
@@ -227,7 +227,7 @@ const _handleEnter = async () => {
       if (!!item) {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
-      } else if (map.getTile({ x, y }).type === TileType.STAIRS_DOWN) {
+      } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
         playSound(Sounds.DESCEND_STAIRS);
         await loadMap(mapIndex + 1);
       }
@@ -253,9 +253,9 @@ const _handleEnter = async () => {
     default:
       throw `Unknown game screen: ${state.screen}`;
   }
-}
+};
 
-function _handleTab(): Promise<void> {
+const _handleTab = async () => {
   const { state, renderer } = jwb;
 
   switch (state.screen) {
@@ -267,7 +267,7 @@ function _handleTab(): Promise<void> {
       break;
   }
   return renderer.render();
-}
+};
 
 const _handleMap = async () => {
   const { state, renderer } = jwb;
@@ -284,7 +284,7 @@ const _handleMap = async () => {
       break;
   }
   return renderer.render();
-}
+};
 
 const _handleAbility = async (command: KeyCommand) => {
   const { renderer } = jwb;
@@ -296,13 +296,11 @@ const _handleAbility = async (command: KeyCommand) => {
   const ability = playerUnit.abilities[index];
   if (playerUnit.getCooldown(ability) <= 0) {
     jwb.state.queuedAbility = ability;
-    return renderer.render();
+    await renderer.render();
   } else {
     console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);
   }
-
-  return Promise.resolve();
-}
+};
 
 function attachEvents() {
   window.onkeydown = keyHandlerWrapper;

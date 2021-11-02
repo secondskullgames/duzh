@@ -32,7 +32,7 @@ const _load = (json: any): UnitClass => {
     // We're using "friendly" color names, convert them to hex now
     paletteSwaps: PaletteSwaps.create(json.paletteSwaps),
   };
-}
+};
 
 const _enemyClasses: UnitClass[] = [grunt, golem, soldier, snake].map(json => _load(json));
 
@@ -41,7 +41,7 @@ namespace UnitClass {
 
   export const getEnemyClasses = (): UnitClass[] => {
     return _enemyClasses;
-  }
+  };
 
   export const load = _load;
 }

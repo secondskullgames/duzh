@@ -5,7 +5,7 @@ import UnitAbility from './UnitAbility'
 import { randChoice } from '../utils/random';
 import { Coordinates, Rect } from '../types/types';
 import { comparingReversed } from '../utils/ArrayUtils';
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';;
+import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 

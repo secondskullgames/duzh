@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "description": "A graphical Roguelike in the browser, written in Typescript",
   "main": "core/main.js",
-  "directories": {
-    "lib": "lib"
-  },
   "dependencies": {
     "ts-loader": "^9.1.1",
     "typescript": "3.8.3"
@@ -23,5 +20,5 @@
     "url": "git+https://github.com/jwbutler/roguelike-js.git"
   },
   "author": "jwbutler",
-  "license": "BSD-1-Clause"
+  "license": "ISC"
 }

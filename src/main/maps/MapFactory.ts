@@ -1,4 +1,4 @@
-import TileSet from '../types/TileSet';
+import { TileSet } from '../types/TileFactory';
 import MapBuilder from './MapBuilder';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
@@ -7,7 +7,7 @@ import DungeonGenerator from './generation/DungeonGenerator';
 import { MapLayout } from '../types/types';
 import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
 
-function createRandomMap(
+const createRandomMap = (
   mapLayout: MapLayout,
   tileSet: TileSet,
   level: number,
@@ -15,12 +15,12 @@ function createRandomMap(
   height: number,
   numEnemies: number,
   numItems: number
-): MapBuilder {
+): MapBuilder => {
   const dungeonGenerator = _getDungeonGenerator(mapLayout, tileSet);
   return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
-}
+};
 
-function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator {
+const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator => {
   switch (mapLayout) {
     case MapLayout.ROOMS_AND_CORRIDORS: {
       const minRoomDimension = 3;
@@ -35,6 +35,6 @@ function _getDungeonGenerator(mapLayout: MapLayout, tileSet: TileSet): DungeonGe
     case MapLayout.BLOB:
       return new BlobDungeonGenerator(tileSet);
   }
-}
+};
 
 export default { createRandomMap };

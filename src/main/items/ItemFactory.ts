@@ -1,10 +1,11 @@
 import Sounds from '../sounds/Sounds';
+import Equipment from './equipment/Equipment';
 import InventoryItem from './InventoryItem';
 import Unit from '../units/Unit';
 import MapItem from './MapItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { randChoice, randInt } from '../utils/random';
-import EquipmentClass from './equipment/EquipmentClass';
+import EquipmentModel from './equipment/EquipmentModel';
 import { ItemCategory, Coordinates } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
@@ -12,20 +13,18 @@ import { equipItem } from './ItemUtils';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
-function createPotion(lifeRestored: number): InventoryItem {
-  const onUse: ItemProc = (item: InventoryItem, unit: Unit): Promise<void> => {
-    return new Promise(resolve => {
-      playSound(Sounds.USE_POTION);
-      const prevLife = unit.life;
-      unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-      jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
-      resolve();
-    });
+const createPotion = (lifeRestored: number): InventoryItem => {
+  const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+    playSound(Sounds.USE_POTION);
+    const prevLife = unit.life;
+    unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
+    jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
   };
-  return new InventoryItem('Potion', ItemCategory.POTION, onUse);
-}
 
-const createScrollOfFloorFire = (damage: number): InventoryItem => {
+  return new InventoryItem('Potion', ItemCategory.POTION, onUse);
+};
+
+const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
   const onUse: ItemProc = async (item, unit): Promise<void> => {
     const map = jwb.state.getMap();
 
@@ -43,57 +42,74 @@ const createScrollOfFloorFire = (damage: number): InventoryItem => {
       await adjacentUnit.takeDamage(damage, unit);
     }
   };
+
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
-}
+};
 
-function _createMapEquipment(equipmentClass: EquipmentClass, { x, y }: Coordinates): MapItem {
-  const sprite = SpriteFactory.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
-  const inventoryItem: InventoryItem = _createInventoryWeapon(equipmentClass);
-  return new MapItem({ x, y }, equipmentClass.char, sprite, inventoryItem);
-}
+const _createMapEquipment = async (model: EquipmentModel, { x, y }: Coordinates): Promise<MapItem> => {
+  const sprite = await SpriteFactory.createStaticSprite(model.mapIcon, model.paletteSwaps);
+  const inventoryItem: InventoryItem = await _createInventoryWeapon(model);
+  return new MapItem({ x, y }, model.char, sprite, inventoryItem);
+};
 
-function _createInventoryWeapon(equipmentClass: EquipmentClass): InventoryItem {
+const _createInventoryWeapon = async (model: EquipmentModel): Promise<InventoryItem> => {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
-    return equipItem(item, equipmentClass, unit);
+    return equipItem(item, model, unit);
   };
-  return new InventoryItem(equipmentClass.name, equipmentClass.itemCategory, onUse);
-}
+  return new InventoryItem(model.name, model.itemCategory, onUse);
+};
 
-type MapItemSupplier = ({ x, y }: Coordinates) => MapItem;
+const createEquipment = async (id: string): Promise<Equipment> => {
+  const equipmentModel = await EquipmentModel.forId(id);
+  const spriteName = equipmentModel.sprite;
+  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentModel.paletteSwaps);
+  const equipment = new Equipment(equipmentModel, sprite, null);
+  sprite.target = equipment;
+  return equipment;
+};
 
-function _getItemSuppliers(level: number): MapItemSupplier[] {
-  const createMapPotion: MapItemSupplier = ({ x, y }: Coordinates) => {
-    const sprite = SpriteFactory.createStaticSprite('map_potion');
+type MapItemSupplier = ({ x, y }: Coordinates) => Promise<MapItem>;
+
+const _getItemSuppliers = (level: number): MapItemSupplier[] => {
+  const createMapPotion: MapItemSupplier = async ({ x, y }: Coordinates) => {
+    const sprite = await SpriteFactory.createStaticSprite('map_potion');
     const inventoryItem = createPotion(40);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 
-  const createFloorFireScroll = ({ x, y }: Coordinates) => {
-    const sprite = SpriteFactory.createStaticSprite('map_scroll');
-    const inventoryItem = createScrollOfFloorFire(80);
+  const createFloorFireScroll = async ({ x, y }: Coordinates): Promise<MapItem> => {
+    const sprite = await SpriteFactory.createStaticSprite('map_scroll');
+    const inventoryItem = await createScrollOfFloorFire(80);
     return new MapItem({ x, y }, 'K', sprite, inventoryItem);
   };
 
   return [createMapPotion, createFloorFireScroll];
-}
+};
 
-function _getEquipmentSuppliers(level: number): MapItemSupplier[] {
-  return EquipmentClass.values()
-    .filter(equipmentClass => level >= equipmentClass.minLevel)
-    .filter(equipmentClass => level <= equipmentClass.maxLevel)
-    .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
-}
+const _getEquipmentSuppliers = async (level: number): Promise<MapItemSupplier[]> => {
+  const ids = [
+    'bronze_chain_mail', 'bronze_sword', 'fire_sword', 'iron_chain_mail', 'iron_helmet', 'iron_sword',
+    'long_bow', 'short_bow', 'steel_sword'
+  ];
 
-function createRandomItem({ x, y }: Coordinates, level: number): MapItem {
+  const equipmentModels = await Promise.all(ids.map(id => EquipmentModel.forId(id)));
+  return equipmentModels
+    .filter(model => level >= model.minLevel)
+    .filter(model => level <= model.maxLevel)
+    .map(model => ({ x, y }) => _createMapEquipment(model, { x, y }));
+};
+
+const createRandomItem = async ({ x, y }: Coordinates, level: number): Promise<MapItem> => {
   let supplier: MapItemSupplier;
-  if (randInt(0, 2) == 0) {
+  if (randInt(0, 2) === 0) {
     supplier = randChoice(_getItemSuppliers(level))!!;
   } else {
-    supplier = randChoice(_getEquipmentSuppliers(level))!!;
+    supplier = randChoice(await _getEquipmentSuppliers(level))!!;
   }
   return supplier({ x, y });
-}
+};
 
 export default {
+  createEquipment,
   createRandomItem
 };

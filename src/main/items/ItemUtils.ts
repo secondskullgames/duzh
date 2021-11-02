@@ -1,32 +1,29 @@
 import Unit from '../units/Unit';
+import ItemFactory from './ItemFactory';
 import MapItem from './MapItem';
 import InventoryItem from './InventoryItem';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import EquipmentClass from './equipment/EquipmentClass';
-import Equipment from './equipment/Equipment';
+import EquipmentModel from './equipment/EquipmentModel';
 
-function pickupItem(unit: Unit, mapItem: MapItem) {
+const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const { state } = jwb;
   const { inventoryItem } = mapItem;
   unit.inventory.add(inventoryItem);
   state.messages.push(`Picked up a ${inventoryItem.name}.`);
   playSound(Sounds.PICK_UP_ITEM);
-}
+};
 
-function useItem(unit: Unit, item: InventoryItem): Promise<void> {
-  return item.use(unit)
-    .then(() => unit.inventory.remove(item));
-}
+const useItem = async (unit: Unit, item: InventoryItem) => {
+  await item.use(unit);
+  unit.inventory.remove(item);
+};
 
-function equipItem(item: InventoryItem, equipmentClass: EquipmentClass, unit: Unit): Promise<void> {
-  return new Promise(resolve => {
-    const equipment: Equipment = new Equipment(equipmentClass, item);
-    unit.equipment.add(equipment);
-    equipment.attach(unit);
-    resolve();
-  });
-}
+const equipItem = async (item: InventoryItem, equipmentModel: EquipmentModel, unit: Unit) => {
+  const equipment = await ItemFactory.createEquipment(equipmentModel.id);
+  unit.equipment.add(equipment);
+  equipment.attach(unit);
+};
 
 export {
   pickupItem,

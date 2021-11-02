@@ -9,6 +9,15 @@ enum Activity {
   DAMAGED = 'DAMAGED'
 }
 
+namespace Activity {
+  export const values = (): Activity[] => [
+    Activity.STANDING,
+    Activity.WALKING,
+    Activity.ATTACKING,
+    Activity.SHOOTING
+  ];
+}
+
 interface Coordinates {
   x: number,
   y: number
@@ -60,6 +69,8 @@ interface Projectile extends Entity {
   direction: Direction
 }
 
+type Offsets = { dx: number, dy: number };
+
 type PromiseSupplier<T> = (t?: T) => Promise<T>
 
 interface Rect {
@@ -79,17 +90,22 @@ interface Tile {
   isBlocking: boolean
 }
 
-enum TileType {
-  FLOOR,
-  FLOOR_HALL,
-  WALL_TOP,
-  WALL_HALL,
-  WALL,
-  NONE,
-  STAIRS_DOWN
-}
+type TileType =
+  'FLOOR'
+  | 'FLOOR_HALL'
+  | 'WALL_TOP'
+  | 'WALL_HALL'
+  | 'WALL'
+  | 'NONE'
+  | 'STAIRS_DOWN';
 
-type UnitType = 'ANIMAL' | 'ELEMENTAL' | 'GHOST' | 'GOLEM' | 'HUMAN' | 'WIZARD';
+type UnitType =
+  'ANIMAL'
+  | 'ELEMENTAL'
+  | 'GHOST'
+  | 'GOLEM'
+  | 'HUMAN'
+  | 'WIZARD';
 
 export {
   Activity,
@@ -101,6 +117,7 @@ export {
   ItemCategory,
   MapLayout,
   MapSection,
+  Offsets,
   Projectile,
   PromiseSupplier,
   Rect,

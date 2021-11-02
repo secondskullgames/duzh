@@ -8,5 +8,5 @@ declare global {
     renderer: Renderer,
     debug: DebugShape
     DEBUG: boolean
-  }
+  };
 }

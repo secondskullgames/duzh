@@ -4,17 +4,17 @@ import MapItem from '../items/MapItem';
 import MapInstance from './MapInstance';
 
 class MapBuilder {
-  private readonly _level: number;
-  private readonly _width: number;
-  private readonly _height: number;
-  private readonly _tiles: Tile[][];
-  private readonly _rooms: Room[];
-  private readonly _playerUnitLocation: Coordinates;
-  private readonly _enemyUnitLocations: Coordinates[];
-  private readonly _itemLocations: Coordinates[];
-  private readonly _enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit;
-  private readonly _itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem;
-  
+  private readonly level: number;
+  private readonly width: number;
+  private readonly height: number;
+  private readonly tiles: Tile[][];
+  private readonly rooms: Room[];
+  private readonly playerUnitLocation: Coordinates;
+  private readonly enemyUnitLocations: Coordinates[];
+  private readonly itemLocations: Coordinates[];
+  private readonly enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>;
+  private readonly itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>;
+
   constructor(
     level: number,
     width: number,
@@ -23,37 +23,45 @@ class MapBuilder {
     rooms: Room[],
     playerUnitLocation: Coordinates,
     enemyUnitLocations: Coordinates[],
-    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Unit,
+    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>,
     itemLocations: Coordinates[],
-    itemSupplier: ({ x, y }: Coordinates, level: number) => MapItem
+    itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
   ) {
-    this._level = level;
-    this._width = width;
-    this._height = height;
-    this._tiles = tiles;
-    this._rooms = rooms;
-    this._playerUnitLocation = playerUnitLocation;
-    this._enemyUnitLocations = enemyUnitLocations;
-    this._itemLocations = itemLocations;
-    this._enemyUnitSupplier = enemyUnitSupplier;
-    this._itemSupplier = itemSupplier;
+    this.level = level;
+    this.width = width;
+    this.height = height;
+    this.tiles = tiles;
+    this.rooms = rooms;
+    this.playerUnitLocation = playerUnitLocation;
+    this.enemyUnitLocations = enemyUnitLocations;
+    this.itemLocations = itemLocations;
+    this.enemyUnitSupplier = enemyUnitSupplier;
+    this.itemSupplier = itemSupplier;
   }
 
-  build(): MapInstance {
+  build = async (): Promise<MapInstance> => {
     const { playerUnit } = jwb.state;
+    [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     const units = [playerUnit];
-    [playerUnit.x, playerUnit.y] = [this._playerUnitLocation.x, this._playerUnitLocation.y];
-    units.push(...this._enemyUnitLocations.map(({ x, y }) => this._enemyUnitSupplier({ x, y }, this._level)));
-    const items = this._itemLocations.map(({ x, y }) => this._itemSupplier({ x, y }, this._level));
+    for (const { x, y } of this.enemyUnitLocations) {
+      const enemyUnit = await this.enemyUnitSupplier({ x, y }, this.level);
+      units.push(enemyUnit);
+    }
+    const items: MapItem[] = [];
+    for (const { x, y } of this.itemLocations) {
+      const item = await this.itemSupplier({ x, y }, this.level);
+      items.push(item);
+    }
+
     return new MapInstance(
-      this._width,
-      this._height,
-      this._tiles,
-      this._rooms,
+      this.width,
+      this.height,
+      this.tiles,
+      this.rooms,
       units,
       items
-    )
-  }
+    );
+  };
 }
 
 export default MapBuilder;

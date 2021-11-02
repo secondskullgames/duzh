@@ -42,7 +42,7 @@ function playAttackingAnimation(source: Unit, target: Unit): Promise<any> {
   });
 }
 
-function playArrowAnimation(source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null): Promise<any> {
+const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
   const frames: AnimationFrame[] = [];
   // first frame
   {
@@ -56,8 +56,8 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
   }
 
   // arrow movement frames
-  coordinatesList.forEach(({ x, y }: Coordinates) => {
-    const projectile = createArrow({ x, y }, direction);
+  for (const { x, y } of coordinatesList) {
+    const projectile = await createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: Activity.SHOOTING }],
       projectiles: [projectile]
@@ -67,7 +67,7 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
     }
 
     frames.push(frame);
-  });
+  }
 
   // last frames
   {
@@ -97,9 +97,9 @@ function playArrowAnimation(source: Unit, direction: Direction, coordinatesList:
     frames,
     delay: PROJECTILE_FRAME_LENGTH
   });
-}
+};
 
-function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
+const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   const frames: AnimationFrame[] = [];
   for (let i = 0; i < targets.length; i++) {
     const frame: UnitAnimationFrame[] = [];
@@ -110,6 +110,7 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
     }
     frames.push({ units: frame });
   }
+
   // last frame (all standing)
   const frame: UnitAnimationFrame[] = [];
   frame.push({ unit: source, activity: Activity.STANDING });
@@ -121,7 +122,7 @@ function playFloorFireAnimation(source: Unit, targets: Unit[]): Promise<any> {
     frames,
     delay: FRAME_LENGTH
   });
-}
+};
 
 const _playAnimation = async (animation: Animation) => {
   const { delay, frames } = animation;
@@ -142,11 +143,11 @@ const _playAnimation = async (animation: Animation) => {
       await wait(delay);
     }
 
-    if (!!frame.projectiles) {
-      frame.projectiles.forEach(projectile => map.removeProjectile(projectile));
+    for (const projectile of (frame.projectiles || [])) {
+      map.removeProjectile(projectile);
     }
   }
-}
+};
 
 export {
   playAttackingAnimation,

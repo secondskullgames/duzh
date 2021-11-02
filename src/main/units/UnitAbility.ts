@@ -1,3 +1,5 @@
+// TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
+
 import Direction from '../types/Direction';
 import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
@@ -8,12 +10,12 @@ import { playArrowAnimation, playAttackingAnimation } from '../graphics/animatio
 /**
  * Helper function for most melee attacks
  */
-function attack(unit: Unit, target: Unit, damage: number): Promise<void> {
+const attack = async (unit: Unit, target: Unit, damage: number) => {
   jwb.state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
 
-  return playAttackingAnimation(unit, target)
-    .then(() => target.takeDamage(damage, unit));
-}
+  await playAttackingAnimation(unit, target);
+  await target.takeDamage(damage, unit);
+};
 
 abstract class UnitAbility {
   readonly name: string;
@@ -26,7 +28,7 @@ abstract class UnitAbility {
     this.icon = icon;
   }
 
-  abstract use(unit: Unit, direction: Direction | null): Promise<any>
+  abstract use(unit: Unit, direction: Direction | null): Promise<any>;
 }
 
 class NormalAttack extends UnitAbility {
@@ -34,7 +36,7 @@ class NormalAttack extends UnitAbility {
     super('ATTACK', 0);
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<void> {
+  use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw 'NormalAttack requires a direction!';
     }
@@ -46,26 +48,20 @@ class NormalAttack extends UnitAbility {
     const map = jwb.state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
-    return new Promise(resolve => {
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        [unit.x, unit.y] = [x, y];
-        if (unit === playerUnit) {
-          playSound(Sounds.FOOTSTEP);
-        }
-        resolve();
-      } else {
-        const targetUnit = map.getUnit({ x, y });
-        if (!!targetUnit) {
-          const damage = unit.getDamage();
-          attack(unit, targetUnit, damage)
-            .then(() => playSound(Sounds.PLAYER_HITS_ENEMY))
-            .then(resolve);
-        } else {
-          resolve();
-        }
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        await playSound(Sounds.FOOTSTEP);
       }
-    });
-  }
+    } else {
+      const targetUnit = map.getUnit({ x, y });
+      if (!!targetUnit) {
+        const damage = unit.getDamage();
+        await attack(unit, targetUnit, damage);
+        await playSound(Sounds.PLAYER_HITS_ENEMY);
+      }
+    }
+  };
 }
 
 class HeavyAttack extends UnitAbility {
@@ -73,7 +69,7 @@ class HeavyAttack extends UnitAbility {
     super('HEAVY_ATTACK', 15, 'strong_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<void> {
+  use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw 'HeavyAttack requires a direction!';
     }
@@ -85,27 +81,21 @@ class HeavyAttack extends UnitAbility {
     const map = jwb.state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
-    return new Promise(resolve => {
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        [unit.x, unit.y] = [x, y];
-        if (unit === playerUnit) {
-          playSound(Sounds.FOOTSTEP);
-        }
-        resolve();
-      } else {
-        const targetUnit = map.getUnit({ x, y });
-        if (!!targetUnit) {
-          unit.useAbility(this);
-          const damage = unit.getDamage() * 2;
-          attack(unit, targetUnit, damage)
-            .then(() => playSound(Sounds.SPECIAL_ATTACK))
-            .then(resolve);
-        } else {
-          resolve();
-        }
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        await playSound(Sounds.FOOTSTEP);
       }
-    });
-  }
+    } else {
+      const targetUnit = map.getUnit({ x, y });
+      if (!!targetUnit) {
+        unit.useAbility(this);
+        const damage = unit.getDamage() * 2;
+        await attack(unit, targetUnit, damage);
+        await playSound(Sounds.SPECIAL_ATTACK);
+      }
+    }
+  };
 }
 
 class KnockbackAttack extends UnitAbility {
@@ -113,7 +103,7 @@ class KnockbackAttack extends UnitAbility {
     super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<void> {
+  use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw 'KnockbackAttack requires a direction!';
     }
@@ -125,40 +115,32 @@ class KnockbackAttack extends UnitAbility {
     const map = jwb.state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
-    return new Promise(resolve => {
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        [unit.x, unit.y] = [x, y];
-        if (unit === playerUnit) {
-          playSound(Sounds.FOOTSTEP);
-        }
-        resolve();
-      } else {
-        const targetUnit = map.getUnit({ x, y });
-        if (!!targetUnit) {
-          unit.useAbility(this);
-          const damage = unit.getDamage();
-          attack(unit, targetUnit, damage)
-            .then(() => {
-              let targetCoordinates = { x, y };
-
-              // knockback by one tile
-              const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-              if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
-                targetCoordinates = oneTileBack;
-              }
-              [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
-
-              // stun for 1 turn (if they're already stunned, just leave it)
-              targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
-            })
-            .then(() => playSound(Sounds.SPECIAL_ATTACK))
-            .then(resolve);
-        } else {
-          resolve();
-        }
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        await playSound(Sounds.FOOTSTEP);
       }
-    });
-  }
+    } else {
+      const targetUnit = map.getUnit({ x, y });
+      if (!!targetUnit) {
+        unit.useAbility(this);
+        const damage = unit.getDamage();
+        await attack(unit, targetUnit, damage);
+        let targetCoordinates = { x, y };
+
+        // knockback by one tile
+        const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
+        if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
+          targetCoordinates = oneTileBack;
+        }
+        [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
+
+        // stun for 1 turn (if they're already stunned, just leave it)
+        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
+        await playSound(Sounds.SPECIAL_ATTACK);
+      }
+    }
+  };
 }
 
 class StunAttack extends UnitAbility {
@@ -166,7 +148,7 @@ class StunAttack extends UnitAbility {
     super('STUN_ATTACK', 15, 'knockback_icon');
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<void> {
+  use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw 'StunAttack requires a direction!';
     }
@@ -178,31 +160,23 @@ class StunAttack extends UnitAbility {
     const map = jwb.state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
-    return new Promise(resolve => {
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        [unit.x, unit.y] = [x, y];
-        if (unit === playerUnit) {
-          playSound(Sounds.FOOTSTEP);
-        }
-        resolve();
-      } else {
-        const targetUnit = map.getUnit({ x, y });
-        if (!!targetUnit) {
-          unit.useAbility(this);
-          const damage = unit.getDamage();
-          attack(unit, targetUnit, damage)
-            .then(() => {
-              // stun for 2 turns (if they're already stunned, just leave it)
-              targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
-            })
-            .then(() => playSound(Sounds.SPECIAL_ATTACK))
-            .then(resolve);
-        } else {
-          resolve();
-        }
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      [unit.x, unit.y] = [x, y];
+      if (unit === playerUnit) {
+        await playSound(Sounds.FOOTSTEP);
       }
-    });
-  }
+    } else {
+      const targetUnit = map.getUnit({ x, y });
+      if (!!targetUnit) {
+        unit.useAbility(this);
+        const damage = unit.getDamage();
+        await attack(unit, targetUnit, damage);
+        // stun for 2 turns (if they're already stunned, just leave it)
+        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
+        await playSound(Sounds.SPECIAL_ATTACK);
+      }
+    }
+  };
 }
 
 class ShootArrow extends UnitAbility {
@@ -210,7 +184,7 @@ class ShootArrow extends UnitAbility {
     super('SHOOT_ARROW', 0);
   }
 
-  use(unit: Unit, direction: Direction | null): Promise<void> {
+  use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw 'ShootArrow requires a direction!';
     }
@@ -218,39 +192,34 @@ class ShootArrow extends UnitAbility {
     const { dx, dy } = direction;
     unit.direction = { dx, dy };
 
-    return unit.sprite.getImage()
-      .then(() => jwb.renderer.render())
-      .then(() => new Promise(resolve => {
-        if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
-          // change direction and re-render, but don't do anything (don't spend a turn)
-          resolve();
-          return;
-        }
-        const map = jwb.state.getMap();
-        const coordinatesList = [];
-        let { x, y } = { x: unit.x + dx, y: unit.y + dy };
-        while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-          coordinatesList.push({ x, y });
-          x += dx;
-          y += dy;
-        }
+    await jwb.renderer.render();
+    if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+      // change direction and re-render, but don't do anything (don't spend a turn)
+      return;
+    }
 
-        const targetUnit = map.getUnit({ x, y });
-        if (!!targetUnit) {
-          const { messages } = jwb.state;
-          const damage = unit.getRangedDamage();
-          messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
+    const map = jwb.state.getMap();
+    const coordinatesList = [];
+    let { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      coordinatesList.push({ x, y });
+      x += dx;
+      y += dy;
+    }
 
-          playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit)
-            .then(() => targetUnit.takeDamage(damage, unit))
-            .then(() => playSound(Sounds.PLAYER_HITS_ENEMY))
-            .then(() => resolve());
-        } else {
-          playArrowAnimation(unit, { dx, dy }, coordinatesList, null)
-            .then(() => resolve());
-        }
-      }));
-  }
+    const targetUnit = map.getUnit({ x, y });
+    if (!!targetUnit) {
+      const { messages } = jwb.state;
+      const damage = unit.getRangedDamage();
+      messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
+
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      await targetUnit.takeDamage(damage, unit);
+      await playSound(Sounds.PLAYER_HITS_ENEMY);
+    } else {
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
+    }
+  };
 }
 
 namespace UnitAbility {

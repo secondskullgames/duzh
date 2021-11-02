@@ -1,4 +1,4 @@
-import TileSet from '../../types/TileSet';
+import type { TileSet } from '../../types/TileFactory';
 import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, TileType } from '../../types/types';
 import { randInt } from '../../utils/random';
@@ -42,56 +42,56 @@ class BlobDungeonGenerator extends DungeonGenerator {
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
       for (let x = 0; x < width; x++) {
-        row.push(TileType.NONE);
+        row.push('NONE');
       }
       tiles.push(row);
     }
     return tiles;
   }
 
-  private _placeInitialTile(width: number, height: number, tiles: TileType[][]) {
+  private _placeInitialTile = (width: number, height: number, tiles: TileType[][]) => {
     const x = randInt(width * 3 / 8, width * 5 / 8);
     const y = randInt(height * 3 / 8, height * 5 / 8);
-    tiles[y][x] = TileType.FLOOR;
-  }
+    tiles[y][x] = 'FLOOR';
+  };
 
-  private _getTargetNumFloorTiles(max: number) {
+  private _getTargetNumFloorTiles = (max: number) => {
     const minRatio = 0.4;
     const maxRatio = 0.7;
     return randInt(
       Math.round(max * minRatio),
       Math.round(max * maxRatio)
     );
-  }
+  };
 
-  private _getFloorTiles(tiles: TileType[][]): Coordinates[] {
+  private _getFloorTiles = (tiles: TileType[][]): Coordinates[] => {
     const floorTiles: Coordinates[] = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === TileType.FLOOR) {
+        if (tiles[y][x] === 'FLOOR') {
           floorTiles.push({ x, y });
         }
       }
     }
     return floorTiles;
-  }
+  };
 
-  private _getEmptyTiles(tiles: TileType[][]): Coordinates[] {
+  private _getEmptyTiles = (tiles: TileType[][]): Coordinates[] => {
     const floorTiles: Coordinates[] = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === TileType.NONE) {
+        if (tiles[y][x] === 'NONE') {
           floorTiles.push({ x, y });
         }
       }
     }
     return floorTiles;
-  }
+  };
 
   /**
    * @return whether a tile was successfully added
    */
-  private _addFloorTile(tiles: TileType[][]): boolean {
+  private _addFloorTile = (tiles: TileType[][]): boolean => {
     const floorTiles = this._getFloorTiles(tiles);
     const candidates = this._getCandidates(tiles, floorTiles)
       .sort(comparing(tile => this._getSnakeScore(tile, tiles)));
@@ -106,16 +106,16 @@ class BlobDungeonGenerator extends DungeonGenerator {
     const index = randInt(minIndex, maxIndex);
 
     const { x, y } = candidates[index];
-    tiles[y][x] = TileType.FLOOR;
+    tiles[y][x] = 'FLOOR';
     return true;
-  }
+  };
 
-  private _getCandidates(tiles: TileType[][], floorTiles: Coordinates[]): Coordinates[] {
+  private _getCandidates = (tiles: TileType[][], floorTiles: Coordinates[]): Coordinates[] => {
     return this._getEmptyTiles(tiles)
       .filter(({ x, y }) => y > 0)
       .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
       .filter(({ x, y }) => floorTiles.some(floorTile => isAdjacent({ x, y }, floorTile)));
-  }
+  };
 
   private _isLegalWallCoordinates({ x, y }: Coordinates, tiles: TileType[][]) {
     // To facilitate wall generation, disallow some specific cases:
@@ -125,8 +125,8 @@ class BlobDungeonGenerator extends DungeonGenerator {
     for (let n = 2; n <= m; n++) {
       if (y >= n) {
         if (
-          this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === TileType.NONE)
-          && (tiles[y - n][x] === TileType.FLOOR)
+          this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === 'NONE')
+          && (tiles[y - n][x] === 'FLOOR')
         ) {
           return false;
         }
@@ -134,8 +134,8 @@ class BlobDungeonGenerator extends DungeonGenerator {
       // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
       if (y <= (height - 1 - n)) {
         if (
-          this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === TileType.NONE)
-          && (tiles[y + n][x] == TileType.FLOOR)
+          this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
+          && (tiles[y + n][x] === 'FLOOR')
         ) {
           return false;
         }
@@ -148,16 +148,16 @@ class BlobDungeonGenerator extends DungeonGenerator {
     return true;
   }
 
-  private _hasKittyCornerFloorTile({ x, y }: Coordinates, tiles: TileType[][]) {
+  private _hasKittyCornerFloorTile = ({ x, y }: Coordinates, tiles: TileType[][]) => {
     const height = tiles.length;
     const width = tiles[0].length;
     // one tile apart vertically
-    for (let [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
       const [x2, y2] = [x + dx, y + dy];
       if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
         // out of bounds
-      } else if (tiles[y2][x2] === TileType.FLOOR) {
-        if (tiles[y2][x] === TileType.NONE && tiles[y][x2] === TileType.NONE) {
+      } else if (tiles[y2][x2] === 'FLOOR') {
+        if (tiles[y2][x] === 'NONE' && tiles[y][x2] === 'NONE') {
           return true;
         }
       }
@@ -166,7 +166,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
     // @X        ab
     // XX        cd
     //  F        ef
-    for (let [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
+    for (const [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
       const a = { x, y };
       const b = { x: x + dx, y };
       const c = { x, y: y + (dy / 2) };
@@ -177,45 +177,45 @@ class BlobDungeonGenerator extends DungeonGenerator {
         // out of bounds
       } else {
         if (
-          tiles[b.y][b.x] === TileType.NONE
-          && tiles[c.y][c.x] === TileType.NONE
-          && tiles[d.y][d.x] === TileType.NONE
-          && tiles[f.y][f.x] === TileType.FLOOR
+          tiles[b.y][b.x] === 'NONE'
+          && tiles[c.y][c.x] === 'NONE'
+          && tiles[d.y][d.x] === 'NONE'
+          && tiles[f.y][f.x] === 'FLOOR'
         ) {
           return true;
         }
       }
     }
     return false;
-  }
+  };
 
-  private _addWalls(tiles: TileType[][]) {
+  private _addWalls = (tiles: TileType[][]) => {
     const height = tiles.length;
     const width = tiles[0].length;
     for (let y = 0; y < (height - 1); y++) {
       for (let x = 0; x < width; x++) {
-        if (tiles[y][x] === TileType.NONE && tiles[y + 1][x] === TileType.FLOOR) {
-          tiles[y][x] = TileType.WALL_TOP;
+        if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
+          tiles[y][x] = 'WALL_TOP';
         }
       }
     }
-  }
+  };
 
   /**
    * @param end inclusive
    */
-  private _range(start: number, end: number): number[] {
+  private _range = (start: number, end: number): number[] => {
     const range = [];
     for (let i = start; i <= end; i++) {
       range.push(i);
     }
     return range;
-  }
+  };
 
   /**
    * @return the number of nearby tiles
    */
-  private _getSnakeScore(tile: Coordinates, tiles: TileType[][]) {
+  private _getSnakeScore = (tile: Coordinates, tiles: TileType[][]) => {
     let score = 0;
     const offset = 1;
     const height = tiles.length;
@@ -229,13 +229,13 @@ class BlobDungeonGenerator extends DungeonGenerator {
         if (coordinatesEquals(tile, { x, y })) {
           continue;
         }
-        if (tiles[y][x] === TileType.FLOOR) {
+        if (tiles[y][x] === 'FLOOR') {
           score++;
         }
       }
     }
     return score;
-  }
+  };
 }
 
 export default BlobDungeonGenerator;

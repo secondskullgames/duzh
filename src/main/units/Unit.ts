@@ -1,4 +1,4 @@
-import Sprite from '../graphics/sprites/Sprite';
+import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import UnitClass from './UnitClass';
 import Sounds from '../sounds/Sounds';
 import InventoryMap from '../items/InventoryMap';
@@ -7,19 +7,27 @@ import Music from '../sounds/Music';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import Direction from '../types/Direction';
-import EquipmentClass from '../items/equipment/EquipmentClass';
 import Equipment from '../items/equipment/Equipment';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import { playSound } from '../sounds/SoundFX';
 
 // Regenerate 1% of life every 20 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.0005;
 
+type Props = {
+  name: string,
+  unitClass: UnitClass,
+  sprite: DynamicSprite<Unit>;
+  level: number,
+  coordinates: Coordinates,
+  controller: UnitController,
+  equipment: Equipment[]
+};
+
 class Unit implements Entity {
   readonly unitClass: UnitClass;
   readonly char = '@';
-  readonly sprite: Sprite;
+  readonly sprite: DynamicSprite<Unit>;
   inventory: InventoryMap;
   equipment: EquipmentMap;
   x: number;
@@ -32,7 +40,7 @@ class Unit implements Entity {
   mana: number | null;
   maxMana: number | null;
   lifeRemainder: number;
-  private _damage: number;
+  private damage: number;
   controller: UnitController;
   activity: Activity;
   direction: Direction;
@@ -40,11 +48,11 @@ class Unit implements Entity {
   readonly abilities: UnitAbility[];
   stunDuration: number;
 
-  constructor(unitClass: UnitClass, name: string, controller: UnitController, level: number, { x, y }: Coordinates) {
+  constructor({ name, unitClass, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
     this.unitClass = unitClass;
-    this.sprite = SpriteFactory.createUnitSprite(unitClass.sprite, this, unitClass.paletteSwaps);
+    this.sprite = sprite;
+    sprite.target = this;
     this.inventory = new InventoryMap();
-    this.equipment = new EquipmentMap();
 
     this.x = x;
     this.y = y;
@@ -56,7 +64,7 @@ class Unit implements Entity {
     this.mana = unitClass.startingMana;
     this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
-    this._damage = unitClass.startingDamage;
+    this.damage = unitClass.startingDamage;
     this.controller = controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
@@ -65,18 +73,18 @@ class Unit implements Entity {
     this.abilities = [UnitAbility.ATTACK, UnitAbility.HEAVY_ATTACK, UnitAbility.KNOCKBACK_ATTACK, UnitAbility.STUN_ATTACK];
     this.stunDuration = 0;
 
-    unitClass.equipment?.forEach(equipmentName => {
-      const equipment = new Equipment(EquipmentClass.forName(equipmentName), null); // TODO deal with InventoryItem
-      this.equipment.add(equipment);
-      equipment.attach(this);
-    })
+    this.equipment = new EquipmentMap();
+    for (const eq of equipment) {
+      this.equipment.add(eq);
+      eq.attach(this);
+    }
 
     while (this.level < level) {
       this._levelUp(false);
     }
   }
 
-  private _upkeep() {
+  private _upkeep = () => {
     // life regeneration
     const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
     this.lifeRemainder += lifePerTurn;
@@ -88,34 +96,34 @@ class Unit implements Entity {
     this.remainingCooldowns.forEach((cooldown, ability, map) => {
       map.set(ability, Math.max(cooldown - 1, 0));
     });
-  }
+  };
 
-  private _endOfTurn() {
+  private _endOfTurn = () => {
     // decrement stun duration
-    this.stunDuration = Math.max(this.stunDuration - 1, 0)
-  }
+    this.stunDuration = Math.max(this.stunDuration - 1, 0);
+  };
 
-  async update() {
+  update = async () => {
     await this._upkeep();
     if (this.stunDuration === 0) {
       await this.controller.issueOrder(this);
     }
     await this.sprite.getImage();
     await this._endOfTurn();
-  }
+  };
 
-  getDamage(): number {
-    let damage = this._damage;
+  getDamage = (): number => {
+    let damage = this.damage;
     this.equipment.getEntries()
       .filter(([slot, item]) => (slot !== EquipmentSlot.RANGED_WEAPON))
       .forEach(([slot, item]) => {
         damage += (item.damage || 0);
       });
     return damage;
-  }
+  };
 
-  getRangedDamage(): number {
-    let damage = this._damage;
+  getRangedDamage = (): number => {
+    let damage = this.damage;
 
     this.equipment.getEntries()
       .filter(([slot, item]) => (slot !== EquipmentSlot.MELEE_WEAPON))
@@ -127,67 +135,60 @@ class Unit implements Entity {
         }
       });
     return Math.round(damage);
-  }
+  };
 
-  private _levelUp(withSound: boolean) {
+  private _levelUp = (withSound: boolean) => {
     this.level++;
     const lifePerLevel = this.unitClass.lifePerLevel;
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
-    this._damage += this.unitClass.damagePerLevel;
+    this.damage += this.unitClass.damagePerLevel;
     if (withSound) {
       playSound(Sounds.LEVEL_UP);
     }
-  }
+  };
 
-  gainExperience(experience: number) {
+  gainExperience = (experience: number) => {
     this.experience += experience;
     const experienceToNextLevel = this.experienceToNextLevel();
     while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
       this._levelUp(true);
     }
-  }
+  };
 
-  experienceToNextLevel(): (number | null) {
+  experienceToNextLevel = (): (number | null) => {
     const { unitClass } = this;
     if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
       return unitClass.experienceToNextLevel[this.level];
     }
     return null;
-  }
+  };
 
-  takeDamage(damage: number, sourceUnit?: Unit): Promise<void> {
+  takeDamage = (damage: number, sourceUnit?: Unit) => {
     const { playerUnit } = jwb.state;
     const map = jwb.state.getMap();
 
-    return new Promise(resolve => {
-      this.life = Math.max(this.life - damage, 0);
-      if (this.life === 0) {
-        map.removeUnit(this);
-        if (this === playerUnit) {
-          jwb.state.screen = GameScreen.GAME_OVER;
-          Music.stop();
-          Music.playFigure(Music.GAME_OVER)
-        } else {
-          playSound(Sounds.ENEMY_DIES);
-        }
-
-        if (sourceUnit) {
-          sourceUnit.gainExperience(1);
-        }
+    this.life = Math.max(this.life - damage, 0);
+    if (this.life === 0) {
+      map.removeUnit(this);
+      if (this === playerUnit) {
+        jwb.state.screen = GameScreen.GAME_OVER;
+        Music.stop();
+        Music.playFigure(Music.GAME_OVER);
+      } else {
+        playSound(Sounds.ENEMY_DIES);
       }
-      resolve();
-    });
+
+      if (sourceUnit) {
+        sourceUnit.gainExperience(1);
+      }
+    }
   };
 
-  getCooldown(ability: UnitAbility): number {
-    return this.remainingCooldowns.get(ability) || 0
-  }
+  getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
 
-  useAbility(ability: UnitAbility) {
-    this.remainingCooldowns.set(ability, ability.cooldown);
-  }
+  useAbility = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
 }
 
 export default Unit;
