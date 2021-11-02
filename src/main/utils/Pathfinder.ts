@@ -12,34 +12,30 @@ interface Node extends Coordinates {
 /**
  * @return the exact cost of the path from `start` to `coordinates`
  */
-function g(node: Node, start: Coordinates): number {
-  return node.cost;
-}
+const g = (node: Node, start: Coordinates): number => node.cost;
 
 /**
  * @return the heuristic estimated cost from `coordinates` to `goal`
  */
-function h(coordinates: Coordinates, goal: Coordinates): number {
+const h = (coordinates: Coordinates, goal: Coordinates): number => {
   // return civDistance(coordinates, goal);
-
   return manhattanDistance(coordinates, goal);
-}
+};
 
 /**
  * @return an estimate of the best cost from `start` to `goal` combining both `g` and `h`
  */
-function f(node: Node, start: Coordinates, goal: Coordinates): number {
-  return g(node, start) + h(node, goal);
-}
+const f = (node: Node, start: Coordinates, goal: Coordinates): number =>
+  g(node, start) + h(node, goal);
 
-function traverseParents(node: Node): Coordinates[] {
+const traverseParents = (node: Node): Coordinates[] => {
   const path: Coordinates[] = [];
   for (let currentNode: (Node | null) = node; !!currentNode; currentNode = currentNode.parent) {
     const coordinates = { x: currentNode.x, y: currentNode.y };
     path.splice(0, 0, coordinates); // add it at the beginning of the list
   }
   return path;
-}
+};
 
 /**
  * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
@@ -61,7 +57,7 @@ class Pathfinder {
    *
    * @param tiles All allowable unblocked tiles
    */
-  findPath(start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] {
+  findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
@@ -103,13 +99,12 @@ class Pathfinder {
         });
       }
     }
-  }
+  };
 
-  private _findNeighbors(tile: Coordinates, tiles: Coordinates[]): Coordinates[] {
-    return CARDINAL_DIRECTIONS
+  private _findNeighbors = (tile: Coordinates, tiles: Coordinates[]): Coordinates[] =>
+    CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
       .filter(({ x, y }) => tiles.some(tile => coordinatesEquals(tile, { x, y })));
-  }
 }
 
 export default Pathfinder;

@@ -3,7 +3,7 @@ type ImageCache = {
 };
 const CACHE: ImageCache = {};
 
-function _loadImage(filename: string): Promise<ImageData> {
+const _loadImage = async (filename: string): Promise<ImageData> => {
   return new Promise((resolve, reject) => {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     canvas.style.display = 'none';
@@ -15,7 +15,7 @@ function _loadImage(filename: string): Promise<ImageData> {
       canvas.height = img.height;
       const context = canvas.getContext('2d');
       if (!context) {
-        throw 'Couldn\'t get rendering context!';
+        throw new Error('Couldn\'t get rendering context!');
       }
       context.drawImage(img, 0, 0);
 
@@ -35,16 +35,16 @@ function _loadImage(filename: string): Promise<ImageData> {
     };
     img.src = `png/${filename}.png`;
   });
-}
+};
 
-function loadImage(filename: string): Promise<ImageData> {
+const loadImage = async (filename: string): Promise<ImageData> => {
   if (CACHE[filename] != null) {
     return CACHE[filename];
   }
-  const image: Promise<ImageData> = _loadImage(filename);
+  const image = _loadImage(filename);
   CACHE[filename] = image;
   return image;
-}
+};
 
 export default {
   loadImage

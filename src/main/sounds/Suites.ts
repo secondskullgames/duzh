@@ -1,9 +1,7 @@
 import { Figure, Sample, Suite } from './types';
 import { transpose8va } from './AudioUtils';
 
-function _duplicate(samples: Sample[]): Sample[] {
-  return [...samples, ...samples];
-}
+const _duplicate = (samples: Sample[]): Sample[] => [...samples, ...samples];
 
 const SUITE_1: Suite = (() => {
   const FIGURE_1: Figure = [[300,2000],[200,1000],[225,1000]];

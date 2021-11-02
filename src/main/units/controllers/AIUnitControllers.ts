@@ -93,14 +93,14 @@ const HUMAN_DETERMINISTIC = {
   }
 };
 
-function _canMove(speed: number) {
+const _canMove = (speed: number): boolean => {
   // deterministic version
   // const { turn } = jwb.state;
   // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version
   return Math.random() < speed;
-}
+};
 
 export {
   HUMAN_CAUTIOUS,

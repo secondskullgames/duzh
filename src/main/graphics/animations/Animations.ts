@@ -22,25 +22,23 @@ type Animation = {
   delay: number
 };
 
-function playAttackingAnimation(source: Unit, target: Unit): Promise<any> {
-  return _playAnimation({
-    frames: [
-      {
-        units: [
-          { unit: source, activity: Activity.ATTACKING },
-          { unit: target, activity: Activity.DAMAGED }
-        ],
-      },
-      {
-        units: [
-          { unit: source, activity: Activity.STANDING },
-          { unit: target, activity: Activity.STANDING }
-        ]
-      }
-    ],
-    delay: FRAME_LENGTH
-  });
-}
+const playAttackingAnimation = async (source: Unit, target: Unit) => _playAnimation({
+  frames: [
+    {
+      units: [
+        { unit: source, activity: Activity.ATTACKING },
+        { unit: target, activity: Activity.DAMAGED }
+      ],
+    },
+    {
+      units: [
+        { unit: source, activity: Activity.STANDING },
+        { unit: target, activity: Activity.STANDING }
+      ]
+    }
+  ],
+  delay: FRAME_LENGTH
+});
 
 const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
   const frames: AnimationFrame[] = [];

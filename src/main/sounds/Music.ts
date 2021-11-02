@@ -13,10 +13,11 @@ const GAME_OVER: Figure = [[400,150],[300,150],[238,150],[200,150],[300,160],[23
 
 const _getMusicPlayer = () => new SoundPlayer(4, 0.12);
 
-function playSuite(suite: Suite) {
+const playSuite = (suite: Suite) => {
   ACTIVE_SUITE = suite;
   const sections = Object.values(suite.sections);
   const numRepeats = 4;
+
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
     const bass = (!!section.bass) ? randChoice(section.bass) : null;
@@ -39,6 +40,7 @@ function playSuite(suite: Suite) {
       }, ((numRepeats * i) + j) * suite.length);
     }
   }
+
   setTimeout(
     () => {
       if (suite === ACTIVE_SUITE) {
@@ -47,25 +49,25 @@ function playSuite(suite: Suite) {
     },
     sections.length * suite.length * numRepeats
   );
-}
+};
 
-function playFigure(samples: Figure) {
+const playFigure = (samples: Figure) => {
   if (!PLAYER) {
     PLAYER = _getMusicPlayer();
   }
   PLAYER.playSound(samples, false);
-}
+};
 
-function stopMusic() {
+const stopMusic = () => {
   if (PLAYER) {
     PLAYER.stop();
   }
-}
+};
 
-function stop() {
+const stop = () => {
   stopMusic();
   ACTIVE_SUITE = null;
-}
+};
 
 export default {
   TITLE_THEME,

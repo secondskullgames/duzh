@@ -33,7 +33,7 @@ type DebugShape = {
   killPlayer: () => void
 };
 
-export function initDebug() {
+export const initDebug = () => {
   // @ts-ignore
   window.jwb = window.jwb || {};
   jwb.debug = jwb.debug || {
@@ -41,7 +41,7 @@ export function initDebug() {
     killEnemies,
     killPlayer
   };
-}
+};
 
 export default { initDebug };
 

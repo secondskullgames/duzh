@@ -302,9 +302,9 @@ const _handleAbility = async (command: KeyCommand) => {
   }
 };
 
-function attachEvents() {
+const attachEvents = () => {
   window.onkeydown = keyHandlerWrapper;
-}
+};
 
 export {
   attachEvents

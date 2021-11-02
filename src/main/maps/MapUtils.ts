@@ -13,6 +13,7 @@ const pickUnoccupiedLocations = (
   numToChoose: number
 ): Coordinates[] => {
   const unoccupiedLocations: Coordinates[] = [];
+
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
       if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
@@ -46,9 +47,8 @@ const contains = (rect: Rect, coordinates: Coordinates): boolean =>
   && coordinates.y >= rect.top
   && coordinates.y < (rect.top + rect.height);
 
-function manhattanDistance(first: Coordinates, second: Coordinates): number {
-  return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
-}
+const manhattanDistance = (first: Coordinates, second: Coordinates): number =>
+  Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
 
 const hypotenuse = (first: Coordinates, second: Coordinates): number => {
   const dx = second.x - first.x;
