@@ -7,7 +7,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "outDir": "./dist",
+    "outDir": "./build",
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictBindCallApply": true,
@@ -16,7 +16,7 @@
     "target": "es2015"
   },
   "paths": {
-    "data": ["./data", "./dist/data"],
+    "data": ["./data", "./build/data"],
     "*": ["*"]
   }
 }
