@@ -10,10 +10,6 @@ import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
-/*
- * This file defines functions that will be exported to the "global namespace" (window.jwb.*).
- */
-
 const loadMap = async (index: number) => {
   const { state } = jwb;
   if (index >= state.maps.length) {

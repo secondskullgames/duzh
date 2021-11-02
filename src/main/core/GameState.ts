@@ -12,10 +12,10 @@ class GameState {
   playerUnit: Unit;
   maps: (() => MapBuilder)[];
   mapIndex: number | null;
-  private _map: MapInstance | null;
   messages: string[];
   turn: number;
   queuedAbility: UnitAbility | null;
+  private _map: MapInstance | null;
 
   constructor(playerUnit: Unit, maps: (() => MapBuilder)[]) {
     this.screen = GameScreen.TITLE;

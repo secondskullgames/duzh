@@ -74,12 +74,12 @@ class SpriteRenderer implements Renderer {
     this.container.appendChild(this.canvas);
   }
 
-  async render(): Promise<any> {
+  render = async () => {
     await this._renderScreen();
     await this._renderBuffer();
-  }
+  };
 
-  private async _renderScreen() {
+  private _renderScreen = async () => {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
@@ -98,7 +98,7 @@ class SpriteRenderer implements Renderer {
       default:
         throw `Invalid screen ${screen}`;
     }
-  }
+  };
 
   private _renderBuffer = async () => {
     const imageBitmap = await createImageBitmap(this.bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -336,7 +336,7 @@ class SpriteRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private async _renderHUDLeftPanel() {
+  private _renderHUDLeftPanel = async () => {
     const { playerUnit } = jwb.state;
 
     const lines = [
@@ -352,7 +352,7 @@ class SpriteRenderer implements Renderer {
       const y = top + (LINE_HEIGHT * i);
       await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
-  }
+  };
 
   private _renderHUDMiddlePanel = async () => {
     let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
@@ -449,6 +449,7 @@ class SpriteRenderer implements Renderer {
 
     const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
       .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }));
+
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, left, top);
   };
