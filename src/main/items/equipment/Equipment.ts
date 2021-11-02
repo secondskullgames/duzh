@@ -1,6 +1,6 @@
 import InventoryItem from '../InventoryItem';
 import Unit from '../../units/Unit';
-import EquipmentClass from './EquipmentClass';
+import EquipmentModel from './EquipmentModel';
 import { EquipmentSlot } from '../../types/types';
 import Sprite from '../../graphics/sprites/Sprite';
 
@@ -12,11 +12,11 @@ class Equipment {
   readonly name: string;
   unit?: Unit;
 
-  constructor(equipmentClass: EquipmentClass, sprite: Sprite, inventoryItem: InventoryItem | null) {
-    this.name = equipmentClass.name;
-    this.slot = equipmentClass.slot;
+  constructor(model: EquipmentModel, sprite: Sprite, inventoryItem: InventoryItem | null) {
+    this.name = model.name;
+    this.slot = model.slot;
     this.inventoryItem = inventoryItem;
-    this.damage = equipmentClass.damage;
+    this.damage = model.damage;
     this.sprite = sprite;
   }
 

@@ -12,102 +12,67 @@ module.exports = JSON.parse('{"BLACK":"#000000","WHITE":"#FFFFFF","DARK_GRAY":"#
 
 /***/ }),
 
-/***/ "./data/equipment/bronze_chain_mail.json":
-/*!***********************************************!*\
-  !*** ./data/equipment/bronze_chain_mail.json ***!
-  \***********************************************/
-/***/ ((module) => {
+/***/ "./data/equipment lazy recursive ^\\.\\/.*\\.json$":
+/*!**************************************************************!*\
+  !*** ./data/equipment/ lazy ^\.\/.*\.json$ namespace object ***!
+  \**************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-"use strict";
-module.exports = JSON.parse('{"name":"Bronze Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{"DARK_GRAY":"DARK_BROWN"},"minLevel":-1,"maxLevel":-1}');
+var map = {
+	"./bronze_chain_mail.json": [
+		"./data/equipment/bronze_chain_mail.json",
+		"data_equipment_bronze_chain_mail_json"
+	],
+	"./bronze_sword.json": [
+		"./data/equipment/bronze_sword.json",
+		"data_equipment_bronze_sword_json"
+	],
+	"./fire_sword.json": [
+		"./data/equipment/fire_sword.json",
+		"data_equipment_fire_sword_json"
+	],
+	"./iron_chain_mail.json": [
+		"./data/equipment/iron_chain_mail.json",
+		"data_equipment_iron_chain_mail_json"
+	],
+	"./iron_helmet.json": [
+		"./data/equipment/iron_helmet.json",
+		"data_equipment_iron_helmet_json"
+	],
+	"./iron_sword.json": [
+		"./data/equipment/iron_sword.json",
+		"data_equipment_iron_sword_json"
+	],
+	"./long_bow.json": [
+		"./data/equipment/long_bow.json",
+		"data_equipment_long_bow_json"
+	],
+	"./short_bow.json": [
+		"./data/equipment/short_bow.json",
+		"data_equipment_short_bow_json"
+	],
+	"./steel_sword.json": [
+		"./data/equipment/steel_sword.json",
+		"data_equipment_steel_sword_json"
+	]
+};
+function webpackAsyncContext(req) {
+	if(!__webpack_require__.o(map, req)) {
+		return Promise.resolve().then(() => {
+			var e = new Error("Cannot find module '" + req + "'");
+			e.code = 'MODULE_NOT_FOUND';
+			throw e;
+		});
+	}
 
-/***/ }),
-
-/***/ "./data/equipment/bronze_sword.json":
-/*!******************************************!*\
-  !*** ./data/equipment/bronze_sword.json ***!
-  \******************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Bronze Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"BLACK":"BLACK","DARK_GRAY":"LIGHT_BROWN","LIGHT_GRAY":"LIGHT_BROWN"},"damage":2,"minLevel":1,"maxLevel":2}');
-
-/***/ }),
-
-/***/ "./data/equipment/fire_sword.json":
-/*!****************************************!*\
-  !*** ./data/equipment/fire_sword.json ***!
-  \****************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Fire Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"ItemCategory.WEAPON","slot":"EquipmentSlot.MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"Colors.YELLOW","LIGHT_GRAY":"Colors.RED","BLACK":"Colors.DARK_RED"},"damage":8,"minLevel":5,"maxLevel":6}');
-
-/***/ }),
-
-/***/ "./data/equipment/iron_chain_mail.json":
-/*!*********************************************!*\
-  !*** ./data/equipment/iron_chain_mail.json ***!
-  \*********************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Iron Chain Mail","sprite":"mail","mapIcon":"map_mail","char":"S","itemCategory":"ARMOR","slot":"CHEST","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
-
-/***/ }),
-
-/***/ "./data/equipment/iron_helmet.json":
-/*!*****************************************!*\
-  !*** ./data/equipment/iron_helmet.json ***!
-  \*****************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Iron Helmet","sprite":"helmet","mapIcon":"map_helmet","char":"S","itemCategory":"ARMOR","slot":"HEAD","paletteSwaps":{},"minLevel":-1,"maxLevel":-1}');
-
-/***/ }),
-
-/***/ "./data/equipment/iron_sword.json":
-/*!****************************************!*\
-  !*** ./data/equipment/iron_sword.json ***!
-  \****************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Iron Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"BLACK","LIGHT_GRAY":"DARK_GRAY"},"damage":4,"minLevel":3,"maxLevel":4}');
-
-/***/ }),
-
-/***/ "./data/equipment/long_bow.json":
-/*!**************************************!*\
-  !*** ./data/equipment/long_bow.json ***!
-  \**************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Long Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":4,"minLevel":5,"maxLevel":6}');
-
-/***/ }),
-
-/***/ "./data/equipment/short_bow.json":
-/*!***************************************!*\
-  !*** ./data/equipment/short_bow.json ***!
-  \***************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Short Bow","sprite":"bow","mapIcon":"map_bow","char":"S","itemCategory":"WEAPON","slot":"RANGED_WEAPON","paletteSwaps":{},"damage":2,"minLevel":2,"maxLevel":4}');
-
-/***/ }),
-
-/***/ "./data/equipment/steel_sword.json":
-/*!*****************************************!*\
-  !*** ./data/equipment/steel_sword.json ***!
-  \*****************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = JSON.parse('{"name":"Steel Sword","sprite":"sword","mapIcon":"map_sword","char":"S","itemCategory":"WEAPON","slot":"MELEE_WEAPON","paletteSwaps":{"DARK_GRAY":"DARK_GRAY","LIGHT_GRAY":"LIGHT_GRAY"},"damage":6,"minLevel":4,"maxLevel":6}');
+	var ids = map[req], id = ids[0];
+	return __webpack_require__.e(ids[1]).then(() => {
+		return __webpack_require__.t(id, 3);
+	});
+}
+webpackAsyncContext.keys = () => (Object.keys(map));
+webpackAsyncContext.id = "./data/equipment lazy recursive ^\\.\\/.*\\.json$";
+module.exports = webpackAsyncContext;
 
 /***/ }),
 
@@ -1533,17 +1498,12 @@ class SpriteRenderer {
             (0,_core_actions__WEBPACK_IMPORTED_MODULE_5__.revealTiles)();
             this.bufferContext.fillStyle = _types_Color__WEBPACK_IMPORTED_MODULE_0__.default.BLACK;
             this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
-            console.log('started rendering');
-            // can't pass direct references to the functions because `this` won't be defined
             yield this._renderTiles();
             yield this._renderItems();
             yield this._renderProjectiles();
-            console.log('rendering units');
             yield this._renderUnits();
-            console.log('rendered units');
             yield this._renderMessages();
             yield this._renderHUD();
-            console.log('done rendering');
         });
         this._renderTiles = () => __awaiter(this, void 0, void 0, function* () {
             const map = jwb.state.getMap();
@@ -2385,7 +2345,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MapItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./MapItem */ "./src/main/items/MapItem.ts");
 /* harmony import */ var _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../graphics/sprites/SpriteFactory */ "./src/main/graphics/sprites/SpriteFactory.ts");
 /* harmony import */ var _utils_random__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/random */ "./src/main/utils/random.ts");
-/* harmony import */ var _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./equipment/EquipmentClass */ "./src/main/items/equipment/EquipmentClass.ts");
+/* harmony import */ var _equipment_EquipmentModel__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./equipment/EquipmentModel */ "./src/main/items/equipment/EquipmentModel.ts");
 /* harmony import */ var _types_types__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../types/types */ "./src/main/types/types.ts");
 /* harmony import */ var _sounds_SoundFX__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../sounds/SoundFX */ "./src/main/sounds/SoundFX.ts");
 /* harmony import */ var _graphics_animations_Animations__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../graphics/animations/Animations */ "./src/main/graphics/animations/Animations.ts");
@@ -2436,21 +2396,22 @@ const createScrollOfFloorFire = (damage) => __awaiter(void 0, void 0, void 0, fu
     });
     return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default('Scroll of Floor Fire', _types_types__WEBPACK_IMPORTED_MODULE_7__.ItemCategory.SCROLL, onUse);
 });
-const _createMapEquipment = (equipmentClass, { x, y }) => __awaiter(void 0, void 0, void 0, function* () {
-    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
-    const inventoryItem = yield _createInventoryWeapon(equipmentClass);
-    return new _MapItem__WEBPACK_IMPORTED_MODULE_3__.default({ x, y }, equipmentClass.char, sprite, inventoryItem);
+const _createMapEquipment = (model, { x, y }) => __awaiter(void 0, void 0, void 0, function* () {
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createStaticSprite(model.mapIcon, model.paletteSwaps);
+    const inventoryItem = yield _createInventoryWeapon(model);
+    return new _MapItem__WEBPACK_IMPORTED_MODULE_3__.default({ x, y }, model.char, sprite, inventoryItem);
 });
-const _createInventoryWeapon = (equipmentClass) => __awaiter(void 0, void 0, void 0, function* () {
+const _createInventoryWeapon = (model) => __awaiter(void 0, void 0, void 0, function* () {
     const onUse = (item, unit) => {
-        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, equipmentClass, unit);
+        return (0,_ItemUtils__WEBPACK_IMPORTED_MODULE_10__.equipItem)(item, model, unit);
     };
-    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default(equipmentClass.name, equipmentClass.itemCategory, onUse);
+    return new _InventoryItem__WEBPACK_IMPORTED_MODULE_2__.default(model.name, model.itemCategory, onUse);
 });
-const createEquipment = (name) => __awaiter(void 0, void 0, void 0, function* () {
-    const equipmentClass = _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name);
-    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createEquipmentSprite(equipmentClass.sprite, equipmentClass.paletteSwaps);
-    const equipment = yield new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__.default(_equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.forName(name), sprite, null);
+const createEquipment = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const equipmentModel = yield _equipment_EquipmentModel__WEBPACK_IMPORTED_MODULE_6__.default.forId(id);
+    const spriteName = equipmentModel.sprite;
+    const sprite = yield _graphics_sprites_SpriteFactory__WEBPACK_IMPORTED_MODULE_4__.default.createEquipmentSprite(spriteName, equipmentModel.paletteSwaps);
+    const equipment = new _equipment_Equipment__WEBPACK_IMPORTED_MODULE_1__.default(equipmentModel, sprite, null);
     sprite.target = equipment;
     return equipment;
 });
@@ -2467,19 +2428,24 @@ const _getItemSuppliers = (level) => {
     });
     return [createMapPotion, createFloorFireScroll];
 };
-const _getEquipmentSuppliers = (level) => {
-    return _equipment_EquipmentClass__WEBPACK_IMPORTED_MODULE_6__.default.values()
-        .filter(equipmentClass => level >= equipmentClass.minLevel)
-        .filter(equipmentClass => level <= equipmentClass.maxLevel)
-        .map(equipmentClass => ({ x, y }) => _createMapEquipment(equipmentClass, { x, y }));
-};
+const _getEquipmentSuppliers = (level) => __awaiter(void 0, void 0, void 0, function* () {
+    const ids = [
+        'bronze_chain_mail', 'bronze_sword', 'fire_sword', 'iron_chain_mail', 'iron_helmet', 'iron_sword',
+        'long_bow', 'short_bow', 'steel_sword'
+    ];
+    const equipmentModels = yield Promise.all(ids.map(id => _equipment_EquipmentModel__WEBPACK_IMPORTED_MODULE_6__.default.forId(id)));
+    return equipmentModels
+        .filter(model => level >= model.minLevel)
+        .filter(model => level <= model.maxLevel)
+        .map(model => ({ x, y }) => _createMapEquipment(model, { x, y }));
+});
 const createRandomItem = ({ x, y }, level) => __awaiter(void 0, void 0, void 0, function* () {
     let supplier;
     if ((0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randInt)(0, 2) === 0) {
         supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getItemSuppliers(level));
     }
     else {
-        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(_getEquipmentSuppliers(level));
+        supplier = (0,_utils_random__WEBPACK_IMPORTED_MODULE_5__.randChoice)(yield _getEquipmentSuppliers(level));
     }
     return supplier({ x, y });
 });
@@ -2530,8 +2496,8 @@ const useItem = (unit, item) => __awaiter(void 0, void 0, void 0, function* () {
     yield item.use(unit);
     unit.inventory.remove(item);
 });
-const equipItem = (item, equipmentClass, unit) => __awaiter(void 0, void 0, void 0, function* () {
-    const equipment = yield _ItemFactory__WEBPACK_IMPORTED_MODULE_0__.default.createEquipment(equipmentClass.name);
+const equipItem = (item, equipmentModel, unit) => __awaiter(void 0, void 0, void 0, function* () {
+    const equipment = yield _ItemFactory__WEBPACK_IMPORTED_MODULE_0__.default.createEquipment(equipmentModel.id);
     unit.equipment.add(equipment);
     equipment.attach(unit);
 });
@@ -2613,11 +2579,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 class Equipment {
-    constructor(equipmentClass, sprite, inventoryItem) {
-        this.name = equipmentClass.name;
-        this.slot = equipmentClass.slot;
+    constructor(model, sprite, inventoryItem) {
+        this.name = model.name;
+        this.slot = model.slot;
         this.inventoryItem = inventoryItem;
-        this.damage = equipmentClass.damage;
+        this.damage = model.damage;
         this.sprite = sprite;
     }
     attach(unit) {
@@ -2625,69 +2591,6 @@ class Equipment {
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Equipment);
-
-
-/***/ }),
-
-/***/ "./src/main/items/equipment/EquipmentClass.ts":
-/*!****************************************************!*\
-  !*** ./src/main/items/equipment/EquipmentClass.ts ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _data_equipment_bronze_sword_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../data/equipment/bronze_sword.json */ "./data/equipment/bronze_sword.json");
-/* harmony import */ var _data_equipment_iron_sword_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../data/equipment/iron_sword.json */ "./data/equipment/iron_sword.json");
-/* harmony import */ var _data_equipment_steel_sword_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../data/equipment/steel_sword.json */ "./data/equipment/steel_sword.json");
-/* harmony import */ var _data_equipment_fire_sword_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../data/equipment/fire_sword.json */ "./data/equipment/fire_sword.json");
-/* harmony import */ var _data_equipment_short_bow_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../data/equipment/short_bow.json */ "./data/equipment/short_bow.json");
-/* harmony import */ var _data_equipment_long_bow_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../data/equipment/long_bow.json */ "./data/equipment/long_bow.json");
-/* harmony import */ var _data_equipment_bronze_chain_mail_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../data/equipment/bronze_chain_mail.json */ "./data/equipment/bronze_chain_mail.json");
-/* harmony import */ var _data_equipment_iron_chain_mail_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../data/equipment/iron_chain_mail.json */ "./data/equipment/iron_chain_mail.json");
-/* harmony import */ var _data_equipment_iron_helmet_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../data/equipment/iron_helmet.json */ "./data/equipment/iron_helmet.json");
-/* harmony import */ var _types_PaletteSwaps__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../types/PaletteSwaps */ "./src/main/types/PaletteSwaps.ts");
-
-
-
-
-
-
-
-
-
-
-function _load(json) {
-    // ugh
-    return Object.assign(Object.assign({}, json), { 
-        // We're using "friendly" color names, convert them to hex now
-        paletteSwaps: _types_PaletteSwaps__WEBPACK_IMPORTED_MODULE_9__.default.create(json.paletteSwaps) });
-}
-const _map = {
-    bronze_sword: _load(_data_equipment_bronze_sword_json__WEBPACK_IMPORTED_MODULE_0__),
-    iron_sword: _load(_data_equipment_iron_sword_json__WEBPACK_IMPORTED_MODULE_1__),
-    steel_sword: _load(_data_equipment_steel_sword_json__WEBPACK_IMPORTED_MODULE_2__),
-    fire_sword: _load(_data_equipment_fire_sword_json__WEBPACK_IMPORTED_MODULE_3__),
-    short_bow: _load(_data_equipment_short_bow_json__WEBPACK_IMPORTED_MODULE_4__),
-    long_bow: _load(_data_equipment_long_bow_json__WEBPACK_IMPORTED_MODULE_5__),
-    bronze_chain_mail: _load(_data_equipment_bronze_chain_mail_json__WEBPACK_IMPORTED_MODULE_6__),
-    iron_chain_mail: _load(_data_equipment_iron_chain_mail_json__WEBPACK_IMPORTED_MODULE_7__),
-    iron_helmet: _load(_data_equipment_iron_helmet_json__WEBPACK_IMPORTED_MODULE_8__)
-};
-var EquipmentClass;
-(function (EquipmentClass) {
-    EquipmentClass.forName = (name) => {
-        if (_map.hasOwnProperty(name)) {
-            return _load(_map[name]);
-        }
-        throw `Unknown equipment "${name}"!`;
-    };
-    EquipmentClass.values = () => Object.values(_map);
-})(EquipmentClass || (EquipmentClass = {}));
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentClass);
 
 
 /***/ }),
@@ -2727,6 +2630,49 @@ class EquipmentMap {
     }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentMap);
+
+
+/***/ }),
+
+/***/ "./src/main/items/equipment/EquipmentModel.ts":
+/*!****************************************************!*\
+  !*** ./src/main/items/equipment/EquipmentModel.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _types_PaletteSwaps__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types/PaletteSwaps */ "./src/main/types/PaletteSwaps.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+const _map = {};
+var EquipmentModel;
+(function (EquipmentModel) {
+    EquipmentModel.forId = (id) => __awaiter(this, void 0, void 0, function* () {
+        if (_map.hasOwnProperty(id)) {
+            return _map[id];
+        }
+        return _load(id);
+    });
+})(EquipmentModel || (EquipmentModel = {}));
+const _load = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const json = (yield __webpack_require__("./data/equipment lazy recursive ^\\.\\/.*\\.json$")(`./${id}.json`)).default;
+    return Object.assign(Object.assign({}, json), { id, 
+        // We're using "friendly" color names, convert them to hex now
+        paletteSwaps: _types_PaletteSwaps__WEBPACK_IMPORTED_MODULE_0__.default.create(json.paletteSwaps) });
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EquipmentModel);
 
 
 /***/ }),

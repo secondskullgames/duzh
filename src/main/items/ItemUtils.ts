@@ -4,7 +4,7 @@ import MapItem from './MapItem';
 import InventoryItem from './InventoryItem';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import EquipmentClass from './equipment/EquipmentClass';
+import EquipmentModel from './equipment/EquipmentModel';
 
 const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const { state } = jwb;
@@ -19,8 +19,8 @@ const useItem = async (unit: Unit, item: InventoryItem) => {
   unit.inventory.remove(item);
 };
 
-const equipItem = async (item: InventoryItem, equipmentClass: EquipmentClass, unit: Unit) => {
-  const equipment = await ItemFactory.createEquipment(equipmentClass.name);
+const equipItem = async (item: InventoryItem, equipmentModel: EquipmentModel, unit: Unit) => {
+  const equipment = await ItemFactory.createEquipment(equipmentModel.id);
   unit.equipment.add(equipment);
   equipment.attach(unit);
 };
