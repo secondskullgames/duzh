@@ -3,7 +3,7 @@ import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
-import { loadMap, returnToTitle, startGame } from './actions';
+import { loadMap, render, returnToTitle, startGame } from './actions';
 import { Coordinates, GameScreen} from '../types/types';
 import UnitAbility from '../units/UnitAbility';
 
@@ -200,12 +200,13 @@ const _handleArrowKey = async (command: KeyCommand) => {
           inventory.nextCategory();
           break;
       }
-      return jwb.renderer.render();
+      await render();
+      break;
     case GameScreen.TITLE:
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
     case GameScreen.MINIMAP:
-      return Promise.resolve();
+      break;
     default:
       throw `Invalid game screen ${state.screen}`;
   }
@@ -231,7 +232,8 @@ const _handleEnter = async () => {
         playSound(Sounds.DESCEND_STAIRS);
         await loadMap(mapIndex + 1);
       }
-      return TurnHandler.playTurn(null);
+      await TurnHandler.playTurn(null);
+      break;
     }
     case GameScreen.INVENTORY: {
       const { playerUnit } = state;
@@ -240,23 +242,25 @@ const _handleEnter = async () => {
       if (!!selectedItem) {
         state.screen = GameScreen.GAME;
         await useItem(playerUnit, selectedItem);
-        return jwb.renderer.render();
+        await render();
       }
-      return Promise.resolve();
+      break;
     }
     case GameScreen.TITLE:
       state.screen = GameScreen.GAME;
-      return startGame();
+      await startGame();
+      break;
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
-      return returnToTitle();
+      await returnToTitle();
+      break;
     default:
       throw `Unknown game screen: ${state.screen}`;
   }
 };
 
 const _handleTab = async () => {
-  const { state, renderer } = jwb;
+  const { state } = jwb;
 
   switch (state.screen) {
     case GameScreen.INVENTORY:
@@ -266,11 +270,11 @@ const _handleTab = async () => {
       state.screen = GameScreen.INVENTORY;
       break;
   }
-  return renderer.render();
+  return await render();
 };
 
 const _handleMap = async () => {
-  const { state, renderer } = jwb;
+  const { state } = jwb;
 
   switch (state.screen) {
     case GameScreen.MINIMAP:
@@ -283,11 +287,10 @@ const _handleMap = async () => {
     default:
       break;
   }
-  return renderer.render();
+  await render();
 };
 
 const _handleAbility = async (command: KeyCommand) => {
-  const { renderer } = jwb;
   const { playerUnit } = jwb.state;
 
   // sketchy - recall KEY_1 = '1', etc.
@@ -296,7 +299,7 @@ const _handleAbility = async (command: KeyCommand) => {
   const ability = playerUnit.abilities[index];
   if (playerUnit.getCooldown(ability) <= 0) {
     jwb.state.queuedAbility = ability;
-    await renderer.render();
+    await render();
   } else {
     console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);
   }

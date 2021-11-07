@@ -1,4 +1,4 @@
-import PaletteSwaps from '../types/PaletteSwaps';
+import PaletteSwaps from '../../types/PaletteSwaps';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import ImageLoader from './ImageLoader';
 

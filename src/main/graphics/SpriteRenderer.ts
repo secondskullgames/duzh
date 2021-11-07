@@ -1,30 +1,17 @@
+import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from './constants';
+import HUDRenderer from './HUDRenderer';
+import { Alignment, drawAligned } from './RenderingUtils';
 import Sprite from './sprites/Sprite';
 import Color from '../types/Color';
 import MinimapRenderer from './MinimapRenderer';
-import Renderer from './Renderer';
-import FontRenderer, { FontDefinition, Fonts } from './FontRenderer';
+import BufferedRenderer from './BufferedRenderer';
+import { renderFont, FontDefinition, Fonts } from './FontRenderer';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, ItemCategory, PromiseSupplier, Tile } from '../types/types';
 import { revealTiles } from '../core/actions';
-import { applyTransparentColor, replaceColors } from './ImageUtils';
-import UnitAbility from '../units/UnitAbility';
+import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Equipment from '../items/equipment/Equipment';
-import ImageLoader from './ImageLoader';
-
-const TILE_WIDTH = 32;
-const TILE_HEIGHT = 24;
-
-const WIDTH = 20; // in tiles
-const HEIGHT = 15; // in tiles
-
-const SCREEN_WIDTH = 640;
-const SCREEN_HEIGHT = 360;
-
-const HUD_HEIGHT = 3 * TILE_HEIGHT;
-const HUD_LEFT_WIDTH = 5 * TILE_WIDTH;
-const HUD_RIGHT_WIDTH = 5 * TILE_WIDTH;
-const HUD_MARGIN = 5;
-const HUD_BORDER_MARGIN = 3;
+import ImageLoader from './images/ImageLoader';
 
 const INVENTORY_LEFT = 2 * TILE_WIDTH;
 const INVENTORY_TOP = 2 * TILE_HEIGHT;
@@ -32,54 +19,24 @@ const INVENTORY_WIDTH = 16 * TILE_WIDTH;
 const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
 const INVENTORY_MARGIN = 12;
 
-const ABILITIES_PANEL_HEIGHT = 48;
-const ABILITIES_OUTER_MARGIN = 13;
-const ABILITIES_INNER_MARGIN = 10;
-const ABILITY_ICON_WIDTH = 20;
-const ABILITIES_Y_MARGIN = 4;
-
-const LINE_HEIGHT = 16;
-
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
-const HUD_FILENAME = 'HUD2';
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 const SHADOW_FILENAME = 'shadow';
 
-class SpriteRenderer implements Renderer {
-  static readonly SCREEN_WIDTH = SCREEN_WIDTH;
-  static readonly SCREEN_HEIGHT = SCREEN_HEIGHT;
-  private readonly container: HTMLElement;
-  private readonly bufferCanvas: HTMLCanvasElement;
-  private readonly bufferContext: CanvasRenderingContext2D;
-  private readonly canvas: HTMLCanvasElement;
-  private readonly context: CanvasRenderingContext2D;
-  private readonly fontRenderer: FontRenderer;
+class SpriteRenderer extends BufferedRenderer {
+  private readonly hudRenderer: HUDRenderer;
 
   constructor() {
-    this.container = document.getElementById('container') as HTMLElement;
-    this.container.innerHTML = '';
-    this.bufferCanvas = document.createElement('canvas');
-    this.bufferCanvas.width = WIDTH * TILE_WIDTH;
-    this.bufferCanvas.height = HEIGHT * TILE_HEIGHT;
-    this.bufferContext = this.bufferCanvas.getContext('2d') as CanvasRenderingContext2D;
-    this.bufferContext.imageSmoothingEnabled = false;
-    this.fontRenderer = new FontRenderer();
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = WIDTH * TILE_WIDTH;
-    this.canvas.height = HEIGHT * TILE_HEIGHT;
-    this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.bufferContext.imageSmoothingEnabled = false;
-    this.container.appendChild(this.canvas);
+    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.hudRenderer = new HUDRenderer();
   }
 
-  render = async () => {
-    await this._renderScreen();
-    await this._renderBuffer();
-  };
-
-  private _renderScreen = async () => {
+  /**
+   * @override {@link BufferedRenderer#renderBuffer}
+   */
+  renderBuffer = async () => {
     const { screen } = jwb.state;
     switch (screen) {
       case GameScreen.TITLE:
@@ -98,11 +55,6 @@ class SpriteRenderer implements Renderer {
       default:
         throw `Invalid screen ${screen}`;
     }
-  };
-
-  private _renderBuffer = async () => {
-    const imageBitmap = await createImageBitmap(this.bufferContext.getImageData(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-    await this.context.drawImage(imageBitmap, 0, 0);
   };
 
   private _renderGameScreen = async () => {
@@ -159,8 +111,7 @@ class SpriteRenderer implements Renderer {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
-          const projectile = map.projectiles
-            .filter(p => coordinatesEquals(p, { x, y }))[0];
+          const projectile = map.projectiles.filter(p => coordinatesEquals(p, { x, y }))[0];
           if (!!projectile) {
             promises.push(this._renderElement(projectile, { x, y }));
           }
@@ -270,15 +221,15 @@ class SpriteRenderer implements Renderer {
         promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
       }
     }
-    return Promise.all(promises);
+    await Promise.all(promises);
   };
 
   private _isPixelOnScreen = ({ x, y }: Coordinates): boolean => {
     return (
       (x >= -TILE_WIDTH) &&
-      (x <= SCREEN_WIDTH + TILE_WIDTH) &&
+      (x <= this.width + TILE_WIDTH) &&
       (y >= -TILE_HEIGHT) &&
-      (y <= SCREEN_HEIGHT + TILE_HEIGHT)
+      (y <= this.height + TILE_HEIGHT)
     );
   };
 
@@ -312,84 +263,8 @@ class SpriteRenderer implements Renderer {
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
       bufferContext.fillStyle = Color.BLACK;
-      bufferContext.fillRect(left, y, SCREEN_WIDTH, LINE_HEIGHT);
+      bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
       await this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
-    }
-  };
-
-  private _renderHUD = async () => {
-    await this._renderHUDFrame();
-    await Promise.all([
-      this._renderHUDLeftPanel(),
-      this._renderHUDMiddlePanel(),
-      this._renderHUDRightPanel(),
-    ]);
-  };
-
-  private _renderHUDFrame = async () => {
-    const imageData = await ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Color.WHITE));
-    const imageBitmap = await createImageBitmap(imageData);
-    await this.bufferContext.drawImage(imageBitmap, 0, SCREEN_HEIGHT - HUD_HEIGHT);
-  };
-
-  /**
-   * Renders the bottom-left area of the screen, showing information about the player
-   */
-  private _renderHUDLeftPanel = async () => {
-    const { playerUnit } = jwb.state;
-
-    const lines = [
-      playerUnit.name,
-      `Level ${playerUnit.level}`,
-      `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
-      `Damage: ${playerUnit.getDamage()}`,
-    ];
-
-    const left = HUD_MARGIN;
-    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-    for (let i = 0; i < lines.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
-    }
-  };
-
-  private _renderHUDMiddlePanel = async () => {
-    let left = HUD_LEFT_WIDTH + ABILITIES_OUTER_MARGIN;
-    const top = SCREEN_HEIGHT - ABILITIES_PANEL_HEIGHT + HUD_BORDER_MARGIN + ABILITIES_Y_MARGIN;
-    const { playerUnit } = jwb.state;
-
-    let keyNumber = 1;
-    for (let i = 0; i < playerUnit.abilities.length; i++) {
-      const ability = playerUnit.abilities[i];
-      if (!!ability.icon) {
-        await this._renderAbility(ability, left, top);
-        await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Color.WHITE, 'center');
-        left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
-        keyNumber++;
-      }
-    }
-  };
-
-  private _renderHUDRightPanel = async () => {
-    const { mapIndex, playerUnit, turn } = jwb.state;
-
-    const left = SCREEN_WIDTH - HUD_RIGHT_WIDTH + HUD_MARGIN;
-    const top = SCREEN_HEIGHT - HUD_HEIGHT + HUD_MARGIN;
-
-    const lines = [
-      `Turn: ${turn}`,
-      `Floor: ${(mapIndex || 0) + 1}`,
-    ];
-
-    const experienceToNextLevel = playerUnit.experienceToNextLevel();
-    if (experienceToNextLevel !== null) {
-      lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
-    }
-
-    for (let i = 0; i < lines.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
   };
 
@@ -399,8 +274,8 @@ class SpriteRenderer implements Renderer {
   private _gridToPixel = ({ x, y }: Coordinates): Coordinates => {
     const { playerUnit } = jwb.state;
     return {
-      x: ((x - playerUnit.x) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: ((y - playerUnit.y) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+      x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
+      y: ((y - playerUnit.y) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2
     };
   };
 
@@ -411,23 +286,9 @@ class SpriteRenderer implements Renderer {
     await this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Color.WHITE, 'center');
   };
 
-  private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: 'left' | 'center' | 'right') => {
-    const imageBitmap = await this.fontRenderer.render(text, font, color);
-    let left;
-    switch (textAlign) {
-      case 'left':
-        left = x;
-        break;
-      case 'center':
-        left = Math.floor(x - imageBitmap.width / 2);
-        break;
-      case 'right':
-        left = x + imageBitmap.width;
-        break;
-      default:
-        throw 'fux';
-    }
-    await this.bufferContext.drawImage(imageBitmap, left, y);
+  private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
+    const imageBitmap = await renderFont(text, font, color);
+    await drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
   };
 
   private _renderMinimap = async () => {
@@ -436,22 +297,9 @@ class SpriteRenderer implements Renderer {
     await this.bufferContext.drawImage(bitmap, 0, 0);
   };
 
-  private _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
-    let borderColor: Color;
-    const { queuedAbility, playerUnit } = jwb.state;
-    if (queuedAbility === ability) {
-      borderColor = Color.GREEN;
-    } else if (playerUnit.getCooldown(ability) === 0) {
-      borderColor = Color.WHITE;
-    } else {
-      borderColor = Color.DARK_GRAY;
-    }
-
-    const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }));
-
-    const imageBitmap = await createImageBitmap(imageData);
-    await this.bufferContext.drawImage(imageBitmap, left, top);
+  private _renderHUD = async() => {
+    const imageBitmap = await this.hudRenderer.render();
+    await this.bufferContext.drawImage(imageBitmap, 0, this.height - imageBitmap.height, imageBitmap.width, imageBitmap.height);
   };
 }
 

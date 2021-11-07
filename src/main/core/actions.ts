@@ -10,6 +10,8 @@ import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
+let renderer: SpriteRenderer;
+
 const loadMap = async (index: number) => {
   const { state } = jwb;
   if (index >= state.maps.length) {
@@ -26,11 +28,17 @@ const loadMap = async (index: number) => {
 const initialize = async () => {
   // @ts-ignore
   window.jwb = window.jwb || {};
-  jwb.renderer = new SpriteRenderer();
+  renderer = new SpriteRenderer();
+  const container = document.getElementById('container') as HTMLElement;
+  container.appendChild(renderer.canvas);
   attachEvents();
   await _initState();
   Music.playFigure(Music.TITLE_THEME);
-  return jwb.renderer.render();
+  return render();
+};
+
+const render = async () => {
+  const imageBitmap = await renderer.render();
 };
 
 const _initState = async () => {
@@ -61,14 +69,14 @@ const startGame = async () => {
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  return jwb.renderer.render();
+  return render();
 };
 
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
-  return jwb.renderer.render();
+  return render();
 };
 
 /**
@@ -104,6 +112,7 @@ const revealTiles = () => {
 export {
   initialize,
   loadMap,
+  render,
   returnToTitle,
   revealTiles,
   startGame

@@ -1,4 +1,4 @@
-import PaletteSwaps from '../types/PaletteSwaps';
+import PaletteSwaps from '../../types/PaletteSwaps';
 
 type RGB = [number, number, number];
 
