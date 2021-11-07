@@ -13,7 +13,7 @@ const HUD_FILENAME = 'HUD2';
 const HEIGHT = 3 * TILE_HEIGHT;
 const LEFT_PANE_WIDTH = 5 * TILE_WIDTH;
 const RIGHT_PAIN_WIDTH = 5 * TILE_WIDTH;
-const MARGIN_WIDTH = 5;
+const MARGIN_THICKNESS = 5;
 const BORDER_MARGIN = 3;
 
 const ABILITIES_PANEL_HEIGHT = 48;
@@ -28,15 +28,15 @@ class HUDRenderer extends BufferedRenderer {
   }
 
   renderBuffer = async () => {
-    await this._renderHUDFrame();
+    await this._renderFrame();
     await Promise.all([
-      this._renderHUDLeftPanel(),
-      this._renderHUDMiddlePanel(),
-      this._renderHUDRightPanel(),
+      this._renderLeftPanel(),
+      this._renderMiddlePanel(),
+      this._renderRightPanel(),
     ]);
   };
 
-  _renderHUDFrame = async () => {
+  _renderFrame = async () => {
     const imageData = await ImageLoader.loadImage(HUD_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Color.WHITE));
     const imageBitmap = await createImageBitmap(imageData);
@@ -46,7 +46,7 @@ class HUDRenderer extends BufferedRenderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  _renderHUDLeftPanel = async () => {
+  _renderLeftPanel = async () => {
     const { playerUnit } = jwb.state;
 
     const lines = [
@@ -56,15 +56,15 @@ class HUDRenderer extends BufferedRenderer {
       `Damage: ${playerUnit.getDamage()}`,
     ];
 
-    const left = MARGIN_WIDTH;
-    const top = MARGIN_WIDTH;
+    const left = MARGIN_THICKNESS;
+    const top = MARGIN_THICKNESS;
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
       await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
     }
   };
 
-  _renderHUDMiddlePanel = async () => {
+  _renderMiddlePanel = async () => {
     let left = LEFT_PANE_WIDTH + ABILITIES_OUTER_MARGIN;
     const top = this.height - ABILITIES_PANEL_HEIGHT + BORDER_MARGIN + ABILITIES_Y_MARGIN;
     const { playerUnit } = jwb.state;
@@ -81,11 +81,11 @@ class HUDRenderer extends BufferedRenderer {
     }
   };
 
-  _renderHUDRightPanel = async () => {
+  _renderRightPanel = async () => {
     const { mapIndex, playerUnit, turn } = jwb.state;
 
-    const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_WIDTH;
-    const top = this.height - HEIGHT + MARGIN_WIDTH;
+    const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_THICKNESS;
+    const top = this.height - HEIGHT + MARGIN_THICKNESS;
 
     const lines = [
       `Turn: ${turn}`,
