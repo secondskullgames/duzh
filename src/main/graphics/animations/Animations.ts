@@ -117,7 +117,7 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
     frame.push({ unit: targets[i], activity: Activity.STANDING });
   }
   frames.push({ units: frame });
-  
+
   return _playAnimation({
     frames,
     delay: FRAME_LENGTH

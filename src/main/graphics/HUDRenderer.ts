@@ -36,10 +36,11 @@ class HUDRenderer extends BufferedRenderer {
     ]);
   };
 
-  _renderHUDFrame = async (): Promise<ImageBitmap> => {
+  _renderHUDFrame = async () => {
     const imageData = await ImageLoader.loadImage(HUD_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Color.WHITE));
-    return createImageBitmap(imageData);
+    const imageBitmap = await createImageBitmap(imageData);
+    this.bufferContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
   };
 
   /**
