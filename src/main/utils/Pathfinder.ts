@@ -82,7 +82,9 @@ class Pathfinder {
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
         closed.push(chosenNode);
-        this._findNeighbors(chosenNode, tiles).forEach(neighbor => {
+
+        const neighbors = this._findNeighbors(chosenNode, tiles);
+        for (const neighbor of neighbors) {
           if (closed.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
             // already been seen, don't need to look at it*
           } else if (open.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
@@ -96,7 +98,7 @@ class Pathfinder {
               parent: chosenNode
             });
           }
-        });
+        }
       }
     }
   };

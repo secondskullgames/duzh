@@ -1,4 +1,3 @@
-import InventoryItem from '../items/InventoryItem';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from './constants';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
@@ -10,7 +9,6 @@ import BufferedRenderer from './BufferedRenderer';
 import { renderFont, FontDefinition, Fonts } from './FontRenderer';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, Tile } from '../types/types';
-import { revealTiles } from '../core/actions';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Equipment from '../items/equipment/Equipment';
 import ImageLoader from './images/ImageLoader';
@@ -55,7 +53,6 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderGameScreen = async () => {
-    revealTiles();
     this.bufferContext.fillStyle = Color.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 

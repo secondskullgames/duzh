@@ -17,7 +17,9 @@ class SoundPlayer {
 
   stop() {
     try {
-      this._oscillators.forEach(oscillator => oscillator.stop());
+      for (const oscillator of this._oscillators) {
+        oscillator.stop();
+      }
     } catch (e) {
       console.error(e);
     }

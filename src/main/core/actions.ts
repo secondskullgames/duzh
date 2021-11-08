@@ -38,7 +38,8 @@ const initialize = async () => {
 };
 
 const render = async () => {
-  const imageBitmap = await renderer.render();
+  _revealTiles();
+  await renderer.render();
 };
 
 const _initState = async () => {
@@ -82,11 +83,11 @@ const returnToTitle = async () => {
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-const revealTiles = () => {
+const _revealTiles = () => {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
 
-  map.rooms.forEach(room => {
+  for (const room of map.rooms) {
     if (contains(room, playerUnit)) {
       for (let y = room.top; y < room.top + room.height; y++) {
         for (let x = room.left; x < room.left + room.width; x++) {
@@ -96,7 +97,7 @@ const revealTiles = () => {
         }
       }
     }
-  });
+  }
 
   const radius = 2;
 
@@ -114,6 +115,5 @@ export {
   loadMap,
   render,
   returnToTitle,
-  revealTiles,
   startGame
 };

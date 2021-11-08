@@ -35,7 +35,9 @@ const playSuite = (suite: Suite) => {
             ...(!!bass ? [bass.map(transpose8vb)] : []),
             ...(!!lead ? [lead] : [])
           ];
-          figures.forEach(figure => playFigure(figure));
+          for (const figure of figures) {
+            playFigure(figure);
+          }
         }
       }, ((numRepeats * i) + j) * suite.length);
     }

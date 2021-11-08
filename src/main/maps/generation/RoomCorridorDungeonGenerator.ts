@@ -205,7 +205,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
       shuffle(candidatePairs);
 
       let joinedAnyRooms = false;
-      for (let [connectedRoom, unconnectedRoom] of candidatePairs) {
+      for (const [connectedRoom, unconnectedRoom] of candidatePairs) {
         if (this._joinRooms(connectedRoom, unconnectedRoom, section)) {
           connectedRoomPairs.push([connectedRoom, unconnectedRoom]);
           unconnectedRooms.splice(unconnectedRooms.indexOf(unconnectedRoom), 1);
@@ -272,10 +272,8 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
   }
 
   private _getExitCandidates(room: Room): Coordinates[] {
-    const eligibleSides = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT'];
-
     const candidates: Coordinates[] = [];
-    eligibleSides.forEach(side => {
+    for (const side of ['TOP', 'RIGHT', 'BOTTOM', 'LEFT']) {
       switch (side) {
         case 'TOP':
           for (let x = room.left + 1; x < room.left + room.width - 1; x++) {
@@ -300,7 +298,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
         default:
           throw `Unknown side ${side}`;
       }
-    });
+    }
 
     return candidates.filter(({ x, y }) => !room.exits.some(exit => isAdjacent(exit, { x, y })));
   }
@@ -322,9 +320,9 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
 
     const tileCostCalculator = (first: Coordinates, second: Coordinates) => this._calculateTileCost(section, first, second);
     const path = new Pathfinder(tileCostCalculator).findPath(firstExit, secondExit, unblockedTiles);
-    path.forEach(({ x, y }) => {
+    for (const { x, y } of path) {
       section.tiles[y][x] = 'FLOOR_HALL';
-    });
+    }
 
     return (path.length > 0);
   }
