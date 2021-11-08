@@ -1,7 +1,7 @@
 import TileFactory from '../types/TileFactory';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
-import SpriteRenderer from '../graphics/SpriteRenderer';
+import GameRenderer from '../graphics/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import UnitClass from '../units/UnitClass';
 import Music from '../sounds/Music';
@@ -10,7 +10,7 @@ import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
-let renderer: SpriteRenderer;
+let renderer: GameRenderer;
 
 const loadMap = async (index: number) => {
   const { state } = jwb;
@@ -28,7 +28,7 @@ const loadMap = async (index: number) => {
 const initialize = async () => {
   // @ts-ignore
   window.jwb = window.jwb || {};
-  renderer = new SpriteRenderer();
+  renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
   container.appendChild(renderer.canvas);
   attachEvents();
