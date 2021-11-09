@@ -15,9 +15,9 @@ type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
  * TODO can we delete this?
  */
 class RoomCorridorDungeonGenerator extends DungeonGenerator {
-  private readonly _minRoomDimension: number;
-  private readonly _maxRoomDimension: number;
-  private readonly _minRoomPadding: number;
+  private readonly minRoomDimension: number;
+  private readonly maxRoomDimension: number;
+  private readonly minRoomPadding: number;
   /**
    * @param minRoomDimension outer width, including wall
    * @param maxRoomDimension outer width, including wall
@@ -25,9 +25,9 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    */
   constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number, minRoomPadding: number) {
     super(tileSet);
-    this._minRoomDimension = minRoomDimension;
-    this._maxRoomDimension = maxRoomDimension;
-    this._minRoomPadding = minRoomPadding;
+    this.minRoomDimension = minRoomDimension;
+    this.maxRoomDimension = maxRoomDimension;
+    this.minRoomPadding = minRoomPadding;
   }
 
   protected generateTiles(width: number, height: number): MapSection {
@@ -97,7 +97,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
 
   private _getSplitDirection(width: number, height: number): SplitDirection {
     // First, make sure the area is large enough to support two sections; if not, we're done
-    const minSectionDimension = this._minRoomDimension + (2 * this._minRoomPadding);
+    const minSectionDimension = this.minRoomDimension + (2 * this.minRoomPadding);
     const canSplitHorizontally = (width >= (2 * minSectionDimension));
     const canSplitVertically = (height >= (2 * minSectionDimension));
 
@@ -120,15 +120,15 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * (within the specified parameters).
    */
   private _generateSingleSection(width: number, height: number): MapSection {
-    const maxRoomWidth = Math.min(width - (2 * this._minRoomPadding), this._maxRoomDimension);
-    const maxRoomHeight = Math.min(height - (2 * this._minRoomPadding), this._maxRoomDimension);
-    console.assert(maxRoomWidth >= this._minRoomDimension && maxRoomHeight >= this._minRoomDimension, 'calculate room dimensions failed');
-    const roomWidth = randInt(this._minRoomDimension, maxRoomWidth);
-    const roomHeight = randInt(this._minRoomDimension, maxRoomHeight);
+    const maxRoomWidth = Math.min(width - (2 * this.minRoomPadding), this.maxRoomDimension);
+    const maxRoomHeight = Math.min(height - (2 * this.minRoomPadding), this.maxRoomDimension);
+    console.assert(maxRoomWidth >= this.minRoomDimension && maxRoomHeight >= this.minRoomDimension, 'calculate room dimensions failed');
+    const roomWidth = randInt(this.minRoomDimension, maxRoomWidth);
+    const roomHeight = randInt(this.minRoomDimension, maxRoomHeight);
     const roomTiles = this._generateRoomTiles(roomWidth, roomHeight);
 
-    const roomLeft = randInt(this._minRoomPadding, width - roomWidth - this._minRoomPadding);
-    const roomTop = randInt(this._minRoomPadding, height - roomHeight - this._minRoomPadding);
+    const roomLeft = randInt(this.minRoomPadding, width - roomWidth - this.minRoomPadding);
+    const roomTop = randInt(this.minRoomPadding, height - roomHeight - this.minRoomPadding);
     const tiles: TileType[][] = [];
     // x, y are relative to the section's origin
     // roomX, roomY are relative to the room's origin
@@ -177,7 +177,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
    * @returns the min X/Y coordinate of the *second* room
    */
   private _getSplitPoint(dimension: number): number {
-    const minSectionDimension = this._minRoomDimension + 2 * this._minRoomPadding;
+    const minSectionDimension = this.minRoomDimension + 2 * this.minRoomPadding;
     const minSplitPoint = minSectionDimension;
     const maxSplitPoint = dimension - minSectionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
