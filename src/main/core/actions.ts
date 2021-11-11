@@ -37,10 +37,7 @@ const initialize = async () => {
   return render();
 };
 
-const render = async () => {
-  _revealTiles();
-  await renderer.render();
-};
+const render = async () => renderer.render();
 
 const _initState = async () => {
   const playerUnitController = new PlayerUnitController();
@@ -83,7 +80,7 @@ const returnToTitle = async () => {
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-const _revealTiles = () => {
+const revealTiles = () => {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
 
@@ -115,5 +112,6 @@ export {
   loadMap,
   render,
   returnToTitle,
+  revealTiles,
   startGame
 };

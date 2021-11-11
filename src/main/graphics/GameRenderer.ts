@@ -12,6 +12,7 @@ import { Coordinates, Entity, GameScreen, Tile } from '../types/types';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Equipment from '../items/equipment/Equipment';
 import ImageLoader from './images/ImageLoader';
+import { revealTiles } from '../core/actions';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -26,6 +27,7 @@ class GameRenderer extends BufferedRenderer {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
     this.hudRenderer = new HUDRenderer();
     this.inventoryRenderer = new InventoryRenderer();
+    this.canvas.classList.add('game');
   }
 
   /**
@@ -56,6 +58,7 @@ class GameRenderer extends BufferedRenderer {
     this.bufferContext.fillStyle = Color.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
+    await revealTiles();
     await this._renderTiles();
     await this._renderItems();
     await this._renderProjectiles();
