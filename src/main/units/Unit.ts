@@ -1,15 +1,15 @@
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import UnitClass from './UnitClass';
-import Sounds from '../sounds/Sounds';
-import InventoryMap from '../items/InventoryMap';
+import Equipment from '../items/equipment/Equipment';
 import EquipmentMap from '../items/equipment/EquipmentMap';
+import InventoryMap from '../items/InventoryMap';
 import Music from '../sounds/Music';
+import { playSound } from '../sounds/SoundFX';
+import Sounds from '../sounds/Sounds';
+import Direction from '../types/Direction';
+import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
-import Direction from '../types/Direction';
-import Equipment from '../items/equipment/Equipment';
-import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
-import { playSound } from '../sounds/SoundFX';
+import UnitClass from './UnitClass';
 
 // Regenerate 1% of life every 20 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.0005;
@@ -92,10 +92,9 @@ class Unit implements Entity {
     this.lifeRemainder -= deltaLife;
     this.life = Math.min(this.life + deltaLife, this.maxLife);
 
-    // I hate javascript, wtf is this callback signature
-    this.remainingCooldowns.forEach((cooldown, ability, map) => {
-      map.set(ability, Math.max(cooldown - 1, 0));
-    });
+    for (const [ability, cooldown] of this.remainingCooldowns.entries()) {
+      this.remainingCooldowns.set(ability, Math.max(cooldown - 1, 0));
+    }
   };
 
   private _endOfTurn = () => {
@@ -114,26 +113,32 @@ class Unit implements Entity {
 
   getDamage = (): number => {
     let damage = this.damage;
-    this.equipment.getEntries()
-      .filter(([slot, item]) => (slot !== EquipmentSlot.RANGED_WEAPON))
-      .forEach(([slot, item]) => {
+
+    for (const [slot, item] of this.equipment.getEntries()) {
+      if (slot !== EquipmentSlot.RANGED_WEAPON) {
         damage += (item.damage || 0);
-      });
+      }
+    }
+
     return damage;
   };
 
   getRangedDamage = (): number => {
     let damage = this.damage;
 
-    this.equipment.getEntries()
-      .filter(([slot, item]) => (slot !== EquipmentSlot.MELEE_WEAPON))
-      .forEach(([slot, item]) => {
-        if (slot === EquipmentSlot.RANGED_WEAPON) {
+    for (const [slot, item] of this.equipment.getEntries()) {
+      switch (slot) {
+        case EquipmentSlot.RANGED_WEAPON:
           damage += (item.damage || 0);
-        } else {
+          break;
+        case EquipmentSlot.MELEE_WEAPON:
+          // do nothing
+          break;
+        default:
           damage += (item.damage || 0) / 2;
-        }
-      });
+      }
+    }
+
     return Math.round(damage);
   };
 
@@ -143,6 +148,7 @@ class Unit implements Entity {
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
     this.damage += this.unitClass.damagePerLevel;
+
     if (withSound) {
       playSound(Sounds.LEVEL_UP);
     }

@@ -1,4 +1,4 @@
-import SpriteRenderer from './SpriteRenderer';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import Color from '../types/Color';
 import { Coordinates } from '../types/types';
 import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
@@ -7,14 +7,17 @@ const LIGHT_GRAY = '#c0c0c0';
 const DARK_GRAY  = '#808080';
 const BLACK      = '#000000';
 
+/**
+ * TODO: Make this extend BufferedRenderer
+ */
 class MinimapRenderer {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
 
   constructor() {
     this.canvas = document.createElement('canvas');
-    this.canvas.width = SpriteRenderer.SCREEN_WIDTH;
-    this.canvas.height = SpriteRenderer.SCREEN_HEIGHT;
+    this.canvas.width = SCREEN_WIDTH;
+    this.canvas.height = SCREEN_HEIGHT;
     this.context = <any>this.canvas.getContext('2d');
     this.context.imageSmoothingEnabled = false;
   }

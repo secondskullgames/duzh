@@ -1,5 +1,6 @@
 import Unit from '../units/Unit';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
+import { render } from './actions';
 
 const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null) => {
   const { playerUnit } = jwb.state;
@@ -9,7 +10,7 @@ const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null)
 };
 
 const _update = async () => {
-  const { state, renderer } = jwb;
+  const { state } = jwb;
   const { playerUnit } = state;
   const map = state.getMap();
 
@@ -22,7 +23,7 @@ const _update = async () => {
     }
   }
 
-  await renderer.render();
+  await render();
   state.turn++;
   state.messages = [];
 };

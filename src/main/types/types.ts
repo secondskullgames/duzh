@@ -23,6 +23,11 @@ interface Coordinates {
   y: number
 }
 
+interface Pixel {
+  x: number,
+  y: number
+}
+
 type CoordinatePair = [Coordinates, Coordinates];
 
 interface Entity extends Coordinates {
@@ -118,6 +123,7 @@ export {
   MapLayout,
   MapSection,
   Offsets,
+  Pixel,
   Projectile,
   PromiseSupplier,
   Rect,

@@ -4,23 +4,24 @@
  */
 
 import { GameScreen } from '../types/types';
+import { render } from './actions';
 
 const revealMap = async () => {
   jwb.DEBUG = true;
-  return jwb.renderer.render();
+  await render();
 };
 
 const killEnemies = async () => {
   const map = jwb.state.getMap();
   map.units = map.units.filter(u => u === jwb.state.playerUnit);
-  return jwb.renderer.render();
+  await render();
 };
 
 const killPlayer = async () => {
   const map = jwb.state.getMap();
   const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
   await playerUnit.takeDamage(playerUnit.life);
-  return jwb.renderer.render();
+  await render();
 };
 
 const renderMinimap = () => {

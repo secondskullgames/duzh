@@ -30,7 +30,7 @@ class GameState {
 
   getMap(): MapInstance {
     if (!this._map) {
-      throw 'Tried to retrieve map before map was loaded';
+      throw new Error('Tried to retrieve map before map was loaded');
     }
     return this._map;
   }

@@ -1,7 +1,7 @@
 import TileFactory from '../types/TileFactory';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
-import SpriteRenderer from '../graphics/SpriteRenderer';
+import GameRenderer from '../graphics/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import UnitClass from '../units/UnitClass';
 import Music from '../sounds/Music';
@@ -9,6 +9,8 @@ import { attachEvents } from './InputHandler';
 import { GameScreen, MapLayout } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
+
+let renderer: GameRenderer;
 
 const loadMap = async (index: number) => {
   const { state } = jwb;
@@ -26,12 +28,16 @@ const loadMap = async (index: number) => {
 const initialize = async () => {
   // @ts-ignore
   window.jwb = window.jwb || {};
-  jwb.renderer = new SpriteRenderer();
+  renderer = new GameRenderer();
+  const container = document.getElementById('container') as HTMLElement;
+  container.appendChild(renderer.canvas);
   attachEvents();
   await _initState();
   Music.playFigure(Music.TITLE_THEME);
-  return jwb.renderer.render();
+  return render();
 };
+
+const render = async () => renderer.render();
 
 const _initState = async () => {
   const playerUnitController = new PlayerUnitController();
@@ -61,14 +67,14 @@ const startGame = async () => {
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  return jwb.renderer.render();
+  return render();
 };
 
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
-  return jwb.renderer.render();
+  return render();
 };
 
 /**
@@ -78,7 +84,7 @@ const revealTiles = () => {
   const { playerUnit } = jwb.state;
   const map = jwb.state.getMap();
 
-  map.rooms.forEach(room => {
+  for (const room of map.rooms) {
     if (contains(room, playerUnit)) {
       for (let y = room.top; y < room.top + room.height; y++) {
         for (let x = room.left; x < room.left + room.width; x++) {
@@ -88,7 +94,7 @@ const revealTiles = () => {
         }
       }
     }
-  });
+  }
 
   const radius = 2;
 
@@ -104,6 +110,7 @@ const revealTiles = () => {
 export {
   initialize,
   loadMap,
+  render,
   returnToTitle,
   revealTiles,
   startGame

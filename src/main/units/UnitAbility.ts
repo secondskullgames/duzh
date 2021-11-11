@@ -1,5 +1,6 @@
 // TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
 
+import { render } from '../core/actions';
 import Direction from '../types/Direction';
 import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
@@ -192,7 +193,7 @@ class ShootArrow extends UnitAbility {
     const { dx, dy } = direction;
     unit.direction = { dx, dy };
 
-    await jwb.renderer.render();
+    await render();
     if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
       // change direction and re-render, but don't do anything (don't spend a turn)
       return;

@@ -14,7 +14,7 @@ const _wanderAndAttack = async (unit: Unit) => {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
 
-  Direction.values().forEach(({ dx, dy }) => {
+  for (const { dx, dy } of Direction.values()) {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -25,7 +25,7 @@ const _wanderAndAttack = async (unit: Unit) => {
         }
       }
     }
-  });
+  }
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
@@ -38,14 +38,14 @@ const _wander = async (unit: Unit) => {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
 
-  Direction.values().forEach(({ dx, dy }) => {
+  for (const { dx, dy } of Direction.values()) {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
         tiles.push({ x, y });
       }
     }
-  });
+  }
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
@@ -89,7 +89,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
   const map = jwb.state.getMap();
   const tiles: Coordinates[] = [];
 
-  Direction.values().forEach(({ dx, dy }) => {
+  for (const { dx, dy } of Direction.values()) {
     const [x, y] = [unit.x + dx, unit.y + dy];
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
@@ -100,7 +100,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
         }
       }
     }
-  });
+  }
 
   if (tiles.length > 0) {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));

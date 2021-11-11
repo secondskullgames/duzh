@@ -1,3 +1,4 @@
+import { render } from '../../core/actions';
 import Direction from '../../types/Direction';
 import Unit from '../../units/Unit';
 import { Activity, Coordinates, Projectile } from '../../types/types';
@@ -116,6 +117,7 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
     frame.push({ unit: targets[i], activity: Activity.STANDING });
   }
   frames.push({ units: frame });
+
   return _playAnimation({
     frames,
     delay: FRAME_LENGTH
@@ -134,9 +136,10 @@ const _playAnimation = async (animation: Animation) => {
     for (let j = 0; j < frame.units.length; j++) {
       const { unit, activity } = frame.units[j];
       unit.activity = activity;
-      await unit.sprite.getImage();
     }
-    await jwb.renderer.render();
+
+    await render();
+
     if (i < (frames.length - 1)) {
       await wait(delay);
     }
