@@ -20,8 +20,6 @@ interface UnitClass {
   readonly manaPerLevel: number | null;
   readonly damagePerLevel: number;
   readonly equipment?: string[];
-
-  // TODO move these somewhere else
   readonly experienceToNextLevel?: number[];
   readonly aiParameters?: AIParameters;
 }

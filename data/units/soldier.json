@@ -18,7 +18,7 @@
   "equipment": [
     "iron_chain_mail",
     "iron_helmet",
-    "steel_sword"
+    "iron_sword"
   ],
   "aiParameters": {
     "speed": 0.95,

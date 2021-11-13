@@ -30,21 +30,16 @@ class GameState {
     this.queuedAbility = null;
   }
 
-  getMap(): MapInstance {
+  getMap = (): MapInstance => {
     if (!this._map) {
       throw new Error('Tried to retrieve map before map was loaded');
     }
     return this._map;
-  }
+  };
 
-  setMap(map: MapInstance) {
-    this._map = map;
-  }
+  setMap = (map: MapInstance) => { this._map = map; };
 
-  static setInstance(state: GameState) {
-    INSTANCE = state;
-  }
-
+  static setInstance = (state: GameState) => { INSTANCE = state; };
   static getInstance = (): GameState => INSTANCE!!;
 }
 

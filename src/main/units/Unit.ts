@@ -12,8 +12,8 @@ import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
 
-// Regenerate 1% of life every 20 turns
-const LIFE_PER_TURN_MULTIPLIER = 0.0005;
+// Regenerate 1% of life every 10 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.001;
 
 type Props = {
   name: string,
