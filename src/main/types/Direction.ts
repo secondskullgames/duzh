@@ -1,7 +1,3 @@
-/**
- * Declaration merging wizardry below!
- */
-
 interface Direction {
   dx: number,
   dy: number

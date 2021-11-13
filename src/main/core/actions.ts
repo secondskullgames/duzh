@@ -26,8 +26,6 @@ const loadMap = async (index: number) => {
 };
 
 const initialize = async () => {
-  // @ts-ignore
-  window.jwb = window.jwb || {};
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
   container.appendChild(renderer.canvas);

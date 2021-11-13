@@ -3,7 +3,6 @@
  * that are only intended for debugging purposes.
  */
 
-import { GameScreen } from '../types/types';
 import { render } from './actions';
 import GameState from './GameState';
 
@@ -23,13 +22,8 @@ const killEnemies = async () => {
 const killPlayer = async () => {
   const state = GameState.getInstance();
   const { playerUnit } = state;
-  const map = state.getMap();
   await playerUnit.takeDamage(playerUnit.life);
   await render();
-};
-
-const renderMinimap = () => {
-  GameState.getInstance().screen = GameScreen.MINIMAP;
 };
 
 type DebugShape = {

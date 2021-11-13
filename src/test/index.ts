@@ -1,7 +1,7 @@
-import TestMapUtils from './maps/TestMapUtils';
+import { testAreAdjacent } from './maps/TestMapUtils';
 
-function test() {
-  TestMapUtils();
-}
+const test = () => {
+  testAreAdjacent();
+};
 
 test();

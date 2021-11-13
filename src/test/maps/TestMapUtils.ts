@@ -1,7 +1,7 @@
 import { Rect } from '../../main/types/types';
 import { areAdjacent } from '../../main/maps/MapUtils';
 
-function testAreAdjacent() {
+const testAreAdjacent = () => {
   // right-left
   // ####
   // ####****
@@ -32,14 +32,14 @@ function testAreAdjacent() {
     const second: Rect = { left: 0, top: 0, width: 6, height: 7 };
     _assert(areAdjacent(first, second, 5));
   }
-}
+};
 
-function _assert(condition: boolean, message: string = 'fux') {
+const _assert = (condition: boolean, message: string = 'fux') => {
   if (!condition) {
     throw new Error(message);
   }
-}
+};
 
-export default function() {
-  testAreAdjacent();
-}
+export {
+  testAreAdjacent
+};
