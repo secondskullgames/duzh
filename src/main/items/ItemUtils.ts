@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import Unit from '../units/Unit';
 import ItemFactory from './ItemFactory';
 import MapItem from './MapItem';
@@ -7,7 +8,7 @@ import Sounds from '../sounds/Sounds';
 import EquipmentModel from './equipment/EquipmentModel';
 
 const pickupItem = (unit: Unit, mapItem: MapItem) => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
   const { inventoryItem } = mapItem;
   unit.inventory.add(inventoryItem);
   state.messages.push(`Picked up a ${inventoryItem.name}.`);

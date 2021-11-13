@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import Color from '../types/Color';
 import { Coordinates, ItemCategory } from '../types/types';
 import BufferedRenderer from './BufferedRenderer';
@@ -20,7 +21,8 @@ class InventoryRenderer extends BufferedRenderer {
   }
 
   renderBuffer = async () => {
-    const { playerUnit } = jwb.state;
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
     const { inventory } = playerUnit;
     const { bufferCanvas, bufferContext } = this;
 

@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import Color from '../types/Color';
 import { Coordinates } from '../types/types';
 import UnitAbility from '../units/UnitAbility';
@@ -47,7 +48,7 @@ class HUDRenderer extends BufferedRenderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   _renderLeftPanel = async () => {
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
 
     const lines = [
       playerUnit.name,
@@ -67,7 +68,7 @@ class HUDRenderer extends BufferedRenderer {
   _renderMiddlePanel = async () => {
     let left = LEFT_PANE_WIDTH + ABILITIES_OUTER_MARGIN;
     const top = this.height - ABILITIES_PANEL_HEIGHT + BORDER_MARGIN + ABILITIES_Y_MARGIN;
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
 
     let keyNumber = 1;
     for (let i = 0; i < playerUnit.abilities.length; i++) {
@@ -82,7 +83,7 @@ class HUDRenderer extends BufferedRenderer {
   };
 
   _renderRightPanel = async () => {
-    const { mapIndex, playerUnit, turn } = jwb.state;
+    const { mapIndex, playerUnit, turn } = GameState.getInstance();
 
     const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_THICKNESS;
     const top = this.height - HEIGHT + MARGIN_THICKNESS;
@@ -105,7 +106,7 @@ class HUDRenderer extends BufferedRenderer {
 
   _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
     let borderColor: Color;
-    const { queuedAbility, playerUnit } = jwb.state;
+    const { queuedAbility, playerUnit } = GameState.getInstance();
     if (queuedAbility === ability) {
       borderColor = Color.GREEN;
     } else if (playerUnit.getCooldown(ability) === 0) {

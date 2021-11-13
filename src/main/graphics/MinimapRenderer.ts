@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import Color from '../types/Color';
 import { Coordinates } from '../types/types';
@@ -26,7 +27,7 @@ class MinimapRenderer {
     this.context.fillStyle = Color.BLACK;
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const map = jwb.state.getMap();
+    const map = GameState.getInstance().getMap();
     const m = Math.floor(Math.min(
       this.canvas.width / map.width,
       this.canvas.height / map.height
@@ -42,11 +43,14 @@ class MinimapRenderer {
   };
 
   private _getColor = ({ x, y }: Coordinates) => {
-    if (Coordinates.equals(jwb.state.playerUnit, { x, y })) {
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
+
+    if (Coordinates.equals(playerUnit, { x, y })) {
       return Color.RED;
     }
 
-    const map = jwb.state.getMap();
     if (isTileRevealed({ x, y })) {
       const tileType = map.getTile({ x, y }).type;
       switch (tileType) {

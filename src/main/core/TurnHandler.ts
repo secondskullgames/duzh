@@ -1,16 +1,18 @@
 import Unit from '../units/Unit';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import { render } from './actions';
+import GameState from './GameState';
 
 const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null) => {
-  const { playerUnit } = jwb.state;
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
   const playerController = <PlayerUnitController>(playerUnit.controller);
   playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
   return _update();
 };
 
 const _update = async () => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
   const { playerUnit } = state;
   const map = state.getMap();
 

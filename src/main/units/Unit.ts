@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../items/equipment/Equipment';
 import EquipmentMap from '../items/equipment/EquipmentMap';
@@ -172,14 +173,15 @@ class Unit implements Entity {
   };
 
   takeDamage = (damage: number, sourceUnit?: Unit) => {
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
 
     this.life = Math.max(this.life - damage, 0);
     if (this.life === 0) {
       map.removeUnit(this);
       if (this === playerUnit) {
-        jwb.state.screen = GameScreen.GAME_OVER;
+        state.screen = GameScreen.GAME_OVER;
         Music.stop();
         Music.playFigure(Music.GAME_OVER);
       } else {

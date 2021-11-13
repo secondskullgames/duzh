@@ -4,6 +4,8 @@ import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
 import UnitAbility from '../units/UnitAbility';
 
+let INSTANCE: GameState | null = null;
+
 /**
  * Global mutable state
  */
@@ -38,6 +40,12 @@ class GameState {
   setMap(map: MapInstance) {
     this._map = map;
   }
+
+  static setInstance(state: GameState) {
+    INSTANCE = state;
+  }
+
+  static getInstance = (): GameState => INSTANCE!!;
 }
 
 export default GameState;

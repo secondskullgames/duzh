@@ -1,3 +1,4 @@
+import GameState from '../../core/GameState';
 import Unit from '../Unit';
 import UnitController from './UnitController';
 import UnitBehavior from '../UnitBehaviors';
@@ -6,7 +7,7 @@ import { randInt, weightedRandom } from '../../utils/random';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder(unit: Unit) {
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
@@ -40,7 +41,7 @@ const HUMAN_CAUTIOUS: UnitController = {
 
 const HUMAN_AGGRESSIVE = {
   issueOrder(unit: Unit) {
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
@@ -65,7 +66,7 @@ const HUMAN_AGGRESSIVE = {
 
 const HUMAN_DETERMINISTIC = {
   issueOrder(unit: Unit) {
-    const { playerUnit, turn } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
 
     const { aiParameters } = unit.unitClass;
     if (!aiParameters) {

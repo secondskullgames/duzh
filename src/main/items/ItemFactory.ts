@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import Sounds from '../sounds/Sounds';
 import Equipment from './equipment/Equipment';
 import InventoryItem from './InventoryItem';
@@ -18,7 +19,7 @@ const createPotion = (lifeRestored: number): InventoryItem => {
     playSound(Sounds.USE_POTION);
     const prevLife = unit.life;
     unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-    jwb.state.messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
+    GameState.getInstance().messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
   };
 
   return new InventoryItem('Potion', ItemCategory.POTION, onUse);
@@ -26,7 +27,7 @@ const createPotion = (lifeRestored: number): InventoryItem => {
 
 const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
   const onUse: ItemProc = async (item, unit): Promise<void> => {
-    const map = jwb.state.getMap();
+    const map = GameState.getInstance().getMap();
 
     const adjacentUnits: Unit[] = map.units.filter(u => {
       const dx = unit.x - u.x;

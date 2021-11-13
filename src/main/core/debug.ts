@@ -5,6 +5,7 @@
 
 import { GameScreen } from '../types/types';
 import { render } from './actions';
+import GameState from './GameState';
 
 const revealMap = async () => {
   jwb.DEBUG = true;
@@ -12,20 +13,23 @@ const revealMap = async () => {
 };
 
 const killEnemies = async () => {
-  const map = jwb.state.getMap();
-  map.units = map.units.filter(u => u === jwb.state.playerUnit);
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
+  map.units = map.units.filter(u => u === playerUnit);
   await render();
 };
 
 const killPlayer = async () => {
-  const map = jwb.state.getMap();
-  const playerUnit = map.units.filter(u => u === jwb.state.playerUnit)[0];
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
   await playerUnit.takeDamage(playerUnit.life);
   await render();
 };
 
 const renderMinimap = () => {
-  jwb.state.screen = GameScreen.MINIMAP;
+  GameState.getInstance().screen = GameScreen.MINIMAP;
 };
 
 type DebugShape = {

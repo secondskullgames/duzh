@@ -1,3 +1,4 @@
+import GameState from './GameState';
 import TurnHandler from './TurnHandler';
 import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
@@ -134,7 +135,7 @@ const keyHandler = async (e: KeyboardEvent) => {
 };
 
 const _handleArrowKey = async (command: KeyCommand) => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
 
   switch (state.screen) {
     case GameScreen.GAME:
@@ -170,15 +171,16 @@ const _handleArrowKey = async (command: KeyCommand) => {
           case KeyCommand.SHIFT_RIGHT:
             return (u: Unit) => UnitAbility.SHOOT_ARROW.use(u, { dx, dy });
           default:
-            if (!!jwb.state.queuedAbility) {
-              const ability = jwb.state.queuedAbility;
-              jwb.state.queuedAbility = null;
+            if (state.queuedAbility) {
+              const ability = state.queuedAbility;
+              state.queuedAbility = null;
               return (u: Unit) => ability.use(u, { dx, dy });
             }
             return (u: Unit) => UnitAbility.ATTACK.use(u, { dx, dy });
         }
       })();
-      return TurnHandler.playTurn(queuedOrder);
+      await TurnHandler.playTurn(queuedOrder);
+      break;
     case GameScreen.INVENTORY:
       const { inventory } = state.playerUnit;
 
@@ -213,7 +215,7 @@ const _handleArrowKey = async (command: KeyCommand) => {
 };
 
 const _handleEnter = async () => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
   const { playerUnit } = state;
 
   switch (state.screen) {
@@ -260,7 +262,7 @@ const _handleEnter = async () => {
 };
 
 const _handleTab = async () => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
 
   switch (state.screen) {
     case GameScreen.INVENTORY:
@@ -274,7 +276,7 @@ const _handleTab = async () => {
 };
 
 const _handleMap = async () => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
 
   switch (state.screen) {
     case GameScreen.MINIMAP:
@@ -291,14 +293,15 @@ const _handleMap = async () => {
 };
 
 const _handleAbility = async (command: KeyCommand) => {
-  const { playerUnit } = jwb.state;
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
 
   // sketchy - recall KEY_1 = '1', etc.
   // player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
   const ability = playerUnit.abilities[index];
   if (playerUnit.getCooldown(ability) <= 0) {
-    jwb.state.queuedAbility = ability;
+    state.queuedAbility = ability;
     await render();
   } else {
     console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);

@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from './constants';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
@@ -34,7 +35,7 @@ class GameRenderer extends BufferedRenderer {
    * @override {@link BufferedRenderer#renderBuffer}
    */
   renderBuffer = async () => {
-    const { screen } = jwb.state;
+    const { screen } = GameState.getInstance();
     switch (screen) {
       case GameScreen.TITLE:
         return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
@@ -68,7 +69,8 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderTiles = async () => {
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const map = state.getMap();
     const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -84,7 +86,8 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderItems = async () => {
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const map = state.getMap();
     const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -103,7 +106,8 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderProjectiles = async () => {
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const map = state.getMap();
     const promises: Promise<any>[] = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -119,8 +123,9 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderUnits = async () => {
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
     const promises: Promise<any>[] = [];
 
     for (let y = 0; y < map.height; y++) {
@@ -196,7 +201,7 @@ class GameRenderer extends BufferedRenderer {
 
   private _renderMessages = async () => {
     const { bufferContext } = this;
-    const { messages } = jwb.state;
+    const { messages } = GameState.getInstance();
     bufferContext.fillStyle = Color.BLACK;
     bufferContext.strokeStyle = Color.BLACK;
 
@@ -215,7 +220,7 @@ class GameRenderer extends BufferedRenderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Coordinates => {
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
       y: ((y - playerUnit.y) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2

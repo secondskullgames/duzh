@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import { Coordinates, Room, Tile } from '../types/types';
 import Unit from '../units/Unit';
 import MapItem from '../items/MapItem';
@@ -40,7 +41,7 @@ class MapBuilder {
   }
 
   build = async (): Promise<MapInstance> => {
-    const { playerUnit } = jwb.state;
+    const { playerUnit } = GameState.getInstance();
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     const units = [playerUnit];
     for (const { x, y } of this.enemyUnitLocations) {

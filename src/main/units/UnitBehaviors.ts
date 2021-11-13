@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import Direction from '../types/Direction';
 import Pathfinder from '../utils/Pathfinder';
 import Unit from './Unit';
@@ -10,8 +11,9 @@ import { manhattanDistance } from '../maps/MapUtils';
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
 const _wanderAndAttack = async (unit: Unit) => {
-  const { playerUnit } = jwb.state;
-  const map = jwb.state.getMap();
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {
@@ -35,7 +37,8 @@ const _wanderAndAttack = async (unit: Unit) => {
 };
 
 const _wander = async (unit: Unit) => {
-  const map = jwb.state.getMap();
+  const state = GameState.getInstance();
+  const map = state.getMap();
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {
@@ -55,8 +58,9 @@ const _wander = async (unit: Unit) => {
 };
 
 const _attackPlayerUnit_withPath = async (unit: Unit) => {
-  const { playerUnit } = jwb.state;
-  const map = jwb.state.getMap();
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
   const mapRect: Rect = map.getRect();
   const unblockedTiles: Coordinates[] = [];
 
@@ -85,8 +89,9 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
 };
 
 const _fleeFromPlayerUnit = async (unit: Unit) => {
-  const { playerUnit } = jwb.state;
-  const map = jwb.state.getMap();
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {

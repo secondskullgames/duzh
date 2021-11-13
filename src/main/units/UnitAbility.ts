@@ -1,6 +1,7 @@
 // TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
 
 import { render } from '../core/actions';
+import GameState from '../core/GameState';
 import Direction from '../types/Direction';
 import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
@@ -12,7 +13,8 @@ import { playArrowAnimation, playAttackingAnimation } from '../graphics/animatio
  * Helper function for most melee attacks
  */
 const attack = async (unit: Unit, target: Unit, damage: number) => {
-  jwb.state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
+  const state = GameState.getInstance();
+  state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
 
   await playAttackingAnimation(unit, target);
   await target.takeDamage(damage, unit);
@@ -45,8 +47,9 @@ class NormalAttack extends UnitAbility {
     const { dx, dy } = direction;
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -78,8 +81,9 @@ class HeavyAttack extends UnitAbility {
     const { dx, dy } = direction;
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -112,8 +116,9 @@ class KnockbackAttack extends UnitAbility {
     const { dx, dy } = direction;
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -157,8 +162,9 @@ class StunAttack extends UnitAbility {
     const { dx, dy } = direction;
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
-    const { playerUnit } = jwb.state;
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const { playerUnit } = state;
+    const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -199,7 +205,8 @@ class ShootArrow extends UnitAbility {
       return;
     }
 
-    const map = jwb.state.getMap();
+    const state = GameState.getInstance();
+    const map = state.getMap();
     const coordinatesList = [];
     let { x, y } = { x: unit.x + dx, y: unit.y + dy };
     while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
@@ -210,7 +217,7 @@ class ShootArrow extends UnitAbility {
 
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
-      const { messages } = jwb.state;
+      const { messages } = GameState.getInstance();
       const damage = unit.getRangedDamage();
       messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
 

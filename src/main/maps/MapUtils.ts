@@ -1,3 +1,4 @@
+import GameState from '../core/GameState';
 import { Coordinates, Rect } from '../types/types';
 import { sortBy } from '../utils/ArrayUtils';
 import { TileType } from '../types/types';
@@ -70,7 +71,7 @@ const isTileRevealed = ({ x, y }: Coordinates) => {
     return true;
   }
 
-  return jwb.state.getMap().revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
+  return GameState.getInstance().getMap().revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
 };
 
 const isBlocking = (tileType: TileType) => {

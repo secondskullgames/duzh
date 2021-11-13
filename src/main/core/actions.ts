@@ -13,10 +13,10 @@ import PlayerUnitController from '../units/controllers/PlayerUnitController';
 let renderer: GameRenderer;
 
 const loadMap = async (index: number) => {
-  const { state } = jwb;
+  const state = GameState.getInstance();
   if (index >= state.maps.length) {
     Music.stop();
-    jwb.state.screen = GameScreen.VICTORY;
+    state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
     // TODO - this isn't memoized
@@ -52,7 +52,7 @@ const _initState = async () => {
   const dungeonTileSet = await TileFactory.createTileSet('dungeon');
   const caveTileSet = await TileFactory.createTileSet('cave');
 
-  jwb.state = new GameState(playerUnit, [
+  const state = new GameState(playerUnit, [
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 1, 32, 24, 10, 5),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 2, 32, 24, 11, 4),
     () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 3, 32, 24, 12, 3),
@@ -60,6 +60,8 @@ const _initState = async () => {
     () => MapFactory.createRandomMap(MapLayout.BLOB, caveTileSet, 5, 36, 26, 13, 3),
     () => MapFactory.createRandomMap(MapLayout.BLOB, caveTileSet, 6, 38, 27, 14, 3)
   ]);
+
+  GameState.setInstance(state);
 };
 
 const startGame = async () => {
@@ -81,8 +83,9 @@ const returnToTitle = async () => {
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
 const revealTiles = () => {
-  const { playerUnit } = jwb.state;
-  const map = jwb.state.getMap();
+  const state = GameState.getInstance();
+  const { playerUnit } = state;
+  const map = state.getMap();
 
   for (const room of map.rooms) {
     if (contains(room, playerUnit)) {

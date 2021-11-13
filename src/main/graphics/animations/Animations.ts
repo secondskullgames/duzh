@@ -1,4 +1,5 @@
 import { render } from '../../core/actions';
+import GameState from '../../core/GameState';
 import Direction from '../../types/Direction';
 import Unit from '../../units/Unit';
 import { Activity, Coordinates, Projectile } from '../../types/types';
@@ -129,7 +130,7 @@ const _playAnimation = async (animation: Animation) => {
 
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
-    const map = jwb.state.getMap();
+    const map = GameState.getInstance().getMap();
     if (!!frame.projectiles) {
       map.projectiles.push(...frame.projectiles);
     }
