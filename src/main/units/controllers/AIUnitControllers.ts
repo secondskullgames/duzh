@@ -96,7 +96,7 @@ const HUMAN_DETERMINISTIC = {
 
 const _canMove = (speed: number): boolean => {
   // deterministic version
-  // const { turn } = jwb.state;
+  // const { turn } = GameState.getInstance();
   // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version
