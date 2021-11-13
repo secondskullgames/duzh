@@ -2,7 +2,7 @@ import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, Rect, TileType } from '../../types/types';
 import type { TileSet } from '../../types/TileFactory';
 import { randChoice, randInt, shuffle } from '../../utils/random';
-import { areAdjacent, coordinatesEquals } from '../MapUtils';
+import { areAdjacent } from '../MapUtils';
 
 type Direction = 'HORIZONTAL' | 'VERTICAL';
 
@@ -305,7 +305,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       const dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
 
       let { x, y } = connection.startCoordinates;
-      while (!coordinatesEquals({ x, y }, connection.endCoordinates)) {
+      while (!Coordinates.equals({ x, y }, connection.endCoordinates)) {
         tiles[y][x] = 'FLOOR_HALL';
         x += dx;
         y += dy;
@@ -464,7 +464,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     let dy = Math.sign(middle.y - start.y);
 
     let { x, y } = start;
-    while (!coordinatesEquals({ x, y }, middle)) {
+    while (!Coordinates.equals({ x, y }, middle)) {
       tiles[y][x] = 'FLOOR_HALL';
       x += dx;
       y += dy;
@@ -472,7 +472,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
     dx = Math.sign(end.x - middle.x);
     dy = Math.sign(end.y - middle.y);
-    while (!coordinatesEquals({ x, y }, end)) {
+    while (!Coordinates.equals({ x, y }, end)) {
       tiles[y][x] = 'FLOOR_HALL';
       x += dx;
       y += dy;

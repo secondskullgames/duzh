@@ -3,7 +3,7 @@ import Unit from '../../units/Unit';
 import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
 import { Coordinates, MapSection, TileType } from '../../types/types';
-import { coordinatesEquals, hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
+import { hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
@@ -75,7 +75,7 @@ abstract class DungeonGenerator {
 
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (!isBlocking(tiles[y][x]) && !blockedTiles.some(tile => coordinatesEquals(tile, { x, y }))) {
+        if (!isBlocking(tiles[y][x]) && !blockedTiles.some(tile => Coordinates.equals(tile, { x, y }))) {
           const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
           candidates.push([{ x, y }, average(tileDistances)]);
         }

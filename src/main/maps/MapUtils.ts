@@ -17,7 +17,7 @@ const pickUnoccupiedLocations = (
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
       if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
-        if (occupiedLocations.filter(loc => coordinatesEquals(loc, { x, y })).length === 0) {
+        if (occupiedLocations.filter(loc => Coordinates.equals(loc, { x, y })).length === 0) {
           unoccupiedLocations.push({ x, y });
         }
       }
@@ -37,9 +37,6 @@ const pickUnoccupiedLocations = (
   }
   return chosenLocations;
 };
-
-const coordinatesEquals= (first: Coordinates, second: Coordinates): boolean =>
-  (first.x === second.x && first.y === second.y);
 
 const contains = (rect: Rect, coordinates: Coordinates): boolean =>
   coordinates.x >= rect.left
@@ -73,7 +70,7 @@ const isTileRevealed = ({ x, y }: Coordinates) => {
     return true;
   }
 
-  return jwb.state.getMap().revealedTiles.some(tile => coordinatesEquals({ x, y }, tile));
+  return jwb.state.getMap().revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
 };
 
 const isBlocking = (tileType: TileType) => {
@@ -120,7 +117,6 @@ export {
   areAdjacent,
   civDistance,
   contains,
-  coordinatesEquals,
   hypotenuse,
   isAdjacent,
   isBlocking,

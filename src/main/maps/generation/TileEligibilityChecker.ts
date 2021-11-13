@@ -1,18 +1,17 @@
 import { Coordinates, MapSection, TileType } from '../../types/types';
-import { coordinatesEquals } from '../MapUtils';
 
 class TileEligibilityChecker {
   isBlocked = ({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]): boolean => {
     // can't draw a path through an existing room or a wall
     const blockedTileTypes: TileType[] = ['FLOOR', /*'FLOOR_HALL',*/ 'WALL', 'WALL_HALL', 'WALL_TOP'];
 
-    if (exits.some(exit => coordinatesEquals({ x, y }, exit))) {
+    if (exits.some(exit => Coordinates.equals({ x, y }, exit))) {
       return false;
     } else if (section.tiles[y][x] === 'NONE' || section.tiles[y][x] === 'FLOOR_HALL') {
       let dy;
       // skip the check if we're within 1 tile vertically of an exit
       const isNextToExit: boolean = [-2, -1, 1, 2].some(dy => (
-        exits.some(exit => coordinatesEquals(exit, { x, y: y + dy }))
+        exits.some(exit => Coordinates.equals(exit, { x, y: y + dy }))
       ));
 
       if (isNextToExit) {

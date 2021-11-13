@@ -7,7 +7,7 @@ import Color from '../types/Color';
 import MinimapRenderer from './MinimapRenderer';
 import BufferedRenderer from './BufferedRenderer';
 import { renderFont, FontDefinition, Fonts } from './FontRenderer';
-import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
+import { isTileRevealed } from '../maps/MapUtils';
 import { Coordinates, Entity, GameScreen, Tile } from '../types/types';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Equipment from '../items/equipment/Equipment';
@@ -108,7 +108,7 @@ class GameRenderer extends BufferedRenderer {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
-          const projectile = map.projectiles.filter(p => coordinatesEquals(p, { x, y }))[0];
+          const projectile = map.projectiles.find(p => Coordinates.equals(p, { x, y }));
           if (!!projectile) {
             promises.push(this._renderElement(projectile, { x, y }));
           }

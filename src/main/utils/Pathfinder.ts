@@ -1,4 +1,4 @@
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
+import { manhattanDistance } from '../maps/MapUtils';
 import { Coordinates } from '../types/types';
 import { randChoice } from './random';
 
@@ -74,7 +74,7 @@ class Pathfinder {
         .sort((a, b) => a.cost - b.cost);
 
       const bestNode = nodeCosts[0].node;
-      if (coordinatesEquals(bestNode, goal)) {
+      if (Coordinates.equals(bestNode, goal)) {
         // Done!
         return traverseParents(bestNode);
       } else {
@@ -85,9 +85,9 @@ class Pathfinder {
 
         const neighbors = this._findNeighbors(chosenNode, tiles);
         for (const neighbor of neighbors) {
-          if (closed.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
+          if (closed.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
             // already been seen, don't need to look at it*
-          } else if (open.some(coordinates => coordinatesEquals(coordinates, neighbor))) {
+          } else if (open.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
             // don't need to look at it now, will look later?
           } else {
             const movementCost = this._tileCostCalculator(chosenNode, neighbor);
@@ -106,7 +106,7 @@ class Pathfinder {
   private _findNeighbors = (tile: Coordinates, tiles: Coordinates[]): Coordinates[] =>
     CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
-      .filter(({ x, y }) => tiles.some(tile => coordinatesEquals(tile, { x, y })));
+      .filter(({ x, y }) => tiles.some(tile => Coordinates.equals(tile, { x, y })));
 }
 
 export default Pathfinder;

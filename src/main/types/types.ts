@@ -1,4 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
+import Coordinates from './Coordinates';
 import Direction from './Direction';
 
 enum Activity {
@@ -16,11 +17,6 @@ namespace Activity {
     Activity.ATTACKING,
     Activity.SHOOTING
   ];
-}
-
-interface Coordinates {
-  x: number,
-  y: number
 }
 
 interface Pixel {

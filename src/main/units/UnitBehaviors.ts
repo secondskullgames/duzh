@@ -5,7 +5,7 @@ import UnitAbility from './UnitAbility'
 import { randChoice } from '../utils/random';
 import { Coordinates, Rect } from '../types/types';
 import { comparingReversed } from '../utils/ArrayUtils';
-import { coordinatesEquals, manhattanDistance } from '../maps/MapUtils';
+import { manhattanDistance } from '../maps/MapUtils';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
@@ -64,7 +64,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
     for (let x = 0; x < mapRect.width; x++) {
       if (!map.getTile({ x, y }).isBlocking) {
         unblockedTiles.push({ x, y });
-      } else if (coordinatesEquals({ x, y }, playerUnit)) {
+      } else if (Coordinates.equals({ x, y }, playerUnit)) {
         unblockedTiles.push({ x, y });
       } else {
         // blocked

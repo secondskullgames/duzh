@@ -2,7 +2,7 @@ import type { TileSet } from '../../types/TileFactory';
 import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection, TileType } from '../../types/types';
 import { randInt } from '../../utils/random';
-import { coordinatesEquals, isAdjacent } from '../MapUtils';
+import { isAdjacent } from '../MapUtils';
 import { comparing } from '../../utils/ArrayUtils';
 
 class BlobDungeonGenerator extends DungeonGenerator {
@@ -226,7 +226,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
     const maxX = Math.min(tile.x + offset, width - 1);
     for (let y = minY; y <= maxY; y++) {
       for (let x = minX; x <= maxX; x++) {
-        if (coordinatesEquals(tile, { x, y })) {
+        if (Coordinates.equals(tile, { x, y })) {
           continue;
         }
         if (tiles[y][x] === 'FLOOR') {

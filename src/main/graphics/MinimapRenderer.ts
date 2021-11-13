@@ -1,7 +1,7 @@
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import Color from '../types/Color';
 import { Coordinates } from '../types/types';
-import { coordinatesEquals, isTileRevealed } from '../maps/MapUtils';
+import { isTileRevealed } from '../maps/MapUtils';
 
 const LIGHT_GRAY = '#c0c0c0';
 const DARK_GRAY  = '#808080';
@@ -42,7 +42,7 @@ class MinimapRenderer {
   };
 
   private _getColor = ({ x, y }: Coordinates) => {
-    if (coordinatesEquals(jwb.state.playerUnit, { x, y })) {
+    if (Coordinates.equals(jwb.state.playerUnit, { x, y })) {
       return Color.RED;
     }
 
