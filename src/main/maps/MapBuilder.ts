@@ -1,5 +1,6 @@
 import GameState from '../core/GameState';
-import { Coordinates, Room, Tile } from '../types/types';
+import Tile from '../types/Tile';
+import { Coordinates, Room } from '../types/types';
 import Unit from '../units/Unit';
 import MapItem from '../items/MapItem';
 import MapInstance from './MapInstance';

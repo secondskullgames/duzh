@@ -1,5 +1,6 @@
 import Unit from '../units/Unit';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
+import { clear } from '../utils/ArrayUtils';
 import { render } from './actions';
 import GameState from './GameState';
 
@@ -27,7 +28,7 @@ const _update = async () => {
 
   await render();
   state.turn++;
-  state.messages = [];
+  clear(state.messages);
 };
 
 export default {

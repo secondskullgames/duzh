@@ -1,7 +1,7 @@
 import GameState from '../core/GameState';
+import TileType from '../types/TileType';
 import { Coordinates, Rect } from '../types/types';
 import { sortBy } from '../utils/ArrayUtils';
-import { TileType } from '../types/types';
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
@@ -74,17 +74,6 @@ const isTileRevealed = ({ x, y }: Coordinates) => {
   return GameState.getInstance().getMap().revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
 };
 
-const isBlocking = (tileType: TileType) => {
-  switch (tileType) {
-    case 'FLOOR':
-    case 'FLOOR_HALL':
-    case 'STAIRS_DOWN':
-      return false;
-    default:
-      return true;
-  }
-};
-
 const areAdjacent = (first: Rect, second: Rect, minBorderLength: number): boolean => {
   // right-left
   if (first.left + first.width === second.left) {
@@ -120,7 +109,6 @@ export {
   contains,
   hypotenuse,
   isAdjacent,
-  isBlocking,
   isTileRevealed,
   manhattanDistance,
   pickUnoccupiedLocations

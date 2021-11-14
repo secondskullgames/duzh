@@ -1,0 +1,9 @@
+{
+  "layout": "ROOMS_AND_CORRIDORS",
+  "tileSet": "dungeon",
+  "levelNumber": 2,
+  "width": 32,
+  "height": 24,
+  "numEnemies": 11,
+  "numItems": 4
+}

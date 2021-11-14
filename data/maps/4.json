@@ -1,0 +1,9 @@
+{
+  "layout": "BLOB",
+  "tileSet": "cave",
+  "levelNumber": 4,
+  "width": 34,
+  "height": 25,
+  "numEnemies": 12,
+  "numItems": 3
+}

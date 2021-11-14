@@ -1,28 +1,22 @@
-import { TileSet } from '../types/TileFactory';
-import MapBuilder from './MapBuilder';
+import TileSet from '../types/TileSet';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
 import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
-import { MapLayout } from '../types/types';
 import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
+import { MapLayout } from '../types/types';
+import MapBuilder from './MapBuilder';
+import MapModel from './MapModel';
 
-const createRandomMap = (
-  mapLayout: MapLayout,
-  tileSet: TileSet,
-  level: number,
-  width: number,
-  height: number,
-  numEnemies: number,
-  numItems: number
-): MapBuilder => {
-  const dungeonGenerator = _getDungeonGenerator(mapLayout, tileSet);
-  return dungeonGenerator.generateDungeon(level, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
+const loadMap = async (model: MapModel): Promise<MapBuilder> => {
+  const { layout, tileSet, levelNumber, width, height, numEnemies, numItems } = model;
+  const dungeonGenerator = _getDungeonGenerator(layout, await TileSet.forName(tileSet));
+  return dungeonGenerator.generateDungeon(levelNumber, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
 };
 
 const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator => {
   switch (mapLayout) {
-    case MapLayout.ROOMS_AND_CORRIDORS: {
+    case 'ROOMS_AND_CORRIDORS': {
       const minRoomDimension = 3;
       const maxRoomDimension = 7;
       // return new RoomCorridorDungeonGenerator(
@@ -32,9 +26,9 @@ const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGe
         maxRoomDimension
       );
     }
-    case MapLayout.BLOB:
+    case 'BLOB':
       return new BlobDungeonGenerator(tileSet);
   }
 };
 
-export default { createRandomMap };
+export default { loadMap };

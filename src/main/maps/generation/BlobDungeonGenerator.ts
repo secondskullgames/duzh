@@ -1,6 +1,7 @@
-import type { TileSet } from '../../types/TileFactory';
+import TileSet from '../../types/TileSet';
+import TileType from '../../types/TileType';
 import DungeonGenerator from './DungeonGenerator';
-import { Coordinates, MapSection, TileType } from '../../types/types';
+import { Coordinates, MapSection } from '../../types/types';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import { comparing } from '../../utils/ArrayUtils';

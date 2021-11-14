@@ -17,10 +17,27 @@ const average = (list: number[]) => {
   return sum / list.length;
 };
 
+const replace = <T>(array: T[], contents: T[]) => {
+  clear(array);
+  array.push(...contents);
+};
+
+const subtract = <T>(array: T[], toRemove: T[]) => {
+  const updated = array.filter(element => toRemove.indexOf(element) === -1);
+  replace(array, updated);
+};
+
+const clear = (array: any[]) => {
+  array.splice(0, array.length);
+};
+
 export {
   sortBy,
   sortByReversed,
   comparing,
   comparingReversed,
-  average
+  average,
+  replace,
+  subtract,
+  clear
 };

@@ -1,4 +1,5 @@
 import GameState from '../core/GameState';
+import Tile from '../types/Tile';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from './constants';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
@@ -9,7 +10,7 @@ import MinimapRenderer from './MinimapRenderer';
 import BufferedRenderer from './BufferedRenderer';
 import { renderFont, FontDefinition, Fonts } from './FontRenderer';
 import { isTileRevealed } from '../maps/MapUtils';
-import { Coordinates, Entity, GameScreen, Tile } from '../types/types';
+import { Coordinates, Entity, GameScreen } from '../types/types';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Equipment from '../items/equipment/Equipment';
 import ImageLoader from './images/ImageLoader';
