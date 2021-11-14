@@ -1,7 +1,7 @@
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import { replace, subtract } from '../../utils/ArrayUtils';
 import DungeonGenerator from './DungeonGenerator';
+import { replace, subtract } from '../../utils/ArrayUtils';
 import { Coordinates, MapSection, Rect } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
@@ -45,7 +45,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     this.maxRoomDimension = maxRoomDimension;
   }
 
-  protected generateTiles(width: number, height: number): MapSection {
+  protected generateTiles = (width: number, height: number): MapSection => {
     // 1. Recursively subdivide the map into sections.
     //    Each section must fall within the max dimensions.
     // 2. Add rooms within sections, with appropriate padding.
@@ -90,58 +90,57 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       width,
       height
     };
-  }
+  };
 
-  private _sectionToString(section: Section) {
-    return `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`;
-  }
+  private _sectionToString = (section: Section) => `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`;
 
   /**
    * Generate a rectangular area of tiles with the specified dimensions, consisting of any number of rooms connected
    * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
    * not large enough to form two sub-regions, just return a single section.
    */
-  private _generateSections(left: number, top: number, width: number, height: number): Section[] {
+  private _generateSections = (left: number, top: number, width: number, height: number): Section[] => {
     const splitDirection = this._getSplitDirection(width, height);
-    if (splitDirection === 'HORIZONTAL') {
-      const splitX = this._getSplitPoint(left, width, splitDirection);
-      const leftWidth = splitX - left;
-      const leftSections = this._generateSections(left, top, leftWidth, height);
-      const rightWidth = width - leftWidth;
-      const rightSections = this._generateSections(splitX, top, rightWidth, height);
-      return [...leftSections, ...rightSections];
-    } else if (splitDirection === 'VERTICAL') {
-      const splitY = this._getSplitPoint(top, height, splitDirection);
-      const topHeight = splitY - top;
-      const bottomHeight = height - topHeight;
-      const topSections = this._generateSections(left, top, width, topHeight);
-      const bottomSections = this._generateSections(left, splitY, width, bottomHeight);
-      return [...topSections, ...bottomSections];
-    } else {
-      // base case: generate single section
-      const rect: Rect = {
-        left,
-        top,
-        width,
-        height
-      };
+    switch (splitDirection) {
+      case 'HORIZONTAL':
+        const splitX = this._getSplitPoint(left, width, splitDirection);
+        const leftWidth = splitX - left;
+        const leftSections = this._generateSections(left, top, leftWidth, height);
+        const rightWidth = width - leftWidth;
+        const rightSections = this._generateSections(splitX, top, rightWidth, height);
+        return [...leftSections, ...rightSections];
+      case 'VERTICAL':
+        const splitY = this._getSplitPoint(top, height, splitDirection);
+        const topHeight = splitY - top;
+        const bottomHeight = height - topHeight;
+        const topSections = this._generateSections(left, top, width, topHeight);
+        const bottomSections = this._generateSections(left, splitY, width, bottomHeight);
+        return [...topSections, ...bottomSections];
+      default:
+        // base case: generate single section
+        const rect: Rect = {
+          left,
+          top,
+          width,
+          height
+        };
 
-      const padding = 1;
-      const leftPadding = 2;
-      const topPadding = 2;
+        const padding = 1;
+        const leftPadding = 2;
+        const topPadding = 2;
 
-      const roomRect: Rect = {
-        left: left + leftPadding,
-        top: top + topPadding,
-        width: width - padding - leftPadding,
-        height: height - padding - topPadding
-      };
+        const roomRect: Rect = {
+          left: left + leftPadding,
+          top: top + topPadding,
+          width: width - padding - leftPadding,
+          height: height - padding - topPadding
+        };
 
-      return [{ rect, roomRect }];
+        return [{ rect, roomRect }];
     }
-  }
+  };
 
-  private _getSplitDirection(width: number, height: number): Direction | null {
+  private _getSplitDirection = (width: number, height: number): Direction | null => {
     // First, make sure the area is large enough to support two sections; if not, we're done
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
@@ -155,23 +154,23 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     } else {
       return null;
     }
-  }
+  };
 
   /**
    * @param start left or top
    * @param dimension width or height
    * @returns the min X/Y coordinate of the *second* room
    */
-  private _getSplitPoint(start: number, dimension: number, direction: Direction): number {
+  private _getSplitPoint = (start: number, dimension: number, direction: Direction): number => {
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
     const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
     const minSplitPoint = start + minSectionDimension;
     const maxSplitPoint = start + dimension - minSectionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
-  }
+  };
 
-  private _removeRooms(sections: Section[]): void {
+  private _removeRooms = (sections: Section[]) => {
     const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
     const maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
     if (sections.length < minRooms) {
@@ -185,9 +184,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     for (let i = numRooms; i < shuffledSections.length; i++) {
       shuffledSections[i].roomRect = null;
     }
-  }
+  };
 
-  private _generateMinimalSpanningTree(sections: Section[]): Connection[] {
+  private _generateMinimalSpanningTree = (sections: Section[]): Connection[] => {
     const connectedSection = randChoice(sections);
     const connectedSections = [connectedSection];
     const unconnectedSections = [...sections].filter(section => section !== connectedSection);
@@ -222,9 +221,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
 
     return connections;
-  }
+  };
 
-  private _generateOptionalConnections(sections: Section[], spanningConnections: Connection[]): Connection[] {
+  private _generateOptionalConnections = (sections: Section[], spanningConnections: Connection[]): Connection[] => {
     const optionalConnections: Connection[] = [];
     for (let i = 0; i < sections.length; i++) {
       const first = sections[i];
@@ -239,13 +238,13 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
 
     return optionalConnections;
-  }
+  };
 
-  private _addInternalConnections(
+  private _addInternalConnections = (
     sections: Section[],
     spanningConnections: Connection[],
     optionalConnections: Connection[]
-  ): InternalConnection[] {
+  ): InternalConnection[] => {
     const internalConnections: InternalConnection[] = [];
     for (const section of sections) {
       if (!section.roomRect) {
@@ -272,7 +271,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
 
     return internalConnections;
-  }
+  };
 
   private _generateTiles = (
     width: number,
