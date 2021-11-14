@@ -1,4 +1,5 @@
-import { Coordinates, MapSection, TileType } from '../../types/types';
+import TileType from '../../types/TileType';
+import { Coordinates, MapSection } from '../../types/types';
 
 class TileEligibilityChecker {
   isBlocked = ({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]): boolean => {

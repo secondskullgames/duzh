@@ -1,6 +1,8 @@
+import TileSet from '../../types/TileSet';
+import TileType from '../../types/TileType';
+import { replace, subtract } from '../../utils/ArrayUtils';
 import DungeonGenerator from './DungeonGenerator';
-import { Coordinates, MapSection, Rect, TileType } from '../../types/types';
-import type { TileSet } from '../../types/TileFactory';
+import { Coordinates, MapSection, Rect } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
 
@@ -540,7 +542,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         return this._isOrphanedConnection(connection, internalConnections);
       });
 
-      this._subtract(externalConnections, orphanedConnections);
+      subtract(externalConnections, orphanedConnections);
 
       for (const internalConnection of internalConnections) {
         this._pruneInternalConnection(internalConnection, orphanedConnections);
@@ -549,7 +551,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       const orphanedInternalConnections = internalConnections.filter(internalConnection => {
         return this._isOrphanedInternalConnection(internalConnection, internalConnections);
       });
-      this._subtract(internalConnections, orphanedInternalConnections);
+      subtract(internalConnections, orphanedInternalConnections);
 
       removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
       console.log(`stripping: ${orphanedConnections.length}, ${orphanedInternalConnections.length}`);
@@ -589,7 +591,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         }
         return true;
       });
-      this._replace(neighbors, updatedNeighbors);
+      replace(neighbors, updatedNeighbors);
     }
   };
 
@@ -607,16 +609,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       }
     }
     return connectedNeighbors <= 1;
-  };
-
-  private _replace = <T>(array: T[], contents: T[]) => {
-    array.splice(0, array.length);
-    array.push(...contents);
-  };
-
-  private _subtract = <T>(array: T[], toRemove: T[]) => {
-    const updated = array.filter(element => toRemove.indexOf(element) === -1);
-    this._replace(array, updated);
   };
 }
 

@@ -1,12 +1,13 @@
-import TileFactory from '../types/TileFactory';
+import MapFactory from '../maps/MapFactory';
+import MapModel from '../maps/MapModel';
+import TileSet from '../types/TileSet';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
 import GameRenderer from '../graphics/GameRenderer';
-import MapFactory from '../maps/MapFactory';
 import UnitClass from '../units/UnitClass';
 import Music from '../sounds/Music';
 import { attachEvents } from './InputHandler';
-import { GameScreen, MapLayout } from '../types/types';
+import { GameScreen } from '../types/types';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
@@ -14,13 +15,15 @@ let renderer: GameRenderer;
 
 const loadMap = async (index: number) => {
   const state = GameState.getInstance();
-  if (index >= state.maps.length) {
+  if (index >= state.mapIds.length) {
     Music.stop();
     state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
     // TODO - this isn't memoized
-    const mapBuilder = state.maps[index]();
+    const mapId = state.mapIds[index];
+    const mapModel = await MapModel.load(mapId);
+    const mapBuilder = await MapFactory.loadMap(mapModel);
     state.setMap(await mapBuilder.build());
   }
 };
@@ -47,17 +50,10 @@ const _initState = async () => {
     coordinates: { x: 0, y: 0 }
   });
 
-  const dungeonTileSet = await TileFactory.createTileSet('dungeon');
-  const caveTileSet = await TileFactory.createTileSet('cave');
+  const dungeonTileSet = await TileSet.forName('dungeon');
+  const caveTileSet = await TileSet.forName('cave');
 
-  const state = new GameState(playerUnit, [
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 1, 32, 24, 10, 5),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 2, 32, 24, 11, 4),
-    () => MapFactory.createRandomMap(MapLayout.ROOMS_AND_CORRIDORS, dungeonTileSet, 3, 32, 24, 12, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, caveTileSet, 4, 34, 25, 12, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, caveTileSet, 5, 36, 26, 13, 3),
-    () => MapFactory.createRandomMap(MapLayout.BLOB, caveTileSet, 6, 38, 27, 14, 3)
-  ]);
+  const state = new GameState(playerUnit, ['1', '2', '3', '4', '5', '6']);
 
   GameState.setInstance(state);
 };

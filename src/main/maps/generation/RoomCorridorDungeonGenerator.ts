@@ -1,11 +1,12 @@
-import { TileSet } from '../../types/TileFactory';
+import TileSet from '../../types/TileSet';
+import TileType from '../../types/TileType';
 import DungeonGenerator from './DungeonGenerator';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
-import { CoordinatePair, Coordinates, MapSection, Room, TileType } from '../../types/types';
+import { CoordinatePair, Coordinates, MapSection, Room } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { sortBy } from '../../utils/ArrayUtils';
-import { hypotenuse, isAdjacent, isBlocking } from '../MapUtils';
+import { hypotenuse, isAdjacent } from '../MapUtils';
 
 type RoomPair = [Room, Room]
 type SplitDirection = 'HORIZONTAL' | 'VERTICAL' | 'NONE';
@@ -353,7 +354,7 @@ class RoomCorridorDungeonGenerator extends DungeonGenerator {
     sections.forEach(section => console.log(
       section.tiles
         .map(row => row.map(tile => {
-          if (isBlocking(tile)) {
+          if (TileType.isBlocking(tile)) {
             return '#';
           }
           return '.';

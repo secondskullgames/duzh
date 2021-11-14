@@ -1,6 +1,7 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Coordinates from './Coordinates';
 import Direction from './Direction';
+import TileType from './TileType';
 
 enum Activity {
   STANDING = 'STANDING',
@@ -61,10 +62,7 @@ interface MapSection {
   tiles:  TileType[][]
 }
 
-enum MapLayout {
-  ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
-  BLOB                = 'BLOB'
-}
+type MapLayout = 'ROOMS_AND_CORRIDORS' | 'BLOB';
 
 interface Projectile extends Entity {
   direction: Direction
@@ -84,21 +82,6 @@ interface Rect {
 interface Room extends Rect {
   exits: Coordinates[]
 }
-
-interface Tile {
-  type: TileType,
-  sprite: Sprite | null,
-  isBlocking: boolean
-}
-
-type TileType =
-  'FLOOR'
-  | 'FLOOR_HALL'
-  | 'WALL_TOP'
-  | 'WALL_HALL'
-  | 'WALL'
-  | 'NONE'
-  | 'STAIRS_DOWN';
 
 type UnitType =
   'ANIMAL'
@@ -124,7 +107,5 @@ export {
   PromiseSupplier,
   Rect,
   Room,
-  Tile,
-  TileType,
   UnitType
 };

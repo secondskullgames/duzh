@@ -12,17 +12,17 @@ let INSTANCE: GameState | null = null;
 class GameState {
   screen: GameScreen;
   playerUnit: Unit;
-  maps: (() => MapBuilder)[];
+  readonly mapIds: string[];
   mapIndex: number | null;
-  messages: string[];
+  readonly messages: string[];
   turn: number;
   queuedAbility: UnitAbility | null;
   private _map: MapInstance | null;
 
-  constructor(playerUnit: Unit, maps: (() => MapBuilder)[]) {
+  constructor(playerUnit: Unit, mapIds: string[]) {
     this.screen = GameScreen.TITLE;
     this.playerUnit = playerUnit;
-    this.maps = maps;
+    this.mapIds = mapIds;
     this.mapIndex = 0;
     this._map = null;
     this.messages = [];

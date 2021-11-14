@@ -1,9 +1,11 @@
-import TileFactory, { TileSet } from '../../types/TileFactory';
+import Tile from '../../types/Tile';
+import TileSet from '../../types/TileSet';
+import TileType from '../../types/TileType';
 import Unit from '../../units/Unit';
 import MapBuilder from '../MapBuilder';
 import MapItem from '../../items/MapItem';
-import { Coordinates, MapSection, TileType } from '../../types/types';
-import { hypotenuse, isBlocking, pickUnoccupiedLocations } from '../MapUtils';
+import { Coordinates, MapSection } from '../../types/types';
+import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';
 import TileEligibilityChecker from './TileEligibilityChecker';
@@ -48,7 +50,7 @@ abstract class DungeonGenerator {
     const itemLocations = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
 
     const tiles = tileTypes.map((row: TileType[]) =>
-      row.map(tileType => TileFactory.createTile(tileType, this.tileSet))
+      row.map(tileType => Tile.create(tileType, this.tileSet))
     );
 
     return new MapBuilder(
@@ -75,7 +77,7 @@ abstract class DungeonGenerator {
 
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (!isBlocking(tiles[y][x]) && !blockedTiles.some(tile => Coordinates.equals(tile, { x, y }))) {
+        if (!TileType.isBlocking(tiles[y][x]) && !blockedTiles.some(tile => Coordinates.equals(tile, { x, y }))) {
           const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
           candidates.push([{ x, y }, average(tileDistances)]);
         }
