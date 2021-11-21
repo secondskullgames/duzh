@@ -1,3 +1,4 @@
+import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Equipment from '../items/equipment/Equipment';
 import ItemFactory from '../items/ItemFactory';
@@ -17,10 +18,12 @@ type CreateUnitProps = {
 };
 
 const createUnit = async ({ name, unitClass, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
-  const sprite = await SpriteFactory.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
-  const equipment: Equipment[] = await Promise.all(
+  const spritePromise: Promise<DynamicSprite<Unit>> = SpriteFactory.createUnitSprite(unitClass.sprite, unitClass.paletteSwaps);
+  const equipmentPromises: Promise<Equipment[]> = Promise.all(
     (unitClass.equipment || [])?.map(ItemFactory.createEquipment)
   );
+
+  const [sprite, equipment] = await Promise.all([spritePromise, equipmentPromises]);
 
   return new Unit({
     name,

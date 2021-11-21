@@ -8,26 +8,30 @@ type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 
 type TileSetJson = {
   name: string,
-  tiles: {
-    [tileType: string]: (string | null)[]
-  }
-}
+  tiles: Record<TileType, (string | null)[]>
+};
 
 const _memos: Record<string, TileSet> = {};
 
 const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
   const json = await import(`../../../data/tilesets/${name}.json`) as TileSetJson;
   const tileSet: TileSet = {};
+  const promises: Partial<Record<TileType, Promise<Sprite[]>>> = {};
+
   for (const [tileType, filenames] of Object.entries(json.tiles)) {
-    const tiles: Sprite[] = [];
-    for (const filename of filenames) {
+    const tilePromises: Promise<Sprite>[] = [];
+    for (let index = 0; index < filenames.length; index++) {
+      const filename = filenames[index];
       if (filename) {
-        const sprite = await SpriteFactory.createTileSprite(`${name}/${filename}`);
-        tiles.push(sprite);
+        tilePromises.push(SpriteFactory.createTileSprite(`${name}/${filename}`));
       }
     }
+    promises[tileType as TileType] = Promise.all(tilePromises);
+  }
 
-    tileSet[tileType as TileType] = tiles;
+  await Promise.all(Object.values(promises));
+  for (const [tileType, spritePromises] of Object.entries(promises)) {
+    tileSet[tileType as TileType] = await spritePromises;
   }
   return tileSet;
 };
