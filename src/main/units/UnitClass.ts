@@ -1,8 +1,8 @@
+import golem from '../../../data/units/golem.json';
 import grunt from '../../../data/units/grunt.json';
 import player from '../../../data/units/player.json';
 import snake from '../../../data/units/snake.json';
 import soldier from '../../../data/units/soldier.json';
-import golem from '../../../data/units/golem.json';
 import PaletteSwaps from '../types/PaletteSwaps';
 import { UnitType } from '../types/types';
 

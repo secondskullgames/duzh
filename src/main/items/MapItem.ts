@@ -1,6 +1,6 @@
-import InventoryItem from './InventoryItem';
 import Sprite from '../graphics/sprites/Sprite';
 import { Coordinates, Entity } from '../types/types';
+import InventoryItem from './InventoryItem';
 
 class MapItem implements Entity {
   x: number;

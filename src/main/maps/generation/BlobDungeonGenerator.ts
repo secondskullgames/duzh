@@ -1,10 +1,10 @@
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import DungeonGenerator from './DungeonGenerator';
 import { Coordinates, MapSection } from '../../types/types';
+import { comparing } from '../../utils/ArrayUtils';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
-import { comparing } from '../../utils/ArrayUtils';
+import DungeonGenerator from './DungeonGenerator';
 
 class BlobDungeonGenerator extends DungeonGenerator {
   constructor(tileSet: TileSet) {

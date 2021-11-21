@@ -1,6 +1,6 @@
+import existingFilenames from '../../../../data/filenames.json';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import ImageLoader from './ImageLoader';
-import existingFilenames from '../../../../data/filenames.json';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 
 const filenameSet = new Set<string>(existingFilenames);

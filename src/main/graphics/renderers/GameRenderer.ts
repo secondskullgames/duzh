@@ -1,16 +1,16 @@
+import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
-import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, } from '../constants';
+import Color from '../../types/Color';
+import { Coordinates, GameScreen } from '../../types/types';
+import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
+import ImageLoader from '../images/ImageLoader';
+import { Alignment, drawAligned } from '../RenderingUtils';
+import BufferedRenderer from './BufferedRenderer';
 import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
-import { Alignment, drawAligned } from '../RenderingUtils';
-import Color from '../../types/Color';
 import MinimapRenderer from './MinimapRenderer';
-import BufferedRenderer from './BufferedRenderer';
-import { renderFont, FontDefinition, Fonts } from '../FontRenderer';
-import { Coordinates, GameScreen } from '../../types/types';
-import ImageLoader from '../images/ImageLoader';
-import { revealTiles } from '../../core/actions';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';

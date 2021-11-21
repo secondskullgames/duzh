@@ -1,10 +1,10 @@
-import TileSet from '../types/TileSet';
 import ItemFactory from '../items/ItemFactory';
+import TileSet from '../types/TileSet';
+import { MapLayout } from '../types/types';
 import UnitFactory from '../units/UnitFactory';
 import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
 import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
-import { MapLayout } from '../types/types';
 import MapBuilder from './MapBuilder';
 import MapModel from './MapModel';
 

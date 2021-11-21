@@ -1,8 +1,8 @@
 import GameState from '../core/GameState';
+import MapItem from '../items/MapItem';
 import Tile from '../types/Tile';
 import { Coordinates, Room } from '../types/types';
 import Unit from '../units/Unit';
-import MapItem from '../items/MapItem';
 import MapInstance from './MapInstance';
 
 class MapBuilder {

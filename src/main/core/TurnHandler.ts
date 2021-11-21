@@ -1,5 +1,5 @@
-import Unit from '../units/Unit';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
+import Unit from '../units/Unit';
 import { clear } from '../utils/ArrayUtils';
 import { render } from './actions';
 import GameState from './GameState';

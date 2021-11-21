@@ -1,12 +1,12 @@
-import GameState from './GameState';
-import TurnHandler from './TurnHandler';
-import Sounds from '../sounds/Sounds';
-import Unit from '../units/Unit';
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
-import { loadMap, render, returnToTitle, startGame } from './actions';
-import { Coordinates, GameScreen} from '../types/types';
+import Sounds from '../sounds/Sounds';
+import { Coordinates, GameScreen } from '../types/types';
+import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
+import { loadMap, render, returnToTitle, startGame } from './actions';
+import GameState from './GameState';
+import TurnHandler from './TurnHandler';
 
 enum KeyCommand {
   UP = 'UP',

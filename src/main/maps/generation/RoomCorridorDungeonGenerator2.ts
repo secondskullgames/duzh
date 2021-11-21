@@ -1,10 +1,10 @@
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import DungeonGenerator from './DungeonGenerator';
-import { replace, subtract } from '../../utils/ArrayUtils';
 import { Coordinates, MapSection, Offsets, Rect } from '../../types/types';
+import { replace, subtract } from '../../utils/ArrayUtils';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
+import DungeonGenerator from './DungeonGenerator';
 
 type Direction = 'HORIZONTAL' | 'VERTICAL';
 

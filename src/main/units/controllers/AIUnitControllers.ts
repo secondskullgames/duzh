@@ -1,9 +1,9 @@
 import GameState from '../../core/GameState';
-import Unit from '../Unit';
-import UnitController from './UnitController';
-import UnitBehavior from '../UnitBehaviors';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { randInt, weightedRandom } from '../../utils/random';
+import Unit from '../Unit';
+import UnitBehavior from '../UnitBehaviors';
+import UnitController from './UnitController';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder(unit: Unit) {

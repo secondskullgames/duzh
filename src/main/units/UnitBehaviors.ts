@@ -1,12 +1,12 @@
 import GameState from '../core/GameState';
+import { manhattanDistance } from '../maps/MapUtils';
 import Direction from '../types/Direction';
-import Pathfinder from '../utils/Pathfinder';
-import Unit from './Unit';
-import UnitAbility from './UnitAbility'
-import { randChoice } from '../utils/random';
 import { Coordinates, Rect } from '../types/types';
 import { comparingReversed } from '../utils/ArrayUtils';
-import { manhattanDistance } from '../maps/MapUtils';
+import Pathfinder from '../utils/Pathfinder';
+import { randChoice } from '../utils/random';
+import Unit from './Unit';
+import UnitAbility from './UnitAbility';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 

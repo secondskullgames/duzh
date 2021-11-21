@@ -2,12 +2,12 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Equipment from '../items/equipment/Equipment';
 import ItemFactory from '../items/ItemFactory';
-import UnitController from './controllers/UnitController';
-import UnitClass from './UnitClass';
-import Unit from './Unit';
-import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import { Coordinates } from '../types/types';
 import { randChoice } from '../utils/random';
+import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
+import UnitController from './controllers/UnitController';
+import Unit from './Unit';
+import UnitClass from './UnitClass';
 
 type CreateUnitProps = {
   name: string,

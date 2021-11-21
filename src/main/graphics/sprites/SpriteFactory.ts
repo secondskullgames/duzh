@@ -1,17 +1,17 @@
+import Equipment from '../../items/equipment/Equipment';
 import Color from '../../types/Color';
 import Direction from '../../types/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import { Activity } from '../../types/types';
+import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/TemplateUtils';
 import ImageBuilder from '../images/ImageBuilder';
 import { replaceAll } from '../images/ImageUtils';
 import DynamicSprite from './DynamicSprite';
-import Sprite from './Sprite';
-import Unit from '../../units/Unit';
 import DynamicSpriteModel from './DynamicSpriteModel';
+import Sprite from './Sprite';
 import StaticSprite from './StaticSprite';
 import StaticSpriteModel from './StaticSpriteModel';
-import Equipment from '../../items/equipment/Equipment';
 
 type SpriteCategory = 'units' | 'equipment' | 'static';
 

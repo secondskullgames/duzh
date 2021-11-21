@@ -1,13 +1,13 @@
+import MapItem from '../../items/MapItem';
 import Tile from '../../types/Tile';
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import Unit from '../../units/Unit';
-import MapBuilder from '../MapBuilder';
-import MapItem from '../../items/MapItem';
 import { Coordinates, MapSection } from '../../types/types';
-import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
+import Unit from '../../units/Unit';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';
+import MapBuilder from '../MapBuilder';
+import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
 abstract class DungeonGenerator {

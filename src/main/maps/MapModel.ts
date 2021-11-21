@@ -15,10 +15,7 @@ const _memos: Record<string, MapModel> = {};
 
 const _load = async (id: string): Promise<MapModel> => {
   const json = (await import(`../../../data/maps/${id}.json`)).default;
-  return {
-    ...json,
-    id
-  };
+  return { ...json, id };
 };
 
 namespace MapModel {

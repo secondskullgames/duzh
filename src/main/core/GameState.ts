@@ -1,7 +1,6 @@
-import Unit from '../units/Unit';
-import MapBuilder from '../maps/MapBuilder';
 import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
+import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
 
 let INSTANCE: GameState | null = null;

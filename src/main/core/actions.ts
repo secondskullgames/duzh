@@ -1,15 +1,15 @@
+import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import MapModel from '../maps/MapModel';
+import { contains, isTileRevealed } from '../maps/MapUtils';
+import Music from '../sounds/Music';
 import TileSet from '../types/TileSet';
+import { GameScreen } from '../types/types';
+import PlayerUnitController from '../units/controllers/PlayerUnitController';
+import UnitClass from '../units/UnitClass';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
-import GameRenderer from '../graphics/renderers/GameRenderer';
-import UnitClass from '../units/UnitClass';
-import Music from '../sounds/Music';
 import { attachEvents } from './InputHandler';
-import { GameScreen } from '../types/types';
-import { contains, isTileRevealed } from '../maps/MapUtils';
-import PlayerUnitController from '../units/controllers/PlayerUnitController';
 
 let renderer: GameRenderer;
 
@@ -20,7 +20,6 @@ const loadMap = async (index: number) => {
     state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
-    // TODO - this isn't memoized
     const mapId = state.mapIds[index];
     const mapModel = await MapModel.load(mapId);
     const mapBuilder = await MapFactory.loadMap(mapModel);
@@ -51,7 +50,8 @@ const _initState = async () => {
     coordinates: { x: 0, y: 0 }
   });
 
-  const state = new GameState(playerUnit, ['1', '2', '3', '4', '5', '6']);
+  const mapIds = ['1', '2', '3', '4', '5', '6'];
+  const state = new GameState(playerUnit, mapIds);
 
   GameState.setInstance(state);
 };
@@ -59,7 +59,7 @@ const _initState = async () => {
 const startGame = async () => {
   await loadMap(0);
   Music.stop();
-  Music.playFigure(Music.TITLE_THEME);
+  // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   await render();
 };

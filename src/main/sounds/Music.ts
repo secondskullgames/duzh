@@ -1,6 +1,6 @@
-import SoundPlayer from './SoundPlayer';
 import { randChoice } from '../utils/random';
 import { transpose8vb } from './AudioUtils';
+import SoundPlayer from './SoundPlayer';
 import { Figure, Suite } from './types';
 
 // TODO very hacky memoizing

@@ -1,9 +1,9 @@
 import GameState from '../../core/GameState';
-import BufferedRenderer from './BufferedRenderer';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { isTileRevealed } from '../../maps/MapUtils';
 import Color from '../../types/Color';
 import { Coordinates } from '../../types/types';
-import { isTileRevealed } from '../../maps/MapUtils';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import BufferedRenderer from './BufferedRenderer';
 
 const LIGHT_GRAY = '#c0c0c0';
 const DARK_GRAY  = '#808080';

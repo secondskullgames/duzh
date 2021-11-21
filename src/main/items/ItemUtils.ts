@@ -1,11 +1,11 @@
 import GameState from '../core/GameState';
-import Unit from '../units/Unit';
-import ItemFactory from './ItemFactory';
-import MapItem from './MapItem';
-import InventoryItem from './InventoryItem';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
+import Unit from '../units/Unit';
 import EquipmentModel from './equipment/EquipmentModel';
+import InventoryItem from './InventoryItem';
+import ItemFactory from './ItemFactory';
+import MapItem from './MapItem';
 
 const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const state = GameState.getInstance();

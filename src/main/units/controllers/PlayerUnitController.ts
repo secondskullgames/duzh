@@ -1,6 +1,6 @@
-import UnitController from './UnitController';
-import Unit from '../Unit';
 import { PromiseSupplier } from '../../types/types';
+import Unit from '../Unit';
+import UnitController from './UnitController';
 
 class PlayerUnitController implements UnitController {
   queuedOrder: PromiseSupplier<void> | null;

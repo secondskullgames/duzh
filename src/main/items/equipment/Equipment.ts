@@ -1,8 +1,8 @@
-import InventoryItem from '../InventoryItem';
-import Unit from '../../units/Unit';
-import EquipmentModel from './EquipmentModel';
-import { EquipmentSlot } from '../../types/types';
 import Sprite from '../../graphics/sprites/Sprite';
+import { EquipmentSlot } from '../../types/types';
+import Unit from '../../units/Unit';
+import InventoryItem from '../InventoryItem';
+import EquipmentModel from './EquipmentModel';
 
 class Equipment {
   readonly inventoryItem: InventoryItem | null;

@@ -2,13 +2,13 @@
 
 import { render } from '../core/actions';
 import GameState from '../core/GameState';
+import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
+import { playSound } from '../sounds/SoundFX';
+import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import Unit from './Unit';
-import Sounds from '../sounds/Sounds';
 import { EquipmentSlot } from '../types/types';
-import { playSound } from '../sounds/SoundFX';
-import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
+import Unit from './Unit';
 
 /**
  * Helper function for most melee attacks

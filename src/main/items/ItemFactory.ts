@@ -1,16 +1,16 @@
 import GameState from '../core/GameState';
-import Sounds from '../sounds/Sounds';
-import Equipment from './equipment/Equipment';
-import InventoryItem from './InventoryItem';
-import Unit from '../units/Unit';
-import MapItem from './MapItem';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import { randChoice, randInt } from '../utils/random';
-import EquipmentModel from './equipment/EquipmentModel';
-import { ItemCategory, Coordinates } from '../types/types';
-import { playSound } from '../sounds/SoundFX';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import { playSound } from '../sounds/SoundFX';
+import Sounds from '../sounds/Sounds';
+import { Coordinates, ItemCategory } from '../types/types';
+import Unit from '../units/Unit';
+import { randChoice, randInt } from '../utils/random';
+import Equipment from './equipment/Equipment';
+import EquipmentModel from './equipment/EquipmentModel';
+import InventoryItem from './InventoryItem';
 import { equipItem } from './ItemUtils';
+import MapItem from './MapItem';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 

@@ -1,6 +1,6 @@
-import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import Color from '../types/Color';
 import ImageLoader from './images/ImageLoader';
+import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
 const MIN_CHARACTER_CODE = 32;  // ' '
