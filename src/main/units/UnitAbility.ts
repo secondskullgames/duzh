@@ -2,6 +2,7 @@
 
 import { render } from '../core/actions';
 import GameState from '../core/GameState';
+import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
 import Unit from './Unit';
 import Sounds from '../sounds/Sounds';
@@ -18,6 +19,14 @@ const attack = async (unit: Unit, target: Unit, damage: number) => {
 
   await playAttackingAnimation(unit, target);
   await target.takeDamage(damage, unit);
+};
+
+const moveTo = async (unit: Unit, { x, y }: Coordinates) => {
+  const { playerUnit } = GameState.getInstance();
+  [unit.x, unit.y] = [x, y];
+  if (unit === playerUnit) {
+    await playSound(Sounds.FOOTSTEP);
+  }
 };
 
 abstract class UnitAbility {
@@ -53,10 +62,7 @@ class NormalAttack extends UnitAbility {
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        await playSound(Sounds.FOOTSTEP);
-      }
+      await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -87,10 +93,7 @@ class HeavyAttack extends UnitAbility {
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        await playSound(Sounds.FOOTSTEP);
-      }
+      await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -122,10 +125,7 @@ class KnockbackAttack extends UnitAbility {
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        await playSound(Sounds.FOOTSTEP);
-      }
+      await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -168,10 +168,7 @@ class StunAttack extends UnitAbility {
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      [unit.x, unit.y] = [x, y];
-      if (unit === playerUnit) {
-        await playSound(Sounds.FOOTSTEP);
-      }
+      await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {

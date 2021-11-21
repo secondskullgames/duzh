@@ -17,7 +17,7 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 class InventoryRenderer extends BufferedRenderer {
   constructor() {
-    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
   }
 
   renderBuffer = async () => {

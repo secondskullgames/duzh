@@ -1,6 +1,7 @@
 type Props = {
   width: number,
-  height: number
+  height: number,
+  id: string
 };
 
 /**
@@ -8,20 +9,24 @@ type Props = {
  * and the parent class will handle the {@link #render} step
  */
 abstract class BufferedRenderer {
-  readonly canvas: HTMLCanvasElement;
+  private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
+  private readonly id: string;
 
   protected readonly width: number;
   protected readonly height: number;
   protected readonly bufferCanvas: HTMLCanvasElement;
   protected readonly bufferContext: CanvasRenderingContext2D;
 
-  protected constructor({ width, height }: Props) {
+  protected constructor({ width, height, id }: Props) {
     this.width = width;
     this.height = height;
+    this.id = id;
+
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
+    this.canvas.classList.add(this.id);
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
     this.bufferCanvas = document.createElement('canvas');
@@ -40,6 +45,8 @@ abstract class BufferedRenderer {
   };
 
   abstract renderBuffer(): Promise<void>;
+
+  getCanvas = () => this.canvas;
 }
 
 export default BufferedRenderer;

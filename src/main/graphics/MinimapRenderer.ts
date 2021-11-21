@@ -1,4 +1,5 @@
 import GameState from '../core/GameState';
+import BufferedRenderer from './BufferedRenderer';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import Color from '../types/Color';
 import { Coordinates } from '../types/types';
@@ -8,38 +9,30 @@ const LIGHT_GRAY = '#c0c0c0';
 const DARK_GRAY  = '#808080';
 const BLACK      = '#000000';
 
-/**
- * TODO: Make this extend BufferedRenderer
- */
-class MinimapRenderer {
-  private readonly canvas: HTMLCanvasElement;
-  private readonly context: CanvasRenderingContext2D;
-
+class MinimapRenderer extends BufferedRenderer {
   constructor() {
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = SCREEN_WIDTH;
-    this.canvas.height = SCREEN_HEIGHT;
-    this.context = <any>this.canvas.getContext('2d');
-    this.context.imageSmoothingEnabled = false;
+    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'minimap' });
   }
 
-  render = async (): Promise<ImageBitmap> => {
-    this.context.fillStyle = Color.BLACK;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  renderBuffer = async () => {
+    const { bufferCanvas, bufferContext } = this;
+    bufferContext.fillStyle = Color.BLACK;
+    bufferContext.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
     const map = GameState.getInstance().getMap();
     const m = Math.floor(Math.min(
-      this.canvas.width / map.width,
-      this.canvas.height / map.height
+      bufferCanvas.width / map.width,
+      bufferCanvas.height / map.height
     ));
+
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        this.context.fillStyle = this._getColor({ x, y });
-        this.context.fillRect(x * m, y * m, m, m);
+        bufferContext.fillStyle = this._getColor({ x, y });
+        bufferContext.fillRect(x * m, y * m, m, m);
       }
     }
-    const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    return createImageBitmap(imageData);
+    const imageData = bufferContext.getImageData(0, 0, bufferCanvas.width, bufferCanvas.height);
+    await createImageBitmap(imageData);
   };
 
   private _getColor = ({ x, y }: Coordinates) => {

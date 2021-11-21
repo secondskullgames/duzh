@@ -27,8 +27,8 @@ interface FontInstance extends FontDefinition {
   imageMap: { [char: string]: ImageBitmap }
 }
 
-const Fonts = {
-  PERFECT_DOS_VGA: <FontDefinition>{
+const Fonts: Record<string, FontDefinition> = {
+  PERFECT_DOS_VGA: {
     name: 'PERFECT_DOS_VGA',
     src: 'dos_perfect_vga_9x15_2',
     width: 9,
@@ -81,6 +81,7 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
   context.drawImage(imageBitmap, 0, 0);
   const imageMap: { [char: string]: ImageBitmap } = {};
   const promises: Promise<any>[] = [];
+
   for (const c of CHARACTERS) {
     promises.push(_getCharacterData(definition, context, c.charCodeAt(0))
       .then(imageData => createImageBitmap(imageData))

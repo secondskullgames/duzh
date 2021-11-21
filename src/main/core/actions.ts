@@ -31,7 +31,7 @@ const loadMap = async (index: number) => {
 const initialize = async () => {
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
-  container.appendChild(renderer.canvas);
+  container.appendChild(renderer.getCanvas());
   attachEvents();
   await _initState();
   Music.playFigure(Music.TITLE_THEME);

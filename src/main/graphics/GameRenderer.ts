@@ -26,10 +26,9 @@ class GameRenderer extends BufferedRenderer {
   private readonly inventoryRenderer: InventoryRenderer;
 
   constructor() {
-    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
     this.hudRenderer = new HUDRenderer();
     this.inventoryRenderer = new InventoryRenderer();
-    this.canvas.classList.add('game');
   }
 
   /**

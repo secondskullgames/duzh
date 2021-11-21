@@ -25,7 +25,7 @@ const ABILITIES_Y_MARGIN = 4;
 
 class HUDRenderer extends BufferedRenderer {
   constructor() {
-    super({ width: SCREEN_WIDTH, height: HEIGHT });
+    super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
 
   renderBuffer = async () => {
