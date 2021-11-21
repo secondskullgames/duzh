@@ -1,9 +1,8 @@
 import MapFactory from '../maps/MapFactory';
 import MapModel from '../maps/MapModel';
-import TileSet from '../types/TileSet';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
-import GameRenderer from '../graphics/GameRenderer';
+import GameRenderer from '../graphics/renderers/GameRenderer';
 import UnitClass from '../units/UnitClass';
 import Music from '../sounds/Music';
 import { attachEvents } from './InputHandler';

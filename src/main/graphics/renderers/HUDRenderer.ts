@@ -1,13 +1,13 @@
-import GameState from '../core/GameState';
-import Color from '../types/Color';
-import { Coordinates } from '../types/types';
-import UnitAbility from '../units/UnitAbility';
+import GameState from '../../core/GameState';
+import Color from '../../types/Color';
+import { Coordinates } from '../../types/types';
+import UnitAbility from '../../units/UnitAbility';
 import BufferedRenderer from './BufferedRenderer';
-import { LINE_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from './constants';
-import { FontDefinition, Fonts, renderFont } from './FontRenderer';
-import ImageLoader from './images/ImageLoader';
-import { applyTransparentColor, replaceColors } from './images/ImageUtils';
-import { Alignment, drawAligned } from './RenderingUtils';
+import { LINE_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
+import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
+import ImageLoader from '../images/ImageLoader';
+import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import { Alignment, drawAligned } from '../RenderingUtils';
 
 const HUD_FILENAME = 'HUD2';
 
