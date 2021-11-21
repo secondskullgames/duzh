@@ -35,7 +35,7 @@ const initialize = async () => {
   attachEvents();
   await _initState();
   Music.playFigure(Music.TITLE_THEME);
-  return render();
+  await render();
 };
 
 const render = async () => renderer.render();
@@ -50,9 +50,6 @@ const _initState = async () => {
     coordinates: { x: 0, y: 0 }
   });
 
-  const dungeonTileSet = await TileSet.forName('dungeon');
-  const caveTileSet = await TileSet.forName('cave');
-
   const state = new GameState(playerUnit, ['1', '2', '3', '4', '5', '6']);
 
   GameState.setInstance(state);
@@ -63,14 +60,14 @@ const startGame = async () => {
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  return render();
+  await render();
 };
 
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
   Music.playFigure(Music.TITLE_THEME);
-  return render();
+  await render();
 };
 
 /**
