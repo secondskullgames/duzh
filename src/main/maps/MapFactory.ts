@@ -19,12 +19,11 @@ const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGe
     case 'ROOMS_AND_CORRIDORS': {
       const minRoomDimension = 3;
       const maxRoomDimension = 7;
-      // return new RoomCorridorDungeonGenerator(
-      return new RoomCorridorDungeonGenerator2(
+      return new RoomCorridorDungeonGenerator2({
         tileSet,
         minRoomDimension,
         maxRoomDimension
-      );
+      });
     }
     case 'BLOB':
       return new BlobDungeonGenerator(tileSet);

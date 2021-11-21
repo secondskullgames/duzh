@@ -2,7 +2,7 @@ import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
 import DungeonGenerator from './DungeonGenerator';
 import { replace, subtract } from '../../utils/ArrayUtils';
-import { Coordinates, MapSection, Rect } from '../../types/types';
+import { Coordinates, MapSection, Offsets, Rect } from '../../types/types';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
 
@@ -14,6 +14,10 @@ type Section = {
   roomRect: Rect | null
 };
 
+namespace Section {
+  export const toString = ({ rect: { left, top, width, height } }: Section) => `(${left}, ${top}, ${width}, ${height})`;
+}
+
 type Connection = {
   start: Section,
   end: Section,
@@ -23,23 +27,48 @@ type Connection = {
   direction: Direction
 };
 
+namespace Connection {
+  export const toString = ({ startCoordinates, endCoordinates }: Connection) =>
+    `[(${startCoordinates.x}, ${startCoordinates.y})-(${endCoordinates.x}, ${endCoordinates.y})]`;
+
+  export const matches = (connection: Connection, first: Section, second: Section) => {
+    // ref. equality should be fine
+    if (connection.start === first && connection.end === second) {
+      return true;
+    } else if (connection.start === second && connection.end === first) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+}
+
 type InternalConnection = {
   section: Section,
   neighbors: Section[]
 }
+
+type Props = {
+  tileSet: TileSet,
+  minRoomDimension: number,
+  maxRoomDimension: number
+};
 
 const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 const MIN_ROOM_FRACTION = 0.4;
 const MAX_ROOM_FRACTION = 0.8;
 
 class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
-  private readonly minRoomDimension: number;
-  private readonly maxRoomDimension: number;
   /**
-   * @param minRoomDimension inner width, not including wall
-   * @param maxRoomDimension inner width, not including wall
+   * inner width, not including wall
    */
-  constructor(tileSet: TileSet, minRoomDimension: number, maxRoomDimension: number) {
+  private readonly minRoomDimension: number;
+  /**
+   * inner width, not including wall
+   */
+  private readonly maxRoomDimension: number;
+
+  constructor({ tileSet, minRoomDimension, maxRoomDimension }: Props) {
     super(tileSet);
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
@@ -68,11 +97,11 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
     // TODO
     const debugOutput = `
-      Sections: ${sections.map(section => this._sectionToString(section)).join('; ')}
-      MST: ${minimalSpanningTree.map(this._connectionToString).join('; ')}
-      opt: ${optionalConnections.map(this._connectionToString).join('; ')}
-      external: ${externalConnections.map(this._connectionToString).join('; ')}
-      Internal: ${internalConnections.map(connection => `${this._sectionToString(connection.section)}, ${connection.neighbors.length}`).join('; ')}
+      Sections: ${sections.map(Section.toString).join('; ')}
+      MST: ${minimalSpanningTree.map(Connection.toString).join('; ')}
+      opt: ${optionalConnections.map(Connection.toString).join('; ')}
+      external: ${externalConnections.map(Connection.toString).join('; ')}
+      Internal: ${internalConnections.map(connection => `${Section.toString(connection.section)}, ${connection.neighbors.length}`).join('; ')}
     `;
 
     console.log(debugOutput);
@@ -91,8 +120,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       height
     };
   };
-
-  private _sectionToString = (section: Section) => `(${section.rect.left}, ${section.rect.top}, ${section.rect.width}, ${section.rect.height})`;
 
   /**
    * Generate a rectangular area of tiles with the specified dimensions, consisting of any number of rooms connected
@@ -174,7 +201,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
     const maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
     if (sections.length < minRooms) {
-      throw 'Not enough sections';
+      throw new Error('Not enough sections');
     }
 
     const numRooms = randInt(minRooms, maxRooms);
@@ -189,7 +216,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private _generateMinimalSpanningTree = (sections: Section[]): Connection[] => {
     const connectedSection = randChoice(sections);
     const connectedSections = [connectedSection];
-    const unconnectedSections = [...sections].filter(section => section !== connectedSection);
+    const unconnectedSections = sections.filter(section => section !== connectedSection);
     shuffle(unconnectedSections);
 
     const connections : Connection[] = [];
@@ -216,7 +243,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         connectedSections.forEach(x => console.log(x));
         console.log('unconnected:');
         unconnectedSections.forEach(x => console.log(x));
-        throw 'Failed to generate minimal spanning tree';
+        throw new Error('Failed to generate minimal spanning tree');
       }
     }
 
@@ -230,7 +257,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       for (let j = i + 1; j < sections.length; j++) {
         const second = sections[j];
         if (this._canConnect(first, second)) {
-          if (!spanningConnections.some(connection => this._connectionMatches(connection, first, second))) {
+          if (!spanningConnections.some(connection => Connection.matches(connection, first, second))) {
             optionalConnections.push(this._buildConnection(first, second));
           }
         }
@@ -251,14 +278,14 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         const connectedSections: Section[] = [];
         const neighbors = sections.filter(s => s !== section).filter(s => this._canConnect(section, s));
         for (const neighbor of neighbors) {
-          if (spanningConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
+          if (spanningConnections.some(connection => Connection.matches(connection, section, neighbor))) {
             connectedSections.push(neighbor);
           }
         }
         if (connectedSections.length === 1) {
           shuffle(neighbors);
           for (const neighbor of neighbors) {
-            if (optionalConnections.some(connection => this._connectionMatches(connection, section, neighbor))) {
+            if (optionalConnections.some(connection => Connection.matches(connection, section, neighbor))) {
               connectedSections.push(neighbor);
               break;
             }
@@ -302,11 +329,11 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
     // add floor tiles for connections
     for (const connection of connections) {
-      const dx = Math.sign(connection.endCoordinates.x - connection.startCoordinates.x);
-      const dy = Math.sign(connection.endCoordinates.y - connection.startCoordinates.y);
+      const { startCoordinates, endCoordinates } = connection;
+      const { dx, dy } = this._pointAt(startCoordinates, endCoordinates);
 
-      let { x, y } = connection.startCoordinates;
-      while (!Coordinates.equals({ x, y }, connection.endCoordinates)) {
+      let { x, y } = startCoordinates;
+      while (!Coordinates.equals({ x, y }, endCoordinates)) {
         tiles[y][x] = 'FLOOR_HALL';
         x += dx;
         y += dy;
@@ -338,17 +365,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   private _canConnect = (first: Section, second: Section): boolean =>
     areAdjacent(first.rect, second.rect, 5);
-
-  private _connectionMatches = (connection: Connection, first: Section, second: Section) => {
-    // ref. equality should be fine
-    if (connection.start === first && connection.end === second) {
-      return true;
-    } else if (connection.start === second && connection.end === first) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   private _buildConnection = (first: Section, second: Section): Connection => {
     let connectionPoint : Coordinates; // on the starting edge of `second`
@@ -397,9 +413,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       };
       firstCoordinates = { x: connectionPoint.x, y: connectionPoint.y + 1 };
       secondCoordinates = { x: connectionPoint.x, y: connectionPoint.y - 1};
-    }
-    else {
-      throw 'Failed to build connection';
+    } else {
+      throw new Error('Failed to build connection');
     }
 
     const direction = (firstCoordinates.x === secondCoordinates.x) ? 'VERTICAL' : 'HORIZONTAL';
@@ -418,9 +433,6 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     };
   };
 
-  private _connectionToString = (connection: Connection): string =>
-    `[(${connection.startCoordinates.x}, ${connection.startCoordinates.y})-(${connection.endCoordinates.x}, ${connection.endCoordinates.y})]`;
-
   private _addTilesForInternalConnections = (tiles: TileType[][], internalConnections: InternalConnection[], connections: Connection[]) => {
     for (const internalConnection of internalConnections) {
       const neighbors = [...internalConnection.neighbors];
@@ -428,12 +440,12 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       for (let i = 0; i < neighbors.length - 1; i++) {
         const firstNeighbor = internalConnection.neighbors[i];
         const secondNeighbor = internalConnection.neighbors[i + 1];
-        const firstConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, firstNeighbor))[0];
-        const secondConnection = connections.filter(c => this._connectionMatches(c, internalConnection.section, secondNeighbor))[0];
+        const firstConnection = connections.filter(c => Connection.matches(c, internalConnection.section, firstNeighbor))[0];
+        const secondConnection = connections.filter(c => Connection.matches(c, internalConnection.section, secondNeighbor))[0];
 
         if (!firstConnection || !secondConnection) {
-          console.error('fux3');
-          console.log(connections.map(this._connectionToString).join(', '));
+          console.error('Failed to find connection');
+          console.log(connections.map(Connection.toString).join(', '));
           console.log(neighbors.join(' '));
           console.log(firstNeighbor.rect);
           console.log(secondNeighbor.rect);
@@ -461,8 +473,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
     };
 
-    let dx = Math.sign(middle.x - start.x);
-    let dy = Math.sign(middle.y - start.y);
+    let { dx, dy } = this._pointAt(start, middle);
 
     let { x, y } = start;
     while (!Coordinates.equals({ x, y }, middle)) {
@@ -471,8 +482,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       y += dy;
     }
 
-    dx = Math.sign(end.x - middle.x);
-    dy = Math.sign(end.y - middle.y);
+    ({ dx, dy } = this._pointAt(middle, end));
     while (!Coordinates.equals({ x, y }, end)) {
       tiles[y][x] = 'FLOOR_HALL';
       x += dx;
@@ -488,10 +498,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
       y: Math.round((start.y + end.y) / 2)
     };
 
+    const { dx, dy } = this._pointAt(start, end);
     const xDistance = end.x - start.x;
     const yDistance = end.y - start.y;
-    const dx = Math.sign(xDistance);
-    const dy = Math.sign(yDistance);
 
     const majorDirection: Direction = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
     let { x, y } = start;
@@ -536,6 +545,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    */
   private _stripOrphanedConnections = (externalConnections: Connection[], internalConnections: InternalConnection[]) => {
     let removedAnyConnections = false;
+
     do {
       const orphanedConnections = externalConnections.filter(connection => {
         return this._isOrphanedConnection(connection, internalConnections);
@@ -563,10 +573,11 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     let endHasInternalConnection = false;
 
     for (const internalConnection of internalConnections) {
-      if (internalConnection.section === start && internalConnection.neighbors.indexOf(end) > -1) {
+      const { section, neighbors } = internalConnection;
+      if (section === start && neighbors.indexOf(end) > -1) {
         startHasInternalConnection = true;
       }
-      if (internalConnection.section === end && internalConnection.neighbors.indexOf(start) > -1) {
+      if (section === end && neighbors.indexOf(start) > -1) {
         endHasInternalConnection = true;
       }
     }
@@ -602,13 +613,19 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     let connectedNeighbors = 0;
     const { section, neighbors } = internalConnection;
     for (const neighbor of neighbors) {
-      const neighborHasInternalConnection = internalConnections.find(other => other.section === neighbor && other.neighbors.indexOf(section) > -1);
+      const neighborHasInternalConnection = internalConnections.find(other =>
+        other.section === neighbor && other.neighbors.indexOf(section) > -1);
       if (!!neighbor.roomRect || neighborHasInternalConnection) {
         connectedNeighbors++;
       }
     }
     return connectedNeighbors <= 1;
   };
+
+  private _pointAt = (first: Coordinates, second: Coordinates): Offsets => ({
+    dx: Math.sign(second.x - first.x),
+    dy: Math.sign(second.y - first.y)
+  });
 }
 
 export default RoomCorridorDungeonGenerator2;
