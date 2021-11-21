@@ -1,6 +1,5 @@
-type ImageCache = {
-  [filename: string]: Promise<ImageData>
-};
+type ImageCache = Record<string, Promise<ImageData>>;
+
 const CACHE: ImageCache = {};
 
 const _loadImage = async (filename: string): Promise<ImageData> => {
