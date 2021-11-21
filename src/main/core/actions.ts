@@ -1,5 +1,6 @@
 import MapFactory from '../maps/MapFactory';
 import MapModel from '../maps/MapModel';
+import TileSet from '../types/TileSet';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
@@ -31,10 +32,11 @@ const initialize = async () => {
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
   container.appendChild(renderer.getCanvas());
-  attachEvents();
   await _initState();
+  attachEvents();
   Music.playFigure(Music.TITLE_THEME);
   await render();
+  await TileSet.preload();
 };
 
 const render = async () => renderer.render();

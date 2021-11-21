@@ -3,6 +3,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import TileType from './TileType';
 
 type TileSetName = 'dungeon' | 'cave';
+const names: TileSetName[] = ['dungeon', 'cave'];
 
 type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 
@@ -44,6 +45,9 @@ namespace TileSet {
 
     return _memos[name];
   };
+
+  export const preload = async () =>
+    Promise.all(names.map(TileSet.forName));
 }
 
 export default TileSet;
