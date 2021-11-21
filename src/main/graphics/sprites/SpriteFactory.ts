@@ -87,7 +87,8 @@ const _loadAnimations = async (
   spriteModel: DynamicSpriteModel,
   paletteSwaps: PaletteSwaps
 ): Promise<Record<string, ImageBitmap>> => {
-  const imageMap: Record<string, ImageBitmap> = {};
+  const promises: Promise<{ frameKey: string, image: ImageBitmap }>[] = [];
+
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
     for (const frame of animation.frames) {
       for (const direction of Direction.values()) {
@@ -110,18 +111,26 @@ const _loadAnimations = async (
           ? [(img: ImageData) => replaceAll(img, Color.WHITE)]
           : [];
 
-        const image: ImageBitmap = await new ImageBuilder({
+        const frameKey = `${animationName}_${Direction.toString(direction)}`;
+
+        const imagePromise: Promise<ImageBitmap> = new ImageBuilder({
           filenames,
           transparentColor: Color.WHITE,
           paletteSwaps,
           effects
         }).build();
 
-        const frameKey = `${animationName}_${Direction.toString(direction)}`;
-        imageMap[frameKey] = image;
+        promises.push(imagePromise.then(image => ({ frameKey, image })));
       }
     }
   }
+
+  const images = await Promise.all(promises);
+  const imageMap: Record<string, ImageBitmap> = {};
+  for (const { frameKey, image } of images) {
+    imageMap[frameKey] = image;
+  }
+
   return imageMap;
 };
 

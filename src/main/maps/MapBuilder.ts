@@ -45,15 +45,21 @@ class MapBuilder {
     const { playerUnit } = GameState.getInstance();
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     const units = [playerUnit];
-    for (const { x, y } of this.enemyUnitLocations) {
-      const enemyUnit = await this.enemyUnitSupplier({ x, y }, this.level);
-      units.push(enemyUnit);
-    }
     const items: MapItem[] = [];
-    for (const { x, y } of this.itemLocations) {
-      const item = await this.itemSupplier({ x, y }, this.level);
-      items.push(item);
+
+    const unitPromises: Promise<Unit>[] = [];
+    for (const { x, y } of this.enemyUnitLocations) {
+      unitPromises.push(this.enemyUnitSupplier({ x, y }, this.level));
     }
+
+    const itemPromises: Promise<MapItem>[] = [];
+    for (const { x, y } of this.itemLocations) {
+      itemPromises.push(this.itemSupplier({ x, y }, this.level));
+    }
+
+    const [resolvedUnits, resolvedItems] = await Promise.all([Promise.all(unitPromises), Promise.all(itemPromises)]);
+    units.push(...resolvedUnits);
+    items.push(...resolvedItems);
 
     return new MapInstance(
       this.width,
