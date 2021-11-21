@@ -33,7 +33,8 @@ const initialize = async () => {
   container.appendChild(renderer.getCanvas());
   await _initState();
   attachEvents();
-  Music.playFigure(Music.TITLE_THEME);
+  const evilTheme = await Music.loadMusic('evil');
+  Music.playMusic(evilTheme);
   await render();
   await TileSet.preload();
 };

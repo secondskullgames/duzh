@@ -3,7 +3,6 @@ import { transpose8vb } from './AudioUtils';
 import SoundPlayer from './SoundPlayer';
 import { Figure, Suite } from './types';
 
-// TODO very hacky memoizing
 let PLAYER: SoundPlayer | null = null;
 
 let ACTIVE_SUITE: Suite | null = null;
@@ -53,11 +52,19 @@ const playSuite = (suite: Suite) => {
   );
 };
 
-const playFigure = (samples: Figure) => {
+const playMusic = (figures: Figure[]) => {
+  const length = figures[0].map(sample => sample[1]).reduce((a, b) => a + b);
+  for (const figure of figures) {
+    playFigure(figure);
+  }
+  setTimeout(() => playMusic(figures), length);
+};
+
+const playFigure = (figure: Figure) => {
   if (!PLAYER) {
     PLAYER = _getMusicPlayer();
   }
-  PLAYER.playSound(samples, false);
+  PLAYER.playSound(figure, false);
 };
 
 const stopMusic = () => {
@@ -71,10 +78,15 @@ const stop = () => {
   ACTIVE_SUITE = null;
 };
 
+const loadMusic = async (filename: string): Promise<Figure[]> =>
+  (await import(`../../../data/music/${filename}.json`)).default;
+
 export default {
   TITLE_THEME,
   GAME_OVER,
+  loadMusic,
   playFigure,
+  playMusic,
   playSuite,
   stop
 };

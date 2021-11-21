@@ -272,7 +272,7 @@ const _handleTab = async () => {
       state.screen = GameScreen.INVENTORY;
       break;
   }
-  return await render();
+  await render();
 };
 
 const _handleMap = async () => {
