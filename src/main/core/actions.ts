@@ -68,7 +68,8 @@ const startGame = async () => {
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
-  Music.playFigure(Music.TITLE_THEME);
+  const titleTheme = await Music.loadMusic('title_theme');
+  Music.playMusic(titleTheme);
   await render();
 };
 

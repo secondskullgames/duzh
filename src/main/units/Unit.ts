@@ -172,7 +172,7 @@ class Unit implements Entity {
     return null;
   };
 
-  takeDamage = (damage: number, sourceUnit?: Unit) => {
+  takeDamage = async (damage: number, sourceUnit?: Unit) => {
     const state = GameState.getInstance();
     const { playerUnit } = state;
     const map = state.getMap();
@@ -183,7 +183,8 @@ class Unit implements Entity {
       if (this === playerUnit) {
         state.screen = GameScreen.GAME_OVER;
         Music.stop();
-        Music.playFigure(Music.GAME_OVER);
+        const gameOverTheme = await Music.loadMusic('game_over');
+        Music.playMusic(gameOverTheme);
       } else {
         playSound(Sounds.ENEMY_DIES);
       }
