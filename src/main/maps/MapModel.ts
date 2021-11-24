@@ -8,7 +8,8 @@ type MapModel = {
   width: number,
   height: number,
   numEnemies: number,
-  numItems: number
+  numItems: number,
+  enemies: string[], // correspond to models in data/units
 };
 
 const _memos: Record<string, MapModel> = {};

@@ -2,7 +2,11 @@ import GameState from '../core/GameState';
 import MapItem from '../items/MapItem';
 import Tile from '../types/Tile';
 import { Coordinates, Room } from '../types/types';
+import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
+import UnitClass from '../units/UnitClass';
+import UnitFactory from '../units/UnitFactory';
+import { randChoice } from '../utils/random';
 import MapInstance from './MapInstance';
 
 class MapBuilder {
@@ -14,7 +18,7 @@ class MapBuilder {
   private readonly playerUnitLocation: Coordinates;
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
-  private readonly enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>;
+  private readonly enemyUnitClasses: UnitClass[];
   private readonly itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>;
 
   constructor(
@@ -25,7 +29,7 @@ class MapBuilder {
     rooms: Room[],
     playerUnitLocation: Coordinates,
     enemyUnitLocations: Coordinates[],
-    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>,
+    enemyUnitClasses: UnitClass[],
     itemLocations: Coordinates[],
     itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
   ) {
@@ -37,7 +41,7 @@ class MapBuilder {
     this.playerUnitLocation = playerUnitLocation;
     this.enemyUnitLocations = enemyUnitLocations;
     this.itemLocations = itemLocations;
-    this.enemyUnitSupplier = enemyUnitSupplier;
+    this.enemyUnitClasses = enemyUnitClasses;
     this.itemSupplier = itemSupplier;
   }
 
@@ -49,7 +53,15 @@ class MapBuilder {
 
     const unitPromises: Promise<Unit>[] = [];
     for (const { x, y } of this.enemyUnitLocations) {
-      unitPromises.push(this.enemyUnitSupplier({ x, y }, this.level));
+      const unitClass = randChoice(this.enemyUnitClasses);
+      const promise = UnitFactory.createUnit({
+        name: unitClass.name, // TODO unique names?
+        unitClass,
+        controller: HUMAN_DETERMINISTIC,
+        coordinates: { x, y },
+        level: this.level
+      });
+      unitPromises.push(promise);
     }
 
     const itemPromises: Promise<MapItem>[] = [];

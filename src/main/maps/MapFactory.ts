@@ -1,7 +1,7 @@
 import ItemFactory from '../items/ItemFactory';
 import TileSet from '../types/TileSet';
 import { MapLayout } from '../types/types';
-import UnitFactory from '../units/UnitFactory';
+import UnitClass from '../units/UnitClass';
 import BlobDungeonGenerator from './generation/BlobDungeonGenerator';
 import DungeonGenerator from './generation/DungeonGenerator';
 import RoomCorridorDungeonGenerator2 from './generation/RoomCorridorDungeonGenerator2';
@@ -9,9 +9,10 @@ import MapBuilder from './MapBuilder';
 import MapModel from './MapModel';
 
 const loadMap = async (model: MapModel): Promise<MapBuilder> => {
-  const { layout, tileSet, levelNumber, width, height, numEnemies, numItems } = model;
+  const { layout, tileSet, levelNumber, width, height, numEnemies, numItems, enemies } = model;
   const dungeonGenerator = _getDungeonGenerator(layout, await TileSet.forName(tileSet));
-  return dungeonGenerator.generateDungeon(levelNumber, width, height, numEnemies, UnitFactory.createRandomEnemy, numItems, ItemFactory.createRandomItem);
+  const enemyUnitClasses: UnitClass[] = await Promise.all(enemies.map(UnitClass.load));
+  return dungeonGenerator.generateDungeon(levelNumber, width, height, numEnemies, enemyUnitClasses, numItems, ItemFactory.createRandomItem);
 };
 
 const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator => {

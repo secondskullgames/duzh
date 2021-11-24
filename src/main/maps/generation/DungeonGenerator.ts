@@ -3,7 +3,7 @@ import Tile from '../../types/Tile';
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
 import { Coordinates, MapSection } from '../../types/types';
-import Unit from '../../units/Unit';
+import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/ArrayUtils';
 import Pathfinder from '../../utils/Pathfinder';
 import MapBuilder from '../MapBuilder';
@@ -22,7 +22,7 @@ abstract class DungeonGenerator {
     width: number,
     height: number,
     numEnemies: number,
-    enemyUnitSupplier: ({ x, y }: Coordinates, level: number) => Promise<Unit>,
+    enemyUnitClasses: UnitClass[],
     numItems: number,
     itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
   ): MapBuilder => {
@@ -61,7 +61,7 @@ abstract class DungeonGenerator {
       section.rooms,
       playerUnitLocation,
       enemyUnitLocations,
-      enemyUnitSupplier,
+      enemyUnitClasses,
       itemLocations,
       itemSupplier
     );

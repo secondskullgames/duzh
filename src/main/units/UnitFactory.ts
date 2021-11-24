@@ -3,8 +3,6 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Equipment from '../items/equipment/Equipment';
 import ItemFactory from '../items/ItemFactory';
 import { Coordinates } from '../types/types';
-import { randChoice } from '../utils/random';
-import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
 import UnitClass from './UnitClass';
@@ -36,22 +34,6 @@ const createUnit = async ({ name, unitClass, controller, level, coordinates }: C
   });
 };
 
-const createRandomEnemy = async ({ x, y }: Coordinates, level: number): Promise<Unit> => {
-  const candidates = UnitClass.getEnemyClasses()
-    .filter(unitClass => level >= unitClass.minLevel)
-    .filter(unitClass => level <= unitClass.maxLevel);
-
-  const unitClass = randChoice(candidates);
-  return createUnit({
-    name: unitClass.name, // TODO - individual unit names
-    unitClass,
-    controller: HUMAN_DETERMINISTIC,
-    level,
-    coordinates: { x, y }
-  });
-};
-
 export default {
-  createUnit,
-  createRandomEnemy
+  createUnit
 };
