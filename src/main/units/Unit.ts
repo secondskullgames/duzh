@@ -1,9 +1,9 @@
+import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../items/equipment/Equipment';
 import EquipmentMap from '../items/equipment/EquipmentMap';
 import InventoryMap from '../items/InventoryMap';
-import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Direction from '../types/Direction';
@@ -14,11 +14,12 @@ import UnitClass from './UnitClass';
 
 // Regenerate 1% of life every 10 turns
 const LIFE_PER_TURN_MULTIPLIER = 0.001;
+const MAX_PLAYER_LEVEL = 20;
 
 type Props = {
   name: string,
   unitClass: UnitClass,
-  sprite: DynamicSprite<Unit>;
+  sprite: DynamicSprite<Unit>,
   level: number,
   coordinates: Coordinates,
   controller: UnitController,
@@ -156,9 +157,11 @@ class Unit implements Entity {
   };
 
   gainExperience = (experience: number) => {
+    if (!this.unitClass.experienceToNextLevel) return;
+
     this.experience += experience;
     const experienceToNextLevel = this.experienceToNextLevel();
-    while (!!experienceToNextLevel && this.experience >= experienceToNextLevel) {
+    while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
       this._levelUp(true);
     }
@@ -166,7 +169,7 @@ class Unit implements Entity {
 
   experienceToNextLevel = (): (number | null) => {
     const { unitClass } = this;
-    if (unitClass.experienceToNextLevel && (this.level < unitClass.maxLevel)) {
+    if (unitClass.experienceToNextLevel && (this.level < MAX_PLAYER_LEVEL)) {
       return unitClass.experienceToNextLevel[this.level];
     }
     return null;
@@ -181,15 +184,13 @@ class Unit implements Entity {
     if (this.life === 0) {
       map.removeUnit(this);
       if (this === playerUnit) {
-        state.screen = GameScreen.GAME_OVER;
-        Music.stop();
-        const gameOverTheme = await Music.loadMusic('game_over');
-        Music.playMusic(gameOverTheme);
+        await gameOver();
+        return;
       } else {
         playSound(Sounds.ENEMY_DIES);
       }
 
-      if (sourceUnit) {
+      if (sourceUnit && sourceUnit === playerUnit) {
         sourceUnit.gainExperience(1);
       }
     }

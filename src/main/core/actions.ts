@@ -104,7 +104,16 @@ const revealTiles = () => {
   }
 };
 
+const gameOver = async () => {
+  const state = GameState.getInstance();
+  state.screen = GameScreen.GAME_OVER;
+  Music.stop();
+  const gameOverTheme = await Music.loadMusic('game_over');
+  Music.playMusic(gameOverTheme);
+};
+
 export {
+  gameOver,
   initialize,
   loadMap,
   render,

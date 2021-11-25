@@ -10,8 +10,6 @@
   "startingLife": 60,
   "startingMana": null,
   "startingDamage": 4,
-  "minLevel": 3,
-  "maxLevel": 6,
   "lifePerLevel": 20,
   "manaPerLevel": null,
   "damagePerLevel": 1,

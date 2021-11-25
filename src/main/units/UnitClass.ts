@@ -10,8 +10,6 @@ interface UnitClass {
   readonly startingLife: number;
   readonly startingMana: number | null;
   readonly startingDamage: number;
-  readonly minLevel: number;
-  readonly maxLevel: number;
   readonly lifePerLevel: number;
   readonly manaPerLevel: number | null;
   readonly damagePerLevel: number;
