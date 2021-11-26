@@ -5,7 +5,5 @@
   "char": "S",
   "itemCategory": "ARMOR",
   "slot": "HEAD",
-  "paletteSwaps": {},
-  "minLevel": -1,
-  "maxLevel": -1
+  "paletteSwaps": {}
 }

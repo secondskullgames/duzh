@@ -7,7 +7,5 @@
   "slot": "CHEST",
   "paletteSwaps": {
     "DARK_GRAY": "DARK_BROWN"
-  },
-  "minLevel": -1,
-  "maxLevel": -1
+  }
 }

@@ -5,5 +5,8 @@
   "width": 38,
   "height": 27,
   "numEnemies": 14,
-  "numItems": 3
+  "numItems": 3,
+  "enemies": ["soldier", "golem"],
+  "equipment": ["steel_sword", "long_bow", "fire_sword"],
+  "items": ["life_potion", "floor_fire_scroll"]
 }

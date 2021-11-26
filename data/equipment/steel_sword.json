@@ -9,7 +9,5 @@
     "DARK_GRAY": "DARK_GRAY",
     "LIGHT_GRAY": "LIGHT_GRAY"
   },
-  "damage": 6,
-  "minLevel": 4,
-  "maxLevel": 6
+  "damage": 6
 }

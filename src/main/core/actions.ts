@@ -45,7 +45,7 @@ const _initState = async () => {
   const playerUnitController = new PlayerUnitController();
   const playerUnit = await UnitFactory.createUnit({
     name: 'player',
-    unitClass: UnitClass.PLAYER,
+    unitClass: await UnitClass.load('player'),
     controller: playerUnitController,
     level: 1,
     coordinates: { x: 0, y: 0 }
@@ -104,7 +104,16 @@ const revealTiles = () => {
   }
 };
 
+const gameOver = async () => {
+  const state = GameState.getInstance();
+  state.screen = GameScreen.GAME_OVER;
+  Music.stop();
+  const gameOverTheme = await Music.loadMusic('game_over');
+  Music.playMusic(gameOverTheme);
+};
+
 export {
+  gameOver,
   initialize,
   loadMap,
   render,

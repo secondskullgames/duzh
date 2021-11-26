@@ -5,5 +5,8 @@
   "width": 32,
   "height": 24,
   "numEnemies": 12,
-  "numItems": 3
+  "numItems": 3,
+  "enemies": ["grunt", "soldier"],
+  "equipment": ["short_bow", "iron_sword"],
+  "items": ["life_potion", "floor_fire_scroll"]
 }

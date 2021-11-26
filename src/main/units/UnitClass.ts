@@ -1,10 +1,6 @@
-import golem from '../../../data/units/golem.json';
-import grunt from '../../../data/units/grunt.json';
-import player from '../../../data/units/player.json';
-import snake from '../../../data/units/snake.json';
-import soldier from '../../../data/units/soldier.json';
 import PaletteSwaps from '../types/PaletteSwaps';
 import { UnitType } from '../types/types';
+import memoize from '../utils/memoize';
 
 interface UnitClass {
   readonly name: string;
@@ -14,8 +10,6 @@ interface UnitClass {
   readonly startingLife: number;
   readonly startingMana: number | null;
   readonly startingDamage: number;
-  readonly minLevel: number;
-  readonly maxLevel: number;
   readonly lifePerLevel: number;
   readonly manaPerLevel: number | null;
   readonly damagePerLevel: number;
@@ -24,24 +18,17 @@ interface UnitClass {
   readonly aiParameters?: AIParameters;
 }
 
-const _load = (json: any): UnitClass => {
-  return <UnitClass>{
+const _load = async (name: string): Promise<UnitClass> => {
+  const json = (await import(`../../../data/units/${name}.json`)).default;
+  return {
     ...json,
     // We're using "friendly" color names, convert them to hex now
     paletteSwaps: PaletteSwaps.create(json.paletteSwaps),
-  };
+  } as UnitClass;
 };
 
-const _enemyClasses: UnitClass[] = [grunt, golem, soldier, snake].map(json => _load(json));
-
 namespace UnitClass {
-  export const PLAYER: UnitClass = _load(player);
-
-  export const getEnemyClasses = (): UnitClass[] => {
-    return _enemyClasses;
-  };
-
-  export const load = _load;
+  export const load = memoize(_load);
 }
 
 export default UnitClass;
