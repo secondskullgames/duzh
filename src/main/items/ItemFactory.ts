@@ -5,14 +5,16 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { Coordinates, ItemCategory } from '../types/types';
 import Unit from '../units/Unit';
-import { randChoice, randInt } from '../utils/random';
+import { randChoice } from '../utils/random';
 import Equipment from './equipment/Equipment';
-import EquipmentModel from './equipment/EquipmentModel';
+import EquipmentClass from './equipment/EquipmentClass';
 import InventoryItem from './InventoryItem';
+import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from './MapItem';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
+const EQUIPMENT_FREQUENCY = 0.7;
 
 const createPotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
@@ -47,70 +49,50 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   return new InventoryItem('Scroll of Floor Fire', ItemCategory.SCROLL, onUse);
 };
 
-const _createMapEquipment = async (model: EquipmentModel, { x, y }: Coordinates): Promise<MapItem> => {
+const _createMapEquipment = async (model: EquipmentClass, { x, y }: Coordinates): Promise<MapItem> => {
   const sprite = await SpriteFactory.createStaticSprite(model.mapIcon, model.paletteSwaps);
   const inventoryItem: InventoryItem = await _createInventoryWeapon(model);
   return new MapItem({ x, y }, model.char, sprite, inventoryItem);
 };
 
-const _createInventoryWeapon = async (model: EquipmentModel): Promise<InventoryItem> => {
+const _createInventoryWeapon = async (model: EquipmentClass): Promise<InventoryItem> => {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
     return equipItem(item, model, unit);
   };
   return new InventoryItem(model.name, model.itemCategory, onUse);
 };
 
-const createEquipment = async (id: string): Promise<Equipment> => {
-  const equipmentModel = await EquipmentModel.forId(id);
-  const spriteName = equipmentModel.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentModel.paletteSwaps);
-  const equipment = new Equipment(equipmentModel, sprite, null);
+const createEquipment = async (equipmentClass: EquipmentClass): Promise<Equipment> => {
+  const spriteName = equipmentClass.sprite;
+  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentClass.paletteSwaps);
+  const equipment = new Equipment(equipmentClass, sprite, null);
   sprite.target = equipment;
   return equipment;
 };
 
-type MapItemSupplier = ({ x, y }: Coordinates) => Promise<MapItem>;
-
-const _getItemSuppliers = (level: number): MapItemSupplier[] => {
-  const createMapPotion: MapItemSupplier = async ({ x, y }: Coordinates) => {
-    const sprite = await SpriteFactory.createStaticSprite('map_potion');
-    const inventoryItem = createPotion(40);
-    return new MapItem({ x, y }, 'K', sprite, inventoryItem);
-  };
-
-  const createFloorFireScroll = async ({ x, y }: Coordinates): Promise<MapItem> => {
-    const sprite = await SpriteFactory.createStaticSprite('map_scroll');
-    const inventoryItem = await createScrollOfFloorFire(80);
-    return new MapItem({ x, y }, 'K', sprite, inventoryItem);
-  };
-
-  return [createMapPotion, createFloorFireScroll];
+const _createMapItem = async (itemClass: ItemClass, { x, y }: Coordinates) => {
+  const inventoryItem = await itemClass.getInventoryItem();
+  const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite);
+  return new MapItem({ x, y }, 'K', sprite, inventoryItem);
 };
 
-const _getEquipmentSuppliers = async (level: number): Promise<MapItemSupplier[]> => {
-  const ids = [
-    'bronze_chain_mail', 'bronze_sword', 'fire_sword', 'iron_chain_mail', 'iron_helmet', 'iron_sword',
-    'long_bow', 'short_bow', 'steel_sword'
-  ];
-
-  const equipmentModels = await Promise.all(ids.map(id => EquipmentModel.forId(id)));
-  return equipmentModels
-    .filter(model => level >= model.minLevel)
-    .filter(model => level <= model.maxLevel)
-    .map(model => ({ x, y }) => _createMapEquipment(model, { x, y }));
-};
-
-const createRandomItem = async ({ x, y }: Coordinates, level: number): Promise<MapItem> => {
-  let supplier: MapItemSupplier;
-  if (randInt(0, 2) === 0) {
-    supplier = randChoice(_getItemSuppliers(level))!!;
+const createRandomItem = (
+  equipmentClasses: EquipmentClass[],
+  itemClasses: ItemClass[],
+  { x, y }: Coordinates
+): Promise<MapItem> => {
+  if (Math.random() <= EQUIPMENT_FREQUENCY) {
+    const equipmentClass = randChoice(equipmentClasses);
+    return _createMapEquipment(equipmentClass, { x, y });
   } else {
-    supplier = randChoice(await _getEquipmentSuppliers(level))!!;
+    const itemClass = randChoice(itemClasses);
+    return _createMapItem(itemClass, { x, y });
   }
-  return supplier({ x, y });
 };
 
 export default {
   createEquipment,
+  createPotion,
+  createScrollOfFloorFire,
   createRandomItem
 };

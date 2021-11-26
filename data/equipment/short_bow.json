@@ -6,7 +6,5 @@
   "itemCategory": "WEAPON",
   "slot": "RANGED_WEAPON",
   "paletteSwaps": {},
-  "damage": 2,
-  "minLevel": 2,
-  "maxLevel": 4
+  "damage": 2
 }

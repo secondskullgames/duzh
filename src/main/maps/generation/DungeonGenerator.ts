@@ -1,3 +1,5 @@
+import EquipmentClass from '../../items/equipment/EquipmentClass';
+import ItemClass from '../../items/ItemClass';
 import MapItem from '../../items/MapItem';
 import Tile from '../../types/Tile';
 import TileSet from '../../types/TileSet';
@@ -22,9 +24,10 @@ abstract class DungeonGenerator {
     width: number,
     height: number,
     numEnemies: number,
-    enemyUnitClasses: UnitClass[],
     numItems: number,
-    itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
+    enemyUnitClasses: UnitClass[],
+    equipmentClasses: EquipmentClass[],
+    itemClasses: ItemClass[]
   ): MapBuilder => {
     let section;
     let isValid = false;
@@ -63,7 +66,8 @@ abstract class DungeonGenerator {
       enemyUnitLocations,
       enemyUnitClasses,
       itemLocations,
-      itemSupplier
+      equipmentClasses,
+      itemClasses
     );
   };
 

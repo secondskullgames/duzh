@@ -1,7 +1,8 @@
 import PaletteSwaps from '../../types/PaletteSwaps';
 import { EquipmentSlot, ItemCategory } from '../../types/types';
+import memoize from '../../utils/memoize';
 
-interface EquipmentModel {
+interface EquipmentClass {
   id: string,
   name: string,
   sprite: string,
@@ -16,18 +17,7 @@ interface EquipmentModel {
   maxLevel: number,
 }
 
-const _map: Record<string, EquipmentModel> = {};
-
-namespace EquipmentModel {
-  export const forId = async (id: string): Promise<EquipmentModel> => {
-    if (_map.hasOwnProperty(id)) {
-      return _map[id];
-    }
-    return _load(id);
-  };
-}
-
-const _load = async (id: string): Promise<EquipmentModel> => {
+const _load = async (id: string): Promise<EquipmentClass> => {
   const json = (await import(`../../../../data/equipment/${id}.json`)).default;
   return {
     ...json,
@@ -37,4 +27,8 @@ const _load = async (id: string): Promise<EquipmentModel> => {
   };
 };
 
-export default EquipmentModel;
+namespace EquipmentClass {
+  export const load = memoize(_load);
+}
+
+export default EquipmentClass;

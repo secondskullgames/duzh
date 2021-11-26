@@ -1,5 +1,6 @@
 import { TileSetName } from '../types/TileSet';
 import { MapLayout } from '../types/types';
+import memoize from '../utils/memoize';
 
 type MapModel = {
   layout: MapLayout,
@@ -9,10 +10,10 @@ type MapModel = {
   height: number,
   numEnemies: number,
   numItems: number,
-  enemies: string[], // correspond to models in data/units
+  enemies: string[],   // correspond to models in data/units
+  equipment: string[], // correspond to models in data/equipment
+  items: string[]      // defined in ItemClass.ts
 };
-
-const _memos: Record<string, MapModel> = {};
 
 const _load = async (id: string): Promise<MapModel> => {
   const json = (await import(`../../../data/maps/${id}.json`)).default;
@@ -20,12 +21,7 @@ const _load = async (id: string): Promise<MapModel> => {
 };
 
 namespace MapModel {
-  export const load = async (id: string) => {
-    if (!_memos[id]) {
-      _memos[id] = await _load(id);
-    }
-    return _memos[id];
-  };
+  export const load = memoize(_load);
 }
 
 export default MapModel;

@@ -1,4 +1,7 @@
 import GameState from '../core/GameState';
+import EquipmentClass from '../items/equipment/EquipmentClass';
+import ItemClass from '../items/ItemClass';
+import ItemFactory from '../items/ItemFactory';
 import MapItem from '../items/MapItem';
 import Tile from '../types/Tile';
 import { Coordinates, Room } from '../types/types';
@@ -19,7 +22,8 @@ class MapBuilder {
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
   private readonly enemyUnitClasses: UnitClass[];
-  private readonly itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>;
+  private readonly equipmentClasses: EquipmentClass[];
+  private readonly itemClasses: ItemClass[];
 
   constructor(
     level: number,
@@ -31,7 +35,8 @@ class MapBuilder {
     enemyUnitLocations: Coordinates[],
     enemyUnitClasses: UnitClass[],
     itemLocations: Coordinates[],
-    itemSupplier: ({ x, y }: Coordinates, level: number) => Promise<MapItem>
+    equipmentClasses: EquipmentClass[],
+    itemClasses: ItemClass[]
   ) {
     this.level = level;
     this.width = width;
@@ -42,7 +47,8 @@ class MapBuilder {
     this.enemyUnitLocations = enemyUnitLocations;
     this.itemLocations = itemLocations;
     this.enemyUnitClasses = enemyUnitClasses;
-    this.itemSupplier = itemSupplier;
+    this.equipmentClasses = equipmentClasses;
+    this.itemClasses = itemClasses;
   }
 
   build = async (): Promise<MapInstance> => {
@@ -66,7 +72,8 @@ class MapBuilder {
 
     const itemPromises: Promise<MapItem>[] = [];
     for (const { x, y } of this.itemLocations) {
-      itemPromises.push(this.itemSupplier({ x, y }, this.level));
+      const item = ItemFactory.createRandomItem(this.equipmentClasses, this.itemClasses, { x, y });
+      itemPromises.push(item);
     }
 
     const [resolvedUnits, resolvedItems] = await Promise.all([Promise.all(unitPromises), Promise.all(itemPromises)]);
