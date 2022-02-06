@@ -1,7 +1,8 @@
 import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import { Coordinates, GameScreen } from '../types/types';
+import Coordinates from '../types/Coordinates';
+import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
 import { loadMap, render, returnToTitle, startGame } from './actions';

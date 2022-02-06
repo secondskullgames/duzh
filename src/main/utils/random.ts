@@ -2,6 +2,7 @@
  * @param max inclusive
  */
 const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+const randBoolean = () => randInt(0, 1) === 1;
 
 const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
 
@@ -44,8 +45,9 @@ const weightedRandom = <T>(
 };
 
 export {
-  randInt,
+  randBoolean,
   randChoice,
-  weightedRandom,
-  shuffle
+  randInt,
+  shuffle,
+  weightedRandom
 };

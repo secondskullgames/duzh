@@ -1,7 +1,8 @@
+import Coordinates from '../../types/Coordinates';
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import { Coordinates, MapSection, Offsets, Rect } from '../../types/types';
-import { replace, subtract } from '../../utils/ArrayUtils';
+import { MapSection, Offsets, Rect } from '../../types/types';
+import { replace, subtract } from '../../utils/arrays';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
 import DungeonGenerator from './DungeonGenerator';

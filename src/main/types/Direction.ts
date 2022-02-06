@@ -18,7 +18,7 @@ namespace Direction {
     ['W', W]
   ]);
 
-  export const values = () => [N, E, S, W];
+  export const values = (): Direction[] => [N, E, S, W];
 
   export const equals = (first: Direction, second: Direction) => first.dx === second.dx && first.dy === second.dy;
 

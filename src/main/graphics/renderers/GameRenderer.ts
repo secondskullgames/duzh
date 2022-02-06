@@ -1,7 +1,8 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Color from '../../types/Color';
-import { Coordinates, GameScreen } from '../../types/types';
+import Coordinates from '../../types/Coordinates';
+import { GameScreen } from '../../types/types';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';

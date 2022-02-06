@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import { manhattanDistance } from '../../maps/MapUtils';
-import { randInt, weightedRandom } from '../../utils/random';
+import { randBoolean, randInt, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
@@ -84,7 +84,7 @@ const HUMAN_DETERMINISTIC = {
     } else if (distanceToPlayer <= visionRange) {
       behavior = UnitBehavior.ATTACK_PLAYER;
     } else {
-      if (randInt(0, 1) === 1) {
+      if (randBoolean()) {
         behavior = UnitBehavior.STAY;
       } else {
         behavior = UnitBehavior.WANDER;

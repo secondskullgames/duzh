@@ -1,10 +1,12 @@
 import { render } from '../../core/actions';
 import GameState from '../../core/GameState';
 import { createArrow } from '../../items/ProjectileFactory';
+import Activity from '../../types/Activity';
+import Coordinates from '../../types/Coordinates';
 import Direction from '../../types/Direction';
-import { Activity, Coordinates, Projectile } from '../../types/types';
+import { Projectile } from '../../types/types';
 import Unit from '../../units/Unit';
-import { wait } from '../../utils/PromiseUtils';
+import { wait } from '../../utils/promises';
 
 const FRAME_LENGTH = 150; // milliseconds
 const PROJECTILE_FRAME_LENGTH = 50; // milliseconds

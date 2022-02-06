@@ -1,12 +1,12 @@
 import EquipmentClass from '../../items/equipment/EquipmentClass';
 import ItemClass from '../../items/ItemClass';
-import MapItem from '../../items/MapItem';
+import Coordinates from '../../types/Coordinates';
 import Tile from '../../types/Tile';
 import TileSet from '../../types/TileSet';
 import TileType from '../../types/TileType';
-import { Coordinates, MapSection } from '../../types/types';
+import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
-import { average } from '../../utils/ArrayUtils';
+import { average } from '../../utils/arrays';
 import Pathfinder from '../../utils/Pathfinder';
 import MapBuilder from '../MapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';

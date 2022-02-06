@@ -1,10 +1,10 @@
 import Equipment from '../../items/equipment/Equipment';
+import Activity from '../../types/Activity';
 import Color from '../../types/Color';
 import Direction from '../../types/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
-import { Activity } from '../../types/types';
 import Unit from '../../units/Unit';
-import { fillTemplate } from '../../utils/TemplateUtils';
+import { fillTemplate } from '../../utils/templates';
 import ImageBuilder from '../images/ImageBuilder';
 import { replaceAll } from '../images/ImageUtils';
 import DynamicSprite from './DynamicSprite';

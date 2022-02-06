@@ -6,8 +6,10 @@ import EquipmentMap from '../items/equipment/EquipmentMap';
 import InventoryMap from '../items/InventoryMap';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
+import Activity from '../types/Activity';
+import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import { Activity, Coordinates, Entity, EquipmentSlot, GameScreen } from '../types/types';
+import { Entity, EquipmentSlot, Faction } from '../types/types';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
@@ -18,6 +20,7 @@ const MAX_PLAYER_LEVEL = 20;
 
 type Props = {
   name: string,
+  faction: Faction,
   unitClass: UnitClass,
   sprite: DynamicSprite<Unit>,
   level: number,
@@ -28,6 +31,7 @@ type Props = {
 
 class Unit implements Entity {
   readonly unitClass: UnitClass;
+  readonly faction: Faction;
   readonly char = '@';
   readonly sprite: DynamicSprite<Unit>;
   inventory: InventoryMap;
@@ -50,8 +54,9 @@ class Unit implements Entity {
   readonly abilities: UnitAbility[];
   stunDuration: number;
 
-  constructor({ name, unitClass, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
+  constructor({ name, unitClass, faction, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
     this.unitClass = unitClass;
+    this.faction = faction;
     this.sprite = sprite;
     sprite.target = this;
     this.inventory = new InventoryMap();

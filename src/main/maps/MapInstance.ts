@@ -1,6 +1,7 @@
 import MapItem from '../items/MapItem';
+import Coordinates from '../types/Coordinates';
 import Tile from '../types/Tile';
-import { Coordinates, Entity, Rect, Room } from '../types/types';
+import { Entity, Rect, Room } from '../types/types';
 import Unit from '../units/Unit';
 
 class MapInstance {

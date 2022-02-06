@@ -1,7 +1,8 @@
 import GameState from '../core/GameState';
+import Coordinates from '../types/Coordinates';
 import TileType from '../types/TileType';
-import { Coordinates, Rect } from '../types/types';
-import { sortBy } from '../utils/ArrayUtils';
+import { Rect } from '../types/types';
+import { sortBy } from '../utils/arrays';
 
 /**
  * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,

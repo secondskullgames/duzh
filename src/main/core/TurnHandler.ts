@@ -1,6 +1,6 @@
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import Unit from '../units/Unit';
-import { clear } from '../utils/ArrayUtils';
+import { clear, sortBy } from '../utils/arrays';
 import { render } from './actions';
 import GameState from './GameState';
 
@@ -14,22 +14,26 @@ const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null)
 
 const _update = async () => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
   const map = state.getMap();
 
-  // make sure the player unit's update happens first
-  await playerUnit.update();
-  // other units are processed in unspecified order
-  for (const unit of map.units) {
-    if (unit !== playerUnit) {
-      await unit.update();
-    }
+  const sortedUnits = _sortUnits(map.units);
+  for (const unit of sortedUnits) {
+    await unit.update();
   }
 
   await render();
   state.turn++;
   clear(state.messages);
 };
+
+/**
+ * Sort the list of units such that the player unit is first in the order,
+ * and other units appear in unspecified order
+ */
+const _sortUnits = (units: Unit[]): Unit[] => sortBy(
+  units,
+  unit => (unit.faction === 'PLAYER') ? 0 : 1
+);
 
 export default {
   playTurn

@@ -3,8 +3,9 @@ import EquipmentClass from '../items/equipment/EquipmentClass';
 import ItemClass from '../items/ItemClass';
 import ItemFactory from '../items/ItemFactory';
 import MapItem from '../items/MapItem';
+import Coordinates from '../types/Coordinates';
 import Tile from '../types/Tile';
-import { Coordinates, Room } from '../types/types';
+import { Room } from '../types/types';
 import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
 import UnitClass from '../units/UnitClass';
@@ -64,6 +65,7 @@ class MapBuilder {
         name: unitClass.name, // TODO unique names?
         unitClass,
         controller: HUMAN_DETERMINISTIC,
+        faction: 'ENEMY',
         coordinates: { x, y },
         level: this.level
       });

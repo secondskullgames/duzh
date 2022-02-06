@@ -1,9 +1,10 @@
-import { PromiseSupplier } from '../../types/types';
 import Unit from '../Unit';
 import UnitController from './UnitController';
 
+type PromiseSupplier = () => Promise<void>
+
 class PlayerUnitController implements UnitController {
-  queuedOrder: PromiseSupplier<void> | null;
+  queuedOrder: PromiseSupplier | null;
 
   constructor() {
     this.queuedOrder = null;
@@ -11,7 +12,7 @@ class PlayerUnitController implements UnitController {
 
   issueOrder(unit: Unit): Promise<any> {
     if (!!this.queuedOrder) {
-      const { queuedOrder } = this;
+      const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;
       return queuedOrder();
     }

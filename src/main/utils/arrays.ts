@@ -31,13 +31,21 @@ const clear = (array: any[]) => {
   array.splice(0, array.length);
 };
 
+/**
+ * @param max exclusive
+ */
+const range = (min: number, max: number) => new Array(max - min)
+  .fill(null)
+  .map((_, i) => i + min);
+
 export {
-  sortBy,
-  sortByReversed,
+  average,
+  clear,
   comparing,
   comparingReversed,
-  average,
+  range,
   replace,
-  subtract,
-  clear
+  sortBy,
+  sortByReversed,
+  subtract
 };

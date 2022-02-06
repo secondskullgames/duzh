@@ -46,6 +46,7 @@ const _initState = async () => {
   const playerUnit = await UnitFactory.createUnit({
     name: 'player',
     unitClass: await UnitClass.load('player'),
+    faction: 'PLAYER',
     controller: playerUnitController,
     level: 1,
     coordinates: { x: 0, y: 0 }

@@ -3,29 +3,10 @@ import Coordinates from './Coordinates';
 import Direction from './Direction';
 import TileType from './TileType';
 
-enum Activity {
-  STANDING = 'STANDING',
-  WALKING = 'WALKING',
-  ATTACKING = 'ATTACKING',
-  SHOOTING = 'SHOOTING',
-  DAMAGED = 'DAMAGED'
-}
-
-namespace Activity {
-  export const values = (): Activity[] => [
-    Activity.STANDING,
-    Activity.WALKING,
-    Activity.ATTACKING,
-    Activity.SHOOTING
-  ];
-}
-
 interface Pixel {
   x: number,
   y: number
 }
-
-type CoordinatePair = [Coordinates, Coordinates];
 
 interface Entity extends Coordinates {
   char: string,
@@ -70,8 +51,6 @@ interface Projectile extends Entity {
 
 type Offsets = { dx: number, dy: number };
 
-type PromiseSupplier<T> = (t?: T) => Promise<T>
-
 interface Rect {
   left: number,
   top: number,
@@ -91,12 +70,12 @@ type UnitType =
   | 'HUMAN'
   | 'WIZARD';
 
+type Faction = 'PLAYER' | 'FRIENDLY' | 'NEUTRAL' | 'ENEMY';
+
 export {
-  Activity,
-  Coordinates,
-  CoordinatePair,
   Entity,
   EquipmentSlot,
+  Faction,
   GameScreen,
   ItemCategory,
   MapLayout,
@@ -104,7 +83,6 @@ export {
   Offsets,
   Pixel,
   Projectile,
-  PromiseSupplier,
   Rect,
   Room,
   UnitType

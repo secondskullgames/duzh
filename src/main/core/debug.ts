@@ -13,8 +13,8 @@ const revealMap = async () => {
 
 const killEnemies = async () => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
   const map = state.getMap();
+  const { playerUnit } = state;
   map.units = map.units.filter(u => u === playerUnit);
   await render();
 };
