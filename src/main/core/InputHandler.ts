@@ -300,7 +300,7 @@ const _handleAbility = async (command: KeyCommand) => {
   // sketchy - recall KEY_1 = '1', etc.
   // player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
-  const ability = playerUnit.abilities[index];
+  const ability = playerUnit.abilities[index - 1];
   if (playerUnit.getCooldown(ability) <= 0) {
     state.queuedAbility = ability;
     await render();

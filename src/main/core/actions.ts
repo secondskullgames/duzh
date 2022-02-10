@@ -42,15 +42,7 @@ const initialize = async () => {
 const render = async () => renderer.render();
 
 const _initState = async () => {
-  const playerUnitController = new PlayerUnitController();
-  const playerUnit = await UnitFactory.createUnit({
-    name: 'player',
-    unitClass: await UnitClass.load('player'),
-    faction: 'PLAYER',
-    controller: playerUnitController,
-    level: 1,
-    coordinates: { x: 0, y: 0 }
-  });
+  const playerUnit = await UnitFactory.createPlayerUnit();
 
   const mapIds = ['1', '2', '3', '4', '5', '6'];
   const state = new GameState(playerUnit, mapIds);

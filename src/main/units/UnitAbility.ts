@@ -88,7 +88,6 @@ class HeavyAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-    const { playerUnit } = state;
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
@@ -163,7 +162,6 @@ class StunAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-    const { playerUnit } = state;
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
@@ -228,11 +226,12 @@ class ShootArrow extends UnitAbility {
 }
 
 namespace UnitAbility {
-  export const ATTACK = new NormalAttack();
-  export const HEAVY_ATTACK = new HeavyAttack();
-  export const KNOCKBACK_ATTACK = new KnockbackAttack();
-  export const STUN_ATTACK = new StunAttack();
-  export const SHOOT_ARROW = new ShootArrow();
+  export const ATTACK: UnitAbility = new NormalAttack();
+  export const HEAVY_ATTACK: UnitAbility = new HeavyAttack();
+  export const KNOCKBACK_ATTACK: UnitAbility = new KnockbackAttack();
+  export const STUN_ATTACK: UnitAbility = new StunAttack();
+  export const SHOOT_ARROW: UnitAbility = new ShootArrow();
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW';
 }
 
 export default UnitAbility;

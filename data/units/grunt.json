@@ -22,5 +22,8 @@
     "speed": 0.95,
     "visionRange": 8,
     "fleeThreshold": 0.1
+  },
+  "abilities": {
+    "1": ["ATTACK"]
   }
 }

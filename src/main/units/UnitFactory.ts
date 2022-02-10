@@ -4,6 +4,7 @@ import EquipmentClass from '../items/equipment/EquipmentClass';
 import ItemFactory from '../items/ItemFactory';
 import Coordinates from '../types/Coordinates';
 import { Faction } from '../types/types';
+import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
 import UnitClass from './UnitClass';
@@ -37,6 +38,16 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
   });
 };
 
+const createPlayerUnit = async () => createUnit({
+  name: 'player',
+  unitClass: await UnitClass.load('player'),
+  faction: 'PLAYER',
+  controller: PlayerUnitController.getInstance(),
+  level: 1,
+  coordinates: { x: 0, y: 0 }
+});
+
 export default {
-  createUnit
+  createUnit,
+  createPlayerUnit
 };
