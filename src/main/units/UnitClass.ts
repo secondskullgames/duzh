@@ -1,6 +1,7 @@
 import PaletteSwaps from '../types/PaletteSwaps';
 import { UnitType } from '../types/types';
 import memoize from '../utils/memoize';
+import UnitAbility from './UnitAbility';
 
 interface UnitClass {
   readonly name: string;
@@ -16,6 +17,11 @@ interface UnitClass {
   readonly equipment?: string[];
   readonly experienceToNextLevel?: number[];
   readonly aiParameters?: AIParameters;
+  /**
+   * TODO: This includes ATTACK at position 0, followed by special abilities.
+   * It doesn't include SHOOT_ARROW.
+   */
+  readonly abilities: Record<number, UnitAbility.Name[]>;
 }
 
 const _load = async (name: string): Promise<UnitClass> => {

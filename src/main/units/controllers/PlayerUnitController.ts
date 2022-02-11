@@ -6,6 +6,8 @@ type PromiseSupplier = () => Promise<void>
 class PlayerUnitController implements UnitController {
   queuedOrder: PromiseSupplier | null;
 
+  private static INSTANCE = new PlayerUnitController();
+
   constructor() {
     this.queuedOrder = null;
   }
@@ -18,6 +20,8 @@ class PlayerUnitController implements UnitController {
     }
     return Promise.resolve();
   }
+
+  static getInstance = () => PlayerUnitController.INSTANCE;
 }
 
 export default PlayerUnitController;

@@ -76,8 +76,7 @@ class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
     this.remainingCooldowns = new Map();
-    // TODO: this needs to be specific to the player unit
-    this.abilities = [UnitAbility.ATTACK, UnitAbility.HEAVY_ATTACK, UnitAbility.KNOCKBACK_ATTACK, UnitAbility.STUN_ATTACK];
+    this.abilities = unitClass.abilities[1].map(name => UnitAbility[name]);
     this.stunDuration = 0;
 
     this.equipment = new EquipmentMap();
@@ -155,6 +154,9 @@ class Unit implements Entity {
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
     this.damage += this.unitClass.damagePerLevel;
+    for (const abilityName of this.unitClass.abilities[this.level]) {
+      this.abilities.push(UnitAbility[abilityName]);
+    }
 
     if (withSound) {
       playSound(Sounds.LEVEL_UP);
