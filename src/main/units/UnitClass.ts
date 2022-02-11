@@ -18,7 +18,8 @@ interface UnitClass {
   readonly experienceToNextLevel?: number[];
   readonly aiParameters?: AIParameters;
   /**
-   * TODO: This does not include ATTACK or SHOOT_ARROW.  Should it?
+   * TODO: This includes ATTACK at position 0, followed by special abilities.
+   * It doesn't include SHOOT_ARROW.
    */
   readonly abilities: Record<number, UnitAbility.Name[]>;
 }
