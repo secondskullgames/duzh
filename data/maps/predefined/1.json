@@ -19,5 +19,8 @@
   "equipmentColors": {
     "YELLOW": "bronze_sword"
   },
+  "doorColors": {
+    "DARK_BROWN": "vertical"
+  },
   "startingPointColor": "RED"
 }

@@ -1,4 +1,5 @@
-import Equipment from '../../items/equipment/Equipment';
+import Equipment from '../../equipment/Equipment';
+import { DoorDirection, DoorState } from '../../objects/Door';
 import Activity from '../../types/Activity';
 import { Colors } from '../../types/Color';
 import Direction from '../../types/Direction';
@@ -82,6 +83,20 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
   return new StaticSprite(image, offsets);
 };
 
+/**
+ * TODO - hardcoded
+ */
+const createDoorSprite = async (direction: DoorDirection, state: DoorState): Promise<StaticSprite> => {
+  const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
+  const offsets = { dx: 0, dy: 0 }; // TODO
+  const image = await new ImageBuilder({
+    filename,
+    paletteSwaps: {},
+    transparentColor: Colors.WHITE
+  }).build();
+  return new StaticSprite(image, offsets);
+};
+
 const _loadAnimations = async (
   spriteCategory: SpriteCategory,
   spriteModel: DynamicSpriteModel,
@@ -139,9 +154,10 @@ const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Prom
 };
 
 export default {
-  createTileSprite,
-  createStaticSprite,
-  createUnitSprite,
+  createDoorSprite,
   createEquipmentSprite,
-  createProjectileSprite
+  createProjectileSprite,
+  createStaticSprite,
+  createTileSprite,
+  createUnitSprite
 };

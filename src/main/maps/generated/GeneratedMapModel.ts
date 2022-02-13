@@ -1,4 +1,4 @@
-import { TileSetName } from '../../types/TileSet';
+import { TileSetName } from '../../tiles/TileSet';
 import { MapLayout } from '../../types/types';
 import memoize from '../../utils/memoize';
 

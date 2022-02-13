@@ -1,4 +1,4 @@
-import { EquipmentSlot } from '../../types/types';
+import { EquipmentSlot } from '../types/types';
 import Equipment from './Equipment';
 
 /**

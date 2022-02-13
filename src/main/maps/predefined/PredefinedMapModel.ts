@@ -1,19 +1,21 @@
-import EquipmentClass from '../../items/equipment/EquipmentClass';
-import ItemClass from '../../items/ItemClass';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import { DoorDirection } from '../../objects/Door';
+import ItemClass from '../../objects/items/ItemClass';
 import Color, { Colors } from '../../types/Color';
-import { TileSetName } from '../../types/TileSet';
-import TileType from '../../types/TileType';
+import { TileSetName } from '../../tiles/TileSet';
+import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
 
 type PredefinedMapModel = {
   imageFilename: string,
   tileset: TileSetName,
   levelNumber: number,
-  tileColors: Map<Color, TileType>,
-  enemyColors: Map<Color, UnitClass>,
+  tileColors: Record<Color, TileType>,
+  enemyColors: Record<Color, UnitClass>,
   // TODO: unify the below two fields into `objectColors`?
-  itemColors: Map<Color, ItemClass>,
-  equipmentColors: Map<Color, EquipmentClass>,
+  itemColors: Record<Color, ItemClass>,
+  equipmentColors: Record<Color, EquipmentClass>,
+  doorColors: Record<Color, DoorDirection>,
   startingPointColor: Color
 };
 
@@ -40,11 +42,11 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
 const _convertColorMap = async <T> (
   map: Record<string, string>,
   valueFunc: (value: string) => Promise<T>
-): Promise<Map<Color, T>> => {
-  const converted: Map<Color, T> = new Map();
+): Promise<Record<Color, T>> => {
+  const converted: Record<Color, T> = {};
   for (const [colorName, value] of Object.entries(map)) {
     const color = Colors[colorName];
-    converted.set(color, await valueFunc(value));
+    converted[color] = await valueFunc(value);
   }
   return converted;
 };

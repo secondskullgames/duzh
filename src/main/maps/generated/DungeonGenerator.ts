@@ -1,9 +1,9 @@
-import EquipmentClass from '../../items/equipment/EquipmentClass';
-import ItemClass from '../../items/ItemClass';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import ItemClass from '../../objects/items/ItemClass';
 import Coordinates from '../../types/Coordinates';
-import Tile from '../../types/Tile';
-import TileSet from '../../types/TileSet';
-import TileType from '../../types/TileType';
+import Tile from '../../tiles/Tile';
+import TileSet from '../../tiles/TileSet';
+import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/arrays';

@@ -1,6 +1,6 @@
 import Coordinates from '../../types/Coordinates';
-import TileSet from '../../types/TileSet';
-import TileType from '../../types/TileType';
+import TileSet from '../../tiles/TileSet';
+import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';
 import { comparing } from '../../utils/arrays';
 import { randInt } from '../../utils/random';

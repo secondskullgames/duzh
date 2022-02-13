@@ -1,7 +1,6 @@
-import ImageLoader from '../graphics/images/ImageLoader';
-import EquipmentClass from '../items/equipment/EquipmentClass';
-import ItemClass from '../items/ItemClass';
-import TileSet from '../types/TileSet';
+import EquipmentClass from '../equipment/EquipmentClass';
+import ItemClass from '../objects/items/ItemClass';
+import TileSet from '../tiles/TileSet';
 import { MapLayout } from '../types/types';
 import UnitClass from '../units/UnitClass';
 import BlobDungeonGenerator from './generated/BlobDungeonGenerator';

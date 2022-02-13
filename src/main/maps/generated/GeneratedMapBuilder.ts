@@ -1,10 +1,10 @@
 import GameState from '../../core/GameState';
-import EquipmentClass from '../../items/equipment/EquipmentClass';
-import ItemClass from '../../items/ItemClass';
-import ItemFactory from '../../items/ItemFactory';
-import MapItem from '../../items/MapItem';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import ItemClass from '../../objects/items/ItemClass';
+import ItemFactory from '../../objects/items/ItemFactory';
+import MapItem from '../../objects/items/MapItem';
 import Coordinates from '../../types/Coordinates';
-import Tile from '../../types/Tile';
+import Tile from '../../tiles/Tile';
 import { Room } from '../../types/types';
 import { HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
@@ -102,7 +102,8 @@ class GeneratedMapBuilder {
       tiles: this.tiles,
       rooms: this.rooms,
       units,
-      items
+      items,
+      doors: []
     });
   };
 }

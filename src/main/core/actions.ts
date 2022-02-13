@@ -8,7 +8,7 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import SoundPlayer from '../sounds/SoundPlayer';
 import Sounds from '../sounds/Sounds';
-import TileSet from '../types/TileSet';
+import TileSet from '../tiles/TileSet';
 import { GameScreen } from '../types/types';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';

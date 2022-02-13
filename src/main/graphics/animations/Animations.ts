@@ -1,6 +1,6 @@
 import { render } from '../../core/actions';
 import GameState from '../../core/GameState';
-import { createArrow } from '../../items/ProjectileFactory';
+import { createArrow } from '../../objects/ProjectileFactory';
 import Activity from '../../types/Activity';
 import Coordinates from '../../types/Coordinates';
 import Direction from '../../types/Direction';

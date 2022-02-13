@@ -1,10 +1,12 @@
 import GameState from '../../core/GameState';
 import ImageLoader from '../../graphics/images/ImageLoader';
-import ItemFactory from '../../items/ItemFactory';
-import MapItem from '../../items/MapItem';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import Door from '../../objects/Door';
+import ItemFactory from '../../objects/items/ItemFactory';
+import MapItem from '../../objects/items/MapItem';
 import Color from '../../types/Color';
-import Tile from '../../types/Tile';
-import TileSet from '../../types/TileSet';
+import Tile from '../../tiles/Tile';
+import TileSet from '../../tiles/TileSet';
 import { HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
@@ -25,13 +27,15 @@ class PredefinedMapBuilder {
   build = async (): Promise<MapInstance> => {
     const { model } = this;
     const image = await ImageLoader.loadImage(`maps/${model.imageFilename}`);
+
     return new MapInstance({
       width: image.width,
       height: image.height,
       tiles: await _loadTiles(model, image),
       rooms: [], // TODO
       units: await _loadUnits(model, image),
-      items: await _loadItems(model, image)
+      items: await _loadItems(model, image),
+      doors: await _loadDoors(model, image)
     });
   };
 }
@@ -51,7 +55,7 @@ const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const color = Color.fromRGB({ r, g, b });
 
     if (color !== null) {
-      const tileType = tileColors.get(color) || null;
+      const tileType = tileColors[color] || null;
       if (tileType !== null) {
         tiles[y][x] = Tile.create(tileType, tileSet);
       }
@@ -77,7 +81,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
         [playerUnit.x, playerUnit.y] = [x, y];
         units.push(playerUnit);
       } else {
-        const enemyUnitClass = model.enemyColors.get(color) || null;
+        const enemyUnitClass = model.enemyColors[color] || null;
         if (enemyUnitClass !== null) {
           const unit = await UnitFactory.createUnit({
             name: `${enemyUnitClass.name}_${id++}`,
@@ -105,12 +109,12 @@ const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const color = Color.fromRGB({ r, g, b });
 
     if (color !== null) {
-      const itemClass = model.itemColors.get(color) || null;
+      const itemClass = model.itemColors[color] || null;
       if (itemClass !== null) {
         items.push(await ItemFactory.createMapItem(itemClass, { x, y }));
       }
 
-      const equipmentClass = model.equipmentColors.get(color) || null;
+      const equipmentClass = model.equipmentColors[color] || null;
       if (equipmentClass !== null) {
         items.push(await ItemFactory.createMapEquipment(equipmentClass, { x, y }));
       }
@@ -118,6 +122,35 @@ const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Prom
   }
 
   return items;
+};
+
+const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Promise<Door[]> => {
+  const doors: Door[] = [];
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const x = Math.floor(i / 4) % imageData.width;
+    const y = Math.floor(Math.floor(i / 4) / imageData.width);
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    const color = Color.fromRGB({ r, g, b });
+
+    if (color !== null) {
+      const doorDirection = model.doorColors[color] || null;
+      if (doorDirection !== null) {
+        // TODO: figure out factory methods here
+        const sprite = await SpriteFactory.createDoorSprite(doorDirection, 'CLOSED');
+        const door = new Door({
+          direction: doorDirection,
+          state: 'CLOSED',
+          x,
+          y,
+          sprite
+        });
+        doors.push(door);
+      }
+    }
+  }
+
+  return doors;
 };
 
 export default PredefinedMapBuilder;

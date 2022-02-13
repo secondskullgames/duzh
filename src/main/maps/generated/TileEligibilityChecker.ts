@@ -1,5 +1,5 @@
 import Coordinates from '../../types/Coordinates';
-import TileType from '../../types/TileType';
+import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';
 
 class TileEligibilityChecker {

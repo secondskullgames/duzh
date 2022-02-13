@@ -1,4 +1,4 @@
-import { pickupItem, useItem } from '../items/ItemUtils';
+import { pickupItem, useItem } from '../objects/items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';

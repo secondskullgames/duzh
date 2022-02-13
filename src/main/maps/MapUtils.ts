@@ -1,6 +1,6 @@
 import GameState from '../core/GameState';
 import Coordinates from '../types/Coordinates';
-import TileType from '../types/TileType';
+import TileType from '../tiles/TileType';
 import { Rect } from '../types/types';
 import { sortBy } from '../utils/arrays';
 

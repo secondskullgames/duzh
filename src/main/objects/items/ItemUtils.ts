@@ -1,8 +1,8 @@
-import GameState from '../core/GameState';
-import { playSound } from '../sounds/SoundFX';
-import Sounds from '../sounds/Sounds';
-import Unit from '../units/Unit';
-import EquipmentClass from './equipment/EquipmentClass';
+import GameState from '../../core/GameState';
+import { playSound } from '../../sounds/SoundFX';
+import Sounds from '../../sounds/Sounds';
+import Unit from '../../units/Unit';
+import EquipmentClass from '../../equipment/EquipmentClass';
 import InventoryItem from './InventoryItem';
 import ItemFactory from './ItemFactory';
 import MapItem from './MapItem';
