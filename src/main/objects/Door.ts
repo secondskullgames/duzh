@@ -27,9 +27,11 @@ class Door implements Entity {
     this.char = _getChar(direction, state);
     this.x = x;
     this.y = y;
+    this.sprite = sprite;
   }
 
   isOpen = () => this._state === 'OPEN';
+  isClosed = () => this._state === 'CLOSED';
 
   open = async () => {
     this._state = 'OPEN';

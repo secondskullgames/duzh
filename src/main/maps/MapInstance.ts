@@ -80,7 +80,9 @@ class MapInstance {
     if (!this.contains({ x, y })) {
       throw `(${x}, ${y}) is not on the map`;
     }
-    return !!this.getUnit({ x, y }) || this.getTile({ x, y }).isBlocking;
+    return !!this.getUnit({ x, y })
+      || this.getDoor({ x, y })?.isClosed()
+      || this.getTile({ x, y }).isBlocking;
   }
 
   removeUnit({ x, y }: Coordinates) {

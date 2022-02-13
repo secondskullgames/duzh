@@ -9,7 +9,8 @@
     "GREEN": "FLOOR",
     "BLUE": "FLOOR",
     "RED": "FLOOR",
-    "YELLOW": "FLOOR"
+    "YELLOW": "FLOOR",
+    "DARK_BROWN": "FLOOR"
   },
   "enemyColors": {
     "GREEN": "grunt",

@@ -25,6 +25,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const enemyColors = await _convertColorMap(json.enemyColors, UnitClass.load);
   const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemClass.load(x)));
   const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentClass.load);
+  const doorColors = await _convertColorMap(json.doorColors, x => Promise.resolve(x));
   const startingPointColor = Colors[json.startingPointColor];
   const levelNumber = parseInt(json.levelNumber);
 
@@ -35,6 +36,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
     itemColors,
     equipmentColors,
     startingPointColor,
+    doorColors,
     levelNumber
   };
 };

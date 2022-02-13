@@ -65,10 +65,15 @@ class NormalAttack extends UnitAbility {
       await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
+      if (targetUnit) {
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         await playSound(Sounds.PLAYER_HITS_ENEMY);
+      }
+
+      const door = map.getDoor({ x, y });
+      if (door) {
+        await door.open();
       }
     }
   };

@@ -88,7 +88,7 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
  */
 const createDoorSprite = async (direction: DoorDirection, state: DoorState): Promise<StaticSprite> => {
   const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
-  const offsets = { dx: 0, dy: 0 }; // TODO
+  const offsets = { dx: 0, dy: -24 };
   const image = await new ImageBuilder({
     filename,
     paletteSwaps: {},
