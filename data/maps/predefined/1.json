@@ -8,12 +8,16 @@
     "DARK_GRAY": "WALL",
     "GREEN": "FLOOR",
     "BLUE": "FLOOR",
-    "RED": "FLOOR"
+    "RED": "FLOOR",
+    "YELLOW": "FLOOR"
   },
   "enemyColors": {
     "GREEN": "grunt",
     "BLUE": "super_grunt"
   },
   "itemColors": {},
+  "equipmentColors": {
+    "YELLOW": "bronze_sword"
+  },
   "startingPointColor": "RED"
 }

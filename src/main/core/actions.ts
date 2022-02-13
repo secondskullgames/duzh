@@ -5,6 +5,9 @@ import MapSpec from '../maps/MapSpec';
 import { contains, isTileRevealed } from '../maps/MapUtils';
 import PredefinedMapModel from '../maps/predefined/PredefinedMapModel';
 import Music from '../sounds/Music';
+import { playSound } from '../sounds/SoundFX';
+import SoundPlayer from '../sounds/SoundPlayer';
+import Sounds from '../sounds/Sounds';
 import TileSet from '../types/TileSet';
 import { GameScreen } from '../types/types';
 import UnitFactory from '../units/UnitFactory';
@@ -121,8 +124,7 @@ const gameOver = async () => {
   const state = GameState.getInstance();
   state.screen = GameScreen.GAME_OVER;
   Music.stop();
-  const gameOverTheme = await Music.loadMusic('game_over');
-  Music.playMusic(gameOverTheme);
+  playSound(Sounds.GAME_OVER);
 };
 
 export {

@@ -1,33 +1,12 @@
 import PaletteSwaps from '../../types/PaletteSwaps';
 import RGB from './RGB';
 
-type TraverseProps = {
-  x: number,
-  y: number,
-  r: number, // red component
-  g: number, // green component
-  b: number, // blue component
-  a: number, // alpha component
-  i: number // starting index
-};
-type TraverseFunction = (props: TraverseProps) => Promise<void>;
-
-const traverse = async (imageData: ImageData, traverseFunction: TraverseFunction) => {
-  const promises: Promise<void>[] = [];
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const x = Math.floor(i / 4) % imageData.width;
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
-    promises.push(traverseFunction({ x, y, r, g, b, a, i }));
-  }
-  await Promise.all(promises);
-};
-
 const applyTransparentColor = async (imageData: ImageData, transparentColor: string): Promise<ImageData> => {
   const transparentRGB = hex2rgb(transparentColor);
   const array = new Uint8ClampedArray(imageData.data.length);
 
-  await traverse(imageData, async ({ r, g, b, a, i }) => {
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
@@ -37,7 +16,7 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: str
     } else {
       array[i + 3] = a;
     }
-  });
+  }
 
   return new ImageData(array, imageData.width, imageData.height);
 };
@@ -58,7 +37,8 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
     targetRGBMap[targetColor] = hex2rgb(targetColor);
   }
 
-  await traverse(imageData, async ({ r, g, b, a, i }) => {
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
@@ -75,7 +55,7 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
         break;
       }
     }
-  });
+  }
 
   return new ImageData(array, imageData.width, imageData.height);
 };
@@ -87,7 +67,8 @@ const replaceAll = async (imageData: ImageData, color: string): Promise<ImageDat
   const rgb = hex2rgb(color);
   const array = new Uint8ClampedArray(imageData.data.length);
 
-  await traverse(imageData, async ({ r, g, b, a, i }) => {
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
@@ -98,7 +79,7 @@ const replaceAll = async (imageData: ImageData, color: string): Promise<ImageDat
       array[i + 1] = rgb.g;
       array[i + 2] = rgb.b;
     }
-  });
+  }
 
   return new ImageData(array, imageData.width, imageData.height);
 };
@@ -132,6 +113,5 @@ export {
   applyTransparentColor,
   replaceColors,
   replaceAll,
-  hex2rgb,
-  traverse as traverseImage
+  hex2rgb
 };
