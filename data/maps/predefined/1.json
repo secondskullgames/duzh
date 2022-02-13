@@ -1,0 +1,19 @@
+{
+  "imageFilename": "1",
+  "tileset": "dungeon",
+  "levelNumber": "1",
+  "tileColors": {
+    "BLACK": "NONE",
+    "LIGHT_GRAY": "FLOOR",
+    "DARK_GRAY": "WALL",
+    "GREEN": "FLOOR",
+    "BLUE": "FLOOR",
+    "RED": "FLOOR"
+  },
+  "enemyColors": {
+    "GREEN": "grunt",
+    "BLUE": "super_grunt"
+  },
+  "itemColors": {},
+  "startingPointColor": "RED"
+}

@@ -12,7 +12,7 @@
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 10,
-    "fleeThreshold": 0.2
+    "fleeThreshold": 0.1
   },
   "abilities": {
     "1": ["ATTACK"]

@@ -8,7 +8,7 @@ import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/arrays';
 import Pathfinder from '../../utils/Pathfinder';
-import MapBuilder from '../MapBuilder';
+import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
@@ -28,7 +28,7 @@ abstract class DungeonGenerator {
     enemyUnitClasses: UnitClass[],
     equipmentClasses: EquipmentClass[],
     itemClasses: ItemClass[]
-  ): MapBuilder => {
+  ): GeneratedMapBuilder => {
     let section;
     let isValid = false;
     let iterations = 0;
@@ -56,19 +56,19 @@ abstract class DungeonGenerator {
       row.map(tileType => Tile.create(tileType, this.tileSet))
     );
 
-    return new MapBuilder(
+    return new GeneratedMapBuilder({
       level,
       width,
       height,
       tiles,
-      section.rooms,
+      rooms: section.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitClasses,
       itemLocations,
       equipmentClasses,
       itemClasses
-    );
+    });
   };
 
   protected abstract generateTiles(width: number, height: number): MapSection;

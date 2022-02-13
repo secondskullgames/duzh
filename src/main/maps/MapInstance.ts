@@ -4,6 +4,15 @@ import Tile from '../types/Tile';
 import { Entity, Rect, Room } from '../types/types';
 import Unit from '../units/Unit';
 
+type Props = {
+  width: number,
+  height: number,
+  tiles: Tile[][],
+  rooms: Room[],
+  units: Unit[],
+  items: MapItem[]
+};
+
 class MapInstance {
   width: number;
   height: number;
@@ -17,14 +26,14 @@ class MapInstance {
   projectiles: Entity[];
   revealedTiles: Coordinates[];
 
-  constructor(
-    width: number,
-    height: number,
-    tiles: Tile[][],
-    rooms: Room[],
-    units: Unit[],
-    items: MapItem[]
-  ) {
+  constructor({
+    width,
+    height,
+    tiles,
+    rooms,
+    units,
+    items
+  }: Props) {
     this.width = width;
     this.height = height;
     this._tiles = tiles;

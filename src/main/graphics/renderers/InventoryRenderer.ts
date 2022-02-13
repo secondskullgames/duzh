@@ -1,5 +1,5 @@
 import GameState from '../../core/GameState';
-import Color from '../../types/Color';
+import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
 import { ItemCategory } from '../../types/types';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
@@ -36,15 +36,15 @@ class InventoryRenderer extends BufferedRenderer {
     const itemsLeft = (bufferCanvas.width + INVENTORY_MARGIN) / 2;
 
     const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Color.WHITE, 'center'));
+    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
 
     // draw equipment items
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
     for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
-      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Color.WHITE, 'left'));
+      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 
@@ -56,9 +56,9 @@ class InventoryRenderer extends BufferedRenderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       const top = INVENTORY_TOP + 40;
-      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Color.WHITE, 'center'));
+      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
-        bufferContext.fillStyle = Color.WHITE;
+        bufferContext.fillStyle = Colors.WHITE;
         bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
       }
     }
@@ -71,9 +71,9 @@ class InventoryRenderer extends BufferedRenderer {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         let color;
         if (items[i] === inventory.selectedItem) {
-          color = Color.YELLOW;
+          color = Colors.YELLOW;
         } else {
-          color = Color.WHITE;
+          color = Colors.WHITE;
         }
         promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
       }

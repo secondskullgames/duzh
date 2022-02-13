@@ -1,8 +1,8 @@
-import { TileSetName } from '../types/TileSet';
-import { MapLayout } from '../types/types';
-import memoize from '../utils/memoize';
+import { TileSetName } from '../../types/TileSet';
+import { MapLayout } from '../../types/types';
+import memoize from '../../utils/memoize';
 
-type MapModel = {
+type GeneratedMapModel = {
   layout: MapLayout,
   tileSet: TileSetName,
   levelNumber: number,
@@ -15,13 +15,13 @@ type MapModel = {
   items: string[]      // defined in ItemClass.ts
 };
 
-const _load = async (id: string): Promise<MapModel> => {
-  const json = (await import(`../../../data/maps/${id}.json`)).default;
+const _load = async (id: string): Promise<GeneratedMapModel> => {
+  const json = (await import(`../../../../data/maps/generated/${id}.json`)).default;
   return { ...json, id };
 };
 
-namespace MapModel {
+namespace GeneratedMapModel {
   export const load = memoize(_load);
 }
 
-export default MapModel;
+export default GeneratedMapModel;

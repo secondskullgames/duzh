@@ -1,6 +1,6 @@
 import Equipment from '../../items/equipment/Equipment';
 import Activity from '../../types/Activity';
-import Color from '../../types/Color';
+import { Colors } from '../../types/Color';
 import Direction from '../../types/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import Unit from '../../units/Unit';
@@ -20,7 +20,7 @@ type SpriteCategory = 'units' | 'equipment' | 'static';
  */
 const createTileSprite = async (filename: string, paletteSwaps: PaletteSwaps = {}): Promise<Sprite> => {
   const offsets = { dx: 0, dy: 0 };
-  const transparentColor = Color.WHITE;
+  const transparentColor = Colors.WHITE;
   const image = await new ImageBuilder({
     filename: `tiles/${filename}`,
     paletteSwaps,
@@ -77,7 +77,7 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
   const image = await new ImageBuilder({
     filename,
     paletteSwaps,
-    transparentColor: Color.WHITE
+    transparentColor: Colors.WHITE
   }).build();
   return new StaticSprite(image, offsets);
 };
@@ -108,14 +108,14 @@ const _loadAnimations = async (
           .map(pattern => fillTemplate(pattern, variables));
 
         const effects = (animationName === Activity.DAMAGED.toString())
-          ? [(img: ImageData) => replaceAll(img, Color.WHITE)]
+          ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
           : [];
 
         const frameKey = `${animationName}_${Direction.toString(direction)}`;
 
         const imagePromise: Promise<ImageBitmap> = new ImageBuilder({
           filenames,
-          transparentColor: Color.WHITE,
+          transparentColor: Colors.WHITE,
           paletteSwaps,
           effects
         }).build();

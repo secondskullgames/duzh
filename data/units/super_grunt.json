@@ -1,0 +1,29 @@
+{
+  "name": "super_grunt",
+  "type": "HUMAN",
+  "sprite": "player",
+  "paletteSwaps": {
+    "DARK_GREEN": "RED",
+    "GREEN": "RED",
+    "CYAN": "RED"
+  },
+  "startingLife": 200,
+  "startingMana": null,
+  "startingDamage": 12,
+  "lifePerLevel": 0,
+  "manaPerLevel": null,
+  "damagePerLevel": 0,
+  "equipment": [
+    "bronze_chain_mail",
+    "iron_helmet",
+    "bronze_sword"
+  ],
+  "aiParameters": {
+    "speed": 1,
+    "visionRange": 10,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}

@@ -1,7 +1,7 @@
 import GameState from '../../core/GameState';
 import Equipment from '../../items/equipment/Equipment';
 import { isTileRevealed } from '../../maps/MapUtils';
-import Color from '../../types/Color';
+import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
 import Tile from '../../types/Tile';
 import { Entity } from '../../types/types';
@@ -19,7 +19,7 @@ class GameScreenRenderer extends BufferedRenderer {
   }
 
   renderBuffer = async () => {
-    this.bufferContext.fillStyle = Color.BLACK;
+    this.bufferContext.fillStyle = Colors.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await this._renderTiles();
@@ -93,7 +93,7 @@ class GameScreenRenderer extends BufferedRenderer {
           const item = map.getItem({ x, y });
           if (!!item) {
             promises.push(
-              this._drawEllipse({ x, y }, Color.DARK_GRAY)
+              this._drawEllipse({ x, y }, Colors.DARK_GRAY)
                 .then(() => this._renderElement(item, { x, y }))
             );
           }
@@ -136,9 +136,9 @@ class GameScreenRenderer extends BufferedRenderer {
           if (!!unit) {
             let shadowColor: Color;
             if (unit === playerUnit) {
-              shadowColor = Color.GREEN;
+              shadowColor = Colors.GREEN;
             } else {
-              shadowColor = Color.DARK_GRAY;
+              shadowColor = Colors.DARK_GRAY;
             }
 
             promises.push(new Promise<void>(async (resolve) => {
@@ -163,8 +163,8 @@ class GameScreenRenderer extends BufferedRenderer {
   private _drawEllipse = async ({ x, y }: Coordinates, color: Color) => {
     const { x: left, y: top } = this._gridToPixel({ x, y });
     const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Color.WHITE))
-      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }));
+      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }));
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, left, top);
   };

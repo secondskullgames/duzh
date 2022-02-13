@@ -1,23 +1,43 @@
 import PaletteSwaps from '../../types/PaletteSwaps';
+import RGB from './RGB';
 
-type RGB = [number, number, number];
+type TraverseProps = {
+  x: number,
+  y: number,
+  r: number, // red component
+  g: number, // green component
+  b: number, // blue component
+  a: number, // alpha component
+  i: number // starting index
+};
+type TraverseFunction = (props: TraverseProps) => Promise<void>;
+
+const traverse = async (imageData: ImageData, traverseFunction: TraverseFunction) => {
+  const promises: Promise<void>[] = [];
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const y = Math.floor(Math.floor(i / 4) / imageData.width);
+    const x = Math.floor(i / 4) % imageData.width;
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    promises.push(traverseFunction({ x, y, r, g, b, a, i }));
+  }
+  await Promise.all(promises);
+};
 
 const applyTransparentColor = async (imageData: ImageData, transparentColor: string): Promise<ImageData> => {
-  const [tr, tg, tb] = hex2rgb(transparentColor);
+  const transparentRGB = hex2rgb(transparentColor);
   const array = new Uint8ClampedArray(imageData.data.length);
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  await traverse(imageData, async ({ r, g, b, a, i }) => {
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
 
-    if (r === tr && g === tg && b === tb) {
+    if (RGB.equals({ r, g, b }, transparentRGB)) {
       array[i + 3] = 0;
     } else {
       array[i + 3] = a;
     }
-  }
+  });
 
   return new ImageData(array, imageData.width, imageData.height);
 };
@@ -30,33 +50,32 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
   const array = new Uint8ClampedArray(imageData.data.length);
   const entries: [string, string][] = Object.entries(colorMap);
 
-  const srcRGB: { [hex: string]: RGB } = {};
-  const destRGB: { [hex: string]: RGB } = {};
-  for (const [srcColor, destColor] of entries) {
-    srcRGB[srcColor] = hex2rgb(srcColor);
-    destRGB[destColor] = hex2rgb(destColor);
+  const sourceRGBMap: { [hex: string]: RGB } = {};
+  const targetRGBMap: { [hex: string]: RGB } = {};
+
+  for (const [sourceColor, targetColor] of entries) {
+    sourceRGBMap[sourceColor] = hex2rgb(sourceColor);
+    targetRGBMap[targetColor] = hex2rgb(targetColor);
   }
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    // @ts-ignore
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  await traverse(imageData, async ({ r, g, b, a, i }) => {
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
     array[i + 3] = a;
 
-    for (const [srcColor, destColor] of entries) {
-      const [sr, sg, sb] = srcRGB[srcColor];
-      const [dr, dg, db] = destRGB[destColor];
+    for (const [sourceColor, targetColor] of entries) {
+      const sourceRGB = sourceRGBMap[sourceColor];
+      const targetRGB = targetRGBMap[targetColor];
 
-      if (r === sr && g === sg && b === sb) {
-        array[i] = dr;
-        array[i + 1] = dg;
-        array[i + 2] = db;
+      if (RGB.equals({ r, g, b }, sourceRGB)) {
+        array[i] = targetRGB.r;
+        array[i + 1] = targetRGB.g;
+        array[i + 2] = targetRGB.b;
         break;
       }
     }
-  }
+  });
 
   return new ImageData(array, imageData.width, imageData.height);
 };
@@ -65,45 +84,54 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
  * Replace all non-transparent colors with the specified `color`.
  */
 const replaceAll = async (imageData: ImageData, color: string): Promise<ImageData> => {
-  const [dr, dg, db] = hex2rgb(color);
+  const rgb = hex2rgb(color);
   const array = new Uint8ClampedArray(imageData.data.length);
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    // @ts-ignore
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  await traverse(imageData, async ({ r, g, b, a, i }) => {
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
     array[i + 3] = a;
 
     if (a > 0) {
-      array[i] = dr;
-      array[i + 1] = dg;
-      array[i + 2] = db;
+      array[i] = rgb.r;
+      array[i + 1] = rgb.g;
+      array[i + 2] = rgb.b;
     }
-  }
+  });
 
   return new ImageData(array, imageData.width, imageData.height);
 };
 
 /**
  * Convert a hex string, e.g. '#00c0ff', to its equivalent RGB values, e.g. (0, 192, 255).
- * This implementation relies on the browser automatically doing this conversion when
- * an element's `backgroundColor` value is set.
  */
 const hex2rgb = (hex: string): RGB  => {
-  const div = document.createElement('div');
-  div.style.backgroundColor = hex;
-  // @ts-ignore
-  return div.style.backgroundColor
-    .split(/[(),]/)
-    .map(c => parseInt(c))
-    .filter(c => c != null && !isNaN(c));
+  const trimmed = hex.match(/[0-9a-fA-F]+$/)?.[0];
+  if (!trimmed) {
+    throw new Error();
+  }
+  if (trimmed.length === 3) {
+    return {
+      r: parseInt(trimmed[0], 16) * 17,
+      g: parseInt(trimmed[1], 16) * 17,
+      b: parseInt(trimmed[2], 16) * 17
+    };
+  } else if (trimmed.length === 6) {
+    return {
+      r: parseInt(trimmed.slice(0, 2), 16),
+      g: parseInt(trimmed.slice(2, 4), 16),
+      b: parseInt(trimmed.slice(4, 6), 16)
+    };
+  } else {
+    throw new Error();
+  }
 };
 
 export {
   applyTransparentColor,
   replaceColors,
   replaceAll,
-  hex2rgb
+  hex2rgb,
+  traverse as traverseImage
 };

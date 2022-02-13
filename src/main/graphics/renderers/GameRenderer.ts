@@ -1,6 +1,6 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
-import Color from '../../types/Color';
+import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
 import { GameScreen } from '../../types/types';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -54,7 +54,7 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderGameScreen = async () => {
-    this.bufferContext.fillStyle = Color.BLACK;
+    this.bufferContext.fillStyle = Colors.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await revealTiles();
@@ -72,17 +72,17 @@ class GameRenderer extends BufferedRenderer {
   private _renderMessages = async () => {
     const { bufferContext } = this;
     const { messages } = GameState.getInstance();
-    bufferContext.fillStyle = Color.BLACK;
-    bufferContext.strokeStyle = Color.BLACK;
+    bufferContext.fillStyle = Colors.BLACK;
+    bufferContext.strokeStyle = Colors.BLACK;
 
     const left = 0;
     const top = 0;
 
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      bufferContext.fillStyle = Color.BLACK;
+      bufferContext.fillStyle = Colors.BLACK;
       bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
-      await this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
+      await this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
@@ -90,7 +90,7 @@ class GameRenderer extends BufferedRenderer {
     const imageData = await ImageLoader.loadImage(filename);
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
-    await this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Color.WHITE, 'center');
+    await this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
