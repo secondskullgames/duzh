@@ -35,8 +35,8 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
     enemyColors,
     itemColors,
     equipmentColors,
-    startingPointColor,
     doorColors,
+    startingPointColor,
     levelNumber
   };
 };

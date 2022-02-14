@@ -1,5 +1,6 @@
 import { pickupItem, useItem } from '../objects/items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
+import SoundPlayer from '../sounds/SoundPlayer';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import { GameScreen } from '../types/types';
@@ -111,6 +112,7 @@ const keyHandler = async (e: KeyboardEvent) => {
     case KeyCommand.SHIFT_RIGHT:
       return _handleArrowKey(command);
     case KeyCommand.SPACEBAR:
+      await playSound(Sounds.FOOTSTEP);
       return TurnHandler.playTurn(null);
     case KeyCommand.ENTER:
       return _handleEnter();

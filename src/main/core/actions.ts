@@ -57,8 +57,8 @@ const render = async () => renderer.render();
 const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
-  /*
-  const maps = [
+  const maps: MapSpec[] = [
+    { type: 'predefined', id: '1' },
     { type: 'generated', id: '1' },
     { type: 'generated', id: '2' },
     { type: 'generated', id: '3' },
@@ -66,8 +66,6 @@ const _initState = async () => {
     { type: 'generated', id: '5' },
     { type: 'generated', id: '6' }
   ];
-   */
-  const maps: MapSpec[] = [{ type: 'predefined', id: '1' }];
   const state = new GameState({ playerUnit, maps });
 
   GameState.setInstance(state);

@@ -7,7 +7,7 @@
     "LIGHT_GRAY": "FLOOR",
     "DARK_GRAY": "WALL",
     "GREEN": "FLOOR",
-    "BLUE": "FLOOR",
+    "BLUE": "STAIRS_DOWN",
     "RED": "FLOOR",
     "YELLOW": "FLOOR",
     "DARK_BROWN": "FLOOR",

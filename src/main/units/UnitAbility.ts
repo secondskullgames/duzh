@@ -77,6 +77,9 @@ class NormalAttack extends UnitAbility {
         if (keys.length > 0) {
           playerUnit.inventory.remove(keys[0]);
           await door.open();
+          await playSound(Sounds.OPEN_DOOR);
+        } else {
+          await playSound(Sounds.FOOTSTEP);
         }
       }
     }
