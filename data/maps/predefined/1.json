@@ -10,18 +10,17 @@
     "BLUE": "FLOOR",
     "RED": "FLOOR",
     "YELLOW": "FLOOR",
-    "DARK_BROWN": "FLOOR"
+    "DARK_BROWN": "FLOOR",
+    "LIGHT_BROWN": "FLOOR"
   },
-  "enemyColors": {
-    "GREEN": "grunt",
-    "BLUE": "super_grunt"
+  "enemyColors": {},
+  "itemColors": {
+    "YELLOW": "key"
   },
-  "itemColors": {},
-  "equipmentColors": {
-    "YELLOW": "bronze_sword"
-  },
+  "equipmentColors": {},
   "doorColors": {
-    "DARK_BROWN": "vertical"
+    "DARK_BROWN": "vertical",
+    "LIGHT_BROWN": "horizontal"
   },
   "startingPointColor": "RED"
 }

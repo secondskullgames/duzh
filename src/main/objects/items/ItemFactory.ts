@@ -28,6 +28,12 @@ const createPotion = (lifeRestored: number): InventoryItem => {
   return new InventoryItem('Potion', ItemCategory.POTION, onUse);
 };
 
+const createKey = (): InventoryItem => {
+  const onUse: ItemProc = async () => {}; // TODO - for now just use these by walking into a door
+
+  return new InventoryItem('Key', ItemCategory.KEY, onUse);
+};
+
 const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
   const onUse: ItemProc = async (item, unit): Promise<void> => {
     const map = GameState.getInstance().getMap();
@@ -97,5 +103,6 @@ export default {
   createMapItem,
   createPotion,
   createScrollOfFloorFire,
-  createRandomItem
+  createRandomItem,
+  createKey
 };

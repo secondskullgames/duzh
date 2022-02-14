@@ -20,7 +20,13 @@ namespace ItemClass {
     getInventoryItem: () => ItemFactory.createScrollOfFloorFire(80)
   };
 
-  export const values = () => [life_potion, floor_fire_scroll];
+  export const key: ItemClass = {
+    id: 'key',
+    mapSprite: 'map_key',
+    getInventoryItem: () => Promise.resolve(ItemFactory.createKey())
+  };
+
+  export const values = () => [life_potion, floor_fire_scroll, key];
   export const load = (id: string): ItemClass => values().find(itemClass => itemClass.id === id)!!;
 }
 

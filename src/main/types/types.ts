@@ -32,6 +32,7 @@ enum GameScreen {
 enum ItemCategory {
   POTION = 'POTION',
   SCROLL = 'SCROLL',
+  KEY = 'KEY',
   WEAPON = 'WEAPON',
   ARMOR  = 'ARMOR'
 }
