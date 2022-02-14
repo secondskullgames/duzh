@@ -1,6 +1,5 @@
 import { pickupItem, useItem } from '../objects/items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
-import SoundPlayer from '../sounds/SoundPlayer';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import { GameScreen } from '../types/types';
