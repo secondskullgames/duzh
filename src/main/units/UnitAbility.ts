@@ -7,7 +7,7 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import { EquipmentSlot } from '../types/types';
+import { EquipmentSlot, ItemCategory } from '../types/types';
 import Unit from './Unit';
 
 /**
@@ -65,10 +65,22 @@ class NormalAttack extends UnitAbility {
       await moveTo(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
+      if (targetUnit) {
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         await playSound(Sounds.PLAYER_HITS_ENEMY);
+      }
+
+      const door = map.getDoor({ x, y });
+      if (door) {
+        const keys = playerUnit.inventory.get(ItemCategory.KEY) || [];
+        if (keys.length > 0) {
+          playerUnit.inventory.remove(keys[0]);
+          await door.open();
+          await playSound(Sounds.OPEN_DOOR);
+        } else {
+          await playSound(Sounds.FOOTSTEP);
+        }
       }
     }
   };

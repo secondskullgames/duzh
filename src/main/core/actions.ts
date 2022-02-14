@@ -1,12 +1,15 @@
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
-import MapModel from '../maps/MapModel';
+import GeneratedMapModel from '../maps/generated/GeneratedMapModel';
+import MapSpec from '../maps/MapSpec';
 import { contains, isTileRevealed } from '../maps/MapUtils';
+import PredefinedMapModel from '../maps/predefined/PredefinedMapModel';
 import Music from '../sounds/Music';
-import TileSet from '../types/TileSet';
+import { playSound } from '../sounds/SoundFX';
+import SoundPlayer from '../sounds/SoundPlayer';
+import Sounds from '../sounds/Sounds';
+import TileSet from '../tiles/TileSet';
 import { GameScreen } from '../types/types';
-import PlayerUnitController from '../units/controllers/PlayerUnitController';
-import UnitClass from '../units/UnitClass';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
@@ -15,15 +18,25 @@ let renderer: GameRenderer;
 
 const loadMap = async (index: number) => {
   const state = GameState.getInstance();
-  if (index >= state.mapIds.length) {
+  if (index >= state.maps.length) {
     Music.stop();
     state.screen = GameScreen.VICTORY;
   } else {
     state.mapIndex = index;
-    const mapId = state.mapIds[index];
-    const mapModel = await MapModel.load(mapId);
-    const mapBuilder = await MapFactory.loadMap(mapModel);
-    state.setMap(await mapBuilder.build());
+    const map = state.maps[index];
+    switch (map.type) {
+      case 'generated': {
+        const mapModel = await GeneratedMapModel.load(map.id);
+        const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
+        state.setMap(await mapBuilder.build());
+        break;
+      }
+      case 'predefined': {
+        const mapModel = await PredefinedMapModel.load(map.id);
+        state.setMap(await MapFactory.loadPredefinedMap(mapModel));
+        break;
+      }
+    }
   }
 };
 
@@ -44,8 +57,16 @@ const render = async () => renderer.render();
 const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
-  const mapIds = ['1', '2', '3', '4', '5', '6'];
-  const state = new GameState(playerUnit, mapIds);
+  const maps: MapSpec[] = [
+    { type: 'predefined', id: '1' },
+    { type: 'generated', id: '1' },
+    { type: 'generated', id: '2' },
+    { type: 'generated', id: '3' },
+    { type: 'generated', id: '4' },
+    { type: 'generated', id: '5' },
+    { type: 'generated', id: '6' }
+  ];
+  const state = new GameState({ playerUnit, maps });
 
   GameState.setInstance(state);
 };
@@ -101,8 +122,7 @@ const gameOver = async () => {
   const state = GameState.getInstance();
   state.screen = GameScreen.GAME_OVER;
   Music.stop();
-  const gameOverTheme = await Music.loadMusic('game_over');
-  Music.playMusic(gameOverTheme);
+  playSound(Sounds.GAME_OVER);
 };
 
 export {

@@ -1,6 +1,6 @@
-import PaletteSwaps from '../../types/PaletteSwaps';
-import { EquipmentSlot, ItemCategory } from '../../types/types';
-import memoize from '../../utils/memoize';
+import PaletteSwaps from '../types/PaletteSwaps';
+import { EquipmentSlot, ItemCategory } from '../types/types';
+import memoize from '../utils/memoize';
 
 interface EquipmentClass {
   id: string,
@@ -18,7 +18,7 @@ interface EquipmentClass {
 }
 
 const _load = async (id: string): Promise<EquipmentClass> => {
-  const json = (await import(`../../../../data/equipment/${id}.json`)).default;
+  const json = (await import(`../../../data/equipment/${id}.json`)).default;
   return {
     ...json,
     id,

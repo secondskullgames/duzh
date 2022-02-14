@@ -1,9 +1,15 @@
 import MapInstance from '../maps/MapInstance';
+import MapSpec from '../maps/MapSpec';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
 
 let INSTANCE: GameState | null = null;
+
+type Props = {
+  playerUnit: Unit,
+  maps: MapSpec[]
+};
 
 /**
  * Global mutable state
@@ -11,17 +17,17 @@ let INSTANCE: GameState | null = null;
 class GameState {
   screen: GameScreen;
   playerUnit: Unit;
-  readonly mapIds: string[];
+  readonly maps: MapSpec[];
   mapIndex: number | null;
   readonly messages: string[];
   turn: number;
   queuedAbility: UnitAbility | null;
   private _map: MapInstance | null;
 
-  constructor(playerUnit: Unit, mapIds: string[]) {
+  constructor({ playerUnit, maps }: Props) {
     this.screen = GameScreen.TITLE;
     this.playerUnit = playerUnit;
-    this.mapIds = mapIds;
+    this.maps = maps;
     this.mapIndex = 0;
     this._map = null;
     this.messages = [];

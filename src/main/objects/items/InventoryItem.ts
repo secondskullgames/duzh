@@ -1,5 +1,5 @@
-import { ItemCategory } from '../types/types';
-import Unit from '../units/Unit';
+import { ItemCategory } from '../../types/types';
+import Unit from '../../units/Unit';
 
 class InventoryItem {
   readonly name: string;

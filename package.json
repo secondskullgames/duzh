@@ -16,6 +16,7 @@
   "scripts": {
     "prebuild": "node src/scripts/filenames.js",
     "build": "npx webpack",
+    "preserve": "node src/scripts/filenames.js",
     "serve": "npx webpack serve"
   },
   "repository": {

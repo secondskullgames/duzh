@@ -1,4 +1,4 @@
-import Color from '../types/Color';
+import Color, { Colors } from '../types/Color';
 import ImageLoader from './images/ImageLoader';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 
@@ -59,7 +59,7 @@ const renderFont = async (text: string, font: FontDefinition, color: Color): Pro
   }
 
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const imageBitmap = await replaceColors(imageData, { [Color.BLACK]: color })
+  const imageBitmap = await replaceColors(imageData, { [Colors.BLACK]: color })
     .then(imageData => createImageBitmap(imageData));
 
   _imageMemos[key] = imageBitmap;
@@ -104,7 +104,7 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
 const _getCharacterData = async (definition: FontDefinition, context: CanvasRenderingContext2D, char: number) => {
   const offset = _getCharOffset(char);
   const imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
-  return applyTransparentColor(imageData, Color.WHITE);
+  return applyTransparentColor(imageData, Colors.WHITE);
 };
 
 const _getCharOffset = (char: number) => {

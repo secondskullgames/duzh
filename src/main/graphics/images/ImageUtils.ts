@@ -1,9 +1,8 @@
 import PaletteSwaps from '../../types/PaletteSwaps';
-
-type RGB = [number, number, number];
+import RGB from './RGB';
 
 const applyTransparentColor = async (imageData: ImageData, transparentColor: string): Promise<ImageData> => {
-  const [tr, tg, tb] = hex2rgb(transparentColor);
+  const transparentRGB = hex2rgb(transparentColor);
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
@@ -12,7 +11,7 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: str
     array[i + 1] = g;
     array[i + 2] = b;
 
-    if (r === tr && g === tg && b === tb) {
+    if (RGB.equals({ r, g, b }, transparentRGB)) {
       array[i + 3] = 0;
     } else {
       array[i + 3] = a;
@@ -30,29 +29,29 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
   const array = new Uint8ClampedArray(imageData.data.length);
   const entries: [string, string][] = Object.entries(colorMap);
 
-  const srcRGB: { [hex: string]: RGB } = {};
-  const destRGB: { [hex: string]: RGB } = {};
-  for (const [srcColor, destColor] of entries) {
-    srcRGB[srcColor] = hex2rgb(srcColor);
-    destRGB[destColor] = hex2rgb(destColor);
+  const sourceRGBMap: { [hex: string]: RGB } = {};
+  const targetRGBMap: { [hex: string]: RGB } = {};
+
+  for (const [sourceColor, targetColor] of entries) {
+    sourceRGBMap[sourceColor] = hex2rgb(sourceColor);
+    targetRGBMap[targetColor] = hex2rgb(targetColor);
   }
 
   for (let i = 0; i < imageData.data.length; i += 4) {
-    // @ts-ignore
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
     array[i + 3] = a;
 
-    for (const [srcColor, destColor] of entries) {
-      const [sr, sg, sb] = srcRGB[srcColor];
-      const [dr, dg, db] = destRGB[destColor];
+    for (const [sourceColor, targetColor] of entries) {
+      const sourceRGB = sourceRGBMap[sourceColor];
+      const targetRGB = targetRGBMap[targetColor];
 
-      if (r === sr && g === sg && b === sb) {
-        array[i] = dr;
-        array[i + 1] = dg;
-        array[i + 2] = db;
+      if (RGB.equals({ r, g, b }, sourceRGB)) {
+        array[i] = targetRGB.r;
+        array[i + 1] = targetRGB.g;
+        array[i + 2] = targetRGB.b;
         break;
       }
     }
@@ -65,11 +64,10 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
  * Replace all non-transparent colors with the specified `color`.
  */
 const replaceAll = async (imageData: ImageData, color: string): Promise<ImageData> => {
-  const [dr, dg, db] = hex2rgb(color);
+  const rgb = hex2rgb(color);
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
-    // @ts-ignore
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     array[i] = r;
     array[i + 1] = g;
@@ -77,9 +75,9 @@ const replaceAll = async (imageData: ImageData, color: string): Promise<ImageDat
     array[i + 3] = a;
 
     if (a > 0) {
-      array[i] = dr;
-      array[i + 1] = dg;
-      array[i + 2] = db;
+      array[i] = rgb.r;
+      array[i + 1] = rgb.g;
+      array[i + 2] = rgb.b;
     }
   }
 
@@ -88,17 +86,27 @@ const replaceAll = async (imageData: ImageData, color: string): Promise<ImageDat
 
 /**
  * Convert a hex string, e.g. '#00c0ff', to its equivalent RGB values, e.g. (0, 192, 255).
- * This implementation relies on the browser automatically doing this conversion when
- * an element's `backgroundColor` value is set.
  */
 const hex2rgb = (hex: string): RGB  => {
-  const div = document.createElement('div');
-  div.style.backgroundColor = hex;
-  // @ts-ignore
-  return div.style.backgroundColor
-    .split(/[(),]/)
-    .map(c => parseInt(c))
-    .filter(c => c != null && !isNaN(c));
+  const trimmed = hex.match(/[0-9a-fA-F]+$/)?.[0];
+  if (!trimmed) {
+    throw new Error();
+  }
+  if (trimmed.length === 3) {
+    return {
+      r: parseInt(trimmed[0], 16) * 17,
+      g: parseInt(trimmed[1], 16) * 17,
+      b: parseInt(trimmed[2], 16) * 17
+    };
+  } else if (trimmed.length === 6) {
+    return {
+      r: parseInt(trimmed.slice(0, 2), 16),
+      g: parseInt(trimmed.slice(2, 4), 16),
+      b: parseInt(trimmed.slice(4, 6), 16)
+    };
+  } else {
+    throw new Error();
+  }
 };
 
 export {

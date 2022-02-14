@@ -1,14 +1,14 @@
-import EquipmentClass from '../../items/equipment/EquipmentClass';
-import ItemClass from '../../items/ItemClass';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import ItemClass from '../../objects/items/ItemClass';
 import Coordinates from '../../types/Coordinates';
-import Tile from '../../types/Tile';
-import TileSet from '../../types/TileSet';
-import TileType from '../../types/TileType';
+import Tile from '../../tiles/Tile';
+import TileSet from '../../tiles/TileSet';
+import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/arrays';
 import Pathfinder from '../../utils/Pathfinder';
-import MapBuilder from '../MapBuilder';
+import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
@@ -28,7 +28,7 @@ abstract class DungeonGenerator {
     enemyUnitClasses: UnitClass[],
     equipmentClasses: EquipmentClass[],
     itemClasses: ItemClass[]
-  ): MapBuilder => {
+  ): GeneratedMapBuilder => {
     let section;
     let isValid = false;
     let iterations = 0;
@@ -56,19 +56,19 @@ abstract class DungeonGenerator {
       row.map(tileType => Tile.create(tileType, this.tileSet))
     );
 
-    return new MapBuilder(
+    return new GeneratedMapBuilder({
       level,
       width,
       height,
       tiles,
-      section.rooms,
+      rooms: section.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitClasses,
       itemLocations,
       equipmentClasses,
       itemClasses
-    );
+    });
   };
 
   protected abstract generateTiles(width: number, height: number): MapSection;

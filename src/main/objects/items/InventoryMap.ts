@@ -1,4 +1,4 @@
-import { ItemCategory } from '../types/types';
+import { ItemCategory } from '../../types/types';
 import InventoryItem from './InventoryItem';
 
 const categories: ItemCategory[] = Object.values(ItemCategory);

@@ -1,9 +1,9 @@
 import GameState from '../../core/GameState';
-import Equipment from '../../items/equipment/Equipment';
+import Equipment from '../../equipment/Equipment';
 import { isTileRevealed } from '../../maps/MapUtils';
-import Color from '../../types/Color';
+import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
-import Tile from '../../types/Tile';
+import Tile from '../../tiles/Tile';
 import { Entity } from '../../types/types';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import ImageLoader from '../images/ImageLoader';
@@ -19,12 +19,13 @@ class GameScreenRenderer extends BufferedRenderer {
   }
 
   renderBuffer = async () => {
-    this.bufferContext.fillStyle = Color.BLACK;
+    this.bufferContext.fillStyle = Colors.BLACK;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await this._renderTiles();
     await this._renderItems();
     await this._renderProjectiles();
+    await this._renderDoors();
     await this._renderUnits();
   };
 
@@ -72,7 +73,7 @@ class GameScreenRenderer extends BufferedRenderer {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
           const tile = map.getTile({ x, y });
-          if (!!tile) {
+          if (tile) {
             promises.push(this._renderElement(tile, { x, y }));
           }
         }
@@ -91,9 +92,9 @@ class GameScreenRenderer extends BufferedRenderer {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
-          if (!!item) {
+          if (item) {
             promises.push(
-              this._drawEllipse({ x, y }, Color.DARK_GRAY)
+              this._drawEllipse({ x, y }, Colors.DARK_GRAY)
                 .then(() => this._renderElement(item, { x, y }))
             );
           }
@@ -112,9 +113,28 @@ class GameScreenRenderer extends BufferedRenderer {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
-          const projectile = map.projectiles.find(p => Coordinates.equals(p, { x, y }));
-          if (!!projectile) {
+          const projectile = map.getProjectile({ x, y });
+          if (projectile) {
             promises.push(this._renderElement(projectile, { x, y }));
+          }
+        }
+      }
+    }
+
+    await Promise.all(promises);
+  };
+
+  private _renderDoors = async () => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    const promises: Promise<any>[] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (isTileRevealed({ x, y })) {
+          const door = map.getDoor({ x, y });
+          if (door) {
+            promises.push(this._renderElement(door, { x, y }));
           }
         }
       }
@@ -133,12 +153,12 @@ class GameScreenRenderer extends BufferedRenderer {
       for (let x = 0; x < map.width; x++) {
         if (isTileRevealed({ x, y })) {
           const unit = map.getUnit({ x, y });
-          if (!!unit) {
+          if (unit) {
             let shadowColor: Color;
             if (unit === playerUnit) {
-              shadowColor = Color.GREEN;
+              shadowColor = Colors.GREEN;
             } else {
-              shadowColor = Color.DARK_GRAY;
+              shadowColor = Colors.DARK_GRAY;
             }
 
             promises.push(new Promise<void>(async (resolve) => {
@@ -163,8 +183,8 @@ class GameScreenRenderer extends BufferedRenderer {
   private _drawEllipse = async ({ x, y }: Coordinates, color: Color) => {
     const { x: left, y: top } = this._gridToPixel({ x, y });
     const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Color.WHITE))
-      .then(imageData => replaceColors(imageData, { [Color.BLACK]: color }));
+      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }));
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, left, top);
   };

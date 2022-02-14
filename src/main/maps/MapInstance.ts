@@ -1,8 +1,19 @@
-import MapItem from '../items/MapItem';
+import Door from '../objects/Door';
+import MapItem from '../objects/items/MapItem';
 import Coordinates from '../types/Coordinates';
-import Tile from '../types/Tile';
+import Tile from '../tiles/Tile';
 import { Entity, Rect, Room } from '../types/types';
 import Unit from '../units/Unit';
+
+type Props = {
+  width: number,
+  height: number,
+  tiles: Tile[][],
+  doors: Door[],
+  rooms: Room[],
+  units: Unit[],
+  items: MapItem[]
+};
 
 class MapInstance {
   width: number;
@@ -14,20 +25,23 @@ class MapInstance {
   rooms: Room[];
   units: Unit[];
   items: MapItem[];
+  doors: Door[];
   projectiles: Entity[];
   revealedTiles: Coordinates[];
 
-  constructor(
-    width: number,
-    height: number,
-    tiles: Tile[][],
-    rooms: Room[],
-    units: Unit[],
-    items: MapItem[]
-  ) {
+  constructor({
+    width,
+    height,
+    tiles,
+    rooms,
+    units,
+    items,
+    doors
+  }: Props) {
     this.width = width;
     this.height = height;
     this._tiles = tiles;
+    this.doors = doors;
     this.rooms = rooms;
     this.units = units;
     this.items = items;
@@ -50,6 +64,10 @@ class MapInstance {
     return this.items.filter(i => i.x === x && i.y === y)[0] || null;
   }
 
+  getDoor({ x, y }: Coordinates): (Door | null) {
+    return this.doors.filter(d => d.x === x && d.y === y)[0] || null;
+  }
+
   getProjectile({ x, y }: Coordinates): (Entity | null) {
     return this.projectiles.filter(p => p.x === x && p.y === y)[0] || null;
   }
@@ -62,7 +80,9 @@ class MapInstance {
     if (!this.contains({ x, y })) {
       throw `(${x}, ${y}) is not on the map`;
     }
-    return !!this.getUnit({ x, y }) || this.getTile({ x, y }).isBlocking;
+    return !!this.getUnit({ x, y })
+      || this.getDoor({ x, y })?.isClosed()
+      || this.getTile({ x, y }).isBlocking;
   }
 
   removeUnit({ x, y }: Coordinates) {

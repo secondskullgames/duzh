@@ -1,5 +1,5 @@
 import GameState from '../../core/GameState';
-import Color from '../../types/Color';
+import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
 import UnitAbility from '../../units/UnitAbility';
 import { LINE_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
@@ -39,7 +39,7 @@ class HUDRenderer extends BufferedRenderer {
 
   _renderFrame = async () => {
     const imageData = await ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Color.WHITE));
+      .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
     const imageBitmap = await createImageBitmap(imageData);
     this.bufferContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
   };
@@ -61,7 +61,7 @@ class HUDRenderer extends BufferedRenderer {
     const top = MARGIN_THICKNESS;
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
@@ -75,7 +75,7 @@ class HUDRenderer extends BufferedRenderer {
       const ability = playerUnit.abilities[i];
       if (!!ability.icon) {
         await this._renderAbility(ability, left, top);
-        await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Color.WHITE, 'center');
+        await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
@@ -100,7 +100,7 @@ class HUDRenderer extends BufferedRenderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Color.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
@@ -108,15 +108,15 @@ class HUDRenderer extends BufferedRenderer {
     let borderColor: Color;
     const { queuedAbility, playerUnit } = GameState.getInstance();
     if (queuedAbility === ability) {
-      borderColor = Color.GREEN;
+      borderColor = Colors.GREEN;
     } else if (playerUnit.getCooldown(ability) === 0) {
-      borderColor = Color.WHITE;
+      borderColor = Colors.WHITE;
     } else {
-      borderColor = Color.DARK_GRAY;
+      borderColor = Colors.DARK_GRAY;
     }
 
     const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Color.DARK_GRAY]: borderColor }));
+      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }));
 
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, left, top);

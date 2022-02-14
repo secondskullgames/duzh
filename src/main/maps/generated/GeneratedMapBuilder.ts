@@ -1,19 +1,33 @@
-import GameState from '../core/GameState';
-import EquipmentClass from '../items/equipment/EquipmentClass';
-import ItemClass from '../items/ItemClass';
-import ItemFactory from '../items/ItemFactory';
-import MapItem from '../items/MapItem';
-import Coordinates from '../types/Coordinates';
-import Tile from '../types/Tile';
-import { Room } from '../types/types';
-import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
-import Unit from '../units/Unit';
-import UnitClass from '../units/UnitClass';
-import UnitFactory from '../units/UnitFactory';
-import { randChoice } from '../utils/random';
-import MapInstance from './MapInstance';
+import GameState from '../../core/GameState';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import ItemClass from '../../objects/items/ItemClass';
+import ItemFactory from '../../objects/items/ItemFactory';
+import MapItem from '../../objects/items/MapItem';
+import Coordinates from '../../types/Coordinates';
+import Tile from '../../tiles/Tile';
+import { Room } from '../../types/types';
+import { HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';
+import Unit from '../../units/Unit';
+import UnitClass from '../../units/UnitClass';
+import UnitFactory from '../../units/UnitFactory';
+import { randChoice } from '../../utils/random';
+import MapInstance from '../MapInstance';
 
-class MapBuilder {
+type Props = {
+  level: number,
+  width: number,
+  height: number,
+  tiles: Tile[][],
+  rooms: Room[],
+  playerUnitLocation: Coordinates,
+  enemyUnitLocations: Coordinates[],
+  itemLocations: Coordinates[],
+  enemyUnitClasses: UnitClass[],
+  equipmentClasses: EquipmentClass[],
+  itemClasses: ItemClass[]
+};
+
+class GeneratedMapBuilder {
   private readonly level: number;
   private readonly width: number;
   private readonly height: number;
@@ -26,19 +40,19 @@ class MapBuilder {
   private readonly equipmentClasses: EquipmentClass[];
   private readonly itemClasses: ItemClass[];
 
-  constructor(
-    level: number,
-    width: number,
-    height: number,
-    tiles: Tile[][],
-    rooms: Room[],
-    playerUnitLocation: Coordinates,
-    enemyUnitLocations: Coordinates[],
-    enemyUnitClasses: UnitClass[],
-    itemLocations: Coordinates[],
-    equipmentClasses: EquipmentClass[],
-    itemClasses: ItemClass[]
-  ) {
+  constructor({
+    level,
+    width,
+    height,
+    tiles,
+    rooms,
+    playerUnitLocation,
+    enemyUnitLocations,
+    enemyUnitClasses,
+    itemLocations,
+    equipmentClasses,
+    itemClasses
+  }: Props) {
     this.level = level;
     this.width = width;
     this.height = height;
@@ -82,15 +96,16 @@ class MapBuilder {
     units.push(...resolvedUnits);
     items.push(...resolvedItems);
 
-    return new MapInstance(
-      this.width,
-      this.height,
-      this.tiles,
-      this.rooms,
+    return new MapInstance({
+      width: this.width,
+      height: this.height,
+      tiles: this.tiles,
+      rooms: this.rooms,
       units,
-      items
-    );
+      items,
+      doors: []
+    });
   };
 }
 
-export default MapBuilder;
+export default GeneratedMapBuilder;

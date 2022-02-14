@@ -1,7 +1,7 @@
-import Sprite from '../../graphics/sprites/Sprite';
-import { EquipmentSlot } from '../../types/types';
-import Unit from '../../units/Unit';
-import InventoryItem from '../InventoryItem';
+import Sprite from '../graphics/sprites/Sprite';
+import { EquipmentSlot } from '../types/types';
+import Unit from '../units/Unit';
+import InventoryItem from '../objects/items/InventoryItem';
 import EquipmentClass from './EquipmentClass';
 
 class Equipment {

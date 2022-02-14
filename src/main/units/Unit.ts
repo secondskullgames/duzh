@@ -1,9 +1,9 @@
 import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import Equipment from '../items/equipment/Equipment';
-import EquipmentMap from '../items/equipment/EquipmentMap';
-import InventoryMap from '../items/InventoryMap';
+import Equipment from '../equipment/Equipment';
+import EquipmentMap from '../equipment/EquipmentMap';
+import InventoryMap from '../objects/items/InventoryMap';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
@@ -76,7 +76,7 @@ class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
     this.remainingCooldowns = new Map();
-    this.abilities = unitClass.abilities[1].map(name => UnitAbility[name]);
+    this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
 
     this.equipment = new EquipmentMap();
@@ -154,7 +154,8 @@ class Unit implements Entity {
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
     this.damage += this.unitClass.damagePerLevel;
-    for (const abilityName of this.unitClass.abilities[this.level]) {
+    const abilities = this.unitClass.abilities[this.level] || [];
+    for (const abilityName of abilities) {
       this.abilities.push(UnitAbility[abilityName]);
     }
 
