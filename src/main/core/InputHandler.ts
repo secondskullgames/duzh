@@ -5,7 +5,7 @@ import Coordinates from '../types/Coordinates';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
-import { loadMap, render, returnToTitle, startGame } from './actions';
+import { loadMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
 
@@ -20,6 +20,8 @@ enum KeyCommand {
   SHIFT_RIGHT = 'SHIFT_RIGHT',
   TAB = 'TAB',
   ENTER = 'ENTER',
+  SHIFT_ENTER = 'SHIFT_ENTER',
+  ALT_ENTER = 'ALT_ENTER',
   SPACEBAR = 'SPACEBAR',
   M = 'M',
   KEY_1 = '1',
@@ -39,23 +41,27 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
     case 'w':
     case 'W':
     case 'ArrowUp':
-      return (e.shiftKey ? KeyCommand.SHIFT_UP : KeyCommand.UP);
+      return (e.shiftKey) ? KeyCommand.SHIFT_UP : KeyCommand.UP;
     case 's':
     case 'S':
     case 'ArrowDown':
-      return (e.shiftKey ? KeyCommand.SHIFT_DOWN : KeyCommand.DOWN);
+      return (e.shiftKey) ? KeyCommand.SHIFT_DOWN : KeyCommand.DOWN;
     case 'a':
     case 'A':
     case 'ArrowLeft':
-      return (e.shiftKey ? KeyCommand.SHIFT_LEFT : KeyCommand.LEFT);
+      return (e.shiftKey) ? KeyCommand.SHIFT_LEFT : KeyCommand.LEFT;
     case 'd':
     case 'D':
     case 'ArrowRight':
-      return (e.shiftKey ? KeyCommand.SHIFT_RIGHT : KeyCommand.RIGHT);
+      return (e.shiftKey) ? KeyCommand.SHIFT_RIGHT : KeyCommand.RIGHT;
     case 'Tab':
       return KeyCommand.TAB;
     case 'Enter':
-      return KeyCommand.ENTER;
+      return (e.altKey)
+        ? KeyCommand.ALT_ENTER
+        : (e.shiftKey)
+        ? KeyCommand.SHIFT_ENTER
+        : KeyCommand.ENTER;
     case ' ':
       return KeyCommand.SPACEBAR;
     case 'm':
@@ -114,7 +120,11 @@ const keyHandler = async (e: KeyboardEvent) => {
       await playSound(Sounds.FOOTSTEP);
       return TurnHandler.playTurn(null);
     case KeyCommand.ENTER:
-      return _handleEnter();
+      return _handleEnter(false, false);
+    case KeyCommand.SHIFT_ENTER:
+      return _handleEnter(true, false);
+    case KeyCommand.ALT_ENTER:
+      return _handleEnter(false, true);
     case KeyCommand.TAB:
       e.preventDefault();
       return _handleTab();
@@ -216,9 +226,22 @@ const _handleArrowKey = async (command: KeyCommand) => {
   }
 };
 
-const _handleEnter = async () => {
+const _handleEnter = async (shift: boolean, alt: boolean) => {
   const state = GameState.getInstance();
   const { playerUnit } = state;
+
+  if (alt) {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else {
+        await document.documentElement.requestFullscreen();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return;
+  }
 
   switch (state.screen) {
     case GameScreen.GAME: {
@@ -252,7 +275,11 @@ const _handleEnter = async () => {
     }
     case GameScreen.TITLE:
       state.screen = GameScreen.GAME;
-      await startGame();
+      if (shift) {
+        await startGameDebug();
+      } else {
+        await startGame();
+      }
       break;
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:

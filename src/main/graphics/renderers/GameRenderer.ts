@@ -36,7 +36,8 @@ class GameRenderer extends BufferedRenderer {
     const { screen } = GameState.getInstance();
     switch (screen) {
       case GameScreen.TITLE:
-        return this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+        await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+        return this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.PERFECT_DOS_VGA, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
       case GameScreen.GAME:
         return this._renderGameScreen();
       case GameScreen.INVENTORY:

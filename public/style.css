@@ -1,3 +1,7 @@
+body {
+  margin: 0;
+}
+
 #container {
   display: inline-block;
   outline: none;
@@ -20,5 +24,16 @@
   #container canvas {
     width: 1280px;
     height: 720px;
+  }
+}
+
+@media all and (display-mode: fullscreen) {
+  body {
+    overflow: hidden;
+  }
+  #container canvas {
+    width: 100vw;
+    height: 100vh;
+    max-height: 56.25vw;
   }
 }
