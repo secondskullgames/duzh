@@ -58,6 +58,8 @@ const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Prom
       const tileType = tileColors[color] || null;
       if (tileType !== null) {
         tiles[y][x] = Tile.create(tileType, tileSet);
+      } else if (model.defaultTile) {
+        tiles[y][x] = Tile.create(model.defaultTile, tileSet);
       }
     }
   }

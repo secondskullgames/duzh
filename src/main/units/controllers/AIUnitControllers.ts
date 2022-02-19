@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import { manhattanDistance } from '../../maps/MapUtils';
-import { randBoolean, randInt, weightedRandom } from '../../utils/random';
+import { randBoolean, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';

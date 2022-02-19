@@ -1,5 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import PaletteSwaps from '../types/PaletteSwaps';
 import TileType from './TileType';
 
 type TileSetName = 'dungeon' | 'cave';
@@ -7,15 +8,16 @@ const names: TileSetName[] = ['dungeon', 'cave'];
 
 type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 
-type TileSetJson = {
-  name: string,
-  tiles: Record<TileType, (string | null)[]>
+type TileSetModel = {
+  path: string,
+  tiles: Record<TileType, (string | null)[]>,
+  paletteSwaps?: PaletteSwaps
 };
 
 const _memos: Record<string, TileSet> = {};
 
 const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
-  const json = await import(`../../../data/tilesets/${name}.json`) as TileSetJson;
+  const json = await import(`../../../data/tilesets/${name}.json`) as TileSetModel;
   const tileSet: TileSet = {};
   const promises: Partial<Record<TileType, Promise<Sprite[]>>> = {};
 
@@ -24,7 +26,8 @@ const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
     for (let index = 0; index < filenames.length; index++) {
       const filename = filenames[index];
       if (filename) {
-        tilePromises.push(SpriteFactory.createTileSprite(`${name}/${filename}`));
+        const paletteSwaps = PaletteSwaps.create(json.paletteSwaps || {});
+        tilePromises.push(SpriteFactory.createTileSprite(`${json.path}/${filename}`, paletteSwaps));
       }
     }
     promises[tileType as TileType] = Promise.all(tilePromises);

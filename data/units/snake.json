@@ -5,10 +5,10 @@
   "paletteSwaps": {},
   "startingLife": 40,
   "startingMana": null,
-  "startingDamage": 4,
-  "lifePerLevel": 15,
+  "startingDamage": 5,
+  "lifePerLevel": 0,
   "manaPerLevel": null,
-  "damagePerLevel": 1,
+  "damagePerLevel": 0,
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 10,

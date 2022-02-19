@@ -3,6 +3,7 @@
  */
 const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 const randBoolean = () => randInt(0, 1) === 1;
+const random = () => Math.random();
 
 const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
 
@@ -45,6 +46,7 @@ const weightedRandom = <T>(
 };
 
 export {
+  random,
   randBoolean,
   randChoice,
   randInt,
