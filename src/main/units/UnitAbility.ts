@@ -50,7 +50,7 @@ class NormalAttack extends UnitAbility {
 
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
-      throw 'NormalAttack requires a direction!';
+      throw new Error('NormalAttack requires a direction!');
     }
 
     const { dx, dy } = direction;
@@ -93,7 +93,7 @@ class HeavyAttack extends UnitAbility {
 
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
-      throw 'HeavyAttack requires a direction!';
+      throw new Error('HeavyAttack requires a direction!');
     }
 
     const { dx, dy } = direction;
@@ -108,7 +108,7 @@ class HeavyAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.useAbility(this);
+        unit.triggerCooldown(this);
         const damage = unit.getDamage() * 2;
         await attack(unit, targetUnit, damage);
         await playSound(Sounds.SPECIAL_ATTACK);
@@ -124,7 +124,7 @@ class KnockbackAttack extends UnitAbility {
 
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
-      throw 'KnockbackAttack requires a direction!';
+      throw new Error('KnockbackAttack requires a direction!');
     }
 
     const { dx, dy } = direction;
@@ -140,7 +140,7 @@ class KnockbackAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.useAbility(this);
+        unit.triggerCooldown(this);
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         let targetCoordinates = { x, y };
@@ -167,7 +167,7 @@ class StunAttack extends UnitAbility {
 
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
-      throw 'StunAttack requires a direction!';
+      throw new Error('StunAttack requires a direction!');
     }
 
     const { dx, dy } = direction;
@@ -182,7 +182,7 @@ class StunAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.useAbility(this);
+        unit.triggerCooldown(this);
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         // stun for 2 turns (if they're already stunned, just leave it)
@@ -200,7 +200,7 @@ class ShootArrow extends UnitAbility {
 
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
-      throw 'ShootArrow requires a direction!';
+      throw new Error('ShootArrow requires a direction!');
     }
 
     const { dx, dy } = direction;
@@ -237,13 +237,41 @@ class ShootArrow extends UnitAbility {
   };
 }
 
+class Blink extends UnitAbility {
+  constructor() {
+    super('BLINK', 10);
+  }
+
+  use = async (unit: Unit, direction: Direction | null) => {
+    if (!direction) {
+      throw new Error('Blink requires a direction!');
+    }
+
+    const dx = 2 * direction.dx;
+    const dy = 2 * direction.dy;
+    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    unit.direction = direction;
+
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      await moveTo(unit, { x, y });
+      unit.triggerCooldown(this);
+    } else {
+      await playSound(Sounds.FOOTSTEP);
+    }
+  };
+}
+
 namespace UnitAbility {
   export const ATTACK: UnitAbility = new NormalAttack();
   export const HEAVY_ATTACK: UnitAbility = new HeavyAttack();
   export const KNOCKBACK_ATTACK: UnitAbility = new KnockbackAttack();
   export const STUN_ATTACK: UnitAbility = new StunAttack();
   export const SHOOT_ARROW: UnitAbility = new ShootArrow();
-  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW';
+  export const BLINK: UnitAbility = new Blink();
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK';
 }
 
 export default UnitAbility;

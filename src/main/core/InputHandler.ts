@@ -18,6 +18,10 @@ enum KeyCommand {
   SHIFT_LEFT = 'SHIFT_LEFT',
   SHIFT_DOWN = 'SHIFT_DOWN',
   SHIFT_RIGHT = 'SHIFT_RIGHT',
+  ALT_UP = 'ALT_UP',
+  ALT_LEFT = 'ALT_LEFT',
+  ALT_DOWN = 'ALT_DOWN',
+  ALT_RIGHT = 'ALT_RIGHT',
   TAB = 'TAB',
   ENTER = 'ENTER',
   SHIFT_ENTER = 'SHIFT_ENTER',
@@ -41,19 +45,35 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
     case 'w':
     case 'W':
     case 'ArrowUp':
-      return (e.shiftKey) ? KeyCommand.SHIFT_UP : KeyCommand.UP;
+      return (e.altKey)
+        ? KeyCommand.ALT_UP
+        : (e.shiftKey)
+        ? KeyCommand.SHIFT_UP
+        : KeyCommand.UP;
     case 's':
     case 'S':
     case 'ArrowDown':
-      return (e.shiftKey) ? KeyCommand.SHIFT_DOWN : KeyCommand.DOWN;
+      return (e.altKey)
+        ? KeyCommand.ALT_DOWN
+        : (e.shiftKey)
+        ? KeyCommand.SHIFT_DOWN
+        : KeyCommand.DOWN;
     case 'a':
     case 'A':
     case 'ArrowLeft':
-      return (e.shiftKey) ? KeyCommand.SHIFT_LEFT : KeyCommand.LEFT;
+      return (e.altKey)
+        ? KeyCommand.ALT_LEFT
+        : (e.shiftKey)
+        ? KeyCommand.SHIFT_LEFT
+        : KeyCommand.LEFT;
     case 'd':
     case 'D':
     case 'ArrowRight':
-      return (e.shiftKey) ? KeyCommand.SHIFT_RIGHT : KeyCommand.RIGHT;
+      return (e.altKey)
+        ? KeyCommand.ALT_RIGHT
+        : (e.shiftKey)
+        ? KeyCommand.SHIFT_RIGHT
+        : KeyCommand.RIGHT;
     case 'Tab':
       return KeyCommand.TAB;
     case 'Enter':
@@ -105,6 +125,9 @@ const keyHandlerWrapper = async (e: KeyboardEvent) => {
 
 const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
+  if (command) {
+    e.preventDefault();
+  }
 
   switch (command) {
     case KeyCommand.UP:
@@ -115,6 +138,10 @@ const keyHandler = async (e: KeyboardEvent) => {
     case KeyCommand.SHIFT_DOWN:
     case KeyCommand.SHIFT_LEFT:
     case KeyCommand.SHIFT_RIGHT:
+    case KeyCommand.ALT_UP:
+    case KeyCommand.ALT_DOWN:
+    case KeyCommand.ALT_LEFT:
+    case KeyCommand.ALT_RIGHT:
       return _handleArrowKey(command);
     case KeyCommand.SPACEBAR:
       await playSound(Sounds.FOOTSTEP);
@@ -157,22 +184,26 @@ const _handleArrowKey = async (command: KeyCommand) => {
       switch (command) {
         case KeyCommand.UP:
         case KeyCommand.SHIFT_UP:
+        case KeyCommand.ALT_UP:
           [dx, dy] = [0, -1];
           break;
         case KeyCommand.DOWN:
         case KeyCommand.SHIFT_DOWN:
+        case KeyCommand.ALT_DOWN:
           [dx, dy] = [0, 1];
           break;
         case KeyCommand.LEFT:
         case KeyCommand.SHIFT_LEFT:
+        case KeyCommand.ALT_LEFT:
           [dx, dy] = [-1, 0];
           break;
         case KeyCommand.RIGHT:
         case KeyCommand.SHIFT_RIGHT:
+        case KeyCommand.ALT_RIGHT:
           [dx, dy] = [1, 0];
           break;
         default:
-          throw `Invalid direction command ${command}`;
+          throw new Error(`Invalid direction command ${command}`);
       }
 
       const queuedOrder: (unit: Unit) => Promise<void> = (() => {
@@ -182,6 +213,15 @@ const _handleArrowKey = async (command: KeyCommand) => {
           case KeyCommand.SHIFT_LEFT:
           case KeyCommand.SHIFT_RIGHT:
             return (u: Unit) => UnitAbility.SHOOT_ARROW.use(u, { dx, dy });
+          case KeyCommand.ALT_UP:
+          case KeyCommand.ALT_DOWN:
+          case KeyCommand.ALT_LEFT:
+          case KeyCommand.ALT_RIGHT:
+            return async (u: Unit) => {
+              if (u.getCooldown(UnitAbility.BLINK) <= 0) {
+                await UnitAbility.BLINK.use(u, { dx, dy });
+              }
+            };
           default:
             if (state.queuedAbility) {
               const ability = state.queuedAbility;

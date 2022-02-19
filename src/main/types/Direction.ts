@@ -32,7 +32,7 @@ namespace Direction {
     } else if (equals(direction, Direction.W)) {
       return 'W';
     }
-    throw `Invalid direction ${direction}`;
+    throw new Error(`Invalid direction ${direction}`);
   };
 
   export const toLegacyDirection = (direction: Direction): string => {
