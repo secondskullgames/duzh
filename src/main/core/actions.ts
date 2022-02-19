@@ -93,8 +93,8 @@ const startGameDebug = async () => {
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
-  const titleTheme = await Music.loadMusic('title_theme');
-  Music.playMusic(titleTheme);
+  const evilTheme = await Music.loadMusic('evil');
+  Music.playMusic(evilTheme);
   await render();
 };
 
