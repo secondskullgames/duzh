@@ -1,0 +1,16 @@
+{
+  "path": "dungeon",
+  "tiles": {
+    "FLOOR": ["tile_floor", "tile_floor_2"],
+    "FLOOR_HALL": ["tile_floor_hall", "tile_floor_hall_2"],
+    "WALL_TOP": [null],
+    "WALL_HALL": ["tile_wall_hall"],
+    "WALL": ["tile_wall"],
+    "STAIRS_DOWN": ["stairs_down2"],
+    "NONE": [null]
+  },
+  "paletteSwaps": {
+    "LIGHT_GRAY": "LIGHT_CYAN_CGA",
+    "DARK_GRAY": "LIGHT_MAGENTA_CGA"
+  }
+}

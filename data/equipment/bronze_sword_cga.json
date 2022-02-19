@@ -1,0 +1,14 @@
+{
+  "name": "Bronze Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "char": "S",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "BLACK": "BLACK",
+    "DARK_GRAY": "DARK_RED_CGA",
+    "LIGHT_GRAY": "LIGHT_RED_CGA"
+  },
+  "damage": 2
+}
