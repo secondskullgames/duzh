@@ -10,9 +10,9 @@
   "startingLife": 50,
   "startingMana": null,
   "startingDamage": 3,
-  "lifePerLevel": 20,
+  "lifePerLevel": 0,
   "manaPerLevel": null,
-  "damagePerLevel": 1,
+  "damagePerLevel": 0,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",

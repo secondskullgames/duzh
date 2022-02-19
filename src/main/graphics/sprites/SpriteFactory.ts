@@ -91,7 +91,12 @@ const createDoorSprite = async (direction: DoorDirection, state: DoorState): Pro
   const offsets = { dx: 0, dy: -24 };
   const image = await new ImageBuilder({
     filename,
-    paletteSwaps: {},
+    // TODO hardcoded
+    paletteSwaps: {
+      [Colors.DARK_RED]: Colors.YELLOW_CGA,
+      [Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
+      [Colors.BLACK]: Colors.BLACK_CGA
+    },
     transparentColor: Colors.WHITE
   }).build();
   return new StaticSprite(image, offsets);

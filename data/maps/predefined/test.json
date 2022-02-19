@@ -1,23 +1,21 @@
 {
-  "imageFilename": "1",
-  "tileset": "dungeon",
+  "imageFilename": "test",
+  "tileset": "dungeon_cga",
   "levelNumber": "1",
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
     "DARK_GRAY": "WALL",
-    "GREEN": "FLOOR",
-    "BLUE": "STAIRS_DOWN",
-    "RED": "FLOOR",
-    "YELLOW": "FLOOR",
-    "DARK_BROWN": "FLOOR",
-    "LIGHT_BROWN": "FLOOR"
+    "BLUE": "STAIRS_DOWN"
   },
+  "defaultTile": "FLOOR",
   "enemyColors": {},
   "itemColors": {
     "YELLOW": "key"
   },
-  "equipmentColors": {},
+  "equipmentColors": {
+    "WHITE": "bronze_sword"
+  },
   "doorColors": {
     "DARK_BROWN": "vertical",
     "LIGHT_BROWN": "horizontal"

@@ -90,7 +90,7 @@ const replaceAll = async (imageData: ImageData, color: string): Promise<ImageDat
 const hex2rgb = (hex: string): RGB  => {
   const trimmed = hex.match(/[0-9a-fA-F]+$/)?.[0];
   if (!trimmed) {
-    throw new Error();
+    throw new Error(`Invalid hex color: ${hex}`);
   }
   if (trimmed.length === 3) {
     return {
@@ -105,7 +105,7 @@ const hex2rgb = (hex: string): RGB  => {
       b: parseInt(trimmed.slice(4, 6), 16)
     };
   } else {
-    throw new Error();
+    throw new Error(`Invalid hex color: ${hex}`);
   }
 };
 

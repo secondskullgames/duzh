@@ -23,5 +23,22 @@
   "MEDIUM_RED": "#c00000",
   "MEDIUM_BLUE": "#0000c0",
   "DARKER_GRAY": "#404040",
-  "TEAL": "#008080"
+  "TEAL": "#008080",
+
+  "BLACK_CGA": "#000000",
+  "WHITE_CGA": "#ffffff",
+  "DARK_BLUE_CGA": "#0000aa",
+  "DARK_GREEN_CGA": "#00aa00",
+  "DARK_CYAN_CGA": "#00aaaa",
+  "DARK_RED_CGA": "#aa0000",
+  "DARK_MAGENTA_CGA": "#aa00aa",
+  "DARK_GRAY_CGA": "#555555",
+  "LIGHT_BLUE_CGA": "#5555ff",
+  "LIGHT_GREEN_CGA": "#55ff55",
+  "LIGHT_CYAN_CGA": "#55ffff",
+  "LIGHT_RED_CGA": "#ff5555",
+  "LIGHT_MAGENTA_CGA": "#ff55ff",
+  "LIGHT_GRAY_CGA": "#aaaaaa",
+  "BROWN_CGA": "#aa5500",
+  "YELLOW_CGA": "#ffff55"
 }

@@ -7,11 +7,12 @@ for (const [name, value] of Object.entries(jsonColors)) {
   Colors[name] = value.toLowerCase();
 }
 
+/** A color is just a color in hex format. */
 type Color = string;
 
 namespace Color {
   export const fromRGB = ({ r, g, b }: RGB): Color | null => {
-    for (const [name, value] of Object.entries(Colors)) {
+    for (const value of Object.values(Colors)) {
       if (RGB.equals(hex2rgb(value), { r, g, b })) {
         return value;
       }

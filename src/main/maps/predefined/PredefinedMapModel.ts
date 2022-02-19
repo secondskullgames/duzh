@@ -11,6 +11,7 @@ type PredefinedMapModel = {
   tileset: TileSetName,
   levelNumber: number,
   tileColors: Record<Color, TileType>,
+  defaultTile?: TileType
   enemyColors: Record<Color, UnitClass>,
   // TODO: unify the below two fields into `objectColors`?
   itemColors: Record<Color, ItemClass>,

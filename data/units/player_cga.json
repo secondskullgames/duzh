@@ -1,0 +1,33 @@
+{
+  "name": "player_cga",
+  "type": "HUMAN",
+  "sprite": "player",
+  "paletteSwaps": {
+    "DARK_PURPLE": "DARK_BLUE_CGA",
+    "MAGENTA": "DARK_BLUE_CGA",
+    "DARK_BLUE": "DARK_BLUE_CGA",
+    "CYAN": "LIGHT_RED_CGA",
+    "ORANGE": "LIGHT_RED_CGA",
+    "BLACK": "DARK_BLUE_CGA",
+    "GREEN": "DARK_GRAY_CGA",
+    "DARK_GREEN": "DARK_GRAY_CGA",
+    "DARK_GRAY": "DARK_RED_CGA",
+    "LIGHT_GRAY": "DARK_RED_CGA",
+    "DARK_BROWN": "DARK_RED_CGA",
+    "DARK_RED": "DARK_RED_CGA",
+    "DARK_TEAL": "DARK_BLUE_CGA"
+  },
+  "startingLife": 100,
+  "startingMana": 100,
+  "startingDamage": 8,
+  "lifePerLevel": 0,
+  "manaPerLevel": 0,
+  "damagePerLevel": 0,
+  "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+  "abilities": {
+    "1": [],
+    "2": ["HEAVY_ATTACK"],
+    "3": ["KNOCKBACK_ATTACK"],
+    "4": ["STUN_ATTACK"]
+  }
+}

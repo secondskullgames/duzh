@@ -8,5 +8,9 @@
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
     "NONE": [null]
+  },
+  "paletteSwaps": {
+    "LIGHT_GRAY": "LIGHT_CYAN_CGA",
+    "DARK_GRAY": "LIGHT_MAGENTA_CGA"
   }
 }
