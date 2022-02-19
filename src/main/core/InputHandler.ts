@@ -2,112 +2,84 @@ import { pickupItem, useItem } from '../objects/items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
+import Direction from '../types/Direction';
 import { GameScreen } from '../types/types';
-import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
 import { loadMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
 
-enum KeyCommand {
-  UP = 'UP',
-  LEFT = 'LEFT',
-  DOWN = 'DOWN',
-  RIGHT = 'RIGHT',
-  SHIFT_UP = 'SHIFT_UP',
-  SHIFT_LEFT = 'SHIFT_LEFT',
-  SHIFT_DOWN = 'SHIFT_DOWN',
-  SHIFT_RIGHT = 'SHIFT_RIGHT',
-  ALT_UP = 'ALT_UP',
-  ALT_LEFT = 'ALT_LEFT',
-  ALT_DOWN = 'ALT_DOWN',
-  ALT_RIGHT = 'ALT_RIGHT',
-  TAB = 'TAB',
-  ENTER = 'ENTER',
-  SHIFT_ENTER = 'SHIFT_ENTER',
-  ALT_ENTER = 'ALT_ENTER',
-  SPACEBAR = 'SPACEBAR',
-  M = 'M',
-  KEY_1 = '1',
-  KEY_2 = '2',
-  KEY_3 = '3',
-  KEY_4 = '4',
-  KEY_5 = '5',
-  KEY_6 = '6',
-  KEY_7 = '7',
-  KEY_8 = '8',
-  KEY_9 = '9',
-  KEY_0 = '0'
-}
+type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+/**
+ * NONE is a special command (read: hack) that does nothing, but is a trigger to call preventDefault()
+ */
+type Key = ArrowKey | NumberKey | 'TAB' | 'ENTER' | 'SPACEBAR' | 'M' | 'NONE';
+
+type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
+
+type KeyCommand = {
+  key: Key,
+  modifiers: ModifierKey[]
+};
+
+type PromiseSupplier = () => Promise<void>;
 
 const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
+  const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
+    .filter(x => x)
+    .map(x => x as ModifierKey);
+
   switch (e.key) {
     case 'w':
     case 'W':
     case 'ArrowUp':
-      return (e.altKey)
-        ? KeyCommand.ALT_UP
-        : (e.shiftKey)
-        ? KeyCommand.SHIFT_UP
-        : KeyCommand.UP;
+      return { key: 'UP', modifiers };
     case 's':
     case 'S':
     case 'ArrowDown':
-      return (e.altKey)
-        ? KeyCommand.ALT_DOWN
-        : (e.shiftKey)
-        ? KeyCommand.SHIFT_DOWN
-        : KeyCommand.DOWN;
+      return { key: 'DOWN', modifiers };
     case 'a':
     case 'A':
     case 'ArrowLeft':
-      return (e.altKey)
-        ? KeyCommand.ALT_LEFT
-        : (e.shiftKey)
-        ? KeyCommand.SHIFT_LEFT
-        : KeyCommand.LEFT;
+      return { key: 'LEFT', modifiers };
     case 'd':
     case 'D':
     case 'ArrowRight':
-      return (e.altKey)
-        ? KeyCommand.ALT_RIGHT
-        : (e.shiftKey)
-        ? KeyCommand.SHIFT_RIGHT
-        : KeyCommand.RIGHT;
+      return { key: 'RIGHT', modifiers };
     case 'Tab':
-      return KeyCommand.TAB;
+      return { key: 'TAB', modifiers };
     case 'Enter':
-      return (e.altKey)
-        ? KeyCommand.ALT_ENTER
-        : (e.shiftKey)
-        ? KeyCommand.SHIFT_ENTER
-        : KeyCommand.ENTER;
+      return { key: 'ENTER', modifiers };
     case ' ':
-      return KeyCommand.SPACEBAR;
+      return { key: 'SPACEBAR', modifiers };
     case 'm':
     case 'M':
-      return KeyCommand.M;
+      return { key: 'M', modifiers };
     case '1':
-      return KeyCommand.KEY_1;
+      return { key: '1', modifiers };
     case '2':
-      return KeyCommand.KEY_2;
+      return { key: '2', modifiers };
     case '3':
-      return KeyCommand.KEY_3;
+      return { key: '3', modifiers };
     case '4':
-      return KeyCommand.KEY_4;
+      return { key: '4', modifiers };
     case '5':
-      return KeyCommand.KEY_5;
+      return { key: '5', modifiers };
     case '6':
-      return KeyCommand.KEY_6;
+      return { key: '6', modifiers };
     case '7':
-      return KeyCommand.KEY_7;
+      return { key: '7', modifiers };
     case '8':
-      return KeyCommand.KEY_8;
+      return { key: '8', modifiers };
     case '9':
-      return KeyCommand.KEY_9;
-    case '0':
-      return KeyCommand.KEY_0;
+      return { key: '9', modifiers };
+    case 'ALT':
+    case 'SHIFT':
+    case 'CTRL':
+      return { key: 'NONE', modifiers };
   }
+
   return null;
 };
 
@@ -125,132 +97,91 @@ const keyHandlerWrapper = async (e: KeyboardEvent) => {
 
 const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
-  if (command) {
-    e.preventDefault();
+
+  if (!command) {
+    return Promise.resolve();
   }
 
-  switch (command) {
-    case KeyCommand.UP:
-    case KeyCommand.LEFT:
-    case KeyCommand.DOWN:
-    case KeyCommand.RIGHT:
-    case KeyCommand.SHIFT_UP:
-    case KeyCommand.SHIFT_DOWN:
-    case KeyCommand.SHIFT_LEFT:
-    case KeyCommand.SHIFT_RIGHT:
-    case KeyCommand.ALT_UP:
-    case KeyCommand.ALT_DOWN:
-    case KeyCommand.ALT_LEFT:
-    case KeyCommand.ALT_RIGHT:
-      return _handleArrowKey(command);
-    case KeyCommand.SPACEBAR:
+  e.preventDefault();
+
+  switch (command.key) {
+    case 'UP':
+    case 'DOWN':
+    case 'LEFT':
+    case 'RIGHT':
+      return _handleArrowKey(command.key, command.modifiers);
+    case 'SPACEBAR':
       await playSound(Sounds.FOOTSTEP);
       return TurnHandler.playTurn(null);
-    case KeyCommand.ENTER:
-      return _handleEnter(false, false);
-    case KeyCommand.SHIFT_ENTER:
-      return _handleEnter(true, false);
-    case KeyCommand.ALT_ENTER:
-      return _handleEnter(false, true);
-    case KeyCommand.TAB:
-      e.preventDefault();
+    case 'ENTER':
+      return _handleEnter(command.modifiers);
+    case 'TAB':
       return _handleTab();
-    case KeyCommand.M:
+    case 'M':
       return _handleMap();
-    case KeyCommand.KEY_1:
-    case KeyCommand.KEY_2:
-    case KeyCommand.KEY_3:
-    case KeyCommand.KEY_4:
-    case KeyCommand.KEY_5:
-    case KeyCommand.KEY_6:
-    case KeyCommand.KEY_7:
-    case KeyCommand.KEY_8:
-    case KeyCommand.KEY_9:
-    case KeyCommand.KEY_0:
-      return _handleAbility(command);
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+      return _handleAbility(command.key);
     default:
+      // not reachable
       return Promise.resolve();
   }
 };
 
-const _handleArrowKey = async (command: KeyCommand) => {
+/**
+ * @return whether we spent a turn doing this
+ */
+const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
 
   switch (state.screen) {
     case GameScreen.GAME:
-      let dx: number;
-      let dy: number;
+      const { dx, dy } = _getDirection(key);
 
-      switch (command) {
-        case KeyCommand.UP:
-        case KeyCommand.SHIFT_UP:
-        case KeyCommand.ALT_UP:
-          [dx, dy] = [0, -1];
-          break;
-        case KeyCommand.DOWN:
-        case KeyCommand.SHIFT_DOWN:
-        case KeyCommand.ALT_DOWN:
-          [dx, dy] = [0, 1];
-          break;
-        case KeyCommand.LEFT:
-        case KeyCommand.SHIFT_LEFT:
-        case KeyCommand.ALT_LEFT:
-          [dx, dy] = [-1, 0];
-          break;
-        case KeyCommand.RIGHT:
-        case KeyCommand.SHIFT_RIGHT:
-        case KeyCommand.ALT_RIGHT:
-          [dx, dy] = [1, 0];
-          break;
-        default:
-          throw new Error(`Invalid direction command ${command}`);
-      }
-
-      const queuedOrder: (unit: Unit) => Promise<void> = (() => {
-        switch (command) {
-          case KeyCommand.SHIFT_UP:
-          case KeyCommand.SHIFT_DOWN:
-          case KeyCommand.SHIFT_LEFT:
-          case KeyCommand.SHIFT_RIGHT:
-            return (u: Unit) => UnitAbility.SHOOT_ARROW.use(u, { dx, dy });
-          case KeyCommand.ALT_UP:
-          case KeyCommand.ALT_DOWN:
-          case KeyCommand.ALT_LEFT:
-          case KeyCommand.ALT_RIGHT:
-            return async (u: Unit) => {
-              if (u.getCooldown(UnitAbility.BLINK) <= 0) {
-                await UnitAbility.BLINK.use(u, { dx, dy });
-              }
-            };
-          default:
-            if (state.queuedAbility) {
-              const ability = state.queuedAbility;
-              state.queuedAbility = null;
-              return (u: Unit) => ability.use(u, { dx, dy });
-            }
-            return (u: Unit) => UnitAbility.ATTACK.use(u, { dx, dy });
+      const playerUnit = GameState.getInstance().playerUnit;
+      let queuedOrder: PromiseSupplier | null = null;
+      if (modifiers.includes('SHIFT')) {
+        queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
+      } else if (modifiers.includes('ALT')) {
+        if (playerUnit.getCooldown(UnitAbility.BLINK) <= 0) {
+          queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
         }
-      })();
-      await TurnHandler.playTurn(queuedOrder);
+      } else {
+        if (state.queuedAbility) {
+          const ability = state.queuedAbility;
+          queuedOrder = async () => {
+            state.queuedAbility = null;
+            await ability.use(playerUnit, { dx, dy });
+          };
+        } else {
+          queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { dx, dy });
+        }
+      }
+      if (queuedOrder) {
+        await TurnHandler.playTurn(queuedOrder);
+      }
       break;
     case GameScreen.INVENTORY:
       const { inventory } = state.playerUnit;
 
-      switch (command) {
-        case KeyCommand.UP:
-        case KeyCommand.SHIFT_UP:
+      switch (key) {
+        case 'UP':
           inventory.previousItem();
           break;
-        case KeyCommand.DOWN:
-        case KeyCommand.SHIFT_DOWN:
+        case 'DOWN':
           inventory.nextItem();
           break;
-        case KeyCommand.LEFT:
-        case KeyCommand.SHIFT_LEFT:
+        case 'LEFT':
           inventory.previousCategory();
           break;
-        case KeyCommand.RIGHT:
-        case KeyCommand.SHIFT_RIGHT:
+        case 'RIGHT':
           inventory.nextCategory();
           break;
       }
@@ -261,16 +192,14 @@ const _handleArrowKey = async (command: KeyCommand) => {
     case GameScreen.GAME_OVER:
     case GameScreen.MINIMAP:
       break;
-    default:
-      throw `Invalid game screen ${state.screen}`;
   }
 };
 
-const _handleEnter = async (shift: boolean, alt: boolean) => {
+const _handleEnter = async (modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
   const { playerUnit } = state;
 
-  if (alt) {
+  if (modifiers.includes('ALT')) {
     try {
       if (document.fullscreenElement) {
         await document.exitFullscreen();
@@ -315,7 +244,7 @@ const _handleEnter = async (shift: boolean, alt: boolean) => {
     }
     case GameScreen.TITLE:
       state.screen = GameScreen.GAME;
-      if (shift) {
+      if (modifiers.includes('SHIFT')) {
         await startGameDebug();
       } else {
         await startGame();
@@ -324,9 +253,6 @@ const _handleEnter = async (shift: boolean, alt: boolean) => {
     case GameScreen.VICTORY:
     case GameScreen.GAME_OVER:
       await returnToTitle();
-      break;
-    default:
-      throw `Unknown game screen: ${state.screen}`;
   }
 };
 
@@ -361,19 +287,29 @@ const _handleMap = async () => {
   await render();
 };
 
-const _handleAbility = async (command: KeyCommand) => {
+const _handleAbility = async (command: NumberKey) => {
   const state = GameState.getInstance();
   const { playerUnit } = state;
 
-  // sketchy - recall KEY_1 = '1', etc.
-  // player abilities are indexed as (0 => attack, others => specials)
+  // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
   const ability = playerUnit.abilities[index - 1];
   if (playerUnit.getCooldown(ability) <= 0) {
     state.queuedAbility = ability;
     await render();
-  } else {
-    console.log(`${ability.name} is on cooldown: ${playerUnit.getCooldown(UnitAbility.HEAVY_ATTACK)}`);
+  }
+};
+
+const _getDirection = (key: ArrowKey): Direction => {
+  switch (key) {
+    case 'UP':
+      return { dx: 0, dy: -1 };
+    case 'DOWN':
+      return { dx: 0, dy: 1 };
+    case 'LEFT':
+      return { dx: -1, dy: 0 };
+    case 'RIGHT':
+      return { dx: 1, dy: 0 };
   }
 };
 

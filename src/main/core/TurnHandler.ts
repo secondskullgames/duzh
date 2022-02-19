@@ -4,11 +4,10 @@ import { clear, sortBy } from '../utils/arrays';
 import { render } from './actions';
 import GameState from './GameState';
 
-const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null) => {
-  const state = GameState.getInstance();
-  const { playerUnit } = state;
-  const playerController = <PlayerUnitController>(playerUnit.controller);
-  playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
+const playTurn = async (playerUnitOrder: (() => Promise<void>) | null) => {
+  const playerUnit = GameState.getInstance().playerUnit;
+  const playerController = playerUnit.controller as PlayerUnitController;
+  playerController.queuedOrder = playerUnitOrder;
   return _update();
 };
 
