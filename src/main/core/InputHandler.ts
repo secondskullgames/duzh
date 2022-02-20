@@ -132,15 +132,12 @@ const keyHandler = async (e: KeyboardEvent) => {
     case '8':
     case '9':
       return _handleAbility(command.key);
-    default:
-      // not reachable
+    case 'NONE':
+    default: // not reachable
       return Promise.resolve();
   }
 };
 
-/**
- * @return whether we spent a turn doing this
- */
 const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
 
