@@ -37,7 +37,7 @@ class MinimapRenderer extends BufferedRenderer {
 
   private _getColor = ({ x, y }: Coordinates) => {
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
     if (Coordinates.equals(playerUnit, { x, y })) {

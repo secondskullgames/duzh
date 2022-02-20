@@ -3,10 +3,10 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import { EquipmentSlot, GameScreen } from '../types/types';
+import { EquipmentSlot } from '../types/types';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
-import { loadMap, render, returnToTitle, startGame, startGameDebug } from './actions';
+import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
 
@@ -145,7 +145,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     case 'GAME':
       const { dx, dy } = _getDirection(key);
 
-      const playerUnit = GameState.getInstance().playerUnit;
+      const playerUnit = GameState.getInstance().getPlayerUnit();
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
         if (playerUnit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
@@ -175,7 +175,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       }
       break;
     case 'INVENTORY':
-      const { inventory } = state.playerUnit;
+      const { inventory } = state.getPlayerUnit();
 
       switch (key) {
         case 'UP':
@@ -200,7 +200,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
 
 const _handleEnter = async (modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+   const playerUnit = state.getPlayerUnit();
 
   if (modifiers.includes('ALT')) {
     try {
@@ -217,10 +217,9 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
 
   switch (state.getScreen()) {
     case 'GAME': {
-      const { mapIndex } = state;
       const map = state.getMap();
       const { x, y }: Coordinates = playerUnit;
-      if (!map || (mapIndex === null)) {
+      if (!map) {
         throw 'Map is not loaded!';
       }
       const item = map.getItem({ x, y });
@@ -229,13 +228,13 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
         playSound(Sounds.DESCEND_STAIRS);
-        await loadMap(mapIndex + 1);
+        await loadNextMap();
       }
       await TurnHandler.playTurn();
       break;
     }
     case 'INVENTORY': {
-      const { playerUnit } = state;
+       const playerUnit = state.getPlayerUnit();
       const { selectedItem } = playerUnit.inventory;
 
       if (!!selectedItem) {
@@ -292,7 +291,7 @@ const _handleMap = async () => {
 
 const _handleAbility = async (command: NumberKey) => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+  const playerUnit = state.getPlayerUnit();
 
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());

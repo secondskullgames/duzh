@@ -3,7 +3,6 @@ import MapSpec from '../maps/MapSpec';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
-import { clear as clearArray } from '../utils/arrays';
 import Messages from './Messages';
 
 let INSTANCE: GameState | null = null;
@@ -18,9 +17,9 @@ type Props = {
  */
 class GameState {
   private screen: GameScreen;
-  playerUnit: Unit;
+  private readonly _playerUnit: Unit;
   readonly maps: MapSpec[];
-  mapIndex: number | null;
+  private mapIndex: number;
   private readonly _messages: Messages;
   turn: number;
   queuedAbility: UnitAbility | null;
@@ -28,9 +27,9 @@ class GameState {
 
   constructor({ playerUnit, maps }: Props) {
     this.screen = 'TITLE';
-    this.playerUnit = playerUnit;
+    this._playerUnit = playerUnit;
     this.maps = maps;
-    this.mapIndex = 0;
+    this.mapIndex = -1;
     this._map = null;
     this._messages = new Messages();
     this.turn = 1;
@@ -39,6 +38,16 @@ class GameState {
 
   getScreen = (): GameScreen => this.screen;
   setScreen = (screen: GameScreen) => { this.screen = screen; };
+
+  getPlayerUnit = (): Unit => this._playerUnit;
+
+  hasNextMap = () => this.mapIndex < (this.maps.length - 1);
+  getMapIndex = () => this.mapIndex;
+  getNextMap = (): MapSpec => {
+    const mapSpec = this.maps[this.mapIndex + 1];
+    this.mapIndex++;
+    return mapSpec;
+  };
 
   getMap = (): MapInstance => {
     if (!this._map) {

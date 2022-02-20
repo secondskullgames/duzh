@@ -2,7 +2,6 @@ import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
-import { GameScreen } from '../../types/types';
 import { tail } from '../../utils/arrays';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
@@ -42,8 +41,8 @@ class GameRenderer extends BufferedRenderer {
       case 'GAME':
         return this._renderGameScreen();
       case 'INVENTORY':
-        return this._renderGameScreen()
-          .then(() => this._renderInventory());
+        await this._renderGameScreen();
+        return this._renderInventory();
       case 'VICTORY':
         return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       case 'GAME_OVER':

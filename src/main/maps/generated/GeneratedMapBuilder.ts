@@ -67,7 +67,7 @@ class GeneratedMapBuilder {
   }
 
   build = async (): Promise<MapInstance> => {
-    const { playerUnit } = GameState.getInstance();
+     const playerUnit = GameState.getInstance().getPlayerUnit();
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     const units = [playerUnit];
     const items: MapItem[] = [];

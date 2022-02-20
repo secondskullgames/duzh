@@ -22,8 +22,7 @@ class InventoryRenderer extends BufferedRenderer {
   }
 
   renderBuffer = async () => {
-    const state = GameState.getInstance();
-    const { playerUnit } = state;
+    const playerUnit = GameState.getInstance().getPlayerUnit();
     const { inventory } = playerUnit;
     const { bufferCanvas, bufferContext } = this;
 

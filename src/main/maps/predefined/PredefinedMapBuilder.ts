@@ -79,7 +79,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
 
     if (color !== null) {
       if (Color.equals(color, model.startingPointColor)) {
-        const { playerUnit } = GameState.getInstance();
+         const playerUnit = GameState.getInstance().getPlayerUnit();
         [playerUnit.x, playerUnit.y] = [x, y];
         units.push(playerUnit);
       } else {

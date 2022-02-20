@@ -15,14 +15,13 @@ import { attachEvents } from './InputHandler';
 
 let renderer: GameRenderer;
 
-const loadMap = async (index: number) => {
+const loadNextMap = async () => {
   const state = GameState.getInstance();
-  if (index >= state.maps.length) {
+  if (!state.hasNextMap()) {
     Music.stop();
     state.setScreen('VICTORY');
   } else {
-    state.mapIndex = index;
-    const mapSpec = state.maps[index];
+    const mapSpec = state.getNextMap();
     const mapInstance = await _loadMap(mapSpec);
     state.setMap(mapInstance);
   }
@@ -73,7 +72,7 @@ const _initState = async () => {
 };
 
 const startGame = async () => {
-  await loadMap(0);
+  await loadNextMap();
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
@@ -102,7 +101,7 @@ const returnToTitle = async () => {
  */
 const revealTiles = () => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
   for (const room of map.rooms) {
@@ -137,7 +136,7 @@ const gameOver = async () => {
 export {
   gameOver,
   initialize,
-  loadMap,
+  loadNextMap,
   render,
   returnToTitle,
   revealTiles,

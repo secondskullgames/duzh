@@ -8,13 +8,10 @@ const MAX_CHARACTER_CODE = 126; // '~'
 const NUM_CHARACTERS = MAX_CHARACTER_CODE - MIN_CHARACTER_CODE + 1;
 const DEFAULT_CHAR = ' ';
 
-const CHARACTERS = (() => {
-  const characters = [];
-  for (let c = MIN_CHARACTER_CODE; c <= MAX_CHARACTER_CODE; c++) {
-    characters.push(String.fromCodePoint(c));
-  }
-  return characters;
-})();
+const CHARACTERS: string[] = [];
+for (let c = MIN_CHARACTER_CODE; c <= MAX_CHARACTER_CODE; c++) {
+  CHARACTERS.push(String.fromCodePoint(c));
+}
 
 interface FontDefinition {
   name: string,
