@@ -13,8 +13,7 @@ const playTurn = async () => {
   }
 
   await render();
-  state.turn++;
-  // state.clearMessages();
+  state.nextTurn();
 };
 
 /**

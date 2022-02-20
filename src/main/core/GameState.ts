@@ -18,11 +18,11 @@ type Props = {
 class GameState {
   private screen: GameScreen;
   private readonly _playerUnit: Unit;
-  readonly maps: MapSpec[];
+  private readonly maps: MapSpec[];
   private mapIndex: number;
   private readonly _messages: Messages;
-  turn: number;
-  queuedAbility: UnitAbility | null;
+  private _turn: number;
+  private _queuedAbility: UnitAbility | null;
   private _map: MapInstance | null;
 
   constructor({ playerUnit, maps }: Props) {
@@ -32,8 +32,8 @@ class GameState {
     this.mapIndex = -1;
     this._map = null;
     this._messages = new Messages();
-    this.turn = 1;
-    this.queuedAbility = null;
+    this._turn = 1;
+    this._queuedAbility = null;
   }
 
   getScreen = (): GameScreen => this.screen;
@@ -57,6 +57,13 @@ class GameState {
   };
 
   setMap = (map: MapInstance) => { this._map = map; };
+
+  getTurn = () => this._turn;
+  nextTurn = () => { this._turn++; };
+
+  getQueuedAbility = () => this._queuedAbility;
+  setQueuedAbility = (ability: UnitAbility | null) => { this._queuedAbility = ability; };
+
   getMessages = (): string[] => this._messages.getRecentMessages(3);
   pushMessage = (message: string): void => { this._messages.pushMessage(message); };
 

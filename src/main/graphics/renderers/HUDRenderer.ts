@@ -85,7 +85,7 @@ class HUDRenderer extends BufferedRenderer {
   _renderRightPanel = async () => {
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
-    const { turn } = state;
+    const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
 
     const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_THICKNESS;
@@ -108,10 +108,12 @@ class HUDRenderer extends BufferedRenderer {
   };
 
   _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
-    let borderColor: Color;
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
-    const { queuedAbility } = GameState.getInstance();
+    const queuedAbility = state.getQueuedAbility();
+
+    let borderColor: Color;
+
     if (queuedAbility === ability) {
       borderColor = Colors.GREEN;
     } else if (playerUnit.getCooldown(ability) === 0) {

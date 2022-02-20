@@ -158,10 +158,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       //     queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
       //   }
       } else {
-        if (state.queuedAbility) {
-          const ability = state.queuedAbility;
+        const ability = state.getQueuedAbility();
+        if (ability !== null) {
           queuedOrder = async () => {
-            state.queuedAbility = null;
+            state.setQueuedAbility(null);
             await ability.use(playerUnit, { dx, dy });
           };
         } else {
@@ -297,7 +297,7 @@ const _handleAbility = async (command: NumberKey) => {
   const index = parseInt(command.toString());
   const ability = playerUnit.abilities[index - 1];
   if (playerUnit.getCooldown(ability) <= 0) {
-    state.queuedAbility = ability;
+    state.setQueuedAbility(ability);
     await render();
   }
 };
