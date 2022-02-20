@@ -164,7 +164,7 @@ class GameScreenRenderer extends BufferedRenderer {
             promises.push(new Promise<void>(async (resolve) => {
               await this._drawEllipse({ x, y }, shadowColor);
               await this._renderElement(unit, { x, y });
-              for (const item of unit.equipment.getValues()) {
+              for (const item of unit.getEquipment().getAll()) {
                 await this._renderElement(item, { x, y });
               }
               resolve();

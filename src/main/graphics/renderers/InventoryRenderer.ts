@@ -23,7 +23,7 @@ class InventoryRenderer extends BufferedRenderer {
 
   renderBuffer = async () => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
-    const { inventory } = playerUnit;
+    const inventory = playerUnit.getInventory();
     const { bufferCanvas, bufferContext } = this;
 
     const imageData = await ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME);
@@ -42,8 +42,8 @@ class InventoryRenderer extends BufferedRenderer {
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
-    for (const [slot, equipment] of playerUnit.equipment.getEntries()) {
-      promises.push(this._drawText(`${slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+    for (const equipment of playerUnit.getEquipment().getAll()) {
+      promises.push(this._drawText(`${equipment.slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 

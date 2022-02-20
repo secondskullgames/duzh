@@ -30,12 +30,12 @@ type Props = {
 };
 
 class Unit implements Entity {
-  readonly unitClass: UnitClass;
+  private readonly unitClass: UnitClass;
   readonly faction: Faction;
   readonly char = '@';
   readonly sprite: DynamicSprite<Unit>;
-  inventory: InventoryMap;
-  equipment: EquipmentMap;
+  private readonly inventory: InventoryMap;
+  private readonly equipment: EquipmentMap;
   x: number;
   y: number;
   name: string;
@@ -108,6 +108,10 @@ class Unit implements Entity {
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
+  getUnitClass = (): UnitClass => this.unitClass;
+  getInventory = (): InventoryMap => this.inventory;
+  getEquipment = (): EquipmentMap => this.equipment;
+
   update = async () => {
     await this._upkeep();
     if (this.stunDuration === 0) {
@@ -120,9 +124,9 @@ class Unit implements Entity {
   getDamage = (): number => {
     let damage = this.damage;
 
-    for (const [slot, item] of this.equipment.getEntries()) {
-      if (slot !== EquipmentSlot.RANGED_WEAPON) {
-        damage += (item.damage || 0);
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.slot !== 'RANGED_WEAPON') {
+        damage += (equipment.damage || 0);
       }
     }
 
@@ -132,16 +136,16 @@ class Unit implements Entity {
   getRangedDamage = (): number => {
     let damage = this.damage;
 
-    for (const [slot, item] of this.equipment.getEntries()) {
-      switch (slot) {
-        case EquipmentSlot.RANGED_WEAPON:
-          damage += (item.damage || 0);
+    for (const equipment of this.equipment.getAll()) {
+      switch (equipment.slot) {
+        case 'RANGED_WEAPON':
+          damage += (equipment.damage || 0);
           break;
-        case EquipmentSlot.MELEE_WEAPON:
+        case 'MELEE_WEAPON':
           // do nothing
           break;
         default:
-          damage += (item.damage || 0) / 2;
+          damage += (equipment.damage || 0) / 2;
       }
     }
 

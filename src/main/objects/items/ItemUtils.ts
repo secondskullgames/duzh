@@ -10,19 +10,19 @@ import MapItem from './MapItem';
 const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const state = GameState.getInstance();
   const { inventoryItem } = mapItem;
-  unit.inventory.add(inventoryItem);
+  unit.getInventory().add(inventoryItem);
   state.pushMessage(`Picked up a ${inventoryItem.name}.`);
   playSound(Sounds.PICK_UP_ITEM);
 };
 
 const useItem = async (unit: Unit, item: InventoryItem) => {
   await item.use(unit);
-  unit.inventory.remove(item);
+  unit.getInventory().remove(item);
 };
 
 const equipItem = async (item: InventoryItem, equipmentClass: EquipmentClass, unit: Unit) => {
   const equipment = await ItemFactory.createEquipment(equipmentClass);
-  unit.equipment.add(equipment);
+  unit.getEquipment().add(equipment);
   equipment.attach(unit);
 };
 

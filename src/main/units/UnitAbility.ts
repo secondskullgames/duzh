@@ -72,9 +72,9 @@ class NormalAttack extends UnitAbility {
 
       const door = map.getDoor({ x, y });
       if (door) {
-        const keys = playerUnit.inventory.get(ItemCategory.KEY) || [];
+        const keys = playerUnit.getInventory().get(ItemCategory.KEY) || [];
         if (keys.length > 0) {
-          playerUnit.inventory.remove(keys[0]);
+          playerUnit.getInventory().remove(keys[0]);
           await door.open();
           await playSound(Sounds.OPEN_DOOR);
         } else {
@@ -201,7 +201,7 @@ class ShootArrow extends UnitAbility {
     if (!direction) {
       throw new Error('ShootArrow requires a direction!');
     }
-    if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+    if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 

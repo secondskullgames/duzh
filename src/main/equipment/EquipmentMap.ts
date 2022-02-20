@@ -2,10 +2,10 @@ import { EquipmentSlot } from '../types/types';
 import Equipment from './Equipment';
 
 /**
- * Represent's a unit's equipment, mapped by slot.
+ * Represents a unit's equipment, mapped by slot.
  */
 class EquipmentMap {
-  private readonly _map: { [slot in EquipmentSlot]?: Equipment };
+  private readonly _map: Partial<Record<EquipmentSlot, Equipment>>;
 
   constructor() {
     this._map = {};
@@ -19,15 +19,11 @@ class EquipmentMap {
     this._map[item.slot] = undefined;
   }
 
-  get(category: EquipmentSlot): Equipment | null {
-    return this._map[category] || null;
+  getBySlot(slot: EquipmentSlot): Equipment | null {
+    return this._map[slot] || null;
   }
 
-  getEntries(): [EquipmentSlot, Equipment][] {
-    return [...(<[EquipmentSlot, Equipment][]>Object.entries(this._map))];
-  }
-
-  getValues(): Equipment[] {
+  getAll(): Equipment[] {
     return [...(<Equipment[]>Object.values(this._map))];
   }
 }

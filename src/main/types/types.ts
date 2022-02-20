@@ -13,12 +13,7 @@ interface Entity extends Coordinates {
   sprite: Sprite
 }
 
-enum EquipmentSlot {
-  MELEE_WEAPON  = 'MELEE_WEAPON',
-  RANGED_WEAPON = 'RANGED_WEAPON',
-  CHEST         = 'CHEST',
-  HEAD          = 'HEAD'
-}
+type EquipmentSlot = 'MELEE_WEAPON' | 'RANGED_WEAPON' | 'CHEST' | 'HEAD';
 
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
 

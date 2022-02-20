@@ -68,7 +68,7 @@ const HUMAN_DETERMINISTIC = {
   issueOrder(unit: Unit) {
      const playerUnit = GameState.getInstance().getPlayerUnit();
 
-    const { aiParameters } = unit.unitClass;
+    const { aiParameters } = unit.getUnitClass();
     if (!aiParameters) {
       throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
     }

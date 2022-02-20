@@ -148,7 +148,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       const playerUnit = GameState.getInstance().getPlayerUnit();
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
-        if (playerUnit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON')) {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
         }
       // Blink is disabled for being really OP.  Here's how to enable it:
@@ -175,7 +175,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       }
       break;
     case 'INVENTORY':
-      const { inventory } = state.getPlayerUnit();
+      const inventory = state.getPlayerUnit().getInventory();
 
       switch (key) {
         case 'UP':
@@ -235,7 +235,7 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
     }
     case 'INVENTORY': {
        const playerUnit = state.getPlayerUnit();
-      const { selectedItem } = playerUnit.inventory;
+      const { selectedItem } = playerUnit.getInventory();
 
       if (!!selectedItem) {
         state.setScreen('GAME');
