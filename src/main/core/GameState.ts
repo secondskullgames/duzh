@@ -17,7 +17,7 @@ type Props = {
  * Global mutable state
  */
 class GameState {
-  screen: GameScreen;
+  private screen: GameScreen;
   playerUnit: Unit;
   readonly maps: MapSpec[];
   mapIndex: number | null;
@@ -27,7 +27,7 @@ class GameState {
   private _map: MapInstance | null;
 
   constructor({ playerUnit, maps }: Props) {
-    this.screen = GameScreen.TITLE;
+    this.screen = 'TITLE';
     this.playerUnit = playerUnit;
     this.maps = maps;
     this.mapIndex = 0;
@@ -36,6 +36,9 @@ class GameState {
     this.turn = 1;
     this.queuedAbility = null;
   }
+
+  getScreen = (): GameScreen => this.screen;
+  setScreen = (screen: GameScreen) => { this.screen = screen; };
 
   getMap = (): MapInstance => {
     if (!this._map) {

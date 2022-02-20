@@ -9,7 +9,6 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import TileSet from '../tiles/TileSet';
-import { GameScreen } from '../types/types';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
@@ -20,7 +19,7 @@ const loadMap = async (index: number) => {
   const state = GameState.getInstance();
   if (index >= state.maps.length) {
     Music.stop();
-    state.screen = GameScreen.VICTORY;
+    state.setScreen('VICTORY');
   } else {
     state.mapIndex = index;
     const mapSpec = state.maps[index];
@@ -130,8 +129,7 @@ const revealTiles = () => {
 };
 
 const gameOver = async () => {
-  const state = GameState.getInstance();
-  state.screen = GameScreen.GAME_OVER;
+  GameState.getInstance().setScreen('GAME_OVER');
   Music.stop();
   playSound(Sounds.GAME_OVER);
 };

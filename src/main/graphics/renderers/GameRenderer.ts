@@ -34,21 +34,21 @@ class GameRenderer extends BufferedRenderer {
    * @override {@link BufferedRenderer#renderBuffer}
    */
   renderBuffer = async () => {
-    const { screen } = GameState.getInstance();
+    const screen = GameState.getInstance().getScreen();
     switch (screen) {
-      case GameScreen.TITLE:
+      case 'TITLE':
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
         return this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.PERFECT_DOS_VGA, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
-      case GameScreen.GAME:
+      case 'GAME':
         return this._renderGameScreen();
-      case GameScreen.INVENTORY:
+      case 'INVENTORY':
         return this._renderGameScreen()
           .then(() => this._renderInventory());
-      case GameScreen.VICTORY:
+      case 'VICTORY':
         return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-      case GameScreen.GAME_OVER:
+      case 'GAME_OVER':
         return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-      case GameScreen.MINIMAP:
+      case 'MINIMAP':
         return this._renderMinimap();
       default:
         throw `Invalid screen ${screen}`;

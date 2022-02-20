@@ -20,14 +20,7 @@ enum EquipmentSlot {
   HEAD          = 'HEAD'
 }
 
-enum GameScreen {
-  GAME      = 'GAME',
-  INVENTORY = 'INVENTORY',
-  TITLE     = 'TITLE',
-  VICTORY   = 'VICTORY',
-  GAME_OVER = 'GAME_OVER',
-  MINIMAP   = 'MINIMAP'
-}
+type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
 
 enum ItemCategory {
   POTION = 'POTION',

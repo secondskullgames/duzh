@@ -141,8 +141,8 @@ const keyHandler = async (e: KeyboardEvent) => {
 const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.GAME:
+  switch (state.getScreen()) {
+    case 'GAME':
       const { dx, dy } = _getDirection(key);
 
       const playerUnit = GameState.getInstance().playerUnit;
@@ -174,7 +174,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
         await TurnHandler.playTurn();
       }
       break;
-    case GameScreen.INVENTORY:
+    case 'INVENTORY':
       const { inventory } = state.playerUnit;
 
       switch (key) {
@@ -193,10 +193,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       }
       await render();
       break;
-    case GameScreen.TITLE:
-    case GameScreen.VICTORY:
-    case GameScreen.GAME_OVER:
-    case GameScreen.MINIMAP:
+    default:
       break;
   }
 };
@@ -218,8 +215,8 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
     return;
   }
 
-  switch (state.screen) {
-    case GameScreen.GAME: {
+  switch (state.getScreen()) {
+    case 'GAME': {
       const { mapIndex } = state;
       const map = state.getMap();
       const { x, y }: Coordinates = playerUnit;
@@ -237,27 +234,27 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       await TurnHandler.playTurn();
       break;
     }
-    case GameScreen.INVENTORY: {
+    case 'INVENTORY': {
       const { playerUnit } = state;
       const { selectedItem } = playerUnit.inventory;
 
       if (!!selectedItem) {
-        state.screen = GameScreen.GAME;
+        state.setScreen('GAME');
         await useItem(playerUnit, selectedItem);
         await render();
       }
       break;
     }
-    case GameScreen.TITLE:
-      state.screen = GameScreen.GAME;
+    case 'TITLE':
+      state.setScreen('GAME');
       if (modifiers.includes('SHIFT')) {
         await startGameDebug();
       } else {
         await startGame();
       }
       break;
-    case GameScreen.VICTORY:
-    case GameScreen.GAME_OVER:
+    case 'VICTORY':
+    case 'GAME_OVER':
       await returnToTitle();
   }
 };
@@ -265,12 +262,12 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
 const _handleTab = async () => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.INVENTORY:
-      state.screen = GameScreen.GAME;
+  switch (state.getScreen()) {
+    case 'INVENTORY':
+      state.setScreen('GAME');
       break;
     default:
-      state.screen = GameScreen.INVENTORY;
+      state.setScreen('INVENTORY');
       break;
   }
   await render();
@@ -279,13 +276,13 @@ const _handleTab = async () => {
 const _handleMap = async () => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.MINIMAP:
-      state.screen = GameScreen.GAME;
+  switch (state.getScreen()) {
+    case 'MINIMAP':
+      state.setScreen('GAME');
       break;
-    case GameScreen.GAME:
-    case GameScreen.INVENTORY:
-      state.screen = GameScreen.MINIMAP;
+    case 'GAME':
+    case 'INVENTORY':
+      state.setScreen('MINIMAP');
       break;
     default:
       break;
