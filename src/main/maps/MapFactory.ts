@@ -1,7 +1,6 @@
 import EquipmentModel from '../equipment/EquipmentModel';
 import ItemModel from '../items/ItemModel';
 import TileSet from '../tiles/TileSet';
-import { MapLayout } from '../types/types';
 import UnitClass from '../units/UnitClass';
 import BlobDungeonGenerator from './generated/BlobDungeonGenerator';
 import DungeonGenerator from './generated/DungeonGenerator';
@@ -9,6 +8,7 @@ import RoomCorridorDungeonGenerator2 from './generated/RoomCorridorDungeonGenera
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapModel from './generated/GeneratedMapModel';
 import MapInstance from './MapInstance';
+import MapLayout from './MapLayout';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 import PredefinedMapModel from './predefined/PredefinedMapModel';
 

@@ -1,7 +1,7 @@
 import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { MapSection } from '../../types/types';
+import MapSection from './MapSection';
 import { comparing } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';

@@ -4,12 +4,12 @@ import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/arrays';
 import Pathfinder from '../../geometry/Pathfinder';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
+import MapSection from './MapSection';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
 abstract class DungeonGenerator {

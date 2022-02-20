@@ -101,10 +101,10 @@ const returnToTitle = async () => {
  */
 const revealTiles = () => {
   const state = GameState.getInstance();
-   const playerUnit = state.getPlayerUnit();
+  const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  for (const room of map.rooms) {
+  for (const room of map.getRooms()) {
     if (contains(room, playerUnit)) {
       for (let y = room.top; y < room.top + room.height; y++) {
         for (let x = room.left; x < room.left + room.width; x++) {

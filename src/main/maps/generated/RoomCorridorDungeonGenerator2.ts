@@ -1,11 +1,12 @@
 import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { MapSection, Offsets, Rect } from '../../types/types';
+import { Offsets, Rect } from '../../types/types';
 import { replace, subtract } from '../../utils/arrays';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
 import DungeonGenerator from './DungeonGenerator';
+import MapSection from './MapSection';
 
 type Direction = 'HORIZONTAL' | 'VERTICAL';
 
@@ -75,6 +76,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     this.maxRoomDimension = maxRoomDimension;
   }
 
+  /**
+   * @override {@link DungeonGenerator#generateTiles}
+   */
   protected generateTiles = (width: number, height: number): MapSection => {
     // 1. Recursively subdivide the map into sections.
     //    Each section must fall within the max dimensions.

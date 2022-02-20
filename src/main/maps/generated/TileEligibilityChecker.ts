@@ -1,6 +1,6 @@
 import Coordinates from '../../geometry/Coordinates';
 import TileType from '../../tiles/TileType';
-import { MapSection } from '../../types/types';
+import MapSection from './MapSection';
 
 class TileEligibilityChecker {
   isBlocked = ({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]): boolean => {

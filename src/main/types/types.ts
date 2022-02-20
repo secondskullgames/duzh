@@ -20,15 +20,6 @@ interface Entity extends Coordinates {
 
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
 
-interface MapSection {
-  width:  number,
-  height: number,
-  rooms:  Room[],
-  tiles:  TileType[][]
-}
-
-type MapLayout = 'ROOMS_AND_CORRIDORS' | 'BLOB';
-
 interface Projectile extends Entity {
   direction: Direction
 }
@@ -60,8 +51,6 @@ export {
   Entity,
   Faction,
   GameScreen,
-  MapLayout,
-  MapSection,
   Offsets,
   Pixel,
   Projectile,
