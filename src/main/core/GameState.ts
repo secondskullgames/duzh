@@ -3,6 +3,8 @@ import MapSpec from '../maps/MapSpec';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
+import { clear as clearArray } from '../utils/arrays';
+import Messages from './Messages';
 
 let INSTANCE: GameState | null = null;
 
@@ -19,7 +21,7 @@ class GameState {
   playerUnit: Unit;
   readonly maps: MapSpec[];
   mapIndex: number | null;
-  readonly messages: string[];
+  private readonly _messages: Messages;
   turn: number;
   queuedAbility: UnitAbility | null;
   private _map: MapInstance | null;
@@ -30,7 +32,7 @@ class GameState {
     this.maps = maps;
     this.mapIndex = 0;
     this._map = null;
-    this.messages = [];
+    this._messages = new Messages();
     this.turn = 1;
     this.queuedAbility = null;
   }
@@ -43,6 +45,8 @@ class GameState {
   };
 
   setMap = (map: MapInstance) => { this._map = map; };
+  getMessages = (): string[] => this._messages.getRecentMessages(3);
+  pushMessage = (message: string): void => { this._messages.pushMessage(message); };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };
   static getInstance = (): GameState => INSTANCE!!;

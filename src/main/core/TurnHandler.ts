@@ -1,18 +1,9 @@
-import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import Unit from '../units/Unit';
-import { clear, sortBy } from '../utils/arrays';
+import { clear as clearArray, sortBy } from '../utils/arrays';
 import { render } from './actions';
 import GameState from './GameState';
 
-const playTurn = async (playerUnitOrder: ((unit: Unit) => Promise<void>) | null) => {
-  const state = GameState.getInstance();
-  const { playerUnit } = state;
-  const playerController = <PlayerUnitController>(playerUnit.controller);
-  playerController.queuedOrder = !!playerUnitOrder ? (() => playerUnitOrder(playerUnit)) : null;
-  return _update();
-};
-
-const _update = async () => {
+const playTurn = async () => {
   const state = GameState.getInstance();
   const map = state.getMap();
 
@@ -23,7 +14,7 @@ const _update = async () => {
 
   await render();
   state.turn++;
-  clear(state.messages);
+  // state.clearMessages();
 };
 
 /**

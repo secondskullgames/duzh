@@ -206,7 +206,7 @@ class Unit implements Entity {
 
   getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
 
-  useAbility = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
+  triggerCooldown = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
 }
 
 export default Unit;
