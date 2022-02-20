@@ -3,7 +3,8 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import { GameScreen } from '../types/types';
+import { EquipmentSlot, GameScreen } from '../types/types';
+import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { loadMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
@@ -112,7 +113,7 @@ const keyHandler = async (e: KeyboardEvent) => {
       return _handleArrowKey(command.key, command.modifiers);
     case 'SPACEBAR':
       await playSound(Sounds.FOOTSTEP);
-      return TurnHandler.playTurn(null);
+      return TurnHandler.playTurn();
     case 'ENTER':
       return _handleEnter(command.modifiers);
     case 'TAB':
@@ -148,7 +149,9 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       const playerUnit = GameState.getInstance().playerUnit;
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
-        queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
+        if (playerUnit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+          queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
+        }
       // Blink is disabled for being really OP.  Here's how to enable it:
       //
       // } else if (modifiers.includes('ALT')) {
@@ -166,8 +169,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
           queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { dx, dy });
         }
       }
+      const playerController = playerUnit.controller as PlayerUnitController;
       if (queuedOrder) {
-        await TurnHandler.playTurn(queuedOrder);
+        playerController.queuedOrder = queuedOrder;
+        await TurnHandler.playTurn();
       }
       break;
     case GameScreen.INVENTORY:
@@ -230,7 +235,7 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
         playSound(Sounds.DESCEND_STAIRS);
         await loadMap(mapIndex + 1);
       }
-      await TurnHandler.playTurn(null);
+      await TurnHandler.playTurn();
       break;
     }
     case GameScreen.INVENTORY: {

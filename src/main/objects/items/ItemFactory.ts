@@ -22,7 +22,7 @@ const createPotion = (lifeRestored: number): InventoryItem => {
     playSound(Sounds.USE_POTION);
     const prevLife = unit.life;
     unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-    GameState.getInstance().messages.push(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
+    GameState.getInstance().pushMessage(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
   };
 
   return new InventoryItem('Potion', ItemCategory.POTION, onUse);

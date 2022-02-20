@@ -14,8 +14,7 @@ import Unit from './Unit';
  * Helper function for most melee attacks
  */
 const attack = async (unit: Unit, target: Unit, damage: number) => {
-  const state = GameState.getInstance();
-  state.messages.push(`${unit.name} hit ${target.name} for ${damage} damage!`);
+  GameState.getInstance().pushMessage(`${unit.name} hit ${target.name} for ${damage} damage!`);
 
   await playAttackingAnimation(unit, target);
   await target.takeDamage(damage, unit);
@@ -202,15 +201,14 @@ class ShootArrow extends UnitAbility {
     if (!direction) {
       throw new Error('ShootArrow requires a direction!');
     }
+    if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+      throw new Error('ShootArrow requires a ranged weapon!');
+    }
 
     const { dx, dy } = direction;
     unit.direction = { dx, dy };
 
     await render();
-    if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
-      // change direction and re-render, but don't do anything (don't spend a turn)
-      return;
-    }
 
     const state = GameState.getInstance();
     const map = state.getMap();
@@ -224,9 +222,8 @@ class ShootArrow extends UnitAbility {
 
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
-      const { messages } = GameState.getInstance();
       const damage = unit.getRangedDamage();
-      messages.push(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
+      state.pushMessage(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
 
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await targetUnit.takeDamage(damage, unit);
