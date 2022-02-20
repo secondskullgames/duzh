@@ -75,11 +75,13 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
       return { key: '8', modifiers };
     case '9':
       return { key: '9', modifiers };
-    case 'ALT':
-    case 'SHIFT':
-    case 'CTRL':
+    case 'Alt':
+    case 'Shift':
+    case 'Control':
       return { key: 'NONE', modifiers };
   }
+
+  console.log(e);
 
   return null;
 };

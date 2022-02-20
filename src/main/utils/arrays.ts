@@ -38,14 +38,19 @@ const range = (min: number, max: number) => new Array(max - min)
   .fill(null)
   .map((_, i) => i + min);
 
+const head = <T> (array: T[], count: number): T[] => array.slice(0, count);
+const tail = <T> (array: T[], count: number): T[] => array.slice(-count);
+
 export {
   average,
   clear,
   comparing,
   comparingReversed,
+  head,
   range,
   replace,
   sortBy,
   sortByReversed,
-  subtract
+  subtract,
+  tail
 };

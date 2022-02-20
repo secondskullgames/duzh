@@ -17,9 +17,9 @@
   "startingLife": 100,
   "startingMana": 100,
   "startingDamage": 8,
-  "lifePerLevel": 0,
+  "lifePerLevel": 10,
   "manaPerLevel": 0,
-  "damagePerLevel": 0,
+  "damagePerLevel": 1,
   "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
   "abilities": {
     "1": [],

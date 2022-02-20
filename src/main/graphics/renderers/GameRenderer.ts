@@ -3,6 +3,7 @@ import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../types/Coordinates';
 import { GameScreen } from '../../types/types';
+import { tail } from '../../utils/arrays';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
@@ -72,7 +73,7 @@ class GameRenderer extends BufferedRenderer {
 
   private _renderMessages = async () => {
     const { bufferContext } = this;
-    const messages = GameState.getInstance().getMessages();
+    const messages = tail(GameState.getInstance().getMessages(), 3);
     bufferContext.fillStyle = Colors.BLACK;
     bufferContext.strokeStyle = Colors.BLACK;
 
