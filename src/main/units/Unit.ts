@@ -3,7 +3,7 @@ import GameState from '../core/GameState';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
-import InventoryMap from '../objects/items/InventoryMap';
+import InventoryMap from '../items/InventoryMap';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';

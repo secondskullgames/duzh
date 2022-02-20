@@ -1,7 +1,7 @@
 import GameState from '../../core/GameState';
+import ItemCategory from '../../items/ItemCategory';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
-import { ItemCategory } from '../../types/types';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
@@ -48,7 +48,7 @@ class InventoryRenderer extends BufferedRenderer {
     }
 
     // draw inventory categories
-    const inventoryCategories: ItemCategory[] = Object.values(ItemCategory);
+    const inventoryCategories: ItemCategory[] = ItemCategory.values();
     const categoryWidth = 60;
     const xOffset = 4;
 

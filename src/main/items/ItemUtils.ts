@@ -1,11 +1,11 @@
-import GameState from '../../core/GameState';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
-import Unit from '../../units/Unit';
-import EquipmentClass from '../../equipment/EquipmentClass';
+import GameState from '../core/GameState';
+import { playSound } from '../sounds/SoundFX';
+import Sounds from '../sounds/Sounds';
+import Unit from '../units/Unit';
+import EquipmentModel from '../equipment/EquipmentModel';
 import InventoryItem from './InventoryItem';
 import ItemFactory from './ItemFactory';
-import MapItem from './MapItem';
+import MapItem from '../objects/MapItem';
 
 const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const state = GameState.getInstance();
@@ -20,7 +20,7 @@ const useItem = async (unit: Unit, item: InventoryItem) => {
   unit.getInventory().remove(item);
 };
 
-const equipItem = async (item: InventoryItem, equipmentClass: EquipmentClass, unit: Unit) => {
+const equipItem = async (item: InventoryItem, equipmentClass: EquipmentModel, unit: Unit) => {
   const equipment = await ItemFactory.createEquipment(equipmentClass);
   unit.getEquipment().add(equipment);
   equipment.attach(unit);

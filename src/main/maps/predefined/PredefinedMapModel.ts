@@ -1,6 +1,6 @@
-import EquipmentClass from '../../equipment/EquipmentClass';
+import EquipmentModel from '../../equipment/EquipmentModel';
 import { DoorDirection } from '../../objects/Door';
-import ItemClass from '../../objects/items/ItemClass';
+import ItemModel from '../../items/ItemModel';
 import Color, { Colors } from '../../types/Color';
 import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
@@ -14,8 +14,8 @@ type PredefinedMapModel = {
   defaultTile?: TileType
   enemyColors: Record<Color, UnitClass>,
   // TODO: unify the below two fields into `objectColors`?
-  itemColors: Record<Color, ItemClass>,
-  equipmentColors: Record<Color, EquipmentClass>,
+  itemColors: Record<Color, ItemModel>,
+  equipmentColors: Record<Color, EquipmentModel>,
   doorColors: Record<Color, DoorDirection>,
   startingPointColor: Color
 };
@@ -24,8 +24,8 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const json = (await import(`../../../../data/maps/predefined/${id}.json`)).default;
   const tileColors = await _convertColorMap(json.tileColors, x => Promise.resolve(x));
   const enemyColors = await _convertColorMap(json.enemyColors, UnitClass.load);
-  const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemClass.load(x)));
-  const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentClass.load);
+  const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemModel.load(x)));
+  const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentModel.load);
   const doorColors = await _convertColorMap(json.doorColors, x => Promise.resolve(x));
   const startingPointColor = Colors[json.startingPointColor];
   const levelNumber = parseInt(json.levelNumber);

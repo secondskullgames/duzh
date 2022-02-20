@@ -1,11 +1,11 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../types/Animatable';
 import Direction from '../geometry/Direction';
-import { EquipmentSlot } from '../types/types';
 import Unit from '../units/Unit';
-import InventoryItem from '../objects/items/InventoryItem';
+import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import EquipmentClass from './EquipmentClass';
+import EquipmentModel from './EquipmentModel';
+import EquipmentSlot from './EquipmentSlot';
 
 class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
@@ -15,7 +15,7 @@ class Equipment implements Animatable {
   readonly name: string;
   private _unit: Unit | null;
 
-  constructor(model: EquipmentClass, sprite: Sprite, inventoryItem: InventoryItem | null) {
+  constructor(model: EquipmentModel, sprite: Sprite, inventoryItem: InventoryItem | null) {
     this.name = model.name;
     this.slot = model.slot;
     this.inventoryItem = inventoryItem;

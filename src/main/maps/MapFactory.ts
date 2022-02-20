@@ -1,5 +1,5 @@
-import EquipmentClass from '../equipment/EquipmentClass';
-import ItemClass from '../objects/items/ItemClass';
+import EquipmentModel from '../equipment/EquipmentModel';
+import ItemModel from '../items/ItemModel';
 import TileSet from '../tiles/TileSet';
 import { MapLayout } from '../types/types';
 import UnitClass from '../units/UnitClass';
@@ -15,8 +15,8 @@ import PredefinedMapModel from './predefined/PredefinedMapModel';
 const loadGeneratedMap = async (model: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
   const dungeonGenerator = _getDungeonGenerator(model.layout, await TileSet.forName(model.tileSet));
   const enemyUnitClasses: UnitClass[] = await Promise.all(model.enemies.map(UnitClass.load));
-  const equipmentClasses: EquipmentClass[] = await Promise.all(model.equipment.map(EquipmentClass.load));
-  const itemClasses: ItemClass[] = model.items.map(ItemClass.load);
+  const equipmentClasses: EquipmentModel[] = await Promise.all(model.equipment.map(EquipmentModel.load));
+  const itemClasses: ItemModel[] = model.items.map(ItemModel.load);
   return dungeonGenerator.generateDungeon(model.levelNumber, model.width, model.height, model.numEnemies, model.numItems, enemyUnitClasses, equipmentClasses, itemClasses);
 };
 

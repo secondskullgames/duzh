@@ -1,8 +1,8 @@
 import GameState from '../../core/GameState';
-import EquipmentClass from '../../equipment/EquipmentClass';
-import ItemClass from '../../objects/items/ItemClass';
-import ItemFactory from '../../objects/items/ItemFactory';
-import MapItem from '../../objects/items/MapItem';
+import EquipmentModel from '../../equipment/EquipmentModel';
+import ItemModel from '../../items/ItemModel';
+import ItemFactory from '../../items/ItemFactory';
+import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Room } from '../../types/types';
@@ -23,8 +23,8 @@ type Props = {
   enemyUnitLocations: Coordinates[],
   itemLocations: Coordinates[],
   enemyUnitClasses: UnitClass[],
-  equipmentClasses: EquipmentClass[],
-  itemClasses: ItemClass[]
+  equipmentClasses: EquipmentModel[],
+  itemClasses: ItemModel[]
 };
 
 class GeneratedMapBuilder {
@@ -37,8 +37,8 @@ class GeneratedMapBuilder {
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
   private readonly enemyUnitClasses: UnitClass[];
-  private readonly equipmentClasses: EquipmentClass[];
-  private readonly itemClasses: ItemClass[];
+  private readonly equipmentClasses: EquipmentModel[];
+  private readonly itemClasses: ItemModel[];
 
   constructor({
     level,

@@ -1,5 +1,5 @@
 import Door from '../objects/Door';
-import MapItem from '../objects/items/MapItem';
+import MapItem from '../objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
 import Tile from '../tiles/Tile';
 import { Entity, Rect, Room } from '../types/types';

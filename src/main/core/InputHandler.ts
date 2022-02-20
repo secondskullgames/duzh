@@ -1,9 +1,8 @@
-import { pickupItem, useItem } from '../objects/items/ItemUtils';
+import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import { EquipmentSlot } from '../types/types';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';

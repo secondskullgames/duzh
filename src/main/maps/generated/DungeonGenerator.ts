@@ -1,5 +1,5 @@
-import EquipmentClass from '../../equipment/EquipmentClass';
-import ItemClass from '../../objects/items/ItemClass';
+import EquipmentModel from '../../equipment/EquipmentModel';
+import ItemModel from '../../items/ItemModel';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
@@ -26,8 +26,8 @@ abstract class DungeonGenerator {
     numEnemies: number,
     numItems: number,
     enemyUnitClasses: UnitClass[],
-    equipmentClasses: EquipmentClass[],
-    itemClasses: ItemClass[]
+    equipmentClasses: EquipmentModel[],
+    itemClasses: ItemModel[]
   ): GeneratedMapBuilder => {
     let section;
     let isValid = false;

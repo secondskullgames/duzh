@@ -3,6 +3,11 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import TileType from '../tiles/TileType';
 
+/*
+ * Note: The types defined in this file are mostly very general and/or legacy types that don't fit neatly into
+ * an existing package.  In general, you should put types in their own file in an appropriate package.
+ */
+
 interface Pixel {
   x: number,
   y: number
@@ -13,17 +18,7 @@ interface Entity extends Coordinates {
   sprite: Sprite
 }
 
-type EquipmentSlot = 'MELEE_WEAPON' | 'RANGED_WEAPON' | 'CHEST' | 'HEAD';
-
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
-
-enum ItemCategory {
-  POTION = 'POTION',
-  SCROLL = 'SCROLL',
-  KEY = 'KEY',
-  WEAPON = 'WEAPON',
-  ARMOR  = 'ARMOR'
-}
 
 interface MapSection {
   width:  number,
@@ -53,20 +48,18 @@ interface Room extends Rect {
 
 type UnitType =
   'ANIMAL'
-  | 'ELEMENTAL'
-  | 'GHOST'
-  | 'GOLEM'
-  | 'HUMAN'
-  | 'WIZARD';
+| 'ELEMENTAL'
+| 'GHOST'
+| 'GOLEM'
+| 'HUMAN'
+| 'WIZARD';
 
 type Faction = 'PLAYER' | 'FRIENDLY' | 'NEUTRAL' | 'ENEMY';
 
 export {
   Entity,
-  EquipmentSlot,
   Faction,
   GameScreen,
-  ItemCategory,
   MapLayout,
   MapSection,
   Offsets,

@@ -1,7 +1,7 @@
-import Sprite from '../../graphics/sprites/Sprite';
-import Coordinates from '../../geometry/Coordinates';
-import { Entity } from '../../types/types';
-import InventoryItem from './InventoryItem';
+import Sprite from '../graphics/sprites/Sprite';
+import Coordinates from '../geometry/Coordinates';
+import { Entity } from '../types/types';
+import InventoryItem from '../items/InventoryItem';
 
 class MapItem implements Entity {
   x: number;

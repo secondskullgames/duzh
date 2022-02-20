@@ -7,7 +7,6 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import { EquipmentSlot, ItemCategory } from '../types/types';
 import Unit from './Unit';
 
 /**
@@ -72,7 +71,7 @@ class NormalAttack extends UnitAbility {
 
       const door = map.getDoor({ x, y });
       if (door) {
-        const keys = playerUnit.getInventory().get(ItemCategory.KEY) || [];
+        const keys = playerUnit.getInventory().get('KEY') || [];
         if (keys.length > 0) {
           playerUnit.getInventory().remove(keys[0]);
           await door.open();

@@ -1,5 +1,5 @@
-import { EquipmentSlot } from '../types/types';
 import Equipment from './Equipment';
+import EquipmentSlot from './EquipmentSlot';
 
 /**
  * Represents a unit's equipment, mapped by slot.
