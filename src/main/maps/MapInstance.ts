@@ -76,7 +76,7 @@ class MapInstance {
     && (y >= 0 && y < this.height);
 
   isBlocked = ({ x, y }: Coordinates): boolean => {
-    checkArgument(!this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
+    checkArgument(this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
     return !!this.getUnit({ x, y })
       || this.getDoor({ x, y })?.isClosed()
       || this.getTile({ x, y }).isBlocking;

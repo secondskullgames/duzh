@@ -5,21 +5,22 @@ import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
-import { average } from '../../utils/arrays';
+import { average, minBy } from '../../utils/arrays';
 import Pathfinder from '../../geometry/Pathfinder';
+import { checkState } from '../../utils/preconditions';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
-import MapSection from './MapSection';
+import EmptyMap from './EmptyMap';
 import TileEligibilityChecker from './TileEligibilityChecker';
 
-abstract class DungeonGenerator {
+abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;
 
   protected constructor(tileSet: TileSet) {
     this.tileSet = tileSet;
   }
 
-  generateDungeon = (
+  generateMap = (
     level: number,
     width: number,
     height: number,
@@ -29,22 +30,8 @@ abstract class DungeonGenerator {
     equipmentClasses: EquipmentModel[],
     itemClasses: ItemModel[]
   ): GeneratedMapBuilder => {
-    let section;
-    let isValid = false;
-    let iterations = 0;
-    do {
-      const t1 = new Date().getTime();
-      section = this.generateTiles(width, height);
-      isValid = this._validateSection(section);
-      const t2 = new Date().getTime();
-      console.log(`Generated dungeon tiles for level ${level} in ${t2 - t1} ms`);
-      if (!isValid) {
-        console.error(`Generated invalid tiles for level ${level}, regenerating`);
-      }
-      iterations++;
-    } while (!isValid && (iterations < 100));
-
-    const tileTypes = section.tiles;
+    const map = this._generateEmptyMap(width, height, level);
+    const tileTypes = map.tiles;
 
     const [stairsLocation] = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [], 1);
     tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
@@ -61,7 +48,7 @@ abstract class DungeonGenerator {
       width,
       height,
       tiles,
-      rooms: section.rooms,
+      rooms: map.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitClasses,
@@ -71,7 +58,24 @@ abstract class DungeonGenerator {
     });
   };
 
-  protected abstract generateTiles(width: number, height: number): MapSection;
+  protected abstract generateTiles(width: number, height: number): EmptyMap;
+
+  private _generateEmptyMap = (width: number, height: number, level: number): EmptyMap => {
+    const iterations = 100;
+    for (let iteration = 1; iteration <= iterations; iteration++) {
+      const t1 = new Date().getTime();
+      const map = this.generateTiles(width, height);
+      const isValid = this._validateTiles(map);
+      const t2 = new Date().getTime();
+      console.log(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
+      if (isValid) {
+        return map;
+      } else {
+        console.error(`Generated invalid tiles for level ${level}, regenerating`);
+      }
+    }
+    throw new Error(`Failed to generate map in ${iterations} iterations`);
+  };
 
   /**
    * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
@@ -88,25 +92,25 @@ abstract class DungeonGenerator {
       }
     }
 
-    console.assert(candidates.length > 0);
-    return candidates.sort((a, b) => (b[1] - a[1]))[0];
+    checkState(candidates.length > 0);
+    return minBy(candidates, ([coordinates, averageDistance]) => averageDistance);
   };
 
   /**
    * Verify that:
    * - all rooms can be connected
    * - wall placement is correct
-   *   (all floor tiles have either another floor tile, or a wall + wall top directly above them)
    *
    * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
    * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
-   *
-   * @return true if the provided `section` is valid
    */
-  private _validateSection = (section: MapSection): boolean =>
-    this._validateRoomConnectivity(section) && this._validateWallPlacement(section);
+  private _validateTiles = (map: EmptyMap): boolean =>
+    this._validateRoomConnectivity(map) && this._validateWallPlacement(map);
 
-  private _validateRoomConnectivity = (section: MapSection): boolean => {
+  /**
+   * verify that every room is reachable from every other room
+   */
+  private _validateRoomConnectivity = (section: EmptyMap): boolean => {
     const { rooms } = section;
     const roomCenters: Coordinates[] = rooms.map(room => ({
       x: Math.round(room.left + room.width) / 2,
@@ -122,6 +126,7 @@ abstract class DungeonGenerator {
       }
     }
 
+    // check that every room is reachable from every other room
     const pathfinder: Pathfinder = new Pathfinder(() => 1);
     for (let i = 0; i < rooms.length; i++) {
       for (let j = i + 1; j < rooms.length; j++) {
@@ -134,22 +139,29 @@ abstract class DungeonGenerator {
     return true;
   };
 
-  private _validateWallPlacement = (section: MapSection) => {
+  /**
+   * Validate that walls are placed correctly:
+   * they can't be at the very top of the map, and they must have a "wall top" tile above them
+   */
+  private _validateWallPlacement = (map: EmptyMap): boolean => {
     const floorTypes = ['FLOOR', 'FLOOR_HALL'];
     const wallTypes = ['WALL', 'WALL_HALL'];
-    for (let y = 0; y < section.height; y++) {
-      for (let x = 0; x < section.width; x++) {
-        const tileType = section.tiles[y][x];
-        if (floorTypes.indexOf(tileType) > -1) {
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        const tileType = map.tiles[y][x];
+        if (floorTypes.includes(tileType)) {
           if (y < 2) {
+            // can't place a wall at the top of the map because... reasons
             return false;
           }
-          const oneUp = section.tiles[y - 1][x];
-          const twoUp = section.tiles[y - 2][x];
-          if (floorTypes.indexOf(oneUp) > -1) {
-            // continue
-          } else if (wallTypes.indexOf(oneUp) > -1) {
+          const oneUp = map.tiles[y - 1][x];
+          const twoUp = map.tiles[y - 2][x];
+          if (floorTypes.includes(oneUp)) {
+            // continue, can't place a wall directly below a floor
+            // (because we have to show the top of the wall above it)
+          } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== 'WALL_TOP') {
+              // can't show a wall without a tile for its top
               return false;
             }
           }
@@ -160,4 +172,4 @@ abstract class DungeonGenerator {
   };
 }
 
-export default DungeonGenerator;
+export default AbstractMapGenerator;

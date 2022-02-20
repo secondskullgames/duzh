@@ -2,9 +2,9 @@ import EquipmentModel from '../equipment/EquipmentModel';
 import ItemModel from '../items/ItemModel';
 import TileSet from '../tiles/TileSet';
 import UnitClass from '../units/UnitClass';
-import BlobDungeonGenerator from './generated/BlobDungeonGenerator';
-import DungeonGenerator from './generated/DungeonGenerator';
-import RoomCorridorDungeonGenerator2 from './generated/RoomCorridorDungeonGenerator2';
+import BlobMapGenerator from './generated/BlobMapGenerator';
+import AbstractMapGenerator from './generated/AbstractMapGenerator';
+import RoomCorridorMapGenerator2 from './generated/RoomCorridorMapGenerator2';
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapModel from './generated/GeneratedMapModel';
 import MapInstance from './MapInstance';
@@ -17,25 +17,25 @@ const loadGeneratedMap = async (model: GeneratedMapModel): Promise<GeneratedMapB
   const enemyUnitClasses: UnitClass[] = await Promise.all(model.enemies.map(UnitClass.load));
   const equipmentClasses: EquipmentModel[] = await Promise.all(model.equipment.map(EquipmentModel.load));
   const itemClasses: ItemModel[] = model.items.map(ItemModel.load);
-  return dungeonGenerator.generateDungeon(model.levelNumber, model.width, model.height, model.numEnemies, model.numItems, enemyUnitClasses, equipmentClasses, itemClasses);
+  return dungeonGenerator.generateMap(model.levelNumber, model.width, model.height, model.numEnemies, model.numItems, enemyUnitClasses, equipmentClasses, itemClasses);
 };
 
 const loadPredefinedMap = async (model: PredefinedMapModel): Promise<MapInstance> =>
   new PredefinedMapBuilder(model).build();
 
-const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): DungeonGenerator => {
+const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractMapGenerator => {
   switch (mapLayout) {
     case 'ROOMS_AND_CORRIDORS': {
       const minRoomDimension = 3;
       const maxRoomDimension = 7;
-      return new RoomCorridorDungeonGenerator2({
+      return new RoomCorridorMapGenerator2({
         tileSet,
         minRoomDimension,
         maxRoomDimension
       });
     }
     case 'BLOB':
-      return new BlobDungeonGenerator(tileSet);
+      return new BlobMapGenerator(tileSet);
   }
 };
 
