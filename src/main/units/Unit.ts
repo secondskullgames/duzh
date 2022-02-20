@@ -7,9 +7,10 @@ import InventoryMap from '../objects/items/InventoryMap';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
+import Animatable from '../types/Animatable';
 import Coordinates from '../types/Coordinates';
 import Direction from '../types/Direction';
-import { Entity, EquipmentSlot, Faction } from '../types/types';
+import { Entity, Faction } from '../types/types';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
@@ -29,7 +30,7 @@ type Props = {
   equipment: Equipment[]
 };
 
-class Unit implements Entity {
+class Unit implements Entity, Animatable {
   private readonly unitClass: UnitClass;
   readonly faction: Faction;
   readonly char = '@';
@@ -211,6 +212,11 @@ class Unit implements Entity {
   getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
 
   triggerCooldown = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
+
+  /**
+   * @override {@link Animatable#getAnimationKey}
+   */
+  getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}`;
 }
 
 export default Unit;

@@ -24,7 +24,7 @@ class EquipmentMap {
   }
 
   getAll(): Equipment[] {
-    return [...(<Equipment[]>Object.values(this._map))];
+    return Object.values(this._map);
   }
 }
 
