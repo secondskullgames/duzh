@@ -5,6 +5,7 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
+import { checkNotNull } from '../utils/preconditions';
 import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
@@ -216,11 +217,8 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
 
   switch (state.getScreen()) {
     case 'GAME': {
-      const map = state.getMap();
+      const map = checkNotNull(state.getMap(), 'Map is not loaded!');
       const { x, y }: Coordinates = playerUnit;
-      if (!map) {
-        throw 'Map is not loaded!';
-      }
       const item = map.getItem({ x, y });
       if (!!item) {
         pickupItem(playerUnit, item);
@@ -233,7 +231,7 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       break;
     }
     case 'INVENTORY': {
-       const playerUnit = state.getPlayerUnit();
+      const playerUnit = state.getPlayerUnit();
       const { selectedItem } = playerUnit.getInventory();
 
       if (!!selectedItem) {

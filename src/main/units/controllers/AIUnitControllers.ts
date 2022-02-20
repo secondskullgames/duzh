@@ -1,5 +1,6 @@
 import GameState from '../../core/GameState';
 import { manhattanDistance } from '../../maps/MapUtils';
+import { checkNotNull } from '../../utils/preconditions';
 import { randBoolean, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitBehavior from '../UnitBehaviors';
@@ -66,12 +67,9 @@ const HUMAN_AGGRESSIVE = {
 
 const HUMAN_DETERMINISTIC = {
   issueOrder(unit: Unit) {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
 
-    const { aiParameters } = unit.getUnitClass();
-    if (!aiParameters) {
-      throw 'HUMAN_DETERMINISTIC behavior requires aiParams!';
-    }
+    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_DETERMINISTIC behavior requires aiParams!');
     const { speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;

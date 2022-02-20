@@ -3,6 +3,7 @@ import MapSpec from '../maps/MapSpec';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
+import { checkNotNull } from '../utils/preconditions';
 import Messages from './Messages';
 
 let INSTANCE: GameState | null = null;
@@ -49,12 +50,7 @@ class GameState {
     return mapSpec;
   };
 
-  getMap = (): MapInstance => {
-    if (!this._map) {
-      throw new Error('Tried to retrieve map before map was loaded');
-    }
-    return this._map;
-  };
+  getMap = (): MapInstance => checkNotNull(this._map, 'Tried to retrieve map before map was loaded');
 
   setMap = (map: MapInstance) => { this._map = map; };
 

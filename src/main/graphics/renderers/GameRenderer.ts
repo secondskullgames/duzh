@@ -50,7 +50,8 @@ class GameRenderer extends BufferedRenderer {
       case 'MINIMAP':
         return this._renderMinimap();
       default:
-        throw `Invalid screen ${screen}`;
+        // unreachable
+        throw new Error(`Invalid screen ${screen}`);
     }
   };
 

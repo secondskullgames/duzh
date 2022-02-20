@@ -3,6 +3,7 @@ import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import { Offsets, Rect } from '../../types/types';
 import { replace, subtract } from '../../utils/arrays';
+import { checkState } from '../../utils/preconditions';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
 import DungeonGenerator from './DungeonGenerator';
@@ -205,9 +206,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private _removeRooms = (sections: Section[]) => {
     const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
     const maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
-    if (sections.length < minRooms) {
-      throw new Error('Not enough sections');
-    }
+    checkState(sections.length >= minRooms, 'Not enough sections');
 
     const numRooms = randInt(minRooms, maxRooms);
 

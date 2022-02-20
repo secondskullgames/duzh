@@ -238,6 +238,9 @@ class Blink extends UnitAbility {
     super('BLINK', 10);
   }
 
+  /**
+   * @override
+   */
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw new Error('Blink requires a direction!');

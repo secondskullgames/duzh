@@ -14,8 +14,6 @@ const drawAligned = async (imageBitmap: ImageBitmap, context: CanvasRenderingCon
     case 'right':
       left = x + imageBitmap.width;
       break;
-    default:
-      throw new Error();
   }
   await context.drawImage(imageBitmap, left, y);
 };

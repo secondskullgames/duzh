@@ -1,5 +1,6 @@
 import existingFilenames from '../../../../data/filenames.json';
 import PaletteSwaps from '../../types/PaletteSwaps';
+import { checkNotNull } from '../../utils/preconditions';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 
@@ -20,10 +21,7 @@ const _loadFirst = async (filenames: string[]): Promise<ImageData> => {
     .map(filename => _loadOptional(filename));
   const results = await Promise.all(promises);
   const imageData = results.filter(p => !!p)[0];
-  if (!imageData) {
-    throw new Error(`Failed to load images: ${filenames}`);
-  }
-  return imageData;
+  return checkNotNull(imageData, `Failed to load images: ${filenames}`);
 };
 
 type Props = {
