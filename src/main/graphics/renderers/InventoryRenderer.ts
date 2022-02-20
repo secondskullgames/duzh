@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import { ItemCategory } from '../../types/types';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';

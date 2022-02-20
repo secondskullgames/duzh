@@ -1,4 +1,4 @@
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';

@@ -1,10 +1,10 @@
 import GameState from '../core/GameState';
 import { manhattanDistance } from '../maps/MapUtils';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import { Rect } from '../types/types';
 import { comparingReversed } from '../utils/arrays';
-import Pathfinder from '../utils/Pathfinder';
+import Pathfinder from '../geometry/Pathfinder';
 import { randChoice } from '../utils/random';
 import Unit from './Unit';
 import UnitAbility from './UnitAbility';

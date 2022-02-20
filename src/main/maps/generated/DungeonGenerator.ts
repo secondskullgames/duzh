@@ -1,13 +1,13 @@
 import EquipmentClass from '../../equipment/EquipmentClass';
 import ItemClass from '../../objects/items/ItemClass';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import { MapSection } from '../../types/types';
 import UnitClass from '../../units/UnitClass';
 import { average } from '../../utils/arrays';
-import Pathfinder from '../../utils/Pathfinder';
+import Pathfinder from '../../geometry/Pathfinder';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import TileEligibilityChecker from './TileEligibilityChecker';

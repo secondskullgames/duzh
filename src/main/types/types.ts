@@ -1,6 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Coordinates from './Coordinates';
-import Direction from './Direction';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import TileType from '../tiles/TileType';
 
 interface Pixel {

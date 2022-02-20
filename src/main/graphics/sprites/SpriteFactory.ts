@@ -2,7 +2,7 @@ import Equipment from '../../equipment/Equipment';
 import { DoorDirection, DoorState } from '../../objects/Door';
 import Activity from '../../types/Activity';
 import { Colors } from '../../types/Color';
-import Direction from '../../types/Direction';
+import Direction from '../../geometry/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';

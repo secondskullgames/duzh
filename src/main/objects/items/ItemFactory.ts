@@ -3,7 +3,7 @@ import { playFloorFireAnimation } from '../../graphics/animations/Animations';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import { ItemCategory } from '../../types/types';
 import Unit from '../../units/Unit';
 import { randChoice } from '../../utils/random';

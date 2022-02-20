@@ -1,6 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../types/Animatable';
-import Direction from '../types/Direction';
+import Direction from '../geometry/Direction';
 import { EquipmentSlot } from '../types/types';
 import Unit from '../units/Unit';
 import InventoryItem from '../objects/items/InventoryItem';

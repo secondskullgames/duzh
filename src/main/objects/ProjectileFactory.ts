@@ -1,6 +1,6 @@
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import { Projectile } from '../types/types';
 
 const createArrow = async({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => ({

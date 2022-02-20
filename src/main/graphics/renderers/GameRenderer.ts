@@ -1,7 +1,7 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import { tail } from '../../utils/arrays';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';

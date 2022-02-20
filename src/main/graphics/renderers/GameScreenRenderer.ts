@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import { isTileRevealed } from '../../maps/MapUtils';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Entity } from '../../types/types';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';

@@ -3,7 +3,7 @@ import EquipmentClass from '../../equipment/EquipmentClass';
 import ItemClass from '../../objects/items/ItemClass';
 import ItemFactory from '../../objects/items/ItemFactory';
 import MapItem from '../../objects/items/MapItem';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Room } from '../../types/types';
 import { HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';

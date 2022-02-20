@@ -5,8 +5,8 @@ import GameState from '../core/GameState';
 import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import { EquipmentSlot, ItemCategory } from '../types/types';
 import Unit from './Unit';
 

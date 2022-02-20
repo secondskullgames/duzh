@@ -2,7 +2,7 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import EquipmentClass from '../equipment/EquipmentClass';
 import ItemFactory from '../objects/items/ItemFactory';
-import Coordinates from '../types/Coordinates';
+import Coordinates from '../geometry/Coordinates';
 import { Faction } from '../types/types';
 import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';

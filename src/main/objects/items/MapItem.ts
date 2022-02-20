@@ -1,5 +1,5 @@
 import Sprite from '../../graphics/sprites/Sprite';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import { Entity } from '../../types/types';
 import InventoryItem from './InventoryItem';
 
