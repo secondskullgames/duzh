@@ -1,6 +1,8 @@
 /**
  * @param max inclusive
  */
+import { head } from './arrays';
+
 const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 const randBoolean = () => randInt(0, 1) === 1;
 const random = () => Math.random();
@@ -46,11 +48,25 @@ const weightedRandom = <T>(
   throw new Error('Error in weightedRandom()!');
 };
 
+/**
+ * TODO: not Fisher-Yates, whatever
+ * TODO: undefined behavior if length < count
+ */
+const sample = <T> (list: T[], count?: number): T[] => {
+  const shuffled = [...list];
+  shuffle(shuffled);
+  if (count === undefined) {
+    count = randInt(0, list.length - 1);
+  }
+  return head(shuffled, count);
+};
+
 export {
   random,
   randBoolean,
   randChoice,
   randInt,
+  sample,
   shuffle,
   weightedRandom
 };
