@@ -9,7 +9,7 @@ import Messages from './Messages';
 let INSTANCE: GameState | null = null;
 
 type Props = {
-  playerUnit: Unit,
+  playerUnit: Unit | null,
   maps: MapSpec[]
 };
 
@@ -18,7 +18,7 @@ type Props = {
  */
 class GameState {
   private screen: GameScreen;
-  private readonly _playerUnit: Unit;
+  private readonly _playerUnit: Unit | null;
   private readonly maps: MapSpec[];
   private mapIndex: number;
   private readonly _messages: Messages;
@@ -40,7 +40,7 @@ class GameState {
   getScreen = (): GameScreen => this.screen;
   setScreen = (screen: GameScreen) => { this.screen = screen; };
 
-  getPlayerUnit = (): Unit => this._playerUnit;
+  getPlayerUnit = (): Unit => checkNotNull(this._playerUnit, 'Player unit was null (was the game initialized?)');
 
   hasNextMap = () => this.mapIndex < (this.maps.length - 1);
   getMapIndex = () => this.mapIndex;
