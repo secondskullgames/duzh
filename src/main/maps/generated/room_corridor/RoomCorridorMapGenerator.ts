@@ -36,9 +36,9 @@ class RoomCorridorMapGenerator extends AbstractMapGenerator {
   }
 
   /**
-   * @override {@link AbstractMapGenerator#generateTiles}
+   * @override {@link AbstractMapGenerator#generateEmptyMap}
    */
-  protected generateTiles = (width: number, height: number): EmptyMap => {
+  protected generateEmptyMap = (width: number, height: number): EmptyMap => {
     // 1. Recursively subdivide the map into regions.
     //    Each region must fall within the max dimensions.
     // 2. Add rooms within regions, with appropriate padding.

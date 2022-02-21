@@ -58,22 +58,22 @@ abstract class AbstractMapGenerator {
     });
   };
 
-  protected abstract generateTiles(width: number, height: number): EmptyMap;
+  protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
 
   private _generateEmptyMap = (width: number, height: number, level: number): EmptyMap => {
     const iterations = 100;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       const t1 = new Date().getTime();
-      const map = this.generateTiles(width, height);
+      const map = this.generateEmptyMap(width, height);
       const isValid = this._validateTiles(map);
       const t2 = new Date().getTime();
       console.debug(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
       if (isValid) {
         return map;
       } else {
-        //console.error(`Generated invalid tiles for level ${level}, regenerating`);
-        console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
-        return map;
+        console.error(`Generated invalid tiles for level ${level}, regenerating`);
+        //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
+        //return map;
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);
