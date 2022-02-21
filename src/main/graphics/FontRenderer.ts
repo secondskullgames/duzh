@@ -68,8 +68,10 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
     return _loadedFonts[definition.name];
   }
 
+  const t1 = new Date().getTime();
   const width = NUM_CHARACTERS * definition.width;
-  const imageData = await ImageLoader.loadImage(`fonts/${definition.src}`);
+  const imageData = await ImageLoader.loadImage(`fonts/${definition.src}`)
+    .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
   const imageBitmap = await createImageBitmap(imageData);
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   canvas.width = width;
@@ -94,14 +96,15 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
         imageMap
       };
       _loadedFonts[definition.name] = fontInstance;
+      const t2 = new Date().getTime();
+      console.log(`Loaded font ${definition.name} in ${t2 - t1} ms`);
       return fontInstance;
     });
 };
 
 const _getCharacterData = async (definition: FontDefinition, context: CanvasRenderingContext2D, char: number) => {
   const offset = _getCharOffset(char);
-  const imageData = context.getImageData(offset * definition.width, 0, definition.width, definition.height);
-  return applyTransparentColor(imageData, Colors.WHITE);
+  return context.getImageData(offset * definition.width, 0, definition.width, definition.height);
 };
 
 const _getCharOffset = (char: number) => {

@@ -37,11 +37,15 @@ abstract class BufferedRenderer {
   }
 
   render = async (): Promise<ImageBitmap> => {
-    const { width, height } = this;
+    const t1 = new Date().getTime();
+    const { width, height, id } = this;
     await this.renderBuffer();
-    const imageBitmap = await createImageBitmap(this.bufferContext.getImageData(0, 0, width, height));
-    await this.context.drawImage(imageBitmap, 0, 0);
-    return createImageBitmap(this.context.getImageData(0, 0, width, height));
+    const bufferBitmap = await createImageBitmap(this.bufferContext.getImageData(0, 0, width, height));
+    await this.context.drawImage(bufferBitmap, 0, 0);
+    const imageBitmap = await createImageBitmap(this.context.getImageData(0, 0, width, height));
+    const t2 = new Date().getTime();
+    console.log(`${id} rendered in ${t2 - t1} ms`);
+    return imageBitmap;
   };
 
   abstract renderBuffer(): Promise<void>;
