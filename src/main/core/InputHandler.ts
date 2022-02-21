@@ -81,8 +81,6 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
       return { key: 'NONE', modifiers };
   }
 
-  console.log(e);
-
   return null;
 };
 

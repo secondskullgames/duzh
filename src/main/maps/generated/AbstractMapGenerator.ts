@@ -67,7 +67,7 @@ abstract class AbstractMapGenerator {
       const map = this.generateTiles(width, height);
       const isValid = this._validateTiles(map);
       const t2 = new Date().getTime();
-      console.log(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
+      console.debug(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
       if (isValid) {
         return map;
       } else {

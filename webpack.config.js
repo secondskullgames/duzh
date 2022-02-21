@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   entry: './src/main/index.ts',
   devtool: 'source-map',
-  mode: 'development',
+  mode: 'production',
   module: {
     rules: [
       {
@@ -34,5 +34,15 @@ module.exports = {
   },
   stats: {
     errorDetails: true
-  }
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'build'),
+    },
+    compress: true,
+    port: 3000,
+    client: {
+      logging: 'none'
+    }
+  },
 };

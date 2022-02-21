@@ -48,7 +48,7 @@ class MapPruner {
       subtract(emptyRegionConnections, orphanedEmptyRegionConnections);
 
       const removedAnyConnections = (orphanedConnections.length > 0 || orphanedEmptyRegionConnections.length > 0);
-      console.log(`stripping: ${orphanedConnections.length}, ${orphanedEmptyRegionConnections.length}`);
+      console.debug(`stripping: ${orphanedConnections.length}, ${orphanedEmptyRegionConnections.length}`);
       if (!removedAnyConnections) {
         return;
       }
