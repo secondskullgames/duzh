@@ -2,7 +2,7 @@ import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import EmptyMap from './EmptyMap';
-import { comparing } from '../../utils/arrays';
+import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import AbstractMapGenerator from './AbstractMapGenerator';
@@ -127,7 +127,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     for (let n = 2; n <= m; n++) {
       if (y >= n) {
         if (
-          this._range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === 'NONE')
+          range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === 'NONE')
           && (tiles[y - n][x] === 'FLOOR')
         ) {
           return false;
@@ -136,7 +136,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
       // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
       if (y <= (height - 1 - n)) {
         if (
-          this._range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
+          range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE')
           && (tiles[y + n][x] === 'FLOOR')
         ) {
           return false;
@@ -201,17 +201,6 @@ class BlobMapGenerator extends AbstractMapGenerator {
         }
       }
     }
-  };
-
-  /**
-   * @param end inclusive
-   */
-  private _range = (start: number, end: number): number[] => {
-    const range = [];
-    for (let i = start; i <= end; i++) {
-      range.push(i);
-    }
-    return range;
   };
 
   /**

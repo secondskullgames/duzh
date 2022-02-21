@@ -28,7 +28,7 @@ class MapInstance {
   items: MapItem[];
   doors: Door[];
   projectiles: Entity[];
-  revealedTiles: Coordinates[];
+  private readonly revealedTiles: Coordinates[];
 
   constructor({
     width,
@@ -109,6 +109,15 @@ class MapInstance {
     width: this.width,
     height: this.height
   });
+
+  isTileRevealed = ({ x, y }: Coordinates): boolean =>
+    this.revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
+
+  revealTile = ({ x, y }: Coordinates) => {
+    if (!this.revealedTiles.find(it => Coordinates.equals(it, { x, y }))) {
+      this.revealedTiles.push({ x, y });
+    }
+  };
 }
 
-export default MapInstance
+export default MapInstance;
