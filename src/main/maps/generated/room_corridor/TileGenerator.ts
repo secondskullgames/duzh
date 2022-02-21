@@ -1,4 +1,4 @@
-import EmptyRegionConnection from '../  EmptyRegionConnection';
+import EmptyRegionConnection from './  EmptyRegionConnection';
 import Coordinates from '../../../geometry/Coordinates';
 import TileType from '../../../tiles/TileType';
 import { Offsets } from '../../../types/types';

@@ -1,4 +1,4 @@
-import RoomRegion from './room_corridor/RoomRegion';
+import RoomRegion from './RoomRegion';
 
 type EmptyRegionConnection = {
   roomRegion: RoomRegion,

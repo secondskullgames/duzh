@@ -1,4 +1,4 @@
-import EmptyRegionConnection from '../  EmptyRegionConnection';
+import EmptyRegionConnection from './  EmptyRegionConnection';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice, randInt, shuffle } from '../../../utils/random';
 import { areAdjacent } from '../../MapUtils';

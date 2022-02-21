@@ -1,4 +1,4 @@
-import EmptyRegionConnection from '../  EmptyRegionConnection';
+import EmptyRegionConnection from './  EmptyRegionConnection';
 import { replace, subtract } from '../../../utils/arrays';
 import { checkState } from '../../../utils/preconditions';
 import { randInt, shuffle } from '../../../utils/random';
