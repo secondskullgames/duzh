@@ -71,7 +71,9 @@ abstract class AbstractMapGenerator {
       if (isValid) {
         return map;
       } else {
-        console.error(`Generated invalid tiles for level ${level}, regenerating`);
+        //console.error(`Generated invalid tiles for level ${level}, regenerating`);
+        console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
+        return map;
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);
@@ -132,6 +134,7 @@ abstract class AbstractMapGenerator {
       for (let j = i + 1; j < rooms.length; j++) {
         const path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
         if (path.length === 0) {
+          console.warn('Invalid map: inaccessible room');
           return false;
         }
       }
@@ -152,6 +155,7 @@ abstract class AbstractMapGenerator {
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
+            console.warn('Invalid map: can\'t place a wall at the top of the map');
             return false;
           }
           const oneUp = map.tiles[y - 1][x];
@@ -161,7 +165,7 @@ abstract class AbstractMapGenerator {
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== 'WALL_TOP') {
-              // can't show a wall without a tile for its top
+              console.warn('can\'t show a wall without a tile for its top');
               return false;
             }
           }

@@ -56,9 +56,7 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     let section: Section = new Section({ rect });
     section = this._splitRecursively(section);
     section = this._connectRecursively(section);
-
     const tiles: TileType[][] = this._getFloorTiles(section);
-
     this._addWalls(tiles);
 
     return {
@@ -150,8 +148,7 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
 
   private _connectRecursively = (section: Section): Section => {
     // base case (checks here are a bit redundant)
-    if (section.firstSubsection === null || section.secondSubsection === null || section.splitDirection === null)
-    {
+    if (section.firstSubsection === null || section.secondSubsection === null || section.splitDirection === null) {
       return section;
     }
 
@@ -206,12 +203,12 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     const roomToExit = new Map<Rect, Coordinates>();
 
     for (const room of leftRoomsToConnect) {
-      const exitY = randInt(room.top + 1, room.top + room.height - 2); // TODO this was bottom()
-      roomToExit.set(room, { x: room.left + room.width - 1, y: exitY }); // TODO this was right()
+      const exitY = randInt(room.top + 1, room.top + room.height - 2);
+      roomToExit.set(room, { x: room.left + room.width - 1, y: exitY });
     }
 
     for (const room of rightRoomsToConnect) {
-      const exitY = randInt(room.top + 1, room.top + room.height - 2); // TODO this was bottom()
+      const exitY = randInt(room.top + 1, room.top + room.height - 2);
       roomToExit.set(room, { x: room.left, y: exitY });
     }
 
@@ -305,13 +302,13 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     for (const room of topRoomsToConnect) {
       const exit = checkNotNull(roomToExit.get(room));
       let { x, y } = { x: exit.x, y: exit.y + 1 };
-      while (x < splitPoint) {
+      while (y < splitPoint) {
         connectedCoordinates.push({ x, y });
         y++;
       }
 
       const dx = Math.sign(midX - x);
-      while (y !== midX) {
+      while (x !== midX) {
         connectedCoordinates.push({ x, y });
         x += dx;
       }
@@ -321,13 +318,13 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     for (const room of bottomRoomsToConnect) {
       const exit = checkNotNull(roomToExit.get(room));
       let { x, y } = { x: exit.x, y: exit.y - 1 };
-      while (x > splitPoint) {
+      while (y > splitPoint) {
         connectedCoordinates.push({ x, y });
         y--;
       }
 
       const dx = Math.sign(midX - x);
-      while (y !== midX) {
+      while (x !== midX) {
         connectedCoordinates.push({ x, y });
         x += dx;
       }
@@ -361,7 +358,7 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
         }
       }
 
-      if (s.connection != null) {
+      if (s.connection !== null) {
         for (const { x, y } of s.connection.connectedCoordinates) {
           tiles[y][x] = 'FLOOR_HALL';
         }
@@ -371,7 +368,6 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
   };
 
   private _addWalls = (tiles: TileType[][]) => {
-    const wallCoordinates: Coordinates[] = [];
     const height = tiles.length;
     const width = tiles[0].length;
     for (let y = 0; y < height; y++) {
@@ -380,27 +376,19 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
         switch (tileType) {
           case 'FLOOR':
           case 'FLOOR_HALL':
-            if (y > 0) {
-              const upOneTile = tiles[y - 1][x];
-              if (upOneTile === 'NONE') {
-                tiles[y][x] = (tileType === 'FLOOR_HALL') ? 'WALL_HALL' : 'WALL';
+            if (y >= 1) {
+              if (tiles[y - 1][x] === 'NONE') {
+                tiles[y - 1][x] = (tileType === 'FLOOR_HALL') ? 'WALL_HALL' : 'WALL';
+              }
+              if (y >= 2) {
+                if (tiles[y - 2][x] === 'NONE') {
+                  tiles[y - 2][x] = 'WALL_TOP';
+                }
               }
             }
         }
       }
     }
-  };
-
-  private _getAllPairs = <T> (list: T[]): [T, T][] => {
-    const pairs: [T, T][] = [];
-    for (let i = 0; i < list.length; i++) {
-      const first = list[i];
-      for (let j = i + 1; j < list.length; j++) {
-        const second = list[j];
-        pairs.push([first, second]);
-      }
-    }
-    return pairs;
   };
 }
 

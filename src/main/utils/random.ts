@@ -56,7 +56,7 @@ const sample = <T> (list: T[], count?: number): T[] => {
   const shuffled = [...list];
   shuffle(shuffled);
   if (count === undefined) {
-    count = randInt(0, list.length - 1);
+    count = randInt(1, list.length - 1);
   }
   return head(shuffled, count);
 };
