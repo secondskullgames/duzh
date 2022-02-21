@@ -25,7 +25,6 @@ class GameState {
   private _turn: number;
   private _queuedAbility: UnitAbility | null;
   private _map: MapInstance | null;
-  private _isInitialized: boolean;
 
   constructor({ playerUnit, maps }: Props) {
     this.screen = 'TITLE';
@@ -36,7 +35,6 @@ class GameState {
     this._messages = new Messages();
     this._turn = 1;
     this._queuedAbility = null;
-    this._isInitialized = false;
   }
 
   getScreen = (): GameScreen => this.screen;

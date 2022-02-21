@@ -1,5 +1,4 @@
 import { checkState } from './preconditions';
-import { toRecord } from './records';
 
 type KeyFunction<T> = (t: T) => number;
 

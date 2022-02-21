@@ -1,7 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import TileType from '../tiles/TileType';
 
 /*
  * Note: The types defined in this file are mostly very general and/or legacy types that don't fit neatly into

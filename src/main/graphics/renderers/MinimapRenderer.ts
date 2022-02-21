@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import { isTileRevealed } from '../../maps/MapUtils';
-import Color, { Colors } from '../../types/Color';
+import { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import BufferedRenderer from './BufferedRenderer';

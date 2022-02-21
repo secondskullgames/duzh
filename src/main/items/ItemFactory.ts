@@ -9,7 +9,6 @@ import { randChoice } from '../utils/random';
 import Equipment from '../equipment/Equipment';
 import EquipmentModel from '../equipment/EquipmentModel';
 import InventoryItem from './InventoryItem';
-import ItemCategory from './ItemCategory';
 import ItemModel from './ItemModel';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';

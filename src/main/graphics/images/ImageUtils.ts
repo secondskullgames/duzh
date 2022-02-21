@@ -22,6 +22,7 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: str
 };
 
 const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Promise<ImageData> => {
+
   if (!colorMap) {
     return imageData;
   }
