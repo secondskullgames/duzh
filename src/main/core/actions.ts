@@ -10,10 +10,12 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import TileSet from '../tiles/TileSet';
 import UnitFactory from '../units/UnitFactory';
+import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
 
 let renderer: GameRenderer;
+let firstMapPromise: Promise<MapInstance> | null = null;
 
 const loadNextMap = async () => {
   const state = GameState.getInstance();
@@ -27,30 +29,44 @@ const loadNextMap = async () => {
   }
 };
 
-const _loadMap = async (map: MapSpec): Promise<MapInstance> => {
+const preloadFirstMap = async () => {
+  const state = GameState.getInstance();
+  const mapSpec = state.getNextMap();
+  firstMapPromise = _loadMap(mapSpec);
+};
+
+const _loadMap = (map: MapSpec): Promise<MapInstance> => {
   switch (map.type) {
     case 'generated': {
-      const mapModel = await GeneratedMapModel.load(map.id);
-      const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
-      return mapBuilder.build();
+      return (async () => {
+        const mapModel = await GeneratedMapModel.load(map.id);
+        const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
+        return mapBuilder.build();
+      })();
     }
     case 'predefined': {
-      const mapModel = await PredefinedMapModel.load(map.id);
-      return  MapFactory.loadPredefinedMap(mapModel);
+      return (async () => {
+        const mapModel = await PredefinedMapModel.load(map.id);
+        return MapFactory.loadPredefinedMap(mapModel);
+      })();
     }
   }
 };
 
 const initialize = async () => {
+  const t1 = new Date().getTime();
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
   container.appendChild(renderer.getCanvas());
   await _initState();
+  await render();
+  const t2 = new Date().getTime();
+  preloadFirstMap();
+  TileSet.preload();
   attachEvents();
+  console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  await render();
-  await TileSet.preload();
 };
 
 const render = async () => renderer.render();
@@ -72,11 +88,15 @@ const _initState = async () => {
 };
 
 const startGame = async () => {
-  await loadNextMap();
+  const t1 = new Date().getTime();
+  const firstMap = await checkNotNull(firstMapPromise);
+  GameState.getInstance().setMap(firstMap);
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   await render();
+  const t2 = new Date().getTime();
+  console.debug(`Loaded level in ${t2 - t1} ms`);
 };
 
 const startGameDebug = async () => {

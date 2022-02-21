@@ -58,6 +58,7 @@ class Pathfinder {
    * @param tiles All allowable unblocked tiles
    */
   findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
+    const t1 = new Date().getTime();
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
@@ -76,7 +77,10 @@ class Pathfinder {
       const bestNode = nodeCosts[0].node;
       if (Coordinates.equals(bestNode, goal)) {
         // Done!
-        return traverseParents(bestNode);
+        const path = traverseParents(bestNode);
+        const t2 = new Date().getTime();
+        console.debug(`Found path in ${t2 - t1} ms`);
+        return path;
       } else {
         const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);

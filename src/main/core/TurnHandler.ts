@@ -1,5 +1,5 @@
 import Unit from '../units/Unit';
-import { clear as clearArray, sortBy } from '../utils/arrays';
+import { sortBy } from '../utils/arrays';
 import { render } from './actions';
 import GameState from './GameState';
 

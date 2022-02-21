@@ -1,10 +1,5 @@
-import Coordinates from '../../../geometry/Coordinates';
 import TileSet from '../../../tiles/TileSet';
 import TileType from '../../../tiles/TileType';
-import { Offsets } from '../../../types/types';
-import { replace, subtract } from '../../../utils/arrays';
-import { checkState } from '../../../utils/preconditions';
-import { randInt, shuffle } from '../../../utils/random';
 import EmptyRegionConnection from '../  EmptyRegionConnection';
 import Connection from './Connection';
 import AbstractMapGenerator from '../AbstractMapGenerator';
@@ -13,7 +8,6 @@ import MapPruner from './MapPruner';
 import RegionConnector from './RegionConnector';
 import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
-import SplitDirection from './SplitDirection';
 import TileGenerator from './TileGenerator';
 
 type Props = {
