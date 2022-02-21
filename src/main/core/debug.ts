@@ -14,14 +14,13 @@ const revealMap = async () => {
 const killEnemies = async () => {
   const state = GameState.getInstance();
   const map = state.getMap();
-  const { playerUnit } = state;
+  const playerUnit = state.getPlayerUnit();
   map.units = map.units.filter(u => u === playerUnit);
   await render();
 };
 
 const killPlayer = async () => {
-  const state = GameState.getInstance();
-  const { playerUnit } = state;
+  const playerUnit = GameState.getInstance().getPlayerUnit();
   await playerUnit.takeDamage(playerUnit.life);
   await render();
 };

@@ -1,3 +1,6 @@
+import { checkState } from './preconditions';
+import { toRecord } from './records';
+
 type KeyFunction<T> = (t: T) => number;
 
 const sortBy = <T>(list: T[], keyFunction: KeyFunction<T>) =>
@@ -15,6 +18,19 @@ const comparingReversed = <T>(keyFunction: KeyFunction<T>) =>
 const average = (list: number[]) => {
   const sum = list.reduce((a, b) => a + b);
   return sum / list.length;
+};
+
+const min = (list: number[]): number => Math.min(...list);
+const max = (list: number[]): number => Math.max(...list);
+
+const minBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+  checkState(list.length > 0);
+  return sortBy(list, keyFunction)[0];
+};
+
+const maxBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+  checkState(list.length > 0);
+  return sortBy(list, keyFunction)[list.length - 1];
 };
 
 const replace = <T>(array: T[], contents: T[]) => {
@@ -47,6 +63,10 @@ export {
   comparing,
   comparingReversed,
   head,
+  max,
+  maxBy,
+  min,
+  minBy,
   range,
   replace,
   sortBy,

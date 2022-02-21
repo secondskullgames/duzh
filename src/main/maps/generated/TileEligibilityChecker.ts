@@ -1,9 +1,9 @@
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import TileType from '../../tiles/TileType';
-import { MapSection } from '../../types/types';
+import EmptyMap from './EmptyMap';
 
 class TileEligibilityChecker {
-  isBlocked = ({ x, y }: Coordinates, section: MapSection, exits: Coordinates[]): boolean => {
+  isBlocked = ({ x, y }: Coordinates, section: EmptyMap, exits: Coordinates[]): boolean => {
     // can't draw a path through an existing room or a wall
     const blockedTileTypes: TileType[] = ['FLOOR', /*'FLOOR_HALL',*/ 'WALL', 'WALL_HALL', 'WALL_TOP'];
 

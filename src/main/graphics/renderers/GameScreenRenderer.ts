@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import { isTileRevealed } from '../../maps/MapUtils';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Entity } from '../../types/types';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
@@ -57,7 +57,7 @@ class GameScreenRenderer extends BufferedRenderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Coordinates => {
-    const { playerUnit } = GameState.getInstance();
+     const playerUnit = GameState.getInstance().getPlayerUnit();
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
       y: ((y - playerUnit.y) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2
@@ -145,7 +145,7 @@ class GameScreenRenderer extends BufferedRenderer {
 
   private _renderUnits = async () => {
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     const promises: Promise<any>[] = [];
 
@@ -164,7 +164,7 @@ class GameScreenRenderer extends BufferedRenderer {
             promises.push(new Promise<void>(async (resolve) => {
               await this._drawEllipse({ x, y }, shadowColor);
               await this._renderElement(unit, { x, y });
-              for (const item of unit.equipment.getValues()) {
+              for (const item of unit.getEquipment().getAll()) {
                 await this._renderElement(item, { x, y });
               }
               resolve();

@@ -1,53 +1,17 @@
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { MapSection, Offsets, Rect } from '../../types/types';
+import { Offsets, Rect } from '../../types/types';
 import { replace, subtract } from '../../utils/arrays';
+import { checkState } from '../../utils/preconditions';
 import { randChoice, randInt, shuffle } from '../../utils/random';
 import { areAdjacent } from '../MapUtils';
-import DungeonGenerator from './DungeonGenerator';
-
-type Direction = 'HORIZONTAL' | 'VERTICAL';
-
-type Section = {
-  // these are in absolute coordinates
-  rect: Rect,
-  roomRect: Rect | null
-};
-
-namespace Section {
-  export const toString = ({ rect: { left, top, width, height } }: Section) => `(${left}, ${top}, ${width}, ${height})`;
-}
-
-type Connection = {
-  start: Section,
-  end: Section,
-  startCoordinates: Coordinates,
-  endCoordinates: Coordinates,
-  middleCoordinates: Coordinates,
-  direction: Direction
-};
-
-namespace Connection {
-  export const toString = ({ startCoordinates, endCoordinates }: Connection) =>
-    `[(${startCoordinates.x}, ${startCoordinates.y})-(${endCoordinates.x}, ${endCoordinates.y})]`;
-
-  export const matches = (connection: Connection, first: Section, second: Section) => {
-    // ref. equality should be fine
-    if (connection.start === first && connection.end === second) {
-      return true;
-    } else if (connection.start === second && connection.end === first) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-}
-
-type InternalConnection = {
-  section: Section,
-  neighbors: Section[]
-}
+import EmptyRegionConnection from './  EmptyRegionConnection';
+import Connection from './Connection';
+import AbstractMapGenerator from './AbstractMapGenerator';
+import EmptyMap from './EmptyMap';
+import RoomRegion from './RoomRegion';
+import SplitDirection from './SplitDirection';
 
 type Props = {
   tileSet: TileSet,
@@ -59,7 +23,7 @@ const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 const MIN_ROOM_FRACTION = 0.4;
 const MAX_ROOM_FRACTION = 0.8;
 
-class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
+class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   /**
    * inner width, not including wall
    */
@@ -75,41 +39,42 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     this.maxRoomDimension = maxRoomDimension;
   }
 
-  protected generateTiles = (width: number, height: number): MapSection => {
-    // 1. Recursively subdivide the map into sections.
-    //    Each section must fall within the max dimensions.
-    // 2. Add rooms within sections, with appropriate padding.
-    //    (Don't add a room for every section; approximately half.  Rules TBD.)
-    const sections : Section[] = this._generateSections(0, 0, width, height);
-    this._removeRooms(sections);
+  /**
+   * @override {@link AbstractMapGenerator#generateTiles}
+   */
+  protected generateTiles = (width: number, height: number): EmptyMap => {
+    // 1. Recursively subdivide the map into regions.
+    //    Each region must fall within the max dimensions.
+    // 2. Add rooms within regions, with appropriate padding.
+    //    (Don't add a room for every region; approximately half.  Rules TBD.)
+    const regions : RoomRegion[] = this._generateRegions(0, 0, width, height);
+    this._removeRooms(regions);
 
-    // 3. Construct a minimal spanning tree between sections (including those without rooms).
-    const minimalSpanningTree: Connection[] = this._generateMinimalSpanningTree(sections);
-    // 4.  Add all optional connections between sections.
-    const optionalConnections: Connection[] = this._generateOptionalConnections(sections, minimalSpanningTree);
-    // 5. Add "red-red" connections in empty rooms.
-    // 6. Add "red-green" connections in empty rooms only if:
-    //    - both edges connect to a room
-    //    - there is no red-red connection in the section
-    const internalConnections: InternalConnection[] = this._addInternalConnections(sections, minimalSpanningTree, optionalConnections);
+    // 3. Construct a minimal spanning tree between regions (including those without rooms).
+    const minimalSpanningTree: Connection[] = this._generateMinimalSpanningTree(regions);
+    // 4.  Add all optional connections between regions.
+    const optionalConnections: Connection[] = this._generateOptionalConnections(regions, minimalSpanningTree);
+    // 5. Add "red-red" connections in empty regions.
+    // 6. Add "red-green" connections in empty regions only if:
+    //    - both edges connect to a region with a room
+    //    - there is no "red-red" connection in the region
+    const internalConnections: EmptyRegionConnection[] = this._addEmptyRegionConnections(regions, minimalSpanningTree, optionalConnections);
 
     const externalConnections = [...minimalSpanningTree, ...optionalConnections];
     this._stripOrphanedConnections(externalConnections, internalConnections);
 
-    // TODO
     const debugOutput = `
-      Sections: ${sections.map(Section.toString).join('; ')}
+      Room regions: ${regions.map(RoomRegion.toString).join('; ')}
       MST: ${minimalSpanningTree.map(Connection.toString).join('; ')}
       opt: ${optionalConnections.map(Connection.toString).join('; ')}
       external: ${externalConnections.map(Connection.toString).join('; ')}
-      Internal: ${internalConnections.map(connection => `${Section.toString(connection.section)}, ${connection.neighbors.length}`).join('; ')}
+      Internal: ${internalConnections.map(connection => `${RoomRegion.toString(connection.roomRegion)}, ${connection.neighbors.length}`).join('; ')}
     `;
 
-    console.log(debugOutput);
-    // END TODO
+    console.debug(debugOutput);
 
-    // Compute the actual tiles based on section/connection specifications.
-    const tiles: TileType[][] = this._generateTiles(width, height, sections, externalConnections, internalConnections);
+    // Compute the actual tiles based on region/connection specifications.
+    const tiles: TileType[][] = this._generateTiles(width, height, regions, externalConnections, internalConnections);
 
     // 7. Add walls.
     this._addWalls(tiles);
@@ -124,28 +89,28 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
   /**
    * Generate a rectangular area of tiles with the specified dimensions, consisting of any number of rooms connected
-   * by corridors.  To do so, split the area into two sub-areas and call this method recursively.  If this area is
-   * not large enough to form two sub-regions, just return a single section.
+   * by corridors.  To do so, split the area into two sub-regions and call this method recursively.  If this area is
+   * not large enough to form two sub-regions, just return a single region.
    */
-  private _generateSections = (left: number, top: number, width: number, height: number): Section[] => {
+  private _generateRegions = (left: number, top: number, width: number, height: number): RoomRegion[] => {
     const splitDirection = this._getSplitDirection(width, height);
     switch (splitDirection) {
       case 'HORIZONTAL':
         const splitX = this._getSplitPoint(left, width, splitDirection);
         const leftWidth = splitX - left;
-        const leftSections = this._generateSections(left, top, leftWidth, height);
+        const leftRegions = this._generateRegions(left, top, leftWidth, height);
         const rightWidth = width - leftWidth;
-        const rightSections = this._generateSections(splitX, top, rightWidth, height);
-        return [...leftSections, ...rightSections];
+        const rightRegions = this._generateRegions(splitX, top, rightWidth, height);
+        return [...leftRegions, ...rightRegions];
       case 'VERTICAL':
         const splitY = this._getSplitPoint(top, height, splitDirection);
         const topHeight = splitY - top;
         const bottomHeight = height - topHeight;
-        const topSections = this._generateSections(left, top, width, topHeight);
-        const bottomSections = this._generateSections(left, splitY, width, bottomHeight);
-        return [...topSections, ...bottomSections];
+        const topRegions = this._generateRegions(left, top, width, topHeight);
+        const bottomRegions = this._generateRegions(left, splitY, width, bottomHeight);
+        return [...topRegions, ...bottomRegions];
       default:
-        // base case: generate single section
+        // base case: generate single region
         const rect: Rect = {
           left,
           top,
@@ -168,8 +133,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
   };
 
-  private _getSplitDirection = (width: number, height: number): Direction | null => {
-    // First, make sure the area is large enough to support two sections; if not, we're done
+  private _getSplitDirection = (width: number, height: number): SplitDirection | null => {
+    // First, make sure the area is large enough to support two regions; if not, we're done
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
     const canSplitHorizontally = (width >= (2 * minWidth));
@@ -189,50 +154,45 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * @param dimension width or height
    * @returns the min X/Y coordinate of the *second* room
    */
-  private _getSplitPoint = (start: number, dimension: number, direction: Direction): number => {
+  private _getSplitPoint = (start: number, dimension: number, direction: SplitDirection): number => {
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
-    const minSectionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
-    const minSplitPoint = start + minSectionDimension;
-    const maxSplitPoint = start + dimension - minSectionDimension;
+    const minRegionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
+    const minSplitPoint = start + minRegionDimension;
+    const maxSplitPoint = start + dimension - minRegionDimension;
     return randInt(minSplitPoint, maxSplitPoint);
   };
 
-  private _removeRooms = (sections: Section[]) => {
-    const minRooms = Math.max(3, Math.round(sections.length * MIN_ROOM_FRACTION));
-    const maxRooms = Math.max(minRooms, sections.length * MAX_ROOM_FRACTION);
-    if (sections.length < minRooms) {
-      throw new Error('Not enough sections');
-    }
+  private _removeRooms = (regions: RoomRegion[]) => {
+    const minRooms = Math.max(3, Math.round(regions.length * MIN_ROOM_FRACTION));
+    const maxRooms = Math.max(minRooms, regions.length * MAX_ROOM_FRACTION);
+    checkState(regions.length >= minRooms, 'Not enough regions');
 
     const numRooms = randInt(minRooms, maxRooms);
 
-    const shuffledSections = [...sections];
-    shuffle(shuffledSections);
-    for (let i = numRooms; i < shuffledSections.length; i++) {
-      shuffledSections[i].roomRect = null;
+    const shuffledRegions = [...regions];
+    shuffle(shuffledRegions);
+    for (let i = numRooms; i < shuffledRegions.length; i++) {
+      shuffledRegions[i].roomRect = null;
     }
   };
 
-  private _generateMinimalSpanningTree = (sections: Section[]): Connection[] => {
-    const connectedSection = randChoice(sections);
-    const connectedSections = [connectedSection];
-    const unconnectedSections = sections.filter(section => section !== connectedSection);
-    shuffle(unconnectedSections);
+  private _generateMinimalSpanningTree = (regions: RoomRegion[]): Connection[] => {
+    const connectedRegions = [randChoice(regions)];
+    const unconnectedRegions = regions.filter(region => !connectedRegions.includes(region));
+    shuffle(unconnectedRegions);
 
     const connections : Connection[] = [];
-    while (unconnectedSections.length > 0) {
-      shuffle(connectedSections);
+    while (unconnectedRegions.length > 0) {
+      shuffle(connectedRegions);
       let connectedAny = false;
-      for (let i = 0; i < connectedSections.length; i++) {
-        const connectedSection = connectedSections[i];
-
-        for (let j = 0; j < unconnectedSections.length; j++) {
-          const unconnectedSection = unconnectedSections[j];
-          if (this._canConnect(connectedSection, unconnectedSection)) {
-            unconnectedSections.splice(j, 1);
-            connectedSections.push(unconnectedSection);
-            connections.push(this._buildConnection(connectedSection, unconnectedSection));
+      for (const connectedRegion of connectedRegions) {
+        for (let j = 0; j < unconnectedRegions.length; j++) {
+          const unconnectedRegion = unconnectedRegions[j];
+          if (this._canConnect(connectedRegion, unconnectedRegion)) {
+            unconnectedRegions.splice(j, 1);
+            connectedRegions.push(unconnectedRegion);
+            connections.push(this._buildConnection(connectedRegion, unconnectedRegion));
             connectedAny = true;
             break;
           }
@@ -241,9 +201,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
 
       if (!connectedAny) {
         console.log('connected:');
-        connectedSections.forEach(x => console.log(x));
+        connectedRegions.forEach(x => console.log(x));
         console.log('unconnected:');
-        unconnectedSections.forEach(x => console.log(x));
+        unconnectedRegions.forEach(x => console.log(x));
         throw new Error('Failed to generate minimal spanning tree');
       }
     }
@@ -251,12 +211,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     return connections;
   };
 
-  private _generateOptionalConnections = (sections: Section[], spanningConnections: Connection[]): Connection[] => {
+  private _generateOptionalConnections = (regions: RoomRegion[], spanningConnections: Connection[]): Connection[] => {
     const optionalConnections: Connection[] = [];
-    for (let i = 0; i < sections.length; i++) {
-      const first = sections[i];
-      for (let j = i + 1; j < sections.length; j++) {
-        const second = sections[j];
+    for (const first of regions) {
+      for (const second of regions) {
         if (this._canConnect(first, second)) {
           if (!spanningConnections.some(connection => Connection.matches(connection, first, second))) {
             optionalConnections.push(this._buildConnection(first, second));
@@ -268,32 +226,33 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     return optionalConnections;
   };
 
-  private _addInternalConnections = (
-    sections: Section[],
+  private _addEmptyRegionConnections = (
+    roomRegions: RoomRegion[],
     spanningConnections: Connection[],
     optionalConnections: Connection[]
-  ): InternalConnection[] => {
-    const internalConnections: InternalConnection[] = [];
-    for (const section of sections) {
-      if (!section.roomRect) {
-        const connectedSections: Section[] = [];
-        const neighbors = sections.filter(s => s !== section).filter(s => this._canConnect(section, s));
+  ): EmptyRegionConnection[] => {
+    const internalConnections: EmptyRegionConnection[] = [];
+    for (const roomRegion of roomRegions) {
+      if (!roomRegion.roomRect) {
+        const connectedRegions: RoomRegion[] = [];
+        const neighbors = roomRegions.filter(s => s !== roomRegion)
+          .filter(s => this._canConnect(roomRegion, s));
         for (const neighbor of neighbors) {
-          if (spanningConnections.some(connection => Connection.matches(connection, section, neighbor))) {
-            connectedSections.push(neighbor);
+          if (spanningConnections.some(connection => Connection.matches(connection, roomRegion, neighbor))) {
+            connectedRegions.push(neighbor);
           }
         }
-        if (connectedSections.length === 1) {
+        if (connectedRegions.length === 1) {
           shuffle(neighbors);
           for (const neighbor of neighbors) {
-            if (optionalConnections.some(connection => Connection.matches(connection, section, neighbor))) {
-              connectedSections.push(neighbor);
+            if (optionalConnections.some(connection => Connection.matches(connection, roomRegion, neighbor))) {
+              connectedRegions.push(neighbor);
               break;
             }
           }
         }
-        if (connectedSections.length > 0) {
-          internalConnections.push({ section, neighbors: connectedSections });
+        if (connectedRegions.length > 0) {
+          internalConnections.push({ roomRegion, neighbors: connectedRegions });
         }
       }
     }
@@ -304,9 +263,9 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   private _generateTiles = (
     width: number,
     height: number,
-    sections: Section[],
+    regions: RoomRegion[],
     connections: Connection[],
-    internalConnections: InternalConnection[]
+    internalConnections: EmptyRegionConnection[]
   ): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
@@ -318,10 +277,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
 
     // add floor tiles for rooms
-    for (const section of sections) {
-      if (!!section.roomRect) {
-        for (let y = section.roomRect.top; y < section.roomRect.top + section.roomRect.height; y++) {
-          for (let x = section.roomRect.left; x < section.roomRect.left + section.roomRect.width; x++) {
+    for (const region of regions) {
+      if (region.roomRect) {
+        for (let y = region.roomRect.top; y < region.roomRect.top + region.roomRect.height; y++) {
+          for (let x = region.roomRect.left; x < region.roomRect.left + region.roomRect.width; x++) {
             tiles[y][x] = 'FLOOR';
           }
         }
@@ -364,10 +323,10 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
   };
 
-  private _canConnect = (first: Section, second: Section): boolean =>
+  private _canConnect = (first: RoomRegion, second: RoomRegion): boolean =>
     areAdjacent(first.rect, second.rect, 5);
 
-  private _buildConnection = (first: Section, second: Section): Connection => {
+  private _buildConnection = (first: RoomRegion, second: RoomRegion): Connection => {
     let connectionPoint : Coordinates; // on the starting edge of `second`
     let firstCoordinates: Coordinates;
     let secondCoordinates: Coordinates;
@@ -434,17 +393,17 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     };
   };
 
-  private _addTilesForInternalConnections = (tiles: TileType[][], internalConnections: InternalConnection[], connections: Connection[]) => {
+  private _addTilesForInternalConnections = (tiles: TileType[][], internalConnections: EmptyRegionConnection[], connections: Connection[]) => {
     for (const internalConnection of internalConnections) {
       const neighbors = [...internalConnection.neighbors];
       shuffle(neighbors);
       for (let i = 0; i < neighbors.length - 1; i++) {
         const firstNeighbor = internalConnection.neighbors[i];
         const secondNeighbor = internalConnection.neighbors[i + 1];
-        const firstConnection = connections.filter(c => Connection.matches(c, internalConnection.section, firstNeighbor))[0];
-        const secondConnection = connections.filter(c => Connection.matches(c, internalConnection.section, secondNeighbor))[0];
+        const firstConnection = connections.find(c => Connection.matches(c, internalConnection.roomRegion, firstNeighbor)) || null;
+        const secondConnection = connections.find(c => Connection.matches(c, internalConnection.roomRegion, secondNeighbor)) || null;
 
-        if (!firstConnection || !secondConnection) {
+        if (firstConnection === null || secondConnection === null) {
           console.error('Failed to find connection');
           console.log(connections.map(Connection.toString).join(', '));
           console.log(neighbors.join(' '));
@@ -491,7 +450,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     }
   };
 
-  private _joinParallelConnections = (tiles: TileType[][], internalConnection: InternalConnection, firstConnection: Connection, secondConnection: Connection) => {
+  private _joinParallelConnections = (tiles: TileType[][], internalConnection: EmptyRegionConnection, firstConnection: Connection, secondConnection: Connection) => {
     const start = firstConnection.middleCoordinates;
     const end = secondConnection.middleCoordinates;
     const middle = {
@@ -503,7 +462,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     const xDistance = end.x - start.x;
     const yDistance = end.y - start.y;
 
-    const majorDirection: Direction = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
+    const majorDirection: SplitDirection = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
     let { x, y } = start;
 
     switch (majorDirection) {
@@ -544,7 +503,7 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    *
    * @return a copy of `externalConnections` with the desired elements removed
    */
-  private _stripOrphanedConnections = (externalConnections: Connection[], internalConnections: InternalConnection[]) => {
+  private _stripOrphanedConnections = (externalConnections: Connection[], internalConnections: EmptyRegionConnection[]) => {
     let removedAnyConnections = false;
 
     do {
@@ -558,9 +517,8 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
         this._pruneInternalConnection(internalConnection, orphanedConnections);
       }
 
-      const orphanedInternalConnections = internalConnections.filter(internalConnection => {
-        return this._isOrphanedInternalConnection(internalConnection, internalConnections);
-      });
+      const orphanedInternalConnections = internalConnections.filter(internalConnection =>
+        this._isOrphanedInternalConnection(internalConnection, internalConnections));
       subtract(internalConnections, orphanedInternalConnections);
 
       removedAnyConnections = (orphanedConnections.length > 0 || orphanedInternalConnections.length > 0);
@@ -568,17 +526,17 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     } while (removedAnyConnections);
   };
 
-  private _isOrphanedConnection = (connection: Connection, internalConnections: InternalConnection[]) => {
+  private _isOrphanedConnection = (connection: Connection, internalConnections: EmptyRegionConnection[]) => {
     const { start, end } = connection;
     let startHasInternalConnection = false;
     let endHasInternalConnection = false;
 
     for (const internalConnection of internalConnections) {
-      const { section, neighbors } = internalConnection;
-      if (section === start && neighbors.indexOf(end) > -1) {
+      const { roomRegion, neighbors } = internalConnection;
+      if (roomRegion === start && neighbors.indexOf(end) > -1) {
         startHasInternalConnection = true;
       }
-      if (section === end && neighbors.indexOf(start) > -1) {
+      if (roomRegion === end && neighbors.indexOf(start) > -1) {
         endHasInternalConnection = true;
       }
     }
@@ -589,15 +547,15 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
     );
   };
 
-  private _pruneInternalConnection = (internalConnection: InternalConnection, orphanedConnections: Connection[]) => {
+  private _pruneInternalConnection = (internalConnection: EmptyRegionConnection, orphanedConnections: Connection[]) => {
     for (const connection of orphanedConnections) {
-      const { section, neighbors } = internalConnection;
+      const { roomRegion, neighbors } = internalConnection;
       const { start, end } = connection;
-      const updatedNeighbors: Section[] = neighbors.filter(neighbor => {
-        if (section === start && neighbor === end) {
+      const updatedNeighbors: RoomRegion[] = neighbors.filter(neighbor => {
+        if (roomRegion === start && neighbor === end) {
           return false;
         }
-        if (section === end && neighbor === start) {
+        if (roomRegion === end && neighbor === start) {
           return false;
         }
         return true;
@@ -610,12 +568,12 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
    * An internal connection is orphaned if at most one of its neighbors has either a room or another
    * internal connection
    */
-  private _isOrphanedInternalConnection = (internalConnection: InternalConnection, internalConnections: InternalConnection[]) => {
+  private _isOrphanedInternalConnection = (internalConnection: EmptyRegionConnection, internalConnections: EmptyRegionConnection[]) => {
     let connectedNeighbors = 0;
-    const { section, neighbors } = internalConnection;
+    const { roomRegion, neighbors } = internalConnection;
     for (const neighbor of neighbors) {
       const neighborHasInternalConnection = internalConnections.find(other =>
-        other.section === neighbor && other.neighbors.indexOf(section) > -1);
+        other.roomRegion === neighbor && other.neighbors.indexOf(roomRegion) > -1);
       if (!!neighbor.roomRect || neighborHasInternalConnection) {
         connectedNeighbors++;
       }
@@ -629,4 +587,4 @@ class RoomCorridorDungeonGenerator2 extends DungeonGenerator {
   });
 }
 
-export default RoomCorridorDungeonGenerator2;
+export default RoomCorridorMapGenerator2;

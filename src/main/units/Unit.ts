@@ -3,13 +3,14 @@ import GameState from '../core/GameState';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
-import InventoryMap from '../objects/items/InventoryMap';
+import InventoryMap from '../items/InventoryMap';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
-import { Entity, EquipmentSlot, Faction } from '../types/types';
+import Animatable from '../types/Animatable';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
+import { Entity, Faction } from '../types/types';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
@@ -29,13 +30,13 @@ type Props = {
   equipment: Equipment[]
 };
 
-class Unit implements Entity {
-  readonly unitClass: UnitClass;
+class Unit implements Entity, Animatable {
+  private readonly unitClass: UnitClass;
   readonly faction: Faction;
   readonly char = '@';
   readonly sprite: DynamicSprite<Unit>;
-  inventory: InventoryMap;
-  equipment: EquipmentMap;
+  private readonly inventory: InventoryMap;
+  private readonly equipment: EquipmentMap;
   x: number;
   y: number;
   name: string;
@@ -108,6 +109,10 @@ class Unit implements Entity {
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
+  getUnitClass = (): UnitClass => this.unitClass;
+  getInventory = (): InventoryMap => this.inventory;
+  getEquipment = (): EquipmentMap => this.equipment;
+
   update = async () => {
     await this._upkeep();
     if (this.stunDuration === 0) {
@@ -120,9 +125,9 @@ class Unit implements Entity {
   getDamage = (): number => {
     let damage = this.damage;
 
-    for (const [slot, item] of this.equipment.getEntries()) {
-      if (slot !== EquipmentSlot.RANGED_WEAPON) {
-        damage += (item.damage || 0);
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.slot !== 'RANGED_WEAPON') {
+        damage += (equipment.damage || 0);
       }
     }
 
@@ -132,16 +137,16 @@ class Unit implements Entity {
   getRangedDamage = (): number => {
     let damage = this.damage;
 
-    for (const [slot, item] of this.equipment.getEntries()) {
-      switch (slot) {
-        case EquipmentSlot.RANGED_WEAPON:
-          damage += (item.damage || 0);
+    for (const equipment of this.equipment.getAll()) {
+      switch (equipment.slot) {
+        case 'RANGED_WEAPON':
+          damage += (equipment.damage || 0);
           break;
-        case EquipmentSlot.MELEE_WEAPON:
+        case 'MELEE_WEAPON':
           // do nothing
           break;
         default:
-          damage += (item.damage || 0) / 2;
+          damage += (equipment.damage || 0) / 2;
       }
     }
 
@@ -185,7 +190,7 @@ class Unit implements Entity {
 
   takeDamage = async (damage: number, sourceUnit?: Unit) => {
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
     this.life = Math.max(this.life - damage, 0);
@@ -207,6 +212,11 @@ class Unit implements Entity {
   getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
 
   triggerCooldown = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
+
+  /**
+   * @override {@link Animatable#getAnimationKey}
+   */
+  getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}`;
 }
 
 export default Unit;

@@ -2,7 +2,7 @@ import Equipment from '../../equipment/Equipment';
 import { DoorDirection, DoorState } from '../../objects/Door';
 import Activity from '../../types/Activity';
 import { Colors } from '../../types/Color';
-import Direction from '../../types/Direction';
+import Direction from '../../geometry/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
@@ -44,28 +44,24 @@ const createStaticSprite = async (spriteName: string, paletteSwaps: PaletteSwaps
 const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<DynamicSprite<Unit>> => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'units');
   const imageMap = await _loadAnimations('units', spriteModel, paletteSwaps);
-  const keyFunction = (unit: Unit) => `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}`;
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
     imageMap,
     offsets:
-    spriteModel.offsets,
-    keyFunction
+    spriteModel.offsets
   });
 };
 
 const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}) => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'equipment');
   const imageMap = await _loadAnimations('equipment', spriteModel, paletteSwaps);
-  const keyFunction = (equipment: Equipment) => `${equipment.unit!!.activity.toLowerCase()}_${Direction.toString(equipment.unit!!.direction)}`;
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
     imageMap,
     offsets:
-    spriteModel.offsets,
-    keyFunction
+    spriteModel.offsets
   });
 };
 

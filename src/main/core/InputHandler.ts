@@ -1,12 +1,12 @@
-import { pickupItem, useItem } from '../objects/items/ItemUtils';
+import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
-import { EquipmentSlot, GameScreen } from '../types/types';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
-import { loadMap, render, returnToTitle, startGame, startGameDebug } from './actions';
+import { checkNotNull } from '../utils/preconditions';
+import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
 
@@ -141,14 +141,14 @@ const keyHandler = async (e: KeyboardEvent) => {
 const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.GAME:
+  switch (state.getScreen()) {
+    case 'GAME':
       const { dx, dy } = _getDirection(key);
 
-      const playerUnit = GameState.getInstance().playerUnit;
+      const playerUnit = GameState.getInstance().getPlayerUnit();
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
-        if (playerUnit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON')) {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
         }
       // Blink is disabled for being really OP.  Here's how to enable it:
@@ -158,10 +158,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       //     queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
       //   }
       } else {
-        if (state.queuedAbility) {
-          const ability = state.queuedAbility;
+        const ability = state.getQueuedAbility();
+        if (ability !== null) {
           queuedOrder = async () => {
-            state.queuedAbility = null;
+            state.setQueuedAbility(null);
             await ability.use(playerUnit, { dx, dy });
           };
         } else {
@@ -174,8 +174,8 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
         await TurnHandler.playTurn();
       }
       break;
-    case GameScreen.INVENTORY:
-      const { inventory } = state.playerUnit;
+    case 'INVENTORY':
+      const inventory = state.getPlayerUnit().getInventory();
 
       switch (key) {
         case 'UP':
@@ -193,17 +193,14 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       }
       await render();
       break;
-    case GameScreen.TITLE:
-    case GameScreen.VICTORY:
-    case GameScreen.GAME_OVER:
-    case GameScreen.MINIMAP:
+    default:
       break;
   }
 };
 
 const _handleEnter = async (modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+   const playerUnit = state.getPlayerUnit();
 
   if (modifiers.includes('ALT')) {
     try {
@@ -218,46 +215,42 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
     return;
   }
 
-  switch (state.screen) {
-    case GameScreen.GAME: {
-      const { mapIndex } = state;
-      const map = state.getMap();
+  switch (state.getScreen()) {
+    case 'GAME': {
+      const map = checkNotNull(state.getMap(), 'Map is not loaded!');
       const { x, y }: Coordinates = playerUnit;
-      if (!map || (mapIndex === null)) {
-        throw 'Map is not loaded!';
-      }
       const item = map.getItem({ x, y });
       if (!!item) {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
         playSound(Sounds.DESCEND_STAIRS);
-        await loadMap(mapIndex + 1);
+        await loadNextMap();
       }
       await TurnHandler.playTurn();
       break;
     }
-    case GameScreen.INVENTORY: {
-      const { playerUnit } = state;
-      const { selectedItem } = playerUnit.inventory;
+    case 'INVENTORY': {
+      const playerUnit = state.getPlayerUnit();
+      const { selectedItem } = playerUnit.getInventory();
 
       if (!!selectedItem) {
-        state.screen = GameScreen.GAME;
+        state.setScreen('GAME');
         await useItem(playerUnit, selectedItem);
         await render();
       }
       break;
     }
-    case GameScreen.TITLE:
-      state.screen = GameScreen.GAME;
+    case 'TITLE':
+      state.setScreen('GAME');
       if (modifiers.includes('SHIFT')) {
         await startGameDebug();
       } else {
         await startGame();
       }
       break;
-    case GameScreen.VICTORY:
-    case GameScreen.GAME_OVER:
+    case 'VICTORY':
+    case 'GAME_OVER':
       await returnToTitle();
   }
 };
@@ -265,12 +258,12 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
 const _handleTab = async () => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.INVENTORY:
-      state.screen = GameScreen.GAME;
+  switch (state.getScreen()) {
+    case 'INVENTORY':
+      state.setScreen('GAME');
       break;
     default:
-      state.screen = GameScreen.INVENTORY;
+      state.setScreen('INVENTORY');
       break;
   }
   await render();
@@ -279,13 +272,13 @@ const _handleTab = async () => {
 const _handleMap = async () => {
   const state = GameState.getInstance();
 
-  switch (state.screen) {
-    case GameScreen.MINIMAP:
-      state.screen = GameScreen.GAME;
+  switch (state.getScreen()) {
+    case 'MINIMAP':
+      state.setScreen('GAME');
       break;
-    case GameScreen.GAME:
-    case GameScreen.INVENTORY:
-      state.screen = GameScreen.MINIMAP;
+    case 'GAME':
+    case 'INVENTORY':
+      state.setScreen('MINIMAP');
       break;
     default:
       break;
@@ -295,13 +288,13 @@ const _handleMap = async () => {
 
 const _handleAbility = async (command: NumberKey) => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+  const playerUnit = state.getPlayerUnit();
 
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
   const ability = playerUnit.abilities[index - 1];
   if (playerUnit.getCooldown(ability) <= 0) {
-    state.queuedAbility = ability;
+    state.setQueuedAbility(ability);
     await render();
   }
 };

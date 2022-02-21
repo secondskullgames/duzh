@@ -9,21 +9,19 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import TileSet from '../tiles/TileSet';
-import { GameScreen } from '../types/types';
 import UnitFactory from '../units/UnitFactory';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
 
 let renderer: GameRenderer;
 
-const loadMap = async (index: number) => {
+const loadNextMap = async () => {
   const state = GameState.getInstance();
-  if (index >= state.maps.length) {
+  if (!state.hasNextMap()) {
     Music.stop();
-    state.screen = GameScreen.VICTORY;
+    state.setScreen('VICTORY');
   } else {
-    state.mapIndex = index;
-    const mapSpec = state.maps[index];
+    const mapSpec = state.getNextMap();
     const mapInstance = await _loadMap(mapSpec);
     state.setMap(mapInstance);
   }
@@ -74,7 +72,7 @@ const _initState = async () => {
 };
 
 const startGame = async () => {
-  await loadMap(0);
+  await loadNextMap();
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
@@ -103,10 +101,10 @@ const returnToTitle = async () => {
  */
 const revealTiles = () => {
   const state = GameState.getInstance();
-  const { playerUnit } = state;
+  const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  for (const room of map.rooms) {
+  for (const room of map.getRooms()) {
     if (contains(room, playerUnit)) {
       for (let y = room.top; y < room.top + room.height; y++) {
         for (let x = room.left; x < room.left + room.width; x++) {
@@ -130,8 +128,7 @@ const revealTiles = () => {
 };
 
 const gameOver = async () => {
-  const state = GameState.getInstance();
-  state.screen = GameScreen.GAME_OVER;
+  GameState.getInstance().setScreen('GAME_OVER');
   Music.stop();
   playSound(Sounds.GAME_OVER);
 };
@@ -139,7 +136,7 @@ const gameOver = async () => {
 export {
   gameOver,
   initialize,
-  loadMap,
+  loadNextMap,
   render,
   returnToTitle,
   revealTiles,

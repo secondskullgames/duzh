@@ -5,9 +5,8 @@ import GameState from '../core/GameState';
 import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../types/Coordinates';
-import Direction from '../types/Direction';
-import { EquipmentSlot, ItemCategory } from '../types/types';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
 import Unit from './Unit';
 
 /**
@@ -21,7 +20,7 @@ const attack = async (unit: Unit, target: Unit, damage: number) => {
 };
 
 const moveTo = async (unit: Unit, { x, y }: Coordinates) => {
-  const { playerUnit } = GameState.getInstance();
+   const playerUnit = GameState.getInstance().getPlayerUnit();
   [unit.x, unit.y] = [x, y];
   if (unit === playerUnit) {
     await playSound(Sounds.FOOTSTEP);
@@ -56,7 +55,7 @@ class NormalAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
@@ -72,9 +71,9 @@ class NormalAttack extends UnitAbility {
 
       const door = map.getDoor({ x, y });
       if (door) {
-        const keys = playerUnit.inventory.get(ItemCategory.KEY) || [];
+        const keys = playerUnit.getInventory().get('KEY') || [];
         if (keys.length > 0) {
-          playerUnit.inventory.remove(keys[0]);
+          playerUnit.getInventory().remove(keys[0]);
           await door.open();
           await playSound(Sounds.OPEN_DOOR);
         } else {
@@ -130,7 +129,7 @@ class KnockbackAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
@@ -201,7 +200,7 @@ class ShootArrow extends UnitAbility {
     if (!direction) {
       throw new Error('ShootArrow requires a direction!');
     }
-    if (!unit.equipment.get(EquipmentSlot.RANGED_WEAPON)) {
+    if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
@@ -239,6 +238,9 @@ class Blink extends UnitAbility {
     super('BLINK', 10);
   }
 
+  /**
+   * @override
+   */
   use = async (unit: Unit, direction: Direction | null) => {
     if (!direction) {
       throw new Error('Blink requires a direction!');

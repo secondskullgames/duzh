@@ -2,8 +2,8 @@ import GameState from '../../core/GameState';
 import ImageLoader from '../../graphics/images/ImageLoader';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../objects/Door';
-import ItemFactory from '../../objects/items/ItemFactory';
-import MapItem from '../../objects/items/MapItem';
+import ItemFactory from '../../items/ItemFactory';
+import MapItem from '../../objects/MapItem';
 import Color from '../../types/Color';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
@@ -79,7 +79,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
 
     if (color !== null) {
       if (Color.equals(color, model.startingPointColor)) {
-        const { playerUnit } = GameState.getInstance();
+         const playerUnit = GameState.getInstance().getPlayerUnit();
         [playerUnit.x, playerUnit.y] = [x, y];
         units.push(playerUnit);
       } else {

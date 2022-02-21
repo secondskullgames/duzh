@@ -1,7 +1,7 @@
-import { ItemCategory } from '../../types/types';
 import InventoryItem from './InventoryItem';
+import ItemCategory from './ItemCategory';
 
-const categories: ItemCategory[] = Object.values(ItemCategory);
+const categories: ItemCategory[] = ItemCategory.values();
 
 /**
  * Contains information about all items held by a particular unit, grouped by category,
@@ -9,7 +9,7 @@ const categories: ItemCategory[] = Object.values(ItemCategory);
  * (although this is only applicable to the player unit)
  */
 class InventoryMap {
-  private readonly _map: { [category in ItemCategory]: InventoryItem[] };
+  private readonly _map: Record<ItemCategory, InventoryItem[]>;
   selectedCategory: ItemCategory;
   selectedItem: InventoryItem | null;
 
@@ -17,7 +17,7 @@ class InventoryMap {
     // @ts-ignore
     this._map = {};
     for (const category of categories) {
-      this._map[<ItemCategory>category] = [];
+      this._map[category] = [];
     }
     this.selectedCategory = categories[0];
     this.selectedItem = null;

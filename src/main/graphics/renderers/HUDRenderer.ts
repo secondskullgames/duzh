@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import UnitAbility from '../../units/UnitAbility';
 import { LINE_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
@@ -48,7 +48,7 @@ class HUDRenderer extends BufferedRenderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   _renderLeftPanel = async () => {
-    const { playerUnit } = GameState.getInstance();
+     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     const lines = [
       playerUnit.name,
@@ -68,7 +68,7 @@ class HUDRenderer extends BufferedRenderer {
   _renderMiddlePanel = async () => {
     let left = LEFT_PANE_WIDTH + ABILITIES_OUTER_MARGIN;
     const top = this.height - ABILITIES_PANEL_HEIGHT + BORDER_MARGIN + ABILITIES_Y_MARGIN;
-    const { playerUnit } = GameState.getInstance();
+     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let keyNumber = 1;
     for (let i = 0; i < playerUnit.abilities.length; i++) {
@@ -83,7 +83,10 @@ class HUDRenderer extends BufferedRenderer {
   };
 
   _renderRightPanel = async () => {
-    const { mapIndex, playerUnit, turn } = GameState.getInstance();
+    const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
+    const turn = state.getTurn();
+    const mapIndex = state.getMapIndex();
 
     const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_THICKNESS;
     const top = this.height - HEIGHT + MARGIN_THICKNESS;
@@ -105,8 +108,12 @@ class HUDRenderer extends BufferedRenderer {
   };
 
   _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
+    const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
+    const queuedAbility = state.getQueuedAbility();
+
     let borderColor: Color;
-    const { queuedAbility, playerUnit } = GameState.getInstance();
+
     if (queuedAbility === ability) {
       borderColor = Colors.GREEN;
     } else if (playerUnit.getCooldown(ability) === 0) {

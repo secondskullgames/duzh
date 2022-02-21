@@ -1,13 +1,13 @@
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { MapSection } from '../../types/types';
+import EmptyMap from './EmptyMap';
 import { comparing } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
-import DungeonGenerator from './DungeonGenerator';
+import AbstractMapGenerator from './AbstractMapGenerator';
 
-class BlobDungeonGenerator extends DungeonGenerator {
+class BlobMapGenerator extends AbstractMapGenerator {
   constructor(tileSet: TileSet) {
     super(tileSet);
   }
@@ -20,7 +20,7 @@ class BlobDungeonGenerator extends DungeonGenerator {
    * where snakiness is defined as the number of tiles within N units
    * (more adjacent tiles - less snaky).
    */
-  protected generateTiles(width: number, height: number): MapSection {
+  protected generateTiles(width: number, height: number): EmptyMap {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
@@ -240,4 +240,4 @@ class BlobDungeonGenerator extends DungeonGenerator {
   };
 }
 
-export default BlobDungeonGenerator;
+export default BlobMapGenerator;

@@ -1,5 +1,5 @@
 import { TileSetName } from '../../tiles/TileSet';
-import { MapLayout } from '../../types/types';
+import MapLayout from '../MapLayout';
 import memoize from '../../utils/memoize';
 
 type GeneratedMapModel = {

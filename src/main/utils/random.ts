@@ -27,8 +27,8 @@ const shuffle = <T>(list: T[]) => {
 };
 
 const weightedRandom = <T>(
-  probabilities: { [key: string]: number },
-  mappedObjects: { [key: string]: T }
+  probabilities: Record<string, number>,
+  mappedObjects: Record<string, T>
 ): T => {
   const total = Object.values(probabilities).reduce((a, b) => a + b);
   const rand = Math.random() * total;
@@ -42,7 +42,8 @@ const weightedRandom = <T>(
     }
   }
 
-  throw 'Error in weightedRandom()!';
+  // unreachable unless programmer error
+  throw new Error('Error in weightedRandom()!');
 };
 
 export {

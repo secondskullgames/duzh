@@ -1,7 +1,7 @@
 import GameState from '../../core/GameState';
 import { isTileRevealed } from '../../maps/MapUtils';
 import Color, { Colors } from '../../types/Color';
-import Coordinates from '../../types/Coordinates';
+import Coordinates from '../../geometry/Coordinates';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import BufferedRenderer from './BufferedRenderer';
 
@@ -37,7 +37,7 @@ class MinimapRenderer extends BufferedRenderer {
 
   private _getColor = ({ x, y }: Coordinates) => {
     const state = GameState.getInstance();
-    const { playerUnit } = state;
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
     if (Coordinates.equals(playerUnit, { x, y })) {

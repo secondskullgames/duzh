@@ -10,13 +10,13 @@ class Messages {
   readonly _messages: Message[] = [];
 
   pushMessage = (message: string) => {
-    const turn = GameState.getInstance().turn;
+    const turn = GameState.getInstance().getTurn();
     this._messages.push({ message, turn });
   };
 
   getAllMessages = () => this._messages.map(m => m.message);
   getRecentMessages = (maxCount: number): string[] => {
-    const turn = GameState.getInstance().turn;
+    const turn = GameState.getInstance().getTurn();
     return tail(
       this._messages.filter(m => m.turn >= turn - 3).map(m => m.message),
       maxCount
