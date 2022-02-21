@@ -4,6 +4,7 @@
   "description": "A graphical Roguelike in the browser, written in Typescript",
   "main": "core/main.js",
   "dependencies": {
+    "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.1.1",
     "typescript": "^4.4.4",
     "webpack-dev-server": "^4.4.0"

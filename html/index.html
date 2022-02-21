@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="">
-  <meta name="viewport" content="width=device-width, user-scalable=no" />
-  <meta charset="UTF-8">
   <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css" />
-    <title></title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
     <div id="container"></div>
@@ -14,6 +13,5 @@
       <button onclick="jwb.debug.killEnemies();">Kill Enemies</button>
       <button onclick="jwb.debug.killPlayer();">Kill Player</button>
     </div>
-    <script src="./bundle.js"></script>
   </body>
 </html>
