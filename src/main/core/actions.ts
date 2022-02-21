@@ -35,16 +35,20 @@ const preloadFirstMap = async () => {
   firstMapPromise = _loadMap(mapSpec);
 };
 
-const _loadMap = async (map: MapSpec): Promise<MapInstance> => {
+const _loadMap = (map: MapSpec): Promise<MapInstance> => {
   switch (map.type) {
     case 'generated': {
-      const mapModel = await GeneratedMapModel.load(map.id);
-      const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
-      return mapBuilder.build();
+      return (async () => {
+        const mapModel = await GeneratedMapModel.load(map.id);
+        const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
+        return mapBuilder.build();
+      })();
     }
     case 'predefined': {
-      const mapModel = await PredefinedMapModel.load(map.id);
-      return MapFactory.loadPredefinedMap(mapModel);
+      return (async () => {
+        const mapModel = await PredefinedMapModel.load(map.id);
+        return MapFactory.loadPredefinedMap(mapModel);
+      })();
     }
   }
 };
@@ -54,17 +58,15 @@ const initialize = async () => {
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
   container.appendChild(renderer.getCanvas());
-  // As a hack, instantiate an empty GameState so we don't have to load expensive images just for the splash screen.
-  GameState.setInstance(new GameState({ playerUnit: null, maps: [] }));
+  await _initState();
   await render();
   const t2 = new Date().getTime();
+  preloadFirstMap();
+  TileSet.preload();
+  attachEvents();
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  await _initState();
-  attachEvents();
-  await TileSet.preload();
-  await preloadFirstMap();
 };
 
 const render = async () => renderer.render();
