@@ -64,31 +64,24 @@ class Section {
 
   withRoom = (room: Rect) => {
     checkState(this.firstSubsection === null && this.secondSubsection === null);
-    return new Section({ ...this, room });
-  };
-
-  withConnection = (connection: Connection) => {
-    checkState(this.firstSubsection !== null && this.secondSubsection !== null && this.room === null);
-    return new Section({ ...this, connection });
+    return new Section({ ...this, room, splitDirection: 'NONE' });
   };
 
   getAllSubsections = (): Set<Section> => {
     const subsections = new Set<Section>();
     const { firstSubsection, secondSubsection } = this;
 
-    if (firstSubsection !== null)
-    {
-        subsections.add(firstSubsection);
-        for (const subsection of firstSubsection.getAllSubsections()) {
-          subsections.add(subsection);
-        }
+    if (firstSubsection !== null) {
+      subsections.add(firstSubsection);
+      for (const subsection of firstSubsection.getAllSubsections()) {
+        subsections.add(subsection);
+      }
     }
-    if (secondSubsection !== null)
-    {
-        subsections.add(secondSubsection);
-        for (const subsection of secondSubsection.getAllSubsections()) {
-          subsections.add(subsection);
-        }
+    if (secondSubsection !== null) {
+      subsections.add(secondSubsection);
+      for (const subsection of secondSubsection.getAllSubsections()) {
+        subsections.add(subsection);
+      }
     }
     return subsections;
   };

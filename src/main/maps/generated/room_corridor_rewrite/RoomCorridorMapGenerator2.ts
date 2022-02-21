@@ -27,6 +27,8 @@ const MIN_SECTION_HEIGHT = MIN_ROOM_HEIGHT + VERTICAL_SECTION_PADDING * 2 + 1;
  * recursively split the map into sections
  * add rooms to sections that can't be split up further
  * add connections between each pair of sections, between any rooms that are close enough
+ *
+ * Note that this was ported from a previous Java implementation and may not be idiomatic Typescript.
  */
 class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
   // The following ASCII diagram looks horrible but is necessary to explain how section sizing works.
@@ -160,8 +162,9 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
       case 'VERTICAL':
         connection = this._connectVertically(section);
         break;
-      case 'NONE':
-        throw new Error('shouldn\'t get here... I guess');
+      default:
+        // shouldn't get here due to the check at the top of the method
+        throw new Error();
     }
 
     return new Section({
