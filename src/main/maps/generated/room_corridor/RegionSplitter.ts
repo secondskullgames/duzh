@@ -12,8 +12,8 @@ type Props = {
 };
 
 class RegionSplitter {
-  private minRoomDimension: number;
-  private maxRoomDimension: number;
+  private readonly minRoomDimension: number;
+  private readonly maxRoomDimension: number;
 
   constructor({ minRoomDimension, maxRoomDimension }: Props) {
     this.minRoomDimension = minRoomDimension;

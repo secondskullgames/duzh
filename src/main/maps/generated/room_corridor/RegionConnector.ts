@@ -113,8 +113,10 @@ const generateMinimalSpanningTree = (regions: RoomRegion[]): Connection[] => {
 
 const generateOptionalConnections = (regions: RoomRegion[], spanningConnections: Connection[]): Connection[] => {
   const optionalConnections: Connection[] = [];
-  for (const first of regions) {
-    for (const second of regions) {
+  for (let i = 0; i < regions.length; i++) {
+    const first = regions[i];
+    for (let j = i + 1; j < regions.length; j++) {
+      const second = regions[j];
       if (_canConnect(first, second)) {
         if (!spanningConnections.some(connection => Connection.matches(connection, first, second))) {
           optionalConnections.push(_buildConnection(first, second));

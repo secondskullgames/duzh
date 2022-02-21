@@ -64,11 +64,11 @@ const _addWallTiles = (tiles: TileType[][]) => {
   for (let y = 0; y < height - 2; y++) {
     for (let x = 0; x < width; x++) {
       const tile = tiles[y][x];
-      const oneUp = tiles[y + 1][x];
-      const twoUp = tiles[y + 2][x];
-      if (tile === 'NONE' && oneUp === 'NONE' && twoUp === 'FLOOR_HALL') {
+      const oneDown = tiles[y + 1][x];
+      const twoDown = tiles[y + 2][x];
+      if (tile === 'NONE' && oneDown === 'NONE' && (twoDown === 'FLOOR_HALL' || twoDown === 'FLOOR')) {
         tiles[y][x] = 'WALL_TOP';
-        tiles[y + 1][x] = 'WALL_HALL';
+        tiles[y + 1][x] = (twoDown === 'FLOOR') ? 'WALL' : 'WALL_HALL';
       }
     }
   }
