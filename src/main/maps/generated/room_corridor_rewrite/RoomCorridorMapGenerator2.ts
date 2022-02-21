@@ -182,11 +182,11 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     const right = checkNotNull(section.secondSubsection);
 
     const splitPoint = right.getLeft();
-    const allLeftSections: Set<Section> = left.getAllSubsections();
-    allLeftSections.add(left);
+    const allLeftSections: Section[] = left.getAllSubsections();
+    allLeftSections.push(left);
 
-    const allRightSections: Set<Section> = right.getAllSubsections();
-    allRightSections.add(right);
+    const allRightSections: Section[] = right.getAllSubsections();
+    allRightSections.push(right);
 
     const matchingLeftRooms: Rect[] = [...allLeftSections]
       .filter(s => s.getLeft() + s.getWidth() === splitPoint)
@@ -254,20 +254,23 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     }
 
     return {
-      connectedCoordinates: new Set(connectedCoordinates)
+      connectedCoordinates
     };
   };
 
+  /**
+   * TODO - heavily copy/pasted from {@link #_connectVertically}, with all the x/y's flipped.
+   */
   private _connectVertically = (section: Section): Connection => {
     const top = checkNotNull(section.firstSubsection);
     const bottom = checkNotNull(section.secondSubsection);
 
     const splitPoint = bottom.getTop();
-    const allTopSections: Set<Section> = top.getAllSubsections();
-    allTopSections.add(top);
+    const allTopSections: Section[] = top.getAllSubsections();
+    allTopSections.push(top);
 
-    const allBottomSections: Set<Section> = bottom.getAllSubsections();
-    allBottomSections.add(bottom);
+    const allBottomSections: Section[] = bottom.getAllSubsections();
+    allBottomSections.push(bottom);
 
     const matchingTopRooms: Rect[] = [...allTopSections]
       .filter(s => s.getTop() + s.getHeight() === splitPoint)
@@ -335,7 +338,7 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     }
 
     return {
-      connectedCoordinates: new Set(connectedCoordinates)
+      connectedCoordinates
     };
   };
 
@@ -350,7 +353,7 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     }
 
     const allSections = section.getAllSubsections();
-    allSections.add(section);
+    allSections.push(section);
     for (const s of allSections) {
       if (s.room !== null) {
         const { left, top, width, height } = s.room;

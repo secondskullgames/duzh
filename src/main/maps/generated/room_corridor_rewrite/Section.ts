@@ -67,20 +67,20 @@ class Section {
     return new Section({ ...this, room, splitDirection: 'NONE' });
   };
 
-  getAllSubsections = (): Set<Section> => {
-    const subsections = new Set<Section>();
+  getAllSubsections = (): Section[] => {
+    const subsections: Section[] = [];
     const { firstSubsection, secondSubsection } = this;
 
     if (firstSubsection !== null) {
-      subsections.add(firstSubsection);
+      subsections.push(firstSubsection);
       for (const subsection of firstSubsection.getAllSubsections()) {
-        subsections.add(subsection);
+        subsections.push(subsection);
       }
     }
     if (secondSubsection !== null) {
-      subsections.add(secondSubsection);
+      subsections.push(secondSubsection);
       for (const subsection of secondSubsection.getAllSubsections()) {
-        subsections.add(subsection);
+        subsections.push(subsection);
       }
     }
     return subsections;

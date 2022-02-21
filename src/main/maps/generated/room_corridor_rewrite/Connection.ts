@@ -1,7 +1,7 @@
 import Coordinates from 'src/main/geometry/Coordinates';
 
 type Connection = {
-  connectedCoordinates: Set<Coordinates>;
+  connectedCoordinates: Coordinates[]
 }
 
 export default Connection;
