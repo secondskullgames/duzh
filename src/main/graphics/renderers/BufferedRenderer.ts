@@ -44,7 +44,7 @@ abstract class BufferedRenderer {
     await this.context.drawImage(bufferBitmap, 0, 0);
     const imageBitmap = await createImageBitmap(this.context.getImageData(0, 0, width, height));
     const t2 = new Date().getTime();
-    console.log(`${id} rendered in ${t2 - t1} ms`);
+    console.debug(`${id} rendered in ${t2 - t1} ms`);
     return imageBitmap;
   };
 

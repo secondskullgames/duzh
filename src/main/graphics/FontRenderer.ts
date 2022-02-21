@@ -97,7 +97,7 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
       };
       _loadedFonts[definition.name] = fontInstance;
       const t2 = new Date().getTime();
-      console.log(`Loaded font ${definition.name} in ${t2 - t1} ms`);
+      console.debug(`Loaded font ${definition.name} in ${t2 - t1} ms`);
       return fontInstance;
     });
 };
