@@ -33,11 +33,11 @@ class Section {
   }: Props) {
     checkArgument(
       // empty section - no subsections, no room, no connection
-      (firstSubsection == null && secondSubsection == null && splitDirection == null && room == null && connection == null) ||
+      (firstSubsection == null && secondSubsection == null && (splitDirection == null || splitDirection === 'NONE') && room == null && connection == null) ||
       // section with subsections - no room, with or without connection
-      (firstSubsection != null && secondSubsection != null && splitDirection != null && room == null) ||
+      (firstSubsection != null && secondSubsection != null && (splitDirection != null && splitDirection !== 'NONE') && room == null) ||
       // section with room, no subsections
-      (firstSubsection == null && secondSubsection == null && splitDirection == null && room != null && connection == null)
+      (firstSubsection == null && secondSubsection == null && (splitDirection == null || splitDirection === 'NONE') && room != null && connection == null)
     );
     this.rect = rect;
     this.firstSubsection = firstSubsection || null;
