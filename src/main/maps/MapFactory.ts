@@ -4,7 +4,7 @@ import TileSet from '../tiles/TileSet';
 import UnitClass from '../units/UnitClass';
 import BlobMapGenerator from './generated/BlobMapGenerator';
 import AbstractMapGenerator from './generated/AbstractMapGenerator';
-import RoomCorridorMapGenerator2 from './generated/RoomCorridorMapGenerator2';
+import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapGenerator';
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapModel from './generated/GeneratedMapModel';
 import MapInstance from './MapInstance';
@@ -28,7 +28,7 @@ const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractM
     case 'ROOMS_AND_CORRIDORS': {
       const minRoomDimension = 3;
       const maxRoomDimension = 7;
-      return new RoomCorridorMapGenerator2({
+      return new RoomCorridorMapGenerator({
         tileSet,
         minRoomDimension,
         maxRoomDimension

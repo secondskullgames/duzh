@@ -108,9 +108,7 @@ const revealTiles = () => {
     if (contains(room, playerUnit)) {
       for (let y = room.top; y < room.top + room.height; y++) {
         for (let x = room.left; x < room.left + room.width; x++) {
-          if (!isTileRevealed({ x, y })) {
-            map.revealedTiles.push({ x, y });
-          }
+          map.revealTile({ x, y });
         }
       }
     }
@@ -121,7 +119,7 @@ const revealTiles = () => {
   for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
     for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
       if (!isTileRevealed({ x, y })) {
-        map.revealedTiles.push({ x, y });
+        map.revealTile({ x, y });
       }
     }
   }

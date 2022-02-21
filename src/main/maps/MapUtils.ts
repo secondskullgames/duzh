@@ -18,8 +18,8 @@ const pickUnoccupiedLocations = (
 
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
-      if (allowedTileTypes.indexOf(tiles[y][x]) !== -1) {
-        if (occupiedLocations.filter(loc => Coordinates.equals(loc, { x, y })).length === 0) {
+      if (allowedTileTypes.includes(tiles[y][x])) {
+        if (!occupiedLocations.find(loc => Coordinates.equals(loc, { x, y }))) {
           unoccupiedLocations.push({ x, y });
         }
       }
@@ -72,7 +72,7 @@ const isTileRevealed = ({ x, y }: Coordinates) => {
     return true;
   }
 
-  return GameState.getInstance().getMap().revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
+  return GameState.getInstance().getMap().isTileRevealed({ x, y });
 };
 
 const areAdjacent = (first: Rect, second: Rect, minBorderLength: number): boolean => {
