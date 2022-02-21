@@ -84,7 +84,6 @@ class RoomCorridorMapGenerator extends AbstractMapGenerator {
 
     return {
       tiles,
-      rooms: [], // TODO
       width,
       height
     };

@@ -124,16 +124,6 @@ const revealTiles = () => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  for (const room of map.getRooms()) {
-    if (contains(room, playerUnit)) {
-      for (let y = room.top; y < room.top + room.height; y++) {
-        for (let x = room.left; x < room.left + room.width; x++) {
-          map.revealTile({ x, y });
-        }
-      }
-    }
-  }
-
   const radius = 2;
 
   for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {

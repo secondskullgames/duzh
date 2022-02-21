@@ -48,7 +48,6 @@ abstract class AbstractMapGenerator {
       width,
       height,
       tiles,
-      rooms: map.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitClasses,
@@ -100,47 +99,16 @@ abstract class AbstractMapGenerator {
 
   /**
    * Verify that:
-   * - all rooms can be connected
    * - wall placement is correct
    *
    * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
    * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
+   *
+   * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
+   * which we are no longer doing.
    */
   private _validateTiles = (map: EmptyMap): boolean =>
-    this._validateRoomConnectivity(map) && this._validateWallPlacement(map);
-
-  /**
-   * verify that every room is reachable from every other room
-   */
-  private _validateRoomConnectivity = (section: EmptyMap): boolean => {
-    const { rooms } = section;
-    const roomCenters: Coordinates[] = rooms.map(room => ({
-      x: Math.round(room.left + room.width) / 2,
-      y: Math.round(room.top + room.height) / 2
-    }));
-    const tileChecker = new TileEligibilityChecker();
-    const unblockedTiles: Coordinates[] = [];
-    for (let y = 0; y < section.height; y++) {
-      for (let x = 0; x < section.width; x++) {
-        if (!tileChecker.isBlocked({ x, y }, section, [])) {
-          unblockedTiles.push({ x, y });
-        }
-      }
-    }
-
-    // check that every room is reachable from every other room
-    const pathfinder: Pathfinder = new Pathfinder(() => 1);
-    for (let i = 0; i < rooms.length; i++) {
-      for (let j = i + 1; j < rooms.length; j++) {
-        const path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
-        if (path.length === 0) {
-          console.warn('Invalid map: inaccessible room');
-          return false;
-        }
-      }
-    }
-    return true;
-  };
+    this._validateWallPlacement(map);
 
   /**
    * Validate that walls are placed correctly:
@@ -165,7 +133,7 @@ abstract class AbstractMapGenerator {
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== 'WALL_TOP') {
-              console.warn('can\'t show a wall without a tile for its top');
+              console.warn('Invalid map: can\'t show a wall without a tile for its top');
               return false;
             }
           }

@@ -13,7 +13,7 @@ type UnitBehavior = (unit: Unit) => Promise<void>;
 
 const _wanderAndAttack = async (unit: Unit) => {
   const state = GameState.getInstance();
-   const playerUnit = state.getPlayerUnit();
+  const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const tiles: Coordinates[] = [];
 
@@ -60,7 +60,7 @@ const _wander = async (unit: Unit) => {
 
 const _attackPlayerUnit_withPath = async (unit: Unit) => {
   const state = GameState.getInstance();
-   const playerUnit = state.getPlayerUnit();
+  const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const mapRect: Rect = map.getRect();
   const unblockedTiles: Coordinates[] = [];
@@ -91,7 +91,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
 
 const _fleeFromPlayerUnit = async (unit: Unit) => {
   const state = GameState.getInstance();
-   const playerUnit = state.getPlayerUnit();
+  const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const tiles: Coordinates[] = [];
 

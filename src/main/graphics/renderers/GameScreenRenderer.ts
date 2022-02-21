@@ -57,7 +57,7 @@ class GameScreenRenderer extends BufferedRenderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Coordinates => {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
       y: ((y - playerUnit.y) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2

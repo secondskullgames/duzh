@@ -12,8 +12,6 @@ const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;
 const HORIZONTAL_SECTION_PADDING = 2;
 const VERTICAL_SECTION_PADDING = 2;
-const MIN_SECTION_WIDTH = MIN_ROOM_WIDTH + HORIZONTAL_SECTION_PADDING * 2 + 1;
-const MIN_SECTION_HEIGHT = MIN_ROOM_HEIGHT + VERTICAL_SECTION_PADDING * 2 + 1;
 
 /**
  * This class generates randomized room-and-corridor levels similar to those used in Rogue and other classic
@@ -68,7 +66,6 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
     return {
       width,
       height,
-      rooms:  [], // TODO
       tiles
     };
   };

@@ -198,7 +198,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
 
 const _handleEnter = async (modifiers: ModifierKey[]) => {
   const state = GameState.getInstance();
-   const playerUnit = state.getPlayerUnit();
+  const playerUnit = state.getPlayerUnit();
 
   if (modifiers.includes('ALT')) {
     try {

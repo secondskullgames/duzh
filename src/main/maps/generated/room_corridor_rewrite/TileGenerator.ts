@@ -5,7 +5,7 @@ interface TileGenerator {
   generateTiles: (section: Section) => TileType[][];
 }
 
-const createTileGenerator = () => {
+const createTileGenerator = (): TileGenerator => {
   const _generateFloorTiles = (section: Section): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < section.getHeight(); y++) {

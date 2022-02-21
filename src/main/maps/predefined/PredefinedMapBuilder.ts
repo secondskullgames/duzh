@@ -32,7 +32,6 @@ class PredefinedMapBuilder {
       width: image.width,
       height: image.height,
       tiles: await _loadTiles(model, image),
-      rooms: [], // TODO
       units: await _loadUnits(model, image),
       items: await _loadItems(model, image),
       doors: await _loadDoors(model, image)
@@ -79,7 +78,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
 
     if (color !== null) {
       if (Color.equals(color, model.startingPointColor)) {
-         const playerUnit = GameState.getInstance().getPlayerUnit();
+        const playerUnit = GameState.getInstance().getPlayerUnit();
         [playerUnit.x, playerUnit.y] = [x, y];
         units.push(playerUnit);
       } else {

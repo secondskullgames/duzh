@@ -34,8 +34,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     return {
       tiles,
       width,
-      height,
-      rooms: []
+      height
     };
   }
 
