@@ -20,7 +20,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
    * where snakiness is defined as the number of tiles within N units
    * (more adjacent tiles - less snaky).
    */
-  protected generateTiles(width: number, height: number): EmptyMap {
+  protected generateEmptyMap(width: number, height: number): EmptyMap {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
@@ -34,8 +34,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     return {
       tiles,
       width,
-      height,
-      rooms: []
+      height
     };
   }
 

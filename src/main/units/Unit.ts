@@ -190,7 +190,7 @@ class Unit implements Entity, Animatable {
 
   takeDamage = async (damage: number, sourceUnit?: Unit) => {
     const state = GameState.getInstance();
-     const playerUnit = state.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
     this.life = Math.max(this.life - damage, 0);

@@ -18,7 +18,6 @@ type Props = {
   width: number,
   height: number,
   tiles: Tile[][],
-  rooms: Room[],
   playerUnitLocation: Coordinates,
   enemyUnitLocations: Coordinates[],
   itemLocations: Coordinates[],
@@ -32,7 +31,6 @@ class GeneratedMapBuilder {
   private readonly width: number;
   private readonly height: number;
   private readonly tiles: Tile[][];
-  private readonly rooms: Room[];
   private readonly playerUnitLocation: Coordinates;
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
@@ -45,7 +43,6 @@ class GeneratedMapBuilder {
     width,
     height,
     tiles,
-    rooms,
     playerUnitLocation,
     enemyUnitLocations,
     enemyUnitClasses,
@@ -57,7 +54,6 @@ class GeneratedMapBuilder {
     this.width = width;
     this.height = height;
     this.tiles = tiles;
-    this.rooms = rooms;
     this.playerUnitLocation = playerUnitLocation;
     this.enemyUnitLocations = enemyUnitLocations;
     this.itemLocations = itemLocations;
@@ -67,7 +63,7 @@ class GeneratedMapBuilder {
   }
 
   build = async (): Promise<MapInstance> => {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
     [playerUnit.x, playerUnit.y] = [this.playerUnitLocation.x, this.playerUnitLocation.y];
     const units = [playerUnit];
     const items: MapItem[] = [];
@@ -100,7 +96,6 @@ class GeneratedMapBuilder {
       width: this.width,
       height: this.height,
       tiles: this.tiles,
-      rooms: this.rooms,
       units,
       items,
       doors: []

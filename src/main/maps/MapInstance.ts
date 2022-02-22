@@ -11,7 +11,6 @@ type Props = {
   height: number,
   tiles: Tile[][],
   doors: Door[],
-  rooms: Room[],
   units: Unit[],
   items: MapItem[]
 };
@@ -23,7 +22,6 @@ class MapInstance {
    * [y][x]
    */
   private readonly _tiles: Tile[][];
-  private readonly _rooms: Room[];
   units: Unit[];
   items: MapItem[];
   doors: Door[];
@@ -34,7 +32,6 @@ class MapInstance {
     width,
     height,
     tiles,
-    rooms,
     units,
     items,
     doors
@@ -43,14 +40,11 @@ class MapInstance {
     this.height = height;
     this._tiles = tiles;
     this.doors = doors;
-    this._rooms = rooms;
     this.units = units;
     this.items = items;
     this.projectiles = [];
     this.revealedTiles = [];
   }
-
-  getRooms = (): Room[] => this._rooms;
 
   getTile = ({ x, y }: Coordinates): Tile => {
     if (x < this.width && y < this.height) {

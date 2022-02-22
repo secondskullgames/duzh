@@ -48,7 +48,6 @@ abstract class AbstractMapGenerator {
       width,
       height,
       tiles,
-      rooms: map.rooms,
       playerUnitLocation,
       enemyUnitLocations,
       enemyUnitClasses,
@@ -58,13 +57,13 @@ abstract class AbstractMapGenerator {
     });
   };
 
-  protected abstract generateTiles(width: number, height: number): EmptyMap;
+  protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
 
   private _generateEmptyMap = (width: number, height: number, level: number): EmptyMap => {
     const iterations = 100;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       const t1 = new Date().getTime();
-      const map = this.generateTiles(width, height);
+      const map = this.generateEmptyMap(width, height);
       const isValid = this._validateTiles(map);
       const t2 = new Date().getTime();
       console.debug(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
@@ -72,6 +71,8 @@ abstract class AbstractMapGenerator {
         return map;
       } else {
         console.error(`Generated invalid tiles for level ${level}, regenerating`);
+        //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
+        //return map;
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);
@@ -98,46 +99,16 @@ abstract class AbstractMapGenerator {
 
   /**
    * Verify that:
-   * - all rooms can be connected
    * - wall placement is correct
    *
    * Frankly, this is a hack and it would be far better to have an algorithm which is mathematically provable
    * to generate the characteristics we want on a consistent basis.  But this is easier and should prevent regressions
+   *
+   * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
+   * which we are no longer doing.
    */
   private _validateTiles = (map: EmptyMap): boolean =>
-    this._validateRoomConnectivity(map) && this._validateWallPlacement(map);
-
-  /**
-   * verify that every room is reachable from every other room
-   */
-  private _validateRoomConnectivity = (section: EmptyMap): boolean => {
-    const { rooms } = section;
-    const roomCenters: Coordinates[] = rooms.map(room => ({
-      x: Math.round(room.left + room.width) / 2,
-      y: Math.round(room.top + room.height) / 2
-    }));
-    const tileChecker = new TileEligibilityChecker();
-    const unblockedTiles: Coordinates[] = [];
-    for (let y = 0; y < section.height; y++) {
-      for (let x = 0; x < section.width; x++) {
-        if (!tileChecker.isBlocked({ x, y }, section, [])) {
-          unblockedTiles.push({ x, y });
-        }
-      }
-    }
-
-    // check that every room is reachable from every other room
-    const pathfinder: Pathfinder = new Pathfinder(() => 1);
-    for (let i = 0; i < rooms.length; i++) {
-      for (let j = i + 1; j < rooms.length; j++) {
-        const path = pathfinder.findPath(roomCenters[i], roomCenters[j], unblockedTiles);
-        if (path.length === 0) {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
+    this._validateWallPlacement(map);
 
   /**
    * Validate that walls are placed correctly:
@@ -152,6 +123,7 @@ abstract class AbstractMapGenerator {
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
+            console.warn('Invalid map: can\'t place a wall at the top of the map');
             return false;
           }
           const oneUp = map.tiles[y - 1][x];
@@ -161,7 +133,7 @@ abstract class AbstractMapGenerator {
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== 'WALL_TOP') {
-              // can't show a wall without a tile for its top
+              console.warn('Invalid map: can\'t show a wall without a tile for its top');
               return false;
             }
           }

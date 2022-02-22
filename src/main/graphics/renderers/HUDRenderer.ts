@@ -48,7 +48,7 @@ class HUDRenderer extends BufferedRenderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   _renderLeftPanel = async () => {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
 
     const lines = [
       playerUnit.name,
@@ -68,7 +68,7 @@ class HUDRenderer extends BufferedRenderer {
   _renderMiddlePanel = async () => {
     let left = LEFT_PANE_WIDTH + ABILITIES_OUTER_MARGIN;
     const top = this.height - ABILITIES_PANEL_HEIGHT + BORDER_MARGIN + ABILITIES_Y_MARGIN;
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let keyNumber = 1;
     for (let i = 0; i < playerUnit.abilities.length; i++) {

@@ -7,6 +7,7 @@ import AbstractMapGenerator from './generated/AbstractMapGenerator';
 import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapGenerator';
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapModel from './generated/GeneratedMapModel';
+import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCorridorMapGenerator2';
 import MapInstance from './MapInstance';
 import MapLayout from './MapLayout';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
@@ -26,6 +27,9 @@ const loadPredefinedMap = async (model: PredefinedMapModel): Promise<MapInstance
 const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractMapGenerator => {
   switch (mapLayout) {
     case 'ROOMS_AND_CORRIDORS': {
+      if (1 === 1) {
+        return new RoomCorridorMapGenerator2(tileSet);
+      }
       const minRoomDimension = 3;
       const maxRoomDimension = 7;
       return new RoomCorridorMapGenerator({

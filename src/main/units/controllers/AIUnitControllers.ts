@@ -8,7 +8,7 @@ import UnitController from './UnitController';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder(unit: Unit) {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
@@ -42,7 +42,7 @@ const HUMAN_CAUTIOUS: UnitController = {
 
 const HUMAN_AGGRESSIVE = {
   issueOrder(unit: Unit) {
-     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);

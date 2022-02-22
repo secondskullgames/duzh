@@ -20,7 +20,7 @@ const attack = async (unit: Unit, target: Unit, damage: number) => {
 };
 
 const moveTo = async (unit: Unit, { x, y }: Coordinates) => {
-   const playerUnit = GameState.getInstance().getPlayerUnit();
+  const playerUnit = GameState.getInstance().getPlayerUnit();
   [unit.x, unit.y] = [x, y];
   if (unit === playerUnit) {
     await playSound(Sounds.FOOTSTEP);
@@ -55,7 +55,7 @@ class NormalAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-     const playerUnit = state.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 
@@ -129,7 +129,6 @@ class KnockbackAttack extends UnitAbility {
     const { x, y } = { x: unit.x + dx, y: unit.y + dy };
 
     const state = GameState.getInstance();
-     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.direction = { dx: x - unit.x, dy: y - unit.y };
 

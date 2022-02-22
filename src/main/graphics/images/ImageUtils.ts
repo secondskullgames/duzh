@@ -22,7 +22,6 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: str
 };
 
 const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Promise<ImageData> => {
-
   if (!colorMap) {
     return imageData;
   }
@@ -30,8 +29,8 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
   const array = new Uint8ClampedArray(imageData.data.length);
   const entries: [string, string][] = Object.entries(colorMap);
 
-  const sourceRGBMap: { [hex: string]: RGB } = {};
-  const targetRGBMap: { [hex: string]: RGB } = {};
+  const sourceRGBMap: Record<string, RGB> = {};
+  const targetRGBMap: Record<string, RGB> = {};
 
   for (const [sourceColor, targetColor] of entries) {
     sourceRGBMap[sourceColor] = hex2rgb(sourceColor);
