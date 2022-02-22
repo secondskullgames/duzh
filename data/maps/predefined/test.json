@@ -9,7 +9,9 @@
     "BLUE": "STAIRS_DOWN"
   },
   "defaultTile": "FLOOR",
-  "enemyColors": {},
+  "enemyColors": {
+    "GREEN": "robed_wizard"
+  },
   "itemColors": {
     "YELLOW": "key"
   },

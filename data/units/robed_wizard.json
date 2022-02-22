@@ -1,0 +1,20 @@
+{
+  "name": "robed_wizard",
+  "type": "GOLEM",
+  "sprite": "robed_wizard",
+  "paletteSwaps": {},
+  "startingLife": 60,
+  "startingMana": null,
+  "startingDamage": 9,
+  "lifePerLevel": 0,
+  "manaPerLevel": null,
+  "damagePerLevel": 0,
+  "aiParameters": {
+    "speed": 0.92,
+    "visionRange": 12,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}

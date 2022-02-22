@@ -76,6 +76,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
+    console.log(`${r} ${g} ${b}`);
     if (color !== null) {
       if (Color.equals(color, model.startingPointColor)) {
         const playerUnit = GameState.getInstance().getPlayerUnit();
