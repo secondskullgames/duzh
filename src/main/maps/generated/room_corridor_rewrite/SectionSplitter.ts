@@ -1,8 +1,6 @@
-import { max, min } from '../../../utils/arrays';
 import { randChoice, randInt } from '../../../utils/random';
 import Section from './Section';
 import SplitDirection from './SplitDirection';
-
 
 type Props = {
   minRoomWidth: number,
