@@ -8,11 +8,11 @@ import ImageLoader from '../images/ImageLoader';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import BufferedRenderer from './BufferedRenderer';
 
-const INVENTORY_LEFT = 2 * TILE_WIDTH;
-const INVENTORY_TOP = 2 * TILE_HEIGHT;
-const INVENTORY_WIDTH = 16 * TILE_WIDTH;
-const INVENTORY_HEIGHT = 11 * TILE_HEIGHT;
-const INVENTORY_MARGIN = 12;
+const INVENTORY_LEFT = 0;
+const INVENTORY_TOP = 0;
+const INVENTORY_WIDTH = SCREEN_WIDTH;
+const INVENTORY_HEIGHT = SCREEN_HEIGHT;
+const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 

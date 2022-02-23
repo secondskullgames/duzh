@@ -3,7 +3,7 @@
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "startingLife": 40,
+  "startingLife": 30,
   "startingMana": null,
   "startingDamage": 4,
   "lifePerLevel": 0,

@@ -10,21 +10,21 @@
       "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "standing",
-        "number": "1"
+        "number": "3"
       }]
     },
     "walking": {
       "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "walking",
-        "number": "1"
+        "number": "3"
       }]
     },
     "attacking": {
       "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "attacking",
-        "number": "1"
+        "number": "3"
       }]
     },
     "damaged": {
