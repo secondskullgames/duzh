@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "baseUrl": ".",
+    "jsx": "react",
     "lib": ["dom", "esnext"],
     "module": "esnext",
     "moduleResolution": "node",
@@ -13,9 +14,12 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "target": "es2015"
+    "target": "es2015",
+    "plugins": [{
+      "name": "typescript-plugin-css-modules"
+    }]
   },
   "paths": {
-    "*": ["*"],
+    "*": ["*"]
   }
 }

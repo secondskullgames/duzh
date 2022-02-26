@@ -3,7 +3,7 @@ import MapFactory from '../maps/MapFactory';
 import GeneratedMapModel from '../maps/generated/GeneratedMapModel';
 import MapInstance from '../maps/MapInstance';
 import MapSpec from '../maps/MapSpec';
-import { contains, isTileRevealed } from '../maps/MapUtils';
+import { isTileRevealed } from '../maps/MapUtils';
 import PredefinedMapModel from '../maps/predefined/PredefinedMapModel';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
