@@ -104,6 +104,9 @@ class MapInstance {
     height: this.height
   });
 
+  /**
+   * TODO: O(n)
+   */
   isTileRevealed = ({ x, y }: Coordinates): boolean =>
     this.revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
 

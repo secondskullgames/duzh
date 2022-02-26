@@ -1,0 +1,38 @@
+{
+  "name": "robed_wizard",
+  "offsets": {
+    "dx": -4,
+    "dy": -20
+  },
+  "pattern": "${sprite}_${activity}_${direction}_${number}",
+  "animations": {
+    "standing": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "standing",
+        "number": "3"
+      }]
+    },
+    "walking": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "walking",
+        "number": "3"
+      }]
+    },
+    "attacking": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "attacking",
+        "number": "3"
+      }]
+    },
+    "damaged": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [{
+        "activity": "stunned",
+        "number": "1"
+      }]
+    }
+  }
+}

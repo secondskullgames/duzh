@@ -1,18 +1,18 @@
 {
-  "name": "snake",
-  "type": "ANIMAL",
-  "sprite": "snake",
+  "name": "robed_wizard",
+  "type": "WIZARD",
+  "sprite": "robed_wizard",
   "paletteSwaps": {},
-  "startingLife": 30,
+  "startingLife": 60,
   "startingMana": null,
-  "startingDamage": 4,
+  "startingDamage": 7,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "aiParameters": {
-    "speed": 0.98,
+    "speed": 0.95,
     "visionRange": 10,
-    "fleeThreshold": 0.1
+    "fleeThreshold": 0
   },
   "abilities": {
     "1": ["ATTACK"]

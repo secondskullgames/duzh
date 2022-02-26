@@ -26,8 +26,7 @@ module.exports = {
       },
     }),
     new HtmlWebpackPlugin({
-      template: 'html/index.html',
-      title: 'Hello World'
+      template: 'html/index.html'
     })
   ],
   resolve: {
