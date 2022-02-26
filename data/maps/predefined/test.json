@@ -1,5 +1,5 @@
 {
-  "imageFilename": "test",
+  "imageFilename": "test_keys",
   "tileset": "dungeon_cga",
   "levelNumber": "1",
   "tileColors": {
@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "robed_wizard"
+    "GREEN": "grunt"
   },
   "itemColors": {
     "YELLOW": "key"
