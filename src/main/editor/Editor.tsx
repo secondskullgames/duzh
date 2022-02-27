@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Colors } from '../types/Color';
 import ColorPicker from './ColorPicker';
+import EditableBitmap from './EditableBitmap';
+import styles from './Editor.css';
 
 const colors = [
   Colors.BLACK,
@@ -25,9 +27,17 @@ const colors = [
 const Editor = () => {
   const [mainColor, setMainColor] = useState(Colors.BLACK);
   const [altColor, setAltColor] = useState(Colors.WHITE);
+  const [zoomLevel] = useState(16);
 
   return (
-    <>
+    <div className={styles.editor}>
+      <EditableBitmap
+        width={40}
+        height={40}
+        zoomLevel={zoomLevel}
+        mainColor={mainColor}
+        altColor={altColor}
+      />
       <ColorPicker
         mainColor={mainColor}
         altColor={altColor}
@@ -35,7 +45,7 @@ const Editor = () => {
         setMainColor={setMainColor}
         setAltColor={setAltColor}
       />
-    </>
+    </div>
   );
 };
 
