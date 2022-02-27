@@ -1,10 +1,9 @@
-import React, { MouseEvent, useEffect, useState } from 'react';
-import { hex2rgb } from '../graphics/images/ImageUtils';
-import Color, { Colors } from '../types/Color';
+import React, { MouseEvent, useEffect } from 'react';
+import { rgb2hex } from '../graphics/images/ImageUtils';
+import Color from '../types/Color';
 import { Pixel } from '../types/types';
 import styles from './EditableBitmap.css';
 import { Tool } from './ToolPicker';
-import fromRGB = Color.fromRGB;
 
 const LEFT_BUTTON = 1;
 const RIGHT_BUTTON = 2;
@@ -17,16 +16,17 @@ type Props = {
   altColor: Color,
   setMainColor: (color: Color) => void,
   setAltColor: (color: Color) => void,
-  selectedTool: Tool
+  selectedTool: Tool,
+  onChange: () => void
 };
 
-const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selectedTool, setMainColor, setAltColor }: Props) => {
+const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selectedTool, setMainColor, setAltColor, onChange }: Props) => {
   const draw = (canvas: HTMLCanvasElement, color: Color, { x, y }: Pixel) => {
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-    console.log(`${x},${y}`);
 
     context.fillStyle = color;
     context.fillRect(x, y, 1, 1);
+    onChange();
   };
 
   const getPixel = (e: MouseEvent, canvas: HTMLCanvasElement): Pixel => ({
@@ -80,7 +80,7 @@ const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selecte
             const { x, y } = getPixel(e, canvas);
             const context = canvas.getContext('2d') as CanvasRenderingContext2D;
             const [r, g, b] = context.getImageData(x, y, 1, 1).data;
-            const color = Color.fromRGB({ r, g, b });
+            const color = rgb2hex({ r, g, b });
             if (color === null) {
               return;
             }
@@ -116,10 +116,7 @@ const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selecte
             const { x, y } = getPixel(e, canvas);
             const context = canvas.getContext('2d') as CanvasRenderingContext2D;
             const [r, g, b] = context.getImageData(x, y, 1, 1).data;
-            const color = Color.fromRGB({ r, g, b });
-            if (color === null) {
-              return;
-            }
+            const color = rgb2hex({ r, g, b });
 
             if (isLeftButton(e)) {
               setMainColor(color);

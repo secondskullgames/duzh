@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Colors } from '../types/Color';
+import { rgb2hex } from '../graphics/images/ImageUtils';
+import Color, { Colors } from '../types/Color';
+import ColorMapper from './ColorMapper';
 import ColorPicker from './ColorPicker';
 import { generateZipBlob, triggerDownload } from './download';
 import EditableBitmap from './EditableBitmap';
@@ -31,16 +33,49 @@ const Editor = () => {
   const [altColor, setAltColor] = useState(Colors.WHITE);
   const [zoomLevel] = useState(16);
   const [selectedTool, setSelectedTool] = useState<Tool>('DRAW');
+  const [mappings, setMappings] = useState<Record<Color, string>>({});
+
+  const updateMappings = () => {
+    const canvas = document.querySelector('#editor canvas') as HTMLCanvasElement;
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const colors = new Set<Color>();
+
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      const [r, g, b, a] = imageData.data.slice(i, i + 4);
+      const color = rgb2hex({ r, g, b });
+      colors.add(color);
+    }
+
+    const updatedMappings = { ...mappings };
+    for (const color of colors) {
+      if (mappings[color] === undefined) {
+        updatedMappings[color] = '';
+      }
+    }
+
+    for (const color of Object.keys(mappings)) {
+      if (!colors.has(color)) {
+        delete updatedMappings[color];
+      }
+    }
+    setMappings(updatedMappings);
+    console.log('updated mappings');
+  };
+
+  useEffect(() => {
+    console.log('in useEffect');
+    updateMappings();
+  }, []);
 
   return (
     <div className={styles.editor}>
-      <div className={styles.topRow}>
+      <div className={styles.topSection}>
         <ToolPicker
           selectedTool={selectedTool}
           setSelectedTool={setSelectedTool}
         />
         <button onClick={async () => {
-          // this isn't Reacty... I don't care
           const canvas = document.querySelector('#editor canvas') as HTMLCanvasElement;
           const zipBlob = await generateZipBlob(canvas);
           triggerDownload(zipBlob);
@@ -48,23 +83,34 @@ const Editor = () => {
           Save
         </button>
       </div>
-      <EditableBitmap
-        width={40}
-        height={40}
-        zoomLevel={zoomLevel}
-        mainColor={mainColor}
-        altColor={altColor}
-        selectedTool={selectedTool}
-        setMainColor={setMainColor}
-        setAltColor={setAltColor}
-      />
-      <ColorPicker
-        mainColor={mainColor}
-        altColor={altColor}
-        colors={colors}
-        setMainColor={setMainColor}
-        setAltColor={setAltColor}
-      />
+      <div className={styles.mainSection}>
+        <div className={styles.leftSection}>
+          <EditableBitmap
+            width={40}
+            height={40}
+            zoomLevel={zoomLevel}
+            mainColor={mainColor}
+            altColor={altColor}
+            selectedTool={selectedTool}
+            setMainColor={setMainColor}
+            setAltColor={setAltColor}
+            onChange={updateMappings}
+          />
+          <ColorPicker
+            mainColor={mainColor}
+            altColor={altColor}
+            colors={colors}
+            setMainColor={setMainColor}
+            setAltColor={setAltColor}
+          />
+        </div>
+        <div className={styles.rightSection}>
+          <ColorMapper
+            mappings={mappings}
+            setMappings={setMappings}
+          />
+        </div>
+      </div>
     </div>
   );
 };

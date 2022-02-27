@@ -10,7 +10,8 @@ const generateZipBlob = async (canvas: HTMLCanvasElement): Promise<string> => {
 const triggerDownload = (blob: string) => {
   const dataUrl = `data:application/zip;base64,${blob}`;
 
-  // SUUUUUPER HACK ALERT
+  // Super hack, but this is the method suggested on Stack Overflow
+  // https://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link
   const a = document.createElement('a');
   a.href = dataUrl;
   a.download = 'export.zip';

@@ -4,9 +4,18 @@
   flex-direction: column;
   align-items: stretch;
   border: 1px solid black;
+  padding: 10px;
 }
 
-.topRow {
+.editor > *:not(:first-child) {
+  margin-top: 5px;
+}
+
+.editor > *:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.topSection {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -14,14 +23,32 @@
   border: 1px solid black;
 }
 
-.editor > * {
-  margin: 8px;
+.mainSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.editor > *:not(:first-child) {
-  margin-top: 8px;
+.mainSection > *:not(:first-child) {
+  margin-left: 5px;
 }
 
-.editor > *:not(:last-child) {
-  margin-bottom: 8px;
+.mainSection > *:not(:last-child) {
+  margin-right: 5px;
+}
+
+.leftSection > *:not(:first-child) {
+  margin-top: 5px;
+}
+
+.leftSection > *:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.rightSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid black;
 }

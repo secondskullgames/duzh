@@ -311,7 +311,8 @@ const _getDirection = (key: ArrowKey): Direction => {
 };
 
 const attachEvents = () => {
-  window.onkeydown = keyHandlerWrapper;
+  const canvas = document.querySelector('#container canvas') as HTMLCanvasElement;
+  canvas.onkeydown = keyHandlerWrapper;
 };
 
 export {
