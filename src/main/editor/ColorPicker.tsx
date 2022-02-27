@@ -22,6 +22,7 @@ const ColorPicker = ({ mainColor, altColor, colors, setMainColor, setAltColor }:
         {
           colors.map(color => (
             <ColorBox
+              key={color}
               color={color}
               onLeftClick={() => setMainColor(color)}
               onRightClick={() => setAltColor(color)}

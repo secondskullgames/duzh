@@ -25,10 +25,16 @@ const killPlayer = async () => {
   await render();
 };
 
+const toggleEditor = () => {
+  const editor = document.getElementById('editor') as HTMLDivElement;
+  editor.style.display = (editor.style.display === 'block' ? 'none' : 'block');
+};
+
 type DebugShape = {
   revealMap: () => void,
   killEnemies: () => void,
-  killPlayer: () => void
+  killPlayer: () => void,
+  toggleEditor: () => void
 };
 
 export const initDebug = () => {
@@ -37,7 +43,8 @@ export const initDebug = () => {
   jwb.debug = jwb.debug || {
     revealMap,
     killEnemies,
-    killPlayer
+    killPlayer,
+    toggleEditor
   };
 };
 
