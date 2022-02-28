@@ -27,6 +27,7 @@ class GameRenderer extends BufferedRenderer {
     this.gameScreenRenderer = new GameScreenRenderer();
     this.hudRenderer = new HUDRenderer();
     this.inventoryRenderer = new InventoryRenderer();
+    this.getCanvas().tabIndex = 0;
   }
 
   /**
