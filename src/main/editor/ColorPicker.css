@@ -1,0 +1,37 @@
+.colorPicker {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.selectedColors {
+  position: relative;
+  background-color: #EEEEEE;
+  outline: 1px solid #000000;
+  width: 40px;
+  height: 40px;
+}
+
+.selectedColors > :first-child {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+}
+.selectedColors > :nth-child(2) {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+}
+
+.colors {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 40px;
+}
+
+.colorBox {
+  width: 20px;
+  height: 20px;
+  outline: 1px solid #000000;
+}

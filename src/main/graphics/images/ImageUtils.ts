@@ -1,3 +1,4 @@
+import Color from '../../types/Color';
 import PaletteSwaps from '../../types/PaletteSwaps';
 import RGB from './RGB';
 
@@ -109,9 +110,15 @@ const hex2rgb = (hex: string): RGB  => {
   }
 };
 
+const rgb2hex = ({ r, g, b }: RGB): Color => {
+  const p = (n: number) => (n > 15) ? n.toString(16) : `0${n.toString(16)}`;
+  return `#${p(r)}${p(g)}${p(b)}`;
+};
+
 export {
   applyTransparentColor,
-  replaceColors,
+  hex2rgb,
   replaceAll,
-  hex2rgb
+  replaceColors,
+  rgb2hex
 };

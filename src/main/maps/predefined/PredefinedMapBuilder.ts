@@ -1,5 +1,6 @@
 import GameState from '../../core/GameState';
 import ImageLoader from '../../graphics/images/ImageLoader';
+import { rgb2hex } from '../../graphics/images/ImageUtils';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../objects/Door';
 import ItemFactory from '../../items/ItemFactory';
@@ -51,7 +52,7 @@ const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const x = Math.floor(i / 4) % imageData.width;
     const y = Math.floor(Math.floor(i / 4) / imageData.width);
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
-    const color = Color.fromRGB({ r, g, b });
+    const color = rgb2hex({ r, g, b });
 
     if (color !== null) {
       const tileType = tileColors[color] || null;
@@ -74,7 +75,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const x = Math.floor(i / 4) % imageData.width;
     const y = Math.floor(Math.floor(i / 4) / imageData.width);
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
-    const color = Color.fromRGB({ r, g, b });
+    const color = rgb2hex({ r, g, b });
 
     if (color !== null) {
       if (Color.equals(color, model.startingPointColor)) {
@@ -107,7 +108,7 @@ const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const x = Math.floor(i / 4) % imageData.width;
     const y = Math.floor(Math.floor(i / 4) / imageData.width);
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
-    const color = Color.fromRGB({ r, g, b });
+    const color = rgb2hex({ r, g, b });
 
     if (color !== null) {
       const itemClass = model.itemColors[color] || null;
@@ -132,7 +133,7 @@ const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const x = Math.floor(i / 4) % imageData.width;
     const y = Math.floor(Math.floor(i / 4) / imageData.width);
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
-    const color = Color.fromRGB({ r, g, b });
+    const color = rgb2hex({ r, g, b });
 
     if (color !== null) {
       const doorDirection = model.doorColors[color] || null;

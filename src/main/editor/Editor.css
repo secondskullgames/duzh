@@ -1,0 +1,54 @@
+.editor {
+  margin: 12px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.editor > *:not(:first-child) {
+  margin-top: 5px;
+}
+
+.editor > *:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.topSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+.mainSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.mainSection > *:not(:first-child) {
+  margin-left: 5px;
+}
+
+.mainSection > *:not(:last-child) {
+  margin-right: 5px;
+}
+
+.leftSection > *:not(:first-child) {
+  margin-top: 5px;
+}
+
+.leftSection > *:not(:last-child) {
+  margin-bottom: 5px;
+}
+
+.rightSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid black;
+}
