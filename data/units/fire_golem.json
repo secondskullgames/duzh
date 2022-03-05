@@ -1,0 +1,28 @@
+{
+  "name": "fire_golem",
+  "type": "GOLEM",
+  "sprite": "zombie",
+  "paletteSwaps": {
+    "DARK_BROWN": "RED",
+    "DARK_GRAY": "RED",
+    "ZOMBIE_SKIN_LIGHT": "RED",
+    "ZOMBIE_SKIN_DARK": "RED",
+    "BLACK": "DARK_RED",
+    "DARK_RED": "DARK_RED",
+    "TEAL": "YELLOW"
+  },
+  "startingLife": 60,
+  "startingMana": null,
+  "startingDamage": 8,
+  "lifePerLevel": 0,
+  "manaPerLevel": null,
+  "damagePerLevel": 0,
+  "aiParameters": {
+    "speed": 0.92,
+    "visionRange": 10,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}

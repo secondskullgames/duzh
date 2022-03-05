@@ -1,0 +1,24 @@
+{
+  "name": "robed_wizard",
+  "type": "WIZARD",
+  "sprite": "robed_wizard",
+  "paletteSwaps": {
+    "WIZARD_DARK_GRAY": "DARK_RED",
+    "DARK_GRAY": "DARK_RED",
+    "LIGHT_GRAY": "RED"
+  },
+  "startingLife": 120,
+  "startingMana": null,
+  "startingDamage": 7,
+  "lifePerLevel": 0,
+  "manaPerLevel": null,
+  "damagePerLevel": 0,
+  "aiParameters": {
+    "speed": 0.95,
+    "visionRange": 10,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}
