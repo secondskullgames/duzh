@@ -4,7 +4,7 @@ import { isTileRevealed } from '../../maps/MapUtils';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { Entity } from '../../types/types';
+import { Entity, Pixel } from '../../types/types';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
@@ -30,7 +30,7 @@ class GameScreenRenderer extends BufferedRenderer {
   };
 
   private _renderElement = async (element: (Entity | Tile | Equipment), { x, y }: Coordinates) => {
-    const pixel: Coordinates = this._gridToPixel({ x, y });
+    const pixel: Pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
       const { sprite } = element;
@@ -40,7 +40,10 @@ class GameScreenRenderer extends BufferedRenderer {
     }
   };
 
-  private _isPixelOnScreen = ({ x, y }: Coordinates): boolean =>
+  /**
+   * Allow for a one-tile buffer in each direction
+   */
+  private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
     (x >= -TILE_WIDTH) &&
     (x <= this.width + TILE_WIDTH) &&
     (y >= -TILE_HEIGHT) &&
@@ -56,7 +59,7 @@ class GameScreenRenderer extends BufferedRenderer {
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates): Coordinates => {
+  private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
     return {
       x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
@@ -177,9 +180,6 @@ class GameScreenRenderer extends BufferedRenderer {
     await Promise.all(promises);
   };
 
-  /**
-   * @param color (in hex form)
-   */
   private _drawEllipse = async ({ x, y }: Coordinates, color: Color) => {
     const { x: left, y: top } = this._gridToPixel({ x, y });
     const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
