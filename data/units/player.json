@@ -18,7 +18,7 @@
     "ORANGE": "ORANGE"
   },
   "startingLife": 100,
-  "startingMana": 100,
+  "startingMana": 30,
   "startingDamage": 8,
   "lifePerLevel": 0,
   "manaPerLevel": 0,

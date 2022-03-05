@@ -11,12 +11,13 @@ import Animatable from '../types/Animatable';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { Entity, Faction } from '../types/types';
+import { checkArgument, checkState } from '../utils/preconditions';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
 
-// Regenerate 1% of life every 2 turns
-const LIFE_PER_TURN_MULTIPLIER = 0.005;
+// Regenerate 1% of life every 5 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.01 / 5;
 const MAX_PLAYER_LEVEL = 20;
 
 type Props = {
@@ -43,14 +44,14 @@ class Unit implements Entity, Animatable {
   experience: number;
   life: number;
   maxLife: number;
-  mana: number | null;
-  maxMana: number | null;
+  private mana: number | null;
+  private maxMana: number | null;
   lifeRemainder: number;
+  manaRemainder: number;
   private damage: number;
   controller: UnitController;
   activity: Activity;
   direction: Direction;
-  private readonly remainingCooldowns: Map<UnitAbility, number>;
   readonly abilities: UnitAbility[];
   stunDuration: number;
 
@@ -71,11 +72,11 @@ class Unit implements Entity, Animatable {
     this.mana = unitClass.startingMana;
     this.maxMana = unitClass.startingMana;
     this.lifeRemainder = 0;
+    this.manaRemainder = 0;
     this.damage = unitClass.startingDamage;
     this.controller = controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
-    this.remainingCooldowns = new Map();
     this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
 
@@ -86,7 +87,7 @@ class Unit implements Entity, Animatable {
     }
 
     while (this.level < level) {
-      this._levelUp(false);
+      this.levelUp(false);
     }
   }
 
@@ -98,8 +99,13 @@ class Unit implements Entity, Animatable {
     this.lifeRemainder -= deltaLife;
     this.life = Math.min(this.life + deltaLife, this.maxLife);
 
-    for (const [ability, cooldown] of this.remainingCooldowns.entries()) {
-      this.remainingCooldowns.set(ability, Math.max(cooldown - 1, 0));
+    // mana regeneration
+    if (this.mana !== null && this.maxMana !== null) {
+      const manaPerTurn = 1;
+      this.manaRemainder += manaPerTurn;
+      const deltaMana = Math.floor(this.manaRemainder);
+      this.manaRemainder -= deltaMana;
+      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
     }
   };
 
@@ -152,7 +158,7 @@ class Unit implements Entity, Animatable {
     return Math.round(damage);
   };
 
-  private _levelUp = (withSound: boolean) => {
+  levelUp = (withSound: boolean) => {
     this.level++;
     const lifePerLevel = this.unitClass.lifePerLevel;
     this.maxLife += lifePerLevel;
@@ -169,13 +175,13 @@ class Unit implements Entity, Animatable {
   };
 
   gainExperience = (experience: number) => {
-    if (!this.unitClass.experienceToNextLevel) return;
+    if (this.unitClass.experienceToNextLevel === null) return;
 
     this.experience += experience;
     const experienceToNextLevel = this.experienceToNextLevel();
     while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
-      this._levelUp(true);
+      this.levelUp(true);
     }
   };
 
@@ -208,14 +214,20 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  getCooldown = (ability: UnitAbility): number => (this.remainingCooldowns.get(ability) || 0);
-
-  triggerCooldown = (ability: UnitAbility)  => this.remainingCooldowns.set(ability, ability.cooldown);
-
   /**
    * @override {@link Animatable#getAnimationKey}
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}`;
+
+  getMana = () => this.mana;
+  getMaxMana = () => this.maxMana;
+  canSpendMana = (amount: number) => (this.mana || 0) >= amount;
+  spendMana = (amount: number) => {
+    checkState(this.mana !== null);
+    checkArgument(amount <= this.mana!!);
+    checkArgument(amount >= 0);
+    this.mana!! -= amount;
+  };
 }
 
 export default Unit;

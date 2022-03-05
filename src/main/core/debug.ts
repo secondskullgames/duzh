@@ -33,6 +33,12 @@ const nextLevel = async () => {
   await render();
 };
 
+const levelUp = async () => {
+  const playerUnit = GameState.getInstance().getPlayerUnit();
+  playerUnit.levelUp(false);
+  await render();
+};
+
 const toggleEditor = () => {
   const editor = document.getElementById('editor') as HTMLDivElement;
   editor.style.display = (editor.style.display === 'block' ? 'none' : 'block');
@@ -43,6 +49,7 @@ type DebugShape = {
   killEnemies: () => void,
   killPlayer: () => void,
   nextLevel: () => void,
+  levelUp: () => void,
   toggleEditor: () => void
 };
 
@@ -54,6 +61,7 @@ export const initDebug = () => {
     killEnemies,
     killPlayer,
     nextLevel,
+    levelUp,
     toggleEditor
   };
 };

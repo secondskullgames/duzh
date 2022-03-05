@@ -27,15 +27,21 @@ const moveTo = async (unit: Unit, { x, y }: Coordinates) => {
   }
 };
 
+type Props = {
+  name: string,
+  manaCost: number,
+  icon?: string | null
+};
+
 abstract class UnitAbility {
   readonly name: string;
-  readonly cooldown: number;
+  readonly manaCost: number;
   readonly icon: string | null;
 
-  protected constructor(name: string, cooldown: number, icon: string | null = null) {
+  protected constructor({ name, manaCost, icon }: Props) {
     this.name = name;
-    this.cooldown = cooldown;
-    this.icon = icon;
+    this.manaCost = manaCost;
+    this.icon = icon || null;
   }
 
   abstract use(unit: Unit, direction: Direction | null): Promise<any>;
@@ -43,7 +49,7 @@ abstract class UnitAbility {
 
 class NormalAttack extends UnitAbility {
   constructor() {
-    super('ATTACK', 0);
+    super({ name: 'ATTACK', manaCost: 0 });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -86,7 +92,7 @@ class NormalAttack extends UnitAbility {
 
 class HeavyAttack extends UnitAbility {
   constructor() {
-    super('HEAVY_ATTACK', 15, 'strong_icon');
+    super({ name: 'HEAVY_ATTACK', manaCost: 15, icon: 'strong_icon' });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -106,7 +112,6 @@ class HeavyAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.triggerCooldown(this);
         const damage = unit.getDamage() * 2;
         await attack(unit, targetUnit, damage);
         await playSound(Sounds.SPECIAL_ATTACK);
@@ -117,7 +122,7 @@ class HeavyAttack extends UnitAbility {
 
 class KnockbackAttack extends UnitAbility {
   constructor() {
-    super('KNOCKBACK_ATTACK', 15, 'knockback_icon');
+    super({ name: 'KNOCKBACK_ATTACK', manaCost: 15, icon: 'knockback_icon' });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -137,7 +142,6 @@ class KnockbackAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.triggerCooldown(this);
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         let targetCoordinates = { x, y };
@@ -159,7 +163,7 @@ class KnockbackAttack extends UnitAbility {
 
 class StunAttack extends UnitAbility {
   constructor() {
-    super('STUN_ATTACK', 15, 'knockback_icon');
+    super({ name: 'STUN_ATTACK', manaCost: 15, icon: 'knockback_icon' });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -179,7 +183,6 @@ class StunAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
-        unit.triggerCooldown(this);
         const damage = unit.getDamage();
         await attack(unit, targetUnit, damage);
         // stun for 2 turns (if they're already stunned, just leave it)
@@ -192,7 +195,7 @@ class StunAttack extends UnitAbility {
 
 class ShootArrow extends UnitAbility {
   constructor() {
-    super('SHOOT_ARROW', 0);
+    super({ name: 'SHOOT_ARROW', manaCost: 0 });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -234,7 +237,7 @@ class ShootArrow extends UnitAbility {
 
 class Blink extends UnitAbility {
   constructor() {
-    super('BLINK', 15);
+    super({ name: 'BLINK', manaCost: 15 });
   }
 
   /**
@@ -255,7 +258,6 @@ class Blink extends UnitAbility {
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
-      unit.triggerCooldown(this);
     } else {
       await playSound(Sounds.FOOTSTEP);
     }
