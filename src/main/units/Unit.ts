@@ -16,8 +16,14 @@ import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
 
-// Regenerate 1% of life every 5 turns
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 5;
+/**
+ * Regenerate this fraction of the unit's health each turn
+ */
+const LIFE_PER_TURN_MULTIPLIER = 0.01 / 8;
+/**
+ * Only regenerate life if the unit's life is less than this (ratio of their total health)
+ */
+const LIFE_REGEN_THRESHOLD = 1;
 const MAX_PLAYER_LEVEL = 20;
 
 type Props = {
@@ -93,11 +99,13 @@ class Unit implements Entity, Animatable {
 
   private _upkeep = () => {
     // life regeneration
-    const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
-    this.lifeRemainder += lifePerTurn;
-    const deltaLife = Math.floor(this.lifeRemainder);
-    this.lifeRemainder -= deltaLife;
-    this.life = Math.min(this.life + deltaLife, this.maxLife);
+    if (this.life < this.maxLife * LIFE_REGEN_THRESHOLD) {
+      const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
+      this.lifeRemainder += lifePerTurn;
+      const deltaLife = Math.floor(this.lifeRemainder);
+      this.lifeRemainder -= deltaLife;
+      this.life = Math.min(this.life + deltaLife, this.maxLife);
+    }
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
@@ -160,9 +168,13 @@ class Unit implements Entity, Animatable {
 
   levelUp = (withSound: boolean) => {
     this.level++;
-    const lifePerLevel = this.unitClass.lifePerLevel;
+    const { lifePerLevel, manaPerLevel } = this.unitClass;
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
+    if (this.mana !== null && this.maxMana !== null && manaPerLevel !== null) {
+      this.maxMana += manaPerLevel;
+      this.mana += manaPerLevel;
+    }
     this.damage += this.unitClass.damagePerLevel;
     const abilities = this.unitClass.abilities[this.level] || [];
     for (const abilityName of abilities) {

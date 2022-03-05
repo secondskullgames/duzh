@@ -115,6 +115,7 @@ class HeavyAttack extends UnitAbility {
         const damage = unit.getDamage() * 2;
         await attack(unit, targetUnit, damage);
         await playSound(Sounds.SPECIAL_ATTACK);
+        unit.spendMana(this.manaCost);
       }
     }
   };
@@ -156,6 +157,7 @@ class KnockbackAttack extends UnitAbility {
         // stun for 1 turn (if they're already stunned, just leave it)
         targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
         await playSound(Sounds.SPECIAL_ATTACK);
+        unit.spendMana(this.manaCost);
       }
     }
   };
@@ -188,6 +190,7 @@ class StunAttack extends UnitAbility {
         // stun for 2 turns (if they're already stunned, just leave it)
         targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
         await playSound(Sounds.SPECIAL_ATTACK);
+        unit.spendMana(this.manaCost);
       }
     }
   };
@@ -195,7 +198,7 @@ class StunAttack extends UnitAbility {
 
 class ShootArrow extends UnitAbility {
   constructor() {
-    super({ name: 'SHOOT_ARROW', manaCost: 0 });
+    super({ name: 'SHOOT_ARROW', manaCost: 5 });
   }
 
   use = async (unit: Unit, direction: Direction | null) => {
@@ -232,6 +235,8 @@ class ShootArrow extends UnitAbility {
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }
+
+    unit.spendMana(this.manaCost);
   };
 }
 
@@ -258,6 +263,7 @@ class Blink extends UnitAbility {
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
+      unit.spendMana(this.manaCost);
     } else {
       await playSound(Sounds.FOOTSTEP);
     }

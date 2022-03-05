@@ -9,7 +9,7 @@ import Unit from '../../units/Unit';
 import { wait } from '../../utils/promises';
 
 const FRAME_LENGTH = 150; // milliseconds
-const PROJECTILE_FRAME_LENGTH = 50; // milliseconds
+const PROJECTILE_FRAME_LENGTH = 40; // milliseconds
 
 type UnitAnimationFrame = {
   unit: Unit,

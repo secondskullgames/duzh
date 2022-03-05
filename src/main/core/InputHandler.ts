@@ -146,12 +146,11 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       const playerUnit = GameState.getInstance().getPlayerUnit();
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
-        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON')) {
+        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
         }
       } else if (modifiers.includes('ALT')) {
         if (playerUnit.canSpendMana(UnitAbility.BLINK.manaCost)) {
-            playerUnit.spendMana(UnitAbility.BLINK.manaCost);
           queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
         }
       } else {
@@ -159,7 +158,6 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
         if (ability !== null) {
           queuedOrder = async () => {
             state.setQueuedAbility(null);
-            playerUnit.spendMana(ability.manaCost);
             await ability.use(playerUnit, { dx, dy });
           };
         } else {

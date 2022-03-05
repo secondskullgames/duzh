@@ -5,14 +5,14 @@
   "width": 32,
   "height": 24,
   "enemies": {
-    "snake": 8,
-    "grunt": 6
+    "snake": 6,
+    "grunt": 8
   },
   "equipment": {
     "short_bow":  1
   },
   "items": {
-    "life_potion": 4,
+    "life_potion": 3,
     "floor_fire_scroll": 1
   }
 }
