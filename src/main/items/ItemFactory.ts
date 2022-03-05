@@ -40,8 +40,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const adjacentUnits: Unit[] = map.units.filter(u => {
       const dx = unit.x - u.x;
       const dy = unit.y - u.y;
-      return ([-1,0,1].indexOf(dx) > -1)
-        && ([-1,0,1].indexOf(dy) > -1)
+      return ([-1,0,1].includes(dx))
+        && ([-1,0,1].includes(dy))
         && !(dx === 0 && dy === 0);
     });
 
