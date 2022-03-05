@@ -90,8 +90,10 @@ const createSectionSplitter = ({ minRoomWidth, minRoomHeight, horizontalSectionP
 
     const left = randInt(minLeft, maxLeft);
     const top = randInt(minTop, maxTop);
-    const width = randInt(minRoomWidth, sectionRight - horizontalSectionPadding - left);
-    const height = randInt(minRoomHeight, sectionBottom - verticalSectionPadding - top);
+    const maxRoomWidth = sectionRight - horizontalSectionPadding - left;
+    const width = randInt(minRoomWidth, maxRoomWidth);
+    const maxRoomHeight = sectionBottom - verticalSectionPadding - top;
+    const height = randInt(minRoomHeight, maxRoomHeight);
 
     return section.withRoom({ left, top, width, height });
   };

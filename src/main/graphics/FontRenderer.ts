@@ -21,7 +21,7 @@ interface FontDefinition {
 }
 
 interface FontInstance extends FontDefinition {
-  imageMap: { [char: string]: ImageBitmap }
+  imageMap: Record<string, ImageBitmap>
 }
 
 const Fonts: Record<string, FontDefinition> = {
@@ -73,12 +73,12 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
   const imageData = await ImageLoader.loadImage(`fonts/${definition.src}`)
     .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
   const imageBitmap = await createImageBitmap(imageData);
-  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  const canvas = document.createElement('canvas') as HTMLCanvasElement;
   canvas.width = width;
   canvas.height = definition.height;
-  const context: CanvasRenderingContext2D = <any>canvas.getContext('2d');
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D;
   context.drawImage(imageBitmap, 0, 0);
-  const imageMap: { [char: string]: ImageBitmap } = {};
+  const imageMap: Record<string, ImageBitmap> = {};
   const promises: Promise<any>[] = [];
 
   for (const c of CHARACTERS) {

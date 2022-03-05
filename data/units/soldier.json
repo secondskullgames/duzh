@@ -1,5 +1,5 @@
 {
-  "name": "ENEMY_SOLDIER",
+  "name": "soldier",
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
@@ -9,7 +9,7 @@
   },
   "startingLife": 70,
   "startingMana": null,
-  "startingDamage": 4,
+  "startingDamage": 6,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,

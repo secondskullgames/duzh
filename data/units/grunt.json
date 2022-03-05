@@ -9,7 +9,7 @@
   },
   "startingLife": 50,
   "startingMana": null,
-  "startingDamage": 3,
+  "startingDamage": 4,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
@@ -20,7 +20,7 @@
   ],
   "aiParameters": {
     "speed": 0.95,
-    "visionRange": 8,
+    "visionRange": 6,
     "fleeThreshold": 0.1
   },
   "abilities": {

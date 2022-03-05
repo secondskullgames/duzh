@@ -15,8 +15,8 @@ import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
 
-// Regenerate 1% of life every 5 turns
-const LIFE_PER_TURN_MULTIPLIER = 0.002;
+// Regenerate 1% of life every 2 turns
+const LIFE_PER_TURN_MULTIPLIER = 0.005;
 const MAX_PLAYER_LEVEL = 20;
 
 type Props = {
@@ -33,7 +33,6 @@ type Props = {
 class Unit implements Entity, Animatable {
   private readonly unitClass: UnitClass;
   readonly faction: Faction;
-  readonly char = '@';
   readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;

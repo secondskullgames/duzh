@@ -234,7 +234,7 @@ class ShootArrow extends UnitAbility {
 
 class Blink extends UnitAbility {
   constructor() {
-    super('BLINK', 10);
+    super('BLINK', 15);
   }
 
   /**

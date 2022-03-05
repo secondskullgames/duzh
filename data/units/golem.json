@@ -3,8 +3,13 @@
   "type": "GOLEM",
   "sprite": "zombie",
   "paletteSwaps": {
-    "DARK_GRAY": "DARKER_GRAY",
-    "LIGHT_GRAY": "DARKER_GRAY"
+    "DARK_BROWN": "DARK_GRAY",
+    "DARK_GRAY": "DARK_GRAY",
+    "ZOMBIE_SKIN_LIGHT": "DARK_GRAY",
+    "ZOMBIE_SKIN_DARK": "DARK_GRAY",
+    "BLACK": "BLACK",
+    "DARK_RED": "BLACK",
+    "TEAL": "CYAN"
   },
   "startingLife": 60,
   "startingMana": null,

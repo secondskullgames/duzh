@@ -16,7 +16,6 @@ type Props = {
 class Door implements Entity {
   private readonly _direction: Direction;
   private _state: State;
-  readonly char: string;
   x: number;
   y: number;
   sprite: Sprite;
@@ -24,7 +23,6 @@ class Door implements Entity {
   constructor({ direction, state, x, y, sprite }: Props) {
     this._direction = direction;
     this._state = state;
-    this.char = _getChar(direction, state);
     this.x = x;
     this.y = y;
     this.sprite = sprite;
@@ -49,13 +47,6 @@ class Door implements Entity {
     }
   };
 }
-
-const _getChar = (direction: Direction, state: State): string => {
-  switch (direction) {
-    case 'VERTICAL': return (state === 'OPEN') ? ' ' : '-';
-    case 'HORIZONTAL': return (state === 'OPEN') ? ' ' : '|';
-  }
-};
 
 export default Door;
 export {

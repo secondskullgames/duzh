@@ -4,9 +4,15 @@
   "levelNumber": 5,
   "width": 36,
   "height": 26,
-  "numEnemies": 13,
-  "numItems": 3,
-  "enemies": ["soldier", "golem"],
-  "equipment": ["steel_sword", "long_bow"],
-  "items": ["life_potion", "floor_fire_scroll"]
+  "enemies": {
+    "soldier": 8,
+    "golem": 4
+  },
+  "equipment": {
+    "long_bow": 1
+  },
+  "items": {
+    "life_potion": 3,
+    "floor_fire_scroll": 1
+  }
 }

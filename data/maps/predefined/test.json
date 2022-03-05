@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "grunt"
+    "GREEN": "fire_golem"
   },
   "itemColors": {
     "YELLOW": "key"

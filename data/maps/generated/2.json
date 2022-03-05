@@ -4,9 +4,15 @@
   "levelNumber": 2,
   "width": 32,
   "height": 24,
-  "numEnemies": 11,
-  "numItems": 4,
-  "enemies": ["snake", "grunt"],
-  "equipment": ["bronze_sword", "short_bow"],
-  "items": ["life_potion", "floor_fire_scroll"]
+  "enemies": {
+    "snake": 8,
+    "grunt": 6
+  },
+  "equipment": {
+    "short_bow":  1
+  },
+  "items": {
+    "life_potion": 4,
+    "floor_fire_scroll": 1
+  }
 }

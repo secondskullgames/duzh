@@ -1,10 +1,8 @@
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
-import GeneratedMapModel from '../maps/generated/GeneratedMapModel';
 import MapInstance from '../maps/MapInstance';
 import MapSpec from '../maps/MapSpec';
 import { isTileRevealed } from '../maps/MapUtils';
-import PredefinedMapModel from '../maps/predefined/PredefinedMapModel';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
@@ -24,7 +22,7 @@ const loadNextMap = async () => {
     state.setScreen('VICTORY');
   } else {
     const mapSpec = state.getNextMap();
-    const mapInstance = await _loadMap(mapSpec);
+    const mapInstance = await MapFactory.loadMap(mapSpec);
     state.setMap(mapInstance);
   }
 };
@@ -32,25 +30,7 @@ const loadNextMap = async () => {
 const preloadFirstMap = async () => {
   const state = GameState.getInstance();
   const mapSpec = state.getNextMap();
-  firstMapPromise = _loadMap(mapSpec);
-};
-
-const _loadMap = (map: MapSpec): Promise<MapInstance> => {
-  switch (map.type) {
-    case 'generated': {
-      return (async () => {
-        const mapModel = await GeneratedMapModel.load(map.id);
-        const mapBuilder = await MapFactory.loadGeneratedMap(mapModel);
-        return mapBuilder.build();
-      })();
-    }
-    case 'predefined': {
-      return (async () => {
-        const mapModel = await PredefinedMapModel.load(map.id);
-        return MapFactory.loadPredefinedMap(mapModel);
-      })();
-    }
-  }
+  firstMapPromise = MapFactory.loadMap(mapSpec);
 };
 
 const initialize = async () => {
@@ -100,7 +80,7 @@ const startGame = async () => {
 };
 
 const startGameDebug = async () => {
-  const mapInstance = await _loadMap({ type: 'predefined', id: 'test' });
+  const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
   GameState.getInstance().setMap(mapInstance);
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
@@ -124,7 +104,7 @@ const revealTiles = () => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  const radius = 2;
+  const radius = 3;
 
   for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
     for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
