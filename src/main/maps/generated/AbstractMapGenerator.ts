@@ -5,13 +5,19 @@ import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
-import { average, minBy } from '../../utils/arrays';
-import Pathfinder from '../../geometry/Pathfinder';
+import { average, minBy, sum } from '../../utils/arrays';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
-import TileEligibilityChecker from './TileEligibilityChecker';
+import GeneratedMapModel from './GeneratedMapModel';
+
+type GenerateMapProps = {
+  model: GeneratedMapModel,
+  enemyUnitClasses: Map<UnitClass, number>,
+  equipmentClasses: Map<EquipmentModel, number>,
+  itemClasses: Map<ItemModel, number>
+};
 
 abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;
@@ -20,18 +26,13 @@ abstract class AbstractMapGenerator {
     this.tileSet = tileSet;
   }
 
-  generateMap = (
-    level: number,
-    width: number,
-    height: number,
-    numEnemies: number,
-    numItems: number,
-    enemyUnitClasses: UnitClass[],
-    equipmentClasses: EquipmentModel[],
-    itemClasses: ItemModel[]
-  ): GeneratedMapBuilder => {
-    const map = this._generateEmptyMap(width, height, level);
+  generateMap = ({ model, enemyUnitClasses, equipmentClasses, itemClasses }: GenerateMapProps): GeneratedMapBuilder => {
+    const { width, height, levelNumber } = model;
+    const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
+
+    const numEnemies = sum([...enemyUnitClasses.values()]);
+    const numItems = sum([...equipmentClasses.values(), ...itemClasses.values()]);
 
     const [stairsLocation] = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [], 1);
     tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
@@ -44,9 +45,9 @@ abstract class AbstractMapGenerator {
     );
 
     return new GeneratedMapBuilder({
-      level,
-      width,
-      height,
+      level: model.levelNumber,
+      width: model.width,
+      height: model.height,
       tiles,
       playerUnitLocation,
       enemyUnitLocations,

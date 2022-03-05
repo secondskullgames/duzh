@@ -5,8 +5,7 @@ import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { Room } from '../../types/types';
-import { HUMAN_CAUTIOUS, HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_CAUTIOUS } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
@@ -21,9 +20,9 @@ type Props = {
   playerUnitLocation: Coordinates,
   enemyUnitLocations: Coordinates[],
   itemLocations: Coordinates[],
-  enemyUnitClasses: UnitClass[],
-  equipmentClasses: EquipmentModel[],
-  itemClasses: ItemModel[]
+  enemyUnitClasses: Map<UnitClass, number>,
+  equipmentClasses: Map<EquipmentModel, number>,
+  itemClasses: Map<ItemModel, number>
 };
 
 class GeneratedMapBuilder {
@@ -34,9 +33,9 @@ class GeneratedMapBuilder {
   private readonly playerUnitLocation: Coordinates;
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
-  private readonly enemyUnitClasses: UnitClass[];
-  private readonly equipmentClasses: EquipmentModel[];
-  private readonly itemClasses: ItemModel[];
+  private readonly enemyUnitClasses: Map<UnitClass, number>;
+  private readonly equipmentClasses: Map<EquipmentModel, number>;
+  private readonly itemClasses: Map<ItemModel, number>;
 
   constructor({
     level,
@@ -69,24 +68,33 @@ class GeneratedMapBuilder {
     const items: MapItem[] = [];
 
     const unitPromises: Promise<Unit>[] = [];
-    for (const { x, y } of this.enemyUnitLocations) {
-      const unitClass = randChoice(this.enemyUnitClasses);
-      const promise = UnitFactory.createUnit({
-        name: unitClass.name, // TODO unique names?
-        unitClass,
-        // controller: HUMAN_DETERMINISTIC,
-        controller: HUMAN_CAUTIOUS,
-        faction: 'ENEMY',
-        coordinates: { x, y },
-        level: this.level
-      });
-      unitPromises.push(promise);
+    let i = 0;
+
+    for (const [unitClass, count] of this.enemyUnitClasses) {
+      for (let j = 0; j < count; j++) {
+        const { x, y } = this.enemyUnitLocations[i];
+        const promise = UnitFactory.createUnit({
+          name: unitClass.name, // TODO unique names?
+          unitClass,
+          controller: HUMAN_CAUTIOUS,
+          faction: 'ENEMY',
+          coordinates: { x, y },
+          level: this.level
+        });
+        unitPromises.push(promise);
+        i++;
+      }
     }
 
     const itemPromises: Promise<MapItem>[] = [];
-    for (const { x, y } of this.itemLocations) {
-      const item = ItemFactory.createRandomItem(this.equipmentClasses, this.itemClasses, { x, y });
-      itemPromises.push(item);
+    i = 0;
+    for (const [equipmentClass, count] of this.equipmentClasses) {
+      for (let j = 0; j < count; j++) {
+        const { x, y } = this.itemLocations[i];
+        const item = ItemFactory.createMapEquipment(equipmentClass, { x, y });
+        itemPromises.push(item);
+        i++;
+      }
     }
 
     const [resolvedUnits, resolvedItems] = await Promise.all([Promise.all(unitPromises), Promise.all(itemPromises)]);

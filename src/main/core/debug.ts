@@ -3,6 +3,7 @@
  * that are only intended for debugging purposes.
  */
 
+import MapFactory from '../maps/MapFactory';
 import { render } from './actions';
 import GameState from './GameState';
 
@@ -25,6 +26,13 @@ const killPlayer = async () => {
   await render();
 };
 
+const nextLevel = async () => {
+  const state = GameState.getInstance();
+  const map = await MapFactory.loadMap(state.getNextMap());
+  state.setMap(map);
+  await render();
+};
+
 const toggleEditor = () => {
   const editor = document.getElementById('editor') as HTMLDivElement;
   editor.style.display = (editor.style.display === 'block' ? 'none' : 'block');
@@ -34,6 +42,7 @@ type DebugShape = {
   revealMap: () => void,
   killEnemies: () => void,
   killPlayer: () => void,
+  nextLevel: () => void,
   toggleEditor: () => void
 };
 
@@ -44,6 +53,7 @@ export const initDebug = () => {
     revealMap,
     killEnemies,
     killPlayer,
+    nextLevel,
     toggleEditor
   };
 };

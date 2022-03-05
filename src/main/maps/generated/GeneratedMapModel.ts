@@ -8,11 +8,9 @@ type GeneratedMapModel = {
   levelNumber: number,
   width: number,
   height: number,
-  numEnemies: number,
-  numItems: number,
-  enemies: string[],   // correspond to models in data/units
-  equipment: string[], // correspond to models in data/equipment
-  items: string[]      // defined in ItemClass.ts
+  enemies: Record<string, number>,   // keys correspond to models in data/units
+  equipment: Record<string, number>, // keys correspond to models in data/equipment
+  items: Record<string, number>      // keys defined in ItemClass.ts
 };
 
 const _load = async (id: string): Promise<GeneratedMapModel> => {

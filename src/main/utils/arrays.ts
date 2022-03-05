@@ -47,14 +47,16 @@ const clear = (array: any[]) => {
 };
 
 /**
- * @param max exclusive
+ * @param max inclusive
  */
-const range = (min: number, max: number) => new Array(max - min)
+const range = (min: number, max: number) => new Array(max - min + 1)
   .fill(null)
   .map((_, i) => i + min);
 
 const head = <T> (array: T[], count: number): T[] => array.slice(0, count);
 const tail = <T> (array: T[], count: number): T[] => array.slice(-count);
+
+const sum = (array: number[]) => array.reduce((a, b) => a + b);
 
 export {
   average,
@@ -71,5 +73,6 @@ export {
   sortBy,
   sortByReversed,
   subtract,
+  sum,
   tail
 };

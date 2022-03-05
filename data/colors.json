@@ -40,5 +40,11 @@
   "LIGHT_MAGENTA_CGA": "#ff55ff",
   "LIGHT_GRAY_CGA": "#aaaaaa",
   "BROWN_CGA": "#aa5500",
-  "YELLOW_CGA": "#ffff55"
+  "YELLOW_CGA": "#ffff55",
+
+  "WIZARD_DARK_GRAY": "#3a3a3a",
+  "WIZARD_SKIN_DARK": "#808040",
+  "WIZARD_SKIN_LIGHT": "#ceca8e",
+  "ZOMBIE_SKIN_DARK": "#808040",
+  "ZOMBIE_SKIN_LIGHT": "#bab778"
 }

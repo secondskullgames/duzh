@@ -10,7 +10,6 @@ interface EquipmentModel {
   mapIcon: string,
   itemCategory: ItemCategory,
   slot: EquipmentSlot,
-  char: string,
   paletteSwaps: PaletteSwaps,
   damage?: number,
   // TODO move these somewhere else - just used to control item spawns

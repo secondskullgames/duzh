@@ -16,7 +16,7 @@
   },
   "startingLife": 100,
   "startingMana": 100,
-  "startingDamage": 10,
+  "startingDamage": 8,
   "lifePerLevel": 0,
   "manaPerLevel": 0,
   "damagePerLevel": 0,

@@ -149,12 +149,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
         if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON')) {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
         }
-      // Blink is disabled for being really OP.  Here's how to enable it:
-      //
-      // } else if (modifiers.includes('ALT')) {
-      //   if (playerUnit.getCooldown(UnitAbility.BLINK) <= 0) {
-      //     queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
-      //   }
+      } else if (modifiers.includes('ALT')) {
+        if (playerUnit.getCooldown(UnitAbility.BLINK) <= 0) {
+          queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
+        }
       } else {
         const ability = state.getQueuedAbility();
         if (ability !== null) {

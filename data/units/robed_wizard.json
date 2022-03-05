@@ -3,7 +3,7 @@
   "type": "WIZARD",
   "sprite": "robed_wizard",
   "paletteSwaps": {},
-  "startingLife": 60,
+  "startingLife": 120,
   "startingMana": null,
   "startingDamage": 7,
   "lifePerLevel": 0,

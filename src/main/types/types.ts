@@ -13,7 +13,6 @@ interface Pixel {
 }
 
 interface Entity extends Coordinates {
-  char: string,
   sprite: Sprite
 }
 

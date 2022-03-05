@@ -4,9 +4,15 @@
   "levelNumber": 4,
   "width": 34,
   "height": 25,
-  "numEnemies": 12,
-  "numItems": 3,
-  "enemies": ["grunt", "soldier"],
-  "equipment": ["short_bow", "iron_sword", "steel_sword"],
-  "items": ["life_potion", "floor_fire_scroll"]
+  "enemies": {
+    "grunt": 8,
+    "soldier": 6
+  },
+  "equipment": {
+    "steel_sword": 1
+  },
+  "items": {
+    "life_potion": 3,
+    "floor_fire_scroll": 1
+  }
 }
