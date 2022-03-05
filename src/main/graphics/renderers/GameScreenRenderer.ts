@@ -9,18 +9,23 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import Sprite from '../sprites/Sprite';
-import BufferedRenderer from './BufferedRenderer';
+import Renderer from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
 
-class GameScreenRenderer extends BufferedRenderer {
+class GameScreenRenderer extends Renderer {
   constructor() {
-    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game_screen' });
+    super({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+      id: 'game_screen'
+    });
   }
 
-  renderBuffer = async () => {
-    this.bufferContext.fillStyle = Colors.BLACK;
-    this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+  _redraw = async () => {
+    const { canvas, context } = this;
+    context.fillStyle = Colors.BLACK;
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
     await this._renderTiles();
     await this._renderItems();
@@ -49,7 +54,7 @@ class GameScreenRenderer extends BufferedRenderer {
   private _drawSprite = async (sprite: Sprite, { x, y }: Coordinates) => {
     const image = sprite.getImage();
     if (image) {
-      await this.bufferContext.drawImage(image, x + sprite.dx, y + sprite.dy);
+      await this.context.drawImage(image, x + sprite.dx, y + sprite.dy);
     }
   };
 
@@ -186,7 +191,7 @@ class GameScreenRenderer extends BufferedRenderer {
       .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
       .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }));
     const imageBitmap = await createImageBitmap(imageData);
-    await this.bufferContext.drawImage(imageBitmap, left, top);
+    await this.context.drawImage(imageBitmap, left, top);
   };
 }
 

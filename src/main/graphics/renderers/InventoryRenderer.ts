@@ -2,11 +2,11 @@ import GameState from '../../core/GameState';
 import ItemCategory from '../../items/ItemCategory';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
-import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
+import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import BufferedRenderer from './BufferedRenderer';
+import Renderer from './Renderer';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -16,27 +16,27 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
-class InventoryRenderer extends BufferedRenderer {
+class InventoryRenderer extends Renderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
   }
 
-  renderBuffer = async () => {
+  _redraw = async () => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
     const inventory = playerUnit.getInventory();
-    const { bufferCanvas, bufferContext } = this;
+    const { canvas, context } = this;
 
     const imageData = await ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME);
     const imageBitmap = await createImageBitmap(imageData);
-    await this.bufferContext.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+    await context.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
     // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
-    const itemsLeft = (bufferCanvas.width + INVENTORY_MARGIN) / 2;
+    const itemsLeft = (canvas.width + INVENTORY_MARGIN) / 2;
 
     const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: bufferCanvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
 
     // draw equipment items
     // for now, just display them all in one list
@@ -57,8 +57,8 @@ class InventoryRenderer extends BufferedRenderer {
       const top = INVENTORY_TOP + 40;
       promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
-        bufferContext.fillStyle = Colors.WHITE;
-        bufferContext.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+        context.fillStyle = Colors.WHITE;
+        context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
       }
     }
 
@@ -82,7 +82,7 @@ class InventoryRenderer extends BufferedRenderer {
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await renderFont(text, font, color);
-    await drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
+    await drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
 
