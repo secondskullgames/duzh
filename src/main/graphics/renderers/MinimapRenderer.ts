@@ -3,35 +3,35 @@ import { isTileRevealed } from '../../maps/MapUtils';
 import { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import BufferedRenderer from './BufferedRenderer';
+import Renderer from './Renderer';
 
 const LIGHT_GRAY = '#c0c0c0';
 const DARK_GRAY  = '#808080';
 const BLACK      = '#000000';
 
-class MinimapRenderer extends BufferedRenderer {
+class MinimapRenderer extends Renderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'minimap' });
   }
 
-  renderBuffer = async () => {
-    const { bufferCanvas, bufferContext } = this;
-    bufferContext.fillStyle = Colors.BLACK;
-    bufferContext.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+  _redraw = async () => {
+    const { canvas, context } = this;
+    context.fillStyle = Colors.BLACK;
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
     const map = GameState.getInstance().getMap();
     const m = Math.floor(Math.min(
-      bufferCanvas.width / map.width,
-      bufferCanvas.height / map.height
+      canvas.width / map.width,
+      canvas.height / map.height
     ));
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        bufferContext.fillStyle = this._getColor({ x, y });
-        bufferContext.fillRect(x * m, y * m, m, m);
+        context.fillStyle = this._getColor({ x, y });
+        context.fillRect(x * m, y * m, m, m);
       }
     }
-    const imageData = bufferContext.getImageData(0, 0, bufferCanvas.width, bufferCanvas.height);
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     await createImageBitmap(imageData);
   };
 

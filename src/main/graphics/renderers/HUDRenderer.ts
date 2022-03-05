@@ -7,7 +7,7 @@ import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import BufferedRenderer from './BufferedRenderer';
+import Renderer from './Renderer';
 
 const HUD_FILENAME = 'HUD2';
 
@@ -23,12 +23,12 @@ const ABILITIES_INNER_MARGIN = 10;
 const ABILITY_ICON_WIDTH = 20;
 const ABILITIES_Y_MARGIN = 4;
 
-class HUDRenderer extends BufferedRenderer {
+class HUDRenderer extends Renderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
 
-  renderBuffer = async () => {
+  _redraw = async () => {
     await this._renderFrame();
     await Promise.all([
       this._renderLeftPanel(),
@@ -41,7 +41,7 @@ class HUDRenderer extends BufferedRenderer {
     const imageData = await ImageLoader.loadImage(HUD_FILENAME)
       .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
     const imageBitmap = await createImageBitmap(imageData);
-    this.bufferContext.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
+    this.context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
   };
 
   /**
@@ -126,12 +126,12 @@ class HUDRenderer extends BufferedRenderer {
       .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }));
 
     const imageBitmap = await createImageBitmap(imageData);
-    await this.bufferContext.drawImage(imageBitmap, left, top);
+    await this.context.drawImage(imageBitmap, left, top);
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await renderFont(text, font, color);
-    await drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
+    await drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
 
