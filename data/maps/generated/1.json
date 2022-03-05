@@ -5,8 +5,8 @@
   "width": 32,
   "height": 24,
   "enemies": {
-    "snake": 8,
-    "grunt": 4
+    "snake": 10,
+    "grunt": 2
   },
   "equipment": {
     "bronze_sword":  1

@@ -97,6 +97,15 @@ class GeneratedMapBuilder {
       }
     }
 
+    for (const [itemClass, count] of this.itemClasses) {
+      for (let j = 0; j < count; j++) {
+        const { x, y } = this.itemLocations[i];
+        const item = ItemFactory.createMapItem(itemClass, { x, y });
+        itemPromises.push(item);
+        i++;
+      }
+    }
+
     const [resolvedUnits, resolvedItems] = await Promise.all([Promise.all(unitPromises), Promise.all(itemPromises)]);
     units.push(...resolvedUnits);
     items.push(...resolvedItems);
