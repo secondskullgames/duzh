@@ -2,7 +2,6 @@
   "name": "Bronze Sword",
   "sprite": "sword",
   "mapIcon": "map_sword",
-  "char": "S",
   "itemCategory": "WEAPON",
   "slot": "MELEE_WEAPON",
   "paletteSwaps": {

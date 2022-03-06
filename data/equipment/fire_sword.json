@@ -2,13 +2,12 @@
   "name": "Fire Sword",
   "sprite": "sword",
   "mapIcon": "map_sword",
-  "char": "S",
-  "itemCategory": "ItemCategory.WEAPON",
-  "slot": "EquipmentSlot.MELEE_WEAPON",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
   "paletteSwaps": {
-    "DARK_GRAY": "Colors.YELLOW",
-    "LIGHT_GRAY": "Colors.RED",
-    "BLACK": "Colors.DARK_RED"
+    "DARK_GRAY": "YELLOW",
+    "LIGHT_GRAY": "RED",
+    "BLACK": "DARK_RED"
   },
-  "damage": 8
+  "damage": 12
 }

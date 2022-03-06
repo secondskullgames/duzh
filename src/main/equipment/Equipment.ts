@@ -7,19 +7,27 @@ import { checkNotNull } from '../utils/preconditions';
 import EquipmentModel from './EquipmentModel';
 import EquipmentSlot from './EquipmentSlot';
 
+type Props = {
+  model: EquipmentModel,
+  sprite: Sprite,
+  inventoryItem?: InventoryItem
+};
+
 class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
-  readonly damage?: number;
+  readonly damage?: number; // typically only for weapons
+  readonly blockAmount: number; // typically only for shields
   readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   readonly name: string;
   private _unit: Unit | null;
 
-  constructor(model: EquipmentModel, sprite: Sprite, inventoryItem: InventoryItem | null) {
+  constructor({ model, sprite, inventoryItem }: Props) {
     this.name = model.name;
     this.slot = model.slot;
-    this.inventoryItem = inventoryItem;
+    this.inventoryItem = inventoryItem || null;
     this.damage = model.damage;
+    this.blockAmount = model.blockAmount || 0;
     this.sprite = sprite;
     this._unit = null;
   }

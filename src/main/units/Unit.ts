@@ -4,6 +4,7 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
 import InventoryMap from '../items/InventoryMap';
+import { isAdjacent, isInStraightLine } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
@@ -205,12 +206,25 @@ class Unit implements Entity, Animatable {
     return null;
   };
 
-  takeDamage = async (damage: number, sourceUnit?: Unit) => {
+  takeDamage = async (baseDamage: number, sourceUnit: Unit | null = null) => {
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
-    this.life = Math.max(this.life - damage, 0);
+    let adjustedDamage = baseDamage;
+    if (sourceUnit !== null && isInStraightLine(this, sourceUnit)) {
+      const shield = this.equipment.getBySlot('SHIELD');
+      if (shield !== null && shield.blockAmount !== null) {
+        adjustedDamage = baseDamage * (1 - (shield.blockAmount || 0));
+      }
+    }
+
+    this.life = Math.max(this.life - adjustedDamage, 0);
+
+    if (sourceUnit) {
+      GameState.getInstance().pushMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
+    }
+
     if (this.life === 0) {
       map.removeUnit(this);
       if (this === playerUnit) {

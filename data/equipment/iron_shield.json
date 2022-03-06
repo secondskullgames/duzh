@@ -1,0 +1,9 @@
+{
+  "name": "Iron Shield",
+  "sprite": "shield2",
+  "mapIcon": "map_shield2",
+  "itemCategory": "ARMOR",
+  "slot": "SHIELD",
+  "paletteSwaps": {},
+  "blockAmount": 0.5
+}
