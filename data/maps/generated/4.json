@@ -3,9 +3,9 @@
   "tileSet": "cave",
   "levelNumber": 4,
   "width": 34,
-  "height": 25,
+  "height": 26,
   "enemies": {
-    "grunt": 8,
+    "grunt": 6,
     "soldier": 6
   },
   "equipment": {

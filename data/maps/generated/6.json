@@ -3,7 +3,7 @@
   "tileSet": "cave",
   "levelNumber": 6,
   "width": 38,
-  "height": 27,
+  "height": 28,
   "enemies": {
     "soldier": 8,
     "golem": 8
