@@ -68,10 +68,10 @@ const _createInventoryWeapon = async (model: EquipmentModel): Promise<InventoryI
   return new InventoryItem(model.name, model.itemCategory, onUse);
 };
 
-const createEquipment = async (equipmentClass: EquipmentModel): Promise<Equipment> => {
-  const spriteName = equipmentClass.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentClass.paletteSwaps);
-  const equipment = new Equipment(equipmentClass, sprite, null);
+const createEquipment = async (model: EquipmentModel): Promise<Equipment> => {
+  const spriteName = model.sprite;
+  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, model.paletteSwaps);
+  const equipment = new Equipment({ model: model, sprite });
   sprite.target = equipment;
   return equipment;
 };

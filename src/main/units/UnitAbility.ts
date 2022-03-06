@@ -13,8 +13,6 @@ import Unit from './Unit';
  * Helper function for most melee attacks
  */
 const attack = async (unit: Unit, target: Unit, damage: number) => {
-  GameState.getInstance().pushMessage(`${unit.name} hit ${target.name} for ${damage} damage!`);
-
   await playAttackingAnimation(unit, target);
   await target.takeDamage(damage, unit);
 };

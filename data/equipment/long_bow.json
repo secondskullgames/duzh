@@ -2,7 +2,6 @@
   "name": "Long Bow",
   "sprite": "bow",
   "mapIcon": "map_bow",
-  "char": "S",
   "itemCategory": "WEAPON",
   "slot": "RANGED_WEAPON",
   "paletteSwaps": {},

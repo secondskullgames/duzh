@@ -12,9 +12,7 @@ interface EquipmentModel {
   slot: EquipmentSlot,
   paletteSwaps: PaletteSwaps,
   damage?: number,
-  // TODO move these somewhere else - just used to control item spawns
-  minLevel: number,
-  maxLevel: number,
+  blockAmount?: number // typically only for shields
 }
 
 const _load = async (id: string): Promise<EquipmentModel> => {

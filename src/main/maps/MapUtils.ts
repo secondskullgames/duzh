@@ -67,6 +67,12 @@ const isAdjacent = (first: Coordinates, second: Coordinates): boolean => {
   return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
 };
 
+const isInStraightLine = (first: Coordinates, second: Coordinates): boolean => {
+  const dx = Math.abs(first.x - second.x);
+  const dy = Math.abs(first.y - second.y);
+  return (dx === 0 && dy !== 0) || (dy === 0 && dx !== 0);
+};
+
 const isTileRevealed = ({ x, y }: Coordinates) => {
   if (jwb.DEBUG) {
     return true;
@@ -110,6 +116,7 @@ export {
   contains,
   hypotenuse,
   isAdjacent,
+  isInStraightLine,
   isTileRevealed,
   manhattanDistance,
   pickUnoccupiedLocations
