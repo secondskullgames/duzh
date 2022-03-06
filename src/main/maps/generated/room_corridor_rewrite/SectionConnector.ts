@@ -1,6 +1,6 @@
 import Coordinates from '../../../geometry/Coordinates';
 import { Rect, Room } from '../../../types/types';
-import { max, min } from '../../../utils/arrays';
+import { max, min, minBy, sortBy } from '../../../utils/arrays';
 import { checkNotNull } from '../../../utils/preconditions';
 import { randInt, sample as randomSample } from '../../../utils/random';
 import Connection from './Connection';
@@ -63,57 +63,76 @@ const createSectionConnector = (): SectionConnector => {
       .filter(room => room !== null)
       .map(room => room as Room);
 
-    const leftRoomsToConnect: Rect[] = randomSample(matchingLeftRooms);
-    const rightRoomsToConnect: Rect[] = randomSample(matchingRightRooms);
-    const allRoomsToConnect: Rect[] = [...leftRoomsToConnect, ...rightRoomsToConnect];
+    console.debug('left=', matchingLeftRooms);
+    console.debug('right=', matchingRightRooms);
+
+    const possibleConnections: [Rect, Rect][] = [];
+    for (const leftRoom of matchingLeftRooms) {
+      for (const rightRoom of matchingRightRooms) {
+        possibleConnections.push([leftRoom, rightRoom]);
+      }
+    }
+
+    const distances: Map<[Rect, Rect], number> = new Map();
+    let minDistance: number | null = null;
+    for (const connection of possibleConnections) {
+      const [leftRoom, rightRoom] = connection;
+      const leftRoomCenterY = leftRoom.top + leftRoom.height / 2;
+      const rightRoomCenterY = rightRoom.top + rightRoom.height / 2;
+      const distance = Math.abs(leftRoomCenterY - rightRoomCenterY);
+      distances.set(connection, distance);
+      minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
+    }
+
+    const connections = possibleConnections.filter(connection => distances.get(connection)!! <= minDistance!! * 1.5);
     const roomToExit = new Map<Rect, Coordinates>();
 
-    for (const room of leftRoomsToConnect) {
-      const exitY = randInt(room.top + 1, room.top + room.height - 2);
-      roomToExit.set(room, { x: room.left + room.width - 1, y: exitY });
+    for (const [leftRoom, rightRoom] of connections) {
+      const leftExitY = randInt(leftRoom.top + 1, leftRoom.top + leftRoom.height - 2);
+      roomToExit.set(leftRoom, { x: leftRoom.left + leftRoom.width - 1, y: leftExitY });
+
+      const bottomExitY = randInt(rightRoom.top + 1, rightRoom.top + rightRoom.height - 2);
+      roomToExit.set(rightRoom, { x: rightRoom.left, y: bottomExitY });
     }
 
-    for (const room of rightRoomsToConnect) {
-      const exitY = randInt(room.top + 1, room.top + room.height - 2);
-      roomToExit.set(room, { x: room.left, y: exitY });
-    }
-
+    const allRoomsToConnect = connections.flatMap(([left, right]) => [left, right]);
     const minY = min(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y)));
     const maxY = max(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y)));
     const midY = randInt(minY, maxY);
 
     const connectedCoordinates: Coordinates[] = [];
 
-    for (const room of leftRoomsToConnect) {
-      const exit = checkNotNull(roomToExit.get(room));
-      let { x, y } = { x: exit.x + 1, y: exit.y };
-      while (x < splitPoint) {
-        connectedCoordinates.push({ x, y });
-        x++;
-      }
+    for (const [leftRoom, rightRoom] of connections) {
+      {
+        const exit = checkNotNull(roomToExit.get(leftRoom));
+        let { x, y } = { x: exit.x + 1, y: exit.y };
+        while (x < splitPoint) {
+          connectedCoordinates.push({ x, y });
+          x++;
+        }
 
-      const dy = Math.sign(midY - y);
-      while (y !== midY) {
+        const dy = Math.sign(midY - y);
+        while (y !== midY) {
+          connectedCoordinates.push({ x, y });
+          y += dy;
+        }
         connectedCoordinates.push({ x, y });
-        y += dy;
       }
-      connectedCoordinates.push({ x, y });
-    }
+      {
+        const exit = checkNotNull(roomToExit.get(rightRoom));
+        let { x, y } = { x: exit.x - 1, y: exit.y };
+        while (x > splitPoint) {
+          connectedCoordinates.push({ x, y });
+          x--;
+        }
 
-    for (const room of rightRoomsToConnect) {
-      const exit = checkNotNull(roomToExit.get(room));
-      let { x, y } = { x: exit.x - 1, y: exit.y };
-      while (x > splitPoint) {
+        const dy = Math.sign(midY - y);
+        while (y !== midY) {
+          connectedCoordinates.push({ x, y });
+          y += dy;
+        }
         connectedCoordinates.push({ x, y });
-        x--;
       }
-
-      const dy = Math.sign(midY - y);
-      while (y !== midY) {
-        connectedCoordinates.push({ x, y });
-        y += dy;
-      }
-      connectedCoordinates.push({ x, y });
     }
 
     return {
@@ -147,20 +166,39 @@ const createSectionConnector = (): SectionConnector => {
       .filter(room => room !== null)
       .map(room => room as Room);
 
-    const topRoomsToConnect: Rect[] = randomSample(matchingTopRooms);
-    const bottomRoomsToConnect: Rect[] = randomSample(matchingBottomRooms);
-    const allRoomsToConnect: Rect[] = [...topRoomsToConnect, ...bottomRoomsToConnect];
+    console.debug('top=', matchingTopRooms);
+    console.debug('bottom=', matchingBottomRooms);
+
+    const possibleConnections: [Rect, Rect][] = [];
+    for (const topRoom of matchingTopRooms) {
+      for (const bottomRoom of matchingBottomRooms) {
+        possibleConnections.push([topRoom, bottomRoom]);
+      }
+    }
+
+    const distances: Map<[Rect, Rect], number> = new Map();
+    let minDistance: number | null = null;
+    for (const connection of possibleConnections) {
+      const [topRoom, bottomRoom] = connection;
+      const topRoomCenterX = topRoom.left + topRoom.width / 2;
+      const bottomRoomCenterX = bottomRoom.left + bottomRoom.width / 2;
+      const distance = Math.abs(topRoomCenterX - bottomRoomCenterX);
+      distances.set(connection, distance);
+      minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
+    }
+
+    const connections = possibleConnections.filter(connection => distances.get(connection)!! <= minDistance!! * 1.5);
     const roomToExit = new Map<Rect, Coordinates>();
 
-    for (const room of topRoomsToConnect) {
-      const exitX = randInt(room.left + 1, room.left + room.width - 2); // TODO this was right()
-      roomToExit.set(room, { x: exitX, y: room.top + room.height - 1 }); // TODO this was bottom()
+    for (const [topRoom, bottomRoom] of connections) {
+      const topExitX = randInt(topRoom.left + 1, topRoom.left + topRoom.width - 2);
+      roomToExit.set(topRoom, { x: topExitX, y: topRoom.top + topRoom.height - 1 });
+
+      const bottomExitX = randInt(bottomRoom.left + 1, bottomRoom.left + bottomRoom.width - 2);
+      roomToExit.set(bottomRoom, { x: bottomExitX, y: bottomRoom.top });
     }
 
-    for (const room of bottomRoomsToConnect) {
-      const exitX = randInt(room.left + 1, room.left + room.width - 2); // TODO this was right()
-      roomToExit.set(room, { x: exitX, y: room.top });
-    }
+    const allRoomsToConnect = connections.flatMap(([top, bottom]) => [top, bottom]);
 
     const minX = min(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x)));
     const maxX = max(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x)));
@@ -168,36 +206,37 @@ const createSectionConnector = (): SectionConnector => {
 
     const connectedCoordinates: Coordinates[] = [];
 
-    for (const room of topRoomsToConnect) {
-      const exit = checkNotNull(roomToExit.get(room));
-      let { x, y } = { x: exit.x, y: exit.y + 1 };
-      while (y < splitPoint) {
-        connectedCoordinates.push({ x, y });
-        y++;
-      }
+    for (const [topRoom, bottomRoom] of connections) {
+      {
+        const exit = checkNotNull(roomToExit.get(topRoom));
+        let { x, y } = { x: exit.x, y: exit.y + 1 };
+        while (y < splitPoint) {
+          connectedCoordinates.push({ x, y });
+          y++;
+        }
 
-      const dx = Math.sign(midX - x);
-      while (x !== midX) {
+        const dx = Math.sign(midX - x);
+        while (x !== midX) {
+          connectedCoordinates.push({ x, y });
+          x += dx;
+        }
         connectedCoordinates.push({ x, y });
-        x += dx;
       }
-      connectedCoordinates.push({ x, y });
-    }
+      {
+        const exit = checkNotNull(roomToExit.get(bottomRoom));
+        let { x, y } = { x: exit.x, y: exit.y - 1 };
+        while (y > splitPoint) {
+          connectedCoordinates.push({ x, y });
+          y--;
+        }
 
-    for (const room of bottomRoomsToConnect) {
-      const exit = checkNotNull(roomToExit.get(room));
-      let { x, y } = { x: exit.x, y: exit.y - 1 };
-      while (y > splitPoint) {
+        const dx = Math.sign(midX - x);
+        while (x !== midX) {
+          connectedCoordinates.push({ x, y });
+          x += dx;
+        }
         connectedCoordinates.push({ x, y });
-        y--;
       }
-
-      const dx = Math.sign(midX - x);
-      while (x !== midX) {
-        connectedCoordinates.push({ x, y });
-        x += dx;
-      }
-      connectedCoordinates.push({ x, y });
     }
 
     return {
