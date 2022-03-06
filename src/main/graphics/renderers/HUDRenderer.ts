@@ -1,3 +1,4 @@
+import { Simulate } from 'react-dom/test-utils';
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
@@ -8,6 +9,7 @@ import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
+import play = Simulate.play;
 
 const HUD_FILENAME = 'HUD2';
 
@@ -53,9 +55,12 @@ class HUDRenderer extends Renderer {
     const lines = [
       playerUnit.name,
       `Level ${playerUnit.level}`,
-      `Life: ${playerUnit.life}/${playerUnit.maxLife}`,
-      `Damage: ${playerUnit.getDamage()}`,
+      `Life: ${playerUnit.life}/${playerUnit.maxLife}`
     ];
+
+    if (playerUnit.getMana() !== null && playerUnit.getMaxMana() !== null) {
+      lines.push(`Mana: ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
+    }
 
     const left = MARGIN_THICKNESS;
     const top = MARGIN_THICKNESS;
@@ -116,7 +121,7 @@ class HUDRenderer extends Renderer {
 
     if (queuedAbility === ability) {
       borderColor = Colors.GREEN;
-    } else if (playerUnit.getCooldown(ability) === 0) {
+    } else if (playerUnit.canSpendMana(ability.manaCost)) {
       borderColor = Colors.WHITE;
     } else {
       borderColor = Colors.DARK_GRAY;

@@ -65,6 +65,8 @@ const _initState = async () => {
   const state = new GameState({ playerUnit, maps });
 
   GameState.setInstance(state);
+
+  firstMapPromise = null;
 };
 
 const startGame = async () => {
@@ -88,12 +90,16 @@ const startGameDebug = async () => {
   await render();
 };
 
+/**
+ * TODO: Is this different from initialize()?
+ */
 const returnToTitle = async () => {
   await _initState(); // will set state.screen = TITLE
   Music.stop();
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
   await render();
+  preloadFirstMap();
 };
 
 /**

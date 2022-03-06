@@ -31,53 +31,53 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
     .filter(x => x)
     .map(x => x as ModifierKey);
 
-  switch (e.key) {
-    case 'w':
-    case 'W':
+  switch (e.code) {
+    case 'KeyW':
     case 'ArrowUp':
       return { key: 'UP', modifiers };
-    case 's':
-    case 'S':
+    case 'KeyS':
     case 'ArrowDown':
       return { key: 'DOWN', modifiers };
-    case 'a':
-    case 'A':
+    case 'KeyA':
     case 'ArrowLeft':
       return { key: 'LEFT', modifiers };
-    case 'd':
-    case 'D':
+    case 'KeyD':
     case 'ArrowRight':
       return { key: 'RIGHT', modifiers };
     case 'Tab':
       return { key: 'TAB', modifiers };
     case 'Enter':
       return { key: 'ENTER', modifiers };
-    case ' ':
+    case 'Space':
       return { key: 'SPACEBAR', modifiers };
-    case 'm':
-    case 'M':
+    case 'KeyM':
       return { key: 'M', modifiers };
-    case '1':
+    case 'Digit1':
       return { key: '1', modifiers };
-    case '2':
+    case 'Digit2':
       return { key: '2', modifiers };
-    case '3':
+    case 'Digit3':
       return { key: '3', modifiers };
-    case '4':
+    case 'Digit4':
       return { key: '4', modifiers };
-    case '5':
+    case 'Digit5':
       return { key: '5', modifiers };
-    case '6':
+    case 'Digit6':
       return { key: '6', modifiers };
-    case '7':
+    case 'Digit7':
       return { key: '7', modifiers };
-    case '8':
+    case 'Digit8':
       return { key: '8', modifiers };
-    case '9':
+    case 'Digit9':
       return { key: '9', modifiers };
-    case 'Alt':
-    case 'Shift':
-    case 'Control':
+    case 'AltLeft':
+    case 'AltRight':
+    case 'ShiftLeft':
+    case 'ShiftRight':
+    case 'ControlLeft':
+    case 'ControlRight':
+    case 'OSLeft':
+    case 'OSRight':
       return { key: 'NONE', modifiers };
   }
 
@@ -146,11 +146,11 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
       const playerUnit = GameState.getInstance().getPlayerUnit();
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
-        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON')) {
+        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
         }
       } else if (modifiers.includes('ALT')) {
-        if (playerUnit.getCooldown(UnitAbility.BLINK) <= 0) {
+        if (playerUnit.canSpendMana(UnitAbility.BLINK.manaCost)) {
           queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
         }
       } else {
@@ -289,7 +289,7 @@ const _handleAbility = async (command: NumberKey) => {
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
   const ability = playerUnit.abilities[index - 1];
-  if (playerUnit.getCooldown(ability) <= 0) {
+  if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
     await render();
   }

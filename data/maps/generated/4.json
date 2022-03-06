@@ -3,16 +3,16 @@
   "tileSet": "cave",
   "levelNumber": 4,
   "width": 34,
-  "height": 25,
+  "height": 26,
   "enemies": {
-    "grunt": 8,
+    "grunt": 6,
     "soldier": 6
   },
   "equipment": {
     "steel_sword": 1
   },
   "items": {
-    "life_potion": 3,
+    "life_potion": 4,
     "floor_fire_scroll": 1
   }
 }

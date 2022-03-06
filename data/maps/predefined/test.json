@@ -1,16 +1,16 @@
 {
-  "imageFilename": "test_keys",
-  "tileset": "dungeon_cga",
+  "imageFilename": "test_zzt",
+  "tileset": "kroz",
   "levelNumber": "1",
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
     "DARK_GRAY": "WALL",
+    "GREEN": "WALL_TOP",
     "BLUE": "STAIRS_DOWN"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "fire_golem"
   },
   "itemColors": {
     "YELLOW": "key"
