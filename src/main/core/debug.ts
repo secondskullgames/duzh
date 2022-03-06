@@ -65,7 +65,7 @@ export const initDebug = () => {
     toggleEditor
   };
 
-  jwb.DEBUG = true;
+  jwb.DEBUG = false;
 };
 
 export default { initDebug };
