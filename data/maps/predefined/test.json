@@ -1,16 +1,16 @@
 {
   "imageFilename": "test_zzt",
-  "tileset": "kroz",
+  "tileset": "zzt",
   "levelNumber": "1",
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
-    "DARK_GRAY": "WALL",
-    "GREEN": "WALL_TOP",
-    "BLUE": "STAIRS_DOWN"
+    "CYAN": "WALL_TOP",
+    "BLUE": "WALL"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
+    "GREEN": "ghost"
   },
   "itemColors": {
     "YELLOW": "key"

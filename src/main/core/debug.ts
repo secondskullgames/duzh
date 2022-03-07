@@ -64,6 +64,8 @@ export const initDebug = () => {
     levelUp,
     toggleEditor
   };
+
+  jwb.DEBUG = false;
 };
 
 export default { initDebug };

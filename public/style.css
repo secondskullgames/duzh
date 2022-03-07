@@ -12,12 +12,14 @@ body {
   cursor: default;
   color: white;
   font-size: 20px;
+  border: 1px solid black;
 }
 
 #container canvas {
   image-rendering: crisp-edges; /* Firefox */
   image-rendering: pixelated;   /* Chrome */
   background-color: black;
+  display: block;
 }
 
 #editor {

@@ -1,12 +1,13 @@
 {
-  "path": "catacomb",
+  "path": "dungeon_new",
   "tiles": {
-    "FLOOR": ["floor2"],
-    "FLOOR_HALL": ["floor2"],
+    "FLOOR": ["floor"],
+    "FLOOR_HALL": ["floor"],
     "WALL_TOP": ["wall_top"],
     "WALL_HALL": ["wall"],
     "WALL": ["wall"],
     "STAIRS_DOWN": ["stairs_down2"],
-    "NONE": [null]
-  }
+    "NONE": ["wall_top"]
+  },
+  "paletteSwaps": {}
 }
