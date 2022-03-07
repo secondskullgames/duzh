@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "ghost"
+    "GREEN": "robed_wizard"
   },
   "itemColors": {
     "YELLOW": "key"

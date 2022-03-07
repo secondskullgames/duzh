@@ -4,7 +4,7 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
 import InventoryMap from '../items/InventoryMap';
-import { isAdjacent, isInStraightLine } from '../maps/MapUtils';
+import { isInStraightLine } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
@@ -59,6 +59,10 @@ class Unit implements Entity, Animatable {
   controller: UnitController;
   activity: Activity;
   direction: Direction;
+  /**
+   * For now, this is not auto-incremented and only used for certain animations (see Animations.ts)
+   */
+  frameNumber: number;
   readonly abilities: UnitAbility[];
   stunDuration: number;
 
@@ -82,8 +86,9 @@ class Unit implements Entity, Animatable {
     this.manaRemainder = 0;
     this.damage = unitClass.startingDamage;
     this.controller = controller;
-    this.activity = Activity.STANDING;
+    this.activity = 'STANDING';
     this.direction = Direction.S;
+    this.frameNumber = 1;
     this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
 
@@ -243,7 +248,7 @@ class Unit implements Entity, Animatable {
   /**
    * @override {@link Animatable#getAnimationKey}
    */
-  getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}`;
+  getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
   getMana = () => this.mana;
   getMaxMana = () => this.maxMana;

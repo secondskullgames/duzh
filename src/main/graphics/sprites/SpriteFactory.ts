@@ -106,8 +106,9 @@ const _loadAnimations = async (
   const promises: Promise<{ frameKey: string, image: ImageBitmap }>[] = [];
 
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
-    for (const frame of animation.frames) {
-      for (const direction of Direction.values()) {
+    for (const direction of Direction.values()) {
+      for (let i = 1; i <= animation.frames.length; i++) { // 1-indexed
+        const frame = animation.frames[i - 1];
         const variables = {
           sprite: spriteModel.name,
           activity: frame.activity,
@@ -123,11 +124,11 @@ const _loadAnimations = async (
         const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
           .map(pattern => fillTemplate(pattern, variables));
 
-        const effects = (animationName === Activity.DAMAGED.toString())
+        const effects = (animationName === 'DAMAGED')
           ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
           : [];
 
-        const frameKey = `${animationName}_${Direction.toString(direction)}`;
+        const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
 
         const imagePromise: Promise<ImageBitmap> = new ImageBuilder({
           filenames,

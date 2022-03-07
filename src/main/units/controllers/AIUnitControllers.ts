@@ -3,11 +3,12 @@ import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
 import { randBoolean, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
+import UnitAbility from '../UnitAbility';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
 
 const HUMAN_CAUTIOUS: UnitController = {
-  issueOrder(unit: Unit) {
+  issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
     const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_CAUTIOUS behavior requires aiParams!');
     const { speed, visionRange } = aiParameters;
@@ -32,7 +33,7 @@ const HUMAN_CAUTIOUS: UnitController = {
 };
 
 const HUMAN_AGGRESSIVE = {
-  issueOrder(unit: Unit) {
+  issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let behavior: UnitBehavior;
@@ -57,7 +58,7 @@ const HUMAN_AGGRESSIVE = {
 };
 
 const HUMAN_DETERMINISTIC = {
-  issueOrder(unit: Unit) {
+  issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_DETERMINISTIC behavior requires aiParams!');
@@ -83,6 +84,32 @@ const HUMAN_DETERMINISTIC = {
   }
 };
 
+const WIZARD = {
+  issueOrder: async (unit: Unit) => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+
+    for (const dy of [-2, 0, 2]) {
+      for (const dx of [-2, 0, 2]) {
+        if (dx === 0 && dy === 0) {
+          continue;
+        }
+        if (dx !== 0 && dy !== 0) {
+          continue;
+        }
+
+        const x = unit.x + dx;
+        const y = unit.y + dy;
+        if (!map.isBlocked({ x, y })) {
+          const direction = { dx: dx / 2, dy: dy / 2};
+          await UnitAbility.TELEPORT.use(unit, direction);
+          return;
+        }
+      }
+    }
+  }
+};
+
 const _canMove = (speed: number): boolean => {
   // deterministic version
   // const { turn } = GameState.getInstance();
@@ -95,5 +122,6 @@ const _canMove = (speed: number): boolean => {
 export {
   HUMAN_CAUTIOUS,
   HUMAN_AGGRESSIVE,
-  HUMAN_DETERMINISTIC
+  HUMAN_DETERMINISTIC,
+  WIZARD
 };

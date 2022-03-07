@@ -41,7 +41,7 @@ class Equipment implements Animatable {
    */
   getAnimationKey = () => {
     const unit = checkNotNull(this._unit);
-    return `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}`;
+    return `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}_${unit.frameNumber}`;
   };
 }
 

@@ -1,17 +1,21 @@
-enum Activity {
-  STANDING = 'STANDING',
-  WALKING = 'WALKING',
-  ATTACKING = 'ATTACKING',
-  SHOOTING = 'SHOOTING',
-  DAMAGED = 'DAMAGED'
-}
+type Activity =
+  'STANDING'
+| 'WALKING'
+| 'ATTACKING'
+| 'SHOOTING'
+| 'DAMAGED'
+| 'VANISHING'
+| 'APPEARING';
 
 namespace Activity {
   export const values = (): Activity[] => [
-    Activity.STANDING,
-    Activity.WALKING,
-    Activity.ATTACKING,
-    Activity.SHOOTING
+    'STANDING',
+    'WALKING',
+    'ATTACKING',
+    'SHOOTING',
+    'DAMAGED',
+    'VANISHING',
+    'APPEARING'
   ];
 }
 

@@ -8,7 +8,7 @@ import MapItem from '../../objects/MapItem';
 import Color from '../../types/Color';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import { HUMAN_DETERMINISTIC } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_DETERMINISTIC, WIZARD } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
 import MapInstance from '../MapInstance';
@@ -89,7 +89,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
             name: `${enemyUnitClass.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
-            controller: HUMAN_DETERMINISTIC,
+            controller: WIZARD, // TODO HUMAN_DETERMINISTIC,
             level: model.levelNumber,
             coordinates: { x, y }
           });

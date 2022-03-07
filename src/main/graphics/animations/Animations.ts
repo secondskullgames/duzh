@@ -10,10 +10,13 @@ import { wait } from '../../utils/promises';
 
 const FRAME_LENGTH = 150; // milliseconds
 const PROJECTILE_FRAME_LENGTH = 40; // milliseconds
+const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type UnitAnimationFrame = {
   unit: Unit,
-  activity: Activity
+  activity: Activity,
+  frameNumber?: number,
+  direction?: Direction
 };
 
 type AnimationFrame = {
@@ -30,14 +33,14 @@ const playAttackingAnimation = async (source: Unit, target: Unit) => _playAnimat
   frames: [
     {
       units: [
-        { unit: source, activity: Activity.ATTACKING },
-        { unit: target, activity: Activity.DAMAGED }
+        { unit: source, activity: 'ATTACKING' },
+        { unit: target, activity: 'DAMAGED' }
       ],
     },
     {
       units: [
-        { unit: source, activity: Activity.STANDING },
-        { unit: target, activity: Activity.STANDING }
+        { unit: source, activity: 'STANDING' },
+        { unit: target, activity: 'STANDING' }
       ]
     }
   ],
@@ -49,10 +52,10 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
   // first frame
   {
     const frame: AnimationFrame = {
-      units: [{ unit: source, activity: Activity.SHOOTING }]
+      units: [{ unit: source, activity: 'SHOOTING' }]
     };
     if (target) {
-      frame.units.push({ unit: target, activity: Activity.STANDING });
+      frame.units.push({ unit: target, activity: 'STANDING' });
     }
     frames.push(frame);
   }
@@ -61,11 +64,11 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
   for (const { x, y } of coordinatesList) {
     const projectile = await createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
-      units: [{ unit: source, activity: Activity.SHOOTING }],
+      units: [{ unit: source, activity: 'SHOOTING' }],
       projectiles: [projectile]
     };
     if (target) {
-      frame.units.push({ unit: target, activity: Activity.STANDING });
+      frame.units.push({ unit: target, activity: 'STANDING' });
     }
 
     frames.push(frame);
@@ -75,21 +78,21 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
   {
     const frame: AnimationFrame = {
       units: [
-        { unit: source, activity: Activity.STANDING }
+        { unit: source, activity: 'STANDING' }
       ]
     };
     if (target) {
-      frame.units.push({ unit: target, activity: Activity.DAMAGED });
+      frame.units.push({ unit: target, activity: 'DAMAGED' });
     }
 
     frames.push(frame);
   }
   {
     const frame: AnimationFrame = {
-      units: [{ unit: source, activity: Activity.STANDING }]
+      units: [{ unit: source, activity: 'STANDING' }]
     };
     if (target) {
-      frame.units.push({ unit: target, activity: Activity.STANDING });
+      frame.units.push({ unit: target, activity: 'STANDING' });
     }
 
     frames.push(frame);
@@ -105,9 +108,9 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   const frames: AnimationFrame[] = [];
   for (let i = 0; i < targets.length; i++) {
     const frame: UnitAnimationFrame[] = [];
-    frame.push({ unit: source, activity: Activity.STANDING });
+    frame.push({ unit: source, activity: 'STANDING' });
     for (let j = 0; j < targets.length; j++) {
-      const activity = (j === i) ? Activity.DAMAGED : Activity.STANDING;
+      const activity = (j === i) ? 'DAMAGED' : 'STANDING';
       frame.push({ unit: targets[j], activity });
     }
     frames.push({ units: frame });
@@ -115,9 +118,9 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
 
   // last frame (all standing)
   const frame: UnitAnimationFrame[] = [];
-  frame.push({ unit: source, activity: Activity.STANDING });
+  frame.push({ unit: source, activity: 'STANDING' });
   for (let i = 0; i < targets.length; i++) {
-    frame.push({ unit: targets[i], activity: Activity.STANDING });
+    frame.push({ unit: targets[i], activity: 'STANDING' });
   }
   frames.push({ units: frame });
 
@@ -127,18 +130,41 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   });
 };
 
+const playWizardVanishingAnimation = async (source: Unit) => _playAnimation({
+  frames: [
+    { units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }] },
+    { units: [{ unit: source, activity: 'VANISHING', frameNumber: 2 }] },
+    { units: [{ unit: source, activity: 'VANISHING', frameNumber: 3 }] },
+    { units: [{ unit: source, activity: 'VANISHING', frameNumber: 4 }] }
+  ],
+  delay: WIZARD_TELEPORT_FRAME_LENGTH
+});
+
+const playWizardAppearingAnimation = async (source: Unit) => _playAnimation({
+  frames: [
+    { units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }] },
+    { units: [{ unit: source, activity: 'APPEARING', frameNumber: 2 }] },
+    { units: [{ unit: source, activity: 'APPEARING', frameNumber: 3 }] },
+    { units: [{ unit: source, activity: 'APPEARING', frameNumber: 4 }] },
+    { units: [{ unit: source, activity: 'STANDING', direction: Direction.S }] },
+  ],
+  delay: WIZARD_TELEPORT_FRAME_LENGTH
+});
+
 const _playAnimation = async (animation: Animation) => {
   const { delay, frames } = animation;
+  const map = GameState.getInstance().getMap();
 
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
-    const map = GameState.getInstance().getMap();
     if (!!frame.projectiles) {
       map.projectiles.push(...frame.projectiles);
     }
     for (let j = 0; j < frame.units.length; j++) {
-      const { unit, activity } = frame.units[j];
+      const { unit, activity, frameNumber, direction } = frame.units[j];
       unit.activity = activity;
+      unit.frameNumber = frameNumber || 1;
+      unit.direction = direction || unit.direction;
     }
 
     await render();
@@ -154,7 +180,9 @@ const _playAnimation = async (animation: Animation) => {
 };
 
 export {
-  playAttackingAnimation,
   playArrowAnimation,
-  playFloorFireAnimation
+  playAttackingAnimation,
+  playFloorFireAnimation,
+  playWizardAppearingAnimation,
+  playWizardVanishingAnimation
 };

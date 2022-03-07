@@ -33,6 +33,48 @@
         "activity": "stunned",
         "number": "1"
       }]
+    },
+    "vanishing": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [
+        {
+          "activity": "vanishing",
+          "number": "1"
+        },
+        {
+          "activity": "vanishing",
+          "number": "2"
+        },
+        {
+          "activity": "vanishing",
+          "number": "3"
+        },
+        {
+          "activity": "vanishing",
+          "number": "4"
+        }
+      ]
+    },
+    "appearing": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [
+        {
+          "activity": "vanishing",
+          "number": "4"
+        },
+        {
+          "activity": "vanishing",
+          "number": "3"
+        },
+        {
+          "activity": "vanishing",
+          "number": "2"
+        },
+        {
+          "activity": "vanishing",
+          "number": "1"
+        }
+      ]
     }
   }
 }
