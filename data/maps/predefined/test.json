@@ -10,6 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
+    "GREEN": "ghost"
   },
   "itemColors": {
     "YELLOW": "key"

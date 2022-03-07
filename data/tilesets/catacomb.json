@@ -1,8 +1,8 @@
 {
   "path": "catacomb",
   "tiles": {
-    "FLOOR": ["floor"],
-    "FLOOR_HALL": ["floor"],
+    "FLOOR": ["floor2"],
+    "FLOOR_HALL": ["floor2"],
     "WALL_TOP": ["wall_top"],
     "WALL_HALL": ["wall"],
     "WALL": ["wall"],

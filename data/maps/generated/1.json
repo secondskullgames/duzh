@@ -1,5 +1,5 @@
 {
-  "layout": "ROOMS_ONLY",
+  "layout": "ROOMS_AND_CORRIDORS",
   "tileSet": "dungeon",
   "levelNumber": 1,
   "width": 30,

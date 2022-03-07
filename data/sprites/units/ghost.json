@@ -1,0 +1,34 @@
+{
+  "name": "ghost",
+  "offsets": {
+    "dx": -4,
+    "dy": -20
+  },
+  "pattern": "${sprite}_${direction}_${number}",
+  "animations": {
+    "standing": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "walking": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "attacking": {
+      "frames": [{
+        "activity": "attacking",
+        "number": "2"
+      }]
+    },
+    "damaged": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    }
+  }
+}
