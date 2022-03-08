@@ -20,7 +20,7 @@
   ],
   "aiParameters": {
     "speed": 0.95,
-    "visionRange": 6,
+    "visionRange": 8,
     "fleeThreshold": 0.1
   },
   "abilities": {

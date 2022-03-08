@@ -273,6 +273,8 @@ class Blink extends UnitAbility {
 }
 
 class Teleport extends UnitAbility {
+  readonly RANGE = 5;
+
   constructor() {
     super({ name: 'TELEPORT', manaCost: 15 });
   }
@@ -294,9 +296,12 @@ class Teleport extends UnitAbility {
     unit.direction = direction;
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      playSound(Sounds.WIZARD_VANISH);
       await playWizardVanishingAnimation(unit);
       await moveTo(unit, { x, y });
+      playSound(Sounds.WIZARD_APPEAR);
       await playWizardAppearingAnimation(unit);
+
       unit.spendMana(this.manaCost);
     } else {
       await playSound(Sounds.FOOTSTEP);
@@ -311,7 +316,7 @@ namespace UnitAbility {
   export const STUN_ATTACK: UnitAbility = new StunAttack();
   export const SHOOT_ARROW: UnitAbility = new ShootArrow();
   export const BLINK: UnitAbility = new Blink();
-  export const TELEPORT: UnitAbility = new Teleport();
+  export const TELEPORT: Teleport = new Teleport();
   export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT';
 }
 

@@ -6,7 +6,7 @@
   "height": 26,
   "enemies": {
     "grunt": 3,
-    "soldier": 6,
+    "soldier": 4,
     "golem": 3
   },
   "equipment": {

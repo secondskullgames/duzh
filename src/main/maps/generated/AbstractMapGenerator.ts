@@ -61,7 +61,7 @@ abstract class AbstractMapGenerator {
   protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
 
   private _generateEmptyMap = (width: number, height: number, level: number): EmptyMap => {
-    const iterations = 100;
+    const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       const t1 = new Date().getTime();
       const map = this.generateEmptyMap(width, height);
@@ -71,7 +71,7 @@ abstract class AbstractMapGenerator {
       if (isValid) {
         return map;
       } else {
-        console.error(`Generated invalid tiles for level ${level}, regenerating`);
+        console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
         //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
         //return map;
       }

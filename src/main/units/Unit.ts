@@ -20,7 +20,7 @@ import UnitClass from './UnitClass';
 /**
  * Regenerate this fraction of the unit's health each turn
  */
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 8;
+const LIFE_PER_TURN_MULTIPLIER = 0.01 / 5;
 /**
  * Only regenerate life if the unit's life is less than this (ratio of their total health)
  */
@@ -51,8 +51,8 @@ class Unit implements Entity, Animatable {
   experience: number;
   life: number;
   maxLife: number;
-  private mana: number | null;
-  private maxMana: number | null;
+  private mana: number;
+  private maxMana: number;
   lifeRemainder: number;
   manaRemainder: number;
   private damage: number;
@@ -63,7 +63,7 @@ class Unit implements Entity, Animatable {
    * For now, this is not auto-incremented and only used for certain animations (see Animations.ts)
    */
   frameNumber: number;
-  readonly abilities: UnitAbility[];
+  private readonly abilities: UnitAbility[];
   stunDuration: number;
 
   constructor({ name, unitClass, faction, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
@@ -80,8 +80,8 @@ class Unit implements Entity, Animatable {
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana;
-    this.maxMana = unitClass.startingMana;
+    this.mana = unitClass.startingMana || 0;
+    this.maxMana = unitClass.startingMana || 0;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
     this.damage = unitClass.startingDamage;
@@ -259,6 +259,8 @@ class Unit implements Entity, Animatable {
     checkArgument(amount >= 0);
     this.mana!! -= amount;
   };
+
+  getAbilities = () => this.abilities;
 }
 
 export default Unit;

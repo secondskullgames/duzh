@@ -193,10 +193,19 @@ class BlobMapGenerator extends AbstractMapGenerator {
   private _addWalls = (tiles: TileType[][]) => {
     const height = tiles.length;
     const width = tiles[0].length;
-    for (let y = 0; y < (height - 1); y++) {
+    const bottom = height - 1;
+
+    for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
-          tiles[y][x] = 'WALL_TOP';
+        if (y < (bottom - 1)) {
+          if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
+            tiles[y][x] = 'WALL';
+          }
+        }
+        if (y < (bottom - 2)) {
+          if (tiles[y + 1][x] === 'NONE' && tiles[y + 2][x] === 'FLOOR') {
+            tiles[y][x] = 'WALL_TOP';
+          }
         }
       }
     }
