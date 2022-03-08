@@ -7,13 +7,13 @@
   "enemies": {
     "grunt": 3,
     "soldier": 4,
-    "golem": 3
+    "golem": 2
   },
   "equipment": {
     "long_bow": 1
   },
   "items": {
-    "life_potion": 5,
+    "life_potion": 3,
     "floor_fire_scroll": 1
   }
 }

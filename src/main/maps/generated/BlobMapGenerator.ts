@@ -57,8 +57,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
   };
 
   private _getTargetNumFloorTiles = (max: number) => {
-    const minRatio = 0.4;
-    const maxRatio = 0.7;
+    const minRatio = 0.5;
+    const maxRatio = 0.8;
     return randInt(
       Math.round(max * minRatio),
       Math.round(max * maxRatio)

@@ -89,7 +89,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
             name: `${enemyUnitClass.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
-            controller: WIZARD, // TODO HUMAN_DETERMINISTIC,
+            controller: HUMAN_DETERMINISTIC, // WIZARD,
             level: model.levelNumber,
             coordinates: { x, y }
           });

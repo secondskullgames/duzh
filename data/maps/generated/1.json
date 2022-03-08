@@ -11,7 +11,6 @@
     "bronze_sword":  1
   },
   "items": {
-    "life_potion": 3,
-    "floor_fire_scroll": 1
+    "life_potion": 3
   }
 }

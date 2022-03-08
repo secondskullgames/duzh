@@ -7,9 +7,9 @@
     "GREEN": "DARK_BROWN",
     "CYAN": "ORANGE"
   },
-  "startingLife": 60,
+  "startingLife": 50,
   "startingMana": null,
-  "startingDamage": 2,
+  "startingDamage": 0,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,

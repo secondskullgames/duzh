@@ -6,7 +6,7 @@
   "height": 24,
   "enemies": {
     "snake": 4,
-    "grunt": 6
+    "grunt": 4
   },
   "equipment": {
     "short_bow":  1

@@ -1,22 +1,22 @@
 {
-  "imageFilename": "test_zzt",
-  "tileset": "zzt",
+  "imageFilename": "test_30x30",
+  "tileset": "dungeon",
   "levelNumber": "1",
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
-    "CYAN": "WALL_TOP",
-    "BLUE": "WALL"
+    "DARK_GRAY": "WALL",
+    "BLUE": "STAIRS_DOWN"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "robed_wizard"
+    "WHITE": "grunt"
   },
   "itemColors": {
-    "YELLOW": "key"
+    "MAGENTA": "life_potion"
   },
   "equipmentColors": {
-    "WHITE": "bronze_sword"
+    "YELLOW": "bronze_sword"
   },
   "doorColors": {
     "DARK_BROWN": "vertical",
