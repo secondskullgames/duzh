@@ -76,8 +76,8 @@ class HUDRenderer extends Renderer {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let keyNumber = 1;
-    for (let i = 0; i < playerUnit.abilities.length; i++) {
-      const ability = playerUnit.abilities[i];
+    for (let i = 0; i < playerUnit.getAbilities().length; i++) {
+      const ability = playerUnit.getAbilities()[i];
       if (!!ability.icon) {
         await this._renderAbility(ability, left, top);
         await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');

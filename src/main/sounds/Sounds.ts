@@ -11,6 +11,8 @@ import PLAYER_DIES from '../../../data/sounds/player_dies.json';
 import PLAYER_HITS_ENEMY from '../../../data/sounds/player_hits_enemy.json';
 import SPECIAL_ATTACK from '../../../data/sounds/special_attack.json';
 import USE_POTION from '../../../data/sounds/use_potion.json';
+import WIZARD_APPEAR from '../../../data/sounds/wizard_appear.json';
+import WIZARD_VANISH from '../../../data/sounds/wizard_vanish.json';
 
 const Sounds: Record<string, [number, number][]> = {
   DEFLECTED_HIT,
@@ -25,7 +27,9 @@ const Sounds: Record<string, [number, number][]> = {
   PLAYER_HITS_ENEMY,
   OPEN_DOOR,
   SPECIAL_ATTACK,
-  USE_POTION
-} as any;
+  USE_POTION,
+  WIZARD_APPEAR,
+  WIZARD_VANISH
+} as any as Record<string, [number, number][]>;
 
 export default Sounds;

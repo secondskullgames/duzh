@@ -1,4 +1,5 @@
 import GameState from '../../core/GameState';
+import InventoryMap from '../../items/InventoryMap';
 import ItemCategory from '../../items/ItemCategory';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
@@ -48,7 +49,7 @@ class InventoryRenderer extends Renderer {
     }
 
     // draw inventory categories
-    const inventoryCategories: ItemCategory[] = ItemCategory.values();
+    const inventoryCategories = inventory.getCategories();
     const categoryWidth = 60;
     const xOffset = 4;
 

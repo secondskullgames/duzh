@@ -5,15 +5,15 @@
   "width": 36,
   "height": 26,
   "enemies": {
-    "grunt": 3,
-    "soldier": 6,
-    "golem": 3
+    "grunt": 4,
+    "soldier": 5,
+    "golem": 2
   },
   "equipment": {
     "long_bow": 1
   },
   "items": {
-    "life_potion": 5,
+    "life_potion": 3,
     "floor_fire_scroll": 1
   }
 }

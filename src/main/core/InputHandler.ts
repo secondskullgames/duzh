@@ -288,7 +288,7 @@ const _handleAbility = async (command: NumberKey) => {
 
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
-  const ability = playerUnit.abilities[index - 1];
+  const ability = playerUnit.getAbilities()[index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
     await render();

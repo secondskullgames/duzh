@@ -1,7 +1,10 @@
 import InventoryItem from './InventoryItem';
 import ItemCategory from './ItemCategory';
 
-const categories: ItemCategory[] = ItemCategory.values();
+/**
+ * Display these in a particular order and don't show keys
+ */
+const categories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'];
 
 /**
  * Contains information about all items held by a particular unit, grouped by category,
@@ -14,11 +17,11 @@ class InventoryMap {
   selectedItem: InventoryItem | null;
 
   constructor() {
-    // @ts-ignore
-    this._map = {};
+    const map: Partial<Record<ItemCategory, InventoryItem[]>> = {};
     for (const category of categories) {
-      this._map[category] = [];
+      map[category] = [];
     }
+    this._map = map as Record<ItemCategory, InventoryItem[]>;
     this.selectedCategory = categories[0];
     this.selectedItem = null;
   }
@@ -70,6 +73,8 @@ class InventoryMap {
       this.selectedItem = items[(index - 1 + items.length) % items.length];
     }
   }
+
+  getCategories = (): ItemCategory[] => categories;
 }
 
 export default InventoryMap;

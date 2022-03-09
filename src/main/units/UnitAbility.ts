@@ -2,7 +2,11 @@
 
 import { render } from '../core/actions';
 import GameState from '../core/GameState';
-import { playArrowAnimation, playAttackingAnimation } from '../graphics/animations/Animations';
+import {
+  playArrowAnimation,
+  playAttackingAnimation, playWizardAppearingAnimation,
+  playWizardVanishingAnimation
+} from '../graphics/animations/Animations';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
@@ -75,7 +79,7 @@ class NormalAttack extends UnitAbility {
 
       const door = map.getDoor({ x, y });
       if (door) {
-        const keys = playerUnit.getInventory().get('KEY') || [];
+        const keys = playerUnit.getInventory().get('KEY');
         if (keys.length > 0) {
           playerUnit.getInventory().remove(keys[0]);
           await door.open();
@@ -225,7 +229,6 @@ class ShootArrow extends UnitAbility {
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
       const damage = unit.getRangedDamage();
-      state.pushMessage(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
 
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await targetUnit.takeDamage(damage, unit);
@@ -268,6 +271,43 @@ class Blink extends UnitAbility {
   };
 }
 
+class Teleport extends UnitAbility {
+  readonly RANGE = 5;
+
+  constructor() {
+    super({ name: 'TELEPORT', manaCost: 15 });
+  }
+
+  /**
+   * @override
+   */
+  use = async (unit: Unit, direction: Direction | null) => {
+    if (!direction) {
+      throw new Error('Teleport requires a direction!');
+    }
+
+    const dx = 2 * direction.dx;
+    const dy = 2 * direction.dy;
+    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    unit.direction = direction;
+
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      playSound(Sounds.WIZARD_VANISH);
+      await playWizardVanishingAnimation(unit);
+      await moveTo(unit, { x, y });
+      playSound(Sounds.WIZARD_APPEAR);
+      await playWizardAppearingAnimation(unit);
+
+      unit.spendMana(this.manaCost);
+    } else {
+      await playSound(Sounds.FOOTSTEP);
+    }
+  };
+}
+
 namespace UnitAbility {
   export const ATTACK: UnitAbility = new NormalAttack();
   export const HEAVY_ATTACK: UnitAbility = new HeavyAttack();
@@ -275,7 +315,8 @@ namespace UnitAbility {
   export const STUN_ATTACK: UnitAbility = new StunAttack();
   export const SHOOT_ARROW: UnitAbility = new ShootArrow();
   export const BLINK: UnitAbility = new Blink();
-  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK';
+  export const TELEPORT: Teleport = new Teleport();
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT';
 }
 
 export default UnitAbility;

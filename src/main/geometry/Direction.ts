@@ -32,7 +32,7 @@ namespace Direction {
     } else if (equals(direction, Direction.W)) {
       return 'W';
     }
-    throw new Error(`Invalid direction ${direction}`);
+    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 
   export const toLegacyDirection = (direction: Direction): string => {

@@ -110,6 +110,11 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
 
   if (tiles.length > 0) {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
+
+    if (unit.getAbilities().includes(UnitAbility.TELEPORT) && unit.getMana() >= UnitAbility.TELEPORT.manaCost) {
+      const x = UnitAbility.TELEPORT.RANGE;
+    }
+
     const { x, y } = orderedTiles[0];
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
     await UnitAbility.ATTACK.use(unit, { dx, dy });
