@@ -79,7 +79,7 @@ class NormalAttack extends UnitAbility {
 
       const door = map.getDoor({ x, y });
       if (door) {
-        const keys = playerUnit.getInventory().get('KEY') || [];
+        const keys = playerUnit.getInventory().get('KEY');
         if (keys.length > 0) {
           playerUnit.getInventory().remove(keys[0]);
           await door.open();
@@ -229,7 +229,6 @@ class ShootArrow extends UnitAbility {
     const targetUnit = map.getUnit({ x, y });
     if (!!targetUnit) {
       const damage = unit.getRangedDamage();
-      state.pushMessage(`${unit.name} hit ${targetUnit.name} for ${damage} damage!`);
 
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await targetUnit.takeDamage(damage, unit);
