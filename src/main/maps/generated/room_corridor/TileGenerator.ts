@@ -1,7 +1,7 @@
-import EmptyRegionConnection from './  EmptyRegionConnection';
+import EmptyRegionConnection from './EmptyRegionConnection';
 import Coordinates from '../../../geometry/Coordinates';
+import Offsets from '../../../geometry/Offsets';
 import TileType from '../../../tiles/TileType';
-import { Offsets } from '../../../types/types';
 import { shuffle } from '../../../utils/random';
 import Connection from './Connection';
 import RoomRegion from './RoomRegion';

@@ -29,23 +29,43 @@ type Animation = {
   delay: number
 };
 
-const playAttackingAnimation = async (source: Unit, target: Unit) => _playAnimation({
-  frames: [
-    {
-      units: [
-        { unit: source, activity: 'ATTACKING' },
-        { unit: target, activity: 'DAMAGED' }
+const playAttackingAnimation = async (source: Unit, target?: Unit) => {
+  if (target) {
+    return _playAnimation({
+      frames: [
+        {
+          units: [
+            { unit: source, activity: 'ATTACKING' },
+            { unit: target, activity: 'DAMAGED' }
+          ],
+        },
+        {
+          units: [
+            { unit: source, activity: 'STANDING' },
+            { unit: target, activity: 'STANDING' }
+          ]
+        }
       ],
-    },
-    {
-      units: [
-        { unit: source, activity: 'STANDING' },
-        { unit: target, activity: 'STANDING' }
-      ]
-    }
-  ],
-  delay: FRAME_LENGTH
-});
+      delay: FRAME_LENGTH
+    });
+  } else {
+    return _playAnimation({
+      frames: [
+        {
+          units: [
+            { unit: source, activity: 'ATTACKING' }
+          ],
+        },
+        {
+          units: [
+            { unit: source, activity: 'STANDING' }
+          ]
+        }
+      ],
+      delay: FRAME_LENGTH
+    });
+  }
+};
 
 const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
   const frames: AnimationFrame[] = [];

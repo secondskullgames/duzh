@@ -41,7 +41,7 @@ type Props = {
 class Unit implements Entity, Animatable {
   private readonly unitClass: UnitClass;
   readonly faction: Faction;
-  readonly sprite: DynamicSprite<Unit>;
+  private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
   x: number;
@@ -261,6 +261,7 @@ class Unit implements Entity, Animatable {
   };
 
   getAbilities = () => this.abilities;
+  getSprite = () => this.sprite;
 }
 
 export default Unit;

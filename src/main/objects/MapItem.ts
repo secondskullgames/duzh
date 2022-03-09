@@ -12,7 +12,7 @@ type Props = {
 class MapItem implements Entity {
   x: number;
   y: number;
-  readonly sprite: Sprite;
+  private readonly sprite: Sprite;
   inventoryItem: InventoryItem;
 
   constructor({ x, y, sprite, inventoryItem }: Props) {
@@ -21,6 +21,9 @@ class MapItem implements Entity {
     this.sprite = sprite;
     this.inventoryItem = inventoryItem;
   }
+
+  getSprite = () => this.sprite;
+  update = async () => {};
 }
 
 export default MapItem;

@@ -2,7 +2,7 @@
  * Note: It's expected that a separate Sprite instance will be created
  * per entity, and frame caching will be handled... somewhere else
  */
-import { Offsets } from '../../types/types';
+import Offsets from '../../geometry/Offsets';
 
 abstract class Sprite {
   dx: number;

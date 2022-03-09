@@ -1,8 +1,9 @@
 import Door from '../objects/Door';
 import MapItem from '../objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
+import Spawner from '../objects/Spawner';
 import Tile from '../tiles/Tile';
-import { Entity, Rect, Room } from '../types/types';
+import { Entity, Rect } from '../types/types';
 import Unit from '../units/Unit';
 import { checkArgument } from '../utils/preconditions';
 
@@ -11,6 +12,7 @@ type Props = {
   height: number,
   tiles: Tile[][],
   doors: Door[],
+  spawners: Spawner[],
   units: Unit[],
   items: MapItem[]
 };
@@ -25,6 +27,7 @@ class MapInstance {
   units: Unit[];
   items: MapItem[];
   doors: Door[];
+  spawners: Spawner[];
   projectiles: Entity[];
   private readonly revealedTiles: Coordinates[];
 
@@ -34,12 +37,14 @@ class MapInstance {
     tiles,
     units,
     items,
-    doors
+    doors,
+    spawners
   }: Props) {
     this.width = width;
     this.height = height;
     this._tiles = tiles;
     this.doors = doors;
+    this.spawners = spawners;
     this.units = units;
     this.items = items;
     this.projectiles = [];
@@ -62,6 +67,9 @@ class MapInstance {
   getDoor = ({ x, y }: Coordinates): (Door | null) =>
     this.doors.find(d => d.x === x && d.y === y) || null;
 
+  getSpawner = ({ x, y }: Coordinates): (Spawner | null) =>
+    this.spawners.find(s => s.x === x && s.y === y) || null;
+
   getProjectile = ({ x, y }: Coordinates): (Entity | null) =>
     this.projectiles.find(p => p.x === x && p.y === y) || null;
 
@@ -73,7 +81,13 @@ class MapInstance {
     checkArgument(this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
     return !!this.getUnit({ x, y })
       || this.getDoor({ x, y })?.isClosed()
-      || this.getTile({ x, y }).isBlocking;
+      || this.getTile({ x, y }).isBlocking
+      || this.getSpawner({ x, y })?.isBlocking
+      || false;
+  };
+
+  addUnit = (unit: Unit) => {
+    this.units.push(unit);
   };
 
   removeUnit = ({ x, y }: Coordinates) => {
@@ -115,6 +129,8 @@ class MapInstance {
       this.revealedTiles.push({ x, y });
     }
   };
+
+  unitExists = (unit: Unit): boolean => !!this.units.find(u => u === unit);
 }
 
 export default MapInstance;

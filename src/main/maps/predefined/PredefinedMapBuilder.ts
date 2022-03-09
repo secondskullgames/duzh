@@ -5,6 +5,8 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../objects/Door';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
+import Spawner from '../../objects/Spawner';
+import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Color from '../../types/Color';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
@@ -35,7 +37,8 @@ class PredefinedMapBuilder {
       tiles: await _loadTiles(model, image),
       units: await _loadUnits(model, image),
       items: await _loadItems(model, image),
-      doors: await _loadDoors(model, image)
+      doors: await _loadDoors(model, image),
+      spawners: await _loadSpawners(model, image)
     });
   };
 }
@@ -138,8 +141,7 @@ const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Prom
     if (color !== null) {
       const doorDirection = model.doorColors[color] || null;
       if (doorDirection !== null) {
-        // TODO: figure out factory methods here
-        const sprite = await SpriteFactory.createDoorSprite(doorDirection, 'CLOSED');
+        const sprite = await SpriteFactory.createDoorSprite();
         const door = new Door({
           direction: doorDirection,
           state: 'CLOSED',
@@ -153,6 +155,26 @@ const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Prom
   }
 
   return doors;
+};
+
+const _loadSpawners = async (model: PredefinedMapModel, imageData: ImageData): Promise<Spawner[]> => {
+  const spawners: Spawner[] = [];
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const x = Math.floor(i / 4) % imageData.width;
+    const y = Math.floor(Math.floor(i / 4) / imageData.width);
+    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    const color = rgb2hex({ r, g, b });
+
+    if (color !== null) {
+      const spawnerName = model.spawnerColors[color];
+      if (spawnerName) {
+        spawners.push(await SpawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
+      }
+    }
+  }
+
+  return spawners;
 };
 
 export default PredefinedMapBuilder;

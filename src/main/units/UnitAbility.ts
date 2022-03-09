@@ -88,6 +88,12 @@ class NormalAttack extends UnitAbility {
           await playSound(Sounds.FOOTSTEP);
         }
       }
+
+      const spawner = map.getSpawner({ x, y });
+      if (spawner) {
+        await playAttackingAnimation(unit);
+        spawner.setState('DEAD');
+      }
     }
   };
 }

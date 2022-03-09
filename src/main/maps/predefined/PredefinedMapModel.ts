@@ -13,10 +13,10 @@ type PredefinedMapModel = {
   tileColors: Record<Color, TileType>,
   defaultTile?: TileType
   enemyColors: Record<Color, UnitClass>,
-  // TODO: unify the below two fields into `objectColors`?
   itemColors: Record<Color, ItemModel>,
   equipmentColors: Record<Color, EquipmentModel>,
   doorColors: Record<Color, DoorDirection>,
+  spawnerColors: Record<Color, string>;
   startingPointColor: Color
 };
 
@@ -27,6 +27,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemModel.load(x)));
   const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentModel.load);
   const doorColors = await _convertColorMap(json.doorColors, x => Promise.resolve(x));
+  const spawnerColors = await _convertColorMap(json.spawnerColors, x => Promise.resolve(x));
   const startingPointColor = Colors[json.startingPointColor];
   const levelNumber = parseInt(json.levelNumber);
 
@@ -37,6 +38,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
     itemColors,
     equipmentColors,
     doorColors,
+    spawnerColors,
     startingPointColor,
     levelNumber
   };

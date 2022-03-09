@@ -1,4 +1,4 @@
-import { Offsets } from '../../types/types';
+import Offsets from '../../geometry/Offsets';
 import Sprite from './Sprite';
 
 class StaticSprite extends Sprite {
