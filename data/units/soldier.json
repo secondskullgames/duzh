@@ -5,7 +5,8 @@
   "paletteSwaps": {
     "DARK_GREEN": "DARK_BLUE",
     "GREEN": "DARK_BLUE",
-    "CYAN": "ORANGE"
+    "CYAN": "GREEN",
+    "ORANGE: "GREEN",
   },
   "startingLife": 80,
   "startingMana": null,
