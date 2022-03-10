@@ -1,6 +1,6 @@
 {
-  "layout": "BLOB",
-  "tileSet": "cave",
+  "layout": "ROOMS_AND_CORRIDORS",
+  "tileSet": "catacomb_red",
   "levelNumber": 4,
   "width": 34,
   "height": 26,
