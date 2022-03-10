@@ -26,12 +26,10 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage = (): ImageBitmap => {
+  getImage = (): ImageBitmap | null => {
     const target = checkNotNull(this.target);
     const frameKey = target.getAnimationKey();
-    const image = this.imageMap[frameKey];
-    checkState(!!image);
-    return image;
+    return this.imageMap[frameKey];
   };
 }
 

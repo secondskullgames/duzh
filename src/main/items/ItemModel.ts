@@ -17,7 +17,7 @@ namespace ItemModel {
   export const floor_fire_scroll: ItemModel = {
     id: 'floor_fire_scroll',
     mapSprite: 'map_scroll',
-    getInventoryItem: () => ItemFactory.createScrollOfFloorFire(80)
+    getInventoryItem: () => ItemFactory.createScrollOfFloorFire(50)
   };
 
   export const key: ItemModel = {
