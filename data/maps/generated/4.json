@@ -9,7 +9,8 @@
     "soldier": 4
   },
   "equipment": {
-    "steel_sword": 1
+    "steel_sword": 1,
+    "iron_shield": 1
   },
   "items": {
     "life_potion": 3,
