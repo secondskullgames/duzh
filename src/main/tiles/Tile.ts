@@ -5,16 +5,19 @@ import TileType from './TileType';
 
 interface Tile {
   type: TileType,
-  sprite: Sprite | null,
   isBlocking: boolean
+  getSprite: () => Sprite | null
 }
 
 namespace Tile {
-  export const create = (type: TileType, tileSet: TileSet): Tile => ({
-    type,
-    sprite: randChoice(tileSet[type]!!),
-    isBlocking: TileType.isBlocking(type)
-  });
+  export const create = (type: TileType, tileSet: TileSet): Tile => {
+    const sprite = randChoice(tileSet[type]!!);
+    return {
+      type,
+      getSprite: () => sprite,
+      isBlocking: TileType.isBlocking(type)
+    };
+  };
 }
 
 export default Tile;

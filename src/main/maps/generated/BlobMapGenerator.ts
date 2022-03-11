@@ -58,7 +58,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
 
   private _getTargetNumFloorTiles = (max: number) => {
     const minRatio = 0.5;
-    const maxRatio = 0.8;
+    const maxRatio = 0.7;
     return randInt(
       Math.round(max * minRatio),
       Math.round(max * maxRatio)
@@ -102,8 +102,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
     }
 
     // change these ratios to adjust the "snakiness"
-    const minIndex = Math.floor((candidates.length - 1) * 0.6);
-    const maxIndex = Math.floor((candidates.length - 1) * 0.8);
+    const minIndex = Math.floor((candidates.length - 1) * 0.7);
+    const maxIndex = Math.floor((candidates.length - 1) * 0.9);
     const index = randInt(minIndex, maxIndex);
 
     const { x, y } = candidates[index];
@@ -112,8 +112,10 @@ class BlobMapGenerator extends AbstractMapGenerator {
   };
 
   private _getCandidates = (tiles: TileType[][], floorTiles: Coordinates[]): Coordinates[] => {
+    const width = tiles[0].length;
+    const height = tiles.length;
     return this._getEmptyTiles(tiles)
-      .filter(({ x, y }) => y > 0)
+      .filter(({ x, y }) => x > 0 && x < (width - 1) && y > 0 && y < (height - 1))
       .filter(({ x, y }) => this._isLegalWallCoordinates({ x, y }, tiles))
       .filter(({ x, y }) => floorTiles.some(floorTile => isAdjacent({ x, y }, floorTile)));
   };

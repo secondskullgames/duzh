@@ -9,7 +9,6 @@ import { HUMAN_CAUTIOUS } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
-import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
 
 type Props = {
@@ -116,7 +115,8 @@ class GeneratedMapBuilder {
       tiles: this.tiles,
       units,
       items,
-      doors: []
+      doors: [],
+      spawners: []
     });
   };
 }

@@ -13,7 +13,8 @@ interface Pixel {
 }
 
 interface Entity extends Coordinates {
-  sprite: Sprite
+  getSprite: () => Sprite;
+  update: () => Promise<void>;
 }
 
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
@@ -21,8 +22,6 @@ type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MI
 interface Projectile extends Entity {
   direction: Direction
 }
-
-type Offsets = { dx: number, dy: number };
 
 interface Rect {
   left: number,
@@ -49,7 +48,6 @@ export {
   Entity,
   Faction,
   GameScreen,
-  Offsets,
   Pixel,
   Projectile,
   Rect,

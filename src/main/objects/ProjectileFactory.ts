@@ -3,12 +3,16 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { Projectile } from '../types/types';
 
-const createArrow = async ({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => ({
-  x,
-  y,
-  direction,
-  sprite: await SpriteFactory.createProjectileSprite('arrow', direction, {})
-});
+const createArrow = async ({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => {
+  const sprite = await SpriteFactory.createProjectileSprite('arrow', direction, {});
+  return {
+    x,
+    y,
+    direction,
+    getSprite: () => sprite,
+    update: async () => {}
+  };
+};
 
 export {
   createArrow

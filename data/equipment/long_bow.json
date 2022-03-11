@@ -4,6 +4,9 @@
   "mapIcon": "map_bow",
   "itemCategory": "WEAPON",
   "slot": "RANGED_WEAPON",
-  "paletteSwaps": {},
+  "paletteSwaps": {
+    "DARK_GREEN": "DARK_RED",
+    "GREEN": "RED"
+  },
   "damage": 4
 }

@@ -1,24 +1,30 @@
+import Animatable from '../types/Animatable';
 import Sprite from '../graphics/sprites/Sprite';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { Entity } from '../types/types';
 
-type Direction = 'HORIZONTAL' | 'VERTICAL';
-type State = 'OPEN' | 'CLOSED';
+type DoorDirection = 'HORIZONTAL' | 'VERTICAL';
+namespace DoorDirection {
+  export const values = () => ['HORIZONTAL', 'VERTICAL'];
+}
+type DoorState = 'OPEN' | 'CLOSED';
+namespace DoorState {
+  export const values = () => ['OPEN', 'CLOSED'];
+}
 
 type Props = {
-  direction: Direction,
-  state: State,
+  direction: DoorDirection,
+  state: DoorState,
   x: number,
   y: number,
   sprite: Sprite
 };
 
-class Door implements Entity {
-  private readonly _direction: Direction;
-  private _state: State;
+class Door implements Entity, Animatable {
+  private readonly _direction: DoorDirection;
+  private _state: DoorState;
   x: number;
   y: number;
-  sprite: Sprite;
+  private readonly sprite: Sprite;
 
   constructor({ direction, state, x, y, sprite }: Props) {
     this._direction = direction;
@@ -33,11 +39,9 @@ class Door implements Entity {
 
   open = async () => {
     this._state = 'OPEN';
-    this.sprite = await SpriteFactory.createDoorSprite(this._direction, this._state);
   };
   close = async () => {
     this._state = 'CLOSED';
-    this.sprite = await SpriteFactory.createDoorSprite(this._direction, this._state);
   };
   toggleOpen = async () => {
     if (this._state === 'OPEN') {
@@ -46,10 +50,15 @@ class Door implements Entity {
       await this.open();
     }
   };
+  getSprite = () => this.sprite;
+
+  getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
+
+  update = async () => {};
 }
 
 export default Door;
 export {
-  Direction as DoorDirection,
-  State as DoorState
+  DoorDirection,
+  DoorState
 };

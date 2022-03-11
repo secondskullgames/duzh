@@ -2,7 +2,7 @@
  * This file provides a schema for the JSON sprite models found in /data/sprites.
  */
 
-import { Offsets } from '../../types/types';
+import Offsets from '../../geometry/Offsets';
 
 type DynamicSpriteModel = {
   name: string,

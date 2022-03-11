@@ -1,6 +1,7 @@
 import Equipment from '../../equipment/Equipment';
-import { DoorDirection, DoorState } from '../../objects/Door';
-import Activity from '../../types/Activity';
+import Offsets from '../../geometry/Offsets';
+import Door, { DoorDirection, DoorState } from '../../objects/Door';
+import Spawner, { SpawnerState } from '../../objects/Spawner';
 import { Colors } from '../../types/Color';
 import Direction from '../../geometry/Direction';
 import PaletteSwaps from '../../types/PaletteSwaps';
@@ -82,20 +83,62 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
 /**
  * TODO - hardcoded
  */
-const createDoorSprite = async (direction: DoorDirection, state: DoorState): Promise<StaticSprite> => {
-  const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
+const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
   const offsets = { dx: 0, dy: -24 };
-  const image = await new ImageBuilder({
-    filename,
     // TODO hardcoded
-    paletteSwaps: {
-      [Colors.DARK_RED]: Colors.YELLOW_CGA,
-      [Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
-      [Colors.BLACK]: Colors.BLACK_CGA
-    },
-    transparentColor: Colors.WHITE
-  }).build();
-  return new StaticSprite(image, offsets);
+  const paletteSwaps = {
+    [Colors.DARK_RED]: Colors.YELLOW_CGA,
+    [Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
+    [Colors.BLACK]: Colors.BLACK_CGA
+  };
+  const imageMap: Record<string, ImageBitmap> = {};
+  for (const direction of DoorDirection.values()) {
+    for (const state of DoorState.values()) {
+      const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
+      const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
+      const image = await new ImageBuilder({
+        filename,
+        paletteSwaps: {
+          [Colors.DARK_RED]: Colors.YELLOW_CGA,
+          [Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
+          [Colors.BLACK]: Colors.BLACK_CGA
+        },
+        transparentColor: Colors.WHITE
+      }).build();
+      imageMap[key] = image;
+    }
+  }
+  return new DynamicSprite<Door>({
+    offsets,
+    paletteSwaps,
+    imageMap
+  });
+};
+
+const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
+  const imageMap: Record<string, ImageBitmap> = {};
+  for (const state of SpawnerState.values()) {
+    const key = `${state.toLowerCase()}`;
+    const filename: string = (() => {
+      switch (state) {
+        case 'ALIVE': return 'mirror';
+        case 'DEAD':  return 'mirror_broken';
+      }
+      throw new Error(); // wat
+    })();
+    const image = await new ImageBuilder({
+      filename,
+      transparentColor: Colors.WHITE
+    }).build();
+    imageMap[key] = image;
+  }
+
+  const offsets = { dx: -4, dy: -20 };
+  return new DynamicSprite<Spawner>({
+    offsets,
+    paletteSwaps: {},
+    imageMap
+  });
 };
 
 const _loadAnimations = async (
@@ -158,6 +201,7 @@ const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Prom
 export default {
   createDoorSprite,
   createEquipmentSprite,
+  createMirrorSprite,
   createProjectileSprite,
   createStaticSprite,
   createTileSprite,

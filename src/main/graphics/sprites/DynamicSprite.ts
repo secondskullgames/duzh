@@ -1,7 +1,7 @@
+import Offsets from '../../geometry/Offsets';
 import Animatable from '../../types/Animatable';
 import PaletteSwaps from '../../types/PaletteSwaps';
-import { Offsets } from '../../types/types';
-import { checkNotNull } from '../../utils/preconditions';
+import { checkNotNull, checkState } from '../../utils/preconditions';
 import Sprite from './Sprite';
 
 type Props<T> = {
@@ -26,7 +26,7 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage = (): ImageBitmap => {
+  getImage = (): ImageBitmap | null => {
     const target = checkNotNull(this.target);
     const frameKey = target.getAnimationKey();
     return this.imageMap[frameKey];

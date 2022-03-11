@@ -17,7 +17,7 @@ class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
   readonly damage?: number; // typically only for weapons
   readonly blockAmount: number; // typically only for shields
-  readonly sprite: Sprite;
+  private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   readonly name: string;
   private _unit: Unit | null;
@@ -43,6 +43,8 @@ class Equipment implements Animatable {
     const unit = checkNotNull(this._unit);
     return `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}_${unit.frameNumber}`;
   };
+
+  getSprite = () => this.sprite;
 }
 
 export default Equipment;

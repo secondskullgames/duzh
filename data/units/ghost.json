@@ -6,7 +6,7 @@
     "LIGHT_GRAY": "WHITE",
     "DARK_GRAY": "CYAN"
   },
-  "startingLife": 80,
+  "startingLife": 20,
   "startingMana": null,
   "startingDamage": 8,
   "lifePerLevel": 0,

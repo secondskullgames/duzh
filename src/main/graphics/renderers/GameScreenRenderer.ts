@@ -31,6 +31,7 @@ class GameScreenRenderer extends Renderer {
     await this._renderItems();
     await this._renderProjectiles();
     await this._renderDoors();
+    await this._renderSpawners();
     await this._renderUnits();
   };
 
@@ -38,8 +39,8 @@ class GameScreenRenderer extends Renderer {
     const pixel: Pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
-      const { sprite } = element;
-      if (!!sprite) {
+      const sprite = element.getSprite();
+      if (sprite) {
         await this._drawSprite(sprite, pixel);
       }
     }
@@ -143,6 +144,25 @@ class GameScreenRenderer extends Renderer {
           const door = map.getDoor({ x, y });
           if (door) {
             promises.push(this._renderElement(door, { x, y }));
+          }
+        }
+      }
+    }
+
+    await Promise.all(promises);
+  };
+
+  private _renderSpawners = async () => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    const promises: Promise<any>[] = [];
+
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        if (isTileRevealed({ x, y })) {
+          const spawner = map.getSpawner({ x, y });
+          if (spawner) {
+            promises.push(this._renderElement(spawner, { x, y }));
           }
         }
       }

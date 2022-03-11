@@ -12,6 +12,11 @@ const playTurn = async () => {
     await unit.update();
   }
 
+  // TODO: update other things
+  for (const spawner of map.spawners) {
+    await spawner.update();
+  }
+
   await render();
   state.nextTurn();
 };
