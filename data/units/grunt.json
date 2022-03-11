@@ -3,9 +3,13 @@
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
-    "DARK_GREEN": "DARK_BROWN",
-    "GREEN": "DARK_BROWN",
-    "CYAN": "ORANGE"
+    "PLAYER_HANDS": "DARK_GRAY",
+    "PLAYER_HAIR": "DARK_GRAY",
+    "PLAYER_SHINS": "DARK_BROWN",
+    "PLAYER_MOUTH": "DARK_GREEN",
+    "PLAYER_EYES": "RED",
+    "PLAYER_FEET": "DARK_BROWN",
+    "PLAYER_SKIN": "DARK_GRAY"
   },
   "startingLife": 50,
   "startingMana": null,
