@@ -1,6 +1,6 @@
 {
-  "layout": "ROOMS_AND_CORRIDORS",
-  "tileSet": "zzt",
+  "layout": "BLOB",
+  "tileSet": "dungeon_new",
   "levelNumber": 6,
   "width": 38,
   "height": 28,

@@ -80,7 +80,5 @@ const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractM
 };
 
 export default {
-  loadMap,
-  loadGeneratedMap,
-  loadPredefinedMap
+  loadMap
 };

@@ -54,14 +54,8 @@ const render = async () => renderer.render();
 const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
-  const maps: MapSpec[] = [
-    { type: 'generated', id: '1' },
-    { type: 'generated', id: '2' },
-    { type: 'generated', id: '3' },
-    { type: 'generated', id: '4' },
-    { type: 'generated', id: '5' },
-    { type: 'generated', id: '6' }
-  ];
+  const json = (await import(`../../../data/maps.json`)).default as any[];
+  const maps = json.map(item => MapSpec.parse(item));
   const state = new GameState({ playerUnit, maps });
 
   GameState.setInstance(state);
