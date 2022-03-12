@@ -4,7 +4,8 @@
  */
 
 import MapFactory from '../maps/MapFactory';
-import { render } from './actions';
+import { subtract } from '../utils/arrays';
+import { loadNextMap, render } from './actions';
 import GameState from './GameState';
 
 const revealMap = async () => {
@@ -16,7 +17,7 @@ const killEnemies = async () => {
   const state = GameState.getInstance();
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
-  map.units = map.units.filter(u => u === playerUnit);
+  subtract(map.units, map.units.filter(u => u !== playerUnit));
   await render();
 };
 
@@ -27,9 +28,7 @@ const killPlayer = async () => {
 };
 
 const nextLevel = async () => {
-  const state = GameState.getInstance();
-  const map = await MapFactory.loadMap(state.getNextMap());
-  state.setMap(map);
+  await loadNextMap();
   await render();
 };
 

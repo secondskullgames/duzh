@@ -126,7 +126,6 @@ class GameScreenRenderer extends Renderer {
 
           const unit = map.getUnit({ x, y });
           if (unit) {
-            console.log(`unit ${x} ${y}`);
             let shadowColor: Color;
             if (unit === playerUnit) {
               shadowColor = Colors.GREEN;

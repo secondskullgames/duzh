@@ -116,7 +116,8 @@ class GeneratedMapBuilder {
       units,
       items,
       doors: [],
-      spawners: []
+      spawners: [],
+      music: null
     });
   };
 }

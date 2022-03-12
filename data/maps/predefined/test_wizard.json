@@ -23,5 +23,6 @@
     "LIGHT_BROWN": "horizontal"
   },
   "spawnerColors": {},
-  "startingPointColor": "RED"
+  "startingPointColor": "RED",
+  "music": "evil"
 }

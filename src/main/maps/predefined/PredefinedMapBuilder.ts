@@ -38,7 +38,8 @@ class PredefinedMapBuilder {
       units: await _loadUnits(model, image),
       items: await _loadItems(model, image),
       doors: await _loadDoors(model, image),
-      spawners: await _loadSpawners(model, image)
+      spawners: await _loadSpawners(model, image),
+      music: model.music
     });
   };
 }

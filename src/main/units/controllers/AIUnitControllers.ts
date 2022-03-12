@@ -104,7 +104,8 @@ const WIZARD = {
     } else if (canSummon && distanceToPlayerUnit >= 3) {
       const coordinates = Direction.values()
         .map(({ dx, dy }) => ({ x: unit.x + dx, y: unit.y + dy }))
-        .filter(({ x, y }) => !map.isBlocked({ x, y }))[0];
+        .filter(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }))
+        [0];
       if (coordinates) {
         return UnitAbility.SUMMON.use(unit, coordinates);
       }

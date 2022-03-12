@@ -4,5 +4,6 @@
   { "type": "generated", "id": "3" },
   { "type": "generated", "id": "4" },
   { "type": "generated", "id": "5" },
-  { "type": "generated", "id": "6" }
+  { "type": "generated", "id": "6" },
+  { "type": "predefined", "id": "test_wizard" }
 ]
