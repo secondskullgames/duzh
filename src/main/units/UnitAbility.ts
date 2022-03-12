@@ -7,10 +7,12 @@ import {
   playAttackingAnimation, playWizardAppearingAnimation,
   playWizardVanishingAnimation
 } from '../graphics/animations/Animations';
+import { manhattanDistance } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
+import { pointAt } from '../utils/geometry';
 import Unit from './Unit';
 
 /**
@@ -46,7 +48,7 @@ abstract class UnitAbility {
     this.icon = icon || null;
   }
 
-  abstract use(unit: Unit, direction: Direction | null): Promise<any>;
+  abstract use(unit: Unit, coordinates: Coordinates | null): Promise<any>;
 }
 
 class NormalAttack extends UnitAbility {
@@ -54,18 +56,17 @@ class NormalAttack extends UnitAbility {
     super({ name: 'ATTACK', manaCost: 0 });
   }
 
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('NormalAttack requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('NormalAttack requires a target!');
     }
 
-    const { dx, dy } = direction;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    const { x, y } = coordinates;
 
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
-    unit.direction = { dx: x - unit.x, dy: y - unit.y };
+    unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
@@ -104,17 +105,16 @@ class HeavyAttack extends UnitAbility {
     super({ name: 'HEAVY_ATTACK', manaCost: 15, icon: 'strong_icon' });
   }
 
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('HeavyAttack requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('HeavyAttack requires a target!');
     }
 
-    const { dx, dy } = direction;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    const { x, y } = coordinates;
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = { dx: x - unit.x, dy: y - unit.y };
+    unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
@@ -135,17 +135,17 @@ class KnockbackAttack extends UnitAbility {
     super({ name: 'KNOCKBACK_ATTACK', manaCost: 15, icon: 'knockback_icon' });
   }
 
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('KnockbackAttack requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('KnockbackAttack requires a target!');
     }
 
-    const { dx, dy } = direction;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    const { x, y } = coordinates;
+    const { dx, dy } = pointAt(unit, coordinates);
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = { dx: x - unit.x, dy: y - unit.y };
+    unit.direction = { dx, dy };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
@@ -177,17 +177,16 @@ class StunAttack extends UnitAbility {
     super({ name: 'STUN_ATTACK', manaCost: 15, icon: 'knockback_icon' });
   }
 
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('StunAttack requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('StunAttack requires a target!');
     }
 
-    const { dx, dy } = direction;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    const { x, y } = coordinates;
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = { dx: x - unit.x, dy: y - unit.y };
+    unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
@@ -210,15 +209,15 @@ class ShootArrow extends UnitAbility {
     super({ name: 'SHOOT_ARROW', manaCost: 5 });
   }
 
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('ShootArrow requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('ShootArrow requires a target!');
     }
     if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const { dx, dy } = direction;
+    const { dx, dy } = pointAt(unit, coordinates);
     unit.direction = { dx, dy };
 
     await render();
@@ -256,18 +255,16 @@ class Blink extends UnitAbility {
   /**
    * @override
    */
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('Blink requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('Blink requires a target!');
     }
 
-    const dx = 2 * direction.dx;
-    const dy = 2 * direction.dy;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    const { x, y } = coordinates;
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = direction;
+    unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await moveTo(unit, { x, y });
@@ -282,24 +279,26 @@ class Teleport extends UnitAbility {
   readonly RANGE = 5;
 
   constructor() {
-    super({ name: 'TELEPORT', manaCost: 15 });
+    super({ name: 'TELEPORT', manaCost: 25 });
   }
 
   /**
    * @override
    */
-  use = async (unit: Unit, direction: Direction | null) => {
-    if (!direction) {
-      throw new Error('Teleport requires a direction!');
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('Teleport requires a target!');
     }
 
-    const dx = 2 * direction.dx;
-    const dy = 2 * direction.dy;
-    const { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    if (manhattanDistance(unit, coordinates) > this.RANGE) {
+      throw new Error(`Can't teleport more than ${this.RANGE} units`);
+    }
+
+    const { x, y } = coordinates;
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = direction;
+    unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       playSound(Sounds.WIZARD_VANISH);

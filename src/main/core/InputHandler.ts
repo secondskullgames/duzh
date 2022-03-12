@@ -142,26 +142,28 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
   switch (state.getScreen()) {
     case 'GAME':
       const { dx, dy } = _getDirection(key);
-
       const playerUnit = GameState.getInstance().getPlayerUnit();
+      const { x, y } = { x: playerUnit.x + dx, y: playerUnit.y + dy };
+
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
         if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
-          queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { dx, dy });
+          queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { x, y });
         }
       } else if (modifiers.includes('ALT')) {
         if (playerUnit.canSpendMana(UnitAbility.BLINK.manaCost)) {
-          queuedOrder = () => UnitAbility.BLINK.use(playerUnit, { dx, dy });
+          const target: Coordinates = { x: playerUnit.x + 2 * dx, y: playerUnit.y + 2 * dy };
+          queuedOrder = () => UnitAbility.BLINK.use(playerUnit, target);
         }
       } else {
         const ability = state.getQueuedAbility();
         if (ability !== null) {
           queuedOrder = async () => {
             state.setQueuedAbility(null);
-            await ability.use(playerUnit, { dx, dy });
+            await ability.use(playerUnit, { x, y });
           };
         } else {
-          queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { dx, dy });
+          queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { x, y });
         }
       }
       const playerController = playerUnit.controller as PlayerUnitController;

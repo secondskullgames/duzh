@@ -4,6 +4,7 @@ import { checkNotNull } from '../../utils/preconditions';
 import { randBoolean, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitAbility from '../UnitAbility';
+import UnitBehaviors from '../UnitBehaviors';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
 
@@ -86,27 +87,7 @@ const HUMAN_DETERMINISTIC = {
 
 const WIZARD = {
   issueOrder: async (unit: Unit) => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
-
-    for (const dy of [-2, 0, 2]) {
-      for (const dx of [-2, 0, 2]) {
-        if (dx === 0 && dy === 0) {
-          continue;
-        }
-        if (dx !== 0 && dy !== 0) {
-          continue;
-        }
-
-        const x = unit.x + dx;
-        const y = unit.y + dy;
-        if (!map.isBlocked({ x, y })) {
-          const direction = { dx: dx / 2, dy: dy / 2};
-          await UnitAbility.TELEPORT.use(unit, direction);
-          return;
-        }
-      }
-    }
+    return UnitBehaviors.FLEE_FROM_PLAYER(unit);
   }
 };
 

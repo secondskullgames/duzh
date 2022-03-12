@@ -1,6 +1,6 @@
 interface Direction {
-  dx: number,
-  dy: number
+  dx: -1 | 0 | 1,
+  dy: -1 | 0 | 1
 }
 
 type DirectionName = 'N' | 'E' | 'S' | 'W';
