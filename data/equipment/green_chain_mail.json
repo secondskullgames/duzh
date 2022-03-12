@@ -1,0 +1,10 @@
+{
+  "name": "Green Chain Mail",
+  "sprite": "mail",
+  "mapIcon": "map_mail",
+  "itemCategory": "ARMOR",
+  "slot": "CHEST",
+  "paletteSwaps": {
+    "DARK_GRAY": "DARK_GREEN"
+  }
+}

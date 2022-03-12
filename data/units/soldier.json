@@ -3,9 +3,15 @@
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
-    "DARK_GREEN": "DARK_BLUE",
-    "GREEN": "DARK_BLUE",
-    "CYAN": "ORANGE"
+    "PLAYER_HAIR": "DARK_BLUE",
+    "PLAYER_FACE": "GREEN",
+    "PLAYER_EYES": "RED",
+    "PLAYER_MOUTH": "BLACK",
+    "PLAYER_HANDS": "GREEN",
+    "PLAYER_THIGHS": "DARK_PURPLE",
+    "PLAYER_KNEES": "DARK_PURPLE",
+    "PLAYER_SHINS": "BLACK",
+    "PLAYER_FEET": "BLACK"
   },
   "startingLife": 80,
   "startingMana": null,
@@ -14,8 +20,8 @@
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "equipment": [
-    "iron_chain_mail",
-    "iron_helmet",
+    "green_chain_mail",
+    "green_cone_hat",
     "iron_sword"
   ],
   "aiParameters": {

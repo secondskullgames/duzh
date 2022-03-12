@@ -1,0 +1,11 @@
+{
+  "name": "Green Cone Hat",
+  "sprite": "hat",
+  "mapIcon": "map_helmet",
+  "itemCategory": "ARMOR",
+  "slot": "HEAD",
+  "paletteSwaps": {
+    "DARK_BLUE": "BLACK",
+    "BLUE": "DARK_GREEN"
+  }
+}

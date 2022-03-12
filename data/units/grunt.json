@@ -9,7 +9,7 @@
     "PLAYER_MOUTH": "DARK_GREEN",
     "PLAYER_EYES": "RED",
     "PLAYER_FEET": "DARK_BROWN",
-    "PLAYER_SKIN": "DARK_GRAY"
+    "PLAYER_FACE": "DARK_GRAY"
   },
   "startingLife": 50,
   "startingMana": null,
