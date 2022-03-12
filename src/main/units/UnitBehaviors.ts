@@ -87,7 +87,8 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
   }
 };
 
-async function _teleportFromPlayerUnit(unit: Unit) {const state = GameState.getInstance();
+const  _teleportFromPlayerUnit = async (unit: Unit) => {
+  const state = GameState.getInstance();
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const tiles: Coordinates[] = [];
@@ -110,14 +111,9 @@ async function _teleportFromPlayerUnit(unit: Unit) {const state = GameState.getI
     const { x, y } = orderedTiles[0];
     await UnitAbility.TELEPORT.use(unit, { x, y });
   }
-}
+};
 
 const _fleeFromPlayerUnit = async (unit: Unit) => {
-  if (unit.getAbilities().includes(UnitAbility.TELEPORT) && unit.getMana() >= UnitAbility.TELEPORT.manaCost) {
-    await _teleportFromPlayerUnit(unit);
-    return;
-  }
-
   const state = GameState.getInstance();
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
@@ -149,6 +145,7 @@ namespace UnitBehavior {
   export const ATTACK_PLAYER = _attackPlayerUnit_withPath;
   export const FLEE_FROM_PLAYER = _fleeFromPlayerUnit;
   export const STAY = () => Promise.resolve();
+  export const TELEPORT_FROM_PLAYER = _teleportFromPlayerUnit;
 }
 
 export default UnitBehavior;

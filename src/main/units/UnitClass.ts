@@ -22,6 +22,7 @@ interface UnitClass {
    * It doesn't include SHOOT_ARROW.
    */
   readonly abilities: Record<number, UnitAbility.Name[]>;
+  readonly summonedUnitClass: string | null;
 }
 
 const _load = async (name: string): Promise<UnitClass> => {
@@ -29,7 +30,7 @@ const _load = async (name: string): Promise<UnitClass> => {
   return {
     ...json,
     // We're using "friendly" color names, convert them to hex now
-    paletteSwaps: PaletteSwaps.create(json.paletteSwaps),
+    paletteSwaps: PaletteSwaps.create(json.paletteSwaps)
   } as UnitClass;
 };
 

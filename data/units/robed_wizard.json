@@ -15,6 +15,7 @@
     "fleeThreshold": 0
   },
   "abilities": {
-    "1": ["ATTACK", "TELEPORT"]
-  }
+    "1": ["ATTACK", "TELEPORT", "SUMMON"]
+  },
+  "summonedUnitClass": "snake"
 }

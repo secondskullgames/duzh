@@ -13,7 +13,11 @@ import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { pointAt } from '../utils/geometry';
+import { checkNotNull } from '../utils/preconditions';
+import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import Unit from './Unit';
+import UnitClass from './UnitClass';
+import UnitFactory from './UnitFactory';
 
 /**
  * Helper function for most melee attacks
@@ -314,6 +318,42 @@ class Teleport extends UnitAbility {
   };
 }
 
+class Summon extends UnitAbility {
+  constructor() {
+    super({ name: 'SUMMON', manaCost: 25 });
+  }
+
+  /**
+   * @override
+   */
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('Summon requires a target!');
+    }
+
+    const state = GameState.getInstance();
+    const map = state.getMap();
+
+
+    const unitClassName = checkNotNull(unit.getUnitClass().summonedUnitClass);
+    const unitClass = await UnitClass.load(unitClassName);
+
+    // TODO pick a sound
+    playSound(Sounds.WIZARD_APPEAR);
+    // TODO animation
+    const summonedUnit = await UnitFactory.createUnit({
+      name: unitClass.name,
+      unitClass,
+      faction: unit.faction,
+      controller: HUMAN_DETERMINISTIC, // TODO
+      level: 1, // whatever
+      coordinates
+    });
+    map.addUnit(summonedUnit);
+    unit.spendMana(UnitAbility.SUMMON.manaCost);
+  };
+}
+
 namespace UnitAbility {
   export const ATTACK: UnitAbility = new NormalAttack();
   export const HEAVY_ATTACK: UnitAbility = new HeavyAttack();
@@ -322,7 +362,8 @@ namespace UnitAbility {
   export const SHOOT_ARROW: UnitAbility = new ShootArrow();
   export const BLINK: UnitAbility = new Blink();
   export const TELEPORT: Teleport = new Teleport();
-  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT';
+  export const SUMMON: UnitAbility = new Summon();
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT' | 'SUMMON';
 }
 
 export default UnitAbility;

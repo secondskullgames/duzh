@@ -1,4 +1,5 @@
 import GameState from '../../core/GameState';
+import Direction from '../../geometry/Direction';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
 import { randBoolean, weightedRandom } from '../../utils/random';
@@ -87,6 +88,27 @@ const HUMAN_DETERMINISTIC = {
 
 const WIZARD = {
   issueOrder: async (unit: Unit) => {
+    const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
+    const map = state.getMap();
+
+    const distanceToPlayerUnit = manhattanDistance(unit, playerUnit);
+
+    const canTeleport = unit.getAbilities().includes(UnitAbility.TELEPORT)
+      && unit.getMana() >= UnitAbility.TELEPORT.manaCost;
+    const canSummon = unit.getAbilities().includes(UnitAbility.SUMMON)
+      && unit.getMana() >= UnitAbility.SUMMON.manaCost;
+
+    if (canTeleport && distanceToPlayerUnit <= 3) {
+      return UnitBehaviors.TELEPORT_FROM_PLAYER(unit);
+    } else if (canSummon && distanceToPlayerUnit >= 3) {
+      const coordinates = Direction.values()
+        .map(({ dx, dy }) => ({ x: unit.x + dx, y: unit.y + dy }))
+        .filter(({ x, y }) => !map.isBlocked({ x, y }))[0];
+      if (coordinates) {
+        return UnitAbility.SUMMON.use(unit, coordinates);
+      }
+    }
     return UnitBehaviors.FLEE_FROM_PLAYER(unit);
   }
 };
