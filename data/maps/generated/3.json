@@ -6,8 +6,8 @@
   "height": 24,
   "enemies": {
     "snake": 2,
-    "grunt": 5,
-    "soldier": 2
+    "grunt": 6,
+    "soldier": 3
   },
   "equipment": {
     "iron_sword":  1
