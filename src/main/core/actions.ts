@@ -37,7 +37,10 @@ const initialize = async () => {
   const t1 = new Date().getTime();
   renderer = new GameRenderer();
   const container = document.getElementById('container') as HTMLElement;
-  container.appendChild(renderer.getCanvas());
+  const canvas = renderer.getCanvas();
+  container.appendChild(canvas);
+  canvas.focus();
+
   await _initState();
   await render();
   const t2 = new Date().getTime();

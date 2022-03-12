@@ -90,9 +90,10 @@ class NormalAttack extends UnitAbility {
       }
 
       const spawner = map.getSpawner({ x, y });
-      if (spawner) {
+      if (spawner && spawner.isBlocking()) {
         await playAttackingAnimation(unit);
         spawner.setState('DEAD');
+        await playSound(Sounds.SPECIAL_ATTACK);
       }
     }
   };
