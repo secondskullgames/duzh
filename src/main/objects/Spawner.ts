@@ -30,7 +30,7 @@ class Spawner implements Entity, Animatable {
   private readonly unitClass: UnitClass;
   private readonly maxUnits: number;
   private readonly spawnedUnits: Set<Unit>;
-  readonly isBlocking: boolean;
+  private readonly _isBlocking: boolean;
   x: number;
   y: number;
 
@@ -44,7 +44,7 @@ class Spawner implements Entity, Animatable {
     this.cooldown = 0;
     this.spawnedUnits = new Set<Unit>();
     this.state = 'ALIVE';
-    this.isBlocking = isBlocking;
+    this._isBlocking = isBlocking;
   }
 
   getAnimationKey = (): string => `${this.state.toLowerCase()}`;
@@ -83,6 +83,8 @@ class Spawner implements Entity, Animatable {
   };
 
   setState = (state: SpawnerState) => { this.state = state; };
+
+  isBlocking = () => this._isBlocking && this.state === 'ALIVE';
 }
 
 export default Spawner;

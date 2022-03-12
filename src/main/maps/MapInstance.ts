@@ -82,7 +82,7 @@ class MapInstance {
     return !!this.getUnit({ x, y })
       || this.getDoor({ x, y })?.isClosed()
       || this.getTile({ x, y }).isBlocking
-      || this.getSpawner({ x, y })?.isBlocking
+      || this.getSpawner({ x, y })?.isBlocking()
       || false;
   };
 
