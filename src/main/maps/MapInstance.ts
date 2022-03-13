@@ -2,6 +2,7 @@ import Door from '../objects/Door';
 import MapItem from '../objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
 import Spawner from '../objects/Spawner';
+import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import { Entity, Rect } from '../types/types';
 import Unit from '../units/Unit';
@@ -14,22 +15,24 @@ type Props = {
   doors: Door[],
   spawners: Spawner[],
   units: Unit[],
-  items: MapItem[]
+  items: MapItem[],
+  music: Figure[] | null
 };
 
 class MapInstance {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
   /**
    * [y][x]
    */
   private readonly _tiles: Tile[][];
-  units: Unit[];
-  items: MapItem[];
-  doors: Door[];
-  spawners: Spawner[];
-  projectiles: Entity[];
+  readonly units: Unit[];
+  readonly items: MapItem[];
+  readonly doors: Door[];
+  readonly spawners: Spawner[];
+  readonly projectiles: Entity[];
   private readonly revealedTiles: Coordinates[];
+  readonly music: Figure[] | null;
 
   constructor({
     width,
@@ -38,7 +41,8 @@ class MapInstance {
     units,
     items,
     doors,
-    spawners
+    spawners,
+    music
   }: Props) {
     this.width = width;
     this.height = height;
@@ -49,6 +53,7 @@ class MapInstance {
     this.items = items;
     this.projectiles = [];
     this.revealedTiles = [];
+    this.music = music;
   }
 
   getTile = ({ x, y }: Coordinates): Tile => {

@@ -1,6 +1,8 @@
 import EquipmentModel from '../../equipment/EquipmentModel';
 import { DoorDirection } from '../../objects/Door';
 import ItemModel from '../../items/ItemModel';
+import Music from '../../sounds/Music';
+import { Figure } from '../../sounds/types';
 import Color, { Colors } from '../../types/Color';
 import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
@@ -17,7 +19,8 @@ type PredefinedMapModel = {
   equipmentColors: Record<Color, EquipmentModel>,
   doorColors: Record<Color, DoorDirection>,
   spawnerColors: Record<Color, string>;
-  startingPointColor: Color
+  startingPointColor: Color,
+  music: Figure[]
 };
 
 const _load = async (id: string): Promise<PredefinedMapModel> => {
@@ -30,6 +33,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const spawnerColors = await _convertColorMap(json.spawnerColors, x => Promise.resolve(x));
   const startingPointColor = Colors[json.startingPointColor];
   const levelNumber = parseInt(json.levelNumber);
+  const music = json.music ? await Music.loadMusic(json.music as string) : null;
 
   return {
     ...json,
@@ -40,7 +44,8 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
     doorColors,
     spawnerColors,
     startingPointColor,
-    levelNumber
+    levelNumber,
+    music
   };
 };
 

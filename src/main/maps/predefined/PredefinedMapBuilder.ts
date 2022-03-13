@@ -38,7 +38,8 @@ class PredefinedMapBuilder {
       units: await _loadUnits(model, image),
       items: await _loadItems(model, image),
       doors: await _loadDoors(model, image),
-      spawners: await _loadSpawners(model, image)
+      spawners: await _loadSpawners(model, image),
+      music: model.music
     });
   };
 }
@@ -92,7 +93,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
             name: `${enemyUnitClass.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
-            controller: HUMAN_DETERMINISTIC, // WIZARD,
+            controller: WIZARD,
             level: model.levelNumber,
             coordinates: { x, y }
           });

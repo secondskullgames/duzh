@@ -33,7 +33,7 @@ const _wanderAndAttack = async (unit: Unit) => {
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
     const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    await UnitAbility.ATTACK.use(unit, { dx, dy });
+    await UnitAbility.ATTACK.use(unit, { x, y });
   }
 };
 
@@ -53,8 +53,7 @@ const _wander = async (unit: Unit) => {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    await UnitAbility.ATTACK.use(unit, { dx, dy });
+    await UnitAbility.ATTACK.use(unit, { x, y });
   }
 };
 
@@ -83,9 +82,34 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
     const { x, y } = path[1]; // first tile is the unit's own tile
     const unitAtPoint = map.getUnit({ x, y });
     if (!unitAtPoint || unitAtPoint === playerUnit) {
-      const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-      await UnitAbility.ATTACK.use(unit, { dx, dy });
+      await UnitAbility.ATTACK.use(unit, { x, y });
     }
+  }
+};
+
+const  _teleportFromPlayerUnit = async (unit: Unit) => {
+  const state = GameState.getInstance();
+  const playerUnit = state.getPlayerUnit();
+  const map = state.getMap();
+  const tiles: Coordinates[] = [];
+
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      if (map.contains({ x, y })) {
+        if (!map.isBlocked({ x, y })) {
+          if (manhattanDistance(unit, { x, y }) <= UnitAbility.TELEPORT.RANGE) {
+            tiles.push({ x, y });
+          }
+        }
+      }
+    }
+  }
+
+  if (tiles.length > 0) {
+    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
+
+    const { x, y } = orderedTiles[0];
+    await UnitAbility.TELEPORT.use(unit, { x, y });
   }
 };
 
@@ -111,13 +135,8 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
   if (tiles.length > 0) {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
 
-    if (unit.getAbilities().includes(UnitAbility.TELEPORT) && unit.getMana() >= UnitAbility.TELEPORT.manaCost) {
-      const x = UnitAbility.TELEPORT.RANGE;
-    }
-
     const { x, y } = orderedTiles[0];
-    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
-    await UnitAbility.ATTACK.use(unit, { dx, dy });
+    await UnitAbility.ATTACK.use(unit, { x, y });
   }
 };
 
@@ -126,6 +145,7 @@ namespace UnitBehavior {
   export const ATTACK_PLAYER = _attackPlayerUnit_withPath;
   export const FLEE_FROM_PLAYER = _fleeFromPlayerUnit;
   export const STAY = () => Promise.resolve();
+  export const TELEPORT_FROM_PLAYER = _teleportFromPlayerUnit;
 }
 
 export default UnitBehavior;

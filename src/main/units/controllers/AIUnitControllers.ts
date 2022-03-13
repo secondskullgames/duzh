@@ -1,9 +1,11 @@
 import GameState from '../../core/GameState';
+import Direction from '../../geometry/Direction';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
-import { randBoolean, weightedRandom } from '../../utils/random';
+import { randBoolean, randChoice, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitAbility from '../UnitAbility';
+import UnitBehaviors from '../UnitBehaviors';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
 
@@ -32,7 +34,7 @@ const HUMAN_CAUTIOUS: UnitController = {
   }
 };
 
-const HUMAN_AGGRESSIVE = {
+const HUMAN_AGGRESSIVE: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
@@ -57,7 +59,7 @@ const HUMAN_AGGRESSIVE = {
   }
 };
 
-const HUMAN_DETERMINISTIC = {
+const HUMAN_DETERMINISTIC: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
@@ -84,39 +86,48 @@ const HUMAN_DETERMINISTIC = {
   }
 };
 
-const WIZARD = {
+const WIZARD: UnitController = {
   issueOrder: async (unit: Unit) => {
     const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
-    for (const dy of [-2, 0, 2]) {
-      for (const dx of [-2, 0, 2]) {
-        if (dx === 0 && dy === 0) {
-          continue;
-        }
-        if (dx !== 0 && dy !== 0) {
-          continue;
-        }
+    const distanceToPlayerUnit = manhattanDistance(unit, playerUnit);
 
-        const x = unit.x + dx;
-        const y = unit.y + dy;
-        if (!map.isBlocked({ x, y })) {
-          const direction = { dx: dx / 2, dy: dy / 2};
-          await UnitAbility.TELEPORT.use(unit, direction);
-          return;
-        }
+    const canTeleport = unit.getAbilities().includes(UnitAbility.TELEPORT)
+      && unit.getMana() >= UnitAbility.TELEPORT.manaCost;
+    const canSummon = unit.getAbilities().includes(UnitAbility.SUMMON)
+      && unit.getMana() >= UnitAbility.SUMMON.manaCost;
+
+    if (canTeleport && distanceToPlayerUnit <= 3) {
+      return UnitBehaviors.TELEPORT_FROM_PLAYER(unit);
+    }
+
+    if (canSummon && distanceToPlayerUnit >= 3) {
+      const coordinates = Direction.values()
+        .map(({ dx, dy }) => ({ x: unit.x + dx, y: unit.y + dy }))
+        .filter(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }))
+        [0];
+      if (coordinates) {
+        return UnitAbility.SUMMON.use(unit, coordinates);
       }
     }
+
+    return randChoice([
+      UnitBehaviors.FLEE_FROM_PLAYER,
+      UnitBehaviors.ATTACK_PLAYER,
+      UnitBehaviors.WANDER
+    ])(unit);
   }
 };
 
 const _canMove = (speed: number): boolean => {
   // deterministic version
-  // const { turn } = GameState.getInstance();
-  // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
+  const turn = GameState.getInstance().getTurn();
+  return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version
-  return Math.random() < speed;
+  // return Math.random() < speed;
 };
 
 export {

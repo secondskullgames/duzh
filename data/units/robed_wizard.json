@@ -3,8 +3,8 @@
   "type": "WIZARD",
   "sprite": "robed_wizard",
   "paletteSwaps": {},
-  "startingLife": 120,
-  "startingMana": 1000000,
+  "startingLife": 200,
+  "startingMana": 30,
   "startingDamage": 7,
   "lifePerLevel": 0,
   "manaPerLevel": null,
@@ -15,6 +15,7 @@
     "fleeThreshold": 0
   },
   "abilities": {
-    "1": ["ATTACK"]
-  }
+    "1": ["ATTACK", "TELEPORT", "SUMMON"]
+  },
+  "summonedUnitClass": "golem"
 }
