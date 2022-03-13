@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Direction from '../../geometry/Direction';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
-import { randBoolean, weightedRandom } from '../../utils/random';
+import { randBoolean, randChoice, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitAbility from '../UnitAbility';
 import UnitBehaviors from '../UnitBehaviors';
@@ -34,7 +34,7 @@ const HUMAN_CAUTIOUS: UnitController = {
   }
 };
 
-const HUMAN_AGGRESSIVE = {
+const HUMAN_AGGRESSIVE: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
@@ -59,7 +59,7 @@ const HUMAN_AGGRESSIVE = {
   }
 };
 
-const HUMAN_DETERMINISTIC = {
+const HUMAN_DETERMINISTIC: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
@@ -86,7 +86,7 @@ const HUMAN_DETERMINISTIC = {
   }
 };
 
-const WIZARD = {
+const WIZARD: UnitController = {
   issueOrder: async (unit: Unit) => {
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
@@ -101,7 +101,9 @@ const WIZARD = {
 
     if (canTeleport && distanceToPlayerUnit <= 3) {
       return UnitBehaviors.TELEPORT_FROM_PLAYER(unit);
-    } else if (canSummon && distanceToPlayerUnit >= 3) {
+    }
+
+    if (canSummon && distanceToPlayerUnit >= 3) {
       const coordinates = Direction.values()
         .map(({ dx, dy }) => ({ x: unit.x + dx, y: unit.y + dy }))
         .filter(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }))
@@ -110,17 +112,22 @@ const WIZARD = {
         return UnitAbility.SUMMON.use(unit, coordinates);
       }
     }
-    return UnitBehaviors.FLEE_FROM_PLAYER(unit);
+
+    return randChoice([
+      UnitBehaviors.FLEE_FROM_PLAYER,
+      UnitBehaviors.ATTACK_PLAYER,
+      UnitBehaviors.WANDER
+    ])(unit);
   }
 };
 
 const _canMove = (speed: number): boolean => {
   // deterministic version
-  // const { turn } = GameState.getInstance();
-  // return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
+  const turn = GameState.getInstance().getTurn();
+  return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version
-  return Math.random() < speed;
+  // return Math.random() < speed;
 };
 
 export {

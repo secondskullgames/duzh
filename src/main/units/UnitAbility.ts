@@ -334,7 +334,6 @@ class Summon extends UnitAbility {
     const state = GameState.getInstance();
     const map = state.getMap();
 
-
     const unitClassName = checkNotNull(unit.getUnitClass().summonedUnitClass);
     const unitClass = await UnitClass.load(unitClassName);
 
