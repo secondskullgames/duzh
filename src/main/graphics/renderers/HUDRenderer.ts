@@ -1,4 +1,3 @@
-import { Simulate } from 'react-dom/test-utils';
 import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
@@ -9,9 +8,8 @@ import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
-import play = Simulate.play;
 
-const HUD_FILENAME = 'HUD2';
+const HUD_FILENAME = 'hud border';
 
 const HEIGHT = 3 * TILE_HEIGHT;
 const LEFT_PANE_WIDTH = 5 * TILE_WIDTH;
