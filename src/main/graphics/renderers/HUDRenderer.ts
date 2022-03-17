@@ -9,7 +9,7 @@ import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
 
-const HUD_FILENAME = 'hud border';
+const HUD_FILENAME = '2022-03-17';
 
 const HEIGHT = 3 * TILE_HEIGHT;
 const LEFT_PANE_WIDTH = 5 * TILE_WIDTH;
