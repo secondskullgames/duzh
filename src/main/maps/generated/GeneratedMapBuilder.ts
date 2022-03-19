@@ -5,7 +5,7 @@ import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { HUMAN_CAUTIOUS } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_CAUTIOUS, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
@@ -75,7 +75,7 @@ class GeneratedMapBuilder {
         const promise = UnitFactory.createUnit({
           name: unitClass.name, // TODO unique names?
           unitClass,
-          controller: HUMAN_CAUTIOUS,
+          controller: HUMAN_REDESIGN,
           faction: 'ENEMY',
           coordinates: { x, y },
           level: this.level

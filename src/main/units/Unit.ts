@@ -220,7 +220,7 @@ class Unit implements Entity, Animatable {
     if (sourceUnit !== null && isInStraightLine(this, sourceUnit)) {
       const shield = this.equipment.getBySlot('SHIELD');
       if (shield !== null && shield.blockAmount !== null) {
-        adjustedDamage = baseDamage * (1 - (shield.blockAmount || 0));
+        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount || 0)));
       }
     }
 

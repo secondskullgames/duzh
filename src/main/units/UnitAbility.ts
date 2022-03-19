@@ -253,7 +253,7 @@ class ShootArrow extends UnitAbility {
 
 class Blink extends UnitAbility {
   constructor() {
-    super({ name: 'BLINK', manaCost: 15 });
+    super({ name: 'BLINK', manaCost: 10 });
   }
 
   /**

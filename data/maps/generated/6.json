@@ -5,7 +5,7 @@
   "width": 38,
   "height": 28,
   "enemies": {
-    "soldier": 7,
+    "soldier": 8,
     "golem": 5
   },
   "equipment": {

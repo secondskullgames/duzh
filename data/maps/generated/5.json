@@ -6,8 +6,8 @@
   "height": 26,
   "enemies": {
     "grunt": 4,
-    "soldier": 6,
-    "golem": 2
+    "soldier": 8,
+    "golem": 4
   },
   "equipment": {
     "long_bow": 1

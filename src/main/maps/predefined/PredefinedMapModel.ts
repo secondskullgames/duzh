@@ -7,6 +7,7 @@ import Color, { Colors } from '../../types/Color';
 import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
+import { checkNotNull } from '../../utils/preconditions';
 
 type PredefinedMapModel = {
   imageFilename: string,
@@ -31,7 +32,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentModel.load);
   const doorColors = await _convertColorMap(json.doorColors, x => Promise.resolve(x));
   const spawnerColors = await _convertColorMap(json.spawnerColors, x => Promise.resolve(x));
-  const startingPointColor = Colors[json.startingPointColor];
+  const startingPointColor = checkNotNull(Colors[json.startingPointColor]);
   const levelNumber = parseInt(json.levelNumber);
   const music = json.music ? await Music.loadMusic(json.music as string) : null;
 
