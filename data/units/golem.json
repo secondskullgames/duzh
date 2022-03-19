@@ -13,7 +13,7 @@
   },
   "startingLife": 120,
   "startingMana": null,
-  "startingDamage": 14,
+  "startingDamage": 16,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
