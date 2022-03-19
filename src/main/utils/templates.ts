@@ -1,20 +1,31 @@
-let timeCounter = 0;
-let countCounter = 0;
+import memoize from './memoize';
+
+type TemplateParams = {
+  template: string,
+  variables: string[]
+};
+
+type TemplateFunc = (...args: string[]) => string;
+
+const _memoize: (key: string) => TemplateFunc = memoize(stringified => {
+  const { template, variables } = JSON.parse(stringified);
+  return new Function(...variables, `return \`${template}\`;`) as TemplateFunc;
+});
+
+const _newFunction = ({ template, variables }: TemplateParams): TemplateFunc => {
+  const stringified = JSON.stringify({ template, variables });
+  return _memoize(stringified);
+};
 
 /**
  * Dynamically populate a template according to {@param template}. which specifies the template string,
  * and {@param variables}, which provides key-value substitutions for each variable in {@param template}.
  */
 const fillTemplate = (template: string, variables: Record<string, any>): string => {
-  const t1 = new Date().getTime();
   const keys = Object.keys(variables);
   const values = Object.values(variables);
-  const func = new Function(...keys,  `return \`${template}\`;`)(...values);
-  const t2 = new Date().getTime();
-  countCounter++;
-  timeCounter += t2 - t1;
-  console.log(`filled template in ${t2 - t1} ms (${countCounter} ${timeCounter} ms)`);
-  return func;
+  const func = _newFunction({ template, variables: keys });
+  return func(...values);
 };
 
 export { fillTemplate };

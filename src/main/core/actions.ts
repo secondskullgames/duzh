@@ -29,7 +29,7 @@ const loadNextMap = async () => {
       await Music.playMusic(mapInstance.music);
     }
     const t2 = new Date().getTime();
-    console.info(`Loaded level in ${t2 - t1} ms`);
+    console.log(`Loaded level in ${t2 - t1} ms`);
   }
 };
 
@@ -84,7 +84,7 @@ const startGame = async () => {
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   await render();
   const t2 = new Date().getTime();
-  console.info(`Loaded level in ${t2 - t1} ms`);
+  console.log(`Loaded level in ${t2 - t1} ms`);
 };
 
 const startGameDebug = async () => {

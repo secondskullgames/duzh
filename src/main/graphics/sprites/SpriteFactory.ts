@@ -169,7 +169,6 @@ const _loadAnimations = (
         const effects = (animationName === 'DAMAGED')
           ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
           : [];
-
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
 
         const imageSupplier = () => new ImageBuilder({

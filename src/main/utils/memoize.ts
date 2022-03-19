@@ -1,6 +1,6 @@
-type Supplier<T> = (key: string) => T;
+type ValueSupplier<T> = (key: string) => T;
 
-const memoize = <T>(supplier: Supplier<T>): ((key: string) => T) => {
+const memoize = <T>(supplier: ValueSupplier<T>): ValueSupplier<T> => {
   const memos: Record<string, T> = {};
 
   return (key: string) => {
@@ -10,6 +10,7 @@ const memoize = <T>(supplier: Supplier<T>): ((key: string) => T) => {
 
     const value = supplier(key);
     memos[key] = value;
+    console.log(`memos size=${Object.entries(memos).length}`);
     return value;
   };
 };
