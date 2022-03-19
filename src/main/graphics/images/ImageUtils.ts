@@ -22,15 +22,10 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: str
   return new ImageData(array, imageData.width, imageData.height);
 };
 
-let timeCounter = 0;
-let countCounter = 0;
-
 const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Promise<ImageData> => {
   if (!colorMap) {
     return imageData;
   }
-
-  const t1 = new Date().getTime();
 
   const array = new Uint8ClampedArray(imageData.data.length);
   const entries: [string, string][] = Object.entries(colorMap);
@@ -63,14 +58,7 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
     }
   }
 
-  const newImageData = new ImageData(array, imageData.width, imageData.height);
-  const t2 = new Date().getTime();
-  timeCounter += t2 - t1;
-  countCounter++;
-  if (countCounter % 100 === 0) {
-    console.log(`replaceColors: ${countCounter} ${timeCounter} ${timeCounter/countCounter}`);
-  }
-  return newImageData;
+  return new ImageData(array, imageData.width, imageData.height);
 };
 
 /**

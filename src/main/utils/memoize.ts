@@ -10,7 +10,6 @@ const memoize = <T>(supplier: ValueSupplier<T>): ValueSupplier<T> => {
 
     const value = supplier(key);
     memos[key] = value;
-    console.log(`memos size=${Object.entries(memos).length}`);
     return value;
   };
 };
