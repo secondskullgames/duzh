@@ -1,6 +1,6 @@
-type Supplier<T> = (key: string) => T;
+type ValueSupplier<T> = (key: string) => T;
 
-const memoize = <T>(supplier: Supplier<T>) => {
+const memoize = <T>(supplier: ValueSupplier<T>): ValueSupplier<T> => {
   const memos: Record<string, T> = {};
 
   return (key: string) => {

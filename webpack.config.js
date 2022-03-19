@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './src/main/index.ts',
@@ -40,6 +41,14 @@ module.exports = {
     }),
     new PreloadWebpackPlugin({
       preload: 'all'
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public', to: '.' }
+      ],
+      options: {
+        concurrency: 100,
+      },
     })
   ],
   resolve: {

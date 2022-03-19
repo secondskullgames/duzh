@@ -13,7 +13,7 @@ abstract class Sprite {
     this.dy = dy;
   }
 
-  abstract getImage(): ImageBitmap | null;
+  abstract getImage(): Promise<ImageBitmap | null>;
 }
 
 export default Sprite;

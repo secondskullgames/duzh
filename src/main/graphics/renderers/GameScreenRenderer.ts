@@ -52,7 +52,7 @@ class GameScreenRenderer extends Renderer {
     (y <= this.height + TILE_HEIGHT);
 
   private _drawSprite = async (sprite: Sprite, { x, y }: Coordinates) => {
-    const image = sprite.getImage();
+    const image = await sprite.getImage();
     if (image) {
       await this.context.drawImage(image, x + sprite.dx, y + sprite.dy);
     }

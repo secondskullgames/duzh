@@ -12,7 +12,7 @@ class StaticSprite extends Sprite {
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage = () => this.image;
+  getImage = () => Promise.resolve(this.image);
 }
 
 export default StaticSprite;

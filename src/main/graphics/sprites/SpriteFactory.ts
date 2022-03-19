@@ -1,5 +1,4 @@
 import Equipment from '../../equipment/Equipment';
-import Offsets from '../../geometry/Offsets';
 import Door, { DoorDirection, DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import { Colors } from '../../types/Color';
@@ -44,7 +43,7 @@ const createStaticSprite = async (spriteName: string, paletteSwaps: PaletteSwaps
 
 const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}): Promise<DynamicSprite<Unit>> => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'units');
-  const imageMap = await _loadAnimations('units', spriteModel, paletteSwaps);
+  const imageMap = _loadAnimations('units', spriteModel, paletteSwaps);
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
@@ -56,7 +55,7 @@ const createUnitSprite = async (spriteName: string, paletteSwaps: PaletteSwaps =
 
 const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps = {}) => {
   const spriteModel: DynamicSpriteModel = await loadSpriteModel(spriteName, 'equipment');
-  const imageMap = await _loadAnimations('equipment', spriteModel, paletteSwaps);
+  const imageMap = _loadAnimations('equipment', spriteModel, paletteSwaps);
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
@@ -91,12 +90,12 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
     //[Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
     //[Colors.BLACK]: Colors.BLACK_CGA
   };
-  const imageMap: Record<string, ImageBitmap> = {};
+  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
   for (const direction of DoorDirection.values()) {
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
       const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
-      const image = await new ImageBuilder({
+      const imageSupplier = () => new ImageBuilder({
         filename,
         paletteSwaps: {
           [Colors.DARK_RED]: Colors.YELLOW_CGA,
@@ -105,7 +104,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
         },
         transparentColor: Colors.WHITE
       }).build();
-      imageMap[key] = image;
+      imageMap[key] = imageSupplier;
     }
   }
   return new DynamicSprite<Door>({
@@ -116,7 +115,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
 };
 
 const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
-  const imageMap: Record<string, ImageBitmap> = {};
+  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
   for (const state of SpawnerState.values()) {
     const key = `${state.toLowerCase()}`;
     const filename: string = (() => {
@@ -126,11 +125,11 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
       }
       throw new Error(); // wat
     })();
-    const image = await new ImageBuilder({
+    const imageSupplier = () => new ImageBuilder({
       filename,
       transparentColor: Colors.WHITE
     }).build();
-    imageMap[key] = image;
+    imageMap[key] = imageSupplier;
   }
 
   const offsets = { dx: -4, dy: -20 };
@@ -141,12 +140,12 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
   });
 };
 
-const _loadAnimations = async (
+const _loadAnimations = (
   spriteCategory: SpriteCategory,
   spriteModel: DynamicSpriteModel,
   paletteSwaps: PaletteSwaps
-): Promise<Record<string, ImageBitmap>> => {
-  const promises: Promise<{ frameKey: string, image: ImageBitmap }>[] = [];
+): Record<string, () => Promise<ImageBitmap>> => {
+  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
 
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
     for (const direction of Direction.values()) {
@@ -170,25 +169,18 @@ const _loadAnimations = async (
         const effects = (animationName === 'DAMAGED')
           ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
           : [];
-
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
 
-        const imagePromise: Promise<ImageBitmap> = new ImageBuilder({
+        const imageSupplier = () => new ImageBuilder({
           filenames,
           transparentColor: Colors.WHITE,
           paletteSwaps,
           effects
         }).build();
 
-        promises.push(imagePromise.then(image => ({ frameKey, image })));
+        imageMap[frameKey] = imageSupplier;
       }
     }
-  }
-
-  const images = await Promise.all(promises);
-  const imageMap: Record<string, ImageBitmap> = {};
-  for (const { frameKey, image } of images) {
-    imageMap[frameKey] = image;
   }
 
   return imageMap;
