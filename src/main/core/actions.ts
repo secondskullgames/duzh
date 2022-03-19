@@ -21,12 +21,15 @@ const loadNextMap = async () => {
     Music.stop();
     state.setScreen('VICTORY');
   } else {
+    const t1 = new Date().getTime();
     const mapSpec = state.getNextMap();
     const mapInstance = await MapFactory.loadMap(mapSpec);
     state.setMap(mapInstance);
     if (mapInstance.music) {
       await Music.playMusic(mapInstance.music);
     }
+    const t2 = new Date().getTime();
+    console.debug(`Loaded level in ${t2 - t1} ms`);
   }
 };
 

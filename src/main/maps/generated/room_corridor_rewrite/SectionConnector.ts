@@ -63,8 +63,8 @@ const createSectionConnector = (): SectionConnector => {
       .filter(room => room !== null)
       .map(room => room as Room);
 
-    console.debug('left=', matchingLeftRooms);
-    console.debug('right=', matchingRightRooms);
+    // console.debug('left=', matchingLeftRooms);
+    // console.debug('right=', matchingRightRooms);
 
     const possibleConnections: [Rect, Rect][] = [];
     for (const leftRoom of matchingLeftRooms) {
@@ -166,8 +166,8 @@ const createSectionConnector = (): SectionConnector => {
       .filter(room => room !== null)
       .map(room => room as Room);
 
-    console.debug('top=', matchingTopRooms);
-    console.debug('bottom=', matchingBottomRooms);
+    // console.debug('top=', matchingTopRooms);
+    // console.debug('bottom=', matchingBottomRooms);
 
     const possibleConnections: [Rect, Rect][] = [];
     for (const topRoom of matchingTopRooms) {

@@ -15,7 +15,7 @@ module.exports = {
       },
       {
         test: /\.png$/i,
-        type: 'asset/resource'
+        type: 'asset/inline'
       },
       {
         test: /\.css$/i,
@@ -47,7 +47,6 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    assetModuleFilename: "images/[name][hash].png",
     path: path.resolve(__dirname, 'build'),
     clean: true
   },
