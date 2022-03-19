@@ -1,6 +1,6 @@
-const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 
 module.exports = {
   entry: './src/main/index.ts',
@@ -12,6 +12,10 @@ module.exports = {
         test: /\.tsx?$/i,
         use: 'ts-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.png$/i,
+        type: 'asset/resource'
       },
       {
         test: /\.css$/i,
@@ -31,17 +35,11 @@ module.exports = {
     ],
   },
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        { from: 'png', to: 'png' },
-        { from: 'public', to: '.' }
-      ],
-      options: {
-        concurrency: 100,
-      },
-    }),
     new HtmlWebpackPlugin({
       template: 'html/index.html'
+    }),
+    new PreloadWebpackPlugin({
+      preload: 'all'
     })
   ],
   resolve: {
@@ -49,6 +47,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
+    assetModuleFilename: "images/[name][hash].png",
     path: path.resolve(__dirname, 'build'),
     clean: true
   },

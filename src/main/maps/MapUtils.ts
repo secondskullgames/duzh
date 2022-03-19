@@ -62,8 +62,8 @@ const civDistance = (first: Coordinates, second: Coordinates): number => {
 };
 
 const isAdjacent = (first: Coordinates, second: Coordinates): boolean => {
-  const dx = Math.abs(first.x - second.x);
-  const dy = Math.abs(first.y - second.y);
+  const dx = first.x - second.x;
+  const dy = first.y - second.y;
   return (dx === 0 && (dy === -1 || dy === 1)) || (dy === 0 && (dx === -1 || dx === 1));
 };
 
