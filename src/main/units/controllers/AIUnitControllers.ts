@@ -86,6 +86,33 @@ const HUMAN_DETERMINISTIC: UnitController = {
   }
 };
 
+const HUMAN_REDESIGN: UnitController = {
+  issueOrder: async (unit: Unit) => {
+    const playerUnit = GameState.getInstance().getPlayerUnit();
+
+    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_REDESIGN behavior requires aiParams!');
+    const { speed, visionRange, fleeThreshold } = aiParameters;
+
+    let behavior: UnitBehavior;
+    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+
+    if (!_canMove(speed)) {
+      behavior = UnitBehavior.STAY;
+    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+      behavior = UnitBehavior.FLEE_FROM_PLAYER;
+    } else if (distanceToPlayer <= visionRange) {
+      behavior = UnitBehavior.ATTACK_PLAYER;
+    } else {
+      if (randBoolean()) {
+        behavior = UnitBehavior.STAY;
+      } else {
+        behavior = UnitBehavior.WANDER;
+      }
+    }
+    return behavior(unit);
+  }
+};
+
 const WIZARD: UnitController = {
   issueOrder: async (unit: Unit) => {
     const state = GameState.getInstance();
@@ -131,8 +158,9 @@ const _canMove = (speed: number): boolean => {
 };
 
 export {
-  HUMAN_CAUTIOUS,
   HUMAN_AGGRESSIVE,
+  HUMAN_CAUTIOUS,
   HUMAN_DETERMINISTIC,
+  HUMAN_REDESIGN,
   WIZARD
 };

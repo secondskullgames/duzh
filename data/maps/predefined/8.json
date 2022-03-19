@@ -1,0 +1,29 @@
+{
+  "imageFilename": "8",
+  "tileset": "dungeon",
+  "levelNumber": "8",
+  "tileColors": {
+    "BLACK": "FLOOR",
+    "DARK_GRAY": "WALL",
+    "LIGHT_GRAY": "WALL_TOP",
+    "GREEN": "STAIRS_DOWN"
+  },
+  "defaultTile": "FLOOR",
+  "enemyColors": {
+    "DARK_GREEN": "soldier",
+    "DARK_BLUE": "golem"
+  },
+  "itemColors": {
+    "DARK_RED": "life_potion",
+    "DARK_YELLOW": "floor_fire_scroll",
+    "YELLOW": "key"
+  },
+  "equipmentColors": {},
+  "doorColors": {
+    "DARK_BROWN": "vertical"
+  },
+  "spawnerColors": {
+    "CYAN": "mirror"
+  },
+  "startingPointColor": "BLUE"
+}

@@ -21,12 +21,15 @@ const loadNextMap = async () => {
     Music.stop();
     state.setScreen('VICTORY');
   } else {
+    const t1 = new Date().getTime();
     const mapSpec = state.getNextMap();
     const mapInstance = await MapFactory.loadMap(mapSpec);
     state.setMap(mapInstance);
     if (mapInstance.music) {
       await Music.playMusic(mapInstance.music);
     }
+    const t2 = new Date().getTime();
+    console.debug(`Loaded level in ${t2 - t1} ms`);
   }
 };
 
@@ -60,7 +63,10 @@ const render = async () => renderer.render();
 const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
-  const json = (await import(`../../../data/maps.json`)).default as any[];
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../data/maps.json`
+  )).default as any[];
   const maps = json.map(item => MapSpec.parse(item));
   const state = new GameState({ playerUnit, maps });
 
@@ -82,7 +88,8 @@ const startGame = async () => {
 };
 
 const startGameDebug = async () => {
-  const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test_wizard' });
+  // const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test_wizard' });
+  const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: '8' });
   GameState.getInstance().setMap(mapInstance);
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);

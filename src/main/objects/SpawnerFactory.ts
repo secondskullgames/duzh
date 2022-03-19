@@ -12,7 +12,7 @@ const createMirror = async ({ x, y }: Coordinates): Promise<Spawner> => {
     unitClass,
     sprite,
     maxUnits: 5,
-    cooldown: 25,
+    cooldown: 15,
     x,
     y,
     isBlocking: true

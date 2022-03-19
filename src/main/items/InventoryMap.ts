@@ -4,7 +4,7 @@ import ItemCategory from './ItemCategory';
 /**
  * Display these in a particular order and don't show keys
  */
-const categories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'];
+const displayCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'];
 
 /**
  * Contains information about all items held by a particular unit, grouped by category,
@@ -18,11 +18,11 @@ class InventoryMap {
 
   constructor() {
     const map: Partial<Record<ItemCategory, InventoryItem[]>> = {};
-    for (const category of categories) {
+    for (const category of ItemCategory.values()) {
       map[category] = [];
     }
     this._map = map as Record<ItemCategory, InventoryItem[]>;
-    this.selectedCategory = categories[0];
+    this.selectedCategory = displayCategories[0];
     this.selectedItem = null;
   }
 
@@ -43,14 +43,14 @@ class InventoryMap {
   }
 
   nextCategory() {
-    const index = categories.indexOf(this.selectedCategory);
-    this.selectedCategory = categories[(index + 1) % categories.length];
+    const index = displayCategories.indexOf(this.selectedCategory);
+    this.selectedCategory = displayCategories[(index + 1) % displayCategories.length];
     this.selectedItem = this._map[this.selectedCategory][0] || null;
   }
 
   previousCategory() {
-    const index = categories.indexOf(this.selectedCategory);
-    this.selectedCategory = categories[(index - 1 + categories.length) % categories.length];
+    const index = displayCategories.indexOf(this.selectedCategory);
+    this.selectedCategory = displayCategories[(index - 1 + displayCategories.length) % displayCategories.length];
     this.selectedItem = this._map[this.selectedCategory][0] || null;
   }
 
@@ -74,7 +74,7 @@ class InventoryMap {
     }
   }
 
-  getCategories = (): ItemCategory[] => categories;
+  getCategories = (): ItemCategory[] => displayCategories;
 }
 
 export default InventoryMap;

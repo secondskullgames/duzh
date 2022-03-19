@@ -7,7 +7,7 @@ body {
 }
 
 #container {
-  display: inline-block;
+  display: inline-flex;
   outline: none;
   cursor: default;
   color: white;
@@ -20,6 +20,7 @@ body {
   image-rendering: pixelated;   /* Chrome */
   background-color: black;
   display: block;
+  outline: none;
 }
 
 #editor {
@@ -45,6 +46,14 @@ body {
   body {
     overflow: hidden;
   }
+
+  #container {
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    background-color: #000000;
+  }
+
   #container canvas {
     width: 100vw;
     height: 100vh;

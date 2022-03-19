@@ -10,7 +10,8 @@ import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Color from '../../types/Color';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import { HUMAN_DETERMINISTIC, WIZARD } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_REDESIGN, WIZARD } from '../../units/controllers/AIUnitControllers';
+import UnitController from '../../units/controllers/UnitController';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
 import MapInstance from '../MapInstance';
@@ -81,7 +82,12 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = rgb2hex({ r, g, b });
 
+    const colors: Set<Color> = new Set();
     if (color !== null) {
+      if (!colors.has(color)) {
+        console.log(color);
+        colors.add(color);
+      }
       if (Color.equals(color, model.startingPointColor)) {
         const playerUnit = GameState.getInstance().getPlayerUnit();
         [playerUnit.x, playerUnit.y] = [x, y];
@@ -89,11 +95,12 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
       } else {
         const enemyUnitClass = model.enemyColors[color] || null;
         if (enemyUnitClass !== null) {
+          const controller: UnitController = (enemyUnitClass.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
           const unit = await UnitFactory.createUnit({
             name: `${enemyUnitClass.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
-            controller: WIZARD,
+            controller,
             level: model.levelNumber,
             coordinates: { x, y }
           });

@@ -1,5 +1,5 @@
+import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Animatable from '../types/Animatable';
-import Sprite from '../graphics/sprites/Sprite';
 import { Entity } from '../types/types';
 
 type DoorDirection = 'HORIZONTAL' | 'VERTICAL';
@@ -16,7 +16,7 @@ type Props = {
   state: DoorState,
   x: number,
   y: number,
-  sprite: Sprite
+  sprite: DynamicSprite<Door>
 };
 
 class Door implements Entity, Animatable {
@@ -24,7 +24,7 @@ class Door implements Entity, Animatable {
   private _state: DoorState;
   x: number;
   y: number;
-  private readonly sprite: Sprite;
+  private readonly sprite: DynamicSprite<Door>;
 
   constructor({ direction, state, x, y, sprite }: Props) {
     this._direction = direction;
@@ -32,6 +32,7 @@ class Door implements Entity, Animatable {
     this.x = x;
     this.y = y;
     this.sprite = sprite;
+    sprite.target = this;
   }
 
   isOpen = () => this._state === 'OPEN';

@@ -26,7 +26,10 @@ interface UnitClass {
 }
 
 const _load = async (name: string): Promise<UnitClass> => {
-  const json = (await import(`../../../data/units/${name}.json`)).default;
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../data/units/${name}.json`
+  )).default;
   return {
     ...json,
     // We're using "friendly" color names, convert them to hex now

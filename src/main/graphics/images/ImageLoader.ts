@@ -3,6 +3,11 @@ type ImageCache = Record<string, Promise<ImageData>>;
 const CACHE: ImageCache = {};
 
 const _loadImage = async (filename: string): Promise<ImageData> => {
+  const image = (await import(
+    /* webpackMode: "eager" */
+    `../../../../png/${filename}.png`
+  )).default;
+
   return new Promise((resolve, reject) => {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     canvas.style.display = 'none';
@@ -32,7 +37,7 @@ const _loadImage = async (filename: string): Promise<ImageData> => {
     img.onerror = () => {
       reject(`Failed to load image ${img.src}`);
     };
-    img.src = `png/${filename}.png`;
+    img.src = image;
   });
 };
 

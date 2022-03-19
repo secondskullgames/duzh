@@ -1,7 +1,7 @@
 import Offsets from '../../geometry/Offsets';
 import Animatable from '../../types/Animatable';
 import PaletteSwaps from '../../types/PaletteSwaps';
-import { checkNotNull, checkState } from '../../utils/preconditions';
+import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
 
 type Props<T> = {
@@ -11,7 +11,6 @@ type Props<T> = {
 };
 
 class DynamicSprite<T extends Animatable> extends Sprite {
-  // TODO why is this nullable?
   target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
   private readonly imageMap: Record<string, ImageBitmap>;
