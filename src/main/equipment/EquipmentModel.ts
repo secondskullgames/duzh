@@ -16,7 +16,10 @@ interface EquipmentModel {
 }
 
 const _load = async (id: string): Promise<EquipmentModel> => {
-  const json = (await import(`../../../data/equipment/${id}.json`)).default;
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../data/equipment/${id}.json`
+  )).default;
   return {
     ...json,
     id,

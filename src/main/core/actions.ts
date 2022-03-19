@@ -60,7 +60,10 @@ const render = async () => renderer.render();
 const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
-  const json = (await import(`../../../data/maps.json`)).default as any[];
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../data/maps.json`
+  )).default as any[];
   const maps = json.map(item => MapSpec.parse(item));
   const state = new GameState({ playerUnit, maps });
 

@@ -14,7 +14,10 @@ type GeneratedMapModel = {
 };
 
 const _load = async (id: string): Promise<GeneratedMapModel> => {
-  const json = (await import(`../../../../data/maps/generated/${id}.json`)).default;
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../../data/maps/generated/${id}.json`
+  )).default;
   return { ...json, id };
 };
 

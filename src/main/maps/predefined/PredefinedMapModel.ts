@@ -25,7 +25,10 @@ type PredefinedMapModel = {
 };
 
 const _load = async (id: string): Promise<PredefinedMapModel> => {
-  const json = (await import(`../../../../data/maps/predefined/${id}.json`)).default;
+  const json = (await import(
+    /* webpackMode: "eager" */
+    `../../../../data/maps/predefined/${id}.json`
+  )).default;
   const tileColors = await _convertColorMap(json.tileColors, x => Promise.resolve(x));
   const enemyColors = await _convertColorMap(json.enemyColors, UnitClass.load);
   const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemModel.load(x)));

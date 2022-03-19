@@ -17,7 +17,10 @@ type TileSetModel = {
 const _memos: Record<string, TileSet> = {};
 
 const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
-  const json = await import(`../../../data/tilesets/${name}.json`) as TileSetModel;
+  const json = await import(
+    /* webpackMode: "eager" */
+    `../../../data/tilesets/${name}.json`
+  ) as TileSetModel;
   const tileSet: TileSet = {};
   const promises: Partial<Record<TileType, Promise<Sprite[]>>> = {};
 

@@ -195,7 +195,10 @@ const _loadAnimations = async (
 };
 
 const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Promise<T> => {
-  return (await import(`../../../../data/sprites/${category}/${name}.json`)).default;
+  return (await import(
+    /* webpackMode: "eager" */
+    `../../../../data/sprites/${category}/${name}.json`
+  )).default;
 };
 
 export default {

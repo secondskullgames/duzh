@@ -1,7 +1,7 @@
 import Offsets from '../../geometry/Offsets';
 import Animatable from '../../types/Animatable';
 import PaletteSwaps from '../../types/PaletteSwaps';
-import { checkNotNull, checkState } from '../../utils/preconditions';
+import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
 
 type Props<T> = {
