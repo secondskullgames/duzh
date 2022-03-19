@@ -87,9 +87,9 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
   const offsets = { dx: 0, dy: -24 };
     // TODO hardcoded
   const paletteSwaps = {
-    [Colors.DARK_RED]: Colors.YELLOW_CGA,
-    [Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
-    [Colors.BLACK]: Colors.BLACK_CGA
+    //[Colors.DARK_RED]: Colors.YELLOW_CGA,
+    //[Colors.DARK_BROWN]: Colors.LIGHT_MAGENTA_CGA,
+    //[Colors.BLACK]: Colors.BLACK_CGA
   };
   const imageMap: Record<string, ImageBitmap> = {};
   for (const direction of DoorDirection.values()) {
