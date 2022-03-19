@@ -11,7 +11,6 @@ type Props<T> = {
 };
 
 class DynamicSprite<T extends Animatable> extends Sprite {
-  // TODO why is this nullable?
   target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
   private readonly imageMap: Record<string, ImageBitmap>;
