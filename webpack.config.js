@@ -59,6 +59,11 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     clean: true
   },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 1024000,
+    maxAssetSize: 1024000
+  },
   stats: {
     errorDetails: true
   },
