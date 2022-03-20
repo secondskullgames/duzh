@@ -25,7 +25,7 @@
   "damagePerLevel": 0,
   "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
   "abilities": {
-    "1": [],
+    "1": ["BLINK"],
     "2": ["HEAVY_ATTACK"],
     "3": ["KNOCKBACK_ATTACK"],
     "4": ["STUN_ATTACK"]

@@ -2,6 +2,7 @@ import ItemCategory from '../items/ItemCategory';
 import PaletteSwaps from '../types/PaletteSwaps';
 import memoize from '../utils/memoize';
 import EquipmentSlot from './EquipmentSlot';
+import EquipmentScript from './EquipmentScript';
 
 interface EquipmentModel {
   id: string,
@@ -12,7 +13,8 @@ interface EquipmentModel {
   slot: EquipmentSlot,
   paletteSwaps: PaletteSwaps,
   damage?: number,
-  blockAmount?: number // typically only for shields
+  blockAmount?: number, // typically only for shields
+  script: EquipmentScript
 }
 
 const _load = async (id: string): Promise<EquipmentModel> => {

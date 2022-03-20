@@ -34,7 +34,8 @@ class DynamicSprite<T extends Animatable> extends Sprite {
       return this.promises[frameKey] || Promise.resolve(null);
     }
 
-    const promise: Promise<ImageBitmap | null> = this.imageMap[frameKey]() || Promise.resolve(null);
+    const supplier = this.imageMap[frameKey];
+    const promise: Promise<ImageBitmap | null> = supplier?.() || Promise.resolve(null);
     this.promises[frameKey] = promise;
     return promise;
   };

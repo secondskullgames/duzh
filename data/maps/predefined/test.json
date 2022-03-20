@@ -1,5 +1,5 @@
 {
-  "imageFilename": "test_mirror",
+  "imageFilename": "test",
   "tileset": "dungeon",
   "levelNumber": "1",
   "tileColors": {
@@ -9,19 +9,19 @@
     "BLUE": "STAIRS_DOWN"
   },
   "defaultTile": "FLOOR",
-  "enemyColors": {},
+  "enemyColors": {
+    "GREEN": "snake"
+  },
   "itemColors": {
     "MAGENTA": "life_potion"
   },
   "equipmentColors": {
-    "YELLOW": "bronze_sword"
+    "YELLOW": "bolt_sword"
   },
   "doorColors": {
     "DARK_BROWN": "vertical",
     "LIGHT_BROWN": "horizontal"
   },
-  "spawnerColors": {
-    "WHITE": "mirror"
-  },
+  "spawnerColors": {},
   "startingPointColor": "RED"
 }

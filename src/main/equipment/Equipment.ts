@@ -5,6 +5,7 @@ import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
 import EquipmentModel from './EquipmentModel';
+import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
 
 type Props = {
@@ -20,6 +21,7 @@ class Equipment implements Animatable {
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   readonly name: string;
+  readonly script: EquipmentScript | null;
   private _unit: Unit | null;
 
   constructor({ model, sprite, inventoryItem }: Props) {
@@ -29,6 +31,7 @@ class Equipment implements Animatable {
     this.damage = model.damage;
     this.blockAmount = model.blockAmount || 0;
     this.sprite = sprite;
+    this.script = model.script || null;
     this._unit = null;
   }
 

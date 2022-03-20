@@ -4,14 +4,14 @@ import { render } from '../core/actions';
 import GameState from '../core/GameState';
 import {
   playArrowAnimation,
-  playAttackingAnimation, playWizardAppearingAnimation,
+  playAttackingAnimation, playBoltAnimation,
+  playWizardAppearingAnimation,
   playWizardVanishingAnimation
 } from '../graphics/animations/Animations';
 import { manhattanDistance } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
 import { pointAt } from '../utils/geometry';
 import { checkNotNull } from '../utils/preconditions';
 import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
@@ -23,16 +23,8 @@ import UnitFactory from './UnitFactory';
  * Helper function for most melee attacks
  */
 const attack = async (unit: Unit, target: Unit, damage: number) => {
-  await playAttackingAnimation(unit, target);
+  await unit.attack(target);
   await target.takeDamage(damage, unit);
-};
-
-const moveTo = async (unit: Unit, { x, y }: Coordinates) => {
-  const playerUnit = GameState.getInstance().getPlayerUnit();
-  [unit.x, unit.y] = [x, y];
-  if (unit === playerUnit) {
-    await playSound(Sounds.FOOTSTEP);
-  }
 };
 
 type Props = {
@@ -73,7 +65,7 @@ class NormalAttack extends UnitAbility {
     unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
@@ -106,7 +98,7 @@ class NormalAttack extends UnitAbility {
 
 class HeavyAttack extends UnitAbility {
   constructor() {
-    super({ name: 'HEAVY_ATTACK', manaCost: 15, icon: 'strong_icon' });
+    super({ name: 'HEAVY_ATTACK', manaCost: 15, icon: 'icon1' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -121,7 +113,7 @@ class HeavyAttack extends UnitAbility {
     unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -136,7 +128,7 @@ class HeavyAttack extends UnitAbility {
 
 class KnockbackAttack extends UnitAbility {
   constructor() {
-    super({ name: 'KNOCKBACK_ATTACK', manaCost: 15, icon: 'knockback_icon' });
+    super({ name: 'KNOCKBACK_ATTACK', manaCost: 15, icon: 'icon6' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -152,7 +144,7 @@ class KnockbackAttack extends UnitAbility {
     unit.direction = { dx, dy };
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -178,7 +170,7 @@ class KnockbackAttack extends UnitAbility {
 
 class StunAttack extends UnitAbility {
   constructor() {
-    super({ name: 'STUN_ATTACK', manaCost: 15, icon: 'knockback_icon' });
+    super({ name: 'STUN_ATTACK', manaCost: 15, icon: 'icon2' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -193,7 +185,7 @@ class StunAttack extends UnitAbility {
     unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (!!targetUnit) {
@@ -251,9 +243,49 @@ class ShootArrow extends UnitAbility {
   };
 }
 
+class Bolt extends UnitAbility {
+  constructor() {
+    super({ name: 'BOLT', manaCost: 0 });
+  }
+
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('Bolt requires a target!');
+    }
+
+    const { dx, dy } = pointAt(unit, coordinates);
+    unit.direction = { dx, dy };
+
+    await render();
+
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    const coordinatesList = [];
+    let { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      coordinatesList.push({ x, y });
+      x += dx;
+      y += dy;
+    }
+
+    const targetUnit = map.getUnit({ x, y });
+    if (!!targetUnit) {
+      const damage = unit.getDamage();
+
+      await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      await targetUnit.takeDamage(damage, unit);
+      await playSound(Sounds.PLAYER_HITS_ENEMY);
+    } else {
+      await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+    }
+
+    unit.spendMana(this.manaCost);
+  };
+}
+
 class Blink extends UnitAbility {
   constructor() {
-    super({ name: 'BLINK', manaCost: 10 });
+    super({ name: 'BLINK', manaCost: 10, icon: 'icon5' });
   }
 
   /**
@@ -264,14 +296,17 @@ class Blink extends UnitAbility {
       throw new Error('Blink requires a target!');
     }
 
-    const { x, y } = coordinates;
+    const dx = coordinates.x - unit.x;
+    const dy = coordinates.y - unit.y;
+    const x = coordinates.x + 2 * dx;
+    const y = coordinates.y + 2 * dy;
 
     const state = GameState.getInstance();
     const map = state.getMap();
     unit.direction = pointAt(unit, coordinates);
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
       unit.spendMana(this.manaCost);
     } else {
       await playSound(Sounds.FOOTSTEP);
@@ -307,7 +342,7 @@ class Teleport extends UnitAbility {
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       playSound(Sounds.WIZARD_VANISH);
       await playWizardVanishingAnimation(unit);
-      await moveTo(unit, { x, y });
+      await unit.moveTo({ x, y });
       playSound(Sounds.WIZARD_APPEAR);
       await playWizardAppearingAnimation(unit);
 
@@ -353,6 +388,24 @@ class Summon extends UnitAbility {
   };
 }
 
+class Strafe extends UnitAbility {
+  constructor() {
+    super({ name: 'STRAFE', manaCost: 0 });
+  }
+
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
+    if (!coordinates) {
+      throw new Error('Strafe requires a target!');
+    }
+    const map = GameState.getInstance().getMap();
+    const { x, y } = coordinates;
+
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      await unit.moveTo({ x, y });
+    }
+  };
+}
+
 namespace UnitAbility {
   export const ATTACK: UnitAbility = new NormalAttack();
   export const HEAVY_ATTACK: UnitAbility = new HeavyAttack();
@@ -362,7 +415,9 @@ namespace UnitAbility {
   export const BLINK: UnitAbility = new Blink();
   export const TELEPORT: Teleport = new Teleport();
   export const SUMMON: UnitAbility = new Summon();
-  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT' | 'SUMMON';
+  export const BOLT: UnitAbility = new Bolt();
+  export const STRAFE = new Strafe();
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT' | 'SUMMON' | 'BOLT' | 'STRAFE';
 }
 
 export default UnitAbility;

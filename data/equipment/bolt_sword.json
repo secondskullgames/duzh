@@ -1,0 +1,13 @@
+{
+  "name": "Bolt Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "DARK_GRAY": "CYAN",
+    "LIGHT_GRAY": "CYAN"
+  },
+  "damage": 4,
+  "script": "bolt_sword"
+}

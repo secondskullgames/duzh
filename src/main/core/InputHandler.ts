@@ -151,9 +151,9 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
           queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { x, y });
         }
       } else if (modifiers.includes('ALT')) {
-        if (playerUnit.canSpendMana(UnitAbility.BLINK.manaCost)) {
-          const target: Coordinates = { x: playerUnit.x + 2 * dx, y: playerUnit.y + 2 * dy };
-          queuedOrder = () => UnitAbility.BLINK.use(playerUnit, target);
+        if (playerUnit.canSpendMana(UnitAbility.STRAFE.manaCost)) {
+          const target: Coordinates = { x: playerUnit.x + dx, y: playerUnit.y + dy };
+          queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, target);
         }
       } else {
         const ability = state.getQueuedAbility();
@@ -290,7 +290,9 @@ const _handleAbility = async (command: NumberKey) => {
 
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(command.toString());
-  const ability = playerUnit.getAbilities()[index - 1];
+  const ability = playerUnit.getAbilities()
+    .filter(ability => ability.icon !== null)
+    [index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
     await render();
