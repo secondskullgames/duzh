@@ -298,8 +298,8 @@ class Blink extends UnitAbility {
 
     const dx = coordinates.x - unit.x;
     const dy = coordinates.y - unit.y;
-    const x = coordinates.x + 2 * dx;
-    const y = coordinates.y + 2 * dy;
+    const x = unit.x + 2 * dx;
+    const y = unit.y + 2 * dy;
 
     const state = GameState.getInstance();
     const map = state.getMap();
