@@ -59,6 +59,7 @@ body {
     width: 100vw;
     height: 100vh;
     max-height: 56.25vw;
+    cursor: none;
   }
 
   #debug {
