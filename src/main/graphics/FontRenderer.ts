@@ -2,7 +2,9 @@ import Color, { Colors } from '../types/Color';
 import ImageLoader from './images/ImageLoader';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 
-// Fonts are partial ASCII table consisting of the "printable characters", 32 to 126
+// Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
+//  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
+// (note the space before '!')
 const MIN_CHARACTER_CODE = 32;  // ' '
 const MAX_CHARACTER_CODE = 126; // '~'
 const NUM_CHARACTERS = MAX_CHARACTER_CODE - MIN_CHARACTER_CODE + 1;
@@ -30,6 +32,12 @@ const Fonts: Record<string, FontDefinition> = {
     src: 'dos_perfect_vga_9x15_2',
     width: 9,
     height: 15
+  },
+  PRESS_START_2P: {
+    name: 'PRESS_START_2P',
+    src: 'press_start_2p_8x9',
+    width: 8,
+    height: 9
   }
 };
 

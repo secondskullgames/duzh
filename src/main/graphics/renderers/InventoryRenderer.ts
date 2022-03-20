@@ -36,15 +36,15 @@ class InventoryRenderer extends Renderer {
     const itemsLeft = (canvas.width + INVENTORY_MARGIN) / 2;
 
     const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.PERFECT_DOS_VGA, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.PERFECT_DOS_VGA, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('EQUIPMENT', Fonts.PRESS_START_2P, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    promises.push(this._drawText('INVENTORY', Fonts.PRESS_START_2P, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
 
     // draw equipment items
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
-      promises.push(this._drawText(`${equipment.slot} - ${equipment.name}`, Fonts.PERFECT_DOS_VGA, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(`${equipment.slot} - ${equipment.name}`, Fonts.PRESS_START_2P, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 
@@ -56,7 +56,7 @@ class InventoryRenderer extends Renderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       const top = INVENTORY_TOP + 40;
-      promises.push(this._drawText(inventoryCategories[i], Fonts.PERFECT_DOS_VGA, { x, y: top }, Colors.WHITE, 'center'));
+      promises.push(this._drawText(inventoryCategories[i], Fonts.PRESS_START_2P, { x, y: top }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
         context.fillStyle = Colors.WHITE;
         context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
@@ -75,7 +75,7 @@ class InventoryRenderer extends Renderer {
         } else {
           color = Colors.WHITE;
         }
-        promises.push(this._drawText(items[i].name, Fonts.PERFECT_DOS_VGA, { x, y }, color, 'left'));
+        promises.push(this._drawText(items[i].name, Fonts.PRESS_START_2P, { x, y }, color, 'left'));
       }
     }
     await Promise.all(promises);

@@ -4,7 +4,7 @@ const TILE_HEIGHT = 24;
 const SCREEN_WIDTH = 640;
 const SCREEN_HEIGHT = 360;
 
-const LINE_HEIGHT = 16;
+const LINE_HEIGHT = 12;
 
 export {
   TILE_WIDTH,

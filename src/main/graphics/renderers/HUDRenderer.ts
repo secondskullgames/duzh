@@ -2,26 +2,24 @@ import GameState from '../../core/GameState';
 import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import UnitAbility from '../../units/UnitAbility';
-import { LINE_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
+import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
 
-const HUD_FILENAME = 'brick_hud';
+const HUD_FILENAME = 'brick_hud_3';
 
-const HEIGHT = 3 * TILE_HEIGHT;
-const LEFT_PANE_WIDTH = 5 * TILE_WIDTH;
-const RIGHT_PAIN_WIDTH = 5 * TILE_WIDTH;
-const MARGIN_THICKNESS = 5;
-const BORDER_MARGIN = 3;
+const HEIGHT = 64;
+const LEFT_PANE_WIDTH = 163;
+const RIGHT_PANE_WIDTH = 163;
+const MIDDLE_PANE_WIDTH = SCREEN_WIDTH - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
+const BORDER_MARGIN = 5;
+const BORDER_PADDING = 5;
 
-const ABILITIES_PANEL_HEIGHT = 48;
-const ABILITIES_OUTER_MARGIN = 13;
-const ABILITIES_INNER_MARGIN = 10;
+const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
-const ABILITIES_Y_MARGIN = 4;
 
 class HUDRenderer extends Renderer {
   constructor() {
@@ -60,17 +58,17 @@ class HUDRenderer extends Renderer {
       lines.push(`Mana: ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
     }
 
-    const left = MARGIN_THICKNESS;
-    const top = MARGIN_THICKNESS;
+    const left = BORDER_MARGIN + BORDER_PADDING;
+    const top = BORDER_MARGIN + BORDER_PADDING;
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.PRESS_START_2P, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
   _renderMiddlePanel = async () => {
-    let left = LEFT_PANE_WIDTH + ABILITIES_OUTER_MARGIN;
-    const top = this.height - ABILITIES_PANEL_HEIGHT + BORDER_MARGIN + ABILITIES_Y_MARGIN;
+    let left = LEFT_PANE_WIDTH + BORDER_PADDING; // border width is considered part of the left panel
+    const top = BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let keyNumber = 1;
@@ -78,7 +76,8 @@ class HUDRenderer extends Renderer {
       const ability = playerUnit.getAbilities()[i];
       if (!!ability.icon) {
         await this._renderAbility(ability, left, top);
-        await this._drawText(`${keyNumber}`, Fonts.PERFECT_DOS_VGA, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+        await this._drawText(`${keyNumber}`, Fonts.PRESS_START_2P, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+        await this._drawText(`${ability.manaCost}`, Fonts.PRESS_START_2P, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.WHITE, 'center');
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
@@ -91,8 +90,8 @@ class HUDRenderer extends Renderer {
     const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
 
-    const left = this.width - RIGHT_PAIN_WIDTH + MARGIN_THICKNESS;
-    const top = this.height - HEIGHT + MARGIN_THICKNESS;
+    const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
+    const top = this.height - HEIGHT + BORDER_MARGIN + BORDER_PADDING;
 
     const lines = [
       `Turn: ${turn}`,
@@ -106,7 +105,7 @@ class HUDRenderer extends Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.PRESS_START_2P, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
