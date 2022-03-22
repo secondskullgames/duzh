@@ -62,7 +62,7 @@ class HUDRenderer extends Renderer {
     const top = BORDER_MARGIN + BORDER_PADDING;
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PRESS_START_2P, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
@@ -76,8 +76,8 @@ class HUDRenderer extends Renderer {
       const ability = playerUnit.getAbilities()[i];
       if (!!ability.icon) {
         await this._renderAbility(ability, left, top);
-        await this._drawText(`${keyNumber}`, Fonts.PRESS_START_2P, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
-        await this._drawText(`${ability.manaCost}`, Fonts.PRESS_START_2P, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.WHITE, 'center');
+        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.WHITE, 'center');
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }
@@ -105,7 +105,7 @@ class HUDRenderer extends Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.PRESS_START_2P, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 

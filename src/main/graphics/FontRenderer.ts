@@ -38,6 +38,12 @@ const Fonts: Record<string, FontDefinition> = {
     src: 'press_start_2p_8x9',
     width: 8,
     height: 9
+  },
+  APPLE_II: {
+    name: 'APPLE_II',
+    src: 'apple_ii_9x9',
+    width: 9,
+    height: 9
   }
 };
 
