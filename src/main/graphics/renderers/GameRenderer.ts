@@ -38,7 +38,7 @@ class GameRenderer extends BufferedRenderer {
     switch (screen) {
       case 'TITLE':
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        return this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.PERFECT_DOS_VGA, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
+        return this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
       case 'GAME':
         return this._renderGameScreen();
       case 'INVENTORY':
@@ -85,7 +85,7 @@ class GameRenderer extends BufferedRenderer {
       const y = top + (LINE_HEIGHT * i);
       bufferContext.fillStyle = Colors.BLACK;
       bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
-      await this._drawText(messages[i], Fonts.PERFECT_DOS_VGA, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
   };
 
@@ -93,7 +93,7 @@ class GameRenderer extends BufferedRenderer {
     const imageData = await ImageLoader.loadImage(filename);
     const imageBitmap = await createImageBitmap(imageData);
     await this.bufferContext.drawImage(imageBitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
-    await this._drawText(text, Fonts.PERFECT_DOS_VGA, { x: 320, y: 300 }, Colors.WHITE, 'center');
+    await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {

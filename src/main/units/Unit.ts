@@ -1,5 +1,7 @@
 import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
+import EquipmentScript from '../equipment/EquipmentScript';
+import { playAttackingAnimation } from '../graphics/animations/Animations';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
@@ -209,6 +211,32 @@ class Unit implements Entity, Animatable {
       return unitClass.experienceToNextLevel[this.level];
     }
     return null;
+  };
+
+  attack = async (target: Unit) => {
+    const { x, y } = target;
+    await playAttackingAnimation(this, target);
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.script) {
+        await EquipmentScript.onAttack(equipment, equipment.script, { x, y });
+      }
+    }
+  };
+
+  moveTo = async ({ x, y }: Coordinates) => {
+    this.x = x;
+    this.y = y;
+    const playerUnit = GameState.getInstance().getPlayerUnit();
+    if (this === playerUnit) {
+      await playSound(Sounds.FOOTSTEP);
+    }
+
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.script) {
+        const { dx, dy } = this.direction;
+        await EquipmentScript.onMove(equipment, equipment.script, { x: this.x + dx, y: this.y + dy });
+      }
+    }
   };
 
   takeDamage = async (baseDamage: number, sourceUnit: Unit | null = null) => {

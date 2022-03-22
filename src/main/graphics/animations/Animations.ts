@@ -9,7 +9,8 @@ import Unit from '../../units/Unit';
 import { wait } from '../../utils/promises';
 
 const FRAME_LENGTH = 150; // milliseconds
-const PROJECTILE_FRAME_LENGTH = 40; // milliseconds
+const ARROW_FRAME_LENGTH = 40; // milliseconds
+const BOLT_FRAME_LENGTH = 40; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type UnitAnimationFrame = {
@@ -80,8 +81,10 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
     frames.push(frame);
   }
 
+  const visibleCoordinatesList = coordinatesList.filter(GameState.getInstance().getMap().isTileRevealed);
+
   // arrow movement frames
-  for (const { x, y } of coordinatesList) {
+  for (const { x, y } of visibleCoordinatesList) {
     const projectile = await createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: 'SHOOTING' }],
@@ -120,7 +123,67 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
 
   return _playAnimation({
     frames,
-    delay: PROJECTILE_FRAME_LENGTH
+    delay: ARROW_FRAME_LENGTH
+  });
+};
+
+
+const playBoltAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
+  const frames: AnimationFrame[] = [];
+  // first frame
+  {
+    const frame: AnimationFrame = {
+      units: [{ unit: source, activity: 'ATTACKING' }]
+    };
+    if (target) {
+      frame.units.push({ unit: target, activity: 'STANDING' });
+    }
+    frames.push(frame);
+  }
+
+  const visibleCoordinatesList = coordinatesList.filter(GameState.getInstance().getMap().isTileRevealed);
+
+  // arrow movement frames
+  for (const { x, y } of visibleCoordinatesList) {
+    const projectile = await createArrow({ x, y }, direction);
+    const frame: AnimationFrame = {
+      units: [{ unit: source, activity: 'ATTACKING' }],
+      projectiles: [projectile]
+    };
+    if (target) {
+      frame.units.push({ unit: target, activity: 'STANDING' });
+    }
+
+    frames.push(frame);
+  }
+
+  // last frames
+  {
+    const frame: AnimationFrame = {
+      units: [
+        { unit: source, activity: 'STANDING' }
+      ]
+    };
+    if (target) {
+      frame.units.push({ unit: target, activity: 'DAMAGED' });
+    }
+
+    frames.push(frame);
+  }
+  {
+    const frame: AnimationFrame = {
+      units: [{ unit: source, activity: 'STANDING' }]
+    };
+    if (target) {
+      frame.units.push({ unit: target, activity: 'STANDING' });
+    }
+
+    frames.push(frame);
+  }
+
+  return _playAnimation({
+    frames,
+    delay: BOLT_FRAME_LENGTH
   });
 };
 
@@ -202,6 +265,7 @@ const _playAnimation = async (animation: Animation) => {
 export {
   playArrowAnimation,
   playAttackingAnimation,
+  playBoltAnimation,
   playFloorFireAnimation,
   playWizardAppearingAnimation,
   playWizardVanishingAnimation
