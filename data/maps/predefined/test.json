@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "snake"
+    "GREEN": "archer"
   },
   "itemColors": {
     "MAGENTA": "life_potion"

@@ -1,0 +1,35 @@
+{
+  "name": "archer",
+  "type": "HUMAN",
+  "sprite": "player",
+  "paletteSwaps": {
+    "PLAYER_HAIR": "BLACK",
+    "PLAYER_FACE": "DARK_GREEN",
+    "PLAYER_EYES": "YELLOW",
+    "PLAYER_MOUTH": "GREEN",
+    "PLAYER_HANDS": "DARK_GREEN",
+    "PLAYER_THIGHS": "LIGHT_GRAY",
+    "PLAYER_KNEES": "LIGHT_GRAY",
+    "PLAYER_SHINS": "DARK_BROWN",
+    "PLAYER_FEET": "DARK_BROWN"
+  },
+  "startingLife": 80,
+  "startingMana": null,
+  "startingDamage": 4,
+  "lifePerLevel": 0,
+  "manaPerLevel": null,
+  "damagePerLevel": 0,
+  "equipment": [
+    "red_chain_mail",
+    "gray_wizard_hat",
+    "iron_sword"
+  ],
+  "aiParameters": {
+    "speed": 0.95,
+    "visionRange": 10,
+    "fleeThreshold": 0.1
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}

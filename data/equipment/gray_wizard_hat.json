@@ -1,0 +1,12 @@
+{
+  "name": "Gray Wizard Hat",
+  "sprite": "hat2",
+  "mapIcon": "equipment/hat2/hat2_icon",
+  "itemCategory": "ARMOR",
+  "slot": "HEAD",
+  "paletteSwaps": {
+    "HAT2_BORDER": "BLACK",
+    "HAT2_MAIN": "DARK_GRAY",
+    "HAT2_HIGHLIGHT": "LIGHT_GRAY"
+  }
+}
