@@ -1,0 +1,12 @@
+{
+  "name": "Short Bow",
+  "sprite": "bow",
+  "mapIcon": "map_bow",
+  "itemCategory": "WEAPON",
+  "slot": "RANGED_WEAPON",
+  "paletteSwaps": {
+    "DARK_GREEN": "DARK_BROWN",
+    "GREEN": "DARK_GRAY"
+  },
+  "damage": 2
+}
