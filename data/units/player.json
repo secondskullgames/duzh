@@ -5,7 +5,7 @@
   "paletteSwaps": {
     "BLACK": "DARK_TEAL",
     "CYAN": "CYAN",
-    "DARK_BLUE": "CYAN",
+    "DARK_BLUE": "DARK_TEAL",
     "DARK_BROWN": "BLACK",
     "DARK_GRAY": "DARK_PURPLE",
     "DARK_GREEN": "DARK_PURPLE",
