@@ -1,6 +1,6 @@
 {
   "imageFilename": "test",
-  "tileset": "dungeon",
+  "tileset": "catacomb",
   "levelNumber": "1",
   "tileColors": {
     "BLACK": "NONE",
@@ -10,7 +10,8 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "archer"
+    "GREEN": "archer",
+    "DARK_GREEN": "sorceress"
   },
   "itemColors": {
     "MAGENTA": "life_potion"

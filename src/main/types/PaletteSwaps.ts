@@ -1,3 +1,4 @@
+import { checkNotNull } from '../utils/preconditions';
 import Color, { Colors } from './Color';
 
 type PaletteSwaps = Record<Color, Color>;
@@ -9,8 +10,8 @@ namespace PaletteSwaps {
   export const create = (paletteSwaps: Record<string, string>): PaletteSwaps => {
     const map: PaletteSwaps = {};
     for (const [src, dest] of Object.entries(paletteSwaps)) {
-      const srcHex : string = Colors[src]!!;
-      const destHex : string = Colors[dest]!!;
+      const srcHex: string = checkNotNull(Colors[src], `Color '${src}' not found`);
+      const destHex: string = checkNotNull(Colors[dest], `Color '${dest}' not found`);
       map[srcHex] = destHex;
     }
     return map;

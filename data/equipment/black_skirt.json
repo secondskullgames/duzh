@@ -1,0 +1,11 @@
+{
+  "name": "Black Skirt",
+  "sprite": "skirt",
+  "mapIcon": "map_helmet",
+  "itemCategory": "ARMOR",
+  "slot": "CHEST",
+  "paletteSwaps": {
+    "SKIRT_MAIN": "BLACK",
+    "SKIRT_BORDER": "BLACK"
+  }
+}

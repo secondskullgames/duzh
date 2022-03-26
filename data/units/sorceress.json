@@ -1,0 +1,36 @@
+{
+  "name": "sorceress",
+  "type": "HUMAN",
+  "sprite": "female",
+  "paletteSwaps": {
+    "FEMALE_HAIR": "DARK_GRAY",
+    "PLAYER_EYES": "DARK_TEAL",
+    "PLAYER_FACE": "LIGHT_GRAY",
+    "PLAYER_SHOULDERS": "LIGHT_GRAY",
+    "PLAYER_FOREARMS": "LIGHT_GRAY",
+    "PLAYER_HANDS": "DARK_GRAY",
+    "PLAYER_CHEST": "BLACK",
+    "PLAYER_BELT": "DARK_PURPLE",
+    "PLAYER_THIGHS": "BLACK",
+    "PLAYER_KNEES": "BLACK",
+    "PLAYER_SHINS": "LIGHT_GRAY",
+    "PLAYER_FEET": "BLACK"
+  },
+  "equipment": [
+    "black_skirt"
+  ],
+  "startingLife": 100,
+  "startingMana": 15,
+  "startingDamage": 6,
+  "lifePerLevel": 0,
+  "manaPerLevel": 5,
+  "damagePerLevel": 0,
+  "aiParameters": {
+    "speed": 0.95,
+    "visionRange": 10,
+    "fleeThreshold": 0.1
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}
