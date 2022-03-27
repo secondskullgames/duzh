@@ -1,12 +1,12 @@
 import Offsets from '../../geometry/Offsets';
 import Animatable from '../../types/Animatable';
-import PaletteSwaps from '../../types/PaletteSwaps';
+import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
 
 type Props<T> = {
   offsets: Offsets,
-  paletteSwaps: PaletteSwaps,
+  paletteSwaps?: PaletteSwaps,
   imageMap: Record<string, () => Promise<ImageBitmap>>
 };
 
@@ -19,7 +19,7 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   constructor({ offsets, paletteSwaps, imageMap }: Props<T>) {
     super(offsets);
     this.target = null;
-    this.paletteSwaps = paletteSwaps;
+    this.paletteSwaps = paletteSwaps || PaletteSwaps.empty();
     this.imageMap = imageMap;
   }
 

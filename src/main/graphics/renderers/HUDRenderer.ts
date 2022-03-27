@@ -1,11 +1,13 @@
 import GameState from '../../core/GameState';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import UnitAbility from '../../units/UnitAbility';
+import Color from '../Color';
+import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
 
@@ -124,8 +126,11 @@ class HUDRenderer extends Renderer {
       borderColor = Colors.DARK_GRAY;
     }
 
+    const paletteSwaps = PaletteSwaps.builder()
+      .addMapping(Colors.DARK_GRAY, borderColor)
+      .build();
     const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }));
+      .then(image => replaceColors(image, paletteSwaps));
 
     const imageBitmap = await createImageBitmap(imageData);
     await this.context.drawImage(imageBitmap, left, top);

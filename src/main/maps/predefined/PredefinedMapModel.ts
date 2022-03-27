@@ -1,9 +1,10 @@
 import EquipmentModel from '../../equipment/EquipmentModel';
+import Color from '../../graphics/Color';
+import Colors from '../../graphics/Colors';
 import { DoorDirection } from '../../objects/Door';
 import ItemModel from '../../items/ItemModel';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
-import Color, { Colors } from '../../types/Color';
 import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
@@ -13,13 +14,13 @@ type PredefinedMapModel = {
   imageFilename: string,
   tileset: TileSetName,
   levelNumber: number,
-  tileColors: Record<Color, TileType>,
+  tileColors: Map<Color, TileType>,
   defaultTile?: TileType
-  enemyColors: Record<Color, UnitClass>,
-  itemColors: Record<Color, ItemModel>,
-  equipmentColors: Record<Color, EquipmentModel>,
-  doorColors: Record<Color, DoorDirection>,
-  spawnerColors: Record<Color, string>;
+  enemyColors: Map<Color, UnitClass>,
+  itemColors: Map<Color, ItemModel>,
+  equipmentColors: Map<Color, EquipmentModel>,
+  doorColors: Map<Color, DoorDirection>,
+  spawnerColors: Map<Color, string>;
   startingPointColor: Color,
   music: Figure[]
 };
@@ -56,11 +57,11 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
 const _convertColorMap = async <T> (
   map: Record<string, string>,
   valueFunc: (value: string) => Promise<T>
-): Promise<Record<Color, T>> => {
-  const converted: Record<Color, T> = {};
+): Promise<Map<Color, T>> => {
+  const converted = new Map<Color, T>();
   for (const [colorName, value] of Object.entries(map)) {
     const color = Colors[colorName];
-    converted[color] = await valueFunc(value);
+    converted.set(color, await valueFunc(value));
   }
   return converted;
 };

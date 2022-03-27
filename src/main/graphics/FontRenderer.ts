@@ -1,6 +1,8 @@
-import Color, { Colors } from '../types/Color';
+import Color from './Color';
+import Colors from './Colors';
 import ImageLoader from './images/ImageLoader';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
+import PaletteSwaps from './PaletteSwaps';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
@@ -70,7 +72,10 @@ const renderFont = async (text: string, font: FontDefinition, color: Color): Pro
   }
 
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const imageBitmap = await replaceColors(imageData, { [Colors.BLACK]: color })
+  const paletteSwaps = PaletteSwaps.builder()
+    .addMapping(Colors.BLACK, color)
+    .build();
+  const imageBitmap = await replaceColors(imageData, paletteSwaps)
     .then(imageData => createImageBitmap(imageData));
 
   _imageMemos[key] = imageBitmap;

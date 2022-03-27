@@ -1,6 +1,5 @@
 import React, { MouseEvent, useEffect } from 'react';
-import { rgb2hex } from '../graphics/images/ImageUtils';
-import Color from '../types/Color';
+import Color from '../graphics/Color';
 import { Pixel } from '../types/types';
 import styles from './EditableBitmap.css';
 import { Tool } from './ToolPicker';
@@ -24,7 +23,7 @@ const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selecte
   const draw = (canvas: HTMLCanvasElement, color: Color, { x, y }: Pixel) => {
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-    context.fillStyle = color;
+    context.fillStyle = color.hex;
     context.fillRect(x, y, 1, 1);
     onChange();
   };
@@ -80,10 +79,7 @@ const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selecte
             const { x, y } = getPixel(e, canvas);
             const context = canvas.getContext('2d') as CanvasRenderingContext2D;
             const [r, g, b] = context.getImageData(x, y, 1, 1).data;
-            const color = rgb2hex({ r, g, b });
-            if (color === null) {
-              return;
-            }
+            const color = Color.fromRGB({ r, g, b });
 
             if (isLeftButton(e)) {
               setMainColor(color);
@@ -116,7 +112,7 @@ const EditableBitmap = ({ width, height, zoomLevel, mainColor, altColor, selecte
             const { x, y } = getPixel(e, canvas);
             const context = canvas.getContext('2d') as CanvasRenderingContext2D;
             const [r, g, b] = context.getImageData(x, y, 1, 1).data;
-            const color = rgb2hex({ r, g, b });
+            const color = Color.fromRGB({ r, g, b });
 
             if (isLeftButton(e)) {
               setMainColor(color);

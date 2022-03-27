@@ -1,8 +1,7 @@
 import GameState from '../../core/GameState';
-import InventoryMap from '../../items/InventoryMap';
-import ItemCategory from '../../items/ItemCategory';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
+import Color from '../Color';
+import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
@@ -58,7 +57,7 @@ class InventoryRenderer extends Renderer {
       const top = INVENTORY_TOP + 40;
       promises.push(this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, 'center'));
       if (inventoryCategories[i] === inventory.selectedCategory) {
-        context.fillStyle = Colors.WHITE;
+        context.fillStyle = Colors.WHITE.hex;
         context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
       }
     }

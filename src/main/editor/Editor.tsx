@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { rgb2hex } from '../graphics/images/ImageUtils';
-import Color, { Colors } from '../types/Color';
+import Color from '../graphics/Color';
+import Colors from '../graphics/Colors';
 import ColorMapper from './ColorMapper';
 import ColorPicker from './ColorPicker';
 import { generateZipBlob, triggerDownload } from './download';
@@ -33,17 +33,17 @@ const Editor = () => {
   const [altColor, setAltColor] = useState(Colors.WHITE);
   const [zoomLevel] = useState(16);
   const [selectedTool, setSelectedTool] = useState<Tool>('DRAW');
-  const [mappings, setMappings] = useState<Record<Color, string>>({});
+  const [mappings, setMappings] = useState<Record<string, string>>({});
 
   const updateMappings = () => {
     const canvas = document.querySelector('#editor canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const colors = new Set<Color>();
+    const colors = new Set<string>();
 
     for (let i = 0; i < imageData.data.length; i += 4) {
       const [r, g, b, a] = imageData.data.slice(i, i + 4);
-      const color = rgb2hex({ r, g, b });
+      const color = Color.fromRGB({ r, g, b }).hex;
       colors.add(color);
     }
 

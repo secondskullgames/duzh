@@ -1,8 +1,9 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import { tail } from '../../utils/arrays';
+import Color from '../Color';
+import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
@@ -57,7 +58,7 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderGameScreen = async () => {
-    this.bufferContext.fillStyle = Colors.BLACK;
+    this.bufferContext.fillStyle = Colors.BLACK.hex;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await revealTiles();
@@ -75,15 +76,14 @@ class GameRenderer extends BufferedRenderer {
   private _renderMessages = async () => {
     const { bufferContext } = this;
     const messages = tail(GameState.getInstance().getMessages(), 3);
-    bufferContext.fillStyle = Colors.BLACK;
-    bufferContext.strokeStyle = Colors.BLACK;
+    bufferContext.fillStyle = Colors.BLACK.hex;
 
     const left = 0;
     const top = 0;
 
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      bufferContext.fillStyle = Colors.BLACK;
+      bufferContext.fillStyle = Colors.BLACK.hex;
       bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
       await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }

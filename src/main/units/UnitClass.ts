@@ -1,4 +1,4 @@
-import PaletteSwaps from '../types/PaletteSwaps';
+import PaletteSwaps from '../graphics/PaletteSwaps';
 import { UnitType } from '../types/types';
 import memoize from '../utils/memoize';
 import UnitAbility from './UnitAbility';

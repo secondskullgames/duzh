@@ -1,10 +1,13 @@
 import React from 'react';
-import Color from '../types/Color';
 import styles from './ColorMapper.css';
 
+// TODO: I broke this and am not actively working on it, so just commenting things out for now
 type Props = {
-  mappings: Record<Color, string>,
-  setMappings: (mappings: Record<Color, string>) => void
+  // TODO
+  //mappings: Record<Color, string>,
+  //setMappings: (mappings: Record<Color, string>) => void
+  mappings: any,
+  setMappings: any
 };
 
 const ColorMapper = ({ mappings, setMappings }: Props) => {
@@ -27,7 +30,7 @@ const ColorMapper = ({ mappings, setMappings }: Props) => {
                 <td>
                   <input
                     type="text"
-                    value={objectName}
+                    value={objectName as any /* TODO */}
                     onChange={e => {
                       const updatedMappings = {
                         ...mappings,
