@@ -20,9 +20,10 @@
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "equipment": [
+    "iron_sword",
     "red_chain_mail",
-    "gray_wizard_hat",
-    "iron_sword"
+    "red_cloak",
+    "gray_wizard_hat"
   ],
   "aiParameters": {
     "speed": 0.95,

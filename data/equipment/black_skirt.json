@@ -3,7 +3,7 @@
   "sprite": "skirt",
   "mapIcon": "map_helmet",
   "itemCategory": "ARMOR",
-  "slot": "CHEST",
+  "slot": "LEGS",
   "paletteSwaps": {
     "SKIRT_MAIN": "BLACK",
     "SKIRT_BORDER": "BLACK"
