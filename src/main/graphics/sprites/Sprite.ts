@@ -1,10 +1,9 @@
-import Offsets from '../../geometry/Offsets';
-import Image from '../images/Image';
-
 /**
  * Note: It's expected that a separate Sprite instance will be created
  * per entity, and frame caching will be handled... somewhere else
  */
+import Offsets from '../../geometry/Offsets';
+
 abstract class Sprite {
   dx: number;
   dy: number;
@@ -14,7 +13,7 @@ abstract class Sprite {
     this.dy = dy;
   }
 
-  abstract getImage(): Promise<Image | null>;
+  abstract getImage(): Promise<ImageBitmap | null>;
 }
 
 export default Sprite;
