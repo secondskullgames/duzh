@@ -16,6 +16,8 @@ import Renderer from './Renderer';
 const SHADOW_FILENAME = 'shadow';
 
 class GameScreenRenderer extends Renderer {
+  private _cachedShadowImage: ImageData | null = null;
+
   constructor() {
     super({
       width: SCREEN_WIDTH,
@@ -156,9 +158,15 @@ class GameScreenRenderer extends Renderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
-    const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
-      .then(imageData => replaceColors(imageData, paletteSwaps));
+    let imageData;
+    if (this._cachedShadowImage) {
+      imageData = this._cachedShadowImage;
+    } else {
+      imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
+        .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+        .then(imageData => replaceColors(imageData, paletteSwaps));
+      this._cachedShadowImage = imageData;
+    }
     const imageBitmap = await createImageBitmap(imageData);
     await this.context.drawImage(imageBitmap, left, top);
   };

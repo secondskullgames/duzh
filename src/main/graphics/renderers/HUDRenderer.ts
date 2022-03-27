@@ -46,6 +46,7 @@ class HUDRenderer extends Renderer {
     } else {
       imageData = await ImageLoader.loadImage(HUD_FILENAME)
         .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
+      this._cachedBackgroundImage = imageData;
     }
     const imageBitmap = await createImageBitmap(imageData);
     this.context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
