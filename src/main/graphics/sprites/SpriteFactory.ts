@@ -4,6 +4,7 @@ import Spawner, { SpawnerState } from '../../objects/Spawner';
 import Direction from '../../geometry/Direction';
 import Color from '../Color';
 import Colors from '../Colors';
+import Image from '../images/Image';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
@@ -91,7 +92,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
     .addMapping(Colors.DARK_BROWN, Colors.LIGHT_MAGENTA_CGA)
     .addMapping(Colors.BLACK, Colors.BLACK_CGA)
     .build();
-  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
+  const imageMap: Record<string, () => Promise<Image>> = {};
   for (const direction of DoorDirection.values()) {
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
@@ -112,7 +113,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
 };
 
 const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
-  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
+  const imageMap: Record<string, () => Promise<Image>> = {};
   for (const state of SpawnerState.values()) {
     const key = `${state.toLowerCase()}`;
     const filename: string = (() => {
@@ -140,8 +141,8 @@ const _loadAnimations = (
   spriteCategory: SpriteCategory,
   spriteModel: DynamicSpriteModel,
   paletteSwaps?: PaletteSwaps
-): Record<string, () => Promise<ImageBitmap>> => {
-  const imageMap: Record<string, () => Promise<ImageBitmap>> = {};
+): Record<string, () => Promise<Image>> => {
+  const imageMap: Record<string, () => Promise<Image>> = {};
 
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
     for (const direction of Direction.values()) {

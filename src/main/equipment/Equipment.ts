@@ -8,6 +8,8 @@ import EquipmentModel from './EquipmentModel';
 import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
 
+const DRAW_BEHIND_PREFIX = '_B';
+
 type Props = {
   model: EquipmentModel,
   sprite: Sprite,
@@ -48,6 +50,12 @@ class Equipment implements Animatable {
   };
 
   getSprite = () => this.sprite;
+
+  drawBehind = async (): Promise<boolean> => {
+    const image = await this.sprite.getImage();
+    const drawBehind = (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) || false;
+    return drawBehind;
+  };
 }
 
 export default Equipment;

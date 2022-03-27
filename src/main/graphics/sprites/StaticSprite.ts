@@ -1,10 +1,11 @@
 import Offsets from '../../geometry/Offsets';
+import Image from '../images/Image';
 import Sprite from './Sprite';
 
 class StaticSprite extends Sprite {
-  private readonly image: ImageBitmap;
+  private readonly image: Image;
 
-  constructor(image: ImageBitmap, offsets: Offsets) {
+  constructor(image: Image, offsets: Offsets) {
     super(offsets);
     this.image = image;
   }
