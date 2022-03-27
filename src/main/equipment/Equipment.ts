@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Animatable from '../types/Animatable';
+import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';

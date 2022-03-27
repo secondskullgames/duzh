@@ -12,6 +12,7 @@ import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
+import SpriteContainer from '../sprites/SpriteContainer';
 import Renderer from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
@@ -36,7 +37,7 @@ class GameScreenRenderer extends Renderer {
     await this._renderEntities();
   };
 
-  private _renderElement = async (element: (Entity | Tile | Equipment), { x, y }: Coordinates) => {
+  private _renderElement = async (element: SpriteContainer, { x, y }: Coordinates) => {
     const pixel: Pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
@@ -99,7 +100,6 @@ class GameScreenRenderer extends Renderer {
   private _renderEntities = async () => {
     const state = GameState.getInstance();
     const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
 
     for (let y = 0; y < map.height; y++) {
       const promises: Promise<any>[] = [];
