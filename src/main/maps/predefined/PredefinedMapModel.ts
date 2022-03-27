@@ -14,17 +14,21 @@ type PredefinedMapModel = {
   imageFilename: string,
   tileset: TileSetName,
   levelNumber: number,
-  tileColors: Map<Color, TileType>,
+  tileColors: Record<string, TileType>,
   defaultTile?: TileType
-  enemyColors: Map<Color, UnitClass>,
-  itemColors: Map<Color, ItemModel>,
-  equipmentColors: Map<Color, EquipmentModel>,
-  doorColors: Map<Color, DoorDirection>,
-  spawnerColors: Map<Color, string>;
+  enemyColors: Record<string, UnitClass>,
+  itemColors: Record<string, ItemModel>,
+  equipmentColors: Record<string, EquipmentModel>,
+  doorColors: Record<string, DoorDirection>,
+  spawnerColors: Record<string, string>;
   startingPointColor: Color,
   music: Figure[]
 };
 
+/**
+ * TODO: Typescript can't really handle this because of the ...json.  As a result it's really easy for
+ * code that should not compile at all to sneak in here.
+ */
 const _load = async (id: string): Promise<PredefinedMapModel> => {
   const json = (await import(
     /* webpackMode: "eager" */
@@ -57,11 +61,11 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
 const _convertColorMap = async <T> (
   map: Record<string, string>,
   valueFunc: (value: string) => Promise<T>
-): Promise<Map<Color, T>> => {
-  const converted = new Map<Color, T>();
+): Promise<Record<string, T>> => {
+  const converted: Record<string, T> = {};
   for (const [colorName, value] of Object.entries(map)) {
     const color = Colors[colorName];
-    converted.set(color, await valueFunc(value));
+    converted[color.hex] = await valueFunc(value);
   }
   return converted;
 };

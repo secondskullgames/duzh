@@ -62,10 +62,13 @@ class GameRenderer extends BufferedRenderer {
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await revealTiles();
-    const imageBitmap = await this.gameScreenRenderer.render();
-    await this.bufferContext.drawImage(imageBitmap, 0, 0);
+    const [gameScreenBitmap, hudBitmap] = await Promise.all([
+      this.gameScreenRenderer.render(),
+      this.hudRenderer.render()
+    ]);
+    await this.bufferContext.drawImage(gameScreenBitmap, 0, 0);
+    await this.bufferContext.drawImage(hudBitmap, 0, this.height - hudBitmap.height, hudBitmap.width, hudBitmap.height);
     await this._renderMessages();
-    await this._renderHUD();
   };
 
   private _renderInventory = async () => {
@@ -105,11 +108,6 @@ class GameRenderer extends BufferedRenderer {
     const minimapRenderer = new MinimapRenderer();
     const bitmap = await minimapRenderer.render();
     await this.bufferContext.drawImage(bitmap, 0, 0);
-  };
-
-  private _renderHUD = async() => {
-    const imageBitmap = await this.hudRenderer.render();
-    await this.bufferContext.drawImage(imageBitmap, 0, this.height - imageBitmap.height, imageBitmap.width, imageBitmap.height);
   };
 }
 

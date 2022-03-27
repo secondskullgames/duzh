@@ -58,7 +58,7 @@ const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const tileType = tileColors.get(color) || null;
+    const tileType = tileColors[color.hex] || null;
     if (tileType !== null) {
       tiles[y][x] = Tile.create(tileType, tileSet);
     } else if (model.defaultTile) {
@@ -89,7 +89,7 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
         [playerUnit.x, playerUnit.y] = [x, y];
         units.push(playerUnit);
       } else {
-        const enemyUnitClass = model.enemyColors.get(color) || null;
+        const enemyUnitClass = model.enemyColors[color.hex] || null;
         if (enemyUnitClass !== null) {
           const controller: UnitController = (enemyUnitClass.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
           const unit = await UnitFactory.createUnit({
@@ -117,12 +117,12 @@ const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const itemClass = model.itemColors.get(color) || null;
+    const itemClass = model.itemColors[color.hex] || null;
     if (itemClass !== null) {
       items.push(await ItemFactory.createMapItem(itemClass, { x, y }));
     }
 
-    const equipmentClass = model.equipmentColors.get(color) || null;
+    const equipmentClass = model.equipmentColors[color.hex] || null;
     if (equipmentClass !== null) {
       items.push(await ItemFactory.createMapEquipment(equipmentClass, { x, y }));
     }
@@ -140,7 +140,7 @@ const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const doorDirection = model.doorColors.get(color) || null;
+    const doorDirection = model.doorColors[color.hex] || null;
     if (doorDirection !== null) {
       const sprite = await SpriteFactory.createDoorSprite();
       const door = new Door({
@@ -166,7 +166,7 @@ const _loadSpawners = async (model: PredefinedMapModel, imageData: ImageData): P
     const [r, g, b, a] = imageData.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const spawnerName = model.spawnerColors.get(color);
+    const spawnerName = model.spawnerColors[color.hex];
     if (spawnerName) {
       spawners.push(await SpawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
     }
