@@ -24,6 +24,8 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 class HUDRenderer extends Renderer {
+  private _cachedBackgroundImage: ImageData | null = null;
+
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
@@ -38,8 +40,13 @@ class HUDRenderer extends Renderer {
   };
 
   _renderFrame = async () => {
-    const imageData = await ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
+    let imageData;
+    if (this._cachedBackgroundImage) {
+      imageData = this._cachedBackgroundImage;
+    } else {
+      imageData = await ImageLoader.loadImage(HUD_FILENAME)
+        .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
+    }
     const imageBitmap = await createImageBitmap(imageData);
     this.context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
   };

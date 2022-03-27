@@ -82,7 +82,6 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
     const hexColors: Set<string> = new Set();
     if (color !== null) {
       if (!hexColors.has(color.hex)) {
-        console.log(color);
         hexColors.add(color.hex);
       }
       if (Color.equals(color, model.startingPointColor)) {
