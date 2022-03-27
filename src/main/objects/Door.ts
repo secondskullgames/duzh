@@ -1,5 +1,5 @@
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import Animatable from '../types/Animatable';
+import Animatable from '../graphics/animations/Animatable';
 import { Entity } from '../types/types';
 
 type DoorDirection = 'HORIZONTAL' | 'VERTICAL';

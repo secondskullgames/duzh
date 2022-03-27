@@ -4,6 +4,7 @@ import { isTileRevealed } from '../../maps/MapUtils';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Entity, Pixel } from '../../types/types';
+import Unit from '../../units/Unit';
 import Color from '../Color';
 import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
@@ -11,6 +12,7 @@ import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
+import SpriteContainer from '../sprites/SpriteContainer';
 import Renderer from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
@@ -35,7 +37,7 @@ class GameScreenRenderer extends Renderer {
     await this._renderEntities();
   };
 
-  private _renderElement = async (element: (Entity | Tile | Equipment), { x, y }: Coordinates) => {
+  private _renderElement = async (element: SpriteContainer, { x, y }: Coordinates) => {
     const pixel: Pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
@@ -58,7 +60,7 @@ class GameScreenRenderer extends Renderer {
   private _drawSprite = async (sprite: Sprite, { x, y }: Coordinates) => {
     const image = await sprite.getImage();
     if (image) {
-      await this.context.drawImage(image, x + sprite.dx, y + sprite.dy);
+      await this.context.drawImage(image.bitmap, x + sprite.dx, y + sprite.dy);
     }
   };
 
@@ -98,7 +100,6 @@ class GameScreenRenderer extends Renderer {
   private _renderEntities = async () => {
     const state = GameState.getInstance();
     const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
 
     for (let y = 0; y < map.height; y++) {
       const promises: Promise<any>[] = [];
@@ -130,26 +131,43 @@ class GameScreenRenderer extends Renderer {
 
           const unit = map.getUnit({ x, y });
           if (unit) {
-            let shadowColor: Color;
-            if (unit === playerUnit) {
-              shadowColor = Colors.GREEN;
-            } else {
-              shadowColor = Colors.DARK_GRAY;
-            }
-
-            promises.push(new Promise<void>(async (resolve) => {
-              await this._drawEllipse({ x, y }, shadowColor);
-              await this._renderElement(unit, { x, y });
-              for (const item of unit.getEquipment().getAll()) {
-                await this._renderElement(item, { x, y });
-              }
-              resolve();
-            }));
+            promises.push(this._renderUnit(unit, x, y));
           }
         }
       }
 
       await Promise.all(promises);
+    }
+  };
+
+  /**
+   * Render the unit, all of its equipment, and the ceorresponding overlay.
+   */
+  private _renderUnit = async (unit: Unit, x: number, y: number) => {
+    const behindEquipment: Equipment[] = [];
+    const aheadEquipment: Equipment[] = [];
+    for (const equipment of unit.getEquipment().getAll()) {
+      const drawBehind: boolean = await equipment.drawBehind();
+      if (drawBehind) {
+        behindEquipment.push(equipment);
+      } else {
+        aheadEquipment.push(equipment);
+      }
+    }
+
+    let shadowColor: Color;
+    if (unit === GameState.getInstance().getPlayerUnit()) {
+      shadowColor = Colors.GREEN;
+    } else {
+      shadowColor = Colors.DARK_GRAY;
+    }
+    await this._drawEllipse({ x, y }, shadowColor);
+    for (const equipment of behindEquipment) {
+      await this._renderElement(equipment, { x, y });
+    }
+    await this._renderElement(unit, { x, y });
+    for (const equipment of aheadEquipment) {
+      await this._renderElement(equipment, { x, y });
     }
   };
 
@@ -163,10 +181,10 @@ class GameScreenRenderer extends Renderer {
       imageData = this._cachedShadowImage;
     } else {
       imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-        .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
-        .then(imageData => replaceColors(imageData, paletteSwaps));
+        .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
       this._cachedShadowImage = imageData;
     }
+    imageData = await replaceColors(imageData, paletteSwaps);
     const imageBitmap = await createImageBitmap(imageData);
     await this.context.drawImage(imageBitmap, left, top);
   };

@@ -1,6 +1,6 @@
 import GameState from '../core/GameState';
 import Sprite from '../graphics/sprites/Sprite';
-import Animatable from '../types/Animatable';
+import Animatable from '../graphics/animations/Animatable';
 import { Entity } from '../types/types';
 import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
