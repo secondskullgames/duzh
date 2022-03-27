@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Animatable from '../graphics/animations/Animatable';
+import Animatable from '../types/Animatable';
 import Direction from '../geometry/Direction';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
@@ -7,8 +7,6 @@ import { checkNotNull } from '../utils/preconditions';
 import EquipmentModel from './EquipmentModel';
 import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
-
-const DRAW_BEHIND_PREFIX = '_B';
 
 type Props = {
   model: EquipmentModel,
@@ -50,12 +48,6 @@ class Equipment implements Animatable {
   };
 
   getSprite = () => this.sprite;
-
-  drawBehind = async (): Promise<boolean> => {
-    const image = await this.sprite.getImage();
-    const drawBehind = (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) || false;
-    return drawBehind;
-  };
 }
 
 export default Equipment;
