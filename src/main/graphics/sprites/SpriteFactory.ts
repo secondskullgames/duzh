@@ -2,6 +2,7 @@ import Equipment from '../../equipment/Equipment';
 import Door, { DoorDirection, DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import Direction from '../../geometry/Direction';
+import Color from '../Color';
 import Colors from '../Colors';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
@@ -182,10 +183,15 @@ const _loadAnimations = (
 };
 
 const loadSpriteModel = async <T> (name: string, category: SpriteCategory): Promise<T> => {
-  return (await import(
+  const json = (await import(
     /* webpackMode: "eager" */
     `../../../../data/sprites/${category}/${name}.json`
   )).default;
+
+  return {
+    ...json,
+    transparentColor: json.transparentColor && Color.fromHex(json.transparentColor)
+  };
 };
 
 export default {

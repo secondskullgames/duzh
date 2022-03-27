@@ -29,7 +29,6 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   getImage = (): Promise<ImageBitmap | null> => {
     const target = checkNotNull(this.target);
     const frameKey = target.getAnimationKey();
-    // ugh
     if (this.promises[frameKey]) {
       return this.promises[frameKey] || Promise.resolve(null);
     }
