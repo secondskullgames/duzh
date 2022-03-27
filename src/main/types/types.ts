@@ -1,8 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import SpriteContainer from '../graphics/sprites/SpriteContainer';
-import Entity from './Entity';
 
 /*
  * Note: The types defined in this file are mostly very general and/or legacy types that don't fit neatly into
@@ -12,6 +10,11 @@ import Entity from './Entity';
 interface Pixel {
   x: number,
   y: number
+}
+
+interface Entity extends Coordinates {
+  getSprite: () => Sprite;
+  update: () => Promise<void>;
 }
 
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';

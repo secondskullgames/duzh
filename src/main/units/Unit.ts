@@ -10,7 +10,7 @@ import { isInStraightLine } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
-import Animatable from '../graphics/animations/Animatable';
+import Animatable from '../types/Animatable';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { Entity, Faction } from '../types/types';
