@@ -1,6 +1,6 @@
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import PaletteSwaps from '../types/PaletteSwaps';
+import PaletteSwaps from '../graphics/PaletteSwaps';
 import TileType from './TileType';
 
 type TileSetName = 'dungeon' | 'cave';
@@ -11,7 +11,7 @@ type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 type TileSetModel = {
   path: string,
   tiles: Record<TileType, (string | null)[]>,
-  paletteSwaps?: PaletteSwaps
+  paletteSwaps?: Record<string, string>
 };
 
 const _memos: Record<string, TileSet> = {};

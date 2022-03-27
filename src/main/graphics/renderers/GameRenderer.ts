@@ -1,8 +1,9 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import { tail } from '../../utils/arrays';
+import Color from '../Color';
+import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
@@ -57,14 +58,17 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderGameScreen = async () => {
-    this.bufferContext.fillStyle = Colors.BLACK;
+    this.bufferContext.fillStyle = Colors.BLACK.hex;
     this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
 
     await revealTiles();
-    const imageBitmap = await this.gameScreenRenderer.render();
-    await this.bufferContext.drawImage(imageBitmap, 0, 0);
+    const [gameScreenBitmap, hudBitmap] = await Promise.all([
+      this.gameScreenRenderer.render(),
+      this.hudRenderer.render()
+    ]);
+    await this.bufferContext.drawImage(gameScreenBitmap, 0, 0);
+    await this.bufferContext.drawImage(hudBitmap, 0, this.height - hudBitmap.height, hudBitmap.width, hudBitmap.height);
     await this._renderMessages();
-    await this._renderHUD();
   };
 
   private _renderInventory = async () => {
@@ -75,15 +79,14 @@ class GameRenderer extends BufferedRenderer {
   private _renderMessages = async () => {
     const { bufferContext } = this;
     const messages = tail(GameState.getInstance().getMessages(), 3);
-    bufferContext.fillStyle = Colors.BLACK;
-    bufferContext.strokeStyle = Colors.BLACK;
+    bufferContext.fillStyle = Colors.BLACK.hex;
 
     const left = 0;
     const top = 0;
 
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      bufferContext.fillStyle = Colors.BLACK;
+      bufferContext.fillStyle = Colors.BLACK.hex;
       bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
       await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
@@ -105,11 +108,6 @@ class GameRenderer extends BufferedRenderer {
     const minimapRenderer = new MinimapRenderer();
     const bitmap = await minimapRenderer.render();
     await this.bufferContext.drawImage(bitmap, 0, 0);
-  };
-
-  private _renderHUD = async() => {
-    const imageBitmap = await this.hudRenderer.render();
-    await this.bufferContext.drawImage(imageBitmap, 0, this.height - imageBitmap.height, imageBitmap.width, imageBitmap.height);
   };
 }
 

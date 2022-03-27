@@ -1,9 +1,10 @@
 import EquipmentModel from '../../equipment/EquipmentModel';
+import Color from '../../graphics/Color';
+import Colors from '../../graphics/Colors';
 import { DoorDirection } from '../../objects/Door';
 import ItemModel from '../../items/ItemModel';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
-import Color, { Colors } from '../../types/Color';
 import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
@@ -13,17 +14,21 @@ type PredefinedMapModel = {
   imageFilename: string,
   tileset: TileSetName,
   levelNumber: number,
-  tileColors: Record<Color, TileType>,
+  tileColors: Record<string, TileType>,
   defaultTile?: TileType
-  enemyColors: Record<Color, UnitClass>,
-  itemColors: Record<Color, ItemModel>,
-  equipmentColors: Record<Color, EquipmentModel>,
-  doorColors: Record<Color, DoorDirection>,
-  spawnerColors: Record<Color, string>;
+  enemyColors: Record<string, UnitClass>,
+  itemColors: Record<string, ItemModel>,
+  equipmentColors: Record<string, EquipmentModel>,
+  doorColors: Record<string, DoorDirection>,
+  spawnerColors: Record<string, string>;
   startingPointColor: Color,
   music: Figure[]
 };
 
+/**
+ * TODO: Typescript can't really handle this because of the ...json.  As a result it's really easy for
+ * code that should not compile at all to sneak in here.
+ */
 const _load = async (id: string): Promise<PredefinedMapModel> => {
   const json = (await import(
     /* webpackMode: "eager" */
@@ -56,11 +61,11 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
 const _convertColorMap = async <T> (
   map: Record<string, string>,
   valueFunc: (value: string) => Promise<T>
-): Promise<Record<Color, T>> => {
-  const converted: Record<Color, T> = {};
+): Promise<Record<string, T>> => {
+  const converted: Record<string, T> = {};
   for (const [colorName, value] of Object.entries(map)) {
     const color = Colors[colorName];
-    converted[color] = await valueFunc(value);
+    converted[color.hex] = await valueFunc(value);
   }
   return converted;
 };

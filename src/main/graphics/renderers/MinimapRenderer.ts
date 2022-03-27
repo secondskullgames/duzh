@@ -1,7 +1,8 @@
 import GameState from '../../core/GameState';
 import { isTileRevealed } from '../../maps/MapUtils';
-import { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
+import Color from '../Color';
+import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import Renderer from './Renderer';
 
@@ -26,7 +27,7 @@ class MinimapRenderer extends Renderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        context.fillStyle = this._getColor({ x, y });
+        context.fillStyle = this._getColor({ x, y }).hex;
         context.fillRect(x * m + left, y * m + top, m, m);
       }
     }
@@ -34,7 +35,7 @@ class MinimapRenderer extends Renderer {
     await createImageBitmap(imageData);
   };
 
-  private _getColor = ({ x, y }: Coordinates) => {
+  private _getColor = ({ x, y }: Coordinates): Color => {
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();

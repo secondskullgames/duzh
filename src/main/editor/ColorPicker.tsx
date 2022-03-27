@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import Color from '../types/Color';
+import Color from '../graphics/Color';
 import styles from './ColorPicker.css';
 
 type Props = {
@@ -22,7 +22,7 @@ const ColorPicker = ({ mainColor, altColor, colors, setMainColor, setAltColor }:
         {
           colors.map(color => (
             <ColorBox
-              key={color}
+              key={color.hex}
               color={color}
               onLeftClick={() => setMainColor(color)}
               onRightClick={() => setAltColor(color)}
@@ -49,7 +49,7 @@ const ColorBox = ({ color, onLeftClick, onRightClick }: ColorBoxProps) => {
   return (
     <div
       className={styles.colorBox}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: color.hex }}
       onClick={onLeftClick}
       onContextMenu={handleRightClick}
     />

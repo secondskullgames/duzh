@@ -1,5 +1,5 @@
 import ItemCategory from '../items/ItemCategory';
-import PaletteSwaps from '../types/PaletteSwaps';
+import PaletteSwaps from '../graphics/PaletteSwaps';
 import memoize from '../utils/memoize';
 import EquipmentSlot from './EquipmentSlot';
 import EquipmentScript from './EquipmentScript';

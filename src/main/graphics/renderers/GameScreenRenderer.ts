@@ -1,19 +1,23 @@
 import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import { isTileRevealed } from '../../maps/MapUtils';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import { Entity, Pixel } from '../../types/types';
+import Color from '../Color';
+import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import Renderer from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
 
 class GameScreenRenderer extends Renderer {
+  private _cachedShadowImage: ImageData | null = null;
+
   constructor() {
     super({
       width: SCREEN_WIDTH,
@@ -24,7 +28,7 @@ class GameScreenRenderer extends Renderer {
 
   _redraw = async () => {
     const { canvas, context } = this;
-    context.fillStyle = Colors.BLACK;
+    context.fillStyle = Colors.BLACK.hex;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     await this._renderTiles();
@@ -151,9 +155,18 @@ class GameScreenRenderer extends Renderer {
 
   private _drawEllipse = async ({ x, y }: Coordinates, color: Color) => {
     const { x: left, y: top } = this._gridToPixel({ x, y });
-    const imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
-      .then(imageData => replaceColors(imageData, { [Colors.BLACK]: color }));
+    const paletteSwaps = PaletteSwaps.builder()
+      .addMapping(Colors.BLACK, color)
+      .build();
+    let imageData;
+    if (this._cachedShadowImage) {
+      imageData = this._cachedShadowImage;
+    } else {
+      imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
+        .then(imageData => applyTransparentColor(imageData, Colors.WHITE))
+        .then(imageData => replaceColors(imageData, paletteSwaps));
+      this._cachedShadowImage = imageData;
+    }
     const imageBitmap = await createImageBitmap(imageData);
     await this.context.drawImage(imageBitmap, left, top);
   };

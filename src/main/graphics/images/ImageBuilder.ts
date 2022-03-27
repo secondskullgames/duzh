@@ -1,5 +1,6 @@
 import existingFilenames from '../../../../data/filenames.json';
-import PaletteSwaps from '../../types/PaletteSwaps';
+import Color from '../Color';
+import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
@@ -27,7 +28,7 @@ const _loadFirst = async (filenames: string[]): Promise<ImageData> => {
 type Props = {
   filename?: string,
   filenames?: string[]
-  transparentColor: string,
+  transparentColor: Color,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageDataFunc[]
 };
@@ -54,7 +55,7 @@ class ImageBuilder {
 
     let imageData = await _loadFirst(filenames)
       .then(imageData => applyTransparentColor(imageData, transparentColor))
-      .then(imageData => replaceColors(imageData, (paletteSwaps || {})));
+      .then(imageData => replaceColors(imageData, (paletteSwaps || PaletteSwaps.empty())));
 
     for (const effect of (effects || [])) {
       imageData = await effect(imageData);

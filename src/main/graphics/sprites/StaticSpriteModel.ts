@@ -1,5 +1,5 @@
 import Offsets from '../../geometry/Offsets';
-import Color from '../../types/Color';
+import Color from '../Color';
 
 type StaticSpriteModel = {
   name: string,

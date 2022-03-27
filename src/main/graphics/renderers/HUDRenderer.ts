@@ -1,11 +1,13 @@
 import GameState from '../../core/GameState';
-import Color, { Colors } from '../../types/Color';
 import Coordinates from '../../geometry/Coordinates';
 import UnitAbility from '../../units/UnitAbility';
+import Color from '../Color';
+import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageLoader from '../images/ImageLoader';
 import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
 
@@ -22,6 +24,8 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 class HUDRenderer extends Renderer {
+  private _cachedBackgroundImage: ImageData | null = null;
+
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
@@ -36,8 +40,14 @@ class HUDRenderer extends Renderer {
   };
 
   _renderFrame = async () => {
-    const imageData = await ImageLoader.loadImage(HUD_FILENAME)
-      .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
+    let imageData;
+    if (this._cachedBackgroundImage) {
+      imageData = this._cachedBackgroundImage;
+    } else {
+      imageData = await ImageLoader.loadImage(HUD_FILENAME)
+        .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
+      this._cachedBackgroundImage = imageData;
+    }
     const imageBitmap = await createImageBitmap(imageData);
     this.context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
   };
@@ -124,8 +134,11 @@ class HUDRenderer extends Renderer {
       borderColor = Colors.DARK_GRAY;
     }
 
+    const paletteSwaps = PaletteSwaps.builder()
+      .addMapping(Colors.DARK_GRAY, borderColor)
+      .build();
     const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, { [Colors.DARK_GRAY]: borderColor }));
+      .then(image => replaceColors(image, paletteSwaps));
 
     const imageBitmap = await createImageBitmap(imageData);
     await this.context.drawImage(imageBitmap, left, top);
