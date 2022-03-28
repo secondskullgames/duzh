@@ -1,10 +1,13 @@
 {
-  "name": "ghost",
+  "name": "cloak",
   "offsets": {
     "dx": -4,
     "dy": -20
   },
-  "pattern": "${sprite}_${direction}_${number}",
+  "patterns": [
+    "${sprite}_${activity}_${direction}_${number}_B",
+    "${sprite}_${activity}_${direction}_${number}"
+  ],
   "animations": {
     "standing": {
       "frames": [{
@@ -14,14 +17,20 @@
     },
     "walking": {
       "frames": [{
-        "activity": "standing",
+        "activity": "walking",
         "number": "1"
       }]
     },
     "attacking": {
       "frames": [{
         "activity": "attacking",
-        "number": "1"
+        "number": "2"
+      }]
+    },
+    "shooting": {
+      "frames": [{
+        "activity": "attacking",
+        "number": "2"
       }]
     },
     "damaged": {

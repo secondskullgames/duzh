@@ -1,5 +1,6 @@
 import Offsets from '../../geometry/Offsets';
-import Animatable from '../../types/Animatable';
+import Animatable from '../animations/Animatable';
+import Image from '../images/Image';
 import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
@@ -7,14 +8,14 @@ import Sprite from './Sprite';
 type Props<T> = {
   offsets: Offsets,
   paletteSwaps?: PaletteSwaps,
-  imageMap: Record<string, () => Promise<ImageBitmap>>
+  imageMap: Record<string, () => Promise<Image>>
 };
 
 class DynamicSprite<T extends Animatable> extends Sprite {
   target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
-  private readonly imageMap: Record<string, () => Promise<ImageBitmap>>;
-  private readonly promises: Partial<Record<string, Promise<ImageBitmap | null>>> = {};
+  private readonly imageMap: Record<string, () => Promise<Image>>;
+  private readonly promises: Partial<Record<string, Promise<Image | null>>> = {};
 
   constructor({ offsets, paletteSwaps, imageMap }: Props<T>) {
     super(offsets);
@@ -26,7 +27,7 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage = (): Promise<ImageBitmap | null> => {
+  getImage = (): Promise<Image | null> => {
     const target = checkNotNull(this.target);
     const frameKey = target.getAnimationKey();
     if (this.promises[frameKey]) {
@@ -34,7 +35,7 @@ class DynamicSprite<T extends Animatable> extends Sprite {
     }
 
     const supplier = this.imageMap[frameKey];
-    const promise: Promise<ImageBitmap | null> = supplier?.() || Promise.resolve(null);
+    const promise: Promise<Image | null> = supplier?.() || Promise.resolve(null);
     this.promises[frameKey] = promise;
     return promise;
   };

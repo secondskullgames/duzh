@@ -4,7 +4,8 @@ import Coordinates from '../geometry/Coordinates';
 import Spawner from '../objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
-import { Entity, Rect } from '../types/types';
+import Entity from '../types/Entity';
+import { Rect } from '../types/types';
 import Unit from '../units/Unit';
 import { checkArgument } from '../utils/preconditions';
 

@@ -6,13 +6,13 @@ import Spawner from './Spawner';
 type SpawnerClass = 'mirror';
 
 const createMirror = async ({ x, y }: Coordinates): Promise<Spawner> => {
-  const unitClass = await UnitClass.load('ghost');
+  const unitClass = await UnitClass.load('shade');
   const sprite = await SpriteFactory.createMirrorSprite();
   const spawner = new Spawner({
     unitClass,
     sprite,
-    maxUnits: 5,
-    cooldown: 15,
+    maxUnits: 10,
+    cooldown: 5,
     x,
     y,
     isBlocking: true

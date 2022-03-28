@@ -1,6 +1,6 @@
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import Animatable from '../types/Animatable';
-import { Entity } from '../types/types';
+import Animatable from '../graphics/animations/Animatable';
+import Entity from '../types/Entity';
 
 type DoorDirection = 'HORIZONTAL' | 'VERTICAL';
 namespace DoorDirection {
