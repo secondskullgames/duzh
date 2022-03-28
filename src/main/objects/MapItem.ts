@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import { Entity } from '../types/types';
+import Entity from '../types/Entity';
 import InventoryItem from '../items/InventoryItem';
 
 type Props = {

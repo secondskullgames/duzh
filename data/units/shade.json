@@ -1,14 +1,11 @@
 {
-  "name": "ghost",
+  "name": "shade",
   "type": "GHOST",
-  "sprite": "ghost",
-  "paletteSwaps": {
-    "LIGHT_GRAY": "WHITE",
-    "DARK_GRAY": "CYAN"
-  },
-  "startingLife": 40,
+  "sprite": "shade",
+  "paletteSwaps": {},
+  "startingLife": 1,
   "startingMana": null,
-  "startingDamage": 8,
+  "startingDamage": 10,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
