@@ -17,7 +17,8 @@
     "MAGENTA": "life_potion"
   },
   "equipmentColors": {
-    "YELLOW": "bolt_sword"
+    "YELLOW": "bolt_sword",
+    "DARK_YELLOW": "iron_shield"
   },
   "doorColors": {
     "DARK_BROWN": "vertical",
