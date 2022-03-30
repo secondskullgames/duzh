@@ -1,11 +1,13 @@
 const loadImage = async (filename: string): Promise<ImageData | null> => {
-  const image = (await import(
-    /* webpackMode: "eager" */
-    `../../../../png/${filename}.png`
-  )).default;
-
-  if (!image) {
-    throw new Error('expected');
+  let image: string;
+  try {
+    image = (await import(
+      /* webpackMode: "eager" */
+      `../../../../png/${filename}.png`
+    )).default;
+  } catch {
+    // this is expected for _B filenames
+    return null;
   }
 
   return new Promise((resolve, reject) => {

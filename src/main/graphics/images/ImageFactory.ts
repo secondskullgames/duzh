@@ -2,17 +2,16 @@ import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
 import Image from './Image';
 import ImageCache from './ImageCache';
+import ImageEffect from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
-
-type ImageDataFunc = (imageData: ImageData) => Promise<ImageData>;
 
 type Props = {
   filename?: string,
   filenames?: string[]
   transparentColor?: Color,
   paletteSwaps?: PaletteSwaps,
-  effects?: ImageDataFunc[]
+  effects?: ImageEffect[]
 };
 
 const CACHE: ImageCache = ImageCache.create();
@@ -30,22 +29,31 @@ const getImage = async ({ filename, filenames: _filenames, transparentColor, pal
 
   const promises: Promise<Image | null>[] = [];
   for (const filename of filenames) {
-    const cached: Image | null | undefined = CACHE.get({ filename, paletteSwaps, transparentColor });
+    const cacheKey = { filename, paletteSwaps, transparentColor, effects };
+    const cached: Image | null | undefined = CACHE.get(cacheKey);
     if (cached) {
       return cached;
     }
     const promise = async () => {
-      let imageData = await ImageLoader.loadImage(filename);
-      if (imageData) {
+      let imageData: ImageData | null;
+      if (rawCache[filename]) {
+        imageData = rawCache[filename];
+      } else {
+        imageData = await ImageLoader.loadImage(filename);
         rawCache[filename] = imageData;
+      }
+      if (imageData) {
         if (transparentColor) {
           imageData = await applyTransparentColor(imageData, transparentColor);
         }
         if (paletteSwaps) {
           imageData = await replaceColors(imageData, paletteSwaps);
         }
+        for (const effect of (effects || [])) {
+          imageData = await effect.apply(imageData);
+        }
         const image = await Image.create({ imageData, filename });
-        CACHE.put({ filename, paletteSwaps, transparentColor }, image);
+        CACHE.put(cacheKey, image);
         return image;
       }
       return null;

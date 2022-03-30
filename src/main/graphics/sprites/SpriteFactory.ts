@@ -5,6 +5,7 @@ import Direction from '../../geometry/Direction';
 import Color from '../Color';
 import Colors from '../Colors';
 import Image from '../images/Image';
+import ImageEffect from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
@@ -163,8 +164,9 @@ const _loadAnimations = (
         const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
           .map(pattern => fillTemplate(pattern, variables));
 
-        const effects = (animationName === 'DAMAGED')
-          ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
+        // TODO - can we get this into the sprite model?
+        const effects = (animationName === 'damaged')
+          ? [ImageEffect.DAMAGED]
           : [];
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
 

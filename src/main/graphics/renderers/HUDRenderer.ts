@@ -23,8 +23,6 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 class HUDRenderer extends Renderer {
-  private _cachedBackgroundImage: ImageData | null = null;
-
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
