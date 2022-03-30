@@ -4,7 +4,7 @@ import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
-import ImageLoader from '../images/ImageLoader';
+import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
 
@@ -26,9 +26,8 @@ class InventoryRenderer extends Renderer {
     const inventory = playerUnit.getInventory();
     const { canvas, context } = this;
 
-    const imageData = await ImageLoader.loadImage(INVENTORY_BACKGROUND_FILENAME);
-    const imageBitmap = await createImageBitmap(imageData);
-    await context.drawImage(imageBitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+    const image = await ImageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    await context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
     // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;

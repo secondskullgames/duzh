@@ -1,6 +1,6 @@
 import Color from './Color';
 import Colors from './Colors';
-import ImageLoader from './images/ImageLoader';
+import ImageFactory from './images/ImageFactory';
 import { applyTransparentColor, replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
 
@@ -89,16 +89,18 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
 
   const t1 = new Date().getTime();
   const width = NUM_CHARACTERS * definition.width;
-  const imageData = await ImageLoader.loadImage(`fonts/${definition.src}`)
-    .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
-  const imageBitmap = await createImageBitmap(imageData);
+  const image = await ImageFactory.getImage({
+    filename: `fonts/${definition.src}`,
+    transparentColor: Colors.WHITE
+  });
+
   const canvas = document.createElement('canvas') as HTMLCanvasElement;
   canvas.width = width;
   canvas.height = definition.height;
   const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-  context.drawImage(imageBitmap, 0, 0);
+  context.drawImage(image.bitmap, 0, 0);
   const imageMap: Record<string, ImageBitmap> = {};
-  const promises: Promise<any>[] = [];
+  const promises: Promise<void>[] = [];
 
   for (const c of CHARACTERS) {
     promises.push(_getCharacterData(definition, context, c.charCodeAt(0))
