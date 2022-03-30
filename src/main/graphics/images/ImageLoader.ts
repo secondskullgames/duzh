@@ -1,12 +1,14 @@
-type ImageCache = Record<string, Promise<ImageData>>;
-
-const CACHE: ImageCache = {};
-
-const _loadImage = async (filename: string): Promise<ImageData> => {
-  const image = (await import(
-    /* webpackMode: "eager" */
-    `../../../../png/${filename}.png`
-  )).default;
+const loadImage = async (filename: string): Promise<ImageData | null> => {
+  let image: string;
+  try {
+    image = (await import(
+      /* webpackMode: "eager" */
+      `../../../../png/${filename}.png`
+    )).default;
+  } catch {
+    // this is expected for _B filenames
+    return null;
+  }
 
   return new Promise((resolve, reject) => {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -39,15 +41,6 @@ const _loadImage = async (filename: string): Promise<ImageData> => {
     };
     img.src = image;
   });
-};
-
-const loadImage = async (filename: string): Promise<ImageData> => {
-  if (CACHE[filename] != null) {
-    return CACHE[filename];
-  }
-  const image = _loadImage(filename);
-  CACHE[filename] = image;
-  return image;
 };
 
 export default {

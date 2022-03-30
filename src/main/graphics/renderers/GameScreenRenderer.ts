@@ -7,8 +7,7 @@ import Unit from '../../units/Unit';
 import Color from '../Color';
 import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
-import ImageLoader from '../images/ImageLoader';
-import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import SpriteContainer from '../sprites/SpriteContainer';
@@ -17,8 +16,6 @@ import Renderer from './Renderer';
 const SHADOW_FILENAME = 'shadow';
 
 class GameScreenRenderer extends Renderer {
-  private _cachedShadowImage: ImageData | null = null;
-
   constructor() {
     super({
       width: SCREEN_WIDTH,
@@ -175,17 +172,12 @@ class GameScreenRenderer extends Renderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
-    let imageData;
-    if (this._cachedShadowImage) {
-      imageData = this._cachedShadowImage;
-    } else {
-      imageData = await ImageLoader.loadImage(SHADOW_FILENAME)
-        .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
-      this._cachedShadowImage = imageData;
-    }
-    imageData = await replaceColors(imageData, paletteSwaps);
-    const imageBitmap = await createImageBitmap(imageData);
-    await this.context.drawImage(imageBitmap, left, top);
+    const image = await ImageFactory.getImage({
+      filename: SHADOW_FILENAME,
+      transparentColor: Colors.WHITE,
+      paletteSwaps
+    });
+    await this.context.drawImage(image.bitmap, left, top);
   };
 }
 

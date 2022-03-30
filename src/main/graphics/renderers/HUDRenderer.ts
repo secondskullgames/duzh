@@ -5,8 +5,7 @@ import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
-import ImageLoader from '../images/ImageLoader';
-import { applyTransparentColor, replaceColors } from '../images/ImageUtils';
+import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import Renderer from './Renderer';
@@ -24,8 +23,6 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 class HUDRenderer extends Renderer {
-  private _cachedBackgroundImage: ImageData | null = null;
-
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
@@ -40,16 +37,11 @@ class HUDRenderer extends Renderer {
   };
 
   _renderFrame = async () => {
-    let imageData;
-    if (this._cachedBackgroundImage) {
-      imageData = this._cachedBackgroundImage;
-    } else {
-      imageData = await ImageLoader.loadImage(HUD_FILENAME)
-        .then(imageData => applyTransparentColor(imageData, Colors.WHITE));
-      this._cachedBackgroundImage = imageData;
-    }
-    const imageBitmap = await createImageBitmap(imageData);
-    this.context.drawImage(imageBitmap, 0, 0, imageBitmap.width, imageBitmap.height);
+    const image = await ImageFactory.getImage({
+      filename: HUD_FILENAME,
+      transparentColor: Colors.WHITE
+    });
+    this.context.drawImage(image.bitmap, 0, 0, image.bitmap.width, image.bitmap.height);
   };
 
   /**
@@ -137,11 +129,11 @@ class HUDRenderer extends Renderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
-    const imageData = await ImageLoader.loadImage(`abilities/${ability.icon}`)
-      .then(image => replaceColors(image, paletteSwaps));
-
-    const imageBitmap = await createImageBitmap(imageData);
-    await this.context.drawImage(imageBitmap, left, top);
+    const image = await ImageFactory.getImage({
+      filename: `abilities/${ability.icon}`,
+      paletteSwaps
+    });
+    await this.context.drawImage(image.bitmap, left, top);
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {

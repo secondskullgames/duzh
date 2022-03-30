@@ -5,10 +5,11 @@ import Direction from '../../geometry/Direction';
 import Color from '../Color';
 import Colors from '../Colors';
 import Image from '../images/Image';
+import ImageEffect from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
-import ImageBuilder from '../images/ImageBuilder';
+import ImageFactory from '../images/ImageFactory';
 import { replaceAll } from '../images/ImageUtils';
 import DynamicSprite from './DynamicSprite';
 import DynamicSpriteModel from './DynamicSpriteModel';
@@ -24,22 +25,22 @@ type SpriteCategory = 'units' | 'equipment' | 'static';
 const createTileSprite = async (filename: string, paletteSwaps?: PaletteSwaps): Promise<Sprite> => {
   const offsets = { dx: 0, dy: 0 };
   const transparentColor = Colors.WHITE;
-  const image = await new ImageBuilder({
+  const image = await ImageFactory.getImage({
     filename: `tiles/${filename}`,
     paletteSwaps,
     transparentColor
-  }).build();
+  });
   return new StaticSprite(image, offsets);
 };
 
 const createStaticSprite = async (spriteName: string, paletteSwaps?: PaletteSwaps): Promise<Sprite> => {
   const model: StaticSpriteModel = await loadSpriteModel(spriteName, 'static');
   const { offsets, transparentColor } = model;
-  const image = await new ImageBuilder({
+  const image = await ImageFactory.getImage({
     filename: model.filename,
     paletteSwaps,
     transparentColor
-  }).build();
+  });
   return new StaticSprite(image, offsets);
 };
 
@@ -73,11 +74,11 @@ const createEquipmentSprite = async (spriteName: string, paletteSwaps?: PaletteS
 const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps?: PaletteSwaps) => {
   const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
   const offsets = { dx: 0, dy: -8 };
-  const image = await new ImageBuilder({
+  const image = await ImageFactory.getImage({
     filename,
     paletteSwaps,
     transparentColor: Colors.WHITE
-  }).build();
+  });
   return new StaticSprite(image, offsets);
 };
 
@@ -97,11 +98,11 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
       const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
-      const imageSupplier = () => new ImageBuilder({
+      const imageSupplier = () => ImageFactory.getImage({
         filename,
         paletteSwaps,
         transparentColor: Colors.WHITE
-      }).build();
+      });
       imageMap[key] = imageSupplier;
     }
   }
@@ -123,10 +124,10 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
       }
       throw new Error(); // wat
     })();
-    const imageSupplier = () => new ImageBuilder({
+    const imageSupplier = () => ImageFactory.getImage({
       filename,
       transparentColor: Colors.WHITE
-    }).build();
+    });
     imageMap[key] = imageSupplier;
   }
 
@@ -163,17 +164,18 @@ const _loadAnimations = (
         const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
           .map(pattern => fillTemplate(pattern, variables));
 
-        const effects = (animationName === 'DAMAGED')
-          ? [(img: ImageData) => replaceAll(img, Colors.WHITE)]
+        // TODO - can we get this into the sprite model?
+        const effects = (animationName === 'damaged')
+          ? [ImageEffect.DAMAGED]
           : [];
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
 
-        const imageSupplier = () => new ImageBuilder({
+        const imageSupplier = () => ImageFactory.getImage({
           filenames,
           transparentColor: Colors.WHITE,
           paletteSwaps,
           effects
-        }).build();
+        });
 
         imageMap[frameKey] = imageSupplier;
       }

@@ -1,6 +1,7 @@
 import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
-import ImageLoader from '../../graphics/images/ImageLoader';
+import Image from '../../graphics/images/Image';
+import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../objects/Door';
 import ItemFactory from '../../items/ItemFactory';
@@ -29,11 +30,13 @@ class PredefinedMapBuilder {
 
   build = async (): Promise<MapInstance> => {
     const { model } = this;
-    const image = await ImageLoader.loadImage(`maps/${model.imageFilename}`);
+    const image = await ImageFactory.getImage({
+      filename: `maps/${model.imageFilename}`
+    });
 
     return new MapInstance({
-      width: image.width,
-      height: image.height,
+      width: image.bitmap.width,
+      height: image.bitmap.height,
       tiles: await _loadTiles(model, image),
       units: await _loadUnits(model, image),
       items: await _loadItems(model, image),
@@ -44,18 +47,18 @@ class PredefinedMapBuilder {
   };
 }
 
-const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Promise<Tile[][]> => {
+const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
   const tileColors = model.tileColors;
   const tileSet = await TileSet.forName(model.tileset);
   const tiles: Tile[][] = [];
-  for (let y = 0; y < imageData.height; y++) {
+  for (let y = 0; y < image.bitmap.height; y++) {
     tiles.push([]);
   }
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const x = Math.floor(i / 4) % imageData.width;
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  for (let i = 0; i < image.data.data.length; i += 4) {
+    const x = Math.floor(i / 4) % image.width;
+    const y = Math.floor(Math.floor(i / 4) / image.width);
+    const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
     const tileType = tileColors[color.hex] || null;
@@ -69,14 +72,14 @@ const _loadTiles = async (model: PredefinedMapModel, imageData: ImageData): Prom
   return tiles;
 };
 
-const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Promise<Unit[]> => {
+const _loadUnits = async (model: PredefinedMapModel, image: Image): Promise<Unit[]> => {
   const units: Unit[] = [];
   let id = 1;
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const x = Math.floor(i / 4) % imageData.width;
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  for (let i = 0; i < image.data.data.length; i += 4) {
+    const x = Math.floor(i / 4) % image.width;
+    const y = Math.floor(Math.floor(i / 4) / image.width);
+    const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
     const hexColors: Set<string> = new Set();
@@ -108,13 +111,13 @@ const _loadUnits = async (model: PredefinedMapModel, imageData: ImageData): Prom
   return units;
 };
 
-const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Promise<MapItem[]> => {
+const _loadItems = async (model: PredefinedMapModel, image: Image): Promise<MapItem[]> => {
   const items: MapItem[] = [];
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const x = Math.floor(i / 4) % imageData.width;
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  for (let i = 0; i < image.data.data.length; i += 4) {
+    const x = Math.floor(i / 4) % image.width;
+    const y = Math.floor(Math.floor(i / 4) / image.width);
+    const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
     const itemClass = model.itemColors[color.hex] || null;
@@ -131,13 +134,13 @@ const _loadItems = async (model: PredefinedMapModel, imageData: ImageData): Prom
   return items;
 };
 
-const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Promise<Door[]> => {
+const _loadDoors = async (model: PredefinedMapModel, image: Image): Promise<Door[]> => {
   const doors: Door[] = [];
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const x = Math.floor(i / 4) % imageData.width;
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  for (let i = 0; i < image.data.data.length; i += 4) {
+    const x = Math.floor(i / 4) % image.data.width;
+    const y = Math.floor(Math.floor(i / 4) / image.data.width);
+    const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
     const doorDirection = model.doorColors[color.hex] || null;
@@ -157,13 +160,13 @@ const _loadDoors = async (model: PredefinedMapModel, imageData: ImageData): Prom
   return doors;
 };
 
-const _loadSpawners = async (model: PredefinedMapModel, imageData: ImageData): Promise<Spawner[]> => {
+const _loadSpawners = async (model: PredefinedMapModel, image: Image): Promise<Spawner[]> => {
   const spawners: Spawner[] = [];
 
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const x = Math.floor(i / 4) % imageData.width;
-    const y = Math.floor(Math.floor(i / 4) / imageData.width);
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+  for (let i = 0; i < image.data.data.length; i += 4) {
+    const x = Math.floor(i / 4) % image.data.width;
+    const y = Math.floor(Math.floor(i / 4) / image.data.width);
+    const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
     const spawnerName = model.spawnerColors[color.hex];
