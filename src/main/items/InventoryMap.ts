@@ -18,7 +18,7 @@ class InventoryMap {
 
   constructor() {
     const map: Partial<Record<ItemCategory, InventoryItem[]>> = {};
-    for (const category of ItemCategory.values()) {
+    for (const category of displayCategories) {
       map[category] = [];
     }
     this._map = map as Record<ItemCategory, InventoryItem[]>;

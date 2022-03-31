@@ -135,7 +135,7 @@ const _getCharOffset = (char: number) => {
   throw new Error(`invalid character code ${char}`);
 };
 
-const _getMemoKey = (text: string, font: FontDefinition, color: Color) => `${font.name}_${color}_${text}`;
+const _getMemoKey = (text: string, font: FontDefinition, color: Color) => `${font.name}_${color.hex}_${text}`;
 
 export { renderFont };
 export { Fonts, FontDefinition };
