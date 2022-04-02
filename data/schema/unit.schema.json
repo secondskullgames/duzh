@@ -62,7 +62,7 @@
       "type": "string"
     },
     "paletteSwaps": {
-      "$ref": "paletteswaps"
+      "$ref": "palette-swaps"
     },
     "sprite": {
       "type": "string"
@@ -92,6 +92,7 @@
     "startingLife",
     "startingMana",
     "type"
-  ]
+  ],
+  "additionalProperties": false
 }
 

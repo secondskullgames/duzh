@@ -1,5 +1,5 @@
 {
-  "$id": "tileset",
+  "$id": "tile-set",
   "type": "object",
   "properties": {
     "path": {
@@ -15,10 +15,12 @@
       }
     },
     "paletteSwaps": {
-      "$ref": "paletteswaps"
+      "$ref": "palette-swaps"
     }
   },
   "required": [
-    "path"
-  ]
+    "path",
+    "tiles"
+  ],
+  "additionalProperties": false
 }
