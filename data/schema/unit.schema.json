@@ -1,0 +1,98 @@
+{
+  "$id": "unit",
+  "type": "object",
+  "properties": {
+    "abilities": {
+      "type": "object",
+      "description": "TODO: This includes ATTACK at position 0, followed by special abilities.\nIt doesn't include SHOOT_ARROW.",
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "aiParameters": {
+      "type": "object",
+      "properties": {
+        "fleeThreshold": {
+          "description": "ratio of (current life / max life)",
+          "type": "number"
+        },
+        "speed": {
+          "description": "between 0 and 1",
+          "type": "number"
+        },
+        "visionRange": {
+          "description": "whole number of tiles",
+          "type": "number"
+        }
+      },
+      "required": [
+        "fleeThreshold",
+        "speed",
+        "visionRange"
+      ]
+    },
+    "equipment": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "damagePerLevel": {
+      "type": ["number", "null"]
+    },
+    "experienceToNextLevel": {
+      "items": {
+        "type": "number"
+      },
+      "type": "array"
+    },
+    "lifePerLevel": {
+      "type": ["number", "null"]
+    },
+    "manaPerLevel": {
+      "type": ["number", "null"]
+    },
+    "name": {
+      "type": "string"
+    },
+    "paletteSwaps": {
+      "$ref": "palette-swaps"
+    },
+    "sprite": {
+      "type": "string"
+    },
+    "startingDamage": {
+      "type": "number"
+    },
+    "startingLife": {
+      "type": "number"
+    },
+    "startingMana": {
+      "type": ["number", "null"]
+    },
+    "summonedUnitClass": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "abilities",
+    "name",
+    "paletteSwaps",
+    "sprite",
+    "startingDamage",
+    "startingLife",
+    "startingMana",
+    "type"
+  ],
+  "additionalProperties": false
+}
+

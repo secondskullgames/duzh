@@ -1,0 +1,84 @@
+{
+  "$id": "dynamic-sprite",
+  "type": "object",
+  "properties": {
+    "animations": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Animation"
+      }
+    },
+    "name": {
+      "type": "string"
+    },
+    "offsets": {
+      "$ref": "#/definitions/Offsets"
+    },
+    "pattern": {
+      "type": "string"
+    },
+    "patterns": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "transparentColor": {
+      "type": "string",
+      "pattern": "^#[a-zA-Z0-9]{6}$"
+    }
+  },
+  "required": [
+    "name",
+    "offsets",
+    "animations"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "Animation": {
+      "type": "object",
+      "properties": {
+        "frames": {
+          "items": {
+            "properties": {
+              "activity": {
+                "type": "string"
+              },
+              "number": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "activity",
+              "number"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "pattern": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "frames"
+      ]
+    },
+    "Offsets": {
+      "properties": {
+        "dx": {
+          "type": "number"
+        },
+        "dy": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "dx",
+        "dy"
+      ],
+      "type": "object"
+    }
+  }
+}
+

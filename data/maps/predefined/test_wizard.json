@@ -1,7 +1,7 @@
 {
   "imageFilename": "test_wizard",
   "tileset": "dungeon",
-  "levelNumber": "1",
+  "levelNumber": 1,
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",

@@ -1,7 +1,7 @@
 {
   "imageFilename": "8",
   "tileset": "dungeon",
-  "levelNumber": "8",
+  "levelNumber": 8,
   "tileColors": {
     "BLACK": "FLOOR",
     "DARK_GRAY": "WALL",

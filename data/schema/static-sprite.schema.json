@@ -1,0 +1,39 @@
+{
+  "$id": "static-sprite",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "filename": {
+      "type": "string"
+    },
+    "offsets": {
+      "properties": {
+        "dx": {
+          "type": "number"
+        },
+        "dy": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "dx",
+        "dy"
+      ],
+      "type": "object"
+    },
+    "transparentColor": {
+      "type": "string",
+      "pattern": "^#[a-zA-Z0-9]{6}$"
+    }
+  },
+  "required": [
+    "filename",
+    "name",
+    "offsets",
+    "transparentColor"
+  ],
+  "additionalProperties": false
+}
+

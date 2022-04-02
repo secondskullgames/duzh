@@ -15,10 +15,6 @@ type PredefinedMapModel = {
   music: string | null
 };
 
-/**
- * TODO: Typescript can't really handle this because of the ...json.  As a result it's really easy for
- * code that should not compile at all to sneak in here.
- */
 const _load = async (id: string): Promise<PredefinedMapModel> => (await import(
   /* webpackMode: "eager" */
   `../../../../data/maps/predefined/${id}.json`

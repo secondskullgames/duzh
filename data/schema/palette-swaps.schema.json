@@ -1,0 +1,10 @@
+{
+  "$id": "palette-swaps",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Z_]+$": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]+$"
+    }
+  }
+}

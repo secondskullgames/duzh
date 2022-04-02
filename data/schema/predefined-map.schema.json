@@ -1,0 +1,80 @@
+{
+  "$id": "predefined-map",
+  "type": "object",
+  "properties": {
+    "imageFilename": {
+      "type": "string"
+    },
+    "levelNumber": {
+      "type": "number"
+    },
+    "music": {
+      "type": "string"
+    },
+    "startingPointColor": {
+      "$ref": "#/definitions/Color"
+    },
+    "tileColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "enemyColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "equipmentColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "itemColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "doorColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "spawnerColors": {
+      "$ref": "#/definitions/ColorMap"
+    },
+    "defaultTile": {
+      "$ref": "#/definitions/TileType"
+    },
+    "tileset": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "enemyColors",
+    "equipmentColors",
+    "imageFilename",
+    "itemColors",
+    "levelNumber",
+    "startingPointColor",
+    "tileColors",
+    "tileset"
+  ],
+  "definitions": {
+    "TileType": {
+      "enum": [
+        "FLOOR",
+        "FLOOR_HALL",
+        "NONE",
+        "STAIRS_DOWN",
+        "WALL",
+        "WALL_HALL",
+        "WALL_TOP"
+      ],
+      "type": "string"
+    },
+    "Color": {
+      "type": "string",
+      "pattern": "^[A-Z_]+$"
+    },
+    "ColorMap": {
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z_]+$": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+

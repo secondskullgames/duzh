@@ -1,0 +1,26 @@
+{
+  "$id": "tile-set",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "tiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "paletteSwaps": {
+      "$ref": "palette-swaps"
+    }
+  },
+  "required": [
+    "path",
+    "tiles"
+  ],
+  "additionalProperties": false
+}

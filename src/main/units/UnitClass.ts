@@ -1,5 +1,6 @@
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import { UnitType } from '../types/types';
+import AIParameters from './controllers/AIParameters';
 import UnitAbility from './UnitAbility';
 import UnitModel from './UnitModel';
 

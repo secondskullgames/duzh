@@ -1,0 +1,42 @@
+{
+  "$id": "equipment",
+  "type": "object",
+  "properties": {
+    "blockAmount": {
+      "type": "number"
+    },
+    "damage": {
+      "type": "number"
+    },
+    "itemCategory": {
+      "type": "string"
+    },
+    "mapIcon": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "paletteSwaps": {
+      "$ref": "palette-swaps"
+    },
+    "script": {
+      "type": "string"
+    },
+    "slot": {
+      "type": "string"
+    },
+    "sprite": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "itemCategory",
+    "mapIcon",
+    "name",
+    "paletteSwaps",
+    "slot",
+    "sprite"
+  ],
+  "additionalProperties": false
+}
