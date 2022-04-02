@@ -31,7 +31,8 @@
     "build": "npx webpack",
     "serve": "npx webpack serve",
     "clean": "npx rimraf build",
-    "validate": "node --loader ts-node/esm scripts/validate.ts"
+    "validate": "node --loader ts-node/esm scripts/validate.ts",
+    "test": "npm run validate"
   },
   "repository": {
     "type": "git",
