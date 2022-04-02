@@ -1,5 +1,6 @@
 {
   "$id": "unit",
+  "type": "object",
   "properties": {
     "abilities": {
       "type": "object",
@@ -61,10 +62,7 @@
       "type": "string"
     },
     "paletteSwaps": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
+      "$ref": "paletteswaps"
     },
     "sprite": {
       "type": "string"
@@ -94,7 +92,6 @@
     "startingLife",
     "startingMana",
     "type"
-  ],
-  "type": "object"
+  ]
 }
 

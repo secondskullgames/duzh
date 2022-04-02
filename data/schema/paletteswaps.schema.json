@@ -1,0 +1,10 @@
+{
+  "$id": "paletteswaps",
+  "type": "object",
+  "patternProperties": {
+    "^[A-Z_]+$": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

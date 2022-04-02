@@ -1,0 +1,24 @@
+{
+  "$id": "tileset",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "tiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "paletteSwaps": {
+      "$ref": "paletteswaps"
+    }
+  },
+  "required": [
+    "path"
+  ]
+}
