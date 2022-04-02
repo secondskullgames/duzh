@@ -1,6 +1,5 @@
 import TileSet, { TileSetName } from '../../tiles/TileSet';
 import MapLayout from '../MapLayout';
-import memoize from '../../utils/memoize';
 import GeneratedMapModel from './GeneratedMapModel';
 
 type GeneratedMapClass = {

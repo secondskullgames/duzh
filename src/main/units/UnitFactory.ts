@@ -1,7 +1,6 @@
 import EquipmentClass from '../equipment/EquipmentClass';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import EquipmentModel from '../equipment/EquipmentModel';
 import ItemFactory from '../items/ItemFactory';
 import Coordinates from '../geometry/Coordinates';
 import { Faction } from '../types/types';

@@ -9,7 +9,7 @@ import { applyTransparentColor, replaceColors } from './ImageUtils';
 type Props = {
   filename?: string,
   filenames?: string[]
-  transparentColor?: Color,
+  transparentColor?: Color | null,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageEffect[]
 };

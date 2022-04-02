@@ -1,6 +1,5 @@
 import EquipmentClass from '../../equipment/EquipmentClass';
-import EquipmentModel from '../../equipment/EquipmentModel';
-import ItemModel from '../../items/ItemModel';
+import ItemClass from '../../items/ItemClass';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
@@ -17,7 +16,7 @@ type GenerateMapProps = {
   mapClass: GeneratedMapClass,
   enemyUnitClasses: Map<UnitClass, number>,
   equipmentClasses: Map<EquipmentClass, number>,
-  itemClasses: Map<ItemModel, number>
+  itemClasses: Map<ItemClass, number>
 };
 
 abstract class AbstractMapGenerator {

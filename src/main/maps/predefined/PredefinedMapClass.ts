@@ -2,7 +2,7 @@ import EquipmentClass from '../../equipment/EquipmentClass';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { DoorDirection } from '../../objects/Door';
-import ItemModel from '../../items/ItemModel';
+import ItemClass from '../../items/ItemClass';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
 import { TileSetName } from '../../tiles/TileSet';
@@ -18,7 +18,7 @@ type PredefinedMapClass = {
   tileColors: Record<string, TileType>,
   defaultTile?: TileType
   enemyColors: Record<string, UnitClass>,
-  itemColors: Record<string, ItemModel>,
+  itemColors: Record<string, ItemClass>,
   equipmentColors: Record<string, EquipmentClass>,
   doorColors: Record<string, DoorDirection>,
   spawnerColors: Record<string, string>;
@@ -29,7 +29,7 @@ type PredefinedMapClass = {
 const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass> => {
   const tileColors = await _convertColorMap(model.tileColors, x => Promise.resolve(x as TileType));
   const enemyColors = await _convertColorMap(model.enemyColors, UnitClass.load);
-  const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemModel.load(x)));
+  const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemClass.load(x)));
   const equipmentColors = await _convertColorMap(model.equipmentColors, EquipmentClass.load);
   const doorColors = await _convertColorMap(model.doorColors, x => Promise.resolve(x as DoorDirection));
   const spawnerColors = await _convertColorMap(model.spawnerColors, x => Promise.resolve(x));
@@ -65,7 +65,7 @@ const _convertColorMap = async <T> (
 
 namespace PredefinedMapClass {
   export const fromModel = _fromModel;
-  export const load = async (id: string) => _fromModel(await PredefinedMapModel.load(id))
+  export const load = async (id: string) => _fromModel(await PredefinedMapModel.load(id));
 }
 
 export default PredefinedMapClass;

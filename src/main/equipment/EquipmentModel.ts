@@ -1,4 +1,3 @@
-import PaletteSwaps from '../graphics/PaletteSwaps';
 import memoize from '../utils/memoize';
 
 interface EquipmentModel {

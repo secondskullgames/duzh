@@ -1,11 +1,19 @@
 import Offsets from '../../geometry/Offsets';
-import Color from '../Color';
 
 type StaticSpriteModel = {
   name: string,
   filename: string,
   offsets: Offsets,
-  transparentColor: Color
+  transparentColor: string
 };
+
+const _load = async <T> (name: string): Promise<T> => (await import(
+  /* webpackMode: "eager" */
+  `../../../../data/sprites/static/${name}.json`
+)).default;
+
+namespace StaticSpriteModel {
+  export const load = _load;
+}
 
 export default StaticSpriteModel;

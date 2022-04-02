@@ -9,7 +9,7 @@ import Unit from '../units/Unit';
 import { randChoice } from '../utils/random';
 import Equipment from '../equipment/Equipment';
 import InventoryItem from './InventoryItem';
-import ItemModel from './ItemModel';
+import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
 
@@ -76,7 +76,7 @@ const createEquipment = async (equipmentClass: EquipmentClass): Promise<Equipmen
   return equipment;
 };
 
-const createMapItem = async (itemClass: ItemModel, { x, y }: Coordinates) => {
+const createMapItem = async (itemClass: ItemClass, { x, y }: Coordinates) => {
   const inventoryItem = await itemClass.getInventoryItem();
   const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite);
   return new MapItem({ x, y, sprite, inventoryItem });
@@ -84,7 +84,7 @@ const createMapItem = async (itemClass: ItemModel, { x, y }: Coordinates) => {
 
 const createRandomItemOrEquipment = (
   equipmentClasses: EquipmentClass[],
-  itemClasses: ItemModel[],
+  itemClasses: ItemClass[],
   { x, y }: Coordinates
 ): Promise<MapItem> => {
   if (Math.random() <= EQUIPMENT_FREQUENCY) {
