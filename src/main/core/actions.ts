@@ -51,7 +51,6 @@ const initialize = async () => {
   await render();
   const t2 = new Date().getTime();
   preloadFirstMap();
-  TileSet.preload();
   attachEvents();
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');

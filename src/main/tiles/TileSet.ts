@@ -1,36 +1,22 @@
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
+import TileSetModel from './TileSetModel';
 import TileType from './TileType';
-
-type TileSetName = 'dungeon' | 'cave';
-const names: TileSetName[] = ['dungeon', 'cave'];
 
 type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 
-type TileSetModel = {
-  path: string,
-  tiles: Record<TileType, (string | null)[]>,
-  paletteSwaps?: Record<string, string>
-};
-
-const _memos: Record<string, TileSet> = {};
-
-const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
-  const json = await import(
-    /* webpackMode: "eager" */
-    `../../../data/tilesets/${name}.json`
-  ) as TileSetModel;
+const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
   const tileSet: TileSet = {};
   const promises: Partial<Record<TileType, Promise<Sprite[]>>> = {};
 
-  for (const [tileType, filenames] of Object.entries(json.tiles)) {
+  for (const [tileType, filenames] of Object.entries(model.tiles)) {
     const tilePromises: Promise<Sprite>[] = [];
     for (let index = 0; index < filenames.length; index++) {
       const filename = filenames[index];
       if (filename) {
-        const paletteSwaps = PaletteSwaps.create(json.paletteSwaps || {});
-        tilePromises.push(SpriteFactory.createTileSprite(`${json.path}/${filename}`, paletteSwaps));
+        const paletteSwaps = PaletteSwaps.create(model.paletteSwaps || {});
+        tilePromises.push(SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps));
       }
     }
     promises[tileType as TileType] = Promise.all(tilePromises);
@@ -44,17 +30,8 @@ const _loadTileSet = async (name: TileSetName): Promise<TileSet> => {
 };
 
 namespace TileSet {
-  export const forName = async (name: TileSetName): Promise<TileSet> => {
-    if (!_memos[name]) {
-      _memos[name] = await _loadTileSet(name);
-    }
-
-    return _memos[name];
-  };
-
-  export const preload = async () =>
-    Promise.all(names.map(TileSet.forName));
+  export const fromModel = _fromModel;
+  export const load = async (id: string) => _fromModel(await TileSetModel.load(id));
 }
 
 export default TileSet;
-export { TileSetName };

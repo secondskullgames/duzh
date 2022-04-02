@@ -49,7 +49,7 @@ class PredefinedMapBuilder {
 
 const _loadTiles = async (mapClass: PredefinedMapClass, image: Image): Promise<Tile[][]> => {
   const tileColors = mapClass.tileColors;
-  const tileSet = await TileSet.forName(mapClass.tileset);
+  const tileSet = await TileSet.load(mapClass.tileset);
   const tiles: Tile[][] = [];
   for (let y = 0; y < image.bitmap.height; y++) {
     tiles.push([]);

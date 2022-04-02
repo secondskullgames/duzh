@@ -1,10 +1,9 @@
-import TileSet, { TileSetName } from '../../tiles/TileSet';
 import MapLayout from '../MapLayout';
 import GeneratedMapModel from './GeneratedMapModel';
 
 type GeneratedMapClass = {
   layout: MapLayout,
-  tileSet: TileSetName,
+  tileSet: string,
   levelNumber: number,
   width: number,
   height: number,
@@ -17,7 +16,7 @@ const _fromModel = async (model: GeneratedMapModel): Promise<GeneratedMapClass> 
   return {
     ...model,
     layout: model.layout as MapLayout,
-    tileSet: model.tileSet as TileSetName
+    tileSet: model.tileSet
   };
 };
 

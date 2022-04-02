@@ -5,7 +5,6 @@ import { DoorDirection } from '../../objects/Door';
 import ItemClass from '../../items/ItemClass';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
-import { TileSetName } from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
 import { checkNotNull } from '../../utils/preconditions';
@@ -13,7 +12,7 @@ import PredefinedMapModel from './PredefinedMapModel';
 
 type PredefinedMapClass = {
   imageFilename: string,
-  tileset: TileSetName,
+  tileset: string,
   levelNumber: number,
   tileColors: Record<string, TileType>,
   defaultTile?: TileType
@@ -35,7 +34,6 @@ const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass
   const spawnerColors = await _convertColorMap(model.spawnerColors, x => Promise.resolve(x));
   const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
   const music = model.music ? await Music.loadMusic(model.music as string) : null;
-  const tileset = model.tileset as TileSetName;
 
   return {
     ...model,
@@ -46,8 +44,7 @@ const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass
     doorColors,
     spawnerColors,
     startingPointColor,
-    music,
-    tileset
+    music
   };
 };
 
