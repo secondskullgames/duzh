@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "blockAmount": {
+      "type": "number"
+    },
+    "damage": {
+      "type": "number"
+    },
+    "itemCategory": {
+      "type": "string"
+    },
+    "mapIcon": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "paletteSwaps": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "script": {
+      "type": "string"
+    },
+    "slot": {
+      "type": "string"
+    },
+    "sprite": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "itemCategory",
+    "mapIcon",
+    "name",
+    "paletteSwaps",
+    "slot",
+    "sprite"
+  ]
+}

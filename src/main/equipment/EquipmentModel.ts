@@ -1,5 +1,4 @@
 type EquipmentModel = {
-  id: string,
   name: string,
   sprite: string,
   mapIcon: string,
