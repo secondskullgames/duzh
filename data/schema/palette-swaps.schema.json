@@ -4,8 +4,7 @@
   "patternProperties": {
     "^[A-Z_]+$": {
       "type": "string",
-      "pattern": "^[A-Z_]+$"
+      "pattern": "^[A-Z0-9_]+$"
     }
-  },
-  "additionalProperties": false
+  }
 }
