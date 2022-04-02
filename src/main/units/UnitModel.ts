@@ -1,5 +1,3 @@
-import memoize from '../utils/memoize';
-
 type UnitModel = {
   readonly name: string;
   readonly sprite: string,
@@ -28,7 +26,7 @@ const _load = async (name: string): Promise<UnitModel> => (await import(
 )).default;
 
 namespace UnitModel {
-  export const load = memoize(_load);
+  export const load = _load;
 }
 
 export default UnitModel;

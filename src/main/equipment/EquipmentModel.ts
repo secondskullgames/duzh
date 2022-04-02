@@ -1,6 +1,4 @@
-import memoize from '../utils/memoize';
-
-interface EquipmentModel {
+type EquipmentModel = {
   id: string,
   name: string,
   sprite: string,
@@ -11,15 +9,15 @@ interface EquipmentModel {
   damage?: number,
   blockAmount?: number, // typically only for shields
   script: string, // EquipmentScript
-}
+};
 
 const _load = async (id: string): Promise<EquipmentModel> => (await import(
-    /* webpackMode: "eager" */
-    `../../../data/equipment/${id}.json`
-  )).default;
+  /* webpackMode: "eager" */
+  `../../../data/equipment/${id}.json`
+)).default;
 
 namespace EquipmentModel {
-  export const load = memoize(_load);
+  export const load = _load;
 }
 
 export default EquipmentModel;
