@@ -30,7 +30,8 @@
   "scripts": {
     "build": "npx webpack",
     "serve": "npx webpack serve",
-    "clean": "npx rimraf build"
+    "clean": "npx rimraf build",
+    "validate": "node --loader ts-node/esm scripts/validate.ts"
   },
   "repository": {
     "type": "git",
