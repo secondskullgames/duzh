@@ -4,14 +4,14 @@ import Direction from '../geometry/Direction';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import EquipmentModel from './EquipmentModel';
+import EquipmentClass from './EquipmentClass';
 import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
 
 const DRAW_BEHIND_PREFIX = '_B';
 
 type Props = {
-  model: EquipmentModel,
+  equipmentClass: EquipmentClass,
   sprite: Sprite,
   inventoryItem?: InventoryItem
 };
@@ -26,14 +26,14 @@ class Equipment implements Animatable {
   readonly script: EquipmentScript | null;
   private _unit: Unit | null;
 
-  constructor({ model, sprite, inventoryItem }: Props) {
-    this.name = model.name;
-    this.slot = model.slot;
+  constructor({ equipmentClass, sprite, inventoryItem }: Props) {
+    this.name = equipmentClass.name;
+    this.slot = equipmentClass.slot;
     this.inventoryItem = inventoryItem || null;
-    this.damage = model.damage;
-    this.blockAmount = model.blockAmount || 0;
+    this.damage = equipmentClass.damage;
+    this.blockAmount = equipmentClass.blockAmount || 0;
     this.sprite = sprite;
-    this.script = model.script || null;
+    this.script = equipmentClass.script || null;
     this._unit = null;
   }
 

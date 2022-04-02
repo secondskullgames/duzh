@@ -3,7 +3,6 @@
  * that are only intended for debugging purposes.
  */
 
-import MapFactory from '../maps/MapFactory';
 import { subtract } from '../utils/arrays';
 import { loadNextMap, render } from './actions';
 import GameState from './GameState';

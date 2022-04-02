@@ -1,7 +1,7 @@
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import { UnitType } from '../types/types';
-import memoize from '../utils/memoize';
 import UnitAbility from './UnitAbility';
+import UnitModel from './UnitModel';
 
 interface UnitClass {
   readonly name: string;
@@ -25,20 +25,19 @@ interface UnitClass {
   readonly summonedUnitClass: string | null;
 }
 
-const _load = async (name: string): Promise<UnitClass> => {
-  const json = (await import(
-    /* webpackMode: "eager" */
-    `../../../data/units/${name}.json`
-  )).default;
+const _fromModel = async (model: UnitModel): Promise<UnitClass> => {
   return {
-    ...json,
+    ...model,
+    abilities: model.abilities as Record<number, UnitAbility.Name[]>, // TODO enforce this
+    type: model.type as UnitType, // TODO enforce this
     // We're using "friendly" color names, convert them to hex now
-    paletteSwaps: PaletteSwaps.create(json.paletteSwaps)
+    paletteSwaps: PaletteSwaps.create(model.paletteSwaps)
   } as UnitClass;
 };
 
 namespace UnitClass {
-  export const load = memoize(_load);
+  export const fromModel = _fromModel;
+  export const load = async (unitModelId: string) => _fromModel(await UnitModel.load(unitModelId));
 }
 
 export default UnitClass;

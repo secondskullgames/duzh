@@ -6,7 +6,7 @@ import ImageEffect from './ImageEffect';
 
 type CacheKey = {
   filename: string,
-  transparentColor?: Color,
+  transparentColor?: Color | null,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageEffect[]
 };

@@ -1,43 +1,43 @@
-import EquipmentModel from '../equipment/EquipmentModel';
-import ItemModel from '../items/ItemModel';
+import EquipmentClass from '../equipment/EquipmentClass';
+import ItemClass from '../items/ItemClass';
 import TileSet from '../tiles/TileSet';
 import UnitClass from '../units/UnitClass';
 import BlobMapGenerator from './generated/BlobMapGenerator';
 import AbstractMapGenerator from './generated/AbstractMapGenerator';
 import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapGenerator';
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
-import GeneratedMapModel from './generated/GeneratedMapModel';
+import GeneratedMapClass from './generated/GeneratedMapClass';
 import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCorridorMapGenerator2';
 import MapInstance from './MapInstance';
 import MapLayout from './MapLayout';
 import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
-import PredefinedMapModel from './predefined/PredefinedMapModel';
+import PredefinedMapClass from './predefined/PredefinedMapClass';
 
 const loadMap = (map: MapSpec): Promise<MapInstance> => {
   switch (map.type) {
     case 'generated': {
       return (async () => {
-        const mapModel = await GeneratedMapModel.load(map.id);
-        const mapBuilder = await loadGeneratedMap(mapModel);
+        const mapClass = await GeneratedMapClass.load(map.id);
+        const mapBuilder = await loadGeneratedMap(mapClass);
         return mapBuilder.build();
       })();
     }
     case 'predefined': {
       return (async () => {
-        const mapModel = await PredefinedMapModel.load(map.id);
-        return loadPredefinedMap(mapModel);
+        const mapClass = await PredefinedMapClass.load(map.id);
+        return loadPredefinedMap(mapClass);
       })();
     }
   }
 };
 
-const loadGeneratedMap = async (model: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
-  const dungeonGenerator = _getDungeonGenerator(model.layout, await TileSet.forName(model.tileSet));
-  const enemyUnitClasses: Map<UnitClass, number> = await _loadMapWithCounts(model.enemies, UnitClass.load);
-  const equipmentClasses: Map<EquipmentModel, number> = await _loadMapWithCounts(model.equipment, EquipmentModel.load);
-  const itemClasses: Map<ItemModel, number> = await _loadMapWithCounts(model.items, itemId => Promise.resolve(ItemModel.load(itemId)));
-  return dungeonGenerator.generateMap({ model, enemyUnitClasses, equipmentClasses, itemClasses });
+const loadGeneratedMap = async (mapClass: GeneratedMapClass): Promise<GeneratedMapBuilder> => {
+  const dungeonGenerator = _getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
+  const enemyUnitClasses: Map<UnitClass, number> = await _loadMapWithCounts(mapClass.enemies, UnitClass.load);
+  const equipmentClasses: Map<EquipmentClass, number> = await _loadMapWithCounts(mapClass.equipment, EquipmentClass.load);
+  const itemClasses: Map<ItemClass, number> = await _loadMapWithCounts(mapClass.items, itemId => Promise.resolve(ItemClass.load(itemId)));
+  return dungeonGenerator.generateMap({ mapClass, enemyUnitClasses, equipmentClasses, itemClasses });
 };
 
 const _loadMapWithCounts = async <T> (
@@ -56,8 +56,8 @@ const _loadMapWithCounts = async <T> (
   return map;
 };
 
-const loadPredefinedMap = async (model: PredefinedMapModel): Promise<MapInstance> =>
-  new PredefinedMapBuilder(model).build();
+const loadPredefinedMap = async (mapClass: PredefinedMapClass): Promise<MapInstance> =>
+  new PredefinedMapBuilder(mapClass).build();
 
 const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractMapGenerator => {
   switch (mapLayout) {

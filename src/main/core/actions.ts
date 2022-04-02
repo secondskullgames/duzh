@@ -6,7 +6,6 @@ import { isTileRevealed } from '../maps/MapUtils';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import TileSet from '../tiles/TileSet';
 import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
@@ -51,7 +50,6 @@ const initialize = async () => {
   await render();
   const t2 = new Date().getTime();
   preloadFirstMap();
-  TileSet.preload();
   attachEvents();
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');

@@ -1,4 +1,4 @@
-interface AIParameters {
+type AIParameters = {
   /**
    * between 0 and 1
    */
@@ -11,4 +11,4 @@ interface AIParameters {
    * ratio of (current life / max life)
    */
   fleeThreshold: number
-}
+};

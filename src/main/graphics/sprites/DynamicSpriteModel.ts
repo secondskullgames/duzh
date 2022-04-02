@@ -3,6 +3,7 @@
  */
 
 import Offsets from '../../geometry/Offsets';
+import SpriteCategory from './SpriteCategory';
 
 type DynamicSpriteModel = {
   name: string,
@@ -19,6 +20,15 @@ type DynamicSpriteModel = {
     }
   },
   transparentColor: string
+}
+
+const _load = async <T> (name: string, category: SpriteCategory): Promise<T> => (await import(
+  /* webpackMode: "eager" */
+  `../../../../data/sprites/${category}/${name}.json`
+)).default;
+
+namespace DynamicSpriteModel {
+  export const load = _load;
 }
 
 export default DynamicSpriteModel;

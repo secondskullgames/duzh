@@ -1,8 +1,8 @@
 import Coordinates from '../../../geometry/Coordinates';
 import { Rect, Room } from '../../../types/types';
-import { max, min, minBy, sortBy } from '../../../utils/arrays';
+import { max, min } from '../../../utils/arrays';
 import { checkNotNull } from '../../../utils/preconditions';
-import { randInt, sample as randomSample } from '../../../utils/random';
+import { randInt } from '../../../utils/random';
 import Connection from './Connection';
 import Section from './Section';
 

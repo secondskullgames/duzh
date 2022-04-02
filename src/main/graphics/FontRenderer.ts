@@ -1,7 +1,7 @@
 import Color from './Color';
 import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
-import { applyTransparentColor, replaceColors } from './images/ImageUtils';
+import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
@@ -59,7 +59,7 @@ const renderFont = async (text: string, font: FontDefinition, color: Color): Pro
   }
 
   const canvas = document.createElement('canvas');
-  const context : CanvasRenderingContext2D = <any>canvas.getContext('2d');
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D;
   canvas.width = text.length * font.width;
   canvas.height = font.height;
 

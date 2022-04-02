@@ -1,11 +1,11 @@
 import GameState from '../../core/GameState';
-import EquipmentModel from '../../equipment/EquipmentModel';
-import ItemModel from '../../items/ItemModel';
+import EquipmentClass from '../../equipment/EquipmentClass';
+import ItemClass from '../../items/ItemClass';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { HUMAN_CAUTIOUS, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
@@ -20,8 +20,8 @@ type Props = {
   enemyUnitLocations: Coordinates[],
   itemLocations: Coordinates[],
   enemyUnitClasses: Map<UnitClass, number>,
-  equipmentClasses: Map<EquipmentModel, number>,
-  itemClasses: Map<ItemModel, number>
+  equipmentClasses: Map<EquipmentClass, number>,
+  itemClasses: Map<ItemClass, number>
 };
 
 class GeneratedMapBuilder {
@@ -33,8 +33,8 @@ class GeneratedMapBuilder {
   private readonly enemyUnitLocations: Coordinates[];
   private readonly itemLocations: Coordinates[];
   private readonly enemyUnitClasses: Map<UnitClass, number>;
-  private readonly equipmentClasses: Map<EquipmentModel, number>;
-  private readonly itemClasses: Map<ItemModel, number>;
+  private readonly equipmentClasses: Map<EquipmentClass, number>;
+  private readonly itemClasses: Map<ItemClass, number>;
 
   constructor({
     level,
