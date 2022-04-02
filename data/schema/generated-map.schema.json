@@ -1,0 +1,51 @@
+{
+  "$id": "generated-map",
+  "type": "object",
+  "properties": {
+    "layout": {
+      "type": "string"
+    },
+    "tileSet": {
+      "type": "string"
+    },
+    "levelNumber": {
+      "type": "number"
+    },
+    "width": {
+      "type": "number"
+    },
+    "height": {
+      "type": "number"
+    },
+    "enemies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "equipment": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "items": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    }
+  },
+  "required": [
+    "enemies",
+    "equipment",
+    "height",
+    "items",
+    "layout",
+    "levelNumber",
+    "tileSet",
+    "width"
+  ],
+  "additionalProperties": false
+}
+
