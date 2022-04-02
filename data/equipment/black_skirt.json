@@ -1,11 +1,11 @@
 {
   "name": "Black Skirt",
   "sprite": "skirt",
-  "mapIcon": "map_helmet",
-  "itemCategory": "LEGS",
+  "mapIcon": "map_h elmet",
+  "itemCategory": "LEGS",dsa
   "slot": "CHEST",
-  "paletteSwaps": {
-    "SKIRT_MAIN": "BLACK",
+  "paletteSwaps": {1
+    "SKIRT_MAIN": "BLACK",asd
     "SKIRT_BORDER": "BLACK"
   }
 }
