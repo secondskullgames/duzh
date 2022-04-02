@@ -39,5 +39,6 @@
     "paletteSwaps",
     "slot",
     "sprite"
-  ]
+  ],
+  "additionalProperties": false
 }

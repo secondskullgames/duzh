@@ -1,3 +1,5 @@
+import AIParameters from './controllers/AIParameters';
+
 type UnitModel = {
   readonly name: string;
   readonly sprite: string,

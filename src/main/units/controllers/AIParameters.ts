@@ -12,3 +12,5 @@ type AIParameters = {
    */
   fleeThreshold: number
 };
+
+export default AIParameters;
