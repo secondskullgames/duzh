@@ -5,7 +5,7 @@ import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { HUMAN_CAUTIOUS, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
+import { HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';

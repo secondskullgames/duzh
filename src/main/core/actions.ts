@@ -6,7 +6,6 @@ import { isTileRevealed } from '../maps/MapUtils';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import TileSet from '../tiles/TileSet';
 import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
