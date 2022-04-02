@@ -1,20 +1,17 @@
-import ItemCategory from '../items/ItemCategory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import memoize from '../utils/memoize';
-import EquipmentSlot from './EquipmentSlot';
-import EquipmentScript from './EquipmentScript';
 
 interface EquipmentModel {
   id: string,
   name: string,
   sprite: string,
   mapIcon: string,
-  itemCategory: ItemCategory,
-  slot: EquipmentSlot,
-  paletteSwaps: PaletteSwaps,
+  itemCategory: string, // ItemCategory,
+  slot: string, // EquipmentSlot,
+  paletteSwaps: Record<string, string>, // "friendly" color names
   damage?: number,
   blockAmount?: number, // typically only for shields
-  script: EquipmentScript
+  script: string, // EquipmentScript
 }
 
 const _load = async (id: string): Promise<EquipmentModel> => {

@@ -1,4 +1,4 @@
-import EquipmentModel from '../../equipment/EquipmentModel';
+import EquipmentClass from '../../equipment/EquipmentClass';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { DoorDirection } from '../../objects/Door';
@@ -18,7 +18,7 @@ type PredefinedMapModel = {
   defaultTile?: TileType
   enemyColors: Record<string, UnitClass>,
   itemColors: Record<string, ItemModel>,
-  equipmentColors: Record<string, EquipmentModel>,
+  equipmentColors: Record<string, EquipmentClass>,
   doorColors: Record<string, DoorDirection>,
   spawnerColors: Record<string, string>;
   startingPointColor: Color,
@@ -37,7 +37,7 @@ const _load = async (id: string): Promise<PredefinedMapModel> => {
   const tileColors = await _convertColorMap(json.tileColors, x => Promise.resolve(x));
   const enemyColors = await _convertColorMap(json.enemyColors, UnitClass.load);
   const itemColors = await _convertColorMap(json.itemColors, x => Promise.resolve(ItemModel.load(x)));
-  const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentModel.load);
+  const equipmentColors = await _convertColorMap(json.equipmentColors, EquipmentClass.load);
   const doorColors = await _convertColorMap(json.doorColors, x => Promise.resolve(x));
   const spawnerColors = await _convertColorMap(json.spawnerColors, x => Promise.resolve(x));
   const startingPointColor = checkNotNull(Colors[json.startingPointColor]);

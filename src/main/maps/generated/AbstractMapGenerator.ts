@@ -1,3 +1,4 @@
+import EquipmentClass from '../../equipment/EquipmentClass';
 import EquipmentModel from '../../equipment/EquipmentModel';
 import ItemModel from '../../items/ItemModel';
 import Coordinates from '../../geometry/Coordinates';
@@ -15,7 +16,7 @@ import GeneratedMapModel from './GeneratedMapModel';
 type GenerateMapProps = {
   model: GeneratedMapModel,
   enemyUnitClasses: Map<UnitClass, number>,
-  equipmentClasses: Map<EquipmentModel, number>,
+  equipmentClasses: Map<EquipmentClass, number>,
   itemClasses: Map<ItemModel, number>
 };
 
