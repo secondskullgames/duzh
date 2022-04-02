@@ -10,7 +10,6 @@ import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
-import { replaceAll } from '../images/ImageUtils';
 import DynamicSprite from './DynamicSprite';
 import DynamicSpriteModel from './DynamicSpriteModel';
 import Sprite from './Sprite';
