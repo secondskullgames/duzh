@@ -14,18 +14,10 @@ interface EquipmentModel {
   script: string, // EquipmentScript
 }
 
-const _load = async (id: string): Promise<EquipmentModel> => {
-  const json = (await import(
+const _load = async (id: string): Promise<EquipmentModel> => (await import(
     /* webpackMode: "eager" */
     `../../../data/equipment/${id}.json`
   )).default;
-  return {
-    ...json,
-    id,
-    // We're using "friendly" color names, convert them to hex now
-    paletteSwaps: PaletteSwaps.create(json.paletteSwaps),
-  };
-};
 
 namespace EquipmentModel {
   export const load = memoize(_load);

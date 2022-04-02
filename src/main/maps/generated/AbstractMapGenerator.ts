@@ -11,10 +11,10 @@ import { checkState } from '../../utils/preconditions';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
-import GeneratedMapModel from './GeneratedMapModel';
+import GeneratedMapClass from './GeneratedMapClass';
 
 type GenerateMapProps = {
-  model: GeneratedMapModel,
+  mapClass: GeneratedMapClass,
   enemyUnitClasses: Map<UnitClass, number>,
   equipmentClasses: Map<EquipmentClass, number>,
   itemClasses: Map<ItemModel, number>
@@ -27,8 +27,8 @@ abstract class AbstractMapGenerator {
     this.tileSet = tileSet;
   }
 
-  generateMap = ({ model, enemyUnitClasses, equipmentClasses, itemClasses }: GenerateMapProps): GeneratedMapBuilder => {
-    const { width, height, levelNumber } = model;
+  generateMap = ({ mapClass, enemyUnitClasses, equipmentClasses, itemClasses }: GenerateMapProps): GeneratedMapBuilder => {
+    const { width, height, levelNumber } = mapClass;
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
 
@@ -46,9 +46,9 @@ abstract class AbstractMapGenerator {
     );
 
     return new GeneratedMapBuilder({
-      level: model.levelNumber,
-      width: model.width,
-      height: model.height,
+      level: mapClass.levelNumber,
+      width: mapClass.width,
+      height: mapClass.height,
       tiles,
       playerUnitLocation,
       enemyUnitLocations,
