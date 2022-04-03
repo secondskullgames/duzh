@@ -7,7 +7,7 @@ let loadedModels = false;
 
 const _loadModels = async () => {
   for (const schemaName of schemaNames) {
-    console.log(`Loading schema ${schemaName}`);
+    console.debug(`Loading schema ${schemaName}`);
     const schema = (await import(`../../../data/schema/${schemaName}.schema.json`)).default;
     ajv.addSchema(schema);
   }
@@ -23,7 +23,7 @@ const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
     throw new Error(`Failed to load schema ${schemaName}`);
   }
 
-  console.log(`Validating ${path}`);
+  console.debug(`Validating ${path}`);
   const data = (await import(`../../../data/${path}.json`)).default;
   if (!validate(data)) {
     throw new Error(`Failed to validate ${path}: ${JSON.stringify(validate.errors)}`);
