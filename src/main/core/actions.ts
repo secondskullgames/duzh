@@ -62,7 +62,7 @@ const _initState = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
 
   const json = (await import(
-    /* webpackMode: "eager" */
+    /* webpackChunkName: "model" */
     `../../../data/maps.json`
   )).default as any[];
   const maps = json.map(item => MapSpec.parse(item));

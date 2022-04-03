@@ -12,7 +12,11 @@ let loadedModels = false;
 const _loadModels = async () => {
   for (const schemaName of schemaNames) {
     console.debug(`Loading schema ${schemaName}`);
-    const schema = (await import(`../../../data/schema/${schemaName}.schema.json`)).default;
+    const schema = (await import(
+      /* webpackMode: "lazy-once" */
+      /* webpackChunkName: "schema" */
+      `../../../data/schema/${schemaName}.schema.json`
+    )).default;
     ajv.addSchema(schema);
   }
 };
@@ -29,7 +33,8 @@ const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
 
   console.debug(`Validating ${path}`);
   const data = (await import(
-    /* webpackMode: "eager" */
+    /* webpackMode: "lazy-once" */
+    /* webpackChunkName: "model" */
     `../../../data/${path}.json`
   )).default;
   if (!validate(data)) {

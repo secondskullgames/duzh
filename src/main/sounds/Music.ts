@@ -83,7 +83,8 @@ const stop = () => {
 
 const loadMusic = async (filename: string): Promise<Figure[]> =>
   (await import(
-    /* webpackMode: "eager" */
+    /* webpackMode: "lazy-once" */
+    /* webpackChunkName: "model" */
     `../../../data/music/${filename}.json`
   )).default;
 

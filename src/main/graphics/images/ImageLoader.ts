@@ -2,7 +2,8 @@ const loadImage = async (filename: string): Promise<ImageData | null> => {
   let image: string;
   try {
     image = (await import(
-      /* webpackMode: "eager" */
+      /* webpackMode: "lazy-once" */
+      /* webpackChunkName: "png" */
       `../../../../png/${filename}.png`
     )).default;
   } catch {

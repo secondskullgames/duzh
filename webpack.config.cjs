@@ -55,7 +55,7 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.css'],
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[id].bundle.js',
     path: path.resolve(__dirname, 'build'),
     clean: true
   },
