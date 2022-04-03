@@ -1,4 +1,5 @@
 import GameState from '../../core/GameState';
+import EquipmentSlot from '../../equipment/EquipmentSlot';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -42,7 +43,7 @@ class InventoryRenderer extends Renderer {
 
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
-      promises.push(this._drawText(`${equipment.slot} - ${equipment.name}`, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(`${EquipmentSlot.toString(equipment.slot)} - ${equipment.name}`, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 

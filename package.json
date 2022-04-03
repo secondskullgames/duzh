@@ -29,8 +29,8 @@
     "webpack-cli": "^4.9.2"
   },
   "scripts": {
-    "genSchema": "npx json2ts -i \"data/schema/*.schema.json\" -o src/gen-schema --cwd=./data/schema",
-    "preBuild": "genSchema",
+    "gen-schema": "npx json2ts -i \"data/schema/*.schema.json\" -o src/gen-schema --cwd=./data/schema",
+    "prebuild": "npm run gen-schema",
     "build": "npx webpack",
     "serve": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf src/gen-schema",
