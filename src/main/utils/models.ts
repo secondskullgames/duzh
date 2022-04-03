@@ -7,14 +7,14 @@ import Ajv from 'ajv';
 const schemaNames = ['palette-swaps', 'unit', 'equipment', 'predefined-map', 'generated-map', 'static-sprite', 'dynamic-sprite', 'tile-set'];
 
 const ajv = new Ajv();
-let loadedModels = false;
+let loadedSchemas = false;
 
-const _loadModels = async () => {
+const _loadSchemas = async () => {
   for (const schemaName of schemaNames) {
     console.debug(`Loading schema ${schemaName}`);
     const schema = (await import(
       /* webpackMode: "lazy-once" */
-      /* webpackChunkName: "schema" */
+      /* webpackChunkName: "schemas" */
       `../../../data/schema/${schemaName}.schema.json`
     )).default;
     ajv.addSchema(schema);
@@ -22,9 +22,9 @@ const _loadModels = async () => {
 };
 
 const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
-  if (!loadedModels) {
-    await _loadModels();
-    loadedModels = true;
+  if (!loadedSchemas) {
+    await _loadSchemas();
+    loadedSchemas = true;
   }
   const validate = ajv.getSchema(`${schemaName}.schema.json`);
   if (!validate) {
@@ -34,7 +34,7 @@ const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
   console.debug(`Validating ${path}`);
   const data = (await import(
     /* webpackMode: "lazy-once" */
-    /* webpackChunkName: "model" */
+    /* webpackChunkName: "models" */
     `../../../data/${path}.json`
   )).default;
   if (!validate(data)) {

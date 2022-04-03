@@ -3,7 +3,7 @@ const loadImage = async (filename: string): Promise<ImageData | null> => {
   try {
     image = (await import(
       /* webpackMode: "lazy-once" */
-      /* webpackChunkName: "png" */
+      /* webpackChunkName: "images" */
       `../../../../png/${filename}.png`
     )).default;
   } catch {
