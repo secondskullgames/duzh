@@ -1,5 +1,6 @@
 {
-  "$id": "unit",
+  "$id": "unit.schema.json",
+  "title": "UnitModel",
   "type": "object",
   "properties": {
     "abilities": {
@@ -62,7 +63,7 @@
       "type": "string"
     },
     "paletteSwaps": {
-      "$ref": "palette-swaps"
+      "$ref": "./palette-swaps.schema.json"
     },
     "sprite": {
       "type": "string"

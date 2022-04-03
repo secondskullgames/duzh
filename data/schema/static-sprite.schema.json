@@ -1,5 +1,6 @@
 {
-  "$id": "static-sprite",
+  "$id": "static-sprite.schema.json",
+  "title": "StaticSpriteModel",
   "type": "object",
   "properties": {
     "name": {

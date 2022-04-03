@@ -1,6 +1,7 @@
+import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import ItemCategory from '../items/ItemCategory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
-import EquipmentModel from './EquipmentModel';
+import { loadModel } from '../utils/models';
 import EquipmentSlot from './EquipmentSlot';
 import EquipmentScript from './EquipmentScript';
 
@@ -29,7 +30,7 @@ const _fromModel = async (model: EquipmentModel): Promise<EquipmentClass> => {
 
 namespace EquipmentClass {
   export const fromModel = _fromModel;
-  export const load = async (equipmentModelId: string) => _fromModel(await EquipmentModel.load(equipmentModelId));
+  export const load = async (id: string) => _fromModel(await loadModel(`equipment/${id}`, 'equipment'));
 }
 
 export default EquipmentClass;

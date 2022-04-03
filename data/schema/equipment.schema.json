@@ -1,5 +1,6 @@
 {
-  "$id": "equipment",
+  "$id": "equipment.schema.json",
+  "title": "EquipmentModel",
   "type": "object",
   "properties": {
     "blockAmount": {
@@ -18,7 +19,7 @@
       "type": "string"
     },
     "paletteSwaps": {
-      "$ref": "palette-swaps"
+      "$ref": "./palette-swaps.schema.json"
     },
     "script": {
       "type": "string"

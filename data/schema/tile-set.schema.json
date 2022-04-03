@@ -1,5 +1,6 @@
 {
-  "$id": "tile-set",
+  "$id": "tile-set.schema.json",
+  "title": "TileSetModel",
   "type": "object",
   "properties": {
     "path": {
@@ -15,7 +16,7 @@
       }
     },
     "paletteSwaps": {
-      "$ref": "palette-swaps"
+      "$ref": "./palette-swaps.schema.json"
     }
   },
   "required": [

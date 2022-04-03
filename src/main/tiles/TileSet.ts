@@ -1,7 +1,8 @@
+import { TileSetModel } from '../../gen-schema/tile-set.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
-import TileSetModel from './TileSetModel';
+import { loadModel } from '../utils/models';
 import TileType from './TileType';
 
 type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
@@ -31,7 +32,7 @@ const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
 
 namespace TileSet {
   export const fromModel = _fromModel;
-  export const load = async (id: string) => _fromModel(await TileSetModel.load(id));
+  export const load = async (id: string) => _fromModel(await loadModel(`tilesets/${id}`, 'tile-set'));
 }
 
 export default TileSet;
