@@ -12,9 +12,7 @@
   "devDependencies": {
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
-    "@vue/preload-webpack-plugin": "^2.0.0",
     "ajv": "^8.11.0",
-    "ajv-cli": "^5.0.0",
     "copy-webpack-plugin": "^10.2.4",
     "css-loader": "^6.6.0",
     "file-loader": "^6.2.0",

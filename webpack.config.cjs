@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const PreloadWebpackPlugin = require('@vue/preload-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -38,9 +37,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'html/index.html'
-    }),
-    new PreloadWebpackPlugin({
-      preload: 'all'
     }),
     new CopyWebpackPlugin({
       patterns: [
