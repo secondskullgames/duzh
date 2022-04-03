@@ -1,3 +1,4 @@
+import { PredefinedMapModel } from '../../../gen-schema/predefined-map.schema';
 import EquipmentClass from '../../equipment/EquipmentClass';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
@@ -7,8 +8,8 @@ import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
 import TileType from '../../tiles/TileType';
 import UnitClass from '../../units/UnitClass';
+import { loadModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
-import PredefinedMapModel from './PredefinedMapModel';
 
 type PredefinedMapClass = {
   imageFilename: string,
@@ -30,8 +31,8 @@ const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass
   const enemyColors = await _convertColorMap(model.enemyColors, UnitClass.load);
   const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemClass.load(x)));
   const equipmentColors = await _convertColorMap(model.equipmentColors, EquipmentClass.load);
-  const doorColors = await _convertColorMap(model.doorColors, x => Promise.resolve(x as DoorDirection));
-  const spawnerColors = await _convertColorMap(model.spawnerColors, x => Promise.resolve(x));
+  const doorColors = await _convertColorMap(model.doorColors || {}, x => Promise.resolve(x as DoorDirection));
+  const spawnerColors = await _convertColorMap(model.spawnerColors || {}, x => Promise.resolve(x));
   const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
   const music = model.music ? await Music.loadMusic(model.music as string) : null;
 
@@ -62,7 +63,7 @@ const _convertColorMap = async <T> (
 
 namespace PredefinedMapClass {
   export const fromModel = _fromModel;
-  export const load = async (id: string) => _fromModel(await PredefinedMapModel.load(id));
+  export const load = async (id: string) => _fromModel(await loadModel(`maps/predefined/${id}`, 'predefined-map'));
 }
 
 export default PredefinedMapClass;

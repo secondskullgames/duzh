@@ -27,7 +27,10 @@ const loadFile = async (filename: string): Promise<any> => {
 const ajv = new Ajv();
 
 const validate = async (schemaName: string, dataFilenames: string[]) => {
-  const validate = ajv.getSchema(schemaName)!!;
+  const validate = ajv.getSchema(`${schemaName}.schema.json`);
+  if (!validate) {
+    throw new Error(`Failed to load schema ${schemaName}`);
+  }
   for (const dataFilename of dataFilenames) {
     console.log(`Validating ${dataFilename}`);
     const data = await loadFile(dataFilename);

@@ -1,8 +1,11 @@
+import { UnitModel } from '../../gen-schema/unit.schema';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import { UnitType } from '../types/types';
+import { loadModel } from '../utils/models';
 import AIParameters from './controllers/AIParameters';
 import UnitAbility from './UnitAbility';
-import UnitModel from './UnitModel';
+
+const schemaFilename = 'unit';
 
 interface UnitClass {
   readonly name: string;
@@ -38,7 +41,7 @@ const _fromModel = async (model: UnitModel): Promise<UnitClass> => {
 
 namespace UnitClass {
   export const fromModel = _fromModel;
-  export const load = async (unitModelId: string) => _fromModel(await UnitModel.load(unitModelId));
+  export const load = async (id: string) => _fromModel(await loadModel(`units/${id}`, 'unit'));
 }
 
 export default UnitClass;

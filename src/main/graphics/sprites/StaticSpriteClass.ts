@@ -1,6 +1,7 @@
+import { StaticSpriteModel } from '../../../gen-schema/static-sprite.schema';
 import Offsets from '../../geometry/Offsets';
+import { loadModel } from '../../utils/models';
 import Color from '../Color';
-import StaticSpriteModel from './StaticSpriteModel';
 
 type StaticSpriteClass = {
   name: string,
@@ -16,7 +17,7 @@ const _fromModel = async (model: StaticSpriteModel): Promise<StaticSpriteClass> 
 
 namespace StaticSpriteClass {
   export const fromModel = _fromModel;
-  export const load = async (id: string) => fromModel(await StaticSpriteModel.load(id));
+  export const load = async (id: string) => _fromModel(await loadModel(`sprites/static/${id}`, 'static-sprite'));
 }
 
 export default StaticSpriteClass;

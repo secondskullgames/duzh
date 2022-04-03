@@ -1,5 +1,6 @@
 {
-  "$id": "predefined-map",
+  "$id": "predefined-map.schema.json",
+  "title": "PredefinedMapModel",
   "type": "object",
   "properties": {
     "imageFilename": {
@@ -51,6 +52,7 @@
   ],
   "definitions": {
     "TileType": {
+      "title": "PredefinedMapModel_TileType",
       "enum": [
         "FLOOR",
         "FLOOR_HALL",
@@ -63,10 +65,12 @@
       "type": "string"
     },
     "Color": {
+      "title": "PredefinedMapModel_Color",
       "type": "string",
       "pattern": "^[A-Z_]+$"
     },
     "ColorMap": {
+      "title": "PredefinedMapModel_ColorMap",
       "type": "object",
       "patternProperties": {
         "^[A-Z_]+$": {

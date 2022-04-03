@@ -1,5 +1,6 @@
+import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
+import { loadModel } from '../../utils/models';
 import MapLayout from '../MapLayout';
-import GeneratedMapModel from './GeneratedMapModel';
 
 type GeneratedMapClass = {
   layout: MapLayout,
@@ -22,7 +23,7 @@ const _fromModel = async (model: GeneratedMapModel): Promise<GeneratedMapClass> 
 
 namespace GeneratedMapClass {
   export const fromModel = _fromModel;
-  export const load = async (id: string) => fromModel(await GeneratedMapModel.load(id));
+  export const load = async (id: string) => _fromModel(await loadModel(`maps/generated/${id}`, 'generated-map'));
 }
 
 export default GeneratedMapClass;

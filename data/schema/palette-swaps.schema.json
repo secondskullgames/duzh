@@ -1,5 +1,6 @@
 {
-  "$id": "palette-swaps",
+  "$id": "palette-swaps.schema.json",
+  "title": "PaletteSwapsModel",
   "type": "object",
   "patternProperties": {
     "^[A-Z_]+$": {

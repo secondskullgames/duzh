@@ -1,10 +1,7 @@
-/*
- * This file provides a schema for the JSON sprite models found in /data/sprites.
- */
-
+import { DynamicSpriteModel } from '../../../gen-schema/dynamic-sprite.schema';
 import Offsets from '../../geometry/Offsets';
+import { loadModel } from '../../utils/models';
 import Color from '../Color';
-import DynamicSpriteModel from './DynamicSpriteModel';
 import SpriteCategory from './SpriteCategory';
 
 type DynamicSpriteClass = {
@@ -31,7 +28,7 @@ const _fromModel = async (model: DynamicSpriteModel): Promise<DynamicSpriteClass
 
 namespace DynamicSpriteClass {
   export const fromModel = _fromModel;
-  export const load = async (id: string, category: SpriteCategory) => fromModel(await DynamicSpriteModel.load(id, category));
+  export const load = async (id: string, category: SpriteCategory) => _fromModel(await loadModel(`sprites/${category}/${id}`, 'dynamic-sprite'));
 }
 
 export default DynamicSpriteClass;

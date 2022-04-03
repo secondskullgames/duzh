@@ -1,5 +1,6 @@
 {
-  "$id": "generated-map",
+  "$id": "generated-map.schema.json",
+  "title": "GeneratedMapModel",
   "type": "object",
   "properties": {
     "layout": {

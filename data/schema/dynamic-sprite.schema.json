@@ -1,5 +1,6 @@
 {
-  "$id": "dynamic-sprite",
+  "$id": "dynamic-sprite.schema.json",
+  "title": "DynamicSpriteModel",
   "type": "object",
   "properties": {
     "animations": {
@@ -36,6 +37,7 @@
   "additionalProperties": false,
   "definitions": {
     "Animation": {
+      "title": "DynamicSprite_Animation",
       "type": "object",
       "properties": {
         "frames": {
@@ -65,6 +67,7 @@
       ]
     },
     "Offsets": {
+      "title": "DynamicSprite_Offsets",
       "properties": {
         "dx": {
           "type": "number"
