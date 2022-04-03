@@ -2,6 +2,7 @@ import { StaticSpriteModel } from '../../../gen-schema/static-sprite.schema';
 import Offsets from '../../geometry/Offsets';
 import { loadModel } from '../../utils/models';
 import Color from '../Color';
+import Colors from '../Colors';
 
 type StaticSpriteClass = {
   name: string,
@@ -12,7 +13,7 @@ type StaticSpriteClass = {
 
 const _fromModel = async (model: StaticSpriteModel): Promise<StaticSpriteClass> => ({
   ...model,
-  transparentColor: model.transparentColor ? Color.fromHex(model.transparentColor) : null
+  transparentColor: model.transparentColor ? Colors[model.transparentColor] : null
 });
 
 namespace StaticSpriteClass {

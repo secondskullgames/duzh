@@ -33,7 +33,7 @@
     "preBuild": "genSchema",
     "build": "npx webpack",
     "serve": "npx webpack serve",
-    "clean": "npx rimraf build",
+    "clean": "npx rimraf build && npx rimraf src/gen-schema",
     "validate": "node --loader ts-node/esm scripts/validate.ts",
     "test": "npm run validate"
   },

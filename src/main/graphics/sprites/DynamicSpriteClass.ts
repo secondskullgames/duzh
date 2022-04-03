@@ -2,6 +2,7 @@ import { DynamicSpriteModel } from '../../../gen-schema/dynamic-sprite.schema';
 import Offsets from '../../geometry/Offsets';
 import { loadModel } from '../../utils/models';
 import Color from '../Color';
+import Colors from '../Colors';
 import SpriteCategory from './SpriteCategory';
 
 type DynamicSpriteClass = {
@@ -23,7 +24,7 @@ type DynamicSpriteClass = {
 
 const _fromModel = async (model: DynamicSpriteModel): Promise<DynamicSpriteClass> => ({
   ...model,
-  transparentColor: model.transparentColor ? Color.fromHex(model.transparentColor) : null
+  transparentColor: model.transparentColor ? Colors[model.transparentColor] : null
 });
 
 namespace DynamicSpriteClass {
