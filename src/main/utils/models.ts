@@ -28,7 +28,10 @@ const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
   }
 
   console.debug(`Validating ${path}`);
-  const data = (await import(`../../../data/${path}.json`)).default;
+  const data = (await import(
+    /* webpackMode: "eager" */
+    `../../../data/${path}.json`
+  )).default;
   if (!validate(data)) {
     throw new Error(`Failed to validate ${path}: ${JSON.stringify(validate.errors)}`);
   }
