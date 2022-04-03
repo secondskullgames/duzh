@@ -71,7 +71,10 @@ const _createInventoryWeapon = async (equipmentClass: EquipmentClass): Promise<I
 const createEquipment = async (equipmentClass: EquipmentClass): Promise<Equipment> => {
   const spriteName = equipmentClass.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentClass.paletteSwaps);
-  const equipment = new Equipment({ equipmentClass, sprite });
+  const inventoryItem = (equipmentClass.itemCategory === 'WEAPON')
+    ? await _createInventoryWeapon(equipmentClass)
+    : null;
+  const equipment = new Equipment({ equipmentClass, sprite, inventoryItem });
   sprite.target = equipment;
   return equipment;
 };

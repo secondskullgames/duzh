@@ -13,7 +13,7 @@ const DRAW_BEHIND_PREFIX = '_B';
 type Props = {
   equipmentClass: EquipmentClass,
   sprite: Sprite,
-  inventoryItem?: InventoryItem
+  inventoryItem?: InventoryItem | null
 };
 
 class Equipment implements Animatable {
