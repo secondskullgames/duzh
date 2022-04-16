@@ -8,8 +8,8 @@ import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapG
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapClass from './generated/GeneratedMapClass';
 import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCorridorMapGenerator2';
+import PathMapGenerator from './generated/PathMapGenerator';
 import MapInstance from './MapInstance';
-import MapLayout from './MapLayout';
 import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 import PredefinedMapClass from './predefined/PredefinedMapClass';
@@ -59,7 +59,7 @@ const _loadMapWithCounts = async <T> (
 const loadPredefinedMap = async (mapClass: PredefinedMapClass): Promise<MapInstance> =>
   new PredefinedMapBuilder(mapClass).build();
 
-const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractMapGenerator => {
+const _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {
   switch (mapLayout) {
     case 'ROOMS_AND_CORRIDORS': {
       const useNewMapGenerator = true;
@@ -76,6 +76,10 @@ const _getDungeonGenerator = (mapLayout: MapLayout, tileSet: TileSet): AbstractM
     }
     case 'BLOB':
       return new BlobMapGenerator(tileSet);
+    case 'PATH':
+      return new PathMapGenerator(tileSet);
+    default:
+      throw new Error(`Unknown map layout ${mapLayout}`);
   }
 };
 

@@ -71,9 +71,9 @@ abstract class AbstractMapGenerator {
       if (isValid) {
         return map;
       } else {
-        console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
-        //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
-        //return map;
+        //console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
+        console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
+        return map;
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);

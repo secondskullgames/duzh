@@ -86,7 +86,8 @@ const startGame = async () => {
 };
 
 const startGameDebug = async () => {
-  const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
+  const mapInstance = await MapFactory.loadMap({ type: 'generated', id: 'test' });
+  // const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
   GameState.getInstance().setMap(mapInstance);
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);

@@ -56,6 +56,7 @@ class Pathfinder {
    * http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html#sketch
    *
    * @param tiles All allowable unblocked tiles
+   * @return a path from {@code start} to {@code goal}, or an empty list if none was found
    */
   findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
     const t1 = new Date().getTime();
