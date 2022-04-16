@@ -1,8 +1,8 @@
+import { head } from './arrays';
+
 /**
  * @param max inclusive
  */
-import { head } from './arrays';
-
 const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 const randBoolean = () => randInt(0, 1) === 1;
 const random = () => Math.random();
