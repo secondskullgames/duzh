@@ -64,16 +64,21 @@ abstract class AbstractMapGenerator {
     const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       const t1 = new Date().getTime();
-      const map = this.generateEmptyMap(width, height);
+      let map;
+      try {
+        map = this.generateEmptyMap(width, height);
+      } catch (e) {
+        continue;
+      }
       const isValid = this._validateTiles(map);
       const t2 = new Date().getTime();
       console.debug(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
       if (isValid) {
         return map;
       } else {
-        //console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
-        console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
-        return map;
+        console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
+        //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
+        //return map;
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);
@@ -133,7 +138,7 @@ abstract class AbstractMapGenerator {
             // continue, can't place a wall directly below a floor
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
-            if (twoUp !== 'WALL_TOP') {
+            if (twoUp !== 'WALL_TOP' && twoUp !== 'NONE') {
               console.warn('Invalid map: can\'t show a wall without a tile for its top');
               return false;
             }

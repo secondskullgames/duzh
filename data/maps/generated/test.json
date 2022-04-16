@@ -1,11 +1,11 @@
 {
-  "layout": "PATH",
+  "layout": "ROOMS_AND_CORRIDORS_3",
   "tileSet": "dungeon",
   "levelNumber": 1,
   "width": 32,
   "height": 24,
   "enemies": {
-    "snake": 10
+    "snake": 1
   },
   "equipment": {
     "bronze_sword":  1

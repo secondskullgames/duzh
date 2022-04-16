@@ -1,4 +1,4 @@
-import { Rect } from '../../../types/types';
+import Rect from '../../../geometry/Rect';
 import { randInt } from '../../../utils/random';
 
 import RoomRegion from './RoomRegion';

@@ -9,6 +9,7 @@ import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
 import GeneratedMapClass from './generated/GeneratedMapClass';
 import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCorridorMapGenerator2';
 import PathMapGenerator from './generated/PathMapGenerator';
+import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
 import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
@@ -73,6 +74,9 @@ const _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapG
         minRoomDimension,
         maxRoomDimension
       });
+    }
+    case 'ROOMS_AND_CORRIDORS_3': {
+      return new RoomCorridorMapGenerator3(tileSet);
     }
     case 'BLOB':
       return new BlobMapGenerator(tileSet);
