@@ -25,7 +25,7 @@ const VERTICAL_SECTION_PADDING = 2;
  *
  * Note that this was ported from a previous Java implementation and may not be idiomatic Typescript.
  */
-class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
+class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   // The following ASCII diagram looks horrible but is necessary to explain how section sizing works.
   // Section dimensions are calculated as the sum of room dimensions, two sets of padding, and an extra
   // row/column for section boundaries.
@@ -71,4 +71,4 @@ class RoomCorridorLevelGenerator2 extends AbstractMapGenerator {
   };
 }
 
-export default RoomCorridorLevelGenerator2;
+export default RoomCorridorMapGenerator2;

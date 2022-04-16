@@ -2,7 +2,6 @@
   "name": "roguelike-js",
   "version": "0.1.0",
   "description": "A graphical Roguelike in the browser, written in Typescript",
-  "main": "core/main.js",
   "dependencies": {
     "jszip": "^3.7.1",
     "react": "^17.0.2",
