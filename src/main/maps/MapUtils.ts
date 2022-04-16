@@ -1,7 +1,7 @@
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
+import Rect from '../geometry/Rect';
 import TileType from '../tiles/TileType';
-import { Rect } from '../types/types';
 import { sortBy } from '../utils/arrays';
 
 /**

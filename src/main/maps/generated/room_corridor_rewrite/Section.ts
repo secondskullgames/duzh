@@ -1,4 +1,4 @@
-import { Rect } from '../../../types/types';
+import Rect from '../../../geometry/Rect';
 import { checkArgument, checkState } from '../../../utils/preconditions';
 import SplitDirection from '../room_corridor_rewrite/SplitDirection';
 import Connection from './Connection';

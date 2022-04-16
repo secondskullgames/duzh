@@ -1,5 +1,6 @@
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
+import Rect from '../geometry/Rect';
 import Entity from './Entity';
 
 /*
@@ -18,14 +19,7 @@ interface Projectile extends Entity {
   direction: Direction
 }
 
-interface Rect {
-  left: number,
-  top: number,
-  width: number,
-  height: number
-}
-
-interface Room extends Rect {
+type Room = Rect & {
   exits: Coordinates[]
 }
 
@@ -44,7 +38,6 @@ export {
   GameScreen,
   Pixel,
   Projectile,
-  Rect,
   Room,
   UnitType
 };

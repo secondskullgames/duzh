@@ -1,6 +1,6 @@
+import Rect from '../../../geometry/Rect';
 import TileSet from '../../../tiles/TileSet';
 import TileType from '../../../tiles/TileType';
-import { Rect } from '../../../types/types'
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import EmptyMap from '../EmptyMap';
 import Section from './Section';

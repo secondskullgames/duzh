@@ -1,5 +1,5 @@
+import Rect from '../../main/geometry/Rect';
 import { areAdjacent } from '../../main/maps/MapUtils';
-import { Rect } from '../../main/types/types';
 
 const testAreAdjacent = () => {
   // right-left
