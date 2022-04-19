@@ -1,6 +1,6 @@
 {
   "layout": "ROOMS_AND_CORRIDORS",
-  "tileSet": "kroz",
+  "tileSet": "dungeon_new",
   "levelNumber": 1,
   "width": 30,
   "height": 20,
