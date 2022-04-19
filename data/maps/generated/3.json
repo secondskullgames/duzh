@@ -1,6 +1,6 @@
 {
-  "layout": "ROOMS_AND_CORRIDORS",
-  "tileSet": "dungeon_cga",
+  "layout": "BLOB",
+  "tileSet": "cave",
   "levelNumber": 3,
   "width": 32,
   "height": 24,
