@@ -8,5 +8,10 @@
     "WALL": ["wall"],
     "STAIRS_DOWN": ["stairs_down2"],
     "NONE": ["wall_top"]
+  },
+  "paletteSwaps": {
+    "DARK_PURPLE": "BLACK",
+    "MAGENTA": "DARK_RED",
+    "GREEN": "DARK_RED"
   }
 }
