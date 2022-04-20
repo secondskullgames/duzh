@@ -1,6 +1,6 @@
 {
   "layout": "ROOMS_AND_CORRIDORS_3",
-  "tileSet": "catacomb",
+  "tileSet": "catacomb_red",
   "levelNumber": 5,
   "width": 36,
   "height": 26,
