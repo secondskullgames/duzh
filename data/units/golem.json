@@ -18,8 +18,8 @@
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "aiParameters": {
-    "speed": 0.9,
-    "visionRange": 8,
+    "speed": 0.5,
+    "visionRange": 6,
     "fleeThreshold": 0
   },
   "abilities": {
