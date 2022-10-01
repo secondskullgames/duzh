@@ -50,13 +50,15 @@ const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass
 };
 
 const _convertColorMap = async <T> (
-  map: Record<string, string>,
+  map: Record<string, string> | undefined,
   valueFunc: (value: string) => Promise<T>
 ): Promise<Record<string, T>> => {
   const converted: Record<string, T> = {};
-  for (const [colorName, value] of Object.entries(map)) {
-    const color = Colors[colorName];
-    converted[color.hex] = await valueFunc(value);
+  if (map) {
+    for (const [colorName, value] of Object.entries(map)) {
+      const color = Colors[colorName];
+      converted[color.hex] = await valueFunc(value);
+    }
   }
   return converted;
 };

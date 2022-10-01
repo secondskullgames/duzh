@@ -5,8 +5,6 @@ import { loadModel } from '../utils/models';
 import AIParameters from './controllers/AIParameters';
 import UnitAbility from './UnitAbility';
 
-const schemaFilename = 'unit';
-
 interface UnitClass {
   readonly name: string;
   readonly sprite: string,
