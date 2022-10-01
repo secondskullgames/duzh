@@ -1,5 +1,5 @@
 {
-  "name": "grunt",
+  "name": "Grunt",
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
@@ -25,9 +25,10 @@
     "bronze_sword"
   ],
   "aiParameters": {
-    "speed": 0.95,
+    "speed": 0.92,
     "visionRange": 8,
-    "fleeThreshold": 0.1
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
   },
   "abilities": {
     "1": ["ATTACK"]

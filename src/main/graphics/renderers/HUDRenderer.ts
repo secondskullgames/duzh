@@ -79,7 +79,7 @@ class HUDRenderer extends Renderer {
       if (!!ability.icon) {
         await this._renderAbility(ability, left, top);
         await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
-        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.WHITE, 'center');
+        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
         left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
         keyNumber++;
       }

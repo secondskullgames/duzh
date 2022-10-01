@@ -27,7 +27,7 @@ class InventoryMap {
   }
 
   add(item: InventoryItem) {
-    this._map[item.category].push(item);
+    this._map[item.category]?.push(item);
     if (this.selectedCategory === item.category && this.selectedItem === null) {
       this.selectedItem = item;
     }

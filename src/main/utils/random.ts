@@ -6,6 +6,7 @@ import { head } from './arrays';
 const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 const randBoolean = () => randInt(0, 1) === 1;
 const random = () => Math.random();
+const randChance = (chance: number) => Math.random() <= chance;
 
 const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
 
@@ -64,6 +65,7 @@ const sample = <T> (list: T[], count?: number): T[] => {
 export {
   random,
   randBoolean,
+  randChance,
   randChoice,
   randInt,
   sample,

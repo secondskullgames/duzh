@@ -1,5 +1,5 @@
 {
-  "name": "sorceress",
+  "name": "Sorceress",
   "type": "HUMAN",
   "sprite": "female",
   "paletteSwaps": {
@@ -28,6 +28,7 @@
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
   "abilities": {

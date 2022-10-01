@@ -1,5 +1,5 @@
 {
-  "name": "soldier",
+  "name": "Goblin Soldier",
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
@@ -15,7 +15,7 @@
   },
   "startingLife": 80,
   "startingMana": null,
-  "startingDamage": 4,
+  "startingDamage": 2,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
@@ -27,6 +27,7 @@
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
+    "aggressiveness": 0.7,
     "fleeThreshold": 0.1
   },
   "abilities": {

@@ -1,18 +1,19 @@
 {
-  "name": "snake",
+  "name": "Snake",
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
   "startingLife": 15,
   "startingMana": null,
-  "startingDamage": 6,
+  "startingDamage": 8,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "aiParameters": {
     "speed": 0.98,
-    "visionRange": 8,
-    "fleeThreshold": 0.1
+    "visionRange": 12,
+    "autoEngage": false,
+    "fleeThreshold": 0
   },
   "abilities": {
     "1": ["ATTACK"]

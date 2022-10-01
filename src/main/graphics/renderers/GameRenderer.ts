@@ -88,7 +88,7 @@ class GameRenderer extends BufferedRenderer {
       const y = top + (LINE_HEIGHT * i);
       bufferContext.fillStyle = Colors.BLACK.hex;
       bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
-      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, 'left');
     }
   };
 

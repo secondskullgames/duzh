@@ -57,7 +57,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
   };
 
   private _getTargetNumFloorTiles = (max: number) => {
-    const minRatio = 0.4;
+    const minRatio = 0.3;
     const maxRatio = 0.6;
     return randInt(
       Math.round(max * minRatio),
@@ -102,7 +102,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     }
 
     // change these ratios to adjust the "snakiness"
-    const minIndex = Math.floor((candidates.length - 1) * 0.5);
+    const minIndex = Math.floor((candidates.length - 1) * 0.1);
     const maxIndex = Math.floor((candidates.length - 1) * 0.9);
     const index = randInt(minIndex, maxIndex);
 

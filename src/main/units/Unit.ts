@@ -23,7 +23,7 @@ import UnitClass from './UnitClass';
 /**
  * Regenerate this fraction of the unit's health each turn
  */
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 5;
+const LIFE_PER_TURN_MULTIPLIER = 0.01 / 3;
 /**
  * Only regenerate life if the unit's life is less than this (ratio of their total health)
  */
@@ -43,7 +43,7 @@ type Props = {
 
 class Unit implements Entity, Animatable {
   private readonly unitClass: UnitClass;
-  readonly faction: Faction;
+  private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
@@ -54,8 +54,8 @@ class Unit implements Entity, Animatable {
   experience: number;
   life: number;
   maxLife: number;
-  private mana: number;
-  private maxMana: number;
+  mana: number;
+  maxMana: number;
   lifeRemainder: number;
   manaRemainder: number;
   private damage: number;
@@ -68,6 +68,10 @@ class Unit implements Entity, Animatable {
   frameNumber: number;
   private readonly abilities: UnitAbility[];
   stunDuration: number;
+  /**
+   * Used by AI to make certain decisions
+   */
+  private turnsSinceCombatAction: number | null;
 
   constructor({ name, unitClass, faction, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
     this.unitClass = unitClass;
@@ -94,6 +98,7 @@ class Unit implements Entity, Animatable {
     this.frameNumber = 1;
     this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
+    this.turnsSinceCombatAction = null;
 
     this.equipment = new EquipmentMap();
     for (const eq of equipment) {
@@ -124,6 +129,10 @@ class Unit implements Entity, Animatable {
       this.manaRemainder -= deltaMana;
       this.mana = Math.min(this.mana + deltaMana, this.maxMana);
     }
+
+    if (this.turnsSinceCombatAction !== null) {
+      this.turnsSinceCombatAction++;
+    }
   };
 
   private _endOfTurn = () => {
@@ -132,6 +141,7 @@ class Unit implements Entity, Animatable {
   };
 
   getUnitClass = (): UnitClass => this.unitClass;
+  getFaction = (): Faction => this.faction;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
 
@@ -222,6 +232,8 @@ class Unit implements Entity, Animatable {
         await EquipmentScript.onAttack(equipment, equipment.script, { x, y });
       }
     }
+
+    this.turnsSinceCombatAction = 0;
   };
 
   moveTo = async ({ x, y }: Coordinates) => {
@@ -254,9 +266,10 @@ class Unit implements Entity, Animatable {
     }
 
     this.life = Math.max(this.life - adjustedDamage, 0);
+    this.turnsSinceCombatAction = 0;
 
     if (sourceUnit) {
-      GameState.getInstance().pushMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
+      GameState.getInstance().logMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
     }
 
     if (this.life === 0) {
@@ -291,6 +304,8 @@ class Unit implements Entity, Animatable {
 
   getAbilities = () => this.abilities;
   getSprite = () => this.sprite;
+
+  isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
 }
 
 export default Unit;

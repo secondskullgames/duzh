@@ -11,7 +11,7 @@ const pickupItem = (unit: Unit, mapItem: MapItem) => {
   const state = GameState.getInstance();
   const { inventoryItem } = mapItem;
   unit.getInventory().add(inventoryItem);
-  state.pushMessage(`Picked up a ${inventoryItem.name}.`);
+  state.logMessage(`Picked up a ${inventoryItem.name}.`);
   playSound(Sounds.PICK_UP_ITEM);
 };
 

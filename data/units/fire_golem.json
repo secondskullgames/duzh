@@ -1,5 +1,5 @@
 {
-  "name": "fire_golem",
+  "name": "Fire Golem",
   "type": "GOLEM",
   "sprite": "zombie",
   "paletteSwaps": {
@@ -20,6 +20,7 @@
   "aiParameters": {
     "speed": 0.92,
     "visionRange": 10,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "abilities": {

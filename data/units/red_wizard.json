@@ -1,5 +1,5 @@
 {
-  "name": "robed_wizard",
+  "name": "Fire Wizard",
   "type": "WIZARD",
   "sprite": "robed_wizard",
   "paletteSwaps": {
@@ -16,6 +16,7 @@
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "abilities": {

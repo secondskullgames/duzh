@@ -16,15 +16,28 @@ import MapItem from '../objects/MapItem';
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 const EQUIPMENT_FREQUENCY = 0.7;
 
-const createPotion = (lifeRestored: number): InventoryItem => {
+const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
     playSound(Sounds.USE_POTION);
     const prevLife = unit.life;
     unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-    GameState.getInstance().pushMessage(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
+    GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
   };
 
-  return new InventoryItem('Potion', 'POTION', onUse);
+  return new InventoryItem('Life Potion', 'POTION', onUse);
+};
+
+const createManaPotion = (manaRestored: number): InventoryItem => {
+  const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+    playSound(Sounds.USE_POTION);
+    if (unit.mana !== null) {
+      const prevMana = unit.mana;
+      unit.mana = Math.min(unit.mana + manaRestored, unit.maxMana);
+      GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${(unit.mana - prevMana)} mana.`);
+    }
+  };
+
+  return new InventoryItem('Mana Potion', 'POTION', onUse);
 };
 
 const createKey = (): InventoryItem => {
@@ -81,7 +94,7 @@ const createEquipment = async (equipmentClass: EquipmentClass): Promise<Equipmen
 
 const createMapItem = async (itemClass: ItemClass, { x, y }: Coordinates) => {
   const inventoryItem = await itemClass.getInventoryItem();
-  const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite);
+  const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite, itemClass.paletteSwaps);
   return new MapItem({ x, y, sprite, inventoryItem });
 };
 
@@ -104,7 +117,8 @@ export default {
   createKey,
   createMapEquipment,
   createMapItem,
-  createPotion,
+  createLifePotion,
+  createManaPotion,
   createRandomItemOrEquipment,
   createScrollOfFloorFire
 };

@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Direction from '../../geometry/Direction';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
-import { randBoolean, randChoice, weightedRandom } from '../../utils/random';
+import { randBoolean, randChance, randChoice, random, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitAbility from '../UnitAbility';
 import UnitBehaviors from '../UnitBehaviors';
@@ -91,7 +91,7 @@ const HUMAN_REDESIGN: UnitController = {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_REDESIGN behavior requires aiParams!');
-    const { speed, visionRange, fleeThreshold } = aiParameters;
+    const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit, playerUnit);
@@ -101,7 +101,13 @@ const HUMAN_REDESIGN: UnitController = {
     } else if ((unit.life / unit.maxLife) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
-      behavior = UnitBehavior.ATTACK_PLAYER;
+      if (unit.isInCombat()) {
+        behavior = UnitBehavior.ATTACK_PLAYER;
+      } else if (randChance(aggressiveness)) {
+        behavior = UnitBehavior.ATTACK_PLAYER;
+      } else {
+        behavior = UnitBehavior.WANDER;
+      }
     } else {
       if (randBoolean()) {
         behavior = UnitBehavior.STAY;

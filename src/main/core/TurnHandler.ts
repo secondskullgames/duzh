@@ -27,7 +27,8 @@ const playTurn = async () => {
  */
 const _sortUnits = (units: Unit[]): Unit[] => sortBy(
   units,
-  unit => (unit.faction === 'PLAYER') ? 0 : 1
+
+  unit => (unit.getFaction() === 'PLAYER') ? 0 : 1
 );
 
 export default {

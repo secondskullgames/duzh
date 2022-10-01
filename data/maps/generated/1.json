@@ -1,16 +1,16 @@
 {
   "layout": "ROOMS_AND_CORRIDORS",
-  "tileSet": "dungeon_new",
+  "tileSet": "dungeon",
   "levelNumber": 1,
   "width": 30,
   "height": 20,
   "enemies": {
-    "snake": 10
+    "snake": 9
   },
   "equipment": {
     "bronze_sword":  1
   },
   "items": {
-    "life_potion": 3
+    "life_potion": 2
   }
 }

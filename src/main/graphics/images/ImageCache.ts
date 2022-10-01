@@ -11,38 +11,42 @@ type CacheKey = {
   effects?: ImageEffect[]
 };
 
-type ImageCache = {
+interface ImageCache {
   get: ({ filename, transparentColor, paletteSwaps }: CacheKey) => Image | null | undefined,
   put: ({ filename, transparentColor, paletteSwaps }: CacheKey, image: Image | null) => void
-};
+  stringify: (key: CacheKey) => string;
+}
 
-const _hash = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): string => {
-  const stringifiedPaletteSwaps = paletteSwaps?.entries()
-    .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
-    .map(([src, dest]) => `${src.hex}:${dest.hex}`)
-    .join(',')
-    || 'null';
-  const effectNames = effects?.map(effect => effect.name).join(',') || 'null';
-  return `${filename}_${transparentColor?.hex || 'null'}_${stringifiedPaletteSwaps}_${effectNames}`;
-};
+class Impl implements ImageCache {
+  private readonly map: Record<string, Image | null>;
+  constructor() {
+    this.map = {};
+  }
 
-const createImageCache = (): ImageCache => {
-  const map: Record<string, Image | null> = {};
-
-  return {
-    get: ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): Image | null => {
-      const key = _hash({ filename, transparentColor, paletteSwaps, effects });
-      return map[key];
-    },
-    put: ({ filename, transparentColor, paletteSwaps, effects }, image: Image | null) => {
-      const key = _hash({ filename, transparentColor, paletteSwaps, effects });
-      map[key] = image;
-    }
+  get = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): Image | null => {
+    const key = this.stringify({ filename, transparentColor, paletteSwaps, effects });
+    return this.map[key];
   };
-};
+
+  put = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey, image: Image | null) => {
+    const key = this.stringify({ filename, transparentColor, paletteSwaps, effects });
+    this.map[key] = image;
+  };
+
+  stringify = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): string => {
+    const stringifiedPaletteSwaps = paletteSwaps?.entries()
+      .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
+      .map(([src, dest]) => `${src.hex}:${dest.hex}`)
+      .join(',')
+      || 'null';
+    const effectNames = effects?.map(effect => effect.name).join(',') || 'null';
+    return `${filename}_${transparentColor?.hex || 'null'}_${stringifiedPaletteSwaps}_${effectNames}`;
+  };
+}
+
 
 namespace ImageCache {
-  export const create: () => ImageCache = createImageCache;
+  export const create = (): ImageCache => new Impl();
 }
 
 export default ImageCache;

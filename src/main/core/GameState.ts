@@ -60,8 +60,10 @@ class GameState {
   getQueuedAbility = () => this._queuedAbility;
   setQueuedAbility = (ability: UnitAbility | null) => { this._queuedAbility = ability; };
 
-  getMessages = (): string[] => this._messages.getRecentMessages(3);
-  pushMessage = (message: string): void => { this._messages.pushMessage(message); };
+  getMessages = (): string[] => this._messages.getRecentMessages();
+  logMessage = (message: string): void => {
+    this._messages.log(message);
+  };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };
   static getInstance = (): GameState => INSTANCE!!;

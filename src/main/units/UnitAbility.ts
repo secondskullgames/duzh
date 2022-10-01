@@ -378,7 +378,7 @@ class Summon extends UnitAbility {
     const summonedUnit = await UnitFactory.createUnit({
       name: unitClass.name,
       unitClass,
-      faction: unit.faction,
+      faction: unit.getFaction(),
       controller: HUMAN_DETERMINISTIC, // TODO
       level: 1, // whatever
       coordinates

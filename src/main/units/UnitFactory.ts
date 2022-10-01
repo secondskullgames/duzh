@@ -38,14 +38,17 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
   });
 };
 
-const createPlayerUnit = async () => createUnit({
-  name: 'player',
-  unitClass: await UnitClass.load('player'),
-  faction: 'PLAYER',
-  controller: PlayerUnitController.getInstance(),
-  level: 1,
-  coordinates: { x: 0, y: 0 }
-});
+const createPlayerUnit = async (): Promise<Unit> => {
+  const unitClass = await UnitClass.load('player');
+  return createUnit({
+    unitClass,
+    name: unitClass.name,
+    faction: 'PLAYER',
+    controller: PlayerUnitController.getInstance(),
+    level: 1,
+    coordinates: { x: 0, y: 0 }
+  });
+};
 
 export default {
   createUnit,

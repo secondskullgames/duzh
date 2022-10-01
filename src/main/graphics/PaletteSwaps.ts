@@ -4,8 +4,25 @@ import Colors from './Colors';
 
 type PaletteSwaps = {
   entries: () => [Color, Color][],
-  get: (color: Color) => Color | null;
+  get: (color: Color) => Color | null,
+  toString: () => string
 };
+
+class Impl implements PaletteSwaps {
+  constructor(private readonly map: Record<string, Color>) {}
+
+  entries = () => Object.entries(this.map)
+    .map(([srcHex, dest]) => ([Color.fromHex(srcHex), dest]) as [Color, Color]);
+  get = (srcColor: Color): (Color | null) => this.map[srcColor.hex] || null;
+
+  toString = () => {
+    const map: Record<string, string> = {};
+    for (const [src, dest] of this.entries()) {
+      map[src.hex] = dest.hex;
+    }
+    return JSON.stringify(map);
+  };
+}
 
 class Builder {
   private readonly entries: [Color, Color][];
@@ -25,10 +42,7 @@ class Builder {
     for (const [src, dest] of this.entries) {
       map[src.hex] = dest;
     }
-    return {
-      entries: () => this.entries,
-      get: (srcColor: Color): (Color | null) => map[srcColor.hex] || null
-    };
+    return new Impl(map);
   };
 }
 

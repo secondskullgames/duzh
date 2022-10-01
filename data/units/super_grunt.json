@@ -1,5 +1,5 @@
 {
-  "name": "super_grunt",
+  "name": "Super Grunt",
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
@@ -21,8 +21,8 @@
   "aiParameters": {
     "speed": 1,
     "visionRange": 10,
-    "fleeThreshold": 0,
-    "fleeChance": 0
+    "aggressiveness": 1,
+    "fleeThreshold": 0
   },
   "abilities": {
     "1": ["ATTACK"]
