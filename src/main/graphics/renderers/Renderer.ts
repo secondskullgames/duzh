@@ -23,14 +23,14 @@ abstract class Renderer {
     this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
   }
 
-  render = async (): Promise<ImageBitmap> => {
+  render = async (): Promise<ImageData> => {
     const t1 = new Date().getTime();
     const { width, height, id } = this;
     await this._redraw();
-    const imageBitmap = await createImageBitmap(this.context.getImageData(0, 0, width, height));
+    const imageData = this.context.getImageData(0, 0, width, height);
     const t2 = new Date().getTime();
     console.debug(`${id} rendered in ${t2 - t1} ms`);
-    return imageBitmap;
+    return imageData;
   };
 
   abstract _redraw: () => Promise<void>;
