@@ -32,7 +32,6 @@ const _wanderAndAttack = async (unit: Unit) => {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    const { dx, dy } = { dx: x - unit.x, dy: y - unit.y };
     await UnitAbility.ATTACK.use(unit, { x, y });
   }
 };

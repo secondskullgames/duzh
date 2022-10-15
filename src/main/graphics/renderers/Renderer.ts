@@ -20,7 +20,7 @@ abstract class Renderer {
     this.canvas.width = width;
     this.canvas.height = height;
     this.canvas.classList.add(this.id);
-    this.context = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.context = this.canvas.getContext('2d')!;
   }
 
   render = async (): Promise<ImageData> => {

@@ -9,11 +9,17 @@ type PaletteSwaps = {
 };
 
 class Impl implements PaletteSwaps {
-  constructor(private readonly map: Record<string, Color>) {}
+  private readonly _map: Record<string, Color>;
+  private readonly _entries: [Color, Color][];
 
-  entries = () => Object.entries(this.map)
-    .map(([srcHex, dest]) => ([Color.fromHex(srcHex), dest]) as [Color, Color]);
-  get = (srcColor: Color): (Color | null) => this.map[srcColor.hex] || null;
+  constructor(map: Record<string, Color>) {
+    this._map = map;
+    this._entries = Object.entries(map)
+      .map(([srcHex, dest]) => ([Color.fromHex(srcHex), dest]) as [Color, Color]);
+  }
+
+  entries = () => this._entries;
+  get = (srcColor: Color): (Color | null) => this._map[srcColor.hex] || null;
 
   toString = () => {
     const map: Record<string, string> = {};

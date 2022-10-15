@@ -8,14 +8,13 @@ import Sprite from './Sprite';
 type Props<T> = {
   offsets: Offsets,
   paletteSwaps?: PaletteSwaps,
-  imageMap: Record<string, () => Promise<Image>>
+  imageMap: Record<string, Image>
 };
 
 class DynamicSprite<T extends Animatable> extends Sprite {
   target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
-  private readonly imageMap: Record<string, () => Promise<Image>>;
-  private readonly promises: Partial<Record<string, Promise<Image | null>>> = {};
+  private readonly imageMap: Record<string, Image>;
 
   constructor({ offsets, paletteSwaps, imageMap }: Props<T>) {
     super(offsets);
@@ -27,17 +26,10 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   /**
    * @override {@link Sprite#getImage}
    */
-  getImage = (): Promise<Image | null> => {
+  getImage = (): Image | null => {
     const target = checkNotNull(this.target);
     const frameKey = target.getAnimationKey();
-    if (this.promises[frameKey]) {
-      return this.promises[frameKey] || Promise.resolve(null);
-    }
-
-    const supplier = this.imageMap[frameKey];
-    const promise: Promise<Image | null> = supplier?.() || Promise.resolve(null);
-    this.promises[frameKey] = promise;
-    return promise;
+    return this.imageMap[frameKey] ?? null;
   };
 }
 

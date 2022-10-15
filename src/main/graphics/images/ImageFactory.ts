@@ -34,7 +34,7 @@ const getImage = async ({ filename, filenames: _filenames, transparentColor, pal
     if (cached) {
       return cached;
     }
-    const promise = async () => {
+    promises.push(new Promise(async (resolve) => {
       let imageData: ImageData | null;
       if (rawCache[filename]) {
         imageData = rawCache[filename];
@@ -44,21 +44,20 @@ const getImage = async ({ filename, filenames: _filenames, transparentColor, pal
       }
       if (imageData) {
         if (transparentColor) {
-          imageData = await applyTransparentColor(imageData, transparentColor);
+          imageData = applyTransparentColor(imageData, transparentColor);
         }
         if (paletteSwaps) {
-          imageData = await replaceColors(imageData, paletteSwaps);
+          imageData = replaceColors(imageData, paletteSwaps);
         }
         for (const effect of (effects || [])) {
-          imageData = await effect.apply(imageData);
+          imageData = effect.apply(imageData);
         }
         const image = await Image.create({ imageData, filename });
         CACHE.put(cacheKey, image);
-        return image;
+        resolve(image);
       }
-      return null;
-    };
-    promises.push(promise());
+      resolve(null);
+    }));
   }
   const image: Image | null | undefined = (await Promise.all(promises)).find(image => image);
   if (!image) {

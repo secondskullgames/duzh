@@ -41,7 +41,7 @@ class HUDRenderer extends Renderer {
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
-    this.context.drawImage(image.bitmap, 0, 0, image.bitmap.width, image.bitmap.height);
+    this.context.drawImage(image.bitmap, 0, 0, image.width, image.height);
   };
 
   /**

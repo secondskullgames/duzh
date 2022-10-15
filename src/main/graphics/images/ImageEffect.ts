@@ -3,7 +3,7 @@ import { replaceAll } from './ImageUtils';
 
 type ImageEffect = {
   name: string,
-  apply: (imageData: ImageData) => Promise<ImageData>
+  apply: (imageData: ImageData) => ImageData
 };
 
 namespace ImageEffect {
