@@ -18,10 +18,10 @@
     "PLAYER_THIGHS": "DARK_BROWN"
   },
   "startingLife": 100,
-  "startingMana": 10,
+  "startingMana": 6,
   "startingDamage": 6,
   "lifePerLevel": 0,
-  "manaPerLevel": 5,
+  "manaPerLevel": 2,
   "damagePerLevel": 0,
   "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
   "abilities": {

@@ -28,16 +28,23 @@ const rgb2hex = ({ r, g, b }: RGB): string => {
   return `#${p(r)}${p(g)}${p(b)}`;
 };
 
+const _hex2Color: Record<string, Color> = {};
+
 namespace Color {
   export const fromHex = (hex: string) => {
+    if (_hex2Color[hex]) {
+      return _hex2Color[hex];
+    }
     const matches = hex.match(colorMatcher)?.[0];
     if (!matches) {
       throw new Error(`Invalid hex color: ${hex}`);
     }
-    return {
+    const color = {
       hex,
       rgb: hex2rgb(hex)
     };
+    _hex2Color[hex] = color;
+    return color;
   };
 
   export const fromRGB = (rgb: RGB) => ({

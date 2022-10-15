@@ -32,7 +32,7 @@ class MapInstance {
   readonly doors: Door[];
   readonly spawners: Spawner[];
   readonly projectiles: Entity[];
-  private readonly revealedTiles: Coordinates[];
+  private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
 
   constructor({
@@ -53,7 +53,7 @@ class MapInstance {
     this.units = units;
     this.items = items;
     this.projectiles = [];
-    this.revealedTiles = [];
+    this.revealedTiles = new Set();
     this.music = music;
   }
 
@@ -124,17 +124,11 @@ class MapInstance {
     height: this.height
   });
 
-  /**
-   * TODO: O(n)
-   */
   isTileRevealed = ({ x, y }: Coordinates): boolean =>
-    this.revealedTiles.some(tile => Coordinates.equals({ x, y }, tile));
+    this.revealedTiles.has(JSON.stringify({ x, y }));
 
-  revealTile = ({ x, y }: Coordinates) => {
-    if (!this.revealedTiles.find(it => Coordinates.equals(it, { x, y }))) {
-      this.revealedTiles.push({ x, y });
-    }
-  };
+  revealTile = ({ x, y }: Coordinates) =>
+    this.revealedTiles.add(JSON.stringify({ x, y }));
 
   unitExists = (unit: Unit): boolean => !!this.units.find(u => u === unit);
 }

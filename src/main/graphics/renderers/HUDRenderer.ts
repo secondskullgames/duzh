@@ -62,28 +62,35 @@ class HUDRenderer extends Renderer {
 
     const left = BORDER_MARGIN + BORDER_PADDING;
     const top = BORDER_MARGIN + BORDER_PADDING;
+
+    const promises: Promise<void>[] = [];
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      promises.push(this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left'));
     }
+    await Promise.all(promises);
   };
 
   _renderMiddlePanel = async () => {
-    let left = LEFT_PANE_WIDTH + BORDER_PADDING; // border width is considered part of the left panel
     const top = BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let keyNumber = 1;
+    const promises: Promise<void>[] = [];
     for (let i = 0; i < playerUnit.getAbilities().length; i++) {
       const ability = playerUnit.getAbilities()[i];
+      const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (!!ability.icon) {
-        await this._renderAbility(ability, left, top);
-        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
-        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
-        left += ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH;
-        keyNumber++;
+        promises.push(new Promise(async (resolve) => {
+          await this._renderAbility(ability, left, top);
+          await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+          await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
+          keyNumber++;
+          resolve();
+        }));
       }
     }
+    await Promise.all(promises);
   };
 
   _renderRightPanel = async () => {
@@ -97,7 +104,7 @@ class HUDRenderer extends Renderer {
 
     const lines = [
       `Turn: ${turn}`,
-      `Floor: ${(mapIndex || 0) + 1}`,
+      `Floor: ${mapIndex + 1}`,
     ];
 
     const experienceToNextLevel = playerUnit.experienceToNextLevel();
@@ -105,10 +112,12 @@ class HUDRenderer extends Renderer {
       lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
     }
 
+    const promises: Promise<void>[] = [];
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      promises.push(this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left'));
     }
+    await Promise.all(promises);
   };
 
   _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
@@ -133,12 +142,12 @@ class HUDRenderer extends Renderer {
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });
-    await this.context.drawImage(image.bitmap, left, top);
+    this.context.drawImage(image.bitmap, left, top);
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await renderFont(text, font, color);
-    await drawAligned(imageBitmap, this.context, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
 

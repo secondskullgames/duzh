@@ -27,8 +27,7 @@ abstract class BufferedRenderer extends Renderer {
   _redraw = async (): Promise<void> => {
     const { width, height } = this;
     await this.renderBuffer();
-    const bufferBitmap = await createImageBitmap(this.bufferContext.getImageData(0, 0, width, height));
-    await this.context.drawImage(bufferBitmap, 0, 0);
+    this.context.putImageData(this.bufferContext.getImageData(0, 0, width, height), 0, 0);
   };
 
   abstract renderBuffer(): Promise<void>;
