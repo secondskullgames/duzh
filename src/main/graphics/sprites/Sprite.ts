@@ -14,7 +14,7 @@ abstract class Sprite {
     this.dy = dy;
   }
 
-  abstract getImage(): Promise<Image | null>;
+  abstract getImage(): Image | null;
 }
 
 export default Sprite;

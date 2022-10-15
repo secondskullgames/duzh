@@ -2,11 +2,14 @@ import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
 import RGB from '../RGB';
 
-const applyTransparentColor = async (imageData: ImageData, transparentColor: Color): Promise<ImageData> => {
+const applyTransparentColor = (imageData: ImageData, transparentColor: Color): ImageData => {
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    const r = imageData.data[i];
+    const g = imageData.data[i + 1];
+    const b = imageData.data[i + 2];
+    const a = imageData.data[i + 3];
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
@@ -21,7 +24,7 @@ const applyTransparentColor = async (imageData: ImageData, transparentColor: Col
   return new ImageData(array, imageData.width, imageData.height);
 };
 
-const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Promise<ImageData> => {
+const replaceColors = (imageData: ImageData, colorMap: PaletteSwaps): ImageData => {
   if (!colorMap) {
     return imageData;
   }
@@ -29,7 +32,10 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    const r = imageData.data[i];
+    const g = imageData.data[i + 1];
+    const b = imageData.data[i + 2];
+    const a = imageData.data[i + 3];
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;
@@ -54,12 +60,15 @@ const replaceColors = async (imageData: ImageData, colorMap: PaletteSwaps): Prom
 /**
  * Replace all non-transparent colors with the specified `color`.
  */
-const replaceAll = async (imageData: ImageData, color: Color): Promise<ImageData> => {
+const replaceAll = (imageData: ImageData, color: Color): ImageData => {
   const rgb = color.rgb;
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
-    const [r, g, b, a] = imageData.data.slice(i, i + 4);
+    const r = imageData.data[i];
+    const g = imageData.data[i + 1];
+    const b = imageData.data[i + 2];
+    const a = imageData.data[i + 3];
     array[i] = r;
     array[i + 1] = g;
     array[i + 2] = b;

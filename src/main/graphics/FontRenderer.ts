@@ -85,8 +85,7 @@ const renderFont = async (text: string, font: FontDefinition, color: Color): Pro
   const paletteSwaps = PaletteSwaps.builder()
     .addMapping(Colors.BLACK, color)
     .build();
-  const imageBitmap = await replaceColors(imageData, paletteSwaps)
-    .then(imageData => createImageBitmap(imageData));
+  const imageBitmap = await createImageBitmap(replaceColors(imageData, paletteSwaps));
   const t2 = new Date().getTime();
   console.debug(`font rendered in ${t2 - t1} ms`);
 

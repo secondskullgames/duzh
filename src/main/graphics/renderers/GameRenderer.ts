@@ -94,7 +94,7 @@ class GameRenderer extends BufferedRenderer {
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await ImageFactory.getImage({ filename });
-    await this.bufferContext.drawImage(image.bitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+    this.bufferContext.drawImage(image.bitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };
 
