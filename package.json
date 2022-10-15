@@ -28,6 +28,7 @@
     "gen-schema": "npx json2ts -i \"data/schema/*.schema.json\" -o src/gen-schema --cwd=./data/schema",
     "prebuild": "npm run gen-schema",
     "build": "npx webpack",
+    "preserve": "npm run gen-schema",
     "serve": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf src/gen-schema",
     "validate": "node --loader ts-node/esm scripts/validate.ts",
