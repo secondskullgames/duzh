@@ -98,7 +98,7 @@ class NormalAttack extends UnitAbility {
 
 class HeavyAttack extends UnitAbility {
   constructor() {
-    super({ name: 'HEAVY_ATTACK', manaCost: 15, icon: 'icon1' });
+    super({ name: 'HEAVY_ATTACK', manaCost: 10, icon: 'icon1' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -128,7 +128,7 @@ class HeavyAttack extends UnitAbility {
 
 class KnockbackAttack extends UnitAbility {
   constructor() {
-    super({ name: 'KNOCKBACK_ATTACK', manaCost: 15, icon: 'icon6' });
+    super({ name: 'KNOCKBACK_ATTACK', manaCost: 10, icon: 'icon6' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -170,7 +170,7 @@ class KnockbackAttack extends UnitAbility {
 
 class StunAttack extends UnitAbility {
   constructor() {
-    super({ name: 'STUN_ATTACK', manaCost: 15, icon: 'icon2' });
+    super({ name: 'STUN_ATTACK', manaCost: 10, icon: 'icon2' });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -285,7 +285,7 @@ class Bolt extends UnitAbility {
 
 class Blink extends UnitAbility {
   constructor() {
-    super({ name: 'BLINK', manaCost: 10, icon: 'icon5' });
+    super({ name: 'BLINK', manaCost: 5, icon: 'icon5' });
   }
 
   /**

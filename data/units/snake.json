@@ -12,7 +12,7 @@
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 12,
-    "autoEngage": false,
+    "aggressiveness": 0.5,
     "fleeThreshold": 0
   },
   "abilities": {

@@ -13,9 +13,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "startingLife": 80,
+  "startingLife": 70,
   "startingMana": null,
-  "startingDamage": 2,
+  "startingDamage": 3,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,

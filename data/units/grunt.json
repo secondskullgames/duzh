@@ -25,7 +25,7 @@
     "bronze_sword"
   ],
   "aiParameters": {
-    "speed": 0.92,
+    "speed": 0.95,
     "visionRange": 8,
     "aggressiveness": 0.9,
     "fleeThreshold": 0

@@ -23,7 +23,7 @@ import UnitClass from './UnitClass';
 /**
  * Regenerate this fraction of the unit's health each turn
  */
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 3;
+const LIFE_PER_TURN_MULTIPLIER = 0.01 / 2;
 /**
  * Only regenerate life if the unit's life is less than this (ratio of their total health)
  */

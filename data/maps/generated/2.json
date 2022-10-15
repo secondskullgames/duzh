@@ -5,8 +5,8 @@
   "width": 32,
   "height": 24,
   "enemies": {
-    "snake": 4,
-    "grunt": 4
+    "snake": 6,
+    "grunt": 6
   },
   "equipment": {
     "short_bow":  1

@@ -11,7 +11,7 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "startingLife": 120,
+  "startingLife": 100,
   "startingMana": null,
   "startingDamage": 14,
   "lifePerLevel": 0,
