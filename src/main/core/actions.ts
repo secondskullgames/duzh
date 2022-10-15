@@ -86,6 +86,7 @@ const startGame = async () => {
 };
 
 const startGameDebug = async () => {
+  console.log('debug mode');
   const mapInstance = await MapFactory.loadMap({ type: 'generated', id: 'test' });
   // const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
   GameState.getInstance().setMap(mapInstance);

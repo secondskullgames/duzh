@@ -86,7 +86,39 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
   }
 };
 
-const  _teleportFromPlayerUnit = async (unit: Unit) => {
+const _shootPlayerUnit = async (unit: Unit) => {
+  const state = GameState.getInstance();
+  const playerUnit = state.getPlayerUnit();
+  const map = state.getMap();
+
+  if (unit.mana < UnitAbility.SHOOT_ARROW.manaCost) {
+    return _attackPlayerUnit_withPath(unit);
+  }
+  if (unit.x !== playerUnit.x && unit.y !== playerUnit.y) {
+    return _attackPlayerUnit_withPath(unit);
+  }
+  if (manhattanDistance(unit, playerUnit) <= 1) {
+    return _attackPlayerUnit_withPath(unit);
+  }
+
+  let { x, y } = unit;
+  const dx = Math.sign(playerUnit.x - x);
+  const dy = Math.sign(playerUnit.y - y);
+  x += dx;
+  y += dy;
+
+  while (x !== playerUnit.x || y !== playerUnit.y) {
+    if (map.isBlocked({ x, y })) {
+      return _attackPlayerUnit_withPath(unit);
+    }
+    x += dx;
+    y += dy;
+  }
+
+  await UnitAbility.SHOOT_ARROW.use(unit, { x, y });
+};
+
+const _teleportFromPlayerUnit = async (unit: Unit) => {
   const state = GameState.getInstance();
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
@@ -142,6 +174,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
 namespace UnitBehavior {
   export const WANDER = _wander;
   export const ATTACK_PLAYER = _attackPlayerUnit_withPath;
+  export const SHOOT_PLAYER = _shootPlayerUnit;
   export const FLEE_FROM_PLAYER = _fleeFromPlayerUnit;
   export const STAY = () => Promise.resolve();
   export const TELEPORT_FROM_PLAYER = _teleportFromPlayerUnit;

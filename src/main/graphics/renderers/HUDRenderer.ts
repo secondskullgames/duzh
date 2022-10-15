@@ -80,14 +80,15 @@ class HUDRenderer extends Renderer {
     for (let i = 0; i < playerUnit.getAbilities().length; i++) {
       const ability = playerUnit.getAbilities()[i];
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
-      if (!!ability.icon) {
+      if (ability.icon) {
+        let kn = keyNumber;
         promises.push(new Promise(async (resolve) => {
           await this._renderAbility(ability, left, top);
-          await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+          await this._drawText(`${kn}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
           await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
-          keyNumber++;
           resolve();
         }));
+        keyNumber++;
       }
     }
     await Promise.all(promises);

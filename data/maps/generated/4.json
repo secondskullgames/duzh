@@ -5,8 +5,9 @@
   "width": 34,
   "height": 26,
   "enemies": {
-    "grunt": 9,
-    "soldier": 5
+    "grunt": 5,
+    "soldier": 5,
+    "archer": 3
   },
   "equipment": {
     "steel_sword": 1,

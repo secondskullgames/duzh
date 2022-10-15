@@ -5,11 +5,12 @@ import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
-import { HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
+import { ARCHER, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
 import MapInstance from '../MapInstance';
+import UnitController from '../../units/controllers/UnitController';
 
 type Props = {
   level: number,
@@ -72,10 +73,16 @@ class GeneratedMapBuilder {
     for (const [unitClass, count] of this.enemyUnitClasses) {
       for (let j = 0; j < count; j++) {
         const { x, y } = this.enemyUnitLocations[i];
+        let controller: UnitController;
+        if (unitClass.name === 'Goblin Archer') {
+          controller = ARCHER;
+        } else {
+          controller = HUMAN_REDESIGN;
+        }
         const promise = UnitFactory.createUnit({
           name: unitClass.name, // TODO unique names?
           unitClass,
-          controller: HUMAN_REDESIGN,
+          controller,
           faction: 'ENEMY',
           coordinates: { x, y },
           level: this.level

@@ -13,17 +13,18 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "startingLife": 80,
-  "startingMana": null,
-  "startingDamage": 4,
+  "startingLife": 50,
+  "startingMana": 10,
+  "startingDamage": 2,
   "lifePerLevel": 0,
   "manaPerLevel": null,
   "damagePerLevel": 0,
   "equipment": [
-    "iron_sword",
+    "bronze_sword",
     "red_chain_mail",
     "red_cloak",
-    "gray_wizard_hat"
+    "gray_wizard_hat",
+    "short_bow"
   ],
   "aiParameters": {
     "speed": 0.95,

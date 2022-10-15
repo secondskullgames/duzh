@@ -119,6 +119,39 @@ const HUMAN_REDESIGN: UnitController = {
   }
 };
 
+const ARCHER: UnitController = {
+  issueOrder: async (unit: Unit) => {
+    const playerUnit = GameState.getInstance().getPlayerUnit();
+
+    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'ARCHER behavior requires aiParams!');
+    const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
+
+    let behavior: UnitBehavior;
+    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+
+    if (!_canMove(speed)) {
+      behavior = UnitBehavior.STAY;
+    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+      behavior = UnitBehavior.FLEE_FROM_PLAYER;
+    } else if (distanceToPlayer <= visionRange) {
+      if (unit.isInCombat()) {
+        behavior = UnitBehavior.SHOOT_PLAYER;
+      } else if (randChance(aggressiveness)) {
+        behavior = UnitBehavior.SHOOT_PLAYER;
+      } else {
+        behavior = UnitBehavior.WANDER;
+      }
+    } else {
+      if (randBoolean()) {
+        behavior = UnitBehavior.STAY;
+      } else {
+        behavior = UnitBehavior.WANDER;
+      }
+    }
+    return behavior(unit);
+  }
+};
+
 const WIZARD: UnitController = {
   issueOrder: async (unit: Unit) => {
     const state = GameState.getInstance();
@@ -164,6 +197,7 @@ const _canMove = (speed: number): boolean => {
 };
 
 export {
+  ARCHER,
   HUMAN_AGGRESSIVE,
   HUMAN_CAUTIOUS,
   HUMAN_DETERMINISTIC,
