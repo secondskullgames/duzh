@@ -4,6 +4,7 @@ type Activity =
 | 'ATTACKING'
 | 'SHOOTING'
 | 'DAMAGED'
+| 'BURNED'
 | 'VANISHING'
 | 'APPEARING';
 
@@ -14,6 +15,7 @@ namespace Activity {
     'ATTACKING',
     'SHOOTING',
     'DAMAGED',
+    'BURNED',
     'VANISHING',
     'APPEARING'
   ];

@@ -10,6 +10,7 @@ import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
+import ItemFactory from '../items/ItemFactory';
 
 let renderer: GameRenderer;
 let firstMapPromise: Promise<MapInstance> | null = null;
@@ -83,6 +84,13 @@ const startGame = async () => {
   await render();
   const t2 = new Date().getTime();
   console.log(`Loaded level in ${t2 - t1} ms`);
+
+  for (let i = 0; i < 10; i++) {
+    GameState.getInstance()
+      .getPlayerUnit()
+      .getInventory()
+      .add(await ItemFactory.createScrollOfFloorFire(10));
+  }
 };
 
 const startGameDebug = async () => {

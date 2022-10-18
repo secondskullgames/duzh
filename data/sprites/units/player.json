@@ -35,6 +35,12 @@
         "activity": "standing",
         "number": "1"
       }]
+    },
+    "burned": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
     }
   }
 }

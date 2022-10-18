@@ -160,11 +160,17 @@ const _loadAnimations = async (
           .map(pattern => fillTemplate(pattern, variables));
 
         // TODO - can we get this into the sprite model?
-        const effects = (animationName === 'damaged')
-          ? [ImageEffect.DAMAGED]
-          : [];
-        const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
+        const effects: ImageEffect[] = [];
+        switch(animationName) {
+          case 'damaged':
+            effects.push(ImageEffect.DAMAGED);
+            break;
+          case 'burned':
+            effects.push(ImageEffect.BURNED);
+            break;
+        }
 
+        const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
         const image = await ImageFactory.getImage({
           filenames,
           transparentColor: Colors.WHITE,

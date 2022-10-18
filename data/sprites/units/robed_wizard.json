@@ -34,6 +34,12 @@
         "number": "1"
       }]
     },
+    "burned": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
     "vanishing": {
       "pattern": "${sprite}_${activity}_SE_${number}",
       "frames": [

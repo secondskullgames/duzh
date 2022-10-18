@@ -11,6 +11,10 @@ namespace ImageEffect {
     name: 'DAMAGED',
     apply: (img: ImageData) => replaceAll(img, Colors.WHITE)
   };
+  export const BURNED: ImageEffect = {
+    name: 'BURNED',
+    apply: (img: ImageData) => replaceAll(img, Colors.ORANGE)
+  };
 }
 
 export default ImageEffect;

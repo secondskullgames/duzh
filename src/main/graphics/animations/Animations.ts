@@ -9,8 +9,8 @@ import Unit from '../../units/Unit';
 import { wait } from '../../utils/promises';
 
 const FRAME_LENGTH = 150; // milliseconds
-const ARROW_FRAME_LENGTH = 40; // milliseconds
-const BOLT_FRAME_LENGTH = 40; // milliseconds
+const ARROW_FRAME_LENGTH = 50; // milliseconds
+const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type UnitAnimationFrame = {
@@ -193,7 +193,7 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
     const frame: UnitAnimationFrame[] = [];
     frame.push({ unit: source, activity: 'STANDING' });
     for (let j = 0; j < targets.length; j++) {
-      const activity = (j === i) ? 'DAMAGED' : 'STANDING';
+      const activity = (j === i) ? 'BURNED' : 'STANDING';
       frame.push({ unit: targets[j], activity });
     }
     frames.push({ units: frame });

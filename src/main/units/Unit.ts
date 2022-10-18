@@ -269,7 +269,7 @@ class Unit implements Entity, Animatable {
     this.turnsSinceCombatAction = 0;
 
     if (sourceUnit) {
-      GameState.getInstance().logMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
+      state.logMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
     }
 
     if (this.life === 0) {
@@ -279,6 +279,7 @@ class Unit implements Entity, Animatable {
         return;
       } else {
         playSound(Sounds.ENEMY_DIES);
+        state.logMessage(`${this.name} dies!`);
       }
 
       if (sourceUnit && sourceUnit === playerUnit) {
