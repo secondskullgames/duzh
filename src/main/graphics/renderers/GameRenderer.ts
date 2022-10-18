@@ -100,13 +100,13 @@ class GameRenderer extends BufferedRenderer {
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await renderFont(text, font, color);
-    await drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
   };
 
   private _renderMinimap = async () => {
     const minimapRenderer = new MinimapRenderer();
     const image = await minimapRenderer.render();
-    await this.bufferContext.putImageData(image, 0, 0);
+    this.bufferContext.putImageData(image, 0, 0);
   };
 }
 

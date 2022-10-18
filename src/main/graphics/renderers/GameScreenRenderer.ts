@@ -177,7 +177,7 @@ class GameScreenRenderer extends Renderer {
       transparentColor: Colors.WHITE,
       paletteSwaps
     });
-    await this.context.drawImage(image.bitmap, left, top);
+    this.context.drawImage(image.bitmap, left, top);
   };
 }
 

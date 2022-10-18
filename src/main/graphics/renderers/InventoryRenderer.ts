@@ -28,7 +28,7 @@ class InventoryRenderer extends Renderer {
     const { canvas, context } = this;
 
     const image = await ImageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
-    await context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+    context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
     // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
@@ -82,7 +82,7 @@ class InventoryRenderer extends Renderer {
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await renderFont(text, font, color);
-    await drawAligned(imageBitmap, this.context, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
 

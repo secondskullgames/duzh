@@ -111,17 +111,11 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
   const context = canvas.getContext('2d') as CanvasRenderingContext2D;
   context.drawImage(image.bitmap, 0, 0);
   const imageDataMap: Record<string, ImageData> = {};
-  const promises: Promise<void>[] = [];
 
   for (const c of CHARACTERS) {
-    promises.push(new Promise(async (resolve) => {
-      const imageData = await _getCharacterData(definition, context, c.charCodeAt(0));
-      imageDataMap[c] = imageData;
-      resolve();
-    }));
+    imageDataMap[c] = _getCharacterData(definition, context, c.charCodeAt(0));
   }
 
-  await Promise.all(promises);
   const fontInstance: FontInstance = {
     ...definition,
     imageDataMap
@@ -133,7 +127,7 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
   return fontInstance;
 };
 
-const _getCharacterData = async (definition: FontDefinition, context: CanvasRenderingContext2D, char: number) => {
+const _getCharacterData = (definition: FontDefinition, context: CanvasRenderingContext2D, char: number) => {
   const offset = _getCharOffset(char);
   return context.getImageData(offset * definition.letterWidth, 0, definition.letterWidth, definition.letterHeight);
 };
