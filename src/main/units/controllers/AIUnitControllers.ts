@@ -71,7 +71,7 @@ const HUMAN_DETERMINISTIC: UnitController = {
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       behavior = UnitBehavior.ATTACK_PLAYER;
@@ -98,7 +98,7 @@ const HUMAN_REDESIGN: UnitController = {
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
@@ -131,7 +131,7 @@ const ARCHER: UnitController = {
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {

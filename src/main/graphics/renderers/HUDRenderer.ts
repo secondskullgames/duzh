@@ -53,7 +53,7 @@ class HUDRenderer extends Renderer {
     const lines = [
       playerUnit.name,
       `Level ${playerUnit.level}`,
-      `Life: ${playerUnit.life}/${playerUnit.maxLife}`
+      `Life: ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`
     ];
 
     if (playerUnit.getMana() !== null && playerUnit.getMaxMana() !== null) {

@@ -52,8 +52,8 @@ class Unit implements Entity, Animatable {
   name: string;
   level: number;
   experience: number;
-  life: number;
-  maxLife: number;
+  private life: number;
+  private maxLife: number;
   mana: number;
   maxMana: number;
   lifeRemainder: number;
@@ -142,6 +142,8 @@ class Unit implements Entity, Animatable {
 
   getUnitClass = (): UnitClass => this.unitClass;
   getFaction = (): Faction => this.faction;
+  getLife = () => this.life;
+  getMaxLife = () => this.maxLife;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
 
@@ -224,7 +226,7 @@ class Unit implements Entity, Animatable {
     return null;
   };
 
-  attack = async (target: Unit) => {
+  startAttack = async (target: Unit) => {
     const { x, y } = target;
     await playAttackingAnimation(this, target);
     for (const equipment of this.equipment.getAll()) {
@@ -252,11 +254,13 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  takeDamage = async (baseDamage: number, sourceUnit: Unit | null = null) => {
-    const state = GameState.getInstance();
-    const playerUnit = state.getPlayerUnit();
-    const map = state.getMap();
+  takeDamage = async (baseDamage: number, sourceUnit: Unit | null) => {
+    const adjustedDamage = this._calculateIncomingDamage(baseDamage, sourceUnit);
+    this.life = Math.max(this.life - adjustedDamage, 0);
+    this.turnsSinceCombatAction = 0;
+  };
 
+  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
     let adjustedDamage = baseDamage;
     if (sourceUnit !== null && isInStraightLine(this, sourceUnit)) {
       const shield = this.equipment.getBySlot('SHIELD');
@@ -264,28 +268,16 @@ class Unit implements Entity, Animatable {
         adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount || 0)));
       }
     }
+    return adjustedDamage;
+  };
 
-    this.life = Math.max(this.life - adjustedDamage, 0);
-    this.turnsSinceCombatAction = 0;
-
-    if (sourceUnit) {
-      state.logMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
-    }
-
-    if (this.life === 0) {
-      map.removeUnit(this);
-      if (this === playerUnit) {
-        await gameOver();
-        return;
-      } else {
-        playSound(Sounds.ENEMY_DIES);
-        state.logMessage(`${this.name} dies!`);
-      }
-
-      if (sourceUnit && sourceUnit === playerUnit) {
-        sourceUnit.gainExperience(1);
-      }
-    }
+  /**
+   * @return the amount of life gained
+   */
+  gainLife = (life: number): number => {
+    const lifeGained = Math.min(life, this.maxLife - this.life);
+    this.life += lifeGained;
+    return lifeGained;
   };
 
   /**

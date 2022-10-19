@@ -22,7 +22,7 @@ const killEnemies = async () => {
 
 const killPlayer = async () => {
   const playerUnit = GameState.getInstance().getPlayerUnit();
-  await playerUnit.takeDamage(playerUnit.life);
+  await playerUnit.takeDamage(playerUnit.getMaxLife(), null);
   await render();
 };
 

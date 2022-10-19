@@ -19,9 +19,8 @@ const EQUIPMENT_FREQUENCY = 0.7;
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
     playSound(Sounds.USE_POTION);
-    const prevLife = unit.life;
-    unit.life = Math.min(unit.life + lifeRestored, unit.maxLife);
-    GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${(unit.life - prevLife)} life.`);
+    const lifeGained = unit.gainLife(lifeRestored);
+    GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${lifeGained} life.`);
   };
 
   return new InventoryItem('Life Potion', 'POTION', onUse);

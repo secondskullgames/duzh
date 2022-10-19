@@ -11,6 +11,7 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
 import ItemFactory from '../items/ItemFactory';
+import Unit from '../units/Unit';
 
 let renderer: GameRenderer;
 let firstMapPromise: Promise<MapInstance> | null = null;
@@ -141,7 +142,40 @@ const gameOver = async () => {
   playSound(Sounds.GAME_OVER);
 };
 
+const attack = async (source: Unit, target: Unit, damage?: number) => {
+  if (damage === undefined) {
+    damage = source.getDamage();
+  }
+
+  const state = GameState.getInstance();
+  const playerUnit = state.getPlayerUnit();
+  const map = state.getMap();
+
+  await source.startAttack(target);
+  const damageTaken = await target.takeDamage(damage, source);
+
+  if (source) {
+    state.logMessage(`${source.name} hit ${target.name} for ${damageTaken} damage!`);
+  }
+
+  if (target.getLife() === 0) {
+    map.removeUnit(target);
+    if (target === playerUnit) {
+      await gameOver();
+      return;
+    } else {
+      playSound(Sounds.ENEMY_DIES);
+      state.logMessage(`${target.name} dies!`);
+    }
+
+    if (source === playerUnit) {
+      source.gainExperience(1);
+    }
+  }
+};
+
 export {
+  attack,
   gameOver,
   initialize,
   loadNextMap,
