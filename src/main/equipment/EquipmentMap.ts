@@ -20,7 +20,7 @@ class EquipmentMap {
   }
 
   getBySlot(slot: EquipmentSlot): Equipment | null {
-    return this._map[slot] || null;
+    return this._map[slot] ?? null;
   }
 
   getAll(): Equipment[] {

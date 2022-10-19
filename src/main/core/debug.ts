@@ -53,8 +53,8 @@ type DebugShape = {
 
 export const initDebug = () => {
   // @ts-ignore
-  window.jwb = window.jwb || {};
-  jwb.debug = jwb.debug || {
+  window.jwb = window.jwb ?? {};
+  jwb.debug = jwb.debug ?? {
     revealMap,
     killEnemies,
     killPlayer,

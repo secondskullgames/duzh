@@ -254,7 +254,7 @@ const _playAnimation = async (animation: Animation) => {
       await wait(delay);
     }
 
-    for (const projectile of (frame.projectiles || [])) {
+    for (const projectile of (frame.projectiles ?? [])) {
       map.removeProjectile(projectile.getCoordinates());
     }
   }

@@ -40,11 +40,11 @@ class Section {
       (firstSubsection == null && secondSubsection == null && (splitDirection == null || splitDirection === 'NONE') && room != null && connection == null)
     );
     this.rect = rect;
-    this.firstSubsection = firstSubsection || null;
-    this.secondSubsection = secondSubsection || null;
-    this.splitDirection = splitDirection || null;
-    this.room = room || null;
-    this.connection = connection || null;
+    this.firstSubsection = firstSubsection ?? null;
+    this.secondSubsection = secondSubsection ?? null;
+    this.splitDirection = splitDirection ?? null;
+    this.room = room ?? null;
+    this.connection = connection ?? null;
   }
 
   getLeft = () => this.rect.left;

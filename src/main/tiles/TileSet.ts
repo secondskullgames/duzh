@@ -16,7 +16,7 @@ const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
     for (let index = 0; index < filenames.length; index++) {
       const filename = filenames[index];
       if (filename) {
-        const paletteSwaps = PaletteSwaps.create(model.paletteSwaps || {});
+        const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
         tilePromises.push(SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps));
       }
     }

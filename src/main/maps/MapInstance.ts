@@ -60,7 +60,7 @@ class MapInstance {
 
   getTile = ({ x, y }: Coordinates): Tile => {
     if (x < this.width && y < this.height) {
-      return (this._tiles[y] || [])[x] || 'NONE';
+      return (this._tiles[y] ?? [])[x] ?? 'NONE';
     }
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };

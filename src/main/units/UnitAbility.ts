@@ -33,7 +33,7 @@ abstract class UnitAbility {
   protected constructor({ name, manaCost, icon }: Props) {
     this.name = name;
     this.manaCost = manaCost;
-    this.icon = icon || null;
+    this.icon = icon ?? null;
   }
 
   abstract use(unit: Unit, coordinates: Coordinates | null): Promise<any>;

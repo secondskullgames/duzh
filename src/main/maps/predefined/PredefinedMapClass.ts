@@ -31,8 +31,8 @@ const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass
   const enemyColors = await _convertColorMap(model.enemyColors, UnitClass.load);
   const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemClass.load(x)));
   const equipmentColors = await _convertColorMap(model.equipmentColors, EquipmentClass.load);
-  const doorColors = await _convertColorMap(model.doorColors || {}, x => Promise.resolve(x as DoorDirection));
-  const spawnerColors = await _convertColorMap(model.spawnerColors || {}, x => Promise.resolve(x));
+  const doorColors = await _convertColorMap(model.doorColors ?? {}, x => Promise.resolve(x as DoorDirection));
+  const spawnerColors = await _convertColorMap(model.spawnerColors ?? {}, x => Promise.resolve(x));
   const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
   const music = model.music ? await Music.loadMusic(model.music as string) : null;
 

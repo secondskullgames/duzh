@@ -49,7 +49,7 @@ const getImage = async ({ filename, filenames: _filenames, transparentColor, pal
         if (paletteSwaps) {
           imageData = replaceColors(imageData, paletteSwaps);
         }
-        for (const effect of (effects || [])) {
+        for (const effect of (effects ?? [])) {
           imageData = effect.apply(imageData);
         }
         const image = await Image.create({ imageData, filename });

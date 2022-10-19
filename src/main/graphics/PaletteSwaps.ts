@@ -19,7 +19,7 @@ class Impl implements PaletteSwaps {
   }
 
   entries = () => this._entries;
-  get = (srcColor: Color): (Color | null) => this._map[srcColor.hex] || null;
+  get = (srcColor: Color): (Color | null) => this._map[srcColor.hex] ?? null;
 
   toString = () => {
     const map: Record<string, string> = {};

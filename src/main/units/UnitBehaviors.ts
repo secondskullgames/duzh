@@ -80,7 +80,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
   if (path.length > 1) {
     const { x, y } = path[1]; // first tile is the unit's own tile
     const unitAtPoint = map.getUnit({ x, y });
-    if (!unitAtPoint || unitAtPoint === playerUnit) {
+    if (unitAtPoint === null || unitAtPoint === playerUnit) {
       await UnitAbility.ATTACK.use(unit, { x, y });
     }
   }

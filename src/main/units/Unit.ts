@@ -86,8 +86,8 @@ class Unit implements Entity, Animatable {
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana || 0;
-    this.maxMana = unitClass.startingMana || 0;
+    this.mana = unitClass.startingMana ?? 0;
+    this.maxMana = unitClass.startingMana ?? 0;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
     this.damage = unitClass.startingDamage;
@@ -95,7 +95,7 @@ class Unit implements Entity, Animatable {
     this.activity = 'STANDING';
     this.direction = Direction.S;
     this.frameNumber = 1;
-    this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
+    this.abilities = (unitClass.abilities[1] ?? []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -177,7 +177,7 @@ class Unit implements Entity, Animatable {
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.slot !== 'RANGED_WEAPON') {
-        damage += (equipment.damage || 0);
+        damage += (equipment.damage ?? 0);
       }
     }
 
@@ -190,13 +190,13 @@ class Unit implements Entity, Animatable {
     for (const equipment of this.equipment.getAll()) {
       switch (equipment.slot) {
         case 'RANGED_WEAPON':
-          damage += (equipment.damage || 0);
+          damage += (equipment.damage ?? 0);
           break;
         case 'MELEE_WEAPON':
           // do nothing
           break;
         default:
-          damage += (equipment.damage || 0) / 2;
+          damage += (equipment.damage ?? 0) / 2;
       }
     }
 
@@ -213,7 +213,7 @@ class Unit implements Entity, Animatable {
       this.mana += manaPerLevel;
     }
     this.damage += this.unitClass.damagePerLevel;
-    const abilities = this.unitClass.abilities[this.level] || [];
+    const abilities = this.unitClass.abilities[this.level] ?? [];
     for (const abilityName of abilities) {
       this.abilities.push(UnitAbility[abilityName]);
     }
@@ -280,7 +280,7 @@ class Unit implements Entity, Animatable {
     if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
       const shield = this.equipment.getBySlot('SHIELD');
       if (shield !== null && shield.blockAmount !== null) {
-        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount || 0)));
+        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount ?? 0)));
       }
     }
     return adjustedDamage;
@@ -309,7 +309,7 @@ class Unit implements Entity, Animatable {
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
-  canSpendMana = (amount: number) => (this.mana || 0) >= amount;
+  canSpendMana = (amount: number) => (this.mana ?? 0) >= amount;
   spendMana = (amount: number) => {
     checkState(this.mana !== null);
     checkArgument(amount <= this.mana!!);

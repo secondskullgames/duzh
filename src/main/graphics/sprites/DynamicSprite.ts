@@ -19,7 +19,7 @@ class DynamicSprite<T extends Animatable> extends Sprite {
   constructor({ offsets, paletteSwaps, imageMap }: Props<T>) {
     super(offsets);
     this.target = null;
-    this.paletteSwaps = paletteSwaps || PaletteSwaps.empty();
+    this.paletteSwaps = paletteSwaps ?? PaletteSwaps.empty();
     this.imageMap = imageMap;
   }
 

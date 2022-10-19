@@ -38,9 +38,9 @@ class Impl implements ImageCache {
       .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
       .map(([src, dest]) => `${src.hex}:${dest.hex}`)
       .join(',')
-      || 'null';
-    const effectNames = effects?.map(effect => effect.name).join(',') || 'null';
-    return `${filename}_${transparentColor?.hex || 'null'}_${stringifiedPaletteSwaps}_${effectNames}`;
+      ?? 'null';
+    const effectNames = effects?.map(effect => effect.name).join(',') ?? 'null';
+    return `${filename}_${transparentColor?.hex ?? 'null'}_${stringifiedPaletteSwaps}_${effectNames}`;
   };
 }
 

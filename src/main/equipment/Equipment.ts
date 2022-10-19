@@ -30,11 +30,11 @@ class Equipment implements Animatable {
   constructor({ equipmentClass, sprite, inventoryItem }: Props) {
     this.name = equipmentClass.name;
     this.slot = equipmentClass.slot;
-    this.inventoryItem = inventoryItem || null;
+    this.inventoryItem = inventoryItem ?? null;
     this.damage = equipmentClass.damage;
-    this.blockAmount = equipmentClass.blockAmount || 0;
+    this.blockAmount = equipmentClass.blockAmount ?? 0;
     this.sprite = sprite;
-    this.script = equipmentClass.script || null;
+    this.script = equipmentClass.script ?? null;
     this._unit = null;
   }
 

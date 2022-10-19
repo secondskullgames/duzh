@@ -61,7 +61,7 @@ const _loadTiles = async (mapClass: PredefinedMapClass, image: Image): Promise<T
     const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const tileType = tileColors[color.hex] || null;
+    const tileType = tileColors[color.hex] ?? null;
     if (tileType !== null) {
       tiles[y][x] = Tile.create(tileType, tileSet);
     } else if (mapClass.defaultTile) {
@@ -92,7 +92,7 @@ const _loadUnits = async (mapClass: PredefinedMapClass, image: Image): Promise<U
         playerUnit.setCoordinates({ x, y });
         units.push(playerUnit);
       } else {
-        const enemyUnitClass = mapClass.enemyColors[color.hex] || null;
+        const enemyUnitClass = mapClass.enemyColors[color.hex] ?? null;
         if (enemyUnitClass !== null) {
           const controller: UnitController = (enemyUnitClass.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
           const unit = await UnitFactory.createUnit({
@@ -120,12 +120,12 @@ const _loadItems = async (mapClass: PredefinedMapClass, image: Image): Promise<M
     const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const itemClass = mapClass.itemColors[color.hex] || null;
+    const itemClass = mapClass.itemColors[color.hex] ?? null;
     if (itemClass !== null) {
       items.push(await ItemFactory.createMapItem(itemClass, { x, y }));
     }
 
-    const equipmentClass = mapClass.equipmentColors[color.hex] || null;
+    const equipmentClass = mapClass.equipmentColors[color.hex] ?? null;
     if (equipmentClass !== null) {
       items.push(await ItemFactory.createMapEquipment(equipmentClass, { x, y }));
     }
@@ -143,7 +143,7 @@ const _loadDoors = async (mapClass: PredefinedMapClass, image: Image): Promise<D
     const [r, g, b, a] = image.data.data.slice(i, i + 4);
     const color = Color.fromRGB({ r, g, b });
 
-    const doorDirection = mapClass.doorColors[color.hex] || null;
+    const doorDirection = mapClass.doorColors[color.hex] ?? null;
     if (doorDirection !== null) {
       const sprite = await SpriteFactory.createDoorSprite();
       const door = new Door({

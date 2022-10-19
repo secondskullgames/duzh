@@ -38,20 +38,20 @@ class InventoryMap {
     const index = items.indexOf(item);
     items.splice(index, 1);
     if (this.selectedItem === item) {
-      this.selectedItem = items[index % items.length] || null;
+      this.selectedItem = items[index % items.length] ?? null;
     }
   }
 
   nextCategory() {
     const index = displayCategories.indexOf(this.selectedCategory);
     this.selectedCategory = displayCategories[(index + 1) % displayCategories.length];
-    this.selectedItem = this._map[this.selectedCategory][0] || null;
+    this.selectedItem = this._map[this.selectedCategory][0] ?? null;
   }
 
   previousCategory() {
     const index = displayCategories.indexOf(this.selectedCategory);
     this.selectedCategory = displayCategories[(index - 1 + displayCategories.length) % displayCategories.length];
-    this.selectedItem = this._map[this.selectedCategory][0] || null;
+    this.selectedItem = this._map[this.selectedCategory][0] ?? null;
   }
 
   get(category: ItemCategory): InventoryItem[] {
