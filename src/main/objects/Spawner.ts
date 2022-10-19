@@ -6,6 +6,7 @@ import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
 import UnitClass from '../units/UnitClass';
 import UnitFactory from '../units/UnitFactory';
+import Coordinates from '../geometry/Coordinates';
 
 type SpawnerState = 'ALIVE' | 'DEAD';
 namespace SpawnerState {
@@ -31,8 +32,8 @@ class Spawner implements Entity, Animatable {
   private readonly maxUnits: number;
   private readonly spawnedUnits: Set<Unit>;
   private readonly _isBlocking: boolean;
-  x: number;
-  y: number;
+  private x: number;
+  private y: number;
 
   constructor({ x, y, sprite, cooldown, unitClass, maxUnits, isBlocking }: Props) {
     this.x = x;
@@ -85,6 +86,8 @@ class Spawner implements Entity, Animatable {
   setState = (state: SpawnerState) => { this.state = state; };
 
   isBlocking = () => this._isBlocking && this.state === 'ALIVE';
+
+  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
 }
 
 export default Spawner;

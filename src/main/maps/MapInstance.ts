@@ -8,6 +8,7 @@ import Tile from '../tiles/Tile';
 import Entity from '../types/Entity';
 import Unit from '../units/Unit';
 import { checkArgument } from '../utils/preconditions';
+import Projectile from '../types/Projectile';
 
 type Props = {
   width: number,
@@ -31,7 +32,7 @@ class MapInstance {
   readonly items: MapItem[];
   readonly doors: Door[];
   readonly spawners: Spawner[];
-  readonly projectiles: Entity[];
+  readonly projectiles: Projectile[];
   private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
 
@@ -65,19 +66,19 @@ class MapInstance {
   };
 
   getUnit = ({ x, y }: Coordinates): (Unit | null) =>
-    this.units.find(u => u.x === x && u.y === y) || null;
+    this.units.find(unit => Coordinates.equals(unit.getCoordinates(), { x, y })) ?? null;
 
   getItem = ({ x, y }: Coordinates): (MapItem | null) =>
-    this.items.find(i => i.x === x && i.y === y) || null;
+    this.items.find(item => Coordinates.equals(item.getCoordinates(), { x, y })) ?? null;
 
   getDoor = ({ x, y }: Coordinates): (Door | null) =>
-    this.doors.find(d => d.x === x && d.y === y) || null;
+    this.doors.find(door => Coordinates.equals(door.getCoordinates(), { x, y })) ?? null;
 
   getSpawner = ({ x, y }: Coordinates): (Spawner | null) =>
-    this.spawners.find(s => s.x === x && s.y === y) || null;
+    this.spawners.find(spawner => Coordinates.equals(spawner.getCoordinates(), { x, y })) ?? null;
 
-  getProjectile = ({ x, y }: Coordinates): (Entity | null) =>
-    this.projectiles.find(p => p.x === x && p.y === y) || null;
+  getProjectile = ({ x, y }: Coordinates): (Projectile | null) =>
+    this.projectiles.find(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y })) ?? null;
 
   contains = ({ x, y }: Coordinates): boolean =>
     (x >= 0 && x < this.width)
@@ -97,21 +98,21 @@ class MapInstance {
   };
 
   removeUnit = ({ x, y }: Coordinates) => {
-    const index = this.units.findIndex(u => (u.x === x && u.y === y));
+    const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
     if (index >= 0) {
       this.units.splice(index, 1);
     }
   };
 
   removeItem = ({ x, y }: Coordinates) => {
-    const index = this.items.findIndex(i => (i.x === x && i.y === y));
+    const index = this.items.findIndex(item => Coordinates.equals(item.getCoordinates(), { x, y }));
     if (index >= 0) {
       this.items.splice(index, 1);
     }
   };
 
   removeProjectile = ({ x, y }: Coordinates) => {
-    const index = this.projectiles.findIndex(i => (i.x === x && i.y === y));
+    const index = this.projectiles.findIndex(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y }));
     if (index >= 0) {
       this.projectiles.splice(index, 1);
     }

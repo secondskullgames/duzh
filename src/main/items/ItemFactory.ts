@@ -20,7 +20,7 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
-    GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${lifeGained} life.`);
+    GameState.getInstance().logMessage(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`);
   };
 
   return new InventoryItem('Life Potion', 'POTION', onUse);
@@ -29,11 +29,8 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
 const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
     playSound(Sounds.USE_POTION);
-    if (unit.mana !== null) {
-      const prevMana = unit.mana;
-      unit.mana = Math.min(unit.mana + manaRestored, unit.maxMana);
-      GameState.getInstance().logMessage(`${unit.name} used ${item.name} and gained ${(unit.mana - prevMana)} mana.`);
-    }
+    const manaGained = unit.gainMana(manaRestored);
+    GameState.getInstance().logMessage(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`);
   };
 
   return new InventoryItem('Mana Potion', 'POTION', onUse);
@@ -50,8 +47,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const map = GameState.getInstance().getMap();
 
     const adjacentUnits: Unit[] = map.units.filter(u => {
-      const dx = unit.x - u.x;
-      const dy = unit.y - u.y;
+      const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
       return ([-1,0,1].includes(dx))
         && ([-1,0,1].includes(dy))
         && !(dx === 0 && dy === 0);

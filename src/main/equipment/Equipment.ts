@@ -7,6 +7,7 @@ import { checkNotNull } from '../utils/preconditions';
 import EquipmentClass from './EquipmentClass';
 import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
+import Activity from '../types/Activity';
 
 const DRAW_BEHIND_PREFIX = '_B';
 
@@ -46,14 +47,14 @@ class Equipment implements Animatable {
    */
   getAnimationKey = () => {
     const unit = checkNotNull(this._unit);
-    return `${unit.activity.toLowerCase()}_${Direction.toString(unit.direction)}_${unit.frameNumber}`;
+    return `${Activity.toString(unit.getActivity())}_${Direction.toString(unit.getDirection())}_${unit.getFrameNumber()}`;
   };
 
   getSprite = () => this.sprite;
 
   drawBehind = async (): Promise<boolean> => {
     const image = await this.sprite.getImage();
-    const drawBehind = (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) || false;
+    const drawBehind = (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) ?? false;
     return drawBehind;
   };
 }

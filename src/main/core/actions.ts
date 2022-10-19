@@ -127,8 +127,9 @@ const revealTiles = () => {
 
   const radius = 3;
 
-  for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
-    for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
+  const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+  for (let y = playerY - radius; y <= playerY + radius; y++) {
+    for (let x = playerX - radius; x <= playerX + radius; x++) {
       if (!isTileRevealed({ x, y })) {
         map.revealTile({ x, y });
       }
@@ -155,17 +156,17 @@ const attack = async (source: Unit, target: Unit, damage?: number) => {
   const damageTaken = await target.takeDamage(damage, source);
 
   if (source) {
-    state.logMessage(`${source.name} hit ${target.name} for ${damageTaken} damage!`);
+    state.logMessage(`${source.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
   }
 
   if (target.getLife() === 0) {
-    map.removeUnit(target);
+    map.removeUnit(target.getCoordinates());
     if (target === playerUnit) {
       await gameOver();
       return;
     } else {
       playSound(Sounds.ENEMY_DIES);
-      state.logMessage(`${target.name} dies!`);
+      state.logMessage(`${target.getName()} dies!`);
     }
 
     if (source === playerUnit) {

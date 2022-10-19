@@ -15,10 +15,6 @@ interface Pixel {
 
 type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
 
-interface Projectile extends Entity {
-  direction: Direction
-}
-
 type Room = Rect & {
   exits: Coordinates[]
 }
@@ -37,7 +33,6 @@ export {
   Faction,
   GameScreen,
   Pixel,
-  Projectile,
   Room,
   UnitType
 };

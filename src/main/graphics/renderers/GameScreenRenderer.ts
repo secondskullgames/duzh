@@ -65,9 +65,10 @@ class GameScreenRenderer extends Renderer {
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
+    const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: ((x - playerUnit.x) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
-      y: ((y - playerUnit.y) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2
+      x: ((x - playerX) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
+      y: ((y - playerY) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2
     };
   };
 

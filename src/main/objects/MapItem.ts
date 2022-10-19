@@ -1,6 +1,7 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Entity from '../types/Entity';
 import InventoryItem from '../items/InventoryItem';
+import Coordinates from '../geometry/Coordinates';
 
 type Props = {
   x: number,
@@ -10,8 +11,8 @@ type Props = {
 };
 
 class MapItem implements Entity {
-  x: number;
-  y: number;
+  private x: number;
+  private y: number;
   private readonly sprite: Sprite;
   inventoryItem: InventoryItem;
 
@@ -22,6 +23,7 @@ class MapItem implements Entity {
     this.inventoryItem = inventoryItem;
   }
 
+  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
   getSprite = () => this.sprite;
   update = async () => {};
 }

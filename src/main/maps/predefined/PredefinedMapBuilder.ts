@@ -89,7 +89,7 @@ const _loadUnits = async (mapClass: PredefinedMapClass, image: Image): Promise<U
       }
       if (Color.equals(color, mapClass.startingPointColor)) {
         const playerUnit = GameState.getInstance().getPlayerUnit();
-        [playerUnit.x, playerUnit.y] = [x, y];
+        playerUnit.setCoordinates({ x, y });
         units.push(playerUnit);
       } else {
         const enemyUnitClass = mapClass.enemyColors[color.hex] || null;

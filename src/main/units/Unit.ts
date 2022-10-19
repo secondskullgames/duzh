@@ -1,4 +1,3 @@
-import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import EquipmentScript from '../equipment/EquipmentScript';
 import { playAttackingAnimation } from '../graphics/animations/Animations';
@@ -47,27 +46,27 @@ class Unit implements Entity, Animatable {
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
-  x: number;
-  y: number;
-  name: string;
-  level: number;
-  experience: number;
+  private x: number;
+  private y: number;
+  private name: string;
+  private level: number;
+  private experience: number;
   private life: number;
   private maxLife: number;
-  mana: number;
-  maxMana: number;
-  lifeRemainder: number;
-  manaRemainder: number;
+  private mana: number;
+  private maxMana: number;
+  private lifeRemainder: number;
+  private manaRemainder: number;
   private damage: number;
-  controller: UnitController;
-  activity: Activity;
-  direction: Direction;
+  private controller: UnitController;
+  private activity: Activity;
+  private direction: Direction;
   /**
    * For now, this is not auto-incremented and only used for certain animations (see Animations.ts)
    */
-  frameNumber: number;
+  private frameNumber: number;
   private readonly abilities: UnitAbility[];
-  stunDuration: number;
+  private stunDuration: number;
   /**
    * Used by AI to make certain decisions
    */
@@ -141,11 +140,28 @@ class Unit implements Entity, Animatable {
   };
 
   getUnitClass = (): UnitClass => this.unitClass;
+  getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
+  getController = (): UnitController => this.controller;
+  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+  setCoordinates = ({ x, y }: Coordinates) => {
+    this.x = x;
+    this.y = y;
+  };
   getLife = () => this.life;
   getMaxLife = () => this.maxLife;
+  getMana = () => this.mana;
+  getMaxMana = () => this.maxMana;
+  getLevel = () => this.level;
+  getExperience = () => this.experience;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
+  getActivity = () => this.activity;
+  getDirection = () => this.direction;
+  setDirection = (direction: Direction) => { this.direction = direction; };
+  getFrameNumber = () => this.frameNumber;
+  getAbilities = () => this.abilities;
+  getSprite = () => this.sprite;
 
   update = async () => {
     await this._upkeep();
@@ -239,8 +255,7 @@ class Unit implements Entity, Animatable {
   };
 
   moveTo = async ({ x, y }: Coordinates) => {
-    this.x = x;
-    this.y = y;
+    this.setCoordinates({ x, y });
     const playerUnit = GameState.getInstance().getPlayerUnit();
     if (this === playerUnit) {
       await playSound(Sounds.FOOTSTEP);
@@ -262,7 +277,7 @@ class Unit implements Entity, Animatable {
 
   private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
     let adjustedDamage = baseDamage;
-    if (sourceUnit !== null && isInStraightLine(this, sourceUnit)) {
+    if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
       const shield = this.equipment.getBySlot('SHIELD');
       if (shield !== null && shield.blockAmount !== null) {
         adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount || 0)));
@@ -281,12 +296,19 @@ class Unit implements Entity, Animatable {
   };
 
   /**
+   * @return the amount of mana gained
+   */
+  gainMana = (mana: number): number => {
+    const manaGained = Math.min(mana, this.maxMana - this.maxLife);
+    this.mana += manaGained;
+    return manaGained;
+  }
+
+  /**
    * @override {@link Animatable#getAnimationKey}
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
-  getMana = () => this.mana;
-  getMaxMana = () => this.maxMana;
   canSpendMana = (amount: number) => (this.mana || 0) >= amount;
   spendMana = (amount: number) => {
     checkState(this.mana !== null);
@@ -295,10 +317,17 @@ class Unit implements Entity, Animatable {
     this.mana!! -= amount;
   };
 
-  getAbilities = () => this.abilities;
-  getSprite = () => this.sprite;
-
   isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
+
+  setActivity = (activity: Activity, frameNumber: number, direction: Direction | null) => {
+    this.activity = activity;
+    this.frameNumber = frameNumber ?? 1;
+    this.direction = direction ?? this.direction;
+  };
+
+  getStunned = (duration: number) => {
+    this.stunDuration = Math.max(this.stunDuration, duration)
+  };
 }
 
 export default Unit;

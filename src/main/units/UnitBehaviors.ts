@@ -1,6 +1,6 @@
 import GameState from '../core/GameState';
 import Rect from '../geometry/Rect';
-import { manhattanDistance } from '../maps/MapUtils';
+import { isInStraightLine, manhattanDistance } from '../maps/MapUtils';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { comparingReversed } from '../utils/arrays';
@@ -18,7 +18,7 @@ const _wanderAndAttack = async (unit: Unit) => {
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {
-    const [x, y] = [unit.x + dx, unit.y + dy];
+    const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
         tiles.push({ x, y });
@@ -42,7 +42,7 @@ const _wander = async (unit: Unit) => {
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {
-    const [x, y] = [unit.x + dx, unit.y + dy];
+    const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
         tiles.push({ x, y });
@@ -67,7 +67,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
     for (let x = 0; x < mapRect.width; x++) {
       if (!map.getTile({ x, y }).isBlocking) {
         unblockedTiles.push({ x, y });
-      } else if (Coordinates.equals({ x, y }, playerUnit)) {
+      } else if (Coordinates.equals({ x, y }, playerUnit.getCoordinates())) {
         unblockedTiles.push({ x, y });
       } else {
         // blocked
@@ -75,7 +75,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
     }
   }
 
-  const path: Coordinates[] = new Pathfinder(() => 1).findPath(unit, playerUnit, unblockedTiles);
+  const path: Coordinates[] = new Pathfinder(() => 1).findPath(unit.getCoordinates(), playerUnit.getCoordinates(), unblockedTiles);
 
   if (path.length > 1) {
     const { x, y } = path[1]; // first tile is the unit's own tile
@@ -91,23 +91,25 @@ const _shootPlayerUnit = async (unit: Unit) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  if (unit.mana < UnitAbility.SHOOT_ARROW.manaCost) {
-    return _attackPlayerUnit_withPath(unit);
-  }
-  if (unit.x !== playerUnit.x && unit.y !== playerUnit.y) {
-    return _attackPlayerUnit_withPath(unit);
-  }
-  if (manhattanDistance(unit, playerUnit) <= 1) {
+  if (unit.getMana() < UnitAbility.SHOOT_ARROW.manaCost) {
     return _attackPlayerUnit_withPath(unit);
   }
 
-  let { x, y } = unit;
-  const dx = Math.sign(playerUnit.x - x);
-  const dy = Math.sign(playerUnit.y - y);
+  if (!isInStraightLine(unit.getCoordinates(), playerUnit.getCoordinates())) {
+    return _attackPlayerUnit_withPath(unit);
+  }
+  if (manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates()) <= 1) {
+    return _attackPlayerUnit_withPath(unit);
+  }
+
+  let { x, y } = unit.getCoordinates();
+  const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+  const dx = Math.sign(playerX - x);
+  const dy = Math.sign(playerY - y);
   x += dx;
   y += dy;
 
-  while (x !== playerUnit.x || y !== playerUnit.y) {
+  while (x !== playerX || y !== playerY) {
     if (map.isBlocked({ x, y })) {
       return _attackPlayerUnit_withPath(unit);
     }
@@ -128,7 +130,7 @@ const _teleportFromPlayerUnit = async (unit: Unit) => {
     for (let x = 0; x < map.width; x++) {
       if (map.contains({ x, y })) {
         if (!map.isBlocked({ x, y })) {
-          if (manhattanDistance(unit, { x, y }) <= UnitAbility.TELEPORT.RANGE) {
+          if (manhattanDistance(unit.getCoordinates(), { x, y }) <= UnitAbility.TELEPORT.RANGE) {
             tiles.push({ x, y });
           }
         }
@@ -137,7 +139,7 @@ const _teleportFromPlayerUnit = async (unit: Unit) => {
   }
 
   if (tiles.length > 0) {
-    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
+    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit.getCoordinates())));
 
     const { x, y } = orderedTiles[0];
     await UnitAbility.TELEPORT.use(unit, { x, y });
@@ -151,7 +153,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
   const tiles: Coordinates[] = [];
 
   for (const { dx, dy } of Direction.values()) {
-    const [x, y] = [unit.x + dx, unit.y + dy];
+    const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (map.contains({ x, y })) {
       if (!map.isBlocked({ x, y })) {
         tiles.push({ x, y });
@@ -164,7 +166,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
   }
 
   if (tiles.length > 0) {
-    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit)));
+    const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit.getCoordinates())));
 
     const { x, y } = orderedTiles[0];
     await UnitAbility.ATTACK.use(unit, { x, y });

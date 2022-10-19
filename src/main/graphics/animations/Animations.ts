@@ -4,9 +4,9 @@ import { createArrow } from '../../objects/ProjectileFactory';
 import Activity from '../../types/Activity';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
-import { Projectile } from '../../types/types';
 import Unit from '../../units/Unit';
 import { wait } from '../../utils/promises';
+import Projectile from '../../types/Projectile';
 
 const FRAME_LENGTH = 150; // milliseconds
 const ARROW_FRAME_LENGTH = 50; // milliseconds
@@ -245,9 +245,7 @@ const _playAnimation = async (animation: Animation) => {
     }
     for (let j = 0; j < frame.units.length; j++) {
       const { unit, activity, frameNumber, direction } = frame.units[j];
-      unit.activity = activity;
-      unit.frameNumber = frameNumber || 1;
-      unit.direction = direction || unit.direction;
+      unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
     }
 
     await render();
@@ -257,7 +255,7 @@ const _playAnimation = async (animation: Animation) => {
     }
 
     for (const projectile of (frame.projectiles || [])) {
-      map.removeProjectile(projectile);
+      map.removeProjectile(projectile.getCoordinates());
     }
   }
 };

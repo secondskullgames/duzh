@@ -40,7 +40,7 @@ class MinimapRenderer extends Renderer {
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
-    if (Coordinates.equals(playerUnit, { x, y })) {
+    if (Coordinates.equals(playerUnit.getCoordinates(), { x, y })) {
       return Colors.GREEN;
     }
 
