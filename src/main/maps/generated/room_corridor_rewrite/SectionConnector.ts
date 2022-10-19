@@ -85,7 +85,11 @@ const createSectionConnector = (): SectionConnector => {
       minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
     }
 
-    const connections = possibleConnections.filter(connection => distances.get(connection)!! <= minDistance!! * 1.5);
+    const connections = possibleConnections.filter(connection => {
+      const connectionDistance = checkNotNull(distances.get(connection));
+      minDistance = checkNotNull(minDistance);
+      return connectionDistance <= minDistance * 1.5;
+    });
     const roomToExit = new Map<Rect, Coordinates>();
 
     for (const [leftRoom, rightRoom] of connections) {
@@ -188,7 +192,11 @@ const createSectionConnector = (): SectionConnector => {
       minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
     }
 
-    const connections = possibleConnections.filter(connection => distances.get(connection)!! <= minDistance!! * 1.5);
+    const connections = possibleConnections.filter(connection => {
+      const connectionDistance = checkNotNull(distances.get(connection));
+      minDistance = checkNotNull(minDistance);
+      return connectionDistance <= minDistance * 1.5;
+    });
     const roomToExit = new Map<Rect, Coordinates>();
 
     for (const [topRoom, bottomRoom] of connections) {

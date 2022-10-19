@@ -60,7 +60,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
   const state = GameState.getInstance();
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
-  const mapRect: Rect = map.getRect();
+  const mapRect = map.getRect();
   const unblockedTiles: Coordinates[] = [];
 
   for (let y = 0; y < mapRect.height; y++) {

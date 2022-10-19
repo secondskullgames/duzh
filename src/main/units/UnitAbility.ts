@@ -107,7 +107,7 @@ class HeavyAttack extends UnitAbility {
       await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
+      if (targetUnit) {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;

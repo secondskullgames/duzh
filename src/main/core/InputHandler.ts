@@ -231,7 +231,7 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       const playerUnit = state.getPlayerUnit();
       const { selectedItem } = playerUnit.getInventory();
 
-      if (!!selectedItem) {
+      if (selectedItem) {
         state.setScreen('GAME');
         await useItem(playerUnit, selectedItem);
         await render();

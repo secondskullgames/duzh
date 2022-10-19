@@ -16,9 +16,9 @@ const playSuite = (suite: Suite) => {
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    const bass = (!!section.bass) ? randChoice(section.bass) : null;
+    const bass = (section.bass) ? randChoice(section.bass) : null;
     let lead: Figure | null;
-    if (!!section.lead) {
+    if (section.lead) {
       do {
         lead = randChoice(section.lead);
       } while (lead === bass);
@@ -28,8 +28,8 @@ const playSuite = (suite: Suite) => {
       setTimeout(() => {
         if (ACTIVE_MUSIC === suite) {
           const figures = [
-            ...(!!bass ? [bass.map(transpose8vb)] : []),
-            ...(!!lead ? [lead] : [])
+            ...(bass ? [bass.map(transpose8vb)] : []),
+            ...(lead ? [lead] : [])
           ];
           for (const figure of figures) {
             playFigure(figure);

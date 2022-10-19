@@ -106,7 +106,7 @@ class Unit implements Entity, Animatable {
     }
 
     while (this.level < level) {
-      this.levelUp(false);
+      this.levelUp();
     }
   }
 
@@ -203,7 +203,7 @@ class Unit implements Entity, Animatable {
     return Math.round(damage);
   };
 
-  levelUp = (withSound: boolean) => {
+  levelUp = () => {
     this.level++;
     const { lifePerLevel, manaPerLevel } = this.unitClass;
     this.maxLife += lifePerLevel;
@@ -217,10 +217,6 @@ class Unit implements Entity, Animatable {
     for (const abilityName of abilities) {
       this.abilities.push(UnitAbility[abilityName]);
     }
-
-    if (withSound) {
-      playSound(Sounds.LEVEL_UP);
-    }
   };
 
   gainExperience = (experience: number) => {
@@ -230,7 +226,8 @@ class Unit implements Entity, Animatable {
     const experienceToNextLevel = this.experienceToNextLevel();
     while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
-      this.levelUp(true);
+      this.levelUp();
+      playSound(Sounds.LEVEL_UP);
     }
   };
 
@@ -299,7 +296,7 @@ class Unit implements Entity, Animatable {
    * @return the amount of mana gained
    */
   gainMana = (mana: number): number => {
-    const manaGained = Math.min(mana, this.maxMana - this.maxLife);
+    const manaGained = Math.min(mana, this.maxMana - this.mana);
     this.mana += manaGained;
     return manaGained;
   }
@@ -309,12 +306,12 @@ class Unit implements Entity, Animatable {
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
-  canSpendMana = (amount: number) => (this.mana ?? 0) >= amount;
+  canSpendMana = (amount: number) => (this.mana) >= amount;
   spendMana = (amount: number) => {
     checkState(this.mana !== null);
-    checkArgument(amount <= this.mana!!);
+    checkArgument(amount <= this.mana);
     checkArgument(amount >= 0);
-    this.mana!! -= amount;
+    this.mana -= amount;
   };
 
   isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;

@@ -1,3 +1,5 @@
+import { checkNotNull } from '../utils/preconditions';
+
 interface Direction {
   dx: -1 | 0 | 1,
   dy: -1 | 0 | 1
@@ -43,7 +45,7 @@ namespace Direction {
       ['W', 'SW']
     ]);
     return [...lookup.entries()]
-      .filter(([from, to]) => equals(direction, _map.get(from)!!))
+      .filter(([from, to]) => equals(direction, checkNotNull(_map.get(from))))
       .map(([from, to]) => to)
       [0];
   };

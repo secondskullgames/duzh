@@ -240,7 +240,7 @@ const _playAnimation = async (animation: Animation) => {
 
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
-    if (!!frame.projectiles) {
+    if (frame.projectiles) {
       map.projectiles.push(...frame.projectiles);
     }
     for (let j = 0; j < frame.units.length; j++) {
