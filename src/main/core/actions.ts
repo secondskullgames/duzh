@@ -85,13 +85,6 @@ const startGame = async () => {
   await render();
   const t2 = new Date().getTime();
   console.log(`Loaded level in ${t2 - t1} ms`);
-
-  for (let i = 0; i < 10; i++) {
-    GameState.getInstance()
-      .getPlayerUnit()
-      .getInventory()
-      .add(await ItemFactory.createScrollOfFloorFire(10));
-  }
 };
 
 const startGameDebug = async () => {

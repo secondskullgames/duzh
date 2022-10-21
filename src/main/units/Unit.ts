@@ -266,10 +266,15 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  takeDamage = async (baseDamage: number, sourceUnit: Unit | null) => {
+  /**
+   * @return the amount of damage taken
+   */
+  takeDamage = async (baseDamage: number, sourceUnit: Unit | null): Promise<number> => {
     const adjustedDamage = this._calculateIncomingDamage(baseDamage, sourceUnit);
-    this.life = Math.max(this.life - adjustedDamage, 0);
+    const damageTaken = Math.min(adjustedDamage, this.life);
+    this.life -= damageTaken;
     this.turnsSinceCombatAction = 0;
+    return damageTaken;
   };
 
   private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
