@@ -281,7 +281,7 @@ class Blink extends UnitAbility {
     }
 
     const { x: unitX, y: unitY } = unit.getCoordinates();
-    const { dx, dy } = Coordinates.difference(coordinates, unit.getCoordinates());
+    const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     const x = unitX + 2 * dx;
     const y = unitY + 2 * dy;
 

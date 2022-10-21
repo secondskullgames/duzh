@@ -17,7 +17,7 @@ namespace Coordinates {
 
   export const difference = (first: Coordinates, second: Coordinates): Offsets => ({
     dx: second.x - first.x,
-    dy: second.y - first.x
+    dy: second.y - first.y
   });
 }
 
