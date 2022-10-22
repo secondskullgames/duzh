@@ -19,6 +19,8 @@ namespace Activity {
     'VANISHING',
     'APPEARING'
   ];
+
+  export const toString = (activity: Activity) => activity.toLowerCase();
 }
 
 export default Activity;

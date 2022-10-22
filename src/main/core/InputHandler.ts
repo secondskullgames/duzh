@@ -143,7 +143,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     case 'GAME':
       const { dx, dy } = _getDirection(key);
       const playerUnit = GameState.getInstance().getPlayerUnit();
-      const { x, y } = { x: playerUnit.x + dx, y: playerUnit.y + dy };
+      const { x, y } = Coordinates.plus(playerUnit.getCoordinates(), { dx, dy });
 
       let queuedOrder: PromiseSupplier | null = null;
       if (modifiers.includes('SHIFT')) {
@@ -152,8 +152,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
         }
       } else if (modifiers.includes('ALT')) {
         if (playerUnit.canSpendMana(UnitAbility.STRAFE.manaCost)) {
-          const target: Coordinates = { x: playerUnit.x + dx, y: playerUnit.y + dy };
-          queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, target);
+          queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, { x, y });
         }
       } else {
         const ability = state.getQueuedAbility();
@@ -166,7 +165,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
           queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { x, y });
         }
       }
-      const playerController = playerUnit.controller as PlayerUnitController;
+      const playerController = playerUnit.getController() as PlayerUnitController;
       if (queuedOrder) {
         playerController.queuedOrder = queuedOrder;
         await TurnHandler.playTurn();
@@ -216,9 +215,9 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
   switch (state.getScreen()) {
     case 'GAME': {
       const map = checkNotNull(state.getMap(), 'Map is not loaded!');
-      const { x, y }: Coordinates = playerUnit;
+      const { x, y } = playerUnit.getCoordinates();
       const item = map.getItem({ x, y });
-      if (!!item) {
+      if (item) {
         pickupItem(playerUnit, item);
         map.removeItem({ x, y });
       } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
@@ -232,7 +231,7 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       const playerUnit = state.getPlayerUnit();
       const { selectedItem } = playerUnit.getInventory();
 
-      if (!!selectedItem) {
+      if (selectedItem) {
         state.setScreen('GAME');
         await useItem(playerUnit, selectedItem);
         await render();

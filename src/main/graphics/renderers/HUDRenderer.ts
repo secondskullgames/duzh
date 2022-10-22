@@ -51,9 +51,9 @@ class HUDRenderer extends Renderer {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     const lines = [
-      playerUnit.name,
-      `Level ${playerUnit.level}`,
-      `Life: ${playerUnit.life}/${playerUnit.maxLife}`
+      playerUnit.getName(),
+      `Level ${playerUnit.getLevel()}`,
+      `Life: ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`
     ];
 
     if (playerUnit.getMana() !== null && playerUnit.getMaxMana() !== null) {
@@ -110,7 +110,7 @@ class HUDRenderer extends Renderer {
 
     const experienceToNextLevel = playerUnit.experienceToNextLevel();
     if (experienceToNextLevel !== null) {
-      lines.push(`Experience: ${playerUnit.experience}/${experienceToNextLevel}`);
+      lines.push(`Experience: ${playerUnit.getExperience()}/${experienceToNextLevel}`);
     }
 
     const promises: Promise<void>[] = [];

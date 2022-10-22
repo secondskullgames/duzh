@@ -2,6 +2,7 @@ import Sprite from '../graphics/sprites/Sprite';
 import { randChoice } from '../utils/random';
 import TileSet from './TileSet';
 import TileType from './TileType';
+import { checkNotNull } from '../utils/preconditions';
 
 interface Tile {
   type: TileType,
@@ -11,7 +12,8 @@ interface Tile {
 
 namespace Tile {
   export const create = (type: TileType, tileSet: TileSet): Tile => {
-    const sprite = randChoice(tileSet[type]!!);
+    const tilesOfType = checkNotNull(tileSet[type]);
+    const sprite = randChoice(tilesOfType);
     return {
       type,
       getSprite: () => sprite,

@@ -8,13 +8,14 @@ import UnitAbility from '../UnitAbility';
 import UnitBehaviors from '../UnitBehaviors';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
+import Coordinates from '../../geometry/Coordinates';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
     const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_CAUTIOUS behavior requires aiParams!');
     const { speed, visionRange } = aiParameters;
-    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     let behavior: UnitBehavior;
 
@@ -39,7 +40,7 @@ const HUMAN_AGGRESSIVE: UnitController = {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
     let behavior: UnitBehavior;
-    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (distanceToPlayer === 1) {
       behavior = UnitBehavior.ATTACK_PLAYER;
@@ -67,11 +68,11 @@ const HUMAN_DETERMINISTIC: UnitController = {
     const { speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
-    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       behavior = UnitBehavior.ATTACK_PLAYER;
@@ -94,11 +95,11 @@ const HUMAN_REDESIGN: UnitController = {
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
-    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
@@ -127,11 +128,11 @@ const ARCHER: UnitController = {
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
-    const distanceToPlayer = manhattanDistance(unit, playerUnit);
+    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!_canMove(speed)) {
       behavior = UnitBehavior.STAY;
-    } else if ((unit.life / unit.maxLife) < fleeThreshold) {
+    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = UnitBehavior.FLEE_FROM_PLAYER;
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
@@ -158,7 +159,7 @@ const WIZARD: UnitController = {
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
-    const distanceToPlayerUnit = manhattanDistance(unit, playerUnit);
+    const distanceToPlayerUnit = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     const canTeleport = unit.getAbilities().includes(UnitAbility.TELEPORT)
       && unit.getMana() >= UnitAbility.TELEPORT.manaCost;
@@ -171,8 +172,8 @@ const WIZARD: UnitController = {
 
     if (canSummon && distanceToPlayerUnit >= 3) {
       const coordinates = Direction.values()
-        .map(({ dx, dy }) => ({ x: unit.x + dx, y: unit.y + dy }))
-        .filter(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }))
+        .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
+        .filter(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates))
         [0];
       if (coordinates) {
         return UnitAbility.SUMMON.use(unit, coordinates);

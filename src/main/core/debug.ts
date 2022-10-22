@@ -22,7 +22,7 @@ const killEnemies = async () => {
 
 const killPlayer = async () => {
   const playerUnit = GameState.getInstance().getPlayerUnit();
-  await playerUnit.takeDamage(playerUnit.life);
+  await playerUnit.takeDamage(playerUnit.getMaxLife(), null);
   await render();
 };
 
@@ -33,13 +33,13 @@ const nextLevel = async () => {
 
 const levelUp = async () => {
   const playerUnit = GameState.getInstance().getPlayerUnit();
-  playerUnit.levelUp(false);
+  playerUnit.levelUp();
   await render();
 };
 
 const toggleEditor = () => {
   const editor = document.getElementById('editor') as HTMLDivElement;
-  editor.style.display = (editor.style.display === 'block' ? 'none' : 'block');
+  editor.style.display = (editor.style.display === 'block') ? 'none' : 'block';
 };
 
 type DebugShape = {
@@ -53,8 +53,8 @@ type DebugShape = {
 
 export const initDebug = () => {
   // @ts-ignore
-  window.jwb = window.jwb || {};
-  jwb.debug = jwb.debug || {
+  window.jwb = window.jwb ?? {};
+  jwb.debug = jwb.debug ?? {
     revealMap,
     killEnemies,
     killPlayer,

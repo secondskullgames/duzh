@@ -17,15 +17,13 @@ namespace EquipmentScript {
     const map = GameState.getInstance().getMap();
     switch (script) {
       case 'bolt_sword': {
-        const { dx, dy } = unit.direction;
-        let x = unit.x + dx;
-        let y = unit.y + dy;
-        while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-          x += dx;
-          y += dy;
+        const { dx, dy } = unit.getDirection();
+        let coordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+        while (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+          coordinates = Coordinates.plus(coordinates, { dx, dy });
         }
 
-        if (map.contains({ x, y }) && map.isTileRevealed({ x, y }) && map.getUnit({ x, y })) {
+        if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
           await UnitAbility.BOLT.use(unit, target);
         }
       }

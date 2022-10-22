@@ -11,21 +11,17 @@ class EquipmentMap {
     this._map = {};
   }
 
-  add(item: Equipment) {
+  add = (item: Equipment) => {
     this._map[item.slot] = item;
-  }
+  };
 
-  remove(item: Equipment) {
+  remove = (item: Equipment) => {
     this._map[item.slot] = undefined;
-  }
+  };
 
-  getBySlot(slot: EquipmentSlot): Equipment | null {
-    return this._map[slot] || null;
-  }
+  getBySlot = (slot: EquipmentSlot): Equipment | null => this._map[slot] ?? null;
 
-  getAll(): Equipment[] {
-    return Object.values(this._map);
-  }
+  getAll = (): Equipment[] => Object.values(this._map);
 }
 
 export default EquipmentMap;

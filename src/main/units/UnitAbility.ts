@@ -1,6 +1,6 @@
 // TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
 
-import { render } from '../core/actions';
+import { attack, render } from '../core/actions';
 import GameState from '../core/GameState';
 import {
   playArrowAnimation,
@@ -19,14 +19,6 @@ import Unit from './Unit';
 import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
 
-/**
- * Helper function for most melee attacks
- */
-const attack = async (unit: Unit, target: Unit, damage: number) => {
-  await unit.attack(target);
-  await target.takeDamage(damage, unit);
-};
-
 type Props = {
   name: string,
   manaCost: number,
@@ -41,7 +33,7 @@ abstract class UnitAbility {
   protected constructor({ name, manaCost, icon }: Props) {
     this.name = name;
     this.manaCost = manaCost;
-    this.icon = icon || null;
+    this.icon = icon ?? null;
   }
 
   abstract use(unit: Unit, coordinates: Coordinates | null): Promise<any>;
@@ -62,15 +54,14 @@ class NormalAttack extends UnitAbility {
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
-    unit.direction = pointAt(unit, coordinates);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
-        const damage = unit.getDamage();
-        await attack(unit, targetUnit, damage);
+        await attack(unit, targetUnit);
         await playSound(Sounds.PLAYER_HITS_ENEMY);
       }
 
@@ -110,17 +101,17 @@ class HeavyAttack extends UnitAbility {
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = pointAt(unit, coordinates);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
-        const damage = unit.getDamage() * 2;
-        await attack(unit, targetUnit, damage);
+      if (targetUnit) {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
+        const damage = unit.getDamage() * 2;
+        await attack(unit, targetUnit, damage);
       }
     }
   };
@@ -137,19 +128,18 @@ class KnockbackAttack extends UnitAbility {
     }
 
     const { x, y } = coordinates;
-    const { dx, dy } = pointAt(unit, coordinates);
+    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = { dx, dy };
+    unit.setDirection({ dx, dy });
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
-        const damage = unit.getDamage();
-        await attack(unit, targetUnit, damage);
+      if (targetUnit) {
+        await attack(unit, targetUnit);
         let targetCoordinates = { x, y };
 
         // knockback by one tile
@@ -157,10 +147,9 @@ class KnockbackAttack extends UnitAbility {
         if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
           targetCoordinates = oneTileBack;
         }
-        [targetUnit.x, targetUnit.y] = [targetCoordinates.x, targetCoordinates.y];
+        targetUnit.setCoordinates(targetCoordinates);
 
-        // stun for 1 turn (if they're already stunned, just leave it)
-        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 1);
+        targetUnit.getStunned(1);
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
       }
@@ -182,19 +171,17 @@ class StunAttack extends UnitAbility {
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = pointAt(unit, coordinates);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await unit.moveTo({ x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
-      if (!!targetUnit) {
-        const damage = unit.getDamage();
-        await attack(unit, targetUnit, damage);
-        // stun for 2 turns (if they're already stunned, just leave it)
-        targetUnit.stunDuration = Math.max(targetUnit.stunDuration, 2);
+      if (targetUnit) {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
+        await attack(unit, targetUnit);
+        targetUnit.getStunned(2);
       }
     }
   };
@@ -202,7 +189,7 @@ class StunAttack extends UnitAbility {
 
 class ShootArrow extends UnitAbility {
   constructor() {
-    super({ name: 'SHOOT_ARROW', manaCost: 5 });
+    super({ name: 'SHOOT_ARROW', manaCost: 6 });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
@@ -213,15 +200,16 @@ class ShootArrow extends UnitAbility {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const { dx, dy } = pointAt(unit, coordinates);
-    unit.direction = { dx, dy };
+    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection({ dx, dy });
 
     await render();
+    unit.spendMana(this.manaCost);
 
     const state = GameState.getInstance();
     const map = state.getMap();
     const coordinatesList = [];
-    let { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
@@ -229,17 +217,14 @@ class ShootArrow extends UnitAbility {
     }
 
     const targetUnit = map.getUnit({ x, y });
-    if (!!targetUnit) {
+    if (targetUnit) {
       const damage = unit.getRangedDamage();
-
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await targetUnit.takeDamage(damage, unit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
+      await targetUnit.takeDamage(damage, unit);
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }
-
-    unit.spendMana(this.manaCost);
   };
 }
 
@@ -253,15 +238,16 @@ class Bolt extends UnitAbility {
       throw new Error('Bolt requires a target!');
     }
 
-    const { dx, dy } = pointAt(unit, coordinates);
-    unit.direction = { dx, dy };
+    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection({ dx, dy });
 
     await render();
+    unit.spendMana(this.manaCost);
 
     const state = GameState.getInstance();
     const map = state.getMap();
     const coordinatesList = [];
-    let { x, y } = { x: unit.x + dx, y: unit.y + dy };
+    let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
@@ -269,17 +255,15 @@ class Bolt extends UnitAbility {
     }
 
     const targetUnit = map.getUnit({ x, y });
-    if (!!targetUnit) {
+    if (targetUnit) {
       const damage = unit.getDamage();
 
-      await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await targetUnit.takeDamage(damage, unit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
+      await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
     } else {
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);
     }
-
-    unit.spendMana(this.manaCost);
   };
 }
 
@@ -296,14 +280,14 @@ class Blink extends UnitAbility {
       throw new Error('Blink requires a target!');
     }
 
-    const dx = coordinates.x - unit.x;
-    const dy = coordinates.y - unit.y;
-    const x = unit.x + 2 * dx;
-    const y = unit.y + 2 * dy;
+    const { x: unitX, y: unitY } = unit.getCoordinates();
+    const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
+    const x = unitX + 2 * dx;
+    const y = unitY + 2 * dy;
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = pointAt(unit, coordinates);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       await unit.moveTo({ x, y });
@@ -329,7 +313,7 @@ class Teleport extends UnitAbility {
       throw new Error('Teleport requires a target!');
     }
 
-    if (manhattanDistance(unit, coordinates) > this.RANGE) {
+    if (manhattanDistance(unit.getCoordinates(), coordinates) > this.RANGE) {
       throw new Error(`Can't teleport more than ${this.RANGE} units`);
     }
 
@@ -337,7 +321,7 @@ class Teleport extends UnitAbility {
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    unit.direction = pointAt(unit, coordinates);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       playSound(Sounds.WIZARD_VANISH);

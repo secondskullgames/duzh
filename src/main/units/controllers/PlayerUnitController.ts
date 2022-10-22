@@ -13,7 +13,7 @@ class PlayerUnitController implements UnitController {
   }
 
   issueOrder(unit: Unit): Promise<any> {
-    if (!!this.queuedOrder) {
+    if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;
       return queuedOrder();

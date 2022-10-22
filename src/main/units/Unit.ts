@@ -1,4 +1,3 @@
-import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import EquipmentScript from '../equipment/EquipmentScript';
 import { playAttackingAnimation } from '../graphics/animations/Animations';
@@ -47,27 +46,27 @@ class Unit implements Entity, Animatable {
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
-  x: number;
-  y: number;
-  name: string;
-  level: number;
-  experience: number;
-  life: number;
-  maxLife: number;
-  mana: number;
-  maxMana: number;
-  lifeRemainder: number;
-  manaRemainder: number;
+  private x: number;
+  private y: number;
+  private name: string;
+  private level: number;
+  private experience: number;
+  private life: number;
+  private maxLife: number;
+  private mana: number;
+  private maxMana: number;
+  private lifeRemainder: number;
+  private manaRemainder: number;
   private damage: number;
-  controller: UnitController;
-  activity: Activity;
-  direction: Direction;
+  private controller: UnitController;
+  private activity: Activity;
+  private direction: Direction;
   /**
    * For now, this is not auto-incremented and only used for certain animations (see Animations.ts)
    */
-  frameNumber: number;
+  private frameNumber: number;
   private readonly abilities: UnitAbility[];
-  stunDuration: number;
+  private stunDuration: number;
   /**
    * Used by AI to make certain decisions
    */
@@ -87,8 +86,8 @@ class Unit implements Entity, Animatable {
     this.experience = 0;
     this.life = unitClass.startingLife;
     this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana || 0;
-    this.maxMana = unitClass.startingMana || 0;
+    this.mana = unitClass.startingMana ?? 0;
+    this.maxMana = unitClass.startingMana ?? 0;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
     this.damage = unitClass.startingDamage;
@@ -96,7 +95,7 @@ class Unit implements Entity, Animatable {
     this.activity = 'STANDING';
     this.direction = Direction.S;
     this.frameNumber = 1;
-    this.abilities = (unitClass.abilities[1] || []).map(name => UnitAbility[name]);
+    this.abilities = (unitClass.abilities[1] ?? []).map(name => UnitAbility[name]);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -107,7 +106,7 @@ class Unit implements Entity, Animatable {
     }
 
     while (this.level < level) {
-      this.levelUp(false);
+      this.levelUp();
     }
   }
 
@@ -141,9 +140,28 @@ class Unit implements Entity, Animatable {
   };
 
   getUnitClass = (): UnitClass => this.unitClass;
+  getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
+  getController = (): UnitController => this.controller;
+  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+  setCoordinates = ({ x, y }: Coordinates) => {
+    this.x = x;
+    this.y = y;
+  };
+  getLife = () => this.life;
+  getMaxLife = () => this.maxLife;
+  getMana = () => this.mana;
+  getMaxMana = () => this.maxMana;
+  getLevel = () => this.level;
+  getExperience = () => this.experience;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
+  getActivity = () => this.activity;
+  getDirection = () => this.direction;
+  setDirection = (direction: Direction) => { this.direction = direction; };
+  getFrameNumber = () => this.frameNumber;
+  getAbilities = () => this.abilities;
+  getSprite = () => this.sprite;
 
   update = async () => {
     await this._upkeep();
@@ -159,7 +177,7 @@ class Unit implements Entity, Animatable {
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.slot !== 'RANGED_WEAPON') {
-        damage += (equipment.damage || 0);
+        damage += (equipment.damage ?? 0);
       }
     }
 
@@ -172,20 +190,20 @@ class Unit implements Entity, Animatable {
     for (const equipment of this.equipment.getAll()) {
       switch (equipment.slot) {
         case 'RANGED_WEAPON':
-          damage += (equipment.damage || 0);
+          damage += (equipment.damage ?? 0);
           break;
         case 'MELEE_WEAPON':
           // do nothing
           break;
         default:
-          damage += (equipment.damage || 0) / 2;
+          damage += (equipment.damage ?? 0) / 2;
       }
     }
 
     return Math.round(damage);
   };
 
-  levelUp = (withSound: boolean) => {
+  levelUp = () => {
     this.level++;
     const { lifePerLevel, manaPerLevel } = this.unitClass;
     this.maxLife += lifePerLevel;
@@ -195,13 +213,9 @@ class Unit implements Entity, Animatable {
       this.mana += manaPerLevel;
     }
     this.damage += this.unitClass.damagePerLevel;
-    const abilities = this.unitClass.abilities[this.level] || [];
+    const abilities = this.unitClass.abilities[this.level] ?? [];
     for (const abilityName of abilities) {
       this.abilities.push(UnitAbility[abilityName]);
-    }
-
-    if (withSound) {
-      playSound(Sounds.LEVEL_UP);
     }
   };
 
@@ -212,7 +226,8 @@ class Unit implements Entity, Animatable {
     const experienceToNextLevel = this.experienceToNextLevel();
     while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
       this.experience -= experienceToNextLevel;
-      this.levelUp(true);
+      this.levelUp();
+      playSound(Sounds.LEVEL_UP);
     }
   };
 
@@ -224,7 +239,7 @@ class Unit implements Entity, Animatable {
     return null;
   };
 
-  attack = async (target: Unit) => {
+  startAttack = async (target: Unit) => {
     const { x, y } = target;
     await playAttackingAnimation(this, target);
     for (const equipment of this.equipment.getAll()) {
@@ -237,8 +252,7 @@ class Unit implements Entity, Animatable {
   };
 
   moveTo = async ({ x, y }: Coordinates) => {
-    this.x = x;
-    this.y = y;
+    this.setCoordinates({ x, y });
     const playerUnit = GameState.getInstance().getPlayerUnit();
     if (this === playerUnit) {
       await playSound(Sounds.FOOTSTEP);
@@ -252,61 +266,70 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  takeDamage = async (baseDamage: number, sourceUnit: Unit | null = null) => {
-    const state = GameState.getInstance();
-    const playerUnit = state.getPlayerUnit();
-    const map = state.getMap();
+  /**
+   * @return the amount of damage taken
+   */
+  takeDamage = async (baseDamage: number, sourceUnit: Unit | null): Promise<number> => {
+    const adjustedDamage = this._calculateIncomingDamage(baseDamage, sourceUnit);
+    const damageTaken = Math.min(adjustedDamage, this.life);
+    this.life -= damageTaken;
+    this.turnsSinceCombatAction = 0;
+    return damageTaken;
+  };
 
+  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
     let adjustedDamage = baseDamage;
-    if (sourceUnit !== null && isInStraightLine(this, sourceUnit)) {
+    if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
       const shield = this.equipment.getBySlot('SHIELD');
       if (shield !== null && shield.blockAmount !== null) {
-        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount || 0)));
+        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount ?? 0)));
       }
     }
-
-    this.life = Math.max(this.life - adjustedDamage, 0);
-    this.turnsSinceCombatAction = 0;
-
-    if (sourceUnit) {
-      state.logMessage(`${sourceUnit.name} hit ${this.name} for ${adjustedDamage} damage!`);
-    }
-
-    if (this.life === 0) {
-      map.removeUnit(this);
-      if (this === playerUnit) {
-        await gameOver();
-        return;
-      } else {
-        playSound(Sounds.ENEMY_DIES);
-        state.logMessage(`${this.name} dies!`);
-      }
-
-      if (sourceUnit && sourceUnit === playerUnit) {
-        sourceUnit.gainExperience(1);
-      }
-    }
+    return adjustedDamage;
   };
+
+  /**
+   * @return the amount of life gained
+   */
+  gainLife = (life: number): number => {
+    const lifeGained = Math.min(life, this.maxLife - this.life);
+    this.life += lifeGained;
+    return lifeGained;
+  };
+
+  /**
+   * @return the amount of mana gained
+   */
+  gainMana = (mana: number): number => {
+    const manaGained = Math.min(mana, this.maxMana - this.mana);
+    this.mana += manaGained;
+    return manaGained;
+  }
 
   /**
    * @override {@link Animatable#getAnimationKey}
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
-  getMana = () => this.mana;
-  getMaxMana = () => this.maxMana;
-  canSpendMana = (amount: number) => (this.mana || 0) >= amount;
+  canSpendMana = (amount: number) => (this.mana) >= amount;
   spendMana = (amount: number) => {
     checkState(this.mana !== null);
-    checkArgument(amount <= this.mana!!);
+    checkArgument(amount <= this.mana);
     checkArgument(amount >= 0);
-    this.mana!! -= amount;
+    this.mana -= amount;
   };
 
-  getAbilities = () => this.abilities;
-  getSprite = () => this.sprite;
-
   isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
+
+  setActivity = (activity: Activity, frameNumber: number, direction: Direction | null) => {
+    this.activity = activity;
+    this.frameNumber = frameNumber ?? 1;
+    this.direction = direction ?? this.direction;
+  };
+
+  getStunned = (duration: number) => {
+    this.stunDuration = Math.max(this.stunDuration, duration)
+  };
 }
 
 export default Unit;

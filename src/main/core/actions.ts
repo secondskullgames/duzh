@@ -11,6 +11,7 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
 import ItemFactory from '../items/ItemFactory';
+import Unit from '../units/Unit';
 
 let renderer: GameRenderer;
 let firstMapPromise: Promise<MapInstance> | null = null;
@@ -84,13 +85,6 @@ const startGame = async () => {
   await render();
   const t2 = new Date().getTime();
   console.log(`Loaded level in ${t2 - t1} ms`);
-
-  for (let i = 0; i < 10; i++) {
-    GameState.getInstance()
-      .getPlayerUnit()
-      .getInventory()
-      .add(await ItemFactory.createScrollOfFloorFire(10));
-  }
 };
 
 const startGameDebug = async () => {
@@ -126,8 +120,9 @@ const revealTiles = () => {
 
   const radius = 3;
 
-  for (let y = playerUnit.y - radius; y <= playerUnit.y + radius; y++) {
-    for (let x = playerUnit.x - radius; x <= playerUnit.x + radius; x++) {
+  const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+  for (let y = playerY - radius; y <= playerY + radius; y++) {
+    for (let x = playerX - radius; x <= playerX + radius; x++) {
       if (!isTileRevealed({ x, y })) {
         map.revealTile({ x, y });
       }
@@ -141,7 +136,40 @@ const gameOver = async () => {
   playSound(Sounds.GAME_OVER);
 };
 
+const attack = async (source: Unit, target: Unit, damage?: number) => {
+  if (damage === undefined) {
+    damage = source.getDamage();
+  }
+
+  const state = GameState.getInstance();
+  const playerUnit = state.getPlayerUnit();
+  const map = state.getMap();
+
+  await source.startAttack(target);
+  const damageTaken = await target.takeDamage(damage, source);
+
+  if (source) {
+    state.logMessage(`${source.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
+  }
+
+  if (target.getLife() === 0) {
+    map.removeUnit(target.getCoordinates());
+    if (target === playerUnit) {
+      await gameOver();
+      return;
+    } else {
+      playSound(Sounds.ENEMY_DIES);
+      state.logMessage(`${target.getName()} dies!`);
+    }
+
+    if (source === playerUnit) {
+      source.gainExperience(1);
+    }
+  }
+};
+
 export {
+  attack,
   gameOver,
   initialize,
   loadNextMap,
