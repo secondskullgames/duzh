@@ -5,7 +5,7 @@ import Activity from '../../types/Activity';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../units/Unit';
-import { wait } from '../../utils/promises';
+import { sleep } from '../../utils/promises';
 import Projectile from '../../types/Projectile';
 
 const FRAME_LENGTH = 150; // milliseconds
@@ -251,7 +251,7 @@ const _playAnimation = async (animation: Animation) => {
     await render();
 
     if (i < (frames.length - 1)) {
-      await wait(delay);
+      await sleep(delay);
     }
 
     for (const projectile of (frame.projectiles ?? [])) {

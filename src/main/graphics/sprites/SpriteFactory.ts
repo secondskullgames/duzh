@@ -32,9 +32,9 @@ const createTileSprite = async (filename: string, paletteSwaps?: PaletteSwaps): 
 
 const createStaticSprite = async (spriteName: string, paletteSwaps?: PaletteSwaps): Promise<Sprite> => {
   const model: StaticSpriteClass = await StaticSpriteClass.load(spriteName);
-  const { offsets, transparentColor } = model;
+  const { filename, offsets, transparentColor } = model;
   const image = await ImageFactory.getImage({
-    filename: model.filename,
+    filename,
     paletteSwaps,
     transparentColor
   });

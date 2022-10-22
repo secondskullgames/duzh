@@ -1,9 +1,9 @@
-const wait = async (milliseconds: number): Promise<void> => new Promise<void>(resolve => {
+const sleep = async (milliseconds: number): Promise<void> => new Promise<void>(resolve => {
   setTimeout(() => {
     resolve();
   }, milliseconds);
 });
 
 export {
-  wait
+  sleep
 };

@@ -1,8 +1,8 @@
 import { tail } from '../utils/arrays';
 import GameState from './GameState';
 
-const maxTurnsAgo = 6;
-const maxMessages = 3;
+const maxTurnsAgo = 8;
+const maxMessages = 4;
 
 type Message = {
   message: string,

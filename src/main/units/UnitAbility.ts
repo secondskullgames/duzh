@@ -18,6 +18,7 @@ import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import Unit from './Unit';
 import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
+import { sleep } from '../utils/promises';
 
 type Props = {
   name: string,
@@ -127,31 +128,28 @@ class KnockbackAttack extends UnitAbility {
       throw new Error('KnockbackAttack requires a target!');
     }
 
-    const { x, y } = coordinates;
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
     const state = GameState.getInstance();
     const map = state.getMap();
     unit.setDirection({ dx, dy });
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
-    } else {
-      const targetUnit = map.getUnit({ x, y });
-      if (targetUnit) {
-        await attack(unit, targetUnit);
-        let targetCoordinates = { x, y };
+    const targetUnit = map.getUnit(coordinates);
+    if (targetUnit) {
+      unit.spendMana(this.manaCost);
+      await attack(unit, targetUnit);
+      await playSound(Sounds.SPECIAL_ATTACK);
+      targetUnit.getStunned(1);
 
-        // knockback by one tile
-        const oneTileBack = { x: targetCoordinates.x + dx, y: targetCoordinates.y + dy };
-        if (map.contains(oneTileBack) && !map.isBlocked(oneTileBack)) {
-          targetCoordinates = oneTileBack;
+      const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
+      if (map.contains(first) && !map.isBlocked(first)) {
+        targetUnit.setCoordinates(first);
+        await render();
+        await sleep(50);
+        const second = Coordinates.plus(first, { dx, dy });
+        if (map.contains(second) && !map.isBlocked(second)) {
+          targetUnit.setCoordinates(second);
         }
-        targetUnit.setCoordinates(targetCoordinates);
-
-        targetUnit.getStunned(1);
-        await playSound(Sounds.SPECIAL_ATTACK);
-        unit.spendMana(this.manaCost);
       }
     }
   };
@@ -282,16 +280,23 @@ class Blink extends UnitAbility {
 
     const { x: unitX, y: unitY } = unit.getCoordinates();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
-    const x = unitX + 2 * dx;
-    const y = unitY + 2 * dy;
 
     const state = GameState.getInstance();
     const map = state.getMap();
+
+    const first = { x: unitX + dx, y: unitY + dy };
+    const second = { x: unitX + 2 * dx, y: unitY + 2 * dy };
+    const canMove = [first, second]
+      .every(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }));
+
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
+    if (canMove) {
       unit.spendMana(this.manaCost);
+      await unit.moveTo(first);
+      await render();
+      await sleep(50);
+      await unit.moveTo(second);
     } else {
       await playSound(Sounds.FOOTSTEP);
     }
