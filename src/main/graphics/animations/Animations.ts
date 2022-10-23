@@ -30,7 +30,7 @@ type Animation = {
   delay: number
 };
 
-const playAttackingAnimation = async (source: Unit, target?: Unit) => {
+export const playAttackingAnimation = async (source: Unit, target?: Unit) => {
   if (target) {
     return _playAnimation({
       frames: [
@@ -68,7 +68,7 @@ const playAttackingAnimation = async (source: Unit, target?: Unit) => {
   }
 };
 
-const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
+export const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
   const frames: AnimationFrame[] = [];
   // first frame
   {
@@ -128,7 +128,7 @@ const playArrowAnimation = async (source: Unit, direction: Direction, coordinate
 };
 
 
-const playBoltAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
+export const playBoltAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
   const frames: AnimationFrame[] = [];
   // first frame
   {
@@ -187,7 +187,7 @@ const playBoltAnimation = async (source: Unit, direction: Direction, coordinates
   });
 };
 
-const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
+export const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   const frames: AnimationFrame[] = [];
   for (let i = 0; i < targets.length; i++) {
     const frame: UnitAnimationFrame[] = [];
@@ -213,7 +213,7 @@ const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   });
 };
 
-const playWizardVanishingAnimation = async (source: Unit) => _playAnimation({
+export const playWizardVanishingAnimation = async (source: Unit) => _playAnimation({
   frames: [
     { units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }] },
     { units: [{ unit: source, activity: 'VANISHING', frameNumber: 2 }] },
@@ -223,7 +223,7 @@ const playWizardVanishingAnimation = async (source: Unit) => _playAnimation({
   delay: WIZARD_TELEPORT_FRAME_LENGTH
 });
 
-const playWizardAppearingAnimation = async (source: Unit) => _playAnimation({
+export const playWizardAppearingAnimation = async (source: Unit) => _playAnimation({
   frames: [
     { units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }] },
     { units: [{ unit: source, activity: 'APPEARING', frameNumber: 2 }] },
@@ -258,13 +258,4 @@ const _playAnimation = async (animation: Animation) => {
       map.removeProjectile(projectile.getCoordinates());
     }
   }
-};
-
-export {
-  playArrowAnimation,
-  playAttackingAnimation,
-  playBoltAnimation,
-  playFloorFireAnimation,
-  playWizardAppearingAnimation,
-  playWizardVanishingAnimation
 };

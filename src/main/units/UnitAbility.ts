@@ -4,7 +4,8 @@ import { attack, render } from '../core/actions';
 import GameState from '../core/GameState';
 import {
   playArrowAnimation,
-  playAttackingAnimation, playBoltAnimation,
+  playAttackingAnimation,
+  playBoltAnimation,
   playWizardAppearingAnimation,
   playWizardVanishingAnimation
 } from '../graphics/animations/Animations';
@@ -74,7 +75,7 @@ class NormalAttack extends UnitAbility {
           await door.open();
           await playSound(Sounds.OPEN_DOOR);
         } else {
-          await playSound(Sounds.FOOTSTEP);
+          await playSound(Sounds.BLOCKED);
         }
       }
 
@@ -139,7 +140,7 @@ class KnockbackAttack extends UnitAbility {
       unit.spendMana(this.manaCost);
       await attack(unit, targetUnit);
       await playSound(Sounds.SPECIAL_ATTACK);
-      targetUnit.getStunned(1);
+      targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
       if (map.contains(first) && !map.isBlocked(first)) {
@@ -179,7 +180,7 @@ class StunAttack extends UnitAbility {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         await attack(unit, targetUnit);
-        targetUnit.getStunned(2);
+        targetUnit.setStunned(2);
       }
     }
   };
@@ -284,21 +285,28 @@ class Blink extends UnitAbility {
     const state = GameState.getInstance();
     const map = state.getMap();
 
-    const first = { x: unitX + dx, y: unitY + dy };
-    const second = { x: unitX + 2 * dx, y: unitY + 2 * dy };
-    const canMove = [first, second]
-      .every(({ x, y }) => map.contains({ x, y }) && !map.isBlocked({ x, y }));
-
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (canMove) {
+    const distance = 2;
+    let { x, y } = unit.getCoordinates();
+    let moved = false;
+    for (let i = 0; i < distance; i++) {
+      x += dx;
+      y += dy;
+      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+        await unit.moveTo({ x, y });
+        moved = true;
+        await render();
+        await sleep(50);
+      } else {
+        break;
+      }
+    }
+
+    if (moved) {
       unit.spendMana(this.manaCost);
-      await unit.moveTo(first);
-      await render();
-      await sleep(50);
-      await unit.moveTo(second);
     } else {
-      await playSound(Sounds.FOOTSTEP);
+      await playSound(Sounds.BLOCKED);
     }
   };
 }
@@ -337,7 +345,7 @@ class Teleport extends UnitAbility {
 
       unit.spendMana(this.manaCost);
     } else {
-      await playSound(Sounds.FOOTSTEP);
+      await playSound(Sounds.BLOCKED);
     }
   };
 }

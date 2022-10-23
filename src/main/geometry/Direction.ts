@@ -12,13 +12,16 @@ namespace Direction {
   export const E: Direction = { dx: 1, dy: 0 };
   export const S: Direction = { dx: 0, dy: 1 };
   export const W: Direction = { dx: -1, dy: 0 };
+  const _nameToDirection: Record<DirectionName, Direction> = { N, E, S, W };
 
-  const _map = new Map<DirectionName, Direction>([
-    ['N', N],
-    ['E', E],
-    ['S', S],
-    ['W', W]
-  ]);
+  const _getName = (direction: Direction): DirectionName => {
+    for (const [name, dir] of Object.entries(_nameToDirection)) {
+      if (Direction.equals(dir, direction)) {
+        return name as DirectionName;
+      }
+    }
+    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
+  };
 
   export const values = (): Direction[] => [N, E, S, W];
 
@@ -38,16 +41,39 @@ namespace Direction {
   };
 
   export const toLegacyDirection = (direction: Direction): string => {
-    const lookup = new Map<DirectionName, string>([
-      ['N', 'NW'],
-      ['E', 'NE'],
-      ['S', 'SE'],
-      ['W', 'SW']
-    ]);
-    return [...lookup.entries()]
-      .filter(([from, to]) => equals(direction, checkNotNull(_map.get(from))))
-      .map(([from, to]) => to)
-      [0];
+    const lookup: Record<DirectionName, string> = {
+      'N': 'NW',
+      'E': 'NE',
+      'S': 'SE',
+      'W': 'SW'
+    };
+    return lookup[_getName(direction)];
+  };
+
+  export const rotateClockwise = (direction: Direction): Direction => {
+    const directionName = _getName(direction);
+    const rotated: DirectionName = (() => {
+      switch (directionName) {
+        case 'N': return 'E';
+        case 'E': return 'S';
+        case 'S': return 'W';
+        case 'W': return 'N';
+      }
+    })();
+    return _nameToDirection[rotated];
+  };
+
+  export const rotateCounterClockwise = (direction: Direction): Direction => {
+    const directionName = _getName(direction);
+    const rotated: DirectionName = (() => {
+      switch (directionName) {
+        case 'N': return 'W';
+        case 'E': return 'N';
+        case 'S': return 'E';
+        case 'W': return 'S';
+      }
+    })();
+    return _nameToDirection[rotated];
   };
 }
 

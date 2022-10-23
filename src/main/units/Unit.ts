@@ -327,7 +327,7 @@ class Unit implements Entity, Animatable {
     this.direction = direction ?? this.direction;
   };
 
-  getStunned = (duration: number) => {
+  setStunned = (duration: number) => {
     this.stunDuration = Math.max(this.stunDuration, duration)
   };
 }
