@@ -1,3 +1,4 @@
+import BLOCKED from '../../../data/sounds/blocked.json';
 import DEFLECTED_HIT from '../../../data/sounds/deflected_hit.json';
 import DESCEND_STAIRS from '../../../data/sounds/descend_stairs.json';
 import ENEMY_DIES from '../../../data/sounds/enemy_dies.json';
@@ -16,6 +17,7 @@ import WIZARD_VANISH from '../../../data/sounds/wizard_vanish.json';
 import { Sample } from './types';
 
 const Sounds: Record<string, Sample[]> = {
+  BLOCKED,
   DEFLECTED_HIT,
   DESCEND_STAIRS,
   ENEMY_HITS_PLAYER,

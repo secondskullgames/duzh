@@ -279,7 +279,6 @@ class Blink extends UnitAbility {
       throw new Error('Blink requires a target!');
     }
 
-    const { x: unitX, y: unitY } = unit.getCoordinates();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
     const state = GameState.getInstance();
