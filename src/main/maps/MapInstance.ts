@@ -5,7 +5,6 @@ import Coordinates from '../geometry/Coordinates';
 import Spawner from '../objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
-import Entity from '../types/Entity';
 import Unit from '../units/Unit';
 import { checkArgument } from '../utils/preconditions';
 import Projectile from '../types/Projectile';

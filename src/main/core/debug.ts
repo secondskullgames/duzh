@@ -7,8 +7,8 @@ import { subtract } from '../utils/arrays';
 import { loadNextMap, render } from './actions';
 import GameState from './GameState';
 
-const revealMap = async () => {
-  jwb.DEBUG = true;
+const toggleRevealMap = async () => {
+  jwb.DEBUG = !jwb.DEBUG;
   await render();
 };
 
@@ -43,7 +43,7 @@ const toggleEditor = () => {
 };
 
 type DebugShape = {
-  revealMap: () => void,
+  toggleRevealMap: () => void,
   killEnemies: () => void,
   killPlayer: () => void,
   nextLevel: () => void,
@@ -55,7 +55,7 @@ export const initDebug = () => {
   // @ts-ignore
   window.jwb = window.jwb ?? {};
   jwb.debug = jwb.debug ?? {
-    revealMap,
+    toggleRevealMap,
     killEnemies,
     killPlayer,
     nextLevel,

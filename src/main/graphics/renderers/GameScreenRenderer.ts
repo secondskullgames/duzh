@@ -1,6 +1,5 @@
 import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
-import { isTileRevealed } from '../../maps/MapUtils';
 import Coordinates from '../../geometry/Coordinates';
 import { Pixel } from '../../types/types';
 import Unit from '../../units/Unit';
@@ -79,7 +78,7 @@ class GameScreenRenderer extends Renderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        if (isTileRevealed({ x, y })) {
+        if (this._isTileRevealed({ x, y })) {
           const tile = map.getTile({ x, y });
           if (tile) {
             promises.push(this._renderElement(tile, { x, y }));
@@ -102,7 +101,7 @@ class GameScreenRenderer extends Renderer {
       const promises: Promise<any>[] = [];
 
       for (let x = 0; x < map.width; x++) {
-        if (isTileRevealed({ x, y })) {
+        if (this._isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (item) {
             promises.push(
@@ -179,6 +178,11 @@ class GameScreenRenderer extends Renderer {
       paletteSwaps
     });
     this.context.drawImage(image.bitmap, left, top);
+  };
+
+  private _isTileRevealed = ({ x, y }: Coordinates): boolean => {
+    const map = GameState.getInstance().getMap();
+    return jwb.DEBUG || map.isTileRevealed({ x, y });
   };
 }
 

@@ -4,7 +4,7 @@ import ItemCategory from './ItemCategory';
 class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
-  private readonly onUse: (unit: Unit) => Promise<any>;
+  private readonly onUse: (unit: Unit) => Promise<void>;
 
   constructor(name: string, category: ItemCategory, onUse: (item: InventoryItem, unit: Unit) => Promise<void>) {
     this.name = name;
@@ -12,9 +12,7 @@ class InventoryItem {
     this.onUse = (unit: Unit) => onUse(this, unit);
   }
 
-  use(unit: Unit): Promise<any> {
-    return this.onUse(unit);
-  }
+  use = (unit: Unit) => this.onUse(unit);
 }
 
 export default InventoryItem;

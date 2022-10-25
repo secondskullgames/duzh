@@ -2,7 +2,6 @@ import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
 import MapSpec from '../maps/MapSpec';
-import { isTileRevealed } from '../maps/MapUtils';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
@@ -10,7 +9,6 @@ import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
-import ItemFactory from '../items/ItemFactory';
 import Unit from '../units/Unit';
 
 let renderer: GameRenderer;
@@ -123,7 +121,7 @@ const revealTiles = () => {
   const { x: playerX, y: playerY } = playerUnit.getCoordinates();
   for (let y = playerY - radius; y <= playerY + radius; y++) {
     for (let x = playerX - radius; x <= playerX + radius; x++) {
-      if (!isTileRevealed({ x, y })) {
+      if (!map.isTileRevealed({ x, y })) {
         map.revealTile({ x, y });
       }
     }
@@ -152,7 +150,7 @@ const attack = async (source: Unit, target: Unit, damage?: number) => {
     state.logMessage(`${source.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
   }
 
-  if (target.getLife() === 0) {
+  if (target.getLife() <= 0) {
     map.removeUnit(target.getCoordinates());
     if (target === playerUnit) {
       await gameOver();

@@ -1,5 +1,4 @@
 import GameState from '../../core/GameState';
-import { isTileRevealed } from '../../maps/MapUtils';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -44,13 +43,19 @@ class MinimapRenderer extends Renderer {
       return Colors.GREEN;
     }
 
-    if (isTileRevealed({ x, y })) {
+    if (map.isTileRevealed({ x, y })) {
       const tileType = map.getTile({ x, y }).type;
       switch (tileType) {
         case 'STAIRS_DOWN':
           return Colors.BLUE;
         case 'FLOOR':
         case 'FLOOR_HALL':
+          const unit = map.getUnit({ x, y });
+          if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
+            return Colors.RED;
+          } else if (map.getItem({ x, y })) {
+            return Colors.YELLOW;
+          }
           return Colors.LIGHT_GRAY;
         case 'WALL':
         case 'WALL_HALL':
@@ -61,7 +66,7 @@ class MinimapRenderer extends Renderer {
           return Colors.BLACK;
       }
     } else {
-      return Colors.BLACK;
+      return Colors.DARKER_GRAY;
     }
   };
 }

@@ -23,7 +23,7 @@ class Equipment implements Animatable {
   readonly blockAmount: number; // typically only for shields
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
-  readonly name: string;
+  private readonly name: string;
   readonly script: EquipmentScript | null;
   private _unit: Unit | null;
 
@@ -37,6 +37,8 @@ class Equipment implements Animatable {
     this.script = equipmentClass.script ?? null;
     this._unit = null;
   }
+
+  getName = () => this.name;
 
   attach = (unit: Unit) => { this._unit = unit; };
 

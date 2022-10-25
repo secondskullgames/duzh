@@ -43,7 +43,7 @@ class InventoryRenderer extends Renderer {
 
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
-      promises.push(this._drawText(`${EquipmentSlot.toString(equipment.slot)} - ${equipment.name}`, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+      promises.push(this._drawText(`${EquipmentSlot.toString(equipment.slot)} - ${equipment.getName()}`, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 

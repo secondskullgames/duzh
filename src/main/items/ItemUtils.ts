@@ -31,7 +31,8 @@ const equipItem = async (item: InventoryItem, equipmentClass: EquipmentClass, un
   }
   unit.getEquipment().add(equipment);
   equipment.attach(unit);
-
+  GameState.getInstance().logMessage(`Equipped ${equipment.getName()}.`);
+  playSound(Sounds.BLOCKED);
 };
 
 export {

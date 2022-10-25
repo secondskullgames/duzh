@@ -81,7 +81,7 @@ export const playArrowAnimation = async (source: Unit, direction: Direction, coo
     frames.push(frame);
   }
 
-  const visibleCoordinatesList = coordinatesList.filter(GameState.getInstance().getMap().isTileRevealed);
+  const visibleCoordinatesList = coordinatesList.filter(({ x, y }) => GameState.getInstance().getMap().isTileRevealed({ x, y }));
 
   // arrow movement frames
   for (const { x, y } of visibleCoordinatesList) {
