@@ -13,7 +13,7 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "startingLife": 50,
+  "startingLife": 40,
   "startingMana": null,
   "startingDamage": 2,
   "lifePerLevel": 0,

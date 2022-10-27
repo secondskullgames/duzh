@@ -1,6 +1,6 @@
 // TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
 
-import { attack, render } from '../core/actions';
+import { render } from '../core/actions';
 import GameState from '../core/GameState';
 import {
   playArrowAnimation,
@@ -20,6 +20,7 @@ import Unit from './Unit';
 import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
 import { sleep } from '../utils/promises';
+import { attack } from '../core/combat';
 
 type Props = {
   name: string,
@@ -221,6 +222,7 @@ class ShootArrow extends UnitAbility {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
       await targetUnit.takeDamage(damage, unit);
+      state.logMessage(`${unit.getName()} hit ${targetUnit.getName()} for ${damage} damage!`);
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }

@@ -9,7 +9,7 @@ import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
-import Unit from '../units/Unit';
+import { MapSupplier } from '../maps/MapSupplier';
 
 let renderer: GameRenderer;
 let firstMapPromise: Promise<MapInstance> | null = null;
@@ -21,11 +21,10 @@ const loadNextMap = async () => {
     state.setScreen('VICTORY');
   } else {
     const t1 = new Date().getTime();
-    const mapSpec = state.getNextMap();
-    const mapInstance = await MapFactory.loadMap(mapSpec);
-    state.setMap(mapInstance);
-    if (mapInstance.music) {
-      await Music.playMusic(mapInstance.music);
+    const nextMap = await state.getNextMap();
+    state.setMap(nextMap);
+    if (nextMap.music) {
+      await Music.playMusic(nextMap.music);
     }
     const t2 = new Date().getTime();
     console.log(`Loaded level in ${t2 - t1} ms`);
@@ -34,8 +33,7 @@ const loadNextMap = async () => {
 
 const preloadFirstMap = async () => {
   const state = GameState.getInstance();
-  const mapSpec = state.getNextMap();
-  firstMapPromise = MapFactory.loadMap(mapSpec);
+  firstMapPromise = state.getNextMap();
 };
 
 const initialize = async () => {
@@ -65,7 +63,10 @@ const _initState = async () => {
     /* webpackChunkName: "models" */
     `../../../data/maps.json`
   )).default as any[];
-  const maps = json.map(item => MapSpec.parse(item));
+  const mapSpecs = json.map(item => MapSpec.parse(item));
+  const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
+    return () => MapFactory.loadMap(mapSpec);
+  });
   const state = new GameState({ playerUnit, maps });
 
   GameState.setInstance(state);
@@ -134,40 +135,7 @@ const gameOver = async () => {
   playSound(Sounds.GAME_OVER);
 };
 
-const attack = async (source: Unit, target: Unit, damage?: number) => {
-  if (damage === undefined) {
-    damage = source.getDamage();
-  }
-
-  const state = GameState.getInstance();
-  const playerUnit = state.getPlayerUnit();
-  const map = state.getMap();
-
-  await source.startAttack(target);
-  const damageTaken = await target.takeDamage(damage, source);
-
-  if (source) {
-    state.logMessage(`${source.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
-  }
-
-  if (target.getLife() <= 0) {
-    map.removeUnit(target.getCoordinates());
-    if (target === playerUnit) {
-      await gameOver();
-      return;
-    } else {
-      playSound(Sounds.ENEMY_DIES);
-      state.logMessage(`${target.getName()} dies!`);
-    }
-
-    if (source === playerUnit) {
-      source.gainExperience(1);
-    }
-  }
-};
-
 export {
-  attack,
   gameOver,
   initialize,
   loadNextMap,
