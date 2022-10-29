@@ -1,18 +1,18 @@
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
-import MapSpec from '../maps/MapSpec';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
-import { MapSupplier } from '../maps/MapSupplier';
+import { GameEngine } from './GameEngine';
+import Renderer from '../graphics/renderers/Renderer';
 
-let renderer: GameRenderer;
+let engine: GameEngine | null = null;
 let firstMapPromise: Promise<MapInstance> | null = null;
+
+const render = () => engine?.render();
 
 const loadNextMap = async () => {
   const state = GameState.getInstance();
@@ -34,44 +34,6 @@ const loadNextMap = async () => {
 const preloadFirstMap = async () => {
   const state = GameState.getInstance();
   firstMapPromise = state.getNextMap();
-};
-
-const initialize = async () => {
-  const t1 = new Date().getTime();
-  renderer = new GameRenderer();
-  const container = document.getElementById('container') as HTMLElement;
-  const canvas = renderer.getCanvas();
-  container.appendChild(canvas);
-  canvas.focus();
-
-  await _initState();
-  await render();
-  const t2 = new Date().getTime();
-  preloadFirstMap();
-  attachEvents();
-  console.debug(`Loaded splash screen in ${t2 - t1} ms`);
-  const evilTheme = await Music.loadMusic('evil');
-  Music.playMusic(evilTheme);
-};
-
-const render = async () => renderer.render();
-
-const _initState = async () => {
-  const playerUnit = await UnitFactory.createPlayerUnit();
-
-  const json = (await import(
-    /* webpackChunkName: "models" */
-    `../../../data/maps.json`
-  )).default as any[];
-  const mapSpecs = json.map(item => MapSpec.parse(item));
-  const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
-    return () => MapFactory.loadMap(mapSpec);
-  });
-  const state = new GameState({ playerUnit, maps });
-
-  GameState.setInstance(state);
-
-  firstMapPromise = null;
 };
 
 const startGame = async () => {
@@ -97,16 +59,17 @@ const startGameDebug = async () => {
   await render();
 };
 
-/**
- * TODO: Is this different from initialize()?
- */
-const returnToTitle = async () => {
-  await _initState(); // will set state.screen = TITLE
-  Music.stop();
+const initialize = async (state: GameState, renderer: Renderer) => {
+  const t1 = new Date().getTime();
+  engine = new GameEngine({ renderer });
+
+  await render();
+  const t2 = new Date().getTime();
+  preloadFirstMap();
+  attachEvents();
+  console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  await render();
-  preloadFirstMap();
 };
 
 /**
@@ -140,7 +103,6 @@ export {
   initialize,
   loadNextMap,
   render,
-  returnToTitle,
   revealTiles,
   startGame,
   startGameDebug

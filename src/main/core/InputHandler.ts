@@ -6,9 +6,11 @@ import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
-import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';
+import { initialize, loadNextMap, render, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
+import GameRenderer from '../graphics/renderers/GameRenderer';
+import { GameDriver } from './GameDriver';
 
 type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
@@ -247,8 +249,12 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       }
       break;
     case 'VICTORY':
-    case 'GAME_OVER':
-      await returnToTitle();
+    case 'GAME_OVER': {
+      const gameDriver = GameDriver.getInstance();
+      const state = await gameDriver.initState();
+      const renderer = gameDriver.getRenderer();
+      await initialize(state, renderer);
+    }
   }
 };
 

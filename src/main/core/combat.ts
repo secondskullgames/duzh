@@ -4,9 +4,6 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { gameOver } from './actions';
 
-/**
- * TODO this is a really bad place to put this method
- */
 export const attack = async (source: Unit, target: Unit, damage?: number) => {
   if (damage === undefined) {
     damage = source.getDamage();

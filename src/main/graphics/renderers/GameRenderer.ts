@@ -1,7 +1,6 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
-import { tail } from '../../utils/arrays';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -13,22 +12,31 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
+import renderer from './Renderer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
+
+type Props = {
+  parent: Element
+};
 
 class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
 
-  constructor() {
+  constructor({ parent }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
     this.gameScreenRenderer = new GameScreenRenderer();
     this.hudRenderer = new HUDRenderer();
     this.inventoryRenderer = new InventoryRenderer();
-    this.getCanvas().tabIndex = 0;
+
+    const canvas = this.getCanvas();
+    parent.appendChild(canvas);
+    canvas.tabIndex = 0;
+    canvas.focus();
   }
 
   /**

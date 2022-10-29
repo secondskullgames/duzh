@@ -1,7 +1,8 @@
 import Rect from '../../main/geometry/Rect';
 import { areAdjacent } from '../../main/maps/MapUtils';
+import { expect, test } from '@jest/globals';
 
-const testAreAdjacent = () => {
+test('test adjacent rectangles', () => {
   // right-left
   // ####
   // ####****
@@ -32,14 +33,8 @@ const testAreAdjacent = () => {
     const second: Rect = { left: 0, top: 0, width: 6, height: 7 };
     _assert(areAdjacent(first, second, 5));
   }
-};
+});
 
-const _assert = (condition: boolean, message: string = 'fux') => {
-  if (!condition) {
-    throw new Error(message);
-  }
-};
-
-export {
-  testAreAdjacent
+const _assert = (condition: boolean) => {
+  expect(condition).toEqual(true);
 };
