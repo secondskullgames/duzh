@@ -13,7 +13,7 @@ interface Pixel {
   y: number
 }
 
-type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP';
+type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP' | 'HELP';
 
 type Room = Rect & {
   exits: Coordinates[]

@@ -5,12 +5,13 @@ import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
 import Messages from './Messages';
+import { MapSupplier } from '../maps/MapSupplier';
 
 let INSTANCE: GameState | null = null;
 
 type Props = {
   playerUnit: Unit,
-  maps: MapSpec[]
+  maps: MapSupplier[]
 };
 
 /**
@@ -18,51 +19,65 @@ type Props = {
  */
 class GameState {
   private screen: GameScreen;
-  private readonly _playerUnit: Unit;
-  private readonly maps: MapSpec[];
+  private prevScreen: GameScreen | null;
+  private readonly playerUnit: Unit;
+  private readonly mapSuppliers: MapSupplier[];
+  private readonly maps: MapInstance[];
   private mapIndex: number;
-  private readonly _messages: Messages;
-  private _turn: number;
-  private _queuedAbility: UnitAbility | null;
-  private _map: MapInstance | null;
+  private readonly messages: Messages;
+  private turn: number;
+  private queuedAbility: UnitAbility | null;
+  private map: MapInstance | null;
 
   constructor({ playerUnit, maps }: Props) {
     this.screen = 'TITLE';
-    this._playerUnit = playerUnit;
-    this.maps = maps;
+    this.playerUnit = playerUnit;
+    this.mapSuppliers = maps;
+    this.maps = [];
     this.mapIndex = -1;
-    this._map = null;
-    this._messages = new Messages();
-    this._turn = 1;
-    this._queuedAbility = null;
+    this.map = null;
+    this.messages = new Messages();
+    this.turn = 1;
+    this.queuedAbility = null;
   }
 
   getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => { this.screen = screen; };
-
-  getPlayerUnit = (): Unit => this._playerUnit;
-
-  hasNextMap = () => this.mapIndex < (this.maps.length - 1);
-  getMapIndex = () => this.mapIndex;
-  getNextMap = (): MapSpec => {
-    const mapSpec = this.maps[this.mapIndex + 1];
-    this.mapIndex++;
-    return mapSpec;
+  setScreen = (screen: GameScreen) => {
+    this.prevScreen = this.screen;
+    this.screen = screen;
+  };
+  showPrevScreen = () => {
+    if (this.prevScreen) {
+      this.screen = this.prevScreen;
+      this.prevScreen = null;
+    }
   };
 
-  getMap = (): MapInstance => checkNotNull(this._map, 'Tried to retrieve map before map was loaded');
+  getPlayerUnit = (): Unit => this.playerUnit;
 
-  setMap = (map: MapInstance) => { this._map = map; };
+  hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
+  getMapIndex = () => this.mapIndex;
+  getNextMap = async (): Promise<MapInstance> => {
+    this.mapIndex++;
+    const mapSupplier = this.mapSuppliers[this.mapIndex];
+    const map = await mapSupplier();
+    this.maps.push(map);
+    return map;
+  };
 
-  getTurn = () => this._turn;
-  nextTurn = () => { this._turn++; };
+  getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
 
-  getQueuedAbility = () => this._queuedAbility;
-  setQueuedAbility = (ability: UnitAbility | null) => { this._queuedAbility = ability; };
+  setMap = (map: MapInstance) => { this.map = map; };
 
-  getMessages = (): string[] => this._messages.getRecentMessages();
+  getTurn = () => this.turn;
+  nextTurn = () => { this.turn++; };
+
+  getQueuedAbility = () => this.queuedAbility;
+  setQueuedAbility = (ability: UnitAbility | null) => { this.queuedAbility = ability; };
+
+  getMessages = (): string[] => this.messages.getRecentMessages();
   logMessage = (message: string): void => {
-    this._messages.log(message);
+    this.messages.log(message);
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };

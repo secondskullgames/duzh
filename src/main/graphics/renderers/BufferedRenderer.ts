@@ -1,4 +1,4 @@
-import Renderer from './Renderer';
+import AbstractRenderer from './AbstractRenderer';
 
 type Props = {
   width: number,
@@ -10,7 +10,7 @@ type Props = {
  * Subclasses are expected to override the {@link #renderBuffer} method,
  * and the parent class will handle the {@link #render} step
  */
-abstract class BufferedRenderer extends Renderer {
+abstract class BufferedRenderer extends AbstractRenderer {
   protected readonly bufferCanvas: HTMLCanvasElement;
   protected readonly bufferContext: CanvasRenderingContext2D;
 

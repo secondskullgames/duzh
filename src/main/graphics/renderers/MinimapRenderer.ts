@@ -3,9 +3,9 @@ import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import Renderer from './Renderer';
+import AbstractRenderer from './AbstractRenderer';
 
-class MinimapRenderer extends Renderer {
+class MinimapRenderer extends AbstractRenderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'minimap' });
   }

@@ -7,7 +7,7 @@ import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import Renderer from './Renderer';
+import AbstractRenderer from './AbstractRenderer';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -17,7 +17,7 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
-class InventoryRenderer extends Renderer {
+class InventoryRenderer extends AbstractRenderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
   }

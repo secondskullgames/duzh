@@ -1,18 +1,18 @@
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
-import MapSpec from '../maps/MapSpec';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
-import Unit from '../units/Unit';
+import { GameEngine } from './GameEngine';
+import { Renderer } from '../graphics/renderers/Renderer';
 
-let renderer: GameRenderer;
+let engine: GameEngine | null = null;
 let firstMapPromise: Promise<MapInstance> | null = null;
+
+const render = () => engine?.render();
 
 const loadNextMap = async () => {
   const state = GameState.getInstance();
@@ -21,11 +21,10 @@ const loadNextMap = async () => {
     state.setScreen('VICTORY');
   } else {
     const t1 = new Date().getTime();
-    const mapSpec = state.getNextMap();
-    const mapInstance = await MapFactory.loadMap(mapSpec);
-    state.setMap(mapInstance);
-    if (mapInstance.music) {
-      await Music.playMusic(mapInstance.music);
+    const nextMap = await state.getNextMap();
+    state.setMap(nextMap);
+    if (nextMap.music) {
+      await Music.playMusic(nextMap.music);
     }
     const t2 = new Date().getTime();
     console.log(`Loaded level in ${t2 - t1} ms`);
@@ -34,43 +33,7 @@ const loadNextMap = async () => {
 
 const preloadFirstMap = async () => {
   const state = GameState.getInstance();
-  const mapSpec = state.getNextMap();
-  firstMapPromise = MapFactory.loadMap(mapSpec);
-};
-
-const initialize = async () => {
-  const t1 = new Date().getTime();
-  renderer = new GameRenderer();
-  const container = document.getElementById('container') as HTMLElement;
-  const canvas = renderer.getCanvas();
-  container.appendChild(canvas);
-  canvas.focus();
-
-  await _initState();
-  await render();
-  const t2 = new Date().getTime();
-  preloadFirstMap();
-  attachEvents();
-  console.debug(`Loaded splash screen in ${t2 - t1} ms`);
-  const evilTheme = await Music.loadMusic('evil');
-  Music.playMusic(evilTheme);
-};
-
-const render = async () => renderer.render();
-
-const _initState = async () => {
-  const playerUnit = await UnitFactory.createPlayerUnit();
-
-  const json = (await import(
-    /* webpackChunkName: "models" */
-    `../../../data/maps.json`
-  )).default as any[];
-  const maps = json.map(item => MapSpec.parse(item));
-  const state = new GameState({ playerUnit, maps });
-
-  GameState.setInstance(state);
-
-  firstMapPromise = null;
+  firstMapPromise = state.getNextMap();
 };
 
 const startGame = async () => {
@@ -96,16 +59,18 @@ const startGameDebug = async () => {
   await render();
 };
 
-/**
- * TODO: Is this different from initialize()?
- */
-const returnToTitle = async () => {
-  await _initState(); // will set state.screen = TITLE
-  Music.stop();
+const initialize = async (state: GameState, renderer: Renderer) => {
+  const t1 = new Date().getTime();
+  engine = new GameEngine({ renderer });
+  GameState.setInstance(state);
+
+  await render();
+  const t2 = new Date().getTime();
+  preloadFirstMap();
+  attachEvents();
+  console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  await render();
-  preloadFirstMap();
 };
 
 /**
@@ -134,45 +99,11 @@ const gameOver = async () => {
   playSound(Sounds.GAME_OVER);
 };
 
-const attack = async (source: Unit, target: Unit, damage?: number) => {
-  if (damage === undefined) {
-    damage = source.getDamage();
-  }
-
-  const state = GameState.getInstance();
-  const playerUnit = state.getPlayerUnit();
-  const map = state.getMap();
-
-  await source.startAttack(target);
-  const damageTaken = await target.takeDamage(damage, source);
-
-  if (source) {
-    state.logMessage(`${source.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
-  }
-
-  if (target.getLife() <= 0) {
-    map.removeUnit(target.getCoordinates());
-    if (target === playerUnit) {
-      await gameOver();
-      return;
-    } else {
-      playSound(Sounds.ENEMY_DIES);
-      state.logMessage(`${target.getName()} dies!`);
-    }
-
-    if (source === playerUnit) {
-      source.gainExperience(1);
-    }
-  }
-};
-
 export {
-  attack,
   gameOver,
   initialize,
   loadNextMap,
   render,
-  returnToTitle,
   revealTiles,
   startGame,
   startGameDebug

@@ -6,16 +6,18 @@ import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
-import { loadNextMap, render, returnToTitle, startGame, startGameDebug } from './actions';
+import { initialize, loadNextMap, render, startGame, startGameDebug } from './actions';
 import GameState from './GameState';
 import TurnHandler from './TurnHandler';
+import { GameDriver } from './GameDriver';
 
 type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
-type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0';
+type FunctionKey = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12';
 /**
  * NONE is a special command (read: hack) that does nothing, but is a trigger to call preventDefault()
  */
-type Key = ArrowKey | NumberKey | 'TAB' | 'ENTER' | 'SPACEBAR' | 'M' | 'NONE';
+type Key = ArrowKey | NumberKey | FunctionKey | 'TAB' | 'ENTER' | 'SPACEBAR' | 'M' | 'NONE';
 
 type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
 
@@ -27,6 +29,7 @@ type KeyCommand = {
 type PromiseSupplier = () => Promise<void>;
 
 const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
+  console.log(e.code);
   const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
     .filter(x => x)
     .map(x => x as ModifierKey);
@@ -70,6 +73,8 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
       return { key: '8', modifiers };
     case 'Digit9':
       return { key: '9', modifiers };
+    case 'F1':
+      return { key: 'F1', modifiers };
     case 'AltLeft':
     case 'AltRight':
     case 'ShiftLeft':
@@ -130,6 +135,8 @@ const keyHandler = async (e: KeyboardEvent) => {
     case '8':
     case '9':
       return _handleAbility(command.key);
+    case 'F1':
+      return _handleF1();
     case 'NONE':
     default: // not reachable
       return Promise.resolve();
@@ -247,8 +254,12 @@ const _handleEnter = async (modifiers: ModifierKey[]) => {
       }
       break;
     case 'VICTORY':
-    case 'GAME_OVER':
-      await returnToTitle();
+    case 'GAME_OVER': {
+      const gameDriver = GameDriver.getInstance();
+      const state = await gameDriver.initState();
+      const renderer = gameDriver.getRenderer();
+      await initialize(state, renderer);
+    }
   }
 };
 
@@ -296,6 +307,16 @@ const _handleAbility = async (command: NumberKey) => {
     state.setQueuedAbility(ability);
     await render();
   }
+};
+
+const _handleF1 = async () => {
+  const state = GameState.getInstance();
+  if (['GAME', 'INVENTORY', 'MINIMAP'].includes(state.getScreen())) {
+    state.setScreen('HELP');
+  } else {
+    state.showPrevScreen();
+  }
+  await render();
 };
 
 const _getDirection = (key: ArrowKey): Direction => {

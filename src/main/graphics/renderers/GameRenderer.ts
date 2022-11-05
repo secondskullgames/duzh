@@ -1,7 +1,6 @@
 import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
-import { tail } from '../../utils/arrays';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -13,22 +12,31 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
+import renderer from './AbstractRenderer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
+
+type Props = {
+  parent: Element
+};
 
 class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
 
-  constructor() {
+  constructor({ parent }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
     this.gameScreenRenderer = new GameScreenRenderer();
     this.hudRenderer = new HUDRenderer();
     this.inventoryRenderer = new InventoryRenderer();
-    this.getCanvas().tabIndex = 0;
+
+    const canvas = this.getCanvas();
+    parent.appendChild(canvas);
+    canvas.tabIndex = 0;
+    canvas.focus();
   }
 
   /**
@@ -51,6 +59,8 @@ class GameRenderer extends BufferedRenderer {
         return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
       case 'MINIMAP':
         return this._renderMinimap();
+      case 'HELP':
+        return this._renderHelp();
       default:
         // unreachable
         throw new Error(`Invalid screen ${screen}`);
@@ -107,6 +117,45 @@ class GameRenderer extends BufferedRenderer {
     const minimapRenderer = new MinimapRenderer();
     const image = await minimapRenderer.render();
     this.bufferContext.putImageData(image, 0, 0);
+  };
+
+  private _renderHelp = async () => {
+    this.bufferContext.fillStyle = Colors.BLACK.hex;
+    this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+
+    const left = 4;
+    const top = 4;
+
+    const intro = [
+      'Welcome to the Dungeons of Duzh! To escape, you must brave untold',
+      'terrors on seven floors. Make use of every weapon available, hone',
+      'your skills through combat, and beware the Horned Wizard.'
+    ];
+
+    const keys: [string, string][] = [
+      ['WASD / Arrow keys',   'Move around, melee attack'],
+      ['Tab',                 'Open inventory screen'],
+      ['Enter',               'Pick up item, enter portal, go down stairs'],
+      ['Number keys (1-9)',   'Special moves (press arrow to execute)'],
+      ['Shift + (direction)', 'Use bow and arrows'],
+      ['Alt + (direction)',   'Strafe'],
+      ['M',                   'View map'],
+      ['F1',                  'View this screen']
+    ];
+
+    for (let i = 0; i < intro.length; i++) {
+      const y = top + (LINE_HEIGHT * i);
+      await this._drawText(intro[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+    }
+
+    for (let i = 0; i < keys.length; i++) {
+      const y = top + (LINE_HEIGHT * (i + intro.length + 2));
+      this.bufferContext.fillStyle = Colors.BLACK.hex;
+      this.bufferContext.fillRect(left, y, this.width, LINE_HEIGHT);
+      const [key, description] = keys[i];
+      await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, 'left');
+    }
   };
 }
 
