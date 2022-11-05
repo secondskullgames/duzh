@@ -19,6 +19,7 @@ type Props = {
  */
 class GameState {
   private screen: GameScreen;
+  private prevScreen: GameScreen | null;
   private readonly playerUnit: Unit;
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: MapInstance[];
@@ -41,7 +42,16 @@ class GameState {
   }
 
   getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => { this.screen = screen; };
+  setScreen = (screen: GameScreen) => {
+    this.prevScreen = this.screen;
+    this.screen = screen;
+  };
+  showPrevScreen = () => {
+    if (this.prevScreen) {
+      this.screen = this.prevScreen;
+      this.prevScreen = null;
+    }
+  };
 
   getPlayerUnit = (): Unit => this.playerUnit;
 

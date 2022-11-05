@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import fs from 'fs/promises';
+import { test, expect } from '@jest/globals';
 
 const schemaNames = ['palette-swaps', 'unit', 'equipment', 'predefined-map', 'generated-map', 'static-sprite', 'dynamic-sprite', 'tile-set'];
 
@@ -34,13 +35,14 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
   for (const dataFilename of dataFilenames) {
     console.log(`Validating ${dataFilename}`);
     const data = await loadFile(dataFilename);
+    const isValid = validate(data);
     if (!validate(data)) {
       throw new Error(`Failed to validate ${dataFilename}: ${JSON.stringify(validate.errors)}`);
     }
   }
 };
 
-(async () => {
+test('test validity of JSON data', async () => {
   for (const schemaName of schemaNames) {
     const filename = `data/schema/${schemaName}.schema.json`;
     console.log(`Loading schema ${filename}`);
@@ -55,6 +57,6 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
   await validate('dynamic-sprite', await getFilenamesRecursive('data/sprites/units'));
   await validate('dynamic-sprite', await getFilenamesRecursive('data/sprites/equipment'));
   await validate('tile-set', await getFilenamesRecursive('data/tilesets'));
-})();
+});
 
 export {};

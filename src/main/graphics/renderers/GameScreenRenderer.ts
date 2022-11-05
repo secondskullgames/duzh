@@ -10,11 +10,11 @@ import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import SpriteContainer from '../sprites/SpriteContainer';
-import Renderer from './Renderer';
+import AbstractRenderer from './AbstractRenderer';
 
 const SHADOW_FILENAME = 'shadow';
 
-class GameScreenRenderer extends Renderer {
+class GameScreenRenderer extends AbstractRenderer {
   constructor() {
     super({
       width: SCREEN_WIDTH,

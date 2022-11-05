@@ -7,7 +7,7 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { attachEvents } from './InputHandler';
 import { GameEngine } from './GameEngine';
-import Renderer from '../graphics/renderers/Renderer';
+import { Renderer } from '../graphics/renderers/Renderer';
 
 let engine: GameEngine | null = null;
 let firstMapPromise: Promise<MapInstance> | null = null;
@@ -62,6 +62,7 @@ const startGameDebug = async () => {
 const initialize = async (state: GameState, renderer: Renderer) => {
   const t1 = new Date().getTime();
   engine = new GameEngine({ renderer });
+  GameState.setInstance(state);
 
   await render();
   const t2 = new Date().getTime();

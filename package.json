@@ -34,7 +34,6 @@
     "preserve": "npm run gen-schema",
     "serve": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf src/gen-schema",
-    "validate": "node --loader ts-node/esm scripts/validate.ts",
     "test": "jest"
   },
   "repository": {

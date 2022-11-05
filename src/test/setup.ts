@@ -1,6 +1,8 @@
 import UnitFactory from '../main/units/UnitFactory';
 import GameState from '../main/core/GameState';
 import MapInstance from '../main/maps/MapInstance';
+import { initialize } from '../main/core/actions';
+import { Renderer } from '../main/graphics/renderers/Renderer';
 
 export const setup = async () => {
   const playerUnit = await UnitFactory.createPlayerUnit();
@@ -15,6 +17,10 @@ export const setup = async () => {
     music: []
   });
   const state = new GameState({ playerUnit, maps: [() => Promise.resolve(map)] });
-
-  GameState.setInstance(state);
+  const renderer: Renderer = {
+    render: async () => {
+      return null!; // lol
+    }
+  };
+  await initialize(state, renderer);
 };

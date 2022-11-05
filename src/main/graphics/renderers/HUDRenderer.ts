@@ -8,7 +8,7 @@ import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import Renderer from './Renderer';
+import AbstractRenderer from './AbstractRenderer';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -22,7 +22,7 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
-class HUDRenderer extends Renderer {
+class HUDRenderer extends AbstractRenderer {
   constructor() {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
   }
