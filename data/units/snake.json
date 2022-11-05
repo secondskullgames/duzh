@@ -3,12 +3,11 @@
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "startingLife": 15,
-  "startingMana": null,
-  "startingDamage": 8,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "life": 15,
+  "mana": null,
+  "damage": 8,
+  "level": 1,
+  "points": 5,
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 12,
@@ -17,6 +16,5 @@
   },
   "abilities": {
     "1": ["ATTACK"]
-  },
-  "points": 5
+  }
 }

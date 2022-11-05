@@ -1,23 +1,13 @@
-import EquipmentClass from '../../equipment/EquipmentClass';
-import ItemClass from '../../items/ItemClass';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import UnitClass from '../../units/UnitClass';
 import { average, minBy, sum } from '../../utils/arrays';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
-import { hypotenuse, pickUnoccupiedLocations } from '../MapUtils';
+import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import EmptyMap from './EmptyMap';
 import GeneratedMapClass from './GeneratedMapClass';
-
-type GenerateMapProps = {
-  mapClass: GeneratedMapClass,
-  enemyUnitClasses: Map<UnitClass, number>,
-  equipmentClasses: Map<EquipmentClass, number>,
-  itemClasses: Map<ItemClass, number>
-};
 
 abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;
@@ -26,19 +16,14 @@ abstract class AbstractMapGenerator {
     this.tileSet = tileSet;
   }
 
-  generateMap = ({ mapClass, enemyUnitClasses, equipmentClasses, itemClasses }: GenerateMapProps): GeneratedMapBuilder => {
+  generateMap = async (mapClass: GeneratedMapClass): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapClass;
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
 
-    const numEnemies = sum([...enemyUnitClasses.values()]);
-    const numItems = sum([...equipmentClasses.values(), ...itemClasses.values()]);
-
-    const [stairsLocation] = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [], 1);
+    const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
+    const stairsLocation = unoccupiedLocations.shift()!;
     tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
-    const enemyUnitLocations = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [stairsLocation], numEnemies);
-    const [playerUnitLocation] = this._pickPlayerLocation(tileTypes, [stairsLocation, ...enemyUnitLocations]);
-    const itemLocations = pickUnoccupiedLocations(tileTypes, ['FLOOR'], [stairsLocation, playerUnitLocation, ...enemyUnitLocations], numItems);
 
     const tiles = tileTypes.map((row: TileType[]) =>
       row.map(tileType => Tile.create(tileType, this.tileSet))
@@ -49,12 +34,7 @@ abstract class AbstractMapGenerator {
       width: mapClass.width,
       height: mapClass.height,
       tiles,
-      playerUnitLocation,
-      enemyUnitLocations,
-      enemyUnitClasses,
-      itemLocations,
-      equipmentClasses,
-      itemClasses
+      pointAllocation: mapClass.pointAllocation
     });
   };
 

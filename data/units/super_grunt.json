@@ -7,12 +7,10 @@
     "GREEN": "RED",
     "CYAN": "RED"
   },
-  "startingLife": 200,
-  "startingMana": null,
-  "startingDamage": 10,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "life": 200,
+  "mana": 0,
+  "damage": 10,
+  "level": null,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",

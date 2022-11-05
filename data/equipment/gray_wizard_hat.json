@@ -8,5 +8,7 @@
     "HAT2_BORDER": "BLACK",
     "HAT2_MAIN": "DARK_GRAY",
     "HAT2_HIGHLIGHT": "LIGHT_GRAY"
-  }
+  },
+  "points": null,
+  "level": null
 }

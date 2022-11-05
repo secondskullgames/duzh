@@ -1,6 +1,7 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import { UnitType } from '../types/types';
+import memoize from '../utils/memoize';
 import { loadModel } from '../utils/models';
 import AIParameters from './controllers/AIParameters';
 import UnitAbility from './UnitAbility';
@@ -10,12 +11,11 @@ interface UnitClass {
   readonly sprite: string,
   readonly type: UnitType;
   readonly paletteSwaps: PaletteSwaps;
-  readonly startingLife: number;
-  readonly startingMana: number | null;
-  readonly startingDamage: number;
-  readonly lifePerLevel: number;
-  readonly manaPerLevel: number | null;
-  readonly damagePerLevel: number;
+  readonly life: number;
+  readonly mana: number;
+  readonly damage: number;
+  readonly level: number | null;
+  readonly points: number | null;
   readonly equipment?: string[];
   readonly experienceToNextLevel?: number[];
   readonly aiParameters?: AIParameters;
@@ -37,9 +37,24 @@ const _fromModel = async (model: UnitModel): Promise<UnitClass> => {
   } as UnitClass;
 };
 
+const _loadAll = async (): Promise<UnitClass[]> => {
+  const requireContext = require.context(
+    '../../../data/units',
+    false,
+    /\.json$/i
+  );
+
+  return Promise.all(
+    requireContext.keys()
+      .map(filename => requireContext(filename) as UnitModel)
+      .map(_fromModel)
+  );
+};
+
 namespace UnitClass {
   export const fromModel = _fromModel;
   export const load = async (id: string) => _fromModel(await loadModel(`units/${id}`, 'unit'));
+  export const loadAll = _loadAll;
 }
 
 export default UnitClass;

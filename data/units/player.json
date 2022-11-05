@@ -17,13 +17,11 @@
     "PLAYER_SHOULDERS": "DARK_GREEN",
     "PLAYER_THIGHS": "DARK_BROWN"
   },
-  "startingLife": 100,
-  "startingMana": 6,
-  "startingDamage": 6,
-  "lifePerLevel": 0,
-  "manaPerLevel": 2,
-  "damagePerLevel": 0,
-  "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+  "damage": 6,
+  "level": null,
+  "life": 100,
+  "mana": 6,
+  "points": null,
   "abilities": {
     "1": ["BLINK"],
     "2": ["HEAVY_ATTACK"],

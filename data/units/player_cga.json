@@ -17,13 +17,11 @@
     "DARK_RED": "DARK_RED_CGA",
     "DARK_TEAL": "DARK_BLUE_CGA"
   },
-  "startingLife": 100,
-  "startingMana": 100,
-  "startingDamage": 8,
-  "lifePerLevel": 0,
-  "manaPerLevel": 0,
-  "damagePerLevel": 0,
-  "experienceToNextLevel": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+  "damage": 6,
+  "level": null,
+  "life": 100,
+  "mana": 6,
+  "points": null,
   "abilities": {
     "1": [],
     "2": ["HEAVY_ATTACK"],

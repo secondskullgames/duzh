@@ -50,6 +50,7 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
     case 'Tab':
       return { key: 'TAB', modifiers };
     case 'Enter':
+    case 'NumpadEnter':
       return { key: 'ENTER', modifiers };
     case 'Space':
       return { key: 'SPACEBAR', modifiers };

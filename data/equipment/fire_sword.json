@@ -10,5 +10,6 @@
     "BLACK": "DARK_RED"
   },
   "damage": 12,
-  "points": "200"
+  "points": "200",
+  "level": 6
 }

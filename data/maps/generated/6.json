@@ -4,17 +4,9 @@
   "levelNumber": 6,
   "width": 38,
   "height": 28,
-  "enemies": {
-    "soldier": 3,
-    "golem": 6,
-    "archer": 3
-  },
-  "equipment": {
-    "fire_sword": 1
-  },
-  "items": {
-    "life_potion": 1,
-    "mana_potion": 1,
-    "floor_fire_scroll": 1
+  "pointAllocation": {
+    "enemies": 120,
+    "equipment": 200,
+    "items": 60
   }
 }

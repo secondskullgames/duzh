@@ -84,13 +84,13 @@ class Unit implements Entity, Animatable {
     this.name = name;
     this.level = 1;
     this.experience = 0;
-    this.life = unitClass.startingLife;
-    this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana ?? 0;
-    this.maxMana = unitClass.startingMana ?? 0;
+    this.life = unitClass.life;
+    this.maxLife = unitClass.life;
+    this.mana = unitClass.mana;
+    this.maxMana = unitClass.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.damage = unitClass.startingDamage;
+    this.damage = unitClass.damage;
     this.controller = controller;
     this.activity = 'STANDING';
     this.direction = Direction.S;
@@ -205,14 +205,19 @@ class Unit implements Entity, Animatable {
 
   levelUp = () => {
     this.level++;
-    const { lifePerLevel, manaPerLevel } = this.unitClass;
+
+    // TODO hardcoding this player-specific stuff here
+    // We won't get here if this is an enemy...
+    const experienceToNextLevel = [4, 6, 8, 10, 12, 14, 16, 18, 20];
+    const lifePerLevel = 0;
+    const manaPerLevel = 2;
+    const damagePerLevel = 0;
+
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
-    if (this.mana !== null && this.maxMana !== null && manaPerLevel !== null) {
-      this.maxMana += manaPerLevel;
-      this.mana += manaPerLevel;
-    }
-    this.damage += this.unitClass.damagePerLevel;
+    this.maxMana += manaPerLevel;
+    this.mana += manaPerLevel;
+    this.damage += damagePerLevel;
     const abilities = this.unitClass.abilities[this.level] ?? [];
     for (const abilityName of abilities) {
       this.abilities.push(UnitAbility[abilityName]);
@@ -220,14 +225,14 @@ class Unit implements Entity, Animatable {
   };
 
   gainExperience = (experience: number) => {
-    if (this.unitClass.experienceToNextLevel === null) return;
-
-    this.experience += experience;
-    const experienceToNextLevel = this.experienceToNextLevel();
-    while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
-      this.experience -= experienceToNextLevel;
-      this.levelUp();
-      playSound(Sounds.LEVEL_UP);
+    if (this.unitClass.experienceToNextLevel !== null) {
+      this.experience += experience;
+      const experienceToNextLevel = this.experienceToNextLevel();
+      while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
+        this.experience -= experienceToNextLevel;
+        this.levelUp();
+        playSound(Sounds.LEVEL_UP);
+      }
     }
   };
 

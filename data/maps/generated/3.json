@@ -4,18 +4,9 @@
   "levelNumber": 3,
   "width": 32,
   "height": 24,
-  "enemies": {
-    "snake": 2,
-    "grunt": 5,
-    "soldier": 3,
-    "archer": 2
-  },
-  "equipment": {
-    "iron_sword":  1
-  },
-  "items": {
-    "life_potion": 1,
-    "mana_potion": 1,
-    "floor_fire_scroll": 1
+  "pointAllocation": {
+    "enemies": 70,
+    "equipment": 75,
+    "items": 40
   }
 }

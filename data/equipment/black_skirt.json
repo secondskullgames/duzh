@@ -7,5 +7,7 @@
   "paletteSwaps": {
     "SKIRT_MAIN": "BLACK",
     "SKIRT_BORDER": "BLACK"
-  }
+  },
+  "points": null,
+  "level": null
 }

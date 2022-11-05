@@ -8,7 +8,7 @@ import { loadNextMap, render } from './actions';
 import GameState from './GameState';
 
 const toggleRevealMap = async () => {
-  jwb.DEBUG = !jwb.DEBUG;
+  jwb.REVEAL_MAP = !jwb.REVEAL_MAP;
   await render();
 };
 
@@ -63,7 +63,7 @@ export const initDebug = () => {
     toggleEditor
   };
 
-  jwb.DEBUG = false;
+  jwb.REVEAL_MAP = false;
 };
 
 export default { initDebug };

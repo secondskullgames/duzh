@@ -18,64 +18,40 @@
     "height": {
       "type": "number"
     },
-    "enemies": {
-      "type": "object",
-      "properties": {
-        "points": {
-          "type": "number"
-        },
-        "maxLevel": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "points",
-        "maxLevel"
-      ],
-      "additionalProperties": false
-    },
-    "equipment": {
-      "type": "object",
-      "properties": {
-        "points": {
-          "type": "number"
-        },
-        "maxLevel": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "points",
-        "maxLevel"
-      ],
-      "additionalProperties": false
-    },
-    "items": {
-      "type": "object",
-      "properties": {
-        "points": {
-          "type": "number"
-        },
-        "maxLevel": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "points",
-        "maxLevel"
-      ],
-      "additionalProperties": false
+    "pointAllocation": {
+      "$ref": "#/definitions/PointAllocation"
     }
   },
   "required": [
-    "enemies",
-    "equipment",
     "height",
-    "items",
     "layout",
     "levelNumber",
+    "pointAllocation",
     "tileSet",
     "width"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "PointAllocation": {
+      "title": "GeneratedMapModel_PointAllocation",
+      "type": "object",
+      "properties": {
+        "enemies": {
+          "type": "number"
+        },
+        "equipment": {
+          "type": "number"
+        },
+        "items": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "enemies",
+        "equipment",
+        "items"
+      ],
+      "additionalProperties": false
+    }
+  }
 }

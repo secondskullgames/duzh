@@ -9,5 +9,7 @@
     "CLOAK_BORDER": "BLACK",
     "CLOAK_HIGHLIGHT": "DARK_RED",
     "CLOAK_MAIN": "DARK_RED"
-  }
+  },
+  "points": null,
+  "level": null
 }

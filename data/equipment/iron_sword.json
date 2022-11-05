@@ -9,5 +9,6 @@
     "LIGHT_GRAY": "DARK_GRAY"
   },
   "damage": 8,
-  "points": "100"
+  "points": 100,
+  "level": 4
 }

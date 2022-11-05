@@ -6,5 +6,6 @@
   "slot": "RANGED_WEAPON",
   "paletteSwaps": {},
   "damage": 4,
-  "points": "100"
+  "points": 75,
+  "level": 2
 }

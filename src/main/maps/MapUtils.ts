@@ -1,23 +1,22 @@
 import Coordinates from '../geometry/Coordinates';
 import Rect from '../geometry/Rect';
+import Tile from '../tiles/Tile';
 import TileType from '../tiles/TileType';
-import { sortBy } from '../utils/arrays';
+import { shuffle } from '../utils/random';
 
-/**
- * @return `numToChoose` random points from `tiles`, whose tile is in `allowedTileTypes`,
- *         which do not collide with `occupiedLocations`
- */
-export const pickUnoccupiedLocations = (
-  tiles: TileType[][],
+export const getUnoccupiedLocations = (
+  tiles: (Tile | TileType)[][],
   allowedTileTypes: TileType[],
-  occupiedLocations: Coordinates[],
-  numToChoose: number
+  occupiedLocations: Coordinates[]
 ): Coordinates[] => {
   const unoccupiedLocations: Coordinates[] = [];
 
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
-      if (allowedTileTypes.includes(tiles[y][x])) {
+      const tileType = tiles[y][x].hasOwnProperty('type')
+        ? (tiles[y][x] as Tile).type
+        : tiles[y][x] as TileType;
+      if (allowedTileTypes.includes(tileType)) {
         if (!occupiedLocations.find(loc => Coordinates.equals(loc, { x, y }))) {
           unoccupiedLocations.push({ x, y });
         }
@@ -25,18 +24,8 @@ export const pickUnoccupiedLocations = (
     }
   }
 
-  const chosenLocations: Coordinates[] = [];
-  for (let i = 0; i < numToChoose; i++) {
-    if (unoccupiedLocations.length > 0) {
-      sortBy(unoccupiedLocations, ({ x, y }) => -1 * Math.min(...chosenLocations.map(loc => hypotenuse(loc, { x, y }))));
-      const index = 0;
-      const { x, y } = unoccupiedLocations[index];
-      chosenLocations.push({ x, y });
-      occupiedLocations.push({ x, y });
-      unoccupiedLocations.splice(index, 1);
-    }
-  }
-  return chosenLocations;
+  shuffle(unoccupiedLocations);
+  return unoccupiedLocations;
 };
 
 export const contains = (rect: Rect, coordinates: Coordinates): boolean =>

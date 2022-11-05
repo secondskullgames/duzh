@@ -13,12 +13,11 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "startingLife": 40,
-  "startingMana": null,
-  "startingDamage": 2,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "damage": 2,
+  "level": 2,
+  "life": 40,
+  "mana": 0,
+  "points": 10,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",
@@ -32,6 +31,5 @@
   },
   "abilities": {
     "1": ["ATTACK"]
-  },
-  "points": 10
+  }
 }

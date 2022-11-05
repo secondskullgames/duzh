@@ -9,5 +9,6 @@
     "LIGHT_GRAY": "LIGHT_GRAY"
   },
   "damage": 10,
-  "points": "150"
+  "points": 150,
+  "level": 4
 }

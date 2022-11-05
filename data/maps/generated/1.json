@@ -4,16 +4,9 @@
   "levelNumber": 1,
   "width": 30,
   "height": 20,
-  "enemies": {
-    "maxLevel": 1,
-    "points": 40
-  },
-  "equipment": {
-    "maxLevel": 1,
-    "points": 50
-  },
-  "items": {
-    "maxLevel": 1,
-    "points": 40
+  "pointAllocation": {
+    "enemies": 40,
+    "equipment": 50,
+    "items": 40
   }
 }

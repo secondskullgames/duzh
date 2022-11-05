@@ -6,5 +6,6 @@
   "slot": "SHIELD",
   "paletteSwaps": {},
   "blockAmount": 0.5,
-  "points": "100"
+  "points": 100,
+  "level": 3
 }

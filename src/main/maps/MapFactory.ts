@@ -35,26 +35,7 @@ const loadMap = (map: MapSpec): Promise<MapInstance> => {
 
 const loadGeneratedMap = async (mapClass: GeneratedMapClass): Promise<GeneratedMapBuilder> => {
   const dungeonGenerator = _getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
-  const enemyUnitClasses: Map<UnitClass, number> = await _populateUnits(mapClass.enemies.points, mapClass.enemies.maxLevel);
-  const equipmentClasses: Map<EquipmentClass, number> = await _loadMapWithCounts(mapClass.equipment, EquipmentClass.load);
-  const itemClasses: Map<ItemClass, number> = await _loadMapWithCounts(mapClass.items, itemId => Promise.resolve(ItemClass.load(itemId)));
-  return dungeonGenerator.generateMap({ mapClass, enemyUnitClasses, equipmentClasses, itemClasses });
-};
-
-const _populateUnits = async <T> (
-  points: number,
-  maxLevel: number
-): Promise<Map<T, number>> => {
-  const promises: Promise<[T, number]>[] = [];
-  for (const [name, count] of Object.entries(nameToCount)) {
-    promises.push(mapper(name).then(item => [item, count]));
-  }
-  const itemsAndCounts: [T, number][] = await Promise.all(promises);
-  const map = new Map<T, number>();
-  for (const [item, count] of itemsAndCounts) {
-    map.set(item, count);
-  }
-  return map;
+  return dungeonGenerator.generateMap(mapClass);
 };
 
 const loadPredefinedMap = async (mapClass: PredefinedMapClass): Promise<MapInstance> =>

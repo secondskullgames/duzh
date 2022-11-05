@@ -1,4 +1,4 @@
-import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
+import { GeneratedMapModel, GeneratedMapModel_PointAllocation } from '../../../gen-schema/generated-map.schema';
 import { loadModel } from '../../utils/models';
 
 type GeneratedMapClass = {
@@ -7,18 +7,7 @@ type GeneratedMapClass = {
   levelNumber: number,
   width: number,
   height: number,
-  enemies: {
-    points: number,
-    maxLevel: number
-  },
-  equipment: {
-    points: number,
-    maxLevel: number
-  },
-  items: {
-    points: number,
-    maxLevel: number
-  }
+  pointAllocation: GeneratedMapModel_PointAllocation
 };
 
 const _fromModel = async (model: GeneratedMapModel): Promise<GeneratedMapClass> => {
