@@ -21,6 +21,9 @@
     "paletteSwaps": {
       "$ref": "./palette-swaps.schema.json"
     },
+    "points": {
+      "type": "number"
+    },
     "script": {
       "type": "string"
     },

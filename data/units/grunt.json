@@ -32,5 +32,6 @@
   },
   "abilities": {
     "1": ["ATTACK"]
-  }
+  },
+  "points": 10
 }

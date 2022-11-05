@@ -9,5 +9,6 @@
     "DARK_GRAY": "LIGHT_BROWN",
     "LIGHT_GRAY": "LIGHT_BROWN"
   },
-  "damage": 6
+  "damage": 6,
+  "points": 50
 }

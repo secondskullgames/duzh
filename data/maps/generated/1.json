@@ -5,12 +5,15 @@
   "width": 30,
   "height": 20,
   "enemies": {
-    "snake": 8
+    "maxLevel": 1,
+    "points": 40
   },
   "equipment": {
-    "bronze_sword":  1
+    "maxLevel": 1,
+    "points": 50
   },
   "items": {
-    "life_potion": 2
+    "maxLevel": 1,
+    "points": 40
   }
 }

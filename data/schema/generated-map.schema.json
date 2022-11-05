@@ -20,21 +20,51 @@
     },
     "enemies": {
       "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
+      "properties": {
+        "points": {
+          "type": "number"
+        },
+        "maxLevel": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "points",
+        "maxLevel"
+      ],
+      "additionalProperties": false
     },
     "equipment": {
       "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
+      "properties": {
+        "points": {
+          "type": "number"
+        },
+        "maxLevel": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "points",
+        "maxLevel"
+      ],
+      "additionalProperties": false
     },
     "items": {
       "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
+      "properties": {
+        "points": {
+          "type": "number"
+        },
+        "maxLevel": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "points",
+        "maxLevel"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
