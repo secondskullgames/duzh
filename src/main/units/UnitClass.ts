@@ -17,7 +17,6 @@ interface UnitClass {
   readonly level: number | null;
   readonly points: number | null;
   readonly equipment?: string[];
-  readonly experienceToNextLevel?: number[];
   readonly aiParameters?: AIParameters;
   /**
    * TODO: This includes ATTACK at position 0, followed by special abilities.

@@ -1,0 +1,24 @@
+{
+  "name": "Red Snake",
+  "type": "ANIMAL",
+  "sprite": "snake",
+  "paletteSwaps": {
+    "GREEN": "RED",
+    "DARK_GREEN": "DARK_RED",
+    "YELLOW": "DARK_RED"
+  },
+  "life": 15,
+  "mana": null,
+  "damage": 9,
+  "level": 1,
+  "points": 8,
+  "aiParameters": {
+    "speed": 0.98,
+    "visionRange": 12,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}

@@ -29,7 +29,6 @@ type KeyCommand = {
 type PromiseSupplier = () => Promise<void>;
 
 const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
-  console.log(e.code);
   const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
     .filter(x => x)
     .map(x => x as ModifierKey);

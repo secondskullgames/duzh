@@ -1,8 +1,8 @@
 import { GeneratedMapModel_PointAllocation } from '../../../gen-schema/generated-map.schema';
 import GameState from '../../core/GameState';
-import equipment from '../../equipment/Equipment';
-import equipmentClass from '../../equipment/EquipmentClass';
 import EquipmentClass from '../../equipment/EquipmentClass';
+import Coordinates from '../../geometry/Coordinates';
+import { CustomSet } from '../../types/CustomSet';
 import ItemClass from '../../items/ItemClass';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
@@ -11,10 +11,11 @@ import { ARCHER, HUMAN_REDESIGN } from '../../units/controllers/AIUnitController
 import Unit from '../../units/Unit';
 import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
+import { sortByReversed } from '../../utils/arrays';
 import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import UnitController from '../../units/controllers/UnitController';
-import { getUnoccupiedLocations } from '../MapUtils';
+import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 
 type Props = {
   level: number,
@@ -30,6 +31,7 @@ class GeneratedMapBuilder {
   private readonly height: number;
   private readonly tiles: Tile[][];
   private readonly pointAllocation: GeneratedMapModel_PointAllocation;
+  private readonly objectLocations: CustomSet<Coordinates>;
 
   constructor({
     level,
@@ -43,6 +45,7 @@ class GeneratedMapBuilder {
     this.height = height;
     this.tiles = tiles;
     this.pointAllocation = pointAllocation;
+    this.objectLocations = new CustomSet();
   }
 
   build = async (): Promise<MapInstance> => {
@@ -50,6 +53,7 @@ class GeneratedMapBuilder {
     const playerUnit = GameState.getInstance().getPlayerUnit();
     const playerUnitCoordinates = candidateLocations.shift()!;
     playerUnit.setCoordinates(playerUnitCoordinates);
+    this.objectLocations.add(playerUnitCoordinates);
     const units = [playerUnit, ...await this._generateUnits()];
     const items: MapItem[] = await this._generateItems();
 
@@ -80,6 +84,10 @@ class GeneratedMapBuilder {
       }
 
       const unitClass = randChoice(possibleUnitClasses);
+      sortByReversed(
+        candidateLocations,
+        loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
+      );
       const { x, y } = candidateLocations.shift()!;
       let controller: UnitController;
       if (unitClass.name === 'Goblin Archer') {
@@ -97,6 +105,7 @@ class GeneratedMapBuilder {
       });
       unitPromises.push(promise);
       points -= unitClass.points!;
+      this.objectLocations.add({ x, y });
     }
     return Promise.all(unitPromises);
   };
@@ -116,10 +125,15 @@ class GeneratedMapBuilder {
       }
 
       const equipmentClass = randChoice(possibleEquipmentClasses);
+      sortByReversed(
+        candidateLocations,
+        loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
+      );
       const { x, y } = candidateLocations.shift()!;
       const promise = ItemFactory.createMapEquipment(equipmentClass, { x, y });
       itemPromises.push(promise);
       points -= equipmentClass.points!;
+      this.objectLocations.add({ x, y });
     }
 
     points = this.pointAllocation.items;
@@ -133,10 +147,15 @@ class GeneratedMapBuilder {
       }
 
       const itemClass = randChoice(possibleItemClasses);
+      sortByReversed(
+        candidateLocations,
+        loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
+      );
       const { x, y } = candidateLocations.shift()!;
       const promise = ItemFactory.createMapItem(itemClass, { x, y });
       itemPromises.push(promise);
       points -= itemClass.points!;
+      this.objectLocations.add({ x, y });
     }
 
     return Promise.all(itemPromises);

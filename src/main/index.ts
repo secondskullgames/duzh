@@ -7,8 +7,11 @@ import { MapSupplier } from './maps/MapSupplier';
 import MapFactory from './maps/MapFactory';
 import { initialize } from './core/actions';
 import { GameDriver } from './core/GameDriver';
-import gameState from './core/GameState';
 // import { render as renderEditor } from './editor/Editor';
+
+const renderer = new GameRenderer({
+  parent: document.getElementById('container')!
+});
 
 const gameDriver: GameDriver = {
   initState: async (): Promise<GameState> => {
@@ -24,9 +27,7 @@ const gameDriver: GameDriver = {
     });
     return new GameState({ playerUnit, maps });
   },
-  getRenderer: () => new GameRenderer({
-    parent: document.getElementById('container')!
-  })
+  getRenderer: () => renderer
 };
 
 const main = async () => {
@@ -38,4 +39,4 @@ const main = async () => {
   // renderEditor();
 };
 
-main();
+main().then(() => {});

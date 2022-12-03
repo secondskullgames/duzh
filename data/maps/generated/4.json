@@ -7,6 +7,6 @@
   "pointAllocation": {
     "enemies": 80,
     "equipment": 100,
-    "items": 40
+    "items": 50
   }
 }
