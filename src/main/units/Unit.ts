@@ -270,9 +270,6 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  /**
-   * @return the amount of damage taken
-   */
   takeDamage = async (baseDamage: number, params?: TakeDamageParams) => {
     const state = GameState.getInstance();
     const map = state.getMap();

@@ -20,7 +20,6 @@ import Unit from './Unit';
 import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
 import { sleep } from '../utils/promises';
-import { attack } from '../core/combat';
 
 type Props = {
   name: string,
@@ -65,7 +64,9 @@ class NormalAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
-        await attack(unit, targetUnit);
+        const damage = unit.getDamage();
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
         await playSound(Sounds.PLAYER_HITS_ENEMY);
       }
 
@@ -120,7 +121,8 @@ class HeavyAttack extends UnitAbility {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
-        await attack(unit, targetUnit, damage);
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       }
     }
   };
@@ -150,7 +152,9 @@ class KnockbackAttack extends UnitAbility {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(this.manaCost);
-      await attack(unit, targetUnit);
+      const damage = unit.getDamage();
+      await unit.startAttack(targetUnit);
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       await playSound(Sounds.SPECIAL_ATTACK);
       targetUnit.setStunned(1);
 
@@ -196,7 +200,9 @@ class StunAttack extends UnitAbility {
       if (targetUnit) {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
-        await attack(unit, targetUnit);
+        const damage = unit.getDamage();
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
         targetUnit.setStunned(2);
       }
     }
@@ -242,7 +248,7 @@ class ShootArrow extends UnitAbility {
       const damage = unit.getRangedDamage();
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
-      await targetUnit.takeDamage(damage, { sourceUnit: unit });
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       state.logMessage(`${unit.getName()} hit ${targetUnit.getName()} for ${damage} damage!`);
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
@@ -285,7 +291,7 @@ class Bolt extends UnitAbility {
     if (targetUnit) {
       const damage = unit.getDamage();
 
-      await targetUnit.takeDamage(damage, { sourceUnit: unit });
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       await playSound(Sounds.PLAYER_HITS_ENEMY);
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
     } else {
