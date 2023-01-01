@@ -4,13 +4,9 @@
   "levelNumber": 1,
   "width": 30,
   "height": 20,
-  "enemies": {
-    "snake": 8
-  },
-  "equipment": {
-    "bronze_sword":  1
-  },
-  "items": {
-    "life_potion": 2
+  "pointAllocation": {
+    "enemies": 40,
+    "equipment": 50,
+    "items": 40
   }
 }

@@ -4,5 +4,7 @@
   "mapIcon": "map_mail",
   "itemCategory": "ARMOR",
   "slot": "CHEST",
-  "paletteSwaps": {}
+  "paletteSwaps": {},
+  "points": 100,
+  "level": 3
 }

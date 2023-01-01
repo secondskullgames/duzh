@@ -11,12 +11,11 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "startingLife": 100,
-  "startingMana": null,
-  "startingDamage": 14,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "damage": 14,
+  "level": 5,
+  "life": 100,
+  "mana": 0,
+  "points": 30,
   "aiParameters": {
     "speed": 0.9,
     "visionRange": 8,

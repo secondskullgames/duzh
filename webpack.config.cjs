@@ -30,6 +30,10 @@ module.exports = {
             },
           }
         ]
+      },
+      {
+        test: /\.json$/i,
+        use: 'glob-import-loader'
       }
     ],
   },

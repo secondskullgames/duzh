@@ -13,12 +13,10 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "startingLife": 50,
-  "startingMana": 10,
-  "startingDamage": 2,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "damage": 2,
+  "level": 3,
+  "life": 50,
+  "mana": 10,
   "equipment": [
     "bronze_sword",
     "red_chain_mail",
@@ -34,5 +32,6 @@
   },
   "abilities": {
     "1": ["ATTACK"]
-  }
+  },
+  "points": 25
 }

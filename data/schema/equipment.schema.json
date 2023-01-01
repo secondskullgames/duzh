@@ -12,6 +12,9 @@
     "itemCategory": {
       "type": "string"
     },
+    "level": {
+      "type": ["number", "null"]
+    },
     "mapIcon": {
       "type": "string"
     },
@@ -20,6 +23,9 @@
     },
     "paletteSwaps": {
       "$ref": "./palette-swaps.schema.json"
+    },
+    "points": {
+      "type": ["number", "null"]
     },
     "script": {
       "type": "string"
@@ -33,9 +39,11 @@
   },
   "required": [
     "itemCategory",
+    "level",
     "mapIcon",
     "name",
     "paletteSwaps",
+    "points",
     "slot",
     "sprite"
   ],

@@ -1,3 +1,4 @@
+import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import EquipmentScript from '../equipment/EquipmentScript';
 import { playAttackingAnimation } from '../graphics/animations/Animations';
@@ -14,7 +15,7 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Entity from '../types/Entity';
 import { Faction } from '../types/types';
-import { checkArgument, checkState } from '../utils/preconditions';
+import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
 import UnitClass from './UnitClass';
@@ -28,6 +29,12 @@ const LIFE_PER_TURN_MULTIPLIER = 0.01 / 2;
  */
 const LIFE_REGEN_THRESHOLD = 1;
 const MAX_PLAYER_LEVEL = 20;
+
+// TODO hardcoding this player-specific stuff here
+const experienceToNextLevel = [4, 6, 8, 10, 12, 14, 16, 18, 20];
+const lifePerLevel = 0;
+const manaPerLevel = 2;
+const damagePerLevel = 0;
 
 type Props = {
   name: string,
@@ -84,18 +91,18 @@ class Unit implements Entity, Animatable {
     this.name = name;
     this.level = 1;
     this.experience = 0;
-    this.life = unitClass.startingLife;
-    this.maxLife = unitClass.startingLife;
-    this.mana = unitClass.startingMana ?? 0;
-    this.maxMana = unitClass.startingMana ?? 0;
+    this.life = unitClass.life;
+    this.maxLife = unitClass.life;
+    this.mana = unitClass.mana;
+    this.maxMana = unitClass.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.damage = unitClass.startingDamage;
+    this.damage = unitClass.damage;
     this.controller = controller;
     this.activity = 'STANDING';
     this.direction = Direction.S;
     this.frameNumber = 1;
-    this.abilities = (unitClass.abilities[1] ?? []).map(name => UnitAbility[name]);
+    this.abilities = (unitClass.abilities[1] ?? []).map(UnitAbility.forName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -205,36 +212,33 @@ class Unit implements Entity, Animatable {
 
   levelUp = () => {
     this.level++;
-    const { lifePerLevel, manaPerLevel } = this.unitClass;
+
     this.maxLife += lifePerLevel;
     this.life += lifePerLevel;
-    if (this.mana !== null && this.maxMana !== null && manaPerLevel !== null) {
-      this.maxMana += manaPerLevel;
-      this.mana += manaPerLevel;
-    }
-    this.damage += this.unitClass.damagePerLevel;
+    this.maxMana += manaPerLevel;
+    this.mana += manaPerLevel;
+    this.damage += damagePerLevel;
     const abilities = this.unitClass.abilities[this.level] ?? [];
     for (const abilityName of abilities) {
-      this.abilities.push(UnitAbility[abilityName]);
+      this.abilities.push(UnitAbility.forName(abilityName));
     }
   };
 
   gainExperience = (experience: number) => {
-    if (this.unitClass.experienceToNextLevel === null) return;
-
-    this.experience += experience;
-    const experienceToNextLevel = this.experienceToNextLevel();
-    while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
-      this.experience -= experienceToNextLevel;
-      this.levelUp();
-      playSound(Sounds.LEVEL_UP);
+    if (this.faction === 'PLAYER') {
+      this.experience += experience;
+      const experienceToNextLevel = this.experienceToNextLevel();
+      while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
+        this.experience -= experienceToNextLevel;
+        this.levelUp();
+        playSound(Sounds.LEVEL_UP);
+      }
     }
   };
 
   experienceToNextLevel = (): (number | null) => {
-    const { unitClass } = this;
-    if (unitClass.experienceToNextLevel && (this.level < MAX_PLAYER_LEVEL)) {
-      return unitClass.experienceToNextLevel[this.level];
+    if (this.faction === 'PLAYER' && (this.level < MAX_PLAYER_LEVEL)) {
+      return experienceToNextLevel[this.level];
     }
     return null;
   };
@@ -266,15 +270,40 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  /**
-   * @return the amount of damage taken
-   */
-  takeDamage = async (baseDamage: number, sourceUnit: Unit | null): Promise<number> => {
+  takeDamage = async (baseDamage: number, params?: TakeDamageParams) => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    const playerUnit = state.getPlayerUnit();
+
+    const sourceUnit = params?.sourceUnit ?? null;
     const adjustedDamage = this._calculateIncomingDamage(baseDamage, sourceUnit);
     const damageTaken = Math.min(adjustedDamage, this.life);
     this.life -= damageTaken;
     this.turnsSinceCombatAction = 0;
-    return damageTaken;
+
+    if (sourceUnit) {
+      const ability = params?.ability ?? null;
+      if (ability) {
+        ability.logDamage(sourceUnit, this, damageTaken);
+      } else {
+        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${damageTaken} damage!`);
+      }
+    }
+
+    if (this.getLife() <= 0) {
+      map.removeUnit(this.getCoordinates());
+      if (this === playerUnit) {
+        await gameOver();
+        return;
+      } else {
+        playSound(Sounds.ENEMY_DIES);
+        state.logMessage(`${this.getName()} dies!`);
+      }
+
+      if (sourceUnit === playerUnit) {
+        sourceUnit.gainExperience(1);
+      }
+    }
   };
 
   private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
@@ -304,16 +333,16 @@ class Unit implements Entity, Animatable {
     const manaGained = Math.min(mana, this.maxMana - this.mana);
     this.mana += manaGained;
     return manaGained;
-  }
+  };
 
   /**
    * @override {@link Animatable#getAnimationKey}
    */
   getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
 
-  canSpendMana = (amount: number) => (this.mana) >= amount;
+  canSpendMana = (amount: number) => this.mana >= amount;
+
   spendMana = (amount: number) => {
-    checkState(this.mana !== null);
     checkArgument(amount <= this.mana);
     checkArgument(amount >= 0);
     this.mana -= amount;
@@ -328,8 +357,13 @@ class Unit implements Entity, Animatable {
   };
 
   setStunned = (duration: number) => {
-    this.stunDuration = Math.max(this.stunDuration, duration)
+    this.stunDuration = Math.max(this.stunDuration, duration);
   };
 }
+
+type TakeDamageParams = {
+  sourceUnit?: Unit,
+  ability?: UnitAbility
+};
 
 export default Unit;

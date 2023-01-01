@@ -7,5 +7,7 @@
   "paletteSwaps": {
     "DARK_BLUE": "BLACK",
     "BLUE": "DARK_GREEN"
-  }
+  },
+  "points": null,
+  "level": null
 }

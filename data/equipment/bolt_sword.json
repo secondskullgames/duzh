@@ -9,5 +9,7 @@
     "LIGHT_GRAY": "CYAN"
   },
   "damage": 4,
-  "script": "bolt_sword"
+  "script": "bolt_sword",
+  "points": 200,
+  "level": 4
 }

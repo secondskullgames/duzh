@@ -1,16 +1,15 @@
 {
-  "name": "Snake",
+  "name": "Green Snake",
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "startingLife": 15,
-  "startingMana": null,
-  "startingDamage": 8,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "life": 25,
+  "mana": 0,
+  "damage": 5,
+  "level": 1,
+  "points": 5,
   "aiParameters": {
-    "speed": 0.98,
+    "speed": 0.95,
     "visionRange": 12,
     "aggressiveness": 0.5,
     "fleeThreshold": 0

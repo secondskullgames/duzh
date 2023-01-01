@@ -5,5 +5,7 @@
   "itemCategory": "ARMOR",
   "slot": "SHIELD",
   "paletteSwaps": {},
-  "blockAmount": 0.5
+  "blockAmount": 0.5,
+  "points": 100,
+  "level": 3
 }

@@ -13,12 +13,10 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "startingLife": 60,
-  "startingMana": null,
-  "startingDamage": 3,
-  "lifePerLevel": 0,
-  "manaPerLevel": null,
-  "damagePerLevel": 0,
+  "life": 60,
+  "mana": 0,
+  "damage": 3,
+  "level": 3,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
@@ -32,5 +30,6 @@
   },
   "abilities": {
     "1": ["ATTACK"]
-  }
+  },
+  "points": 20
 }

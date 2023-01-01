@@ -9,5 +9,7 @@
     "DARK_GRAY": "DARK_RED_CGA",
     "LIGHT_GRAY": "LIGHT_RED_CGA"
   },
-  "damage": 2
+  "damage": 2,
+  "points": null,
+  "level": null
 }

@@ -4,17 +4,9 @@
   "levelNumber": 5,
   "width": 36,
   "height": 26,
-  "enemies": {
-    "grunt": 4,
-    "soldier": 4,
-    "archer": 3,
-    "golem": 3
-  },
-  "equipment": {
-    "long_bow": 1
-  },
-  "items": {
-    "life_potion": 2,
-    "floor_fire_scroll": 1
+  "pointAllocation": {
+    "enemies": 90,
+    "equipment": 150,
+    "items": 50
   }
 }

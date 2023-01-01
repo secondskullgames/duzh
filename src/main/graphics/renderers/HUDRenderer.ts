@@ -77,11 +77,13 @@ class HUDRenderer extends AbstractRenderer {
 
     let keyNumber = 1;
     const promises: Promise<void>[] = [];
-    for (let i = 0; i < playerUnit.getAbilities().length; i++) {
-      const ability = playerUnit.getAbilities()[i];
+    const abilities = playerUnit.getAbilities();
+    for (let i = 0; i < abilities.length; i++) {
+      const ability = abilities[i];
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
-        let kn = keyNumber;
+        // need to reassign this or it will get incremented before rendering...
+        const kn = keyNumber;
         promises.push(new Promise(async (resolve) => {
           await this._renderAbility(ability, left, top);
           await this._drawText(`${kn}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');

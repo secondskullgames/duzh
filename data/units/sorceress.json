@@ -19,12 +19,11 @@
   "equipment": [
     "black_skirt"
   ],
-  "startingLife": 100,
-  "startingMana": 15,
-  "startingDamage": 6,
-  "lifePerLevel": 0,
-  "manaPerLevel": 5,
-  "damagePerLevel": 0,
+  "life": 100,
+  "mana": 15,
+  "damage": 6,
+  "level": null,
+  "points": null,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,

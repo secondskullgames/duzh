@@ -44,20 +44,18 @@
       },
       "type": "array"
     },
-    "damagePerLevel": {
-      "type": ["number", "null"]
+    "damage": {
+      "type": "number"
     },
-    "experienceToNextLevel": {
-      "items": {
-        "type": "number"
-      },
-      "type": "array"
+    "level": {
+      "type": ["number", "null"],
+      "description": "null if this should not be randomly placed as an enemy"
     },
-    "lifePerLevel": {
-      "type": ["number", "null"]
+    "life": {
+      "type": "number"
     },
-    "manaPerLevel": {
-      "type": ["number", "null"]
+    "mana": {
+      "type": "number"
     },
     "name": {
       "type": "string"
@@ -65,17 +63,11 @@
     "paletteSwaps": {
       "$ref": "./palette-swaps.schema.json"
     },
+    "points": {
+      "type": ["number", "null"]
+    },
     "sprite": {
       "type": "string"
-    },
-    "startingDamage": {
-      "type": "number"
-    },
-    "startingLife": {
-      "type": "number"
-    },
-    "startingMana": {
-      "type": ["number", "null"]
     },
     "summonedUnitClass": {
       "type": "string"
@@ -86,12 +78,14 @@
   },
   "required": [
     "abilities",
+    "damage",
+    "level",
+    "life",
+    "mana",
     "name",
     "paletteSwaps",
+    "points",
     "sprite",
-    "startingDamage",
-    "startingLife",
-    "startingMana",
     "type"
   ],
   "additionalProperties": false

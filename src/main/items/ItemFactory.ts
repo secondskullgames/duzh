@@ -6,7 +6,6 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../units/Unit';
-import { randChoice } from '../utils/random';
 import Equipment from '../equipment/Equipment';
 import InventoryItem from './InventoryItem';
 import ItemClass from './ItemClass';
@@ -14,7 +13,6 @@ import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
-const EQUIPMENT_FREQUENCY = 0.7;
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
@@ -57,7 +55,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     await playFloorFireAnimation(unit, adjacentUnits);
 
     for (const adjacentUnit of adjacentUnits) {
-      await adjacentUnit.takeDamage(damage, unit);
+      await adjacentUnit.takeDamage(damage, { sourceUnit: unit });
     }
   };
 
@@ -94,20 +92,6 @@ const createMapItem = async (itemClass: ItemClass, { x, y }: Coordinates) => {
   return new MapItem({ x, y, sprite, inventoryItem });
 };
 
-const createRandomItemOrEquipment = (
-  equipmentClasses: EquipmentClass[],
-  itemClasses: ItemClass[],
-  { x, y }: Coordinates
-): Promise<MapItem> => {
-  if (Math.random() <= EQUIPMENT_FREQUENCY) {
-    const equipmentClass = randChoice(equipmentClasses);
-    return createMapEquipment(equipmentClass, { x, y });
-  } else {
-    const itemClass = randChoice(itemClasses);
-    return createMapItem(itemClass, { x, y });
-  }
-};
-
 export default {
   createEquipment,
   createKey,
@@ -115,6 +99,5 @@ export default {
   createMapItem,
   createLifePotion,
   createManaPotion,
-  createRandomItemOrEquipment,
   createScrollOfFloorFire
 };

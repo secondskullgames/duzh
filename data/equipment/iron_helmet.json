@@ -4,5 +4,7 @@
   "mapIcon": "map_helmet",
   "itemCategory": "ARMOR",
   "slot": "HEAD",
-  "paletteSwaps": {}
+  "paletteSwaps": {},
+  "points": null,
+  "level": null
 }

@@ -6,5 +6,7 @@
   "slot": "CHEST",
   "paletteSwaps": {
     "DARK_GRAY": "DARK_BROWN"
-  }
+  },
+  "points": null,
+  "level": null
 }

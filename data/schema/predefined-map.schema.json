@@ -50,6 +50,7 @@
     "tileColors",
     "tileset"
   ],
+  "additionalProperties": false,
   "definitions": {
     "TileType": {
       "title": "PredefinedMapModel_TileType",
@@ -78,6 +79,5 @@
         }
       }
     }
-  },
-  "additionalProperties": false
+  }
 }

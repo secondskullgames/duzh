@@ -20,7 +20,6 @@ import Unit from './Unit';
 import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
 import { sleep } from '../utils/promises';
-import { attack } from '../core/combat';
 
 type Props = {
   name: string,
@@ -39,7 +38,8 @@ abstract class UnitAbility {
     this.icon = icon ?? null;
   }
 
-  abstract use(unit: Unit, coordinates: Coordinates | null): Promise<any>;
+  abstract use(unit: Unit, coordinates: Coordinates | null): Promise<void>;
+  abstract logDamage(unit: Unit, target: Unit, damageTaken: number): void;
 }
 
 class NormalAttack extends UnitAbility {
@@ -64,7 +64,9 @@ class NormalAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
-        await attack(unit, targetUnit);
+        const damage = unit.getDamage();
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
         await playSound(Sounds.PLAYER_HITS_ENEMY);
       }
 
@@ -88,6 +90,11 @@ class NormalAttack extends UnitAbility {
       }
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
+  }
 }
 
 class HeavyAttack extends UnitAbility {
@@ -114,10 +121,16 @@ class HeavyAttack extends UnitAbility {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
-        await attack(unit, targetUnit, damage);
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       }
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`);
+  }
 }
 
 class KnockbackAttack extends UnitAbility {
@@ -139,7 +152,9 @@ class KnockbackAttack extends UnitAbility {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(this.manaCost);
-      await attack(unit, targetUnit);
+      const damage = unit.getDamage();
+      await unit.startAttack(targetUnit);
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       await playSound(Sounds.SPECIAL_ATTACK);
       targetUnit.setStunned(1);
 
@@ -155,6 +170,11 @@ class KnockbackAttack extends UnitAbility {
       }
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target} recoils!`);
+  }
 }
 
 class StunAttack extends UnitAbility {
@@ -180,11 +200,18 @@ class StunAttack extends UnitAbility {
       if (targetUnit) {
         await playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
-        await attack(unit, targetUnit);
+        const damage = unit.getDamage();
+        await unit.startAttack(targetUnit);
+        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
         targetUnit.setStunned(2);
       }
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target} is stunned!`);
+  }
 }
 
 class ShootArrow extends UnitAbility {
@@ -221,12 +248,17 @@ class ShootArrow extends UnitAbility {
       const damage = unit.getRangedDamage();
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
-      await targetUnit.takeDamage(damage, unit);
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       state.logMessage(`${unit.getName()} hit ${targetUnit.getName()} for ${damage} damage!`);
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`);
+  }
 }
 
 class Bolt extends UnitAbility {
@@ -259,18 +291,23 @@ class Bolt extends UnitAbility {
     if (targetUnit) {
       const damage = unit.getDamage();
 
-      await targetUnit.takeDamage(damage, unit);
+      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
       await playSound(Sounds.PLAYER_HITS_ENEMY);
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
     } else {
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    const state = GameState.getInstance();
+    state.logMessage(`${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`);
+  }
 }
 
-class Blink extends UnitAbility {
+class Dash extends UnitAbility {
   constructor() {
-    super({ name: 'BLINK', manaCost: 6, icon: 'icon5' });
+    super({ name: 'DASH', manaCost: 6, icon: 'icon5' });
   }
 
   /**
@@ -278,7 +315,7 @@ class Blink extends UnitAbility {
    */
   use = async (unit: Unit, coordinates: Coordinates | null) => {
     if (!coordinates) {
-      throw new Error('Blink requires a target!');
+      throw new Error('Dash requires a target!');
     }
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
@@ -310,6 +347,10 @@ class Blink extends UnitAbility {
       await playSound(Sounds.BLOCKED);
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    throw new Error('can\'t get here');
+  }
 }
 
 class Teleport extends UnitAbility {
@@ -349,6 +390,10 @@ class Teleport extends UnitAbility {
       await playSound(Sounds.BLOCKED);
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    throw new Error('can\'t get here');
+  }
 }
 
 class Summon extends UnitAbility {
@@ -384,6 +429,10 @@ class Summon extends UnitAbility {
     map.addUnit(summonedUnit);
     unit.spendMana(UnitAbility.SUMMON.manaCost);
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    throw new Error('can\'t get here');
+  }
 }
 
 class Strafe extends UnitAbility {
@@ -402,6 +451,10 @@ class Strafe extends UnitAbility {
       await unit.moveTo({ x, y });
     }
   };
+
+  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+    throw new Error('can\'t get here');
+  }
 }
 
 namespace UnitAbility {
@@ -410,12 +463,18 @@ namespace UnitAbility {
   export const KNOCKBACK_ATTACK: UnitAbility = new KnockbackAttack();
   export const STUN_ATTACK: UnitAbility = new StunAttack();
   export const SHOOT_ARROW: UnitAbility = new ShootArrow();
-  export const BLINK: UnitAbility = new Blink();
+  export const DASH: UnitAbility = new Dash();
   export const TELEPORT: Teleport = new Teleport();
   export const SUMMON: UnitAbility = new Summon();
   export const BOLT: UnitAbility = new Bolt();
   export const STRAFE = new Strafe();
-  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'BLINK' | 'TELEPORT' | 'SUMMON' | 'BOLT' | 'STRAFE';
+  export type Name = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'DASH' | 'TELEPORT' | 'SUMMON' | 'BOLT' | 'STRAFE';
+
+  export const forName = (name: Name): UnitAbility => {
+    const ability = UnitAbility[name];
+    checkNotNull(ability, `Unknown ability ${name}`);
+    return ability;
+  };
 }
 
 export default UnitAbility;

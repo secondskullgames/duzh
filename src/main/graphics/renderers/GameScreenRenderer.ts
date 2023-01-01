@@ -182,7 +182,7 @@ class GameScreenRenderer extends AbstractRenderer {
 
   private _isTileRevealed = ({ x, y }: Coordinates): boolean => {
     const map = GameState.getInstance().getMap();
-    return jwb.DEBUG || map.isTileRevealed({ x, y });
+    return jwb.REVEAL_MAP || map.isTileRevealed({ x, y });
   };
 }
 

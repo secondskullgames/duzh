@@ -18,34 +18,40 @@
     "height": {
       "type": "number"
     },
-    "enemies": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
-    },
-    "equipment": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
-    },
-    "items": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "number"
-      }
+    "pointAllocation": {
+      "$ref": "#/definitions/PointAllocation"
     }
   },
   "required": [
-    "enemies",
-    "equipment",
     "height",
-    "items",
     "layout",
     "levelNumber",
+    "pointAllocation",
     "tileSet",
     "width"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "PointAllocation": {
+      "title": "GeneratedMapModel_PointAllocation",
+      "type": "object",
+      "properties": {
+        "enemies": {
+          "type": "number"
+        },
+        "equipment": {
+          "type": "number"
+        },
+        "items": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "enemies",
+        "equipment",
+        "items"
+      ],
+      "additionalProperties": false
+    }
+  }
 }

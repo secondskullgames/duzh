@@ -29,7 +29,6 @@ type KeyCommand = {
 type PromiseSupplier = () => Promise<void>;
 
 const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
-  console.log(e.code);
   const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
     .filter(x => x)
     .map(x => x as ModifierKey);
@@ -50,6 +49,7 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
     case 'Tab':
       return { key: 'TAB', modifiers };
     case 'Enter':
+    case 'NumpadEnter':
       return { key: 'ENTER', modifiers };
     case 'Space':
       return { key: 'SPACEBAR', modifiers };
