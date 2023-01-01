@@ -37,18 +37,12 @@ const levelUp = async () => {
   await render();
 };
 
-const toggleEditor = () => {
-  const editor = document.getElementById('editor') as HTMLDivElement;
-  editor.style.display = (editor.style.display === 'block') ? 'none' : 'block';
-};
-
 type DebugShape = {
   toggleRevealMap: () => void,
   killEnemies: () => void,
   killPlayer: () => void,
   nextLevel: () => void,
-  levelUp: () => void,
-  toggleEditor: () => void
+  levelUp: () => void
 };
 
 export const initDebug = () => {
@@ -59,8 +53,7 @@ export const initDebug = () => {
     killEnemies,
     killPlayer,
     nextLevel,
-    levelUp,
-    toggleEditor
+    levelUp
   };
 
   jwb.REVEAL_MAP = false;

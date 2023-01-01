@@ -7,7 +7,6 @@ import { MapSupplier } from './maps/MapSupplier';
 import MapFactory from './maps/MapFactory';
 import { initialize } from './core/actions';
 import { GameDriver } from './core/GameDriver';
-// import { render as renderEditor } from './editor/Editor';
 
 const renderer = new GameRenderer({
   parent: document.getElementById('container')!
@@ -36,7 +35,6 @@ const main = async () => {
   const renderer = gameDriver.getRenderer();
   await initialize(state, renderer);
   initDebug();
-  // renderEditor();
 };
 
 main().then(() => {});
