@@ -4,7 +4,7 @@
   "sprite": "snake",
   "paletteSwaps": {},
   "life": 25,
-  "mana": null,
+  "mana": 0,
   "damage": 5,
   "level": 1,
   "points": 5,

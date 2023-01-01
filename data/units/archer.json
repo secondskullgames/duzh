@@ -14,6 +14,7 @@
     "PLAYER_FEET": "DARK_BROWN"
   },
   "damage": 2,
+  "level": 3,
   "life": 50,
   "mana": 10,
   "equipment": [

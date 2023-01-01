@@ -38,7 +38,7 @@ const loadModel = async <T> (path: string, schemaName: string): Promise<T> => {
     `../../../data/${path}.json`
   )).default;
   if (!validate(data)) {
-    throw new Error(`Failed to validate ${path}: ${JSON.stringify(validate.errors)}`);
+    throw new Error(`Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`);
   }
   return data as T;
 };

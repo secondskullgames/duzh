@@ -36,8 +36,8 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
     console.log(`Validating ${dataFilename}`);
     const data = await loadFile(dataFilename);
     const isValid = validate(data);
-    if (!validate(data)) {
-      throw new Error(`Failed to validate ${dataFilename}: ${JSON.stringify(validate.errors)}`);
+    if (!isValid) {
+      throw new Error(`Failed to validate ${dataFilename}:\n${JSON.stringify(validate.errors, null, 4)}`);
     }
   }
 };

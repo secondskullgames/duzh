@@ -8,7 +8,7 @@
     "YELLOW": "DARK_RED"
   },
   "life": 15,
-  "mana": null,
+  "mana": 0,
   "damage": 9,
   "level": 1,
   "points": 8,

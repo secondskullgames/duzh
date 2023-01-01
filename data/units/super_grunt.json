@@ -11,6 +11,7 @@
   "mana": 0,
   "damage": 10,
   "level": null,
+  "points": null,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",
