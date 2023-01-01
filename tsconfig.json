@@ -3,7 +3,6 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "baseUrl": ".",
-    "jsx": "react",
     "lib": ["dom", "esnext"],
     "target": "es2015",
     "module": "esnext",
