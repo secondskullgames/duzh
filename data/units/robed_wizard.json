@@ -4,7 +4,7 @@
   "sprite": "robed_wizard",
   "paletteSwaps": {},
   "life": 300,
-  "mana": 20,
+  "mana": 25,
   "damage": 8,
   "level": null,
   "points": null,

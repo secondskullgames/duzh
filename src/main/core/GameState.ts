@@ -72,8 +72,10 @@ class GameState {
   getTurn = () => this.turn;
   nextTurn = () => { this.turn++; };
 
-  getQueuedAbility = () => this.queuedAbility;
-  setQueuedAbility = (ability: UnitAbility | null) => { this.queuedAbility = ability; };
+  getQueuedAbility = (): UnitAbility | null => this.queuedAbility;
+  setQueuedAbility = (ability: UnitAbility | null) => {
+    this.queuedAbility = ability;
+  };
 
   getMessages = (): string[] => this.messages.getRecentMessages();
   logMessage = (message: string): void => {
