@@ -93,10 +93,10 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
 
 let BUSY = false;
 
-const keyHandlerWrapper = async (e: KeyboardEvent) => {
+const keyHandlerWrapper = async (event: KeyboardEvent) => {
   if (!BUSY) {
     BUSY = true;
-    await keyHandler(e);
+    await keyHandler(event);
     BUSY = false;
   }
 };
@@ -105,7 +105,7 @@ const keyHandler = async (e: KeyboardEvent) => {
   const command : (KeyCommand | null) = _mapToCommand(e);
 
   if (!command) {
-    return Promise.resolve();
+    return;
   }
 
   e.preventDefault();
@@ -139,7 +139,7 @@ const keyHandler = async (e: KeyboardEvent) => {
       return _handleF1();
     case 'NONE':
     default: // not reachable
-      return Promise.resolve();
+      return;
   }
 };
 

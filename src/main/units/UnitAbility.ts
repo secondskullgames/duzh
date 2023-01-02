@@ -173,7 +173,7 @@ class KnockbackAttack extends UnitAbility {
 
   logDamage(unit: Unit, target: Unit, damageTaken: number) {
     const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target} recoils!`);
+    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`);
   }
 }
 
@@ -210,7 +210,7 @@ class StunAttack extends UnitAbility {
 
   logDamage(unit: Unit, target: Unit, damageTaken: number) {
     const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target} is stunned!`);
+    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`);
   }
 }
 

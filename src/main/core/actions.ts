@@ -99,10 +99,19 @@ const gameOver = async () => {
   playSound(Sounds.GAME_OVER);
 };
 
+const logFatalError = (message: string, error?: Error) => {
+  alert(message);
+  console.error(`Fatal exception: ${message}`);
+  if (error) {
+    console.error(error);
+  }
+};
+
 export {
   gameOver,
   initialize,
   loadNextMap,
+  logFatalError,
   render,
   revealTiles,
   startGame,
