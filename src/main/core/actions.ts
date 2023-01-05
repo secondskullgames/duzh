@@ -1,3 +1,4 @@
+import GameRenderer from '../graphics/renderers/GameRenderer';
 import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
 import Music from '../sounds/Music';
@@ -5,7 +6,7 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
-import { attachEvents } from './InputHandler';
+import { InputHandler } from './InputHandler';
 import { GameEngine } from './GameEngine';
 import { Renderer } from '../graphics/renderers/Renderer';
 
@@ -67,7 +68,7 @@ const initialize = async (state: GameState, renderer: Renderer) => {
   await render();
   const t2 = new Date().getTime();
   preloadFirstMap();
-  attachEvents();
+  new InputHandler(engine).attachEvents((renderer as GameRenderer).getCanvas());
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);

@@ -5,8 +5,8 @@
   "width": 36,
   "height": 26,
   "pointAllocation": {
-    "enemies": 90,
+    "enemies": 220,
     "equipment": 150,
-    "items": 50
+    "items": 60
   }
 }

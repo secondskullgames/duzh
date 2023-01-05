@@ -7,8 +7,8 @@ import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
 import { initialize, loadNextMap, render, startGame, startGameDebug } from './actions';
+import { GameEngine } from './GameEngine';
 import GameState from './GameState';
-import TurnHandler from './TurnHandler';
 import { GameDriver } from './GameDriver';
 
 type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
@@ -89,254 +89,255 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
   return null;
 };
 
-// global state
-
-let BUSY = false;
-
-const keyHandlerWrapper = async (event: KeyboardEvent) => {
-  if (!BUSY) {
-    BUSY = true;
-    await keyHandler(event);
-    BUSY = false;
-  }
-};
-
-const keyHandler = async (e: KeyboardEvent) => {
-  const command : (KeyCommand | null) = _mapToCommand(e);
-
-  if (!command) {
-    return;
+export class InputHandler {
+  private readonly engine: GameEngine;
+  private busy: boolean;
+  constructor(engine: GameEngine) {
+    this.engine = engine;
+    this.busy = false;
   }
 
-  e.preventDefault();
+  keyHandlerWrapper = async (event: KeyboardEvent) => {
+    if (!this.busy) {
+      this.busy = true;
+      await this.keyHandler(event);
+      this.busy = false;
+    }
+  };
 
-  switch (command.key) {
-    case 'UP':
-    case 'DOWN':
-    case 'LEFT':
-    case 'RIGHT':
-      return _handleArrowKey(command.key, command.modifiers);
-    case 'SPACEBAR':
-      await playSound(Sounds.FOOTSTEP);
-      return TurnHandler.playTurn();
-    case 'ENTER':
-      return _handleEnter(command.modifiers);
-    case 'TAB':
-      return _handleTab();
-    case 'M':
-      return _handleMap();
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-      return _handleAbility(command.key);
-    case 'F1':
-      return _handleF1();
-    case 'NONE':
-    default: // not reachable
+  keyHandler = async (e: KeyboardEvent) => {
+    const command : (KeyCommand | null) = _mapToCommand(e);
+
+    if (!command) {
       return;
-  }
-};
+    }
 
-const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-  const state = GameState.getInstance();
+    e.preventDefault();
 
-  switch (state.getScreen()) {
-    case 'GAME':
-      const { dx, dy } = _getDirection(key);
-      const playerUnit = GameState.getInstance().getPlayerUnit();
-      const { x, y } = Coordinates.plus(playerUnit.getCoordinates(), { dx, dy });
+    switch (command.key) {
+      case 'UP':
+      case 'DOWN':
+      case 'LEFT':
+      case 'RIGHT':
+        return this._handleArrowKey(command.key, command.modifiers);
+      case 'SPACEBAR':
+        await playSound(Sounds.FOOTSTEP);
+        return this.engine.playTurn();
+      case 'ENTER':
+        return this._handleEnter(command.modifiers);
+      case 'TAB':
+        return this._handleTab();
+      case 'M':
+        return this._handleMap();
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        return this._handleAbility(command.key);
+      case 'F1':
+        return this._handleF1();
+      case 'NONE':
+      default: // not reachable
+        return;
+    }
+  };
 
-      let queuedOrder: PromiseSupplier | null = null;
-      if (modifiers.includes('SHIFT')) {
-        if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
-          queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { x, y });
-        }
-      } else if (modifiers.includes('ALT')) {
-        if (playerUnit.canSpendMana(UnitAbility.STRAFE.manaCost)) {
-          queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, { x, y });
-        }
-      } else {
-        const ability = state.getQueuedAbility();
-        if (ability !== null) {
-          queuedOrder = async () => {
-            state.setQueuedAbility(null);
-            await ability.use(playerUnit, { x, y });
-          };
+  private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
+    const state = GameState.getInstance();
+
+    switch (state.getScreen()) {
+      case 'GAME':
+        const { dx, dy } = this._getDirection(key);
+        const playerUnit = GameState.getInstance().getPlayerUnit();
+        const { x, y } = Coordinates.plus(playerUnit.getCoordinates(), { dx, dy });
+
+        let queuedOrder: PromiseSupplier | null = null;
+        if (modifiers.includes('SHIFT')) {
+          if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
+            queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { x, y });
+          }
+        } else if (modifiers.includes('ALT')) {
+          if (playerUnit.canSpendMana(UnitAbility.STRAFE.manaCost)) {
+            queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, { x, y });
+          }
         } else {
-          queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { x, y });
+          const ability = state.getQueuedAbility();
+          if (ability !== null) {
+            queuedOrder = async () => {
+              state.setQueuedAbility(null);
+              await ability.use(playerUnit, { x, y });
+            };
+          } else {
+            queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { x, y });
+          }
         }
-      }
-      const playerController = playerUnit.getController() as PlayerUnitController;
-      if (queuedOrder) {
-        playerController.queuedOrder = queuedOrder;
-        await TurnHandler.playTurn();
-      }
-      break;
-    case 'INVENTORY':
-      const inventory = state.getPlayerUnit().getInventory();
+        const playerController = playerUnit.getController() as PlayerUnitController;
+        if (queuedOrder) {
+          playerController.queuedOrder = queuedOrder;
+          await this.engine.playTurn();
+        }
+        break;
+      case 'INVENTORY':
+        const inventory = state.getPlayerUnit().getInventory();
 
-      switch (key) {
-        case 'UP':
-          inventory.previousItem();
-          break;
-        case 'DOWN':
-          inventory.nextItem();
-          break;
-        case 'LEFT':
-          inventory.previousCategory();
-          break;
-        case 'RIGHT':
-          inventory.nextCategory();
-          break;
-      }
-      await render();
-      break;
-    default:
-      break;
-  }
-};
-
-const _handleEnter = async (modifiers: ModifierKey[]) => {
-  const state = GameState.getInstance();
-  const playerUnit = state.getPlayerUnit();
-
-  if (modifiers.includes('ALT')) {
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else {
-        await document.documentElement.requestFullscreen();
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    return;
-  }
-
-  switch (state.getScreen()) {
-    case 'GAME': {
-      const map = checkNotNull(state.getMap(), 'Map is not loaded!');
-      const { x, y } = playerUnit.getCoordinates();
-      const item = map.getItem({ x, y });
-      if (item) {
-        pickupItem(playerUnit, item);
-        map.removeItem({ x, y });
-      } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
-        playSound(Sounds.DESCEND_STAIRS);
-        await loadNextMap();
-      }
-      await TurnHandler.playTurn();
-      break;
-    }
-    case 'INVENTORY': {
-      const playerUnit = state.getPlayerUnit();
-      const { selectedItem } = playerUnit.getInventory();
-
-      if (selectedItem) {
-        state.setScreen('GAME');
-        await useItem(playerUnit, selectedItem);
+        switch (key) {
+          case 'UP':
+            inventory.previousItem();
+            break;
+          case 'DOWN':
+            inventory.nextItem();
+            break;
+          case 'LEFT':
+            inventory.previousCategory();
+            break;
+          case 'RIGHT':
+            inventory.nextCategory();
+            break;
+        }
         await render();
-      }
-      break;
+        break;
+      default:
+        break;
     }
-    case 'TITLE':
-      state.setScreen('GAME');
-      if (modifiers.includes('SHIFT')) {
-        await startGameDebug();
-      } else {
-        await startGame();
+  };
+
+  private _handleEnter = async (modifiers: ModifierKey[]) => {
+    const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
+
+    if (modifiers.includes('ALT')) {
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (e) {
+        console.error(e);
       }
-      break;
-    case 'VICTORY':
-    case 'GAME_OVER': {
-      const gameDriver = GameDriver.getInstance();
-      const state = await gameDriver.initState();
-      const renderer = gameDriver.getRenderer();
-      await initialize(state, renderer);
+      return;
     }
-  }
-};
 
-const _handleTab = async () => {
-  const state = GameState.getInstance();
+    switch (state.getScreen()) {
+      case 'GAME': {
+        const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+        const { x, y } = playerUnit.getCoordinates();
+        const item = map.getItem({ x, y });
+        if (item) {
+          pickupItem(playerUnit, item);
+          map.removeItem({ x, y });
+        } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
+          playSound(Sounds.DESCEND_STAIRS);
+          await loadNextMap();
+        }
+        await this.engine.playTurn();
+        break;
+      }
+      case 'INVENTORY': {
+        const playerUnit = state.getPlayerUnit();
+        const { selectedItem } = playerUnit.getInventory();
 
-  switch (state.getScreen()) {
-    case 'INVENTORY':
-      state.setScreen('GAME');
-      break;
-    default:
-      state.setScreen('INVENTORY');
-      break;
-  }
-  await render();
-};
+        if (selectedItem) {
+          state.setScreen('GAME');
+          await useItem(playerUnit, selectedItem);
+          await render();
+        }
+        break;
+      }
+      case 'TITLE':
+        state.setScreen('GAME');
+        if (modifiers.includes('SHIFT')) {
+          await startGameDebug();
+        } else {
+          await startGame();
+        }
+        break;
+      case 'VICTORY':
+      case 'GAME_OVER': {
+        const gameDriver = GameDriver.getInstance();
+        const state = await gameDriver.initState();
+        const renderer = gameDriver.getRenderer();
+        await initialize(state, renderer);
+      }
+    }
+  };
 
-const _handleMap = async () => {
-  const state = GameState.getInstance();
+  private _handleTab = async () => {
+    const state = GameState.getInstance();
 
-  switch (state.getScreen()) {
-    case 'MINIMAP':
-      state.setScreen('GAME');
-      break;
-    case 'GAME':
-    case 'INVENTORY':
-      state.setScreen('MINIMAP');
-      break;
-    default:
-      break;
-  }
-  await render();
-};
-
-const _handleAbility = async (command: NumberKey) => {
-  const state = GameState.getInstance();
-  const playerUnit = state.getPlayerUnit();
-
-  // sketchy - player abilities are indexed as (0 => attack, others => specials)
-  const index = parseInt(command.toString());
-  const ability = playerUnit.getAbilities()
-    .filter(ability => ability.icon !== null)
-    [index - 1];
-  if (ability && playerUnit.canSpendMana(ability.manaCost)) {
-    state.setQueuedAbility(ability);
+    switch (state.getScreen()) {
+      case 'INVENTORY':
+        state.setScreen('GAME');
+        break;
+      default:
+        state.setScreen('INVENTORY');
+        break;
+    }
     await render();
-  }
-};
+  };
 
-const _handleF1 = async () => {
-  const state = GameState.getInstance();
-  if (['GAME', 'INVENTORY', 'MINIMAP'].includes(state.getScreen())) {
-    state.setScreen('HELP');
-  } else {
-    state.showPrevScreen();
-  }
-  await render();
-};
+  private _handleMap = async () => {
+    const state = GameState.getInstance();
 
-const _getDirection = (key: ArrowKey): Direction => {
-  switch (key) {
-    case 'UP':
-      return { dx: 0, dy: -1 };
-    case 'DOWN':
-      return { dx: 0, dy: 1 };
-    case 'LEFT':
-      return { dx: -1, dy: 0 };
-    case 'RIGHT':
-      return { dx: 1, dy: 0 };
-  }
-};
+    switch (state.getScreen()) {
+      case 'MINIMAP':
+        state.setScreen('GAME');
+        break;
+      case 'GAME':
+      case 'INVENTORY':
+        state.setScreen('MINIMAP');
+        break;
+      default:
+        break;
+    }
+    await render();
+  };
 
-const attachEvents = () => {
-  const canvas = document.querySelector('#container canvas') as HTMLCanvasElement;
-  canvas.addEventListener('keydown', keyHandlerWrapper);
-};
+  private _handleAbility = async (command: NumberKey) => {
+    const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
 
-export {
-  attachEvents
-};
+    // sketchy - player abilities are indexed as (0 => attack, others => specials)
+    const index = parseInt(command.toString());
+    const ability = playerUnit.getAbilities()
+      .filter(ability => ability.icon !== null)
+      [index - 1];
+    if (ability && playerUnit.canSpendMana(ability.manaCost)) {
+      state.setQueuedAbility(ability);
+      await render();
+    }
+  };
+
+  private _handleF1 = async () => {
+    const state = GameState.getInstance();
+    if (['GAME', 'INVENTORY', 'MINIMAP'].includes(state.getScreen())) {
+      state.setScreen('HELP');
+    } else {
+      state.showPrevScreen();
+    }
+    await render();
+  };
+
+  private _getDirection = (key: ArrowKey): Direction => {
+    switch (key) {
+      case 'UP':
+        return { dx: 0, dy: -1 };
+      case 'DOWN':
+        return { dx: 0, dy: 1 };
+      case 'LEFT':
+        return { dx: -1, dy: 0 };
+      case 'RIGHT':
+        return { dx: 1, dy: 0 };
+    }
+  };
+
+  attachEvents = (target: HTMLElement) => {
+    // const canvas = document.querySelector('#container canvas') as HTMLCanvasElement;
+    target.addEventListener('keydown', this.keyHandlerWrapper);
+  };
+}
