@@ -2,7 +2,6 @@
   "name": "roguelike-js",
   "version": "0.1.0",
   "description": "A graphical Roguelike in the browser, written in Typescript",
-  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.2.5",
     "@types/webpack-env": "^1.18.0",
@@ -30,7 +29,8 @@
     "preserve": "npm run gen-schema",
     "serve": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf src/gen-schema",
-    "test": "jest"
+    "test": "jest",
+    "electron": "cd electron && npx electron ."
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,14 @@
+{
+  "name": "roguelike-electron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "jwbutler",
+  "license": "ISC",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^22.0.0"
+  }
+}
