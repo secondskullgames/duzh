@@ -31,6 +31,7 @@ class GameState {
 
   constructor({ playerUnit, maps }: Props) {
     this.screen = 'TITLE';
+    this.prevScreen = null;
     this.playerUnit = playerUnit;
     this.mapSuppliers = maps;
     this.maps = [];

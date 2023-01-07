@@ -8,7 +8,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/i,
+        test: /\.ts$/i,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
@@ -48,7 +48,7 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.css'],
+    extensions: ['.ts', '.js', '.css'],
   },
   output: {
     filename: '[name].bundle.js',
