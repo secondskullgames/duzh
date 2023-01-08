@@ -10,7 +10,7 @@ const createWindow = async () => {
 
   window.setMenuBarVisibility(false);
 
-  await window.loadFile('../build/index-electron.html');
+  await window.loadFile('./build/index-electron.html');
 };
 
 app.whenReady()
