@@ -42,27 +42,29 @@ body {
   }
 }
 
-@media all and (display-mode: fullscreen) {
-  body {
-    overflow: hidden;
-  }
+body.fullscreen {
+  overflow: hidden;
+}
 
-  #container {
-    width: 100vw;
-    height: 100vh;
-    align-items: center;
-    justify-content: center;
-    background-color: #000000;
-  }
+body.fullscreen #container {
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+}
 
-  #container canvas {
-    width: 100vw;
-    height: 100vh;
-    max-height: 56.25vw;
-    cursor: none;
-  }
+body.fullscreen #container canvas {
+  width: 100vw;
+  height: 100vh;
+  max-height: 56.25vw;
+  cursor: none;
+}
 
-  #debug {
-    display: none;
-  }
+body.fullscreen #debug {
+  display: none;
+}
+
+body.electron #debug {
+  display: none;
 }

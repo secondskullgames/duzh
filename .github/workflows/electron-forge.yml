@@ -1,0 +1,138 @@
+# Github Actions configuration that uses the  to build a native executable for various platforms.
+# Adapted from https://dev.to/sualeh/how-to-create-platform-specific-installers-for-your-java-applications-from-github-actions-2c15
+
+name: Build Electron Forge executables
+
+on:
+  push
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  ##########
+  # WINDOWS
+  ##########
+  build-windows:
+    name: Build executable for Windows
+    runs-on: windows-latest
+    steps:
+    - id: checkout-code
+      name: Checkout code
+      uses: actions/checkout@v3
+    - id: setup-node
+      name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - id: build
+      name: Build distribution
+      run: |
+        npm ci
+        npm run build
+        cd electron
+        npm ci
+        npm run make
+    - id: upload
+      name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./electron/out/make/zip/win32/x64
+        name: windows-executable
+        retention-days: 1
+
+  ##########
+  # OSX
+  ##########
+  build-osx:
+    name: Build executable for OSX
+    runs-on: macos-latest
+    steps:
+    - id: checkout-code
+      name: Checkout code
+      uses: actions/checkout@v3
+    - id: setup-node
+      name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - id: build
+      name: Build distribution
+      run: |
+        npm ci
+        npm run build
+        cd electron
+        npm ci
+        npm run make
+    - id: upload
+      name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./electron/out/make/zip/darwin
+        name: osx-executable
+        retention-days: 1
+
+  ### Create the release
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-windows, build-osx]
+    steps:
+
+    ### Download executables
+    - id: download-windows-executable
+      name: Download Windows executable
+      uses: actions/download-artifact@v3
+      with:
+        name: windows-executable
+        path: windows
+    - id: download-osx-executable
+      name: Download OSX executable
+      uses: actions/download-artifact@v3
+      with:
+        name: osx-executable
+        path: osx
+
+    ### Create the release
+    - id: create-release
+      name: Create GitHub release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: release-${{ github.sha }}
+        release_name: release-${{ github.sha }}
+        draft: false
+        prerelease: false
+
+    - id: zip-windows
+      name: Zip Windows executable
+      run:
+        zip -r windows.zip windows
+    - id: zip-osx
+      name: Zip OSX executable
+      run:
+        zip -r osx.zip osx
+
+    ### Upload the artifacts to the release
+    - id: upload-windows
+      name: Upload Windows executable
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: windows.zip
+        asset_name: windows.zip
+        asset_content_type: application/zip
+
+    - id: upload-osx
+      name: Upload OSX executable
+      uses: actions/upload-release-asset@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: osx.zip
+        asset_name: osx.zip
+        asset_content_type: application/zip

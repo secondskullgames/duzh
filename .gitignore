@@ -5,3 +5,5 @@
 build/
 node_modules/
 src/gen-schema
+electron/build
+electron/out

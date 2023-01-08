@@ -53,7 +53,9 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'build'),
-    clean: true
+    publicPath: '',
+    clean: true,
+    globalObject: 'this' // WTF, webpack
   },
   performance: {
     hints: false,
