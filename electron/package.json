@@ -8,8 +8,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
-    "prepackage": "copyfiles -u 1 ../build/* ."
+    "make": "electron-forge make"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.4",
