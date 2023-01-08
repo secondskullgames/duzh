@@ -1,0 +1,40 @@
+# Github Actions configuration that uses the  to build a native executable for various platforms.
+# Adapted from https://dev.to/sualeh/how-to-create-platform-specific-installers-for-your-java-applications-from-github-actions-2c15
+
+name: Build Electron Forge executables
+
+on:
+  push
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  ##########
+  # WINDOWS
+  ##########
+  build-windows:
+    name: Build executable for Windows
+    runs-on: windows-latest
+    steps:
+    - id: checkout-code
+      name: Checkout code
+      uses: actions/checkout@v3
+    - id: setup-node
+      name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - id: build
+      name: Build distribution
+      run: |
+        npm run build
+        cd electron
+        npm run make
+    - id: upload
+      name: Upload executable
+      uses: actions/upload-artifact@v3
+      with:
+        path: ./electron/out/make/squirrel.windows/x64
+        name: windows-executable
+        retention-days: 1
