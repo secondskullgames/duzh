@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - id: build
       name: Build distribution
-      run:
+      run: |
         npm ci
         npm run build
         cd electron
@@ -46,7 +46,7 @@ jobs:
   ##########
   build-osx:
     name: Build executable for OSX
-    runs-on: osx-latest
+    runs-on: macos-latest
     steps:
     - id: checkout-code
       name: Checkout code
