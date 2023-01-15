@@ -6,5 +6,8 @@
   "slot": "CHEST",
   "paletteSwaps": {},
   "points": 100,
-  "level": 3
+  "level": 3,
+  "stats": {
+    "absorbAmount": 0.2
+  }
 }

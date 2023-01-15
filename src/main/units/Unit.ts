@@ -55,7 +55,7 @@ class Unit implements Entity, Animatable {
   private readonly equipment: EquipmentMap;
   private x: number;
   private y: number;
-  private name: string;
+  private readonly name: string;
   private level: number;
   private experience: number;
   private life: number;
@@ -306,15 +306,21 @@ class Unit implements Entity, Animatable {
     }
   };
 
-  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null) => {
+  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
     let adjustedDamage = baseDamage;
-    if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
-      const shield = this.equipment.getBySlot('SHIELD');
-      if (shield !== null && shield.blockAmount !== null) {
-        adjustedDamage = Math.round(baseDamage * (1 - (shield.blockAmount ?? 0)));
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.absorbAmount !== null) {
+        console.log(`absorbing: ${equipment.absorbAmount}`);
+        adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
+        console.log(`adjusted: ${baseDamage} => ${adjustedDamage}`);
+      }
+      if (equipment.blockAmount !== null) {
+        if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
+          adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.blockAmount ?? 0)));
+        }
       }
     }
-    return adjustedDamage;
+    return Math.max(adjustedDamage, 0);
   };
 
   /**

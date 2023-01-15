@@ -20,7 +20,8 @@ type Props = {
 class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
   readonly damage?: number; // typically only for weapons
-  readonly blockAmount: number; // typically only for shields
+  readonly absorbAmount?: number; // typically for armor
+  readonly blockAmount?: number; // typically only for shields
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   private readonly name: string;
@@ -31,8 +32,9 @@ class Equipment implements Animatable {
     this.name = equipmentClass.name;
     this.slot = equipmentClass.slot;
     this.inventoryItem = inventoryItem ?? null;
-    this.damage = equipmentClass.damage;
-    this.blockAmount = equipmentClass.blockAmount ?? 0;
+    this.damage = equipmentClass.stats.damage;
+    this.absorbAmount = equipmentClass.stats.absorbAmount ?? 0;
+    this.blockAmount = equipmentClass.stats.blockAmount ?? 0;
     this.sprite = sprite;
     this.script = equipmentClass.script ?? null;
     this._unit = null;

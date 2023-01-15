@@ -1,3 +1,4 @@
+import { EquipmentStatsModel } from '../../gen-schema/equipment-stats.schema';
 import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import ItemCategory from '../items/ItemCategory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
@@ -12,21 +13,25 @@ interface EquipmentClass {
   itemCategory: ItemCategory,
   slot: EquipmentSlot,
   paletteSwaps: PaletteSwaps,
-  damage?: number,
-  blockAmount?: number, // typically only for shields
   script: EquipmentScript,
   level: number | null,
-  points: number | null
+  points: number | null,
+  stats: EquipmentStatsModel
 }
 
 const _fromModel = async (model: EquipmentModel): Promise<EquipmentClass> => {
   return {
-    ...model,
+    name: model.name,
+    sprite: model.sprite,
+    mapIcon: model.mapIcon,
+    level: model.level,
+    points: model.points,
     itemCategory: model.itemCategory as ItemCategory,
     // We're using "friendly" color names, convert them to hex now
     paletteSwaps: PaletteSwaps.create(model.paletteSwaps),
     script: model.script as EquipmentScript,
-    slot: model.slot as EquipmentSlot
+    slot: model.slot as EquipmentSlot,
+    stats: model.stats
   };
 };
 

@@ -2,7 +2,17 @@ import Ajv from 'ajv';
 import fs from 'fs/promises';
 import { test, expect } from '@jest/globals';
 
-const schemaNames = ['palette-swaps', 'unit', 'equipment', 'predefined-map', 'generated-map', 'static-sprite', 'dynamic-sprite', 'tile-set'];
+const schemaNames = [
+  'palette-swaps',
+  'unit',
+  'equipment-stats',
+  'equipment',
+  'predefined-map',
+  'generated-map',
+  'static-sprite',
+  'dynamic-sprite',
+  'tile-set'
+];
 
 const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   const allFilenames: string[] = [];

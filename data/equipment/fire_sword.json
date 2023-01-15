@@ -9,7 +9,9 @@
     "LIGHT_GRAY": "RED",
     "BLACK": "DARK_RED"
   },
-  "damage": 12,
   "points": 200,
-  "level": 6
+  "level": 6,
+  "stats": {
+    "damage": 12
+  }
 }

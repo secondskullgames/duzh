@@ -1,12 +1,12 @@
+import { initialize } from './core/actions';
 import { initDebug } from './core/debug';
-import GameRenderer from './graphics/renderers/GameRenderer';
+import { GameDriver } from './core/GameDriver';
 import GameState from './core/GameState';
-import UnitFactory from './units/UnitFactory';
+import GameRenderer from './graphics/renderers/GameRenderer';
+import MapFactory from './maps/MapFactory';
 import MapSpec from './maps/MapSpec';
 import { MapSupplier } from './maps/MapSupplier';
-import MapFactory from './maps/MapFactory';
-import { initialize } from './core/actions';
-import { GameDriver } from './core/GameDriver';
+import UnitFactory from './units/UnitFactory';
 
 const renderer = new GameRenderer({
   parent: document.getElementById('container')!
