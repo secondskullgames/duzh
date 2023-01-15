@@ -4,6 +4,7 @@ import { test, expect } from '@jest/globals';
 
 const schemaNames = [
   'palette-swaps',
+  'door-direction',
   'unit',
   'equipment-stats',
   'equipment',
@@ -54,7 +55,7 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
 
 test('test validity of JSON data', async () => {
   for (const schemaName of schemaNames) {
-    const filename = `data/schema/${schemaName}.schema.json`;
+    const filename = `schema/${schemaName}.schema.json`;
     console.log(`Loading schema ${filename}`);
     const schema = await loadFile(filename);
     ajv.addSchema(schema);

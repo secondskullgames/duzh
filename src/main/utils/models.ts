@@ -10,6 +10,7 @@ import { UnitModel } from '../../gen-schema/unit.schema';
 
 const schemaNames = [
   'palette-swaps',
+  'door-direction',
   'unit',
   'equipment-stats',
   'equipment',
@@ -22,6 +23,7 @@ const schemaNames = [
 
 type SchemaType =
   | 'palette-swaps'
+  | 'door-direction'
   | 'unit'
   | 'equipment-stats'
   | 'equipment'
