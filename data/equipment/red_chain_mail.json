@@ -8,5 +8,8 @@
     "DARK_GRAY": "DARK_RED"
   },
   "points": null,
-  "level": null
+  "level": null,
+  "stats": {
+    "absorbAmount": 0.1
+  }
 }

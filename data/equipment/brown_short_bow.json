@@ -8,7 +8,9 @@
     "DARK_GREEN": "DARK_BROWN",
     "GREEN": "DARK_GRAY"
   },
-  "damage": 2,
   "points": null,
-  "level": null
+  "level": null,
+  "stats": {
+    "damage": 2
+  }
 }

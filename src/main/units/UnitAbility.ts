@@ -249,7 +249,6 @@ class ShootArrow extends UnitAbility {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playSound(Sounds.PLAYER_HITS_ENEMY);
       await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
-      state.logMessage(`${unit.getName()} hit ${targetUnit.getName()} for ${damage} damage!`);
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }

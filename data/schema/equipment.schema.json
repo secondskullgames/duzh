@@ -3,12 +3,6 @@
   "title": "EquipmentModel",
   "type": "object",
   "properties": {
-    "blockAmount": {
-      "type": "number"
-    },
-    "damage": {
-      "type": "number"
-    },
     "itemCategory": {
       "type": "string"
     },
@@ -35,6 +29,9 @@
     },
     "sprite": {
       "type": "string"
+    },
+    "stats": {
+      "$ref": "./equipment-stats.schema.json"
     }
   },
   "required": [
@@ -45,7 +42,8 @@
     "paletteSwaps",
     "points",
     "slot",
-    "sprite"
+    "sprite",
+    "stats"
   ],
   "additionalProperties": false
 }

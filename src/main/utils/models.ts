@@ -4,7 +4,17 @@ import Ajv from 'ajv';
  * Utility methods for working with models (in /data/) and schemas (in /data/schema)
  */
 
-const schemaNames = ['palette-swaps', 'unit', 'equipment', 'predefined-map', 'generated-map', 'static-sprite', 'dynamic-sprite', 'tile-set'];
+const schemaNames = [
+  'palette-swaps',
+  'unit',
+  'equipment-stats',
+  'equipment',
+  'predefined-map',
+  'generated-map',
+  'static-sprite',
+  'dynamic-sprite',
+  'tile-set'
+];
 
 const ajv = new Ajv();
 let loadedSchemas = false;

@@ -8,7 +8,9 @@
     "DARK_GRAY": "BLACK",
     "LIGHT_GRAY": "DARK_GRAY"
   },
-  "damage": 8,
   "points": 100,
-  "level": 4
+  "level": 4,
+  "stats": {
+    "damage": 8
+  }
 }

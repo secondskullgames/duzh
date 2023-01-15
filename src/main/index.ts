@@ -1,6 +1,9 @@
 import { initDebug } from './core/debug';
+import Equipment from './equipment/Equipment';
+import EquipmentClass from './equipment/EquipmentClass';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import GameState from './core/GameState';
+import ItemFactory from './items/ItemFactory';
 import UnitFactory from './units/UnitFactory';
 import MapSpec from './maps/MapSpec';
 import { MapSupplier } from './maps/MapSupplier';
@@ -15,6 +18,9 @@ const renderer = new GameRenderer({
 const gameDriver: GameDriver = {
   initState: async (): Promise<GameState> => {
     const playerUnit = await UnitFactory.createPlayerUnit();
+    const chainMail = await ItemFactory.createEquipment(await EquipmentClass.load('bronze_chain_mail'));
+    playerUnit.getEquipment().add(chainMail);
+    chainMail.attach(playerUnit);
 
     const json = (await import(
       /* webpackChunkName: "models" */

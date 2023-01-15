@@ -7,6 +7,9 @@
   "paletteSwaps": {
     "DARK_GRAY": "DARK_BROWN"
   },
-  "points": null,
-  "level": null
+  "points": 50,
+  "level": 2,
+  "stats": {
+    "absorbAmount": 0.1
+  }
 }
