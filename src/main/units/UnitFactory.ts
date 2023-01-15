@@ -1,10 +1,9 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
-import EquipmentClass from '../equipment/EquipmentClass';
+import Coordinates from '../geometry/Coordinates';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import ItemFactory from '../items/ItemFactory';
-import Coordinates from '../geometry/Coordinates';
 import { Faction } from '../types/types';
 import { loadModel } from '../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
@@ -27,7 +26,7 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
   const model: UnitModel = await loadModel(`units/${unitClass}`, 'unit');
   const spritePromise: Promise<DynamicSprite<Unit>> = SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
   const equipmentPromises = Promise.all(
-    (model.equipment ?? [])?.map(id => EquipmentClass.load(id).then(ItemFactory.createEquipment))
+    (model.equipment ?? [])?.map(ItemFactory.createEquipment)
   );
 
   const [sprite, equipment] = await Promise.all([spritePromise, equipmentPromises]);

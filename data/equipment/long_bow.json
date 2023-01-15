@@ -1,4 +1,5 @@
 {
+  "id": "long_bow",
   "name": "Long Bow",
   "sprite": "bow",
   "mapIcon": "map_bow",

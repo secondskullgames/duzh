@@ -10,6 +10,7 @@ import Spawner from '../../objects/Spawner';
 import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
+import TileType from '../../tiles/TileType';
 import { HUMAN_REDESIGN, WIZARD } from '../../units/controllers/AIUnitControllers';
 import UnitController from '../../units/controllers/UnitController';
 import Unit from '../../units/Unit';
@@ -64,7 +65,7 @@ const _loadTiles = async (mapClass: PredefinedMapClass, image: Image): Promise<T
 
     const tileType = tileColors[color.hex] ?? null;
     if (tileType !== null) {
-      tiles[y][x] = Tile.create(tileType, tileSet);
+      tiles[y][x] = Tile.create(tileType as TileType, tileSet);
     } else if (mapClass.defaultTile) {
       tiles[y][x] = Tile.create(mapClass.defaultTile, tileSet);
     }

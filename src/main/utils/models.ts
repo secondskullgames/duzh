@@ -1,4 +1,5 @@
 import Ajv from 'ajv';
+import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
 import { UnitModel } from '../../gen-schema/unit.schema';
 
@@ -66,6 +67,8 @@ export const loadModel = async <T> (path: string, schema: SchemaType): Promise<T
   return data as T;
 };
 
-export const loadUnitModel = async (unitClass: string): Promise<UnitModel> => loadModel(`units/${unitClass}`, 'unit');
+export const loadUnitModel = async (id: string): Promise<UnitModel> => loadModel(`units/${id}`, 'unit');
 
 export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> => loadModel(`maps/generated/${id}`, 'generated-map');
+
+export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> => loadModel(`equipment/${id}`, 'equipment');

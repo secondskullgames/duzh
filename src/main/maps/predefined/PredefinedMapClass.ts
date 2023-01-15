@@ -1,9 +1,7 @@
 import { PredefinedMapModel } from '../../../gen-schema/predefined-map.schema';
-import EquipmentClass from '../../equipment/EquipmentClass';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { DoorDirection } from '../../objects/Door';
-import ItemClass from '../../items/ItemClass';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
 import TileType from '../../tiles/TileType';
@@ -14,14 +12,23 @@ type PredefinedMapClass = {
   imageFilename: string,
   tileset: string,
   levelNumber: number,
-  tileColors: Record<string, TileType>,
-  defaultTile?: TileType
+  defaultTile?: TileType,
+  /**
+   * hex color -> tile type
+   */
+  tileColors: Record<string, string>,
   /**
    * hex color -> unit class name
    */
   enemyColors: Record<string, string>,
-  itemColors: Record<string, ItemClass>,
-  equipmentColors: Record<string, EquipmentClass>,
+  /**
+   * hex color -> item class name
+   */
+  itemColors: Record<string, string>,
+  /**
+   * hex color -> equipment class name
+   */
+  equipmentColors: Record<string, string>,
   doorColors: Record<string, DoorDirection>,
   spawnerColors: Record<string, string>;
   startingPointColor: Color,
@@ -29,10 +36,10 @@ type PredefinedMapClass = {
 };
 
 const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass> => {
-  const tileColors = await _convertColorMap(model.tileColors, x => Promise.resolve(x as TileType));
+  const tileColors = model.tileColors;
   const enemyColors = model.enemyColors;
-  const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemClass.load(x)));
-  const equipmentColors = await _convertColorMap(model.equipmentColors, EquipmentClass.load);
+  const itemColors = model.itemColors;
+  const equipmentColors = model.equipmentColors;
   const doorColors = await _convertColorMap(model.doorColors ?? {}, x => Promise.resolve(x as DoorDirection));
   const spawnerColors = await _convertColorMap(model.spawnerColors ?? {}, x => Promise.resolve(x));
   const startingPointColor = checkNotNull(Colors[model.startingPointColor]);

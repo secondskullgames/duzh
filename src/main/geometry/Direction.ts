@@ -1,5 +1,3 @@
-import { checkNotNull } from '../utils/preconditions';
-
 interface Direction {
   dx: -1 | 0 | 1,
   dy: -1 | 0 | 1

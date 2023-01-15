@@ -1,6 +1,5 @@
 import { GeneratedMapModel_PointAllocation } from '../../../gen-schema/generated-map.schema';
 import GameState from '../../core/GameState';
-import EquipmentClass from '../../equipment/EquipmentClass';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
 import ItemClass from '../../items/ItemClass';
@@ -115,7 +114,7 @@ class GeneratedMapBuilder {
 
     let points = this.pointAllocation.equipment;
     while (points > 0) {
-      const possibleEquipmentClasses = (await EquipmentClass.loadAll())
+      const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
         .filter(equipmentClass => equipmentClass.level !== null && equipmentClass.level <= this.level)
         .filter(equipmentClass => equipmentClass.points !== null && equipmentClass.points <= points);
 
@@ -129,7 +128,7 @@ class GeneratedMapBuilder {
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const { x, y } = candidateLocations.shift()!;
-      const promise = ItemFactory.createMapEquipment(equipmentClass, { x, y });
+      const promise = ItemFactory.createMapEquipment(equipmentClass.id, { x, y });
       itemPromises.push(promise);
       points -= equipmentClass.points!;
       this.objectLocations.add({ x, y });
@@ -151,7 +150,7 @@ class GeneratedMapBuilder {
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const { x, y } = candidateLocations.shift()!;
-      const promise = ItemFactory.createMapItem(itemClass, { x, y });
+      const promise = ItemFactory.createMapItem(itemClass.id, { x, y });
       itemPromises.push(promise);
       points -= itemClass.points!;
       this.objectLocations.add({ x, y });

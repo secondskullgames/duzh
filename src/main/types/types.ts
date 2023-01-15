@@ -1,7 +1,5 @@
 import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
 import Rect from '../geometry/Rect';
-import Entity from './Entity';
 
 /*
  * Note: The types defined in this file are mostly very general and/or legacy types that don't fit neatly into

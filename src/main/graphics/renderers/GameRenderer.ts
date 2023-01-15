@@ -12,7 +12,6 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
-import renderer from './AbstractRenderer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';

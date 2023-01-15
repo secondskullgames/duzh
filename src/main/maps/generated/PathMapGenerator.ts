@@ -3,7 +3,7 @@ import Pathfinder from '../../geometry/Pathfinder';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
 import { range } from '../../utils/arrays';
-import { randChoice, randInt, shuffle } from '../../utils/random';
+import { randInt} from '../../utils/random';
 import AbstractMapGenerator from './AbstractMapGenerator';
 import EmptyMap from './EmptyMap';
 
