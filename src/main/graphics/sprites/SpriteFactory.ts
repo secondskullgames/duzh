@@ -117,6 +117,7 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
       switch (state) {
         case 'ALIVE': return 'mirror';
         case 'DEAD':  return 'mirror_broken';
+        default:      throw new Error(`Unknown mirror state ${state}`);
       }
     })();
     const image = await ImageFactory.getImage({
@@ -171,7 +172,6 @@ const _loadAnimations = async (
         }
 
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
-        console.log(frameKey + " " + filenames);
         const image = await ImageFactory.getImage({
           filenames,
           transparentColor: Colors.WHITE,

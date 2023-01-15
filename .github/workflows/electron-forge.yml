@@ -4,7 +4,8 @@
 name: Build Electron Forge executables
 
 on:
-  push
+  push:
+    branches: [ master ]
 
 env:
   NODE_VERSION: 16
