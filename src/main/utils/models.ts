@@ -1,6 +1,7 @@
 import Ajv from 'ajv';
 import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
+import { PredefinedMapModel } from '../../gen-schema/predefined-map.schema';
 import { UnitModel } from '../../gen-schema/unit.schema';
 
 /**
@@ -39,7 +40,7 @@ const _loadSchemas = async () => {
     const schema = (await import(
       /* webpackMode: "lazy-once" */
       /* webpackChunkName: "schemas" */
-      `../../../data/schema/${schemaName}.schema.json`
+      `../../../schema/${schemaName}.schema.json`
     )).default;
     ajv.addSchema(schema);
   }
@@ -72,3 +73,5 @@ export const loadUnitModel = async (id: string): Promise<UnitModel> => loadModel
 export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> => loadModel(`maps/generated/${id}`, 'generated-map');
 
 export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> => loadModel(`equipment/${id}`, 'equipment');
+
+export const loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> => loadModel(`maps/generated/${id}`, 'predefined-map');

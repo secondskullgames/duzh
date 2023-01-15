@@ -11,22 +11,16 @@ import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
 import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
-import PredefinedMapClass from './predefined/PredefinedMapClass';
 
-const loadMap = (map: MapSpec): Promise<MapInstance> => {
+const loadMap = async (map: MapSpec): Promise<MapInstance> => {
   switch (map.type) {
     case 'generated': {
-      return (async () => {
-        const mapClass = await loadGeneratedMapModel(map.id);
-        const mapBuilder = await loadGeneratedMap(mapClass);
-        return mapBuilder.build();
-      })();
+      const mapClass = await loadGeneratedMapModel(map.id);
+      const mapBuilder = await loadGeneratedMap(mapClass);
+      return mapBuilder.build();
     }
     case 'predefined': {
-      return (async () => {
-        const mapClass = await PredefinedMapClass.load(map.id);
-        return loadPredefinedMap(mapClass);
-      })();
+      return loadPredefinedMap(map.id);
     }
   }
 };
@@ -36,7 +30,7 @@ const loadGeneratedMap = async (mapClass: GeneratedMapModel): Promise<GeneratedM
   return dungeonGenerator.generateMap(mapClass);
 };
 
-const loadPredefinedMap = async (mapClass: PredefinedMapClass): Promise<MapInstance> =>
+const loadPredefinedMap = async (mapClass: string): Promise<MapInstance> =>
   new PredefinedMapBuilder(mapClass).build();
 
 const _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {

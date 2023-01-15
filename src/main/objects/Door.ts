@@ -2,13 +2,10 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Animatable from '../graphics/animations/Animatable';
 import Entity from '../types/Entity';
 import Coordinates from '../geometry/Coordinates';
+import { DoorDirection } from 'src/gen-schema/door-direction.schema';
 
-type DoorDirection = 'HORIZONTAL' | 'VERTICAL';
-namespace DoorDirection {
-  export const values = () => ['HORIZONTAL', 'VERTICAL'];
-}
-type DoorState = 'OPEN' | 'CLOSED';
-namespace DoorState {
+export type DoorState = 'OPEN' | 'CLOSED';
+export namespace DoorState {
   export const values = () => ['OPEN', 'CLOSED'];
 }
 
@@ -61,7 +58,3 @@ class Door implements Entity, Animatable {
 }
 
 export default Door;
-export {
-  DoorDirection,
-  DoorState
-};

@@ -1,5 +1,5 @@
 import Equipment from '../../equipment/Equipment';
-import Door, { DoorDirection, DoorState } from '../../objects/Door';
+import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import Direction from '../../geometry/Direction';
 import Colors from '../Colors';
@@ -90,7 +90,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
     .addMapping(Colors.BLACK, Colors.BLACK_CGA)
     .build();
   const imageMap: Record<string, Image> = {};
-  for (const direction of DoorDirection.values()) {
+  for (const direction of ['horizontal', 'vertical']) {
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
       const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;

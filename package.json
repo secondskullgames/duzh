@@ -23,7 +23,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "scripts": {
-    "gen-schema": "npx json2ts -i \"data/schema/*.schema.json\" -o src/gen-schema --cwd=./data/schema",
+    "gen-schema": "npx json2ts -i \"schema/*.schema.json\" -o src/gen-schema --cwd=./schema",
     "prebuild": "npm run gen-schema",
     "build": "npx webpack",
     "preserve": "npm run gen-schema",
