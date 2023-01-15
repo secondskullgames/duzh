@@ -1,5 +1,4 @@
 import GameState from '../core/GameState';
-import Rect from '../geometry/Rect';
 import { isInStraightLine, manhattanDistance } from '../maps/MapUtils';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';

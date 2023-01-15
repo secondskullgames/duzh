@@ -1,3 +1,4 @@
+import { UnitModel } from '../../gen-schema/unit.schema';
 import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
 import EquipmentScript from '../equipment/EquipmentScript';
@@ -15,10 +16,10 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Entity from '../types/Entity';
 import { Faction } from '../types/types';
-import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
+import { checkArgument } from '../utils/preconditions';
+import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
 import UnitAbility from './UnitAbility';
-import UnitClass from './UnitClass';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -39,7 +40,7 @@ const damagePerLevel = 0;
 type Props = {
   name: string,
   faction: Faction,
-  unitClass: UnitClass,
+  model: UnitModel,
   sprite: DynamicSprite<Unit>,
   level: number,
   coordinates: Coordinates,
@@ -48,11 +49,11 @@ type Props = {
 };
 
 class Unit implements Entity, Animatable {
-  private readonly unitClass: UnitClass;
   private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
+  private readonly aiParameters: AIParameters | null;
   private x: number;
   private y: number;
   private readonly name: string;
@@ -65,7 +66,7 @@ class Unit implements Entity, Animatable {
   private lifeRemainder: number;
   private manaRemainder: number;
   private damage: number;
-  private controller: UnitController;
+  private readonly controller: UnitController;
   private activity: Activity;
   private direction: Direction;
   /**
@@ -78,43 +79,52 @@ class Unit implements Entity, Animatable {
    * Used by AI to make certain decisions
    */
   private turnsSinceCombatAction: number | null;
+  private abilitiesPerLevel: Record<string, string[]>;
+  private summonedUnitClass: string | null;
 
-  constructor({ name, unitClass, faction, sprite, level, coordinates: { x, y }, controller, equipment }: Props) {
-    this.unitClass = unitClass;
-    this.faction = faction;
-    this.sprite = sprite;
-    sprite.target = this;
+  constructor(props: Props) {
+    this.faction = props.faction;
+    this.sprite = props.sprite;
+    this.sprite.target = this;
     this.inventory = new InventoryMap();
 
-    this.x = x;
-    this.y = y;
-    this.name = name;
+    this.x = props.coordinates.x;
+    this.y = props.coordinates.y;
+    this.name = props.name;
     this.level = 1;
     this.experience = 0;
-    this.life = unitClass.life;
-    this.maxLife = unitClass.life;
-    this.mana = unitClass.mana;
-    this.maxMana = unitClass.mana;
+
+    const { model } = props;
+    this.life = model.life;
+    this.maxLife = model.life;
+    this.mana = model.mana;
+    this.maxMana = model.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.damage = unitClass.damage;
-    this.controller = controller;
+    this.damage = model.damage;
+    this.controller = props.controller;
     this.activity = 'STANDING';
     this.direction = Direction.S;
     this.frameNumber = 1;
-    this.abilities = (unitClass.abilities[1] ?? []).map(UnitAbility.forName);
+    this.abilities = (model.abilities[1] ?? [])
+      .map(str => str as UnitAbility.Name)
+      .map(UnitAbility.forName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
     this.equipment = new EquipmentMap();
-    for (const eq of equipment) {
+    for (const eq of props.equipment) {
       this.equipment.add(eq);
       eq.attach(this);
     }
 
-    while (this.level < level) {
+    while (this.level < props.level) {
       this.levelUp();
     }
+
+    this.aiParameters = model.aiParameters ?? null;
+    this.abilitiesPerLevel = model.abilities;
+    this.summonedUnitClass = model.summonedUnitClass ?? null;
   }
 
   private _upkeep = () => {
@@ -146,7 +156,7 @@ class Unit implements Entity, Animatable {
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
-  getUnitClass = (): UnitClass => this.unitClass;
+  getAiParameters = (): AIParameters | null => this.aiParameters;
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
   getController = (): UnitController => this.controller;
@@ -169,6 +179,7 @@ class Unit implements Entity, Animatable {
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
   getSprite = () => this.sprite;
+  getSummonedUnitClass = () => this.summonedUnitClass;
 
   update = async () => {
     await this._upkeep();
@@ -218,9 +229,9 @@ class Unit implements Entity, Animatable {
     this.maxMana += manaPerLevel;
     this.mana += manaPerLevel;
     this.damage += damagePerLevel;
-    const abilities = this.unitClass.abilities[this.level] ?? [];
+    const abilities = this.abilitiesPerLevel[this.level] ?? [];
     for (const abilityName of abilities) {
-      this.abilities.push(UnitAbility.forName(abilityName));
+      this.abilities.push(UnitAbility.forName(abilityName as UnitAbility.Name));
     }
   };
 

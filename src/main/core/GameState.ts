@@ -1,5 +1,4 @@
 import MapInstance from '../maps/MapInstance';
-import MapSpec from '../maps/MapSpec';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/UnitAbility';

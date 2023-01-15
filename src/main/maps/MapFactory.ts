@@ -1,44 +1,36 @@
-import EquipmentClass from '../equipment/EquipmentClass';
-import ItemClass from '../items/ItemClass';
+import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
 import TileSet from '../tiles/TileSet';
-import UnitClass from '../units/UnitClass';
+import { loadGeneratedMapModel } from '../utils/models';
 import BlobMapGenerator from './generated/BlobMapGenerator';
 import AbstractMapGenerator from './generated/AbstractMapGenerator';
 import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapGenerator';
 import GeneratedMapBuilder from './generated/GeneratedMapBuilder';
-import GeneratedMapClass from './generated/GeneratedMapClass';
 import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCorridorMapGenerator2';
 import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
 import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
-import PredefinedMapClass from './predefined/PredefinedMapClass';
 
-const loadMap = (map: MapSpec): Promise<MapInstance> => {
+const loadMap = async (map: MapSpec): Promise<MapInstance> => {
   switch (map.type) {
     case 'generated': {
-      return (async () => {
-        const mapClass = await GeneratedMapClass.load(map.id);
-        const mapBuilder = await loadGeneratedMap(mapClass);
-        return mapBuilder.build();
-      })();
+      const mapClass = await loadGeneratedMapModel(map.id);
+      const mapBuilder = await loadGeneratedMap(mapClass);
+      return mapBuilder.build();
     }
     case 'predefined': {
-      return (async () => {
-        const mapClass = await PredefinedMapClass.load(map.id);
-        return loadPredefinedMap(mapClass);
-      })();
+      return loadPredefinedMap(map.id);
     }
   }
 };
 
-const loadGeneratedMap = async (mapClass: GeneratedMapClass): Promise<GeneratedMapBuilder> => {
+const loadGeneratedMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
   const dungeonGenerator = _getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
   return dungeonGenerator.generateMap(mapClass);
 };
 
-const loadPredefinedMap = async (mapClass: PredefinedMapClass): Promise<MapInstance> =>
+const loadPredefinedMap = async (mapClass: string): Promise<MapInstance> =>
   new PredefinedMapBuilder(mapClass).build();
 
 const _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {

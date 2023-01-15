@@ -1,4 +1,5 @@
 {
+  "id": "player_cga",
   "name": "Player",
   "type": "HUMAN",
   "sprite": "player",

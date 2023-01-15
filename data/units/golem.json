@@ -1,4 +1,5 @@
 {
+  "id": "golem",
   "name": "Golem",
   "type": "GOLEM",
   "sprite": "zombie",

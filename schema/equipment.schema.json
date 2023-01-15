@@ -3,6 +3,12 @@
   "title": "EquipmentModel",
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
     "itemCategory": {
       "type": "string"
     },
@@ -10,9 +16,6 @@
       "type": ["number", "null"]
     },
     "mapIcon": {
-      "type": "string"
-    },
-    "name": {
       "type": "string"
     },
     "paletteSwaps": {
@@ -35,6 +38,7 @@
     }
   },
   "required": [
+    "id",
     "itemCategory",
     "level",
     "mapIcon",

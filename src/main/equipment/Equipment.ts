@@ -1,10 +1,10 @@
+import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import EquipmentClass from './EquipmentClass';
 import EquipmentScript from './EquipmentScript';
 import EquipmentSlot from './EquipmentSlot';
 import Activity from '../types/Activity';
@@ -12,7 +12,7 @@ import Activity from '../types/Activity';
 const DRAW_BEHIND_PREFIX = '_B';
 
 type Props = {
-  equipmentClass: EquipmentClass,
+  model: EquipmentModel,
   sprite: Sprite,
   inventoryItem?: InventoryItem | null
 };
@@ -28,15 +28,15 @@ class Equipment implements Animatable {
   readonly script: EquipmentScript | null;
   private _unit: Unit | null;
 
-  constructor({ equipmentClass, sprite, inventoryItem }: Props) {
-    this.name = equipmentClass.name;
-    this.slot = equipmentClass.slot;
+  constructor({ model, sprite, inventoryItem }: Props) {
+    this.name = model.name;
+    this.slot = model.slot as EquipmentSlot;
     this.inventoryItem = inventoryItem ?? null;
-    this.damage = equipmentClass.stats.damage;
-    this.absorbAmount = equipmentClass.stats.absorbAmount ?? 0;
-    this.blockAmount = equipmentClass.stats.blockAmount ?? 0;
+    this.damage = model.stats.damage;
+    this.absorbAmount = model.stats.absorbAmount ?? 0;
+    this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
-    this.script = equipmentClass.script ?? null;
+    this.script = (model.script) ? model.script as EquipmentScript : null;
     this._unit = null;
   }
 

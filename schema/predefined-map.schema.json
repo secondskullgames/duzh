@@ -28,7 +28,7 @@
       "$ref": "#/definitions/ColorMap"
     },
     "doorColors": {
-      "$ref": "#/definitions/ColorMap"
+      "$ref": "#/definitions/DoorMap"
     },
     "spawnerColors": {
       "$ref": "#/definitions/ColorMap"
@@ -76,6 +76,15 @@
       "patternProperties": {
         "^[A-Z_]+$": {
           "type": "string"
+        }
+      }
+    },
+    "DoorMap": {
+      "title": "PredefinedMapModel_DoorMap",
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z_]+$": {
+          "$ref": "./door-direction.schema.json"
         }
       }
     }

@@ -1,13 +1,16 @@
+import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import GameState from '../core/GameState';
-import EquipmentClass from '../equipment/EquipmentClass';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
+import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
+import { loadEquipmentModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
+import ItemCategory from './ItemCategory';
 import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
@@ -62,34 +65,51 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   return new InventoryItem('Scroll of Floor Fire', 'SCROLL', onUse);
 };
 
-const createMapEquipment = async (equipmentClass: EquipmentClass, { x, y }: Coordinates): Promise<MapItem> => {
-  const sprite = await SpriteFactory.createStaticSprite(equipmentClass.mapIcon, equipmentClass.paletteSwaps);
+const createMapEquipment = async (equipmentClass: string, { x, y }: Coordinates): Promise<MapItem> => {
+  const model = await loadEquipmentModel(equipmentClass);
+  const sprite = await SpriteFactory.createStaticSprite(model.mapIcon, PaletteSwaps.create(model.paletteSwaps));
   const inventoryItem: InventoryItem = await _createInventoryWeapon(equipmentClass);
   return new MapItem({ x, y, sprite, inventoryItem });
 };
 
-const _createInventoryWeapon = async (equipmentClass: EquipmentClass): Promise<InventoryItem> => {
+const _createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
   const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
     return equipItem(item, equipmentClass, unit);
   };
-  return new InventoryItem(equipmentClass.name, equipmentClass.itemCategory, onUse);
+  const model = await loadEquipmentModel(equipmentClass);
+  return new InventoryItem(model.name, model.itemCategory as ItemCategory, onUse);
 };
 
-const createEquipment = async (equipmentClass: EquipmentClass): Promise<Equipment> => {
-  const spriteName = equipmentClass.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, equipmentClass.paletteSwaps);
-  const inventoryItem = (equipmentClass.itemCategory === 'WEAPON')
+const createEquipment = async (equipmentClass: string): Promise<Equipment> => {
+  const model = await loadEquipmentModel(equipmentClass);
+  const spriteName = model.sprite;
+  const sprite = await SpriteFactory.createEquipmentSprite(spriteName, PaletteSwaps.create(model.paletteSwaps));
+  const inventoryItem = (model.itemCategory === 'WEAPON')
     ? await _createInventoryWeapon(equipmentClass)
     : null;
-  const equipment = new Equipment({ equipmentClass, sprite, inventoryItem });
+  const equipment = new Equipment({ model, sprite, inventoryItem });
   sprite.target = equipment;
   return equipment;
 };
 
-const createMapItem = async (itemClass: ItemClass, { x, y }: Coordinates) => {
+const createMapItem = async (itemClassId: string, { x, y }: Coordinates) => {
+  const itemClass = ItemClass.load(itemClassId);
   const inventoryItem = await itemClass.getInventoryItem();
   const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite, itemClass.paletteSwaps);
   return new MapItem({ x, y, sprite, inventoryItem });
+};
+
+const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
+  const requireContext = require.context(
+    '../../../data/equipment',
+    false,
+    /\.json$/i
+  );
+
+  return Promise.all(
+    requireContext.keys()
+      .map(filename => requireContext(filename) as EquipmentModel)
+  );
 };
 
 export default {
@@ -99,5 +119,6 @@ export default {
   createMapItem,
   createLifePotion,
   createManaPotion,
-  createScrollOfFloorFire
+  createScrollOfFloorFire,
+  loadAllEquipmentModels
 };

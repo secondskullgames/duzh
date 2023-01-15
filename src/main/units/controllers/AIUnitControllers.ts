@@ -1,19 +1,19 @@
 import GameState from '../../core/GameState';
+import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
-import { randBoolean, randChance, randChoice, random, weightedRandom } from '../../utils/random';
+import { randBoolean, randChance, randChoice, weightedRandom } from '../../utils/random';
 import Unit from '../Unit';
 import UnitAbility from '../UnitAbility';
 import UnitBehaviors from '../UnitBehaviors';
 import UnitBehavior from '../UnitBehaviors';
 import UnitController from './UnitController';
-import Coordinates from '../../geometry/Coordinates';
 
 const HUMAN_CAUTIOUS: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
-    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_CAUTIOUS behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_CAUTIOUS behavior requires aiParams!');
     const { speed, visionRange } = aiParameters;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
@@ -64,7 +64,7 @@ const HUMAN_DETERMINISTIC: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_DETERMINISTIC behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_DETERMINISTIC behavior requires aiParams!');
     const { speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
@@ -91,7 +91,7 @@ const HUMAN_REDESIGN: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'HUMAN_REDESIGN behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;
@@ -124,7 +124,7 @@ const ARCHER: UnitController = {
   issueOrder: async (unit: Unit) => {
     const playerUnit = GameState.getInstance().getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getUnitClass().aiParameters, 'ARCHER behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'ARCHER behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     let behavior: UnitBehavior;

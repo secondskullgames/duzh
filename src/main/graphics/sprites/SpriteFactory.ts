@@ -1,5 +1,5 @@
 import Equipment from '../../equipment/Equipment';
-import Door, { DoorDirection, DoorState } from '../../objects/Door';
+import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import Direction from '../../geometry/Direction';
 import Colors from '../Colors';
@@ -90,7 +90,7 @@ const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
     .addMapping(Colors.BLACK, Colors.BLACK_CGA)
     .build();
   const imageMap: Record<string, Image> = {};
-  for (const direction of DoorDirection.values()) {
+  for (const direction of ['horizontal', 'vertical']) {
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
       const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
@@ -117,6 +117,7 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
       switch (state) {
         case 'ALIVE': return 'mirror';
         case 'DEAD':  return 'mirror_broken';
+        default:      throw new Error(`Unknown mirror state ${state}`);
       }
     })();
     const image = await ImageFactory.getImage({
@@ -171,7 +172,6 @@ const _loadAnimations = async (
         }
 
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
-        console.log(frameKey + " " + filenames);
         const image = await ImageFactory.getImage({
           filenames,
           transparentColor: Colors.WHITE,
