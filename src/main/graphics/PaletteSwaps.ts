@@ -2,7 +2,7 @@ import { checkNotNull } from '../utils/preconditions';
 import Color from './Color';
 import Colors from './Colors';
 
-type PaletteSwaps = {
+export type PaletteSwaps = {
   entries: () => [Color, Color][],
   get: (color: Color) => Color | null,
   toString: () => string
@@ -54,7 +54,7 @@ class Builder {
 
 const _empty: PaletteSwaps = new Builder().build();
 
-namespace PaletteSwaps {
+export namespace PaletteSwaps {
   /**
    * @param paletteSwaps Contains a map of color names, to be converted to hex format
    */

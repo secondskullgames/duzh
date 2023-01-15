@@ -85,7 +85,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
   }
 };
 
-const _shootPlayerUnit = async (unit: Unit) => {
+const _shootPlayerUnit = async (unit: Unit): Promise<void> => {
   const state = GameState.getInstance();
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
@@ -116,7 +116,7 @@ const _shootPlayerUnit = async (unit: Unit) => {
     y += dy;
   }
 
-  await UnitAbility.SHOOT_ARROW.use(unit, { x, y });
+  return UnitAbility.SHOOT_ARROW.use(unit, { x, y });
 };
 
 const _teleportFromPlayerUnit = async (unit: Unit) => {

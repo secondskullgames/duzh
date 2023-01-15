@@ -1,6 +1,5 @@
 import Offsets from './Offsets';
 
-
 interface Coordinates {
   x: number,
   y: number

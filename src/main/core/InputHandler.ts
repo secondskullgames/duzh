@@ -105,7 +105,7 @@ export class InputHandler {
     }
   };
 
-  keyHandler = async (e: KeyboardEvent) => {
+  keyHandler = async (e: KeyboardEvent): Promise<void> => {
     const command : (KeyCommand | null) = _mapToCommand(e);
 
     if (!command) {

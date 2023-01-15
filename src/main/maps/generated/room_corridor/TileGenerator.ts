@@ -114,7 +114,7 @@ const _joinPerpendicularly = (tiles: TileType[][], firstConnection: Connection, 
     y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
   };
 
-  let { dx, dy } = _pointAt(start, middle);
+  const { dx, dy } = _pointAt(start, middle);
 
   let { x, y } = start;
   while (!Coordinates.equals({ x, y }, middle)) {

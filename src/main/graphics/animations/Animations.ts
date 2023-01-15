@@ -8,7 +8,7 @@ import Unit from '../../units/Unit';
 import { sleep } from '../../utils/promises';
 import Projectile from '../../types/Projectile';
 
-const FRAME_LENGTH = 200; // milliseconds
+const FRAME_LENGTH = 150; // milliseconds
 const ARROW_FRAME_LENGTH = 50; // milliseconds
 const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds

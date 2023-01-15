@@ -46,7 +46,7 @@ const startGame = async () => {
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   await render();
   const t2 = new Date().getTime();
-  console.log(`Loaded level in ${t2 - t1} ms`);
+  console.debug(`Loaded level in ${t2 - t1} ms`);
 };
 
 const startGameDebug = async () => {
@@ -67,11 +67,11 @@ const initialize = async (state: GameState, renderer: Renderer) => {
 
   await render();
   const t2 = new Date().getTime();
-  preloadFirstMap();
   new InputHandler(engine).attachEvents((renderer as GameRenderer).getCanvas());
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
+  await preloadFirstMap();
 };
 
 /**

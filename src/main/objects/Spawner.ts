@@ -52,7 +52,9 @@ class Spawner implements Entity, Animatable {
   getSprite = (): Sprite => this.sprite;
 
   update = async () => {
-    if (this.state === 'DEAD') return;
+    if (this.state === 'DEAD') {
+      return;
+    }
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 

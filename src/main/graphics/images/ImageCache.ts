@@ -1,8 +1,8 @@
 import { comparing } from '../../utils/arrays';
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import Image from './Image';
-import ImageEffect from './ImageEffect';
+import { Image } from './Image';
+import { ImageEffect } from './ImageEffect';
 
 type CacheKey = {
   filename: string,

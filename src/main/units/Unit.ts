@@ -79,8 +79,8 @@ class Unit implements Entity, Animatable {
    * Used by AI to make certain decisions
    */
   private turnsSinceCombatAction: number | null;
-  private abilitiesPerLevel: Record<string, string[]>;
-  private summonedUnitClass: string | null;
+  private readonly abilitiesPerLevel: Record<string, string[]>;
+  private readonly summonedUnitClass: string | null;
 
   constructor(props: Props) {
     this.faction = props.faction;

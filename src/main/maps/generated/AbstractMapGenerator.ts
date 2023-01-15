@@ -1,13 +1,10 @@
 import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
-import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { average, minBy } from '../../utils/arrays';
-import { checkState } from '../../utils/preconditions';
-import GeneratedMapBuilder from './GeneratedMapBuilder';
-import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
+import { getUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
+import GeneratedMapBuilder from './GeneratedMapBuilder';
 
 abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;
@@ -62,25 +59,6 @@ abstract class AbstractMapGenerator {
       }
     }
     throw new Error(`Failed to generate map in ${iterations} iterations`);
-  };
-
-  /**
-   * Spawn the player at the tile that maximizes average distance from enemies and the level exit.
-   */
-  private _pickPlayerLocation = (tiles: TileType[][], blockedTiles: Coordinates[]) => {
-    const candidates: [Coordinates, number][] = [];
-
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        if (!TileType.isBlocking(tiles[y][x]) && !blockedTiles.some(tile => Coordinates.equals(tile, { x, y }))) {
-          const tileDistances = blockedTiles.map(blockedTile => hypotenuse({ x, y }, blockedTile));
-          candidates.push([{ x, y }, average(tileDistances)]);
-        }
-      }
-    }
-
-    checkState(candidates.length > 0);
-    return minBy(candidates, ([coordinates, averageDistance]) => averageDistance);
   };
 
   /**

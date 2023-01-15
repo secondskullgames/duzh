@@ -1,9 +1,9 @@
-type Figure = Sample[];
+export type Figure = Sample[];
 
-type SoundEffect = Sample[];
-type Sample = [number, number];
+export type SoundEffect = Sample[];
+export type Sample = [number, number];
 
-type Suite = {
+export type Suite = {
   length: number;
   sections: {
     [sectionName: string]: {
@@ -12,9 +12,3 @@ type Suite = {
     }
   }
 }
-
-export {
-  Figure,
-  Sample,
-  Suite
-};
