@@ -1,4 +1,5 @@
 {
+  "id": "grunt",
   "name": "Grunt",
   "type": "HUMAN",
   "sprite": "player",

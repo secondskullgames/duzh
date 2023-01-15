@@ -4,7 +4,6 @@ import Animatable from '../graphics/animations/Animatable';
 import Entity from '../types/Entity';
 import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
-import UnitClass from '../units/UnitClass';
 import UnitFactory from '../units/UnitFactory';
 import Coordinates from '../geometry/Coordinates';
 
@@ -18,7 +17,7 @@ type Props = {
   x: number,
   y: number,
   cooldown: number,
-  unitClass: UnitClass,
+  unitClass: string,
   maxUnits: number,
   isBlocking: boolean
 };
@@ -28,7 +27,7 @@ class Spawner implements Entity, Animatable {
   private state: SpawnerState;
   private readonly maxCooldown: number;
   private cooldown: number = 0;
-  private readonly unitClass: UnitClass;
+  private readonly unitClass: string;
   private readonly maxUnits: number;
   private readonly spawnedUnits: Set<Unit>;
   private readonly _isBlocking: boolean;
@@ -69,7 +68,6 @@ class Spawner implements Entity, Animatable {
       const { x, y } = this;
       if (map.getUnit({ x, y }) === null) {
         const spawnedUnit = await UnitFactory.createUnit({
-          name: this.unitClass.name,
           unitClass: this.unitClass,
           coordinates: { x, y },
           level: 1,

@@ -1,4 +1,5 @@
 {
+  "id": "archer",
   "name": "Goblin Archer",
   "type": "HUMAN",
   "sprite": "player",

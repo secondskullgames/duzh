@@ -1,4 +1,5 @@
 {
+  "id": "green_snake",
   "name": "Green Snake",
   "type": "ANIMAL",
   "sprite": "snake",

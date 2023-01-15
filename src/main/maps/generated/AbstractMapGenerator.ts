@@ -1,13 +1,13 @@
+import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
 import Coordinates from '../../geometry/Coordinates';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import TileType from '../../tiles/TileType';
-import { average, minBy, sum } from '../../utils/arrays';
+import { average, minBy } from '../../utils/arrays';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import EmptyMap from './EmptyMap';
-import GeneratedMapClass from './GeneratedMapClass';
 
 abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;
@@ -16,7 +16,7 @@ abstract class AbstractMapGenerator {
     this.tileSet = tileSet;
   }
 
-  generateMap = async (mapClass: GeneratedMapClass): Promise<GeneratedMapBuilder> => {
+  generateMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapClass;
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;

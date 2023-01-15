@@ -9,7 +9,6 @@ import MapItem from '../../objects/MapItem';
 import Tile from '../../tiles/Tile';
 import { ARCHER, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
-import UnitClass from '../../units/UnitClass';
 import UnitFactory from '../../units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
 import { randChoice } from '../../utils/random';
@@ -75,36 +74,36 @@ class GeneratedMapBuilder {
     let points = this.pointAllocation.enemies;
 
     while (points > 0) {
-      const possibleUnitClasses = (await UnitClass.loadAll())
-        .filter(unitClass => unitClass.level !== null && unitClass.level <= this.level)
-        .filter(unitClass => unitClass.points !== null && unitClass.points <= points);
+      const possibleUnitModels = (await UnitFactory.loadAllModels())
+        .filter(model => model.level !== null && model.level <= this.level)
+        .filter(model => model.points !== null && model.points <= points);
 
-      if (possibleUnitClasses.length === 0) {
+      if (possibleUnitModels.length === 0) {
         break;
       }
 
-      const unitClass = randChoice(possibleUnitClasses);
+      const model = randChoice(possibleUnitModels);
       sortByReversed(
         candidateLocations,
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const { x, y } = candidateLocations.shift()!;
       let controller: UnitController;
-      if (unitClass.name === 'Goblin Archer') {
+      // TODO super hack!
+      if (model.name === 'Goblin Archer') {
         controller = ARCHER;
       } else {
         controller = HUMAN_REDESIGN;
       }
       const promise = UnitFactory.createUnit({
-        name: unitClass.name, // TODO unique names?
-        unitClass,
+        unitClass: model.id,
         controller,
         faction: 'ENEMY',
         coordinates: { x, y },
         level: this.level
       });
       unitPromises.push(promise);
-      points -= unitClass.points!;
+      points -= model.points!;
       this.objectLocations.add({ x, y });
     }
     return Promise.all(unitPromises);

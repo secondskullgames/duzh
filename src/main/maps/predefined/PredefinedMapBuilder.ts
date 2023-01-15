@@ -14,6 +14,7 @@ import { HUMAN_REDESIGN, WIZARD } from '../../units/controllers/AIUnitController
 import UnitController from '../../units/controllers/UnitController';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
+import { loadUnitModel } from '../../utils/models';
 import MapInstance from '../MapInstance';
 import PredefinedMapClass from './PredefinedMapClass';
 
@@ -94,9 +95,10 @@ const _loadUnits = async (mapClass: PredefinedMapClass, image: Image): Promise<U
       } else {
         const enemyUnitClass = mapClass.enemyColors[color.hex] ?? null;
         if (enemyUnitClass !== null) {
-          const controller: UnitController = (enemyUnitClass.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
+          const enemyUnitModel = await loadUnitModel(enemyUnitClass);
+          const controller: UnitController = (enemyUnitModel.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
           const unit = await UnitFactory.createUnit({
-            name: `${enemyUnitClass.name}_${id++}`,
+            name: `${enemyUnitModel.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
             controller,

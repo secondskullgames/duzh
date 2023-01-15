@@ -3,6 +3,14 @@
   "title": "UnitModel",
   "type": "object",
   "properties": {
+    "id": {
+      "type": "string",
+      "description": "Expected to match the filename"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for this unit type"
+    },
     "abilities": {
       "type": "object",
       "description": "TODO: This includes ATTACK at position 0, followed by special abilities.\nIt doesn't include SHOOT_ARROW.",
@@ -19,6 +27,10 @@
     "aiParameters": {
       "type": "object",
       "properties": {
+        "aggressiveness": {
+          "description": "currently unused",
+          "type": "number"
+        },
         "fleeThreshold": {
           "description": "ratio of (current life / max life)",
           "type": "number"
@@ -33,6 +45,7 @@
         }
       },
       "required": [
+        "aggressiveness",
         "fleeThreshold",
         "speed",
         "visionRange"
@@ -57,9 +70,6 @@
     "mana": {
       "type": "number"
     },
-    "name": {
-      "type": "string"
-    },
     "paletteSwaps": {
       "$ref": "./palette-swaps.schema.json"
     },
@@ -79,6 +89,7 @@
   "required": [
     "abilities",
     "damage",
+    "id",
     "level",
     "life",
     "mana",

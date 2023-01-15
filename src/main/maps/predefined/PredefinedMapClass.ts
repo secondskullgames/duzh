@@ -7,7 +7,6 @@ import ItemClass from '../../items/ItemClass';
 import Music from '../../sounds/Music';
 import { Figure } from '../../sounds/types';
 import TileType from '../../tiles/TileType';
-import UnitClass from '../../units/UnitClass';
 import { loadModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
 
@@ -17,7 +16,10 @@ type PredefinedMapClass = {
   levelNumber: number,
   tileColors: Record<string, TileType>,
   defaultTile?: TileType
-  enemyColors: Record<string, UnitClass>,
+  /**
+   * hex color -> unit class name
+   */
+  enemyColors: Record<string, string>,
   itemColors: Record<string, ItemClass>,
   equipmentColors: Record<string, EquipmentClass>,
   doorColors: Record<string, DoorDirection>,
@@ -28,7 +30,7 @@ type PredefinedMapClass = {
 
 const _fromModel = async (model: PredefinedMapModel): Promise<PredefinedMapClass> => {
   const tileColors = await _convertColorMap(model.tileColors, x => Promise.resolve(x as TileType));
-  const enemyColors = await _convertColorMap(model.enemyColors, UnitClass.load);
+  const enemyColors = model.enemyColors;
   const itemColors = await _convertColorMap(model.itemColors, x => Promise.resolve(ItemClass.load(x)));
   const equipmentColors = await _convertColorMap(model.equipmentColors, EquipmentClass.load);
   const doorColors = await _convertColorMap(model.doorColors ?? {}, x => Promise.resolve(x as DoorDirection));

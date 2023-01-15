@@ -1,4 +1,5 @@
 {
+  "id": "player",
   "name": "Player",
   "type": "HUMAN",
   "sprite": "player",

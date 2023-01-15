@@ -2,6 +2,7 @@
 
 import { render } from '../core/actions';
 import GameState from '../core/GameState';
+import Coordinates from '../geometry/Coordinates';
 import {
   playArrowAnimation,
   playAttackingAnimation,
@@ -12,14 +13,12 @@ import {
 import { manhattanDistance } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../geometry/Coordinates';
 import { pointAt } from '../utils/geometry';
 import { checkNotNull } from '../utils/preconditions';
+import { sleep } from '../utils/promises';
 import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import Unit from './Unit';
-import UnitClass from './UnitClass';
 import UnitFactory from './UnitFactory';
-import { sleep } from '../utils/promises';
 
 type Props = {
   name: string,
@@ -411,14 +410,12 @@ class Summon extends UnitAbility {
     const state = GameState.getInstance();
     const map = state.getMap();
 
-    const unitClassName = checkNotNull(unit.getUnitClass().summonedUnitClass);
-    const unitClass = await UnitClass.load(unitClassName);
+    const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
     const summonedUnit = await UnitFactory.createUnit({
-      name: unitClass.name,
       unitClass,
       faction: unit.getFaction(),
       controller: HUMAN_DETERMINISTIC, // TODO
