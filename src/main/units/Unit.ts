@@ -112,6 +112,10 @@ class Unit implements Entity, Animatable {
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
+    this.aiParameters = model.aiParameters ?? null;
+    this.abilitiesPerLevel = model.abilities;
+    this.summonedUnitClass = model.summonedUnitClass ?? null;
+
     this.equipment = new EquipmentMap();
     for (const eq of props.equipment) {
       this.equipment.add(eq);
@@ -121,10 +125,6 @@ class Unit implements Entity, Animatable {
     while (this.level < props.level) {
       this.levelUp();
     }
-
-    this.aiParameters = model.aiParameters ?? null;
-    this.abilitiesPerLevel = model.abilities;
-    this.summonedUnitClass = model.summonedUnitClass ?? null;
   }
 
   private _upkeep = () => {
@@ -270,7 +270,7 @@ class Unit implements Entity, Animatable {
     this.setCoordinates({ x, y });
     const playerUnit = GameState.getInstance().getPlayerUnit();
     if (this === playerUnit) {
-      await playSound(Sounds.FOOTSTEP);
+      playSound(Sounds.FOOTSTEP);
     }
 
     for (const equipment of this.equipment.getAll()) {
@@ -294,10 +294,12 @@ class Unit implements Entity, Animatable {
 
     if (sourceUnit) {
       const ability = params?.ability ?? null;
+      // note: we're logging adjustedDamage here since, if we "overkilled",
+      // we still want to give you "credit" for the full damage amount
       if (ability) {
-        ability.logDamage(sourceUnit, this, damageTaken);
+        ability.logDamage(sourceUnit, this, adjustedDamage);
       } else {
-        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${damageTaken} damage!`);
+        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${adjustedDamage} damage!`);
       }
     }
 

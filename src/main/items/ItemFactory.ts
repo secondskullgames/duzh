@@ -54,7 +54,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
         && !(dx === 0 && dy === 0);
     });
 
-    await playSound(Sounds.PLAYER_HITS_ENEMY);
+    playSound(Sounds.PLAYER_HITS_ENEMY);
     await playFloorFireAnimation(unit, adjacentUnits);
 
     for (const adjacentUnit of adjacentUnits) {

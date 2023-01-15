@@ -64,9 +64,9 @@ class NormalAttack extends UnitAbility {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
         const damage = unit.getDamage();
+        playSound(Sounds.PLAYER_HITS_ENEMY);
         await unit.startAttack(targetUnit);
         await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
-        await playSound(Sounds.PLAYER_HITS_ENEMY);
       }
 
       const door = map.getDoor({ x, y });
@@ -74,18 +74,18 @@ class NormalAttack extends UnitAbility {
         const keys = playerUnit.getInventory().get('KEY');
         if (keys.length > 0) {
           playerUnit.getInventory().remove(keys[0]);
+          playSound(Sounds.OPEN_DOOR);
           await door.open();
-          await playSound(Sounds.OPEN_DOOR);
         } else {
-          await playSound(Sounds.BLOCKED);
+          playSound(Sounds.BLOCKED);
         }
       }
 
       const spawner = map.getSpawner({ x, y });
       if (spawner && spawner.isBlocking()) {
+        playSound(Sounds.SPECIAL_ATTACK);
         await playAttackingAnimation(unit);
         spawner.setState('DEAD');
-        await playSound(Sounds.SPECIAL_ATTACK);
       }
     }
   };
@@ -117,7 +117,7 @@ class HeavyAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
-        await playSound(Sounds.SPECIAL_ATTACK);
+        playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
         await unit.startAttack(targetUnit);
@@ -151,10 +151,10 @@ class KnockbackAttack extends UnitAbility {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(this.manaCost);
+      playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
       await unit.startAttack(targetUnit);
       await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
-      await playSound(Sounds.SPECIAL_ATTACK);
       targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
@@ -197,7 +197,7 @@ class StunAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
-        await playSound(Sounds.SPECIAL_ATTACK);
+        playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage();
         await unit.startAttack(targetUnit);
@@ -245,8 +245,8 @@ class ShootArrow extends UnitAbility {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       const damage = unit.getRangedDamage();
+      playSound(Sounds.PLAYER_HITS_ENEMY);
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await playSound(Sounds.PLAYER_HITS_ENEMY);
       await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
@@ -287,10 +287,9 @@ class Bolt extends UnitAbility {
 
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
+      playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getDamage();
-
       await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
-      await playSound(Sounds.PLAYER_HITS_ENEMY);
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
     } else {
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);
@@ -342,7 +341,7 @@ class Dash extends UnitAbility {
     if (moved) {
       unit.spendMana(this.manaCost);
     } else {
-      await playSound(Sounds.BLOCKED);
+      playSound(Sounds.BLOCKED);
     }
   };
 
@@ -385,7 +384,7 @@ class Teleport extends UnitAbility {
 
       unit.spendMana(this.manaCost);
     } else {
-      await playSound(Sounds.BLOCKED);
+      playSound(Sounds.BLOCKED);
     }
   };
 

@@ -121,7 +121,7 @@ export class InputHandler {
       case 'RIGHT':
         return this._handleArrowKey(command.key, command.modifiers);
       case 'SPACEBAR':
-        await playSound(Sounds.FOOTSTEP);
+        playSound(Sounds.FOOTSTEP);
         return this.engine.playTurn();
       case 'ENTER':
         return this._handleEnter(command.modifiers);
