@@ -1,8 +1,11 @@
 import Ajv from 'ajv';
+import { DynamicSpriteModel } from '../../gen-schema/dynamic-sprite.schema';
 import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
 import { PredefinedMapModel } from '../../gen-schema/predefined-map.schema';
+import { StaticSpriteModel } from '../../gen-schema/static-sprite.schema';
 import { UnitModel } from '../../gen-schema/unit.schema';
+import SpriteCategory from '../graphics/sprites/SpriteCategory';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /data/schema)
@@ -70,10 +73,20 @@ export const loadModel = async <T> (path: string, schema: SchemaType): Promise<T
   return data as T;
 };
 
-export const loadUnitModel = async (id: string): Promise<UnitModel> => loadModel(`units/${id}`, 'unit');
+export const loadUnitModel = async (id: string): Promise<UnitModel> =>
+  loadModel(`units/${id}`, 'unit');
 
-export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> => loadModel(`maps/generated/${id}`, 'generated-map');
+export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> =>
+  loadModel(`equipment/${id}`, 'equipment');
 
-export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> => loadModel(`equipment/${id}`, 'equipment');
+export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> =>
+  loadModel(`maps/generated/${id}`, 'generated-map');
 
-export const loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> => loadModel(`maps/generated/${id}`, 'predefined-map');
+export const loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> =>
+  loadModel(`maps/generated/${id}`, 'predefined-map');
+
+export const loadDynamicSpriteModel = async (id: string, category: SpriteCategory): Promise<DynamicSpriteModel> =>
+  loadModel(`sprites/${category}/${id}`, 'dynamic-sprite');
+
+export const loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
+  loadModel(`sprites/static/${id}`, 'static-sprite');

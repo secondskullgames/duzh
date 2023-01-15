@@ -321,9 +321,7 @@ class Unit implements Entity, Animatable {
     let adjustedDamage = baseDamage;
     for (const equipment of this.equipment.getAll()) {
       if (equipment.absorbAmount !== null) {
-        console.log(`absorbing: ${equipment.absorbAmount}`);
         adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
-        console.log(`adjusted: ${baseDamage} => ${adjustedDamage}`);
       }
       if (equipment.blockAmount !== null) {
         if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {

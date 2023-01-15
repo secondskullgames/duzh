@@ -28,7 +28,7 @@ const loadNextMap = async () => {
       await Music.playMusic(nextMap.music);
     }
     const t2 = new Date().getTime();
-    console.log(`Loaded level in ${t2 - t1} ms`);
+    console.debug(`Loaded level in ${t2 - t1} ms`);
   }
 };
 
