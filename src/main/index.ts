@@ -1,5 +1,5 @@
 import { MapSpec } from '../gen-schema/map-spec.schema';
-import { Debug } from './core/debug';
+import { Debug } from './core/Debug';
 import { GameDriver } from './core/GameDriver';
 import { GameEngine } from './core/GameEngine';
 import GameState from './core/GameState';

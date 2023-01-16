@@ -28,6 +28,8 @@ export class Debug {
     await this.engine.render();
   };
 
+  isMapRevealed = () => this.revealMap;
+
   killEnemies = async () => {
     const { state } = this;
     const map = state.getMap();
@@ -56,6 +58,7 @@ export class Debug {
   attachToWindow = () => {
     // @ts-ignore
     window.jwb = window.jwb ?? {};
-    jwb.debug = this;
+    // @ts-ignore
+    window.jwb.debug = this;
   };
 }
