@@ -16,7 +16,7 @@
       "$ref": "#/definitions/Color"
     },
     "tileColors": {
-      "$ref": "#/definitions/ColorMap"
+      "$ref": "#/definitions/TileMap"
     },
     "enemyColors": {
       "$ref": "#/definitions/ColorMap"
@@ -34,7 +34,7 @@
       "$ref": "#/definitions/ColorMap"
     },
     "defaultTile": {
-      "$ref": "#/definitions/TileType"
+      "$ref": "./tile-type.schema.json"
     },
     "tileset": {
       "type": "string"
@@ -52,19 +52,6 @@
   ],
   "additionalProperties": false,
   "definitions": {
-    "TileType": {
-      "title": "PredefinedMapModel_TileType",
-      "enum": [
-        "FLOOR",
-        "FLOOR_HALL",
-        "NONE",
-        "STAIRS_DOWN",
-        "WALL",
-        "WALL_HALL",
-        "WALL_TOP"
-      ],
-      "type": "string"
-    },
     "Color": {
       "title": "PredefinedMapModel_Color",
       "type": "string",
@@ -85,6 +72,15 @@
       "patternProperties": {
         "^[A-Z_]+$": {
           "$ref": "./door-direction.schema.json"
+        }
+      }
+    },
+    "TileMap": {
+      "title": "PredefinedMapModel_TileMap",
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z_]+$": {
+          "$ref": "./tile-type.schema.json"
         }
       }
     }

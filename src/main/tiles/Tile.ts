@@ -1,7 +1,7 @@
+import { TileType } from '../../gen-schema/tile-type.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import { randChoice } from '../utils/random';
 import TileSet from './TileSet';
-import TileType from './TileType';
 import { checkNotNull } from '../utils/preconditions';
 
 interface Tile {
@@ -17,9 +17,20 @@ namespace Tile {
     return {
       type,
       getSprite: () => sprite,
-      isBlocking: TileType.isBlocking(type)
+      isBlocking: _isBlocking(type)
     };
   };
 }
+
+const _isBlocking = (tileType: TileType): boolean => {
+  switch (tileType) {
+    case 'WALL_HALL':
+    case 'WALL_TOP':
+    case 'NONE':
+      return true;
+    default:
+      return false;
+  }
+};
 
 export default Tile;

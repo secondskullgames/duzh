@@ -1,11 +1,11 @@
 import Coordinates from '../../geometry/Coordinates';
 import TileSet from '../../tiles/TileSet';
-import TileType from '../../tiles/TileType';
 import EmptyMap from './EmptyMap';
 import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import AbstractMapGenerator from './AbstractMapGenerator';
+import { TileType } from 'src/gen-schema/tile-type.schema';
 
 class BlobMapGenerator extends AbstractMapGenerator {
   constructor(tileSet: TileSet) {

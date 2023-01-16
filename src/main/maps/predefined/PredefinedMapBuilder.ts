@@ -1,4 +1,5 @@
 import { PredefinedMapModel } from '../../../gen-schema/predefined-map.schema';
+import { TileType } from '../../../gen-schema/tile-type.schema';
 import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
@@ -13,7 +14,6 @@ import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import TileType from '../../tiles/TileType';
 import { HUMAN_REDESIGN, WIZARD } from '../../units/controllers/AIUnitControllers';
 import UnitController from '../../units/controllers/UnitController';
 import Unit from '../../units/Unit';

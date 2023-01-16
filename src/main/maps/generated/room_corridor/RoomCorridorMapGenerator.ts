@@ -1,5 +1,5 @@
+import { TileType } from '../../../../gen-schema/tile-type.schema';
 import TileSet from '../../../tiles/TileSet';
-import TileType from '../../../tiles/TileType';
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
 import AbstractMapGenerator from '../AbstractMapGenerator';

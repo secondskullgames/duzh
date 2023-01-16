@@ -3,7 +3,7 @@ import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import { loadModel } from '../utils/models';
-import TileType from './TileType';
+import { TileType } from 'src/gen-schema/tile-type.schema';
 
 type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 

@@ -1,11 +1,11 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
 import Coordinates from '../../../geometry/Coordinates';
 import Offsets from '../../../geometry/Offsets';
-import TileType from '../../../tiles/TileType';
 import { shuffle } from '../../../utils/random';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
+import { TileType } from 'src/gen-schema/tile-type.schema';
 
 const generateTiles = (
   width: number,

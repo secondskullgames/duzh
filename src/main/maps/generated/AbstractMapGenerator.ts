@@ -1,7 +1,7 @@
 import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
+import { TileType } from '../../../gen-schema/tile-type.schema';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import TileType from '../../tiles/TileType';
 import { getUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
