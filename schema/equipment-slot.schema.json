@@ -1,0 +1,14 @@
+{
+  "$id": "equipment-slot.schema.json",
+  "title": "EquipmentSlot",
+  "type": "string",
+  "enum": [
+    "MELEE_WEAPON",
+    "RANGED_WEAPON",
+    "CHEST",
+    "HEAD",
+    "SHIELD",
+    "LEGS",
+    "CLOAK"
+  ]
+}

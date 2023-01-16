@@ -10,7 +10,7 @@
       "type": "string"
     },
     "itemCategory": {
-      "type": "string"
+      "$ref": "./item-category.schema.json"
     },
     "level": {
       "type": ["number", "null"]
@@ -28,7 +28,7 @@
       "type": "string"
     },
     "slot": {
-      "type": "string"
+      "$ref": "./equipment-slot.schema.json"
     },
     "sprite": {
       "type": "string"

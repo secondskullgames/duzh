@@ -10,7 +10,6 @@ import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
-import ItemCategory from './ItemCategory';
 import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
@@ -24,7 +23,11 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
     GameState.getInstance().logMessage(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`);
   };
 
-  return new InventoryItem('Life Potion', 'POTION', onUse);
+  return new InventoryItem({
+    name: 'Life Potion',
+    category: 'POTION',
+    onUse
+  });
 };
 
 const createManaPotion = (manaRestored: number): InventoryItem => {
@@ -34,13 +37,21 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
     GameState.getInstance().logMessage(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`);
   };
 
-  return new InventoryItem('Mana Potion', 'POTION', onUse);
+  return new InventoryItem({
+    name: 'Mana Potion',
+    category: 'POTION',
+    onUse
+  });
 };
 
 const createKey = (): InventoryItem => {
   const onUse: ItemProc = async () => {}; // TODO - for now just use these by walking into a door
 
-  return new InventoryItem('Key', 'KEY', onUse);
+  return new InventoryItem({
+    name: 'Key',
+    category: 'KEY',
+    onUse
+  });
 };
 
 const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
@@ -62,7 +73,11 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     }
   };
 
-  return new InventoryItem('Scroll of Floor Fire', 'SCROLL', onUse);
+  return new InventoryItem({
+    name: 'Scroll of Floor Fire',
+    category: 'SCROLL',
+    onUse
+  });
 };
 
 const createMapEquipment = async (equipmentClass: string, { x, y }: Coordinates): Promise<MapItem> => {
@@ -77,7 +92,11 @@ const _createInventoryWeapon = async (equipmentClass: string): Promise<Inventory
     return equipItem(item, equipmentClass, unit);
   };
   const model = await loadEquipmentModel(equipmentClass);
-  return new InventoryItem(model.name, model.itemCategory as ItemCategory, onUse);
+  return new InventoryItem({
+    name: model.name,
+    category: model.itemCategory,
+    onUse
+  });
 };
 
 const createEquipment = async (equipmentClass: string): Promise<Equipment> => {

@@ -6,31 +6,15 @@ import Rect from '../geometry/Rect';
  * an existing package.  In general, you should put types in their own file in an appropriate package.
  */
 
-interface Pixel {
+export interface Pixel {
   x: number,
   y: number
 }
 
-type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP' | 'HELP';
+export type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP' | 'HELP';
 
-type Room = Rect & {
+export type Room = Rect & {
   exits: Coordinates[]
 }
 
-type UnitType =
-  'ANIMAL'
-| 'ELEMENTAL'
-| 'GHOST'
-| 'GOLEM'
-| 'HUMAN'
-| 'WIZARD';
-
-type Faction = 'PLAYER' | 'FRIENDLY' | 'NEUTRAL' | 'ENEMY';
-
-export {
-  Faction,
-  GameScreen,
-  Pixel,
-  Room,
-  UnitType
-};
+export type Faction = 'PLAYER' | 'FRIENDLY' | 'NEUTRAL' | 'ENEMY';

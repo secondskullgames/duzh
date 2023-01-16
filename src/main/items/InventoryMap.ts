@@ -1,6 +1,7 @@
+import { ItemCategory } from 'src/gen-schema/item-category.schema';
 import InventoryItem from './InventoryItem';
-import ItemCategory from './ItemCategory';
 
+const itemCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL', 'KEY'];
 /**
  * Display these in a particular order and don't show keys
  */
@@ -18,7 +19,7 @@ class InventoryMap {
 
   constructor() {
     const map: Partial<Record<ItemCategory, InventoryItem[]>> = {};
-    for (const category of ItemCategory.values()) {
+    for (const category of itemCategories) {
       map[category] = [];
     }
     this._map = map as Record<ItemCategory, InventoryItem[]>;
