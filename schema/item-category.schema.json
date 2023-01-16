@@ -1,0 +1,12 @@
+{
+  "$id": "item-category.schema.json",
+  "title": "ItemCategory",
+  "type": "string",
+  "enum": [
+    "ARMOR",
+    "KEY",
+    "POTION",
+    "SCROLL",
+    "WEAPON"
+  ]
+}

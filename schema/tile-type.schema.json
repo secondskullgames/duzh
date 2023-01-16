@@ -1,0 +1,14 @@
+{
+  "$id": "tile-type.schema.json",
+  "title": "TileType",
+  "type": "string",
+  "enum": [
+    "FLOOR",
+    "FLOOR_HALL",
+    "WALL_TOP",
+    "WALL_HALL",
+    "WALL",
+    "NONE",
+    "STAIRS_DOWN"
+  ]
+}

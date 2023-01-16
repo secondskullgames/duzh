@@ -1,5 +1,5 @@
+import { EquipmentSlot } from '../../../gen-schema/equipment-slot.schema';
 import GameState from '../../core/GameState';
-import EquipmentSlot from '../../equipment/EquipmentSlot';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -43,7 +43,8 @@ class InventoryRenderer extends AbstractRenderer {
 
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
-      promises.push(this._drawText(`${EquipmentSlot.toString(equipment.slot)} - ${equipment.getName()}`, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+      const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
+      promises.push(this._drawText(text, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
       y += LINE_HEIGHT;
     }
 
@@ -85,5 +86,7 @@ class InventoryRenderer extends AbstractRenderer {
     drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
+
+const _equipmentSlotToString = (slot: EquipmentSlot) => slot.toLowerCase().replaceAll('_', ' ');
 
 export default InventoryRenderer;

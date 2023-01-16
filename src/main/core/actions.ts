@@ -5,6 +5,7 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { checkNotNull } from '../utils/preconditions';
+import { GameDriver } from './GameDriver';
 import GameState from './GameState';
 import { InputHandler } from './InputHandler';
 import { GameEngine } from './GameEngine';
@@ -67,7 +68,7 @@ const initialize = async (state: GameState, renderer: Renderer) => {
 
   await render();
   const t2 = new Date().getTime();
-  new InputHandler(engine).attachEvents((renderer as GameRenderer).getCanvas());
+  new InputHandler({ engine }).attachEvents((renderer as GameRenderer).getCanvas());
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);

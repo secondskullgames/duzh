@@ -1,5 +1,5 @@
+import { EquipmentSlot } from '../../gen-schema/equipment-slot.schema';
 import Equipment from './Equipment';
-import EquipmentSlot from './EquipmentSlot';
 
 /**
  * Represents a unit's equipment, mapped by slot.

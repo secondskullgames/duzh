@@ -1,7 +1,7 @@
+import { TileType } from 'src/gen-schema/tile-type.schema';
 import Coordinates from '../geometry/Coordinates';
 import Rect from '../geometry/Rect';
 import Tile from '../tiles/Tile';
-import TileType from '../tiles/TileType';
 import { shuffle } from '../utils/random';
 
 export const getUnoccupiedLocations = (

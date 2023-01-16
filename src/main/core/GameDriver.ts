@@ -1,7 +1,10 @@
+import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { checkNotNull } from '../utils/preconditions';
 
+/**
+ * Handles "top-level" lifecycle functionality
+ */
 export interface GameDriver {
   initState: () => Promise<GameState>
   getRenderer: () => GameRenderer;

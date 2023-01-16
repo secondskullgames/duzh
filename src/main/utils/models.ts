@@ -11,11 +11,14 @@ import SpriteCategory from '../graphics/sprites/SpriteCategory';
  * Utility methods for working with models (in /data/) and schemas (in /data/schema)
  */
 
-const schemaNames = [
+export const schemaNames = [
   'palette-swaps',
   'door-direction',
+  'unit-type',
   'unit',
   'equipment-stats',
+  'equipment-slot',
+  'item-category',
   'equipment',
   'predefined-map',
   'generated-map',

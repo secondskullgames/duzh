@@ -1,3 +1,4 @@
+import { EquipmentSlot } from '../../gen-schema/equipment-slot.schema';
 import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
@@ -6,7 +7,6 @@ import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
 import EquipmentScript from './EquipmentScript';
-import EquipmentSlot from './EquipmentSlot';
 import Activity from '../types/Activity';
 
 const DRAW_BEHIND_PREFIX = '_B';

@@ -1,6 +1,6 @@
+import { TileType } from '../../../../gen-schema/tile-type.schema';
 import Rect from '../../../geometry/Rect';
 import TileSet from '../../../tiles/TileSet';
-import TileType from '../../../tiles/TileType';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import EmptyMap from '../EmptyMap';
 import Section from './Section';

@@ -1,7 +1,7 @@
+import { TileType } from 'src/gen-schema/tile-type.schema';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import TileSet from '../../tiles/TileSet';
-import TileType from '../../tiles/TileType';
 import { range } from '../../utils/arrays';
 import { randInt} from '../../utils/random';
 import AbstractMapGenerator from './AbstractMapGenerator';

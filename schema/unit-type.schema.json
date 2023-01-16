@@ -1,0 +1,13 @@
+{
+  "$id": "unit-type.schema.json",
+  "title": "UnitType",
+  "type": "string",
+  "enum": [
+    "ANIMAL",
+    "ELEMENTAL",
+    "GHOST",
+    "GOLEM",
+    "HUMAN",
+    "WIZARD"
+  ]
+}

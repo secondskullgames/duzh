@@ -5,6 +5,7 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
+import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
 import { initialize, loadNextMap, render, startGame, startGameDebug } from './actions';
 import { GameEngine } from './GameEngine';
@@ -89,10 +90,15 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
   return null;
 };
 
+type Props = Readonly<{
+  engine: GameEngine
+}>;
+
 export class InputHandler {
   private readonly engine: GameEngine;
   private busy: boolean;
-  constructor(engine: GameEngine) {
+
+  constructor({ engine }: Props) {
     this.engine = engine;
     this.busy = false;
   }
@@ -212,13 +218,7 @@ export class InputHandler {
 
     if (modifiers.includes('ALT')) {
       try {
-        if (document.fullscreenElement) {
-          await document.exitFullscreen();
-          document.body.classList.remove('fullscreen');
-        } else {
-          await document.documentElement.requestFullscreen();
-          document.body.classList.add('fullscreen');
-        }
+        await toggleFullScreen();
       } catch (e) {
         console.error(e);
       }
