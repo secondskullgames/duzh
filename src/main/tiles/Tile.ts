@@ -26,6 +26,7 @@ const _isBlocking = (tileType: TileType): boolean => {
   switch (tileType) {
     case 'WALL_HALL':
     case 'WALL_TOP':
+    case 'WALL':
     case 'NONE':
       return true;
     default:
