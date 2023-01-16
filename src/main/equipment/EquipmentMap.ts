@@ -4,7 +4,7 @@ import Equipment from './Equipment';
 /**
  * Represents a unit's equipment, mapped by slot.
  */
-class EquipmentMap {
+export default class EquipmentMap {
   private readonly _map: Partial<Record<EquipmentSlot, Equipment>>;
 
   constructor() {
@@ -23,5 +23,3 @@ class EquipmentMap {
 
   getAll = (): Equipment[] => Object.values(this._map);
 }
-
-export default EquipmentMap;

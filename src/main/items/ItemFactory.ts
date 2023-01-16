@@ -1,4 +1,5 @@
 import { EquipmentModel } from '../../gen-schema/equipment.schema';
+import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
 import PaletteSwaps from '../graphics/PaletteSwaps';
@@ -56,7 +57,9 @@ const createKey = (): InventoryItem => {
 
 const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
   const onUse: ItemProc = async (item, unit): Promise<void> => {
-    const map = GameState.getInstance().getMap();
+    const engine = GameEngine.getInstance();
+    const state = GameState.getInstance();
+    const map = state.getMap();
 
     const adjacentUnits: Unit[] = map.units.filter(u => {
       const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
@@ -69,7 +72,10 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     await playFloorFireAnimation(unit, adjacentUnits);
 
     for (const adjacentUnit of adjacentUnits) {
-      await adjacentUnit.takeDamage(damage, { sourceUnit: unit });
+      await engine.dealDamage(damage, {
+        sourceUnit: unit,
+        targetUnit: unit
+      });
     }
   };
 

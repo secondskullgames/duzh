@@ -125,7 +125,8 @@ export default class MapInstance {
   });
 
   isTileRevealed = ({ x, y }: Coordinates): boolean =>
-    jwb.REVEAL_MAP || this.revealedTiles.has(JSON.stringify({ x, y }));
+    // @ts-ignore
+    window.jwb.debug.isMapRevealed() || this.revealedTiles.has(JSON.stringify({ x, y }));
 
   revealTile = ({ x, y }: Coordinates) =>
     this.revealedTiles.add(JSON.stringify({ x, y }));

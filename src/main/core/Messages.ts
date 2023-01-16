@@ -9,8 +9,8 @@ type Message = Readonly<{
   turn: number
 }>;
 
-class Messages {
-  readonly _messages: Message[] = [];
+export default class Messages {
+  private readonly _messages: Message[] = [];
 
   log = (message: string) => {
     const turn = GameState.getInstance().getTurn();
@@ -26,5 +26,3 @@ class Messages {
     );
   };
 }
-
-export default Messages;

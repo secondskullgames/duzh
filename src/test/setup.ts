@@ -1,7 +1,8 @@
+import { GameDriver } from '../main/core/GameDriver';
+import GameRenderer from '../main/graphics/renderers/GameRenderer';
 import UnitFactory from '../main/units/UnitFactory';
 import GameState from '../main/core/GameState';
 import MapInstance from '../main/maps/MapInstance';
-import { initialize } from '../main/core/actions';
 import { Renderer } from '../main/graphics/renderers/Renderer';
 
 export const setup = async () => {
@@ -22,5 +23,5 @@ export const setup = async () => {
       return null!; // lol
     }
   };
-  await initialize(state, renderer);
+  const driver = new GameDriver({ state, renderer: renderer as GameRenderer });
 };

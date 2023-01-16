@@ -4,9 +4,9 @@ import UnitAbility from '../units/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 
-type EquipmentScript = 'bolt_sword';
+export type EquipmentScript = 'bolt_sword';
 
-namespace EquipmentScript {
+export namespace EquipmentScript {
   export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates) => {
     const unit = checkNotNull(equipment.getUnit());
   };
@@ -30,7 +30,3 @@ namespace EquipmentScript {
     }
   };
 }
-
-export default EquipmentScript;
-
-

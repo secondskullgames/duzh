@@ -16,7 +16,7 @@ type Props = Readonly<{
 /**
  * Global mutable state
  */
-class GameState {
+export default class GameState {
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private readonly playerUnit: Unit;
@@ -57,7 +57,7 @@ class GameState {
 
   hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
   getMapIndex = () => this.mapIndex;
-  getNextMap = async (): Promise<MapInstance> => {
+  loadNextMap = async (): Promise<MapInstance> => {
     this.mapIndex++;
     const mapSupplier = this.mapSuppliers[this.mapIndex];
     const map = await mapSupplier();
@@ -83,7 +83,8 @@ class GameState {
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };
+  /**
+   * @deprecated
+   */
   static getInstance = (): GameState => checkNotNull(INSTANCE);
 }
-
-export default GameState;
