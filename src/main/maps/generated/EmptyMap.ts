@@ -1,4 +1,4 @@
-import TileType from '../../tiles/TileType';
+import { TileType } from '../../../gen-schema/tile-type.schema';
 
 type EmptyMap = Readonly<{
   width:  number,

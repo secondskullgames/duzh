@@ -90,10 +90,15 @@ const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
   return null;
 };
 
+type Props = Readonly<{
+  engine: GameEngine
+}>;
+
 export class InputHandler {
   private readonly engine: GameEngine;
   private busy: boolean;
-  constructor(engine: GameEngine) {
+
+  constructor({ engine }: Props) {
     this.engine = engine;
     this.busy = false;
   }
