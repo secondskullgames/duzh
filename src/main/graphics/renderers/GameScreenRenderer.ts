@@ -9,10 +9,13 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
-import SpriteContainer from '../sprites/SpriteContainer';
 import AbstractRenderer from './AbstractRenderer';
 
 const SHADOW_FILENAME = 'shadow';
+
+type Element = {
+  getSprite: () => Sprite | null;
+}
 
 class GameScreenRenderer extends AbstractRenderer {
   constructor() {
@@ -32,7 +35,7 @@ class GameScreenRenderer extends AbstractRenderer {
     await this._renderEntities();
   };
 
-  private _renderElement = async (element: SpriteContainer, { x, y }: Coordinates) => {
+  private _renderElement = async (element: Element, { x, y }: Coordinates) => {
     const pixel: Pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {

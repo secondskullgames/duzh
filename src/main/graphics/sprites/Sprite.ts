@@ -1,5 +1,5 @@
 import Offsets from '../../geometry/Offsets';
-import Image from '../images/Image';
+import { Image } from '../images/Image';
 
 /**
  * Note: It's expected that a separate Sprite instance will be created

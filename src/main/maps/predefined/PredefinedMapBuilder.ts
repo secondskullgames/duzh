@@ -2,7 +2,7 @@ import { PredefinedMapModel } from '../../../gen-schema/predefined-map.schema';
 import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
-import Image from '../../graphics/images/Image';
+import { Image } from '../../graphics/images/Image';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../objects/Door';

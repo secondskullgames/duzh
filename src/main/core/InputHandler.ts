@@ -21,10 +21,10 @@ type Key = ArrowKey | NumberKey | FunctionKey | 'TAB' | 'ENTER' | 'SPACEBAR' | '
 
 type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
 
-type KeyCommand = {
+type KeyCommand = Readonly<{
   key: Key,
   modifiers: ModifierKey[]
-};
+}>;
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -105,7 +105,7 @@ export class InputHandler {
     }
   };
 
-  keyHandler = async (e: KeyboardEvent) => {
+  keyHandler = async (e: KeyboardEvent): Promise<void> => {
     const command : (KeyCommand | null) = _mapToCommand(e);
 
     if (!command) {
@@ -121,7 +121,7 @@ export class InputHandler {
       case 'RIGHT':
         return this._handleArrowKey(command.key, command.modifiers);
       case 'SPACEBAR':
-        await playSound(Sounds.FOOTSTEP);
+        playSound(Sounds.FOOTSTEP);
         return this.engine.playTurn();
       case 'ENTER':
         return this._handleEnter(command.modifiers);

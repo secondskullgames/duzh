@@ -15,15 +15,15 @@ import MapInstance from '../MapInstance';
 import UnitController from '../../units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 
-type Props = {
+type Props = Readonly<{
   level: number,
   width: number,
   height: number,
   tiles: Tile[][],
   pointAllocation: GeneratedMapModel_PointAllocation
-};
+}>;
 
-class GeneratedMapBuilder {
+export default class GeneratedMapBuilder {
   private readonly level: number;
   private readonly width: number;
   private readonly height: number;
@@ -159,5 +159,3 @@ class GeneratedMapBuilder {
     return Promise.all(itemPromises);
   };
 }
-
-export default GeneratedMapBuilder;

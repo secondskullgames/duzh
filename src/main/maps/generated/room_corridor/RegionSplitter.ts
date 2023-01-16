@@ -6,12 +6,12 @@ import SplitDirection from './SplitDirection';
 
 const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 
-type Props = {
+type Props = Readonly<{
   minRoomDimension: number,
   maxRoomDimension: number
-};
+}>;
 
-class RegionSplitter {
+export default class RegionSplitter {
   private readonly minRoomDimension: number;
   private readonly maxRoomDimension: number;
 
@@ -96,5 +96,3 @@ class RegionSplitter {
     return randInt(minSplitPoint, maxSplitPoint);
   };
 }
-
-export default RegionSplitter;

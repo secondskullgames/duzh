@@ -3,12 +3,12 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
 
-type Props = {
+type Props = Readonly<{
   x: number,
   y: number,
   direction: Direction,
   sprite: Sprite
-};
+}>;
 
 export default class Projectile implements Entity {
   private x: number;

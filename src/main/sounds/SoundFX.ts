@@ -1,15 +1,15 @@
 import SoundPlayer from './SoundPlayer';
-import { Sample } from './types';
+import { SoundEffect } from './types';
 
 let PLAYER: SoundPlayer | null = null;
 
 const _getSoundPlayer = () => new SoundPlayer(4, 0.20);
 
-const playSound = (samples: Sample[]) => {
+const playSound = (soundEffect: SoundEffect) => {
   if (!PLAYER) {
     PLAYER = _getSoundPlayer();
   }
-  PLAYER.playSound(samples, false);
+  PLAYER.playSound(soundEffect, false);
 };
 
 export {

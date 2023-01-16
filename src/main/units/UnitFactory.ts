@@ -32,7 +32,7 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
   const [sprite, equipment] = await Promise.all([spritePromise, equipmentPromises]);
 
   return new Unit({
-    name: name ?? model.id,
+    name: name ?? model.name,
     model,
     faction,
     controller,

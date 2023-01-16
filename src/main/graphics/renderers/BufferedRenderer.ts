@@ -1,16 +1,16 @@
 import AbstractRenderer from './AbstractRenderer';
 
-type Props = {
+type Props = Readonly<{
   width: number,
   height: number,
   id: string
-};
+}>;
 
 /**
  * Subclasses are expected to override the {@link #renderBuffer} method,
  * and the parent class will handle the {@link #render} step
  */
-abstract class BufferedRenderer extends AbstractRenderer {
+export default abstract class BufferedRenderer extends AbstractRenderer {
   protected readonly bufferCanvas: HTMLCanvasElement;
   protected readonly bufferContext: CanvasRenderingContext2D;
 
@@ -34,5 +34,3 @@ abstract class BufferedRenderer extends AbstractRenderer {
 
   getCanvas = () => this.canvas;
 }
-
-export default BufferedRenderer;

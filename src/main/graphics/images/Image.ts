@@ -1,4 +1,4 @@
-type Image = {
+export type Image = {
   bitmap: ImageBitmap,
   data: ImageData,
   width: number,
@@ -6,12 +6,12 @@ type Image = {
   filename?: string | null
 };
 
-type Props = {
+type Props = Readonly<{
   imageData: ImageData,
   filename?: string | null
-};
+}>;
 
-namespace Image {
+export namespace Image {
   export const create = async ({ imageData, filename }: Props): Promise<Image> => {
     const bitmap = await createImageBitmap(imageData);
     return {
@@ -23,5 +23,3 @@ namespace Image {
     };
   };
 }
-
-export default Image;

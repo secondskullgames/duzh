@@ -1,31 +1,32 @@
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import Image from './Image';
+import { Image } from './Image';
 import ImageCache from './ImageCache';
-import ImageEffect from './ImageEffect';
+import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 
-type Props = {
+type Props = Readonly<{
   filename?: string,
   filenames?: string[]
   transparentColor?: Color | null,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageEffect[]
-};
+}>;
 
 const CACHE: ImageCache = ImageCache.create();
 const rawCache: Record<string, ImageData | null> = {};
 
-const getImage = async ({ filename, filenames: _filenames, transparentColor, paletteSwaps, effects }: Props): Promise<Image> => {
+const getImage = async (props: Props): Promise<Image> => {
   let filenames: string[];
-  if (_filenames) {
-    filenames = _filenames;
-  } else if (filename) {
-    filenames = [filename];
+  if (props.filenames) {
+    filenames = props.filenames;
+  } else if (props.filename) {
+    filenames = [props.filename];
   } else {
     throw new Error('No filenames were specified!');
   }
+  const { transparentColor, paletteSwaps, effects } = props;
 
   const promises: Promise<Image | null>[] = [];
   for (const filename of filenames) {

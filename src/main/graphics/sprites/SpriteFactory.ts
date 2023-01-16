@@ -1,20 +1,20 @@
+import { DynamicSpriteModel } from '../../../gen-schema/dynamic-sprite.schema';
 import Equipment from '../../equipment/Equipment';
 import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import Direction from '../../geometry/Direction';
+import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';
-import Image from '../images/Image';
-import ImageEffect from '../images/ImageEffect';
+import { Image } from '../images/Image';
+import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import DynamicSprite from './DynamicSprite';
-import DynamicSpriteClass from './DynamicSpriteClass';
 import Sprite from './Sprite';
 import SpriteCategory from './SpriteCategory';
 import StaticSprite from './StaticSprite';
-import StaticSpriteClass from './StaticSpriteClass';
 
 /**
  * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
@@ -31,36 +31,35 @@ const createTileSprite = async (filename: string, paletteSwaps?: PaletteSwaps): 
 };
 
 const createStaticSprite = async (spriteName: string, paletteSwaps?: PaletteSwaps): Promise<Sprite> => {
-  const model: StaticSpriteClass = await StaticSpriteClass.load(spriteName);
+  const model = await loadStaticSpriteModel(spriteName);
   const { filename, offsets, transparentColor } = model;
   const image = await ImageFactory.getImage({
     filename,
     paletteSwaps,
-    transparentColor
+    transparentColor: (transparentColor) ? Colors[transparentColor] : null
   });
   return new StaticSprite(image, offsets);
 };
 
 const createUnitSprite = async (spriteName: string, paletteSwaps?: PaletteSwaps): Promise<DynamicSprite<Unit>> => {
-  const spriteClass = await DynamicSpriteClass.load(spriteName, 'units');
-  const imageMap = await _loadAnimations('units', spriteClass, paletteSwaps);
+  const model = await loadDynamicSpriteModel(spriteName, 'units');
+  const imageMap = await _loadAnimations('units', model, paletteSwaps);
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
     imageMap,
-    offsets:
-    spriteClass.offsets
+    offsets: model.offsets
   });
 };
 
 const createEquipmentSprite = async (spriteName: string, paletteSwaps?: PaletteSwaps) => {
-  const spriteClass = await DynamicSpriteClass.load(spriteName, 'equipment');
-  const imageMap = await _loadAnimations('equipment', spriteClass, paletteSwaps);
+  const model = await loadDynamicSpriteModel(spriteName, 'equipment');
+  const imageMap = await _loadAnimations('equipment', model, paletteSwaps);
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
     imageMap,
-    offsets: spriteClass.offsets
+    offsets: model.offsets
   });
 };
 
@@ -136,7 +135,7 @@ const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
 
 const _loadAnimations = async (
   spriteCategory: SpriteCategory,
-  spriteModel: DynamicSpriteClass,
+  spriteModel: DynamicSpriteModel,
   paletteSwaps?: PaletteSwaps
 ): Promise<Record<string, Image>> => {
   const imageMap: Record<string, Image> = {};

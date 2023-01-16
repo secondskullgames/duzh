@@ -1,19 +1,19 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
 import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
-import EquipmentScript from '../equipment/EquipmentScript';
-import { playAttackingAnimation } from '../graphics/animations/Animations';
-import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
+import EquipmentScript from '../equipment/EquipmentScript';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
+import Animatable from '../graphics/animations/Animatable';
+import { playAttackingAnimation } from '../graphics/animations/Animations';
+import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import InventoryMap from '../items/InventoryMap';
 import { isInStraightLine } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
-import Animatable from '../graphics/animations/Animatable';
-import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
 import Entity from '../types/Entity';
 import { Faction } from '../types/types';
 import { checkArgument } from '../utils/preconditions';
@@ -37,7 +37,7 @@ const lifePerLevel = 0;
 const manaPerLevel = 2;
 const damagePerLevel = 0;
 
-type Props = {
+type Props = Readonly<{
   name: string,
   faction: Faction,
   model: UnitModel,
@@ -46,9 +46,9 @@ type Props = {
   coordinates: Coordinates,
   controller: UnitController,
   equipment: Equipment[]
-};
+}>;
 
-class Unit implements Entity, Animatable {
+export default class Unit implements Entity, Animatable {
   private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
@@ -79,8 +79,8 @@ class Unit implements Entity, Animatable {
    * Used by AI to make certain decisions
    */
   private turnsSinceCombatAction: number | null;
-  private abilitiesPerLevel: Record<string, string[]>;
-  private summonedUnitClass: string | null;
+  private readonly abilitiesPerLevel: Record<string, string[]>;
+  private readonly summonedUnitClass: string | null;
 
   constructor(props: Props) {
     this.faction = props.faction;
@@ -112,6 +112,10 @@ class Unit implements Entity, Animatable {
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
+    this.aiParameters = model.aiParameters ?? null;
+    this.abilitiesPerLevel = model.abilities;
+    this.summonedUnitClass = model.summonedUnitClass ?? null;
+
     this.equipment = new EquipmentMap();
     for (const eq of props.equipment) {
       this.equipment.add(eq);
@@ -121,10 +125,6 @@ class Unit implements Entity, Animatable {
     while (this.level < props.level) {
       this.levelUp();
     }
-
-    this.aiParameters = model.aiParameters ?? null;
-    this.abilitiesPerLevel = model.abilities;
-    this.summonedUnitClass = model.summonedUnitClass ?? null;
   }
 
   private _upkeep = () => {
@@ -270,7 +270,7 @@ class Unit implements Entity, Animatable {
     this.setCoordinates({ x, y });
     const playerUnit = GameState.getInstance().getPlayerUnit();
     if (this === playerUnit) {
-      await playSound(Sounds.FOOTSTEP);
+      playSound(Sounds.FOOTSTEP);
     }
 
     for (const equipment of this.equipment.getAll()) {
@@ -294,10 +294,12 @@ class Unit implements Entity, Animatable {
 
     if (sourceUnit) {
       const ability = params?.ability ?? null;
+      // note: we're logging adjustedDamage here since, if we "overkilled",
+      // we still want to give you "credit" for the full damage amount
       if (ability) {
-        ability.logDamage(sourceUnit, this, damageTaken);
+        ability.logDamage(sourceUnit, this, adjustedDamage);
       } else {
-        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${damageTaken} damage!`);
+        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${adjustedDamage} damage!`);
       }
     }
 
@@ -321,9 +323,7 @@ class Unit implements Entity, Animatable {
     let adjustedDamage = baseDamage;
     for (const equipment of this.equipment.getAll()) {
       if (equipment.absorbAmount !== null) {
-        console.log(`absorbing: ${equipment.absorbAmount}`);
         adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
-        console.log(`adjusted: ${baseDamage} => ${adjustedDamage}`);
       }
       if (equipment.blockAmount !== null) {
         if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
@@ -378,9 +378,7 @@ class Unit implements Entity, Animatable {
   };
 }
 
-type TakeDamageParams = {
+type TakeDamageParams = Readonly<{
   sourceUnit?: Unit,
   ability?: UnitAbility
-};
-
-export default Unit;
+}>;

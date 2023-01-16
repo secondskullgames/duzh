@@ -4,10 +4,10 @@ namespace Type {
   export const values = () => ['generated', 'predefined'];
 }
 
-type MapSpec = {
+type MapSpec = Readonly<{
   id: string,
   type: Type;
-};
+}>;
 
 namespace MapSpec {
   export const parse = (json: any): MapSpec => {

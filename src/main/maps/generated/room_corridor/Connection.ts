@@ -2,16 +2,16 @@ import Coordinates from '../../../geometry/Coordinates';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 
-type Connection = {
+export type Connection = Readonly<{
   start: RoomRegion,
   end: RoomRegion,
   startCoordinates: Coordinates,
   endCoordinates: Coordinates,
   middleCoordinates: Coordinates,
   direction: SplitDirection
-};
+}>;
 
-namespace Connection {
+export namespace Connection {
   export const toString = ({ startCoordinates, endCoordinates }: Connection) =>
     `[(${startCoordinates.x}, ${startCoordinates.y})-(${endCoordinates.x}, ${endCoordinates.y})]`;
 
@@ -26,5 +26,3 @@ namespace Connection {
     }
   };
 }
-
-export default Connection;

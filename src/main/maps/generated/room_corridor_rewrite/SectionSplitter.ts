@@ -2,12 +2,12 @@ import { randChoice, randInt } from '../../../utils/random';
 import Section from './Section';
 import SplitDirection from './SplitDirection';
 
-type Props = {
+type Props = Readonly<{
   minRoomWidth: number,
   minRoomHeight: number,
   horizontalSectionPadding: number,
   verticalSectionPadding: number
-};
+}>;
 
 interface SectionSplitter {
   splitRecursively: (section: Section) => Section;

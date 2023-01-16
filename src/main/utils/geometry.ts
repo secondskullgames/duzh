@@ -19,4 +19,4 @@ export const areStrictlyAdjacent = (first: Unit, second: Unit) => {
   return ([-1,0,1].includes(dx))
     && ([-1,0,1].includes(dy))
     && !(dx === 0 && dy === 0);
-}
+};

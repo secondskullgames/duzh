@@ -77,30 +77,6 @@ const _randomEmptyTile = (tiles: TileType[][]): Coordinates => {
   }
 };
 
-const _getNeighbors = ({ x, y }: Coordinates, tiles: any[][]) => {
-  const neighbors: Coordinates[] = [];
-  const width = tiles[0].length;
-  const height = tiles.length;
-  for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
-    if (x + dx >= 0 && x + dx < width && y + dy >= 0 && y + dy < height) {
-      neighbors.push({ x: x + dx, y: y + dy });
-    }
-  }
-  return neighbors;
-};
-
-const _getFloorTileCoordinates = (tiles: TileType[][]): Coordinates[] => {
-  const coordinates = [];
-  for (let y = 0; y < tiles.length; y++) {
-    for (let x = 0; x < tiles[0].length; x++) {
-      if (tiles[y][x] === 'FLOOR') {
-        coordinates.push({ x, y });
-      }
-    }
-  }
-  return coordinates;
-};
-
 const _addWalls = (tiles: TileType[][]) => {
   const width = tiles[0].length;
   const height = tiles.length;

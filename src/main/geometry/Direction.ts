@@ -56,6 +56,7 @@ namespace Direction {
         case 'E': return 'S';
         case 'S': return 'W';
         case 'W': return 'N';
+        default:  throw new Error(`Unknown direction ${directionName}`);
       }
     })();
     return _nameToDirection[rotated];
@@ -69,6 +70,7 @@ namespace Direction {
         case 'E': return 'N';
         case 'S': return 'E';
         case 'W': return 'S';
+        default:  throw new Error(`Unknown direction ${directionName}`);
       }
     })();
     return _nameToDirection[rotated];

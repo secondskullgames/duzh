@@ -9,15 +9,15 @@ export namespace DoorState {
   export const values = () => ['OPEN', 'CLOSED'];
 }
 
-type Props = {
+type Props = Readonly<{
   direction: DoorDirection,
   state: DoorState,
   x: number,
   y: number,
   sprite: DynamicSprite<Door>
-};
+}>;
 
-class Door implements Entity, Animatable {
+export default class Door implements Entity, Animatable {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
   private x: number;
@@ -56,5 +56,3 @@ class Door implements Entity, Animatable {
 
   update = async () => {};
 }
-
-export default Door;

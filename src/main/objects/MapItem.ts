@@ -3,14 +3,14 @@ import Entity from '../types/Entity';
 import InventoryItem from '../items/InventoryItem';
 import Coordinates from '../geometry/Coordinates';
 
-type Props = {
+type Props = Readonly<{
   x: number,
   y: number,
   sprite: Sprite,
   inventoryItem: InventoryItem
-};
+}>;
 
-class MapItem implements Entity {
+export default class MapItem implements Entity {
   private x: number;
   private y: number;
   private readonly sprite: Sprite;
@@ -27,5 +27,3 @@ class MapItem implements Entity {
   getSprite = () => this.sprite;
   update = async () => {};
 }
-
-export default MapItem;
