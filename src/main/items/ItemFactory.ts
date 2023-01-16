@@ -4,7 +4,6 @@ import GameState from '../core/GameState';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import { isAdjacent } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';

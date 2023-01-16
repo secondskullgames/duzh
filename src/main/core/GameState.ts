@@ -16,7 +16,7 @@ type Props = Readonly<{
 /**
  * Global mutable state
  */
-class GameState {
+export default class GameState {
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private readonly playerUnit: Unit;
@@ -88,5 +88,3 @@ class GameState {
    */
   static getInstance = (): GameState => checkNotNull(INSTANCE);
 }
-
-export default GameState;

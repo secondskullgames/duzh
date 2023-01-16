@@ -1,5 +1,4 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
-import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
