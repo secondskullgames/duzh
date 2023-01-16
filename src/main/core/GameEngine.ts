@@ -3,9 +3,9 @@ import Unit from '../units/Unit';
 import { sortBy } from '../utils/arrays';
 import GameState from './GameState';
 
-type Props = {
+type Props = Readonly<{
   renderer: Renderer
-};
+}>;
 
 export class GameEngine {
   private renderer: Renderer;

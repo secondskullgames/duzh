@@ -8,10 +8,10 @@ import { MapSupplier } from '../maps/MapSupplier';
 
 let INSTANCE: GameState | null = null;
 
-type Props = {
+type Props = Readonly<{
   playerUnit: Unit,
   maps: MapSupplier[]
-};
+}>;
 
 /**
  * Global mutable state

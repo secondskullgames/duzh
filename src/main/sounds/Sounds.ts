@@ -14,9 +14,9 @@ import SPECIAL_ATTACK from '../../../data/sounds/special_attack.json';
 import USE_POTION from '../../../data/sounds/use_potion.json';
 import WIZARD_APPEAR from '../../../data/sounds/wizard_appear.json';
 import WIZARD_VANISH from '../../../data/sounds/wizard_vanish.json';
-import { Sample } from './types';
+import { SoundEffect } from './types';
 
-const Sounds: Record<string, Sample[]> = {
+const Sounds: Record<string, SoundEffect> = {
   BLOCKED,
   DEFLECTED_HIT,
   DESCEND_STAIRS,
@@ -33,6 +33,6 @@ const Sounds: Record<string, Sample[]> = {
   USE_POTION,
   WIZARD_APPEAR,
   WIZARD_VANISH
-} as any as Record<string, Sample[]>;
+} as any as Record<string, SoundEffect>;
 
 export default Sounds;

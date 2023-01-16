@@ -17,9 +17,9 @@ const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
 
-type Props = {
+type Props = Readonly<{
   parent: Element
-};
+}>;
 
 class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
@@ -75,14 +75,14 @@ class GameRenderer extends BufferedRenderer {
       this.gameScreenRenderer.render(),
       this.hudRenderer.render()
     ]);
-    await this.bufferContext.putImageData(gameScreenImage, 0, 0);
-    await this.bufferContext.putImageData(hudImage, 0, this.height - hudImage.height);
+    this.bufferContext.putImageData(gameScreenImage, 0, 0);
+    this.bufferContext.putImageData(hudImage, 0, this.height - hudImage.height);
     await this._renderMessages();
   };
 
   private _renderInventory = async () => {
     const image = await this.inventoryRenderer.render();
-    await this.bufferContext.putImageData(image, 0, 0);
+    this.bufferContext.putImageData(image, 0, 0);
   };
 
   private _renderMessages = async () => {

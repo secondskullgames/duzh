@@ -20,11 +20,11 @@ import { HUMAN_DETERMINISTIC } from './controllers/AIUnitControllers';
 import Unit from './Unit';
 import UnitFactory from './UnitFactory';
 
-type Props = {
+type Props = Readonly<{
   name: string,
   manaCost: number,
   icon?: string | null
-};
+}>;
 
 abstract class UnitAbility {
   readonly name: string;

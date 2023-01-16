@@ -4,10 +4,10 @@ import GameState from './GameState';
 const maxTurnsAgo = 8;
 const maxMessages = 4;
 
-type Message = {
+type Message = Readonly<{
   message: string,
   turn: number
-};
+}>;
 
 class Messages {
   readonly _messages: Message[] = [];

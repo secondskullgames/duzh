@@ -8,9 +8,9 @@ const JsonSerializer: Serializer<any> = {
   deserialize: JSON.parse
 };
 
-type Props<T> = {
+type Props<T> = Readonly<{
   serializer: Serializer<T>
-};
+}>;
 
 export class CustomSet<T> {
   private readonly serializer: Serializer<T>;

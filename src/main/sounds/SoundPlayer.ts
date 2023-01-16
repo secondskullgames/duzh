@@ -1,7 +1,7 @@
 import CustomOscillator from './CustomOscillator';
 import { Sample } from './types';
 
-class SoundPlayer {
+export default class SoundPlayer {
   private readonly context: AudioContext;
   private readonly gainNode: GainNode;
   private oscillators: CustomOscillator[];
@@ -15,7 +15,7 @@ class SoundPlayer {
     this.oscillators = [];
   }
 
-  stop() {
+  stop = () => {
     try {
       for (const oscillator of this.oscillators) {
         oscillator.stop();
@@ -25,16 +25,14 @@ class SoundPlayer {
     }
   };
 
-  playSound(samples: Sample[], repeating: boolean = false) {
+  playSound = (samples: Sample[], repeating: boolean = false) => {
     const oscillator = new CustomOscillator(this.context, this.gainNode, repeating);
     oscillator.play(samples, this.context);
     this.oscillators.push(oscillator);
     this._cleanup();
   };
 
-  private _cleanup() {
+  private _cleanup = () => {
     this.oscillators = this.oscillators.filter(o => !o.isComplete());
-  }
+  };
 }
-
-export default SoundPlayer;

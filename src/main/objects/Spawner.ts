@@ -7,12 +7,12 @@ import Unit from '../units/Unit';
 import UnitFactory from '../units/UnitFactory';
 import Coordinates from '../geometry/Coordinates';
 
-type SpawnerState = 'ALIVE' | 'DEAD';
-namespace SpawnerState {
+export type SpawnerState = 'ALIVE' | 'DEAD';
+export namespace SpawnerState {
   export const values = (): SpawnerState[] => ['ALIVE', 'DEAD'];
 }
 
-type Props = {
+type Props = Readonly<{
   sprite: Sprite,
   x: number,
   y: number,
@@ -20,9 +20,9 @@ type Props = {
   unitClass: string,
   maxUnits: number,
   isBlocking: boolean
-};
+}>;
 
-class Spawner implements Entity, Animatable {
+export default class Spawner implements Entity, Animatable {
   private readonly sprite: Sprite;
   private state: SpawnerState;
   private readonly maxCooldown: number;
@@ -89,6 +89,3 @@ class Spawner implements Entity, Animatable {
 
   getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
 }
-
-export default Spawner;
-export { SpawnerState };

@@ -1,12 +1,12 @@
 import { Renderer } from './Renderer';
 
-type Props = {
+type Props = Readonly<{
   width: number,
   height: number,
   id: string
-};
+}>;
 
-abstract class AbstractRenderer implements Renderer {
+export default abstract class AbstractRenderer implements Renderer {
   protected readonly canvas: HTMLCanvasElement;
   protected readonly context: CanvasRenderingContext2D;
   protected readonly id: string;
@@ -37,5 +37,3 @@ abstract class AbstractRenderer implements Renderer {
 
   abstract _redraw: () => Promise<void>;
 }
-
-export default AbstractRenderer;

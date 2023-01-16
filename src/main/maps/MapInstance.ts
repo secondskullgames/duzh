@@ -9,7 +9,7 @@ import Unit from '../units/Unit';
 import { checkArgument } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
 
-type Props = {
+type Props = Readonly<{
   width: number,
   height: number,
   tiles: Tile[][],
@@ -18,9 +18,9 @@ type Props = {
   units: Unit[],
   items: MapItem[],
   music: Figure[] | null
-};
+}>;
 
-class MapInstance {
+export default class MapInstance {
   readonly width: number;
   readonly height: number;
   /**
@@ -132,5 +132,3 @@ class MapInstance {
 
   unitExists = (unit: Unit): boolean => !!this.units.find(u => u === unit);
 }
-
-export default MapInstance;

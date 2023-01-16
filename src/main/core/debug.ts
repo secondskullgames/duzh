@@ -37,13 +37,13 @@ const levelUp = async () => {
   await render();
 };
 
-type DebugShape = {
+type DebugShape = Readonly<{
   toggleRevealMap: () => void,
   killEnemies: () => void,
   killPlayer: () => void,
   nextLevel: () => void,
   levelUp: () => void
-};
+}>;
 
 export const initDebug = () => {
   // @ts-ignore

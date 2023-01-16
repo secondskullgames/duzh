@@ -6,13 +6,13 @@ import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 
-type Props = {
+type Props = Readonly<{
   filename?: string,
   filenames?: string[]
   transparentColor?: Color | null,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageEffect[]
-};
+}>;
 
 const CACHE: ImageCache = ImageCache.create();
 const rawCache: Record<string, ImageData | null> = {};

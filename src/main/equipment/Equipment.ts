@@ -11,13 +11,13 @@ import Activity from '../types/Activity';
 
 const DRAW_BEHIND_PREFIX = '_B';
 
-type Props = {
+type Props = Readonly<{
   model: EquipmentModel,
   sprite: Sprite,
   inventoryItem?: InventoryItem | null
-};
+}>;
 
-class Equipment implements Animatable {
+export default class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
   readonly damage?: number; // typically only for weapons
   readonly absorbAmount?: number; // typically for armor
@@ -62,5 +62,3 @@ class Equipment implements Animatable {
     return drawBehind;
   };
 }
-
-export default Equipment;

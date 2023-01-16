@@ -3,19 +3,19 @@ import { checkArgument, checkState } from '../../../utils/preconditions';
 import SplitDirection from '../room_corridor_rewrite/SplitDirection';
 import Connection from './Connection';
 
-type Props = {
+type Props = Readonly<{
   rect: Rect,
   firstSubsection?: Section | null,
   secondSubsection?: Section | null,
   splitDirection?: SplitDirection | null,
   room?: Rect | null,
   connection?: Connection | null
-};
+}>;
 
 /**
  * TODO: Ported from a Java implementation.  I'm not sure I would write it in this style now.
  */
-class Section {
+export default class Section {
   readonly rect: Rect;
   readonly firstSubsection: Section | null;
   readonly secondSubsection: Section | null;
@@ -86,5 +86,3 @@ class Section {
     return subsections;
   };
 }
-
-export default Section;

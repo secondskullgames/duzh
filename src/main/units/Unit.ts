@@ -1,19 +1,19 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
 import { gameOver } from '../core/actions';
 import GameState from '../core/GameState';
-import EquipmentScript from '../equipment/EquipmentScript';
-import { playAttackingAnimation } from '../graphics/animations/Animations';
-import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
+import EquipmentScript from '../equipment/EquipmentScript';
+import Coordinates from '../geometry/Coordinates';
+import Direction from '../geometry/Direction';
+import Animatable from '../graphics/animations/Animatable';
+import { playAttackingAnimation } from '../graphics/animations/Animations';
+import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import InventoryMap from '../items/InventoryMap';
 import { isInStraightLine } from '../maps/MapUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Activity from '../types/Activity';
-import Animatable from '../graphics/animations/Animatable';
-import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
 import Entity from '../types/Entity';
 import { Faction } from '../types/types';
 import { checkArgument } from '../utils/preconditions';
@@ -37,7 +37,7 @@ const lifePerLevel = 0;
 const manaPerLevel = 2;
 const damagePerLevel = 0;
 
-type Props = {
+type Props = Readonly<{
   name: string,
   faction: Faction,
   model: UnitModel,
@@ -46,9 +46,9 @@ type Props = {
   coordinates: Coordinates,
   controller: UnitController,
   equipment: Equipment[]
-};
+}>;
 
-class Unit implements Entity, Animatable {
+export default class Unit implements Entity, Animatable {
   private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
@@ -378,9 +378,7 @@ class Unit implements Entity, Animatable {
   };
 }
 
-type TakeDamageParams = {
+type TakeDamageParams = Readonly<{
   sourceUnit?: Unit,
   ability?: UnitAbility
-};
-
-export default Unit;
+}>;

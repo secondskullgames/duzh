@@ -3,9 +3,9 @@ import Coordinates from '../../../geometry/Coordinates';
 import Offsets from '../../../geometry/Offsets';
 import TileType from '../../../tiles/TileType';
 import { shuffle } from '../../../utils/random';
-import Connection from './Connection';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
+import { Connection } from './Connection';
 
 const generateTiles = (
   width: number,
@@ -114,20 +114,20 @@ const _joinPerpendicularly = (tiles: TileType[][], firstConnection: Connection, 
     y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
   };
 
-  const { dx, dy } = _pointAt(start, middle);
+  let offsets = _pointAt(start, middle);
 
   let { x, y } = start;
   while (!Coordinates.equals({ x, y }, middle)) {
     tiles[y][x] = 'FLOOR_HALL';
-    x += dx;
-    y += dy;
+    x += offsets.dx;
+    y += offsets.dy;
   }
 
-  ({ dx, dy } = _pointAt(middle, end));
+  offsets = _pointAt(middle, end);
   while (!Coordinates.equals({ x, y }, end)) {
     tiles[y][x] = 'FLOOR_HALL';
-    x += dx;
-    y += dy;
+    x += offsets.dx;
+    y += offsets.dy;
   }
 };
 

@@ -21,10 +21,10 @@ type Key = ArrowKey | NumberKey | FunctionKey | 'TAB' | 'ENTER' | 'SPACEBAR' | '
 
 type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
 
-type KeyCommand = {
+type KeyCommand = Readonly<{
   key: Key,
   modifiers: ModifierKey[]
-};
+}>;
 
 type PromiseSupplier = () => Promise<void>;
 

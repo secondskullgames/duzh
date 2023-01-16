@@ -1,7 +1,7 @@
 import TileSet from '../../../tiles/TileSet';
 import TileType from '../../../tiles/TileType';
 import EmptyRegionConnection from './EmptyRegionConnection';
-import Connection from './Connection';
+import { Connection } from './Connection';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import EmptyMap from '../EmptyMap';
 import MapPruner from './MapPruner';
@@ -10,16 +10,16 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 
-type Props = {
+type Props = Readonly<{
   tileSet: TileSet,
   minRoomDimension: number,
   maxRoomDimension: number
-};
+}>;
 
 const MIN_ROOM_FRACTION = 0.4;
 const MAX_ROOM_FRACTION = 0.8;
 
-class RoomCorridorMapGenerator extends AbstractMapGenerator {
+export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
   /**
    * inner width, not including wall
    */
@@ -89,5 +89,3 @@ class RoomCorridorMapGenerator extends AbstractMapGenerator {
     };
   };
 }
-
-export default RoomCorridorMapGenerator;

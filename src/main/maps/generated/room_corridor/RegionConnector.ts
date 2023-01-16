@@ -2,7 +2,7 @@ import EmptyRegionConnection from './EmptyRegionConnection';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice, randInt, shuffle } from '../../../utils/random';
 import { areAdjacent } from '../../MapUtils';
-import Connection from './Connection';
+import { Connection } from './Connection';
 import RoomRegion from './RoomRegion';
 
 const MIN_BORDER_LENGTH = 5;

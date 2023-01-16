@@ -6,10 +6,10 @@ export type Image = {
   filename?: string | null
 };
 
-type Props = {
+type Props = Readonly<{
   imageData: ImageData,
   filename?: string | null
-};
+}>;
 
 export namespace Image {
   export const create = async ({ imageData, filename }: Props): Promise<Image> => {
