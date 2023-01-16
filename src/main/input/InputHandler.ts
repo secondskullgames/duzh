@@ -6,7 +6,6 @@ import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
-import { initialize  } from '../core/actions';
 import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import { GameDriver } from '../core/GameDriver';
@@ -22,9 +21,9 @@ type Props = Readonly<{
 }>;
 
 export class InputHandler {
-  private engine: GameEngine;
-  private state: GameState;
-  private driver: GameDriver;
+  private readonly engine: GameEngine;
+  private readonly state: GameState;
+  private readonly driver: GameDriver;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
@@ -196,12 +195,7 @@ export class InputHandler {
         break;
       case 'VICTORY':
       case 'GAME_OVER': {
-        const state = await driver.getState();
-        const renderer = driver.getRenderer();
-        const engine = await initialize(state, renderer, driver);
-        // TODO noooo
-        this.engine = engine;
-        this.state = state;
+        await driver.showSplashScreen();
       }
     }
   };

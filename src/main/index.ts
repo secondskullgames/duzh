@@ -1,7 +1,7 @@
 import { MapSpec } from '../gen-schema/map-spec.schema';
-import { initialize } from './core/actions';
 import { Debug } from './core/debug';
 import { GameDriver } from './core/GameDriver';
+import { GameEngine } from './core/GameEngine';
 import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
@@ -27,10 +27,14 @@ const main = async () => {
   });
   const state = await getInitialState();
   const gameDriver = new GameDriver({ renderer, state });
+  const engine = gameDriver.getEngine();
   GameDriver.setInstance(gameDriver);
-  const engine = await initialize(state, renderer, gameDriver);
+  GameState.setInstance(state);
+  GameEngine.setInstance(engine);
   const debug = new Debug({ engine, state });
   debug.attachToWindow();
+  await engine.render();
+  await engine.preloadFirstMap();
 };
 
 main().then(() => {});

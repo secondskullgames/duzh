@@ -27,8 +27,7 @@ export class GameEngine {
   }
 
   preloadFirstMap = async () => {
-    const state = GameState.getInstance();
-    this.firstMapPromise = state.getNextMap();
+    this.firstMapPromise = this.state.loadNextMap();
   };
 
   startGame = async () => {
@@ -81,7 +80,7 @@ export class GameEngine {
       state.setScreen('VICTORY');
     } else {
       const t1 = new Date().getTime();
-      const nextMap = await state.getNextMap();
+      const nextMap = await state.loadNextMap();
       state.setMap(nextMap);
       if (nextMap.music) {
         await Music.playMusic(nextMap.music);

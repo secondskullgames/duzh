@@ -57,7 +57,7 @@ class GameState {
 
   hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
   getMapIndex = () => this.mapIndex;
-  getNextMap = async (): Promise<MapInstance> => {
+  loadNextMap = async (): Promise<MapInstance> => {
     this.mapIndex++;
     const mapSupplier = this.mapSuppliers[this.mapIndex];
     const map = await mapSupplier();
