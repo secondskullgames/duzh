@@ -1,4 +1,4 @@
-import { render } from '../../core/actions';
+import { GameEngine } from '../../core/GameEngine';
 import GameState from '../../core/GameState';
 import { createArrow } from '../../objects/ProjectileFactory';
 import Activity from '../../types/Activity';
@@ -236,7 +236,9 @@ export const playWizardAppearingAnimation = async (source: Unit) => _playAnimati
 
 const _playAnimation = async (animation: Animation) => {
   const { delay, frames } = animation;
-  const map = GameState.getInstance().getMap();
+  const engine = GameEngine.getInstance();
+  const state = GameState.getInstance();
+  const map = state.getMap();
 
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
@@ -248,7 +250,7 @@ const _playAnimation = async (animation: Animation) => {
       unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
     }
 
-    await render();
+    await engine.render();
 
     if (i < (frames.length - 1)) {
       await sleep(delay);

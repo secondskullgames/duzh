@@ -1,0 +1,6 @@
+{
+  "$id": "map-type.schema.json",
+  "title": "MapType",
+  "type": "string",
+  "enum": ["predefined", "generated"]
+}

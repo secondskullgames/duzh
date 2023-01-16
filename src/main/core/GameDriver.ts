@@ -1,18 +1,32 @@
+import GameRenderer from '../graphics/renderers/GameRenderer';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
-import GameRenderer from '../graphics/renderers/GameRenderer';
+
+let _instance: GameDriver | null = null;
+
+type Props = Readonly<{
+  renderer: GameRenderer,
+  state: GameState
+}>;
 
 /**
  * Handles "top-level" lifecycle functionality
  */
-export interface GameDriver {
-  initState: () => Promise<GameState>
-  getRenderer: () => GameRenderer;
-}
+export class GameDriver {
+  private readonly state: GameState;
+  private readonly renderer: GameRenderer;
 
-let _instance: GameDriver | null = null;
+  constructor({ renderer, state }: Props) {
+    this.renderer = renderer;
+    this.state = state;
+  }
 
-export namespace GameDriver {
-  export const getInstance = (): GameDriver => checkNotNull(_instance);
-  export const setInstance = (instance: GameDriver) => { _instance = instance; };
+  getState = () => this.state;
+  getRenderer = () => this.renderer;
+
+  /**
+   * @deprecated
+   */
+  static getInstance = (): GameDriver => checkNotNull(_instance);
+  static setInstance = (instance: GameDriver) => { _instance = instance; };
 }

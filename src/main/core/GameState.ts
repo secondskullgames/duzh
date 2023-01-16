@@ -83,6 +83,9 @@ class GameState {
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };
+  /**
+   * @deprecated
+   */
   static getInstance = (): GameState => checkNotNull(INSTANCE);
 }
 

@@ -4,61 +4,58 @@
  */
 
 import { subtract } from '../utils/arrays';
-import { loadNextMap, render } from './actions';
+import { GameEngine } from './GameEngine';
 import GameState from './GameState';
 
-const toggleRevealMap = async () => {
-  jwb.REVEAL_MAP = !jwb.REVEAL_MAP;
-  await render();
-};
-
-const killEnemies = async () => {
-  const state = GameState.getInstance();
-  const map = state.getMap();
-  const playerUnit = state.getPlayerUnit();
-  subtract(map.units, map.units.filter(u => u !== playerUnit));
-  await render();
-};
-
-const killPlayer = async () => {
-  const playerUnit = GameState.getInstance().getPlayerUnit();
-  await playerUnit.takeDamage(playerUnit.getMaxLife());
-  await render();
-};
-
-const nextLevel = async () => {
-  await loadNextMap();
-  await render();
-};
-
-const levelUp = async () => {
-  const playerUnit = GameState.getInstance().getPlayerUnit();
-  playerUnit.levelUp();
-  await render();
-};
-
-type DebugShape = Readonly<{
-  toggleRevealMap: () => void,
-  killEnemies: () => void,
-  killPlayer: () => void,
-  nextLevel: () => void,
-  levelUp: () => void
+type Props = Readonly<{
+  engine: GameEngine,
+  state: GameState
 }>;
 
-export const initDebug = () => {
-  // @ts-ignore
-  window.jwb = window.jwb ?? {};
-  jwb.debug = jwb.debug ?? {
-    toggleRevealMap,
-    killEnemies,
-    killPlayer,
-    nextLevel,
-    levelUp
+export class Debug {
+  private readonly engine: GameEngine;
+  private readonly state: GameState;
+  private revealMap: boolean;
+
+  constructor({ engine, state }: Props) {
+    this.engine = engine;
+    this.state = state;
+    this.revealMap = false;
+  }
+
+  toggleRevealMap = async () => {
+    this.revealMap = !this.revealMap;
+    await this.engine.render();
   };
 
-  jwb.REVEAL_MAP = false;
-};
+  killEnemies = async () => {
+    const { state } = this;
+    const map = state.getMap();
+    const playerUnit = state.getPlayerUnit();
+    subtract(map.units, map.units.filter(u => u !== playerUnit));
+    await this.engine.render();
+  };
 
-export default { initDebug };
+  killPlayer = async () => {
+    const playerUnit = this.state.getPlayerUnit();
+    await playerUnit.takeDamage(playerUnit.getMaxLife());
+    await this.engine.render();
+  };
 
-export type { DebugShape };
+  nextLevel = async () => {
+    await this.engine.loadNextMap();
+    await this.engine.render();
+  };
+
+  levelUp = async () => {
+    const playerUnit = this.state.getPlayerUnit();
+    playerUnit.levelUp();
+    await this.engine.render();
+  };
+
+  attachToWindow = () => {
+    // @ts-ignore
+    window.jwb = window.jwb ?? {};
+    jwb.debug = this;
+  };
+}

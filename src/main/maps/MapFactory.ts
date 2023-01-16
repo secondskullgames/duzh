@@ -1,4 +1,5 @@
 import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
+import { MapSpec } from '../../gen-schema/map-spec.schema';
 import TileSet from '../tiles/TileSet';
 import { loadGeneratedMapModel } from '../utils/models';
 import BlobMapGenerator from './generated/BlobMapGenerator';
@@ -9,7 +10,6 @@ import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCor
 import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
-import MapSpec from './MapSpec';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 
 const loadMap = async (map: MapSpec): Promise<MapInstance> => {

@@ -2,105 +2,40 @@ import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
 import UnitAbility from '../units/UnitAbility';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
-import { initialize, loadNextMap, render, startGame, startGameDebug } from './actions';
-import { GameEngine } from './GameEngine';
-import GameState from './GameState';
-import { GameDriver } from './GameDriver';
-
-type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
-type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0';
-type FunctionKey = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8' | 'F9' | 'F10' | 'F11' | 'F12';
-/**
- * NONE is a special command (read: hack) that does nothing, but is a trigger to call preventDefault()
- */
-type Key = ArrowKey | NumberKey | FunctionKey | 'TAB' | 'ENTER' | 'SPACEBAR' | 'M' | 'NONE';
-
-type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
-
-type KeyCommand = Readonly<{
-  key: Key,
-  modifiers: ModifierKey[]
-}>;
+import { initialize  } from '../core/actions';
+import { GameEngine } from '../core/GameEngine';
+import GameState from '../core/GameState';
+import { GameDriver } from '../core/GameDriver';
+import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
+import { getDirection, mapToCommand } from './inputMappers';
 
 type PromiseSupplier = () => Promise<void>;
 
-const _mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
-  const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
-    .filter(x => x)
-    .map(x => x as ModifierKey);
-
-  switch (e.code) {
-    case 'KeyW':
-    case 'ArrowUp':
-      return { key: 'UP', modifiers };
-    case 'KeyS':
-    case 'ArrowDown':
-      return { key: 'DOWN', modifiers };
-    case 'KeyA':
-    case 'ArrowLeft':
-      return { key: 'LEFT', modifiers };
-    case 'KeyD':
-    case 'ArrowRight':
-      return { key: 'RIGHT', modifiers };
-    case 'Tab':
-      return { key: 'TAB', modifiers };
-    case 'Enter':
-    case 'NumpadEnter':
-      return { key: 'ENTER', modifiers };
-    case 'Space':
-      return { key: 'SPACEBAR', modifiers };
-    case 'KeyM':
-      return { key: 'M', modifiers };
-    case 'Digit1':
-      return { key: '1', modifiers };
-    case 'Digit2':
-      return { key: '2', modifiers };
-    case 'Digit3':
-      return { key: '3', modifiers };
-    case 'Digit4':
-      return { key: '4', modifiers };
-    case 'Digit5':
-      return { key: '5', modifiers };
-    case 'Digit6':
-      return { key: '6', modifiers };
-    case 'Digit7':
-      return { key: '7', modifiers };
-    case 'Digit8':
-      return { key: '8', modifiers };
-    case 'Digit9':
-      return { key: '9', modifiers };
-    case 'F1':
-      return { key: 'F1', modifiers };
-    case 'AltLeft':
-    case 'AltRight':
-    case 'ShiftLeft':
-    case 'ShiftRight':
-    case 'ControlLeft':
-    case 'ControlRight':
-    case 'OSLeft':
-    case 'OSRight':
-      return { key: 'NONE', modifiers };
-  }
-
-  return null;
-};
-
 type Props = Readonly<{
-  engine: GameEngine
+  engine: GameEngine,
+  state: GameState,
+  driver: GameDriver
 }>;
 
 export class InputHandler {
-  private readonly engine: GameEngine;
-  private busy: boolean;
+  private engine: GameEngine;
+  private state: GameState;
+  private driver: GameDriver;
 
-  constructor({ engine }: Props) {
+  private busy: boolean;
+  private eventTarget: HTMLElement | null;
+
+  constructor({ engine, state, driver }: Props) {
     this.engine = engine;
+    this.state = state;
+    this.driver = driver;
+
     this.busy = false;
+    this.eventTarget = null;
   }
 
   keyHandlerWrapper = async (event: KeyboardEvent) => {
@@ -112,7 +47,7 @@ export class InputHandler {
   };
 
   keyHandler = async (e: KeyboardEvent): Promise<void> => {
-    const command : (KeyCommand | null) = _mapToCommand(e);
+    const command : (KeyCommand | null) = mapToCommand(e);
 
     if (!command) {
       return;
@@ -154,12 +89,12 @@ export class InputHandler {
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const state = GameState.getInstance();
+    const { state } = this;
 
     switch (state.getScreen()) {
       case 'GAME':
-        const { dx, dy } = this._getDirection(key);
-        const playerUnit = GameState.getInstance().getPlayerUnit();
+        const { dx, dy } = getDirection(key);
+        const playerUnit = state.getPlayerUnit();
         const { x, y } = Coordinates.plus(playerUnit.getCoordinates(), { dx, dy });
 
         let queuedOrder: PromiseSupplier | null = null;
@@ -205,7 +140,7 @@ export class InputHandler {
             inventory.nextCategory();
             break;
         }
-        await render();
+        await this.engine.render();
         break;
       default:
         break;
@@ -213,7 +148,7 @@ export class InputHandler {
   };
 
   private _handleEnter = async (modifiers: ModifierKey[]) => {
-    const state = GameState.getInstance();
+    const { state, driver } = this;
     const playerUnit = state.getPlayerUnit();
 
     if (modifiers.includes('ALT')) {
@@ -235,7 +170,7 @@ export class InputHandler {
           map.removeItem({ x, y });
         } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
-          await loadNextMap();
+          await this.engine.loadNextMap();
         }
         await this.engine.playTurn();
         break;
@@ -247,30 +182,32 @@ export class InputHandler {
         if (selectedItem) {
           state.setScreen('GAME');
           await useItem(playerUnit, selectedItem);
-          await render();
+          await this.engine.render();
         }
         break;
       }
       case 'TITLE':
         state.setScreen('GAME');
         if (modifiers.includes('SHIFT')) {
-          await startGameDebug();
+          await this.engine.startGameDebug();
         } else {
-          await startGame();
+          await this.engine.startGame();
         }
         break;
       case 'VICTORY':
       case 'GAME_OVER': {
-        const gameDriver = GameDriver.getInstance();
-        const state = await gameDriver.initState();
-        const renderer = gameDriver.getRenderer();
-        await initialize(state, renderer);
+        const state = await driver.getState();
+        const renderer = driver.getRenderer();
+        const engine = await initialize(state, renderer, driver);
+        // TODO noooo
+        this.engine = engine;
+        this.state = state;
       }
     }
   };
 
   private _handleTab = async () => {
-    const state = GameState.getInstance();
+    const { state, engine } = this;
 
     switch (state.getScreen()) {
       case 'INVENTORY':
@@ -280,11 +217,11 @@ export class InputHandler {
         state.setScreen('INVENTORY');
         break;
     }
-    await render();
+    await engine.render();
   };
 
   private _handleMap = async () => {
-    const state = GameState.getInstance();
+    const { state, engine } = this;
 
     switch (state.getScreen()) {
       case 'MINIMAP':
@@ -297,11 +234,11 @@ export class InputHandler {
       default:
         break;
     }
-    await render();
+    await engine.render();
   };
 
   private _handleAbility = async (command: NumberKey) => {
-    const state = GameState.getInstance();
+    const { state, engine } = this;
     const playerUnit = state.getPlayerUnit();
 
     // sketchy - player abilities are indexed as (0 => attack, others => specials)
@@ -311,35 +248,26 @@ export class InputHandler {
       [index - 1];
     if (ability && playerUnit.canSpendMana(ability.manaCost)) {
       state.setQueuedAbility(ability);
-      await render();
+      await engine.render();
     }
   };
 
   private _handleF1 = async () => {
-    const state = GameState.getInstance();
+    const { state, engine } = this;
     if (['GAME', 'INVENTORY', 'MINIMAP'].includes(state.getScreen())) {
       state.setScreen('HELP');
     } else {
       state.showPrevScreen();
     }
-    await render();
+    await engine.render();
   };
 
-  private _getDirection = (key: ArrowKey): Direction => {
-    switch (key) {
-      case 'UP':
-        return { dx: 0, dy: -1 };
-      case 'DOWN':
-        return { dx: 0, dy: 1 };
-      case 'LEFT':
-        return { dx: -1, dy: 0 };
-      case 'RIGHT':
-        return { dx: 1, dy: 0 };
-    }
-  };
-
-  attachEvents = (target: HTMLElement) => {
-    // const canvas = document.querySelector('#container canvas') as HTMLCanvasElement;
+  addEventListener = (target: HTMLElement) => {
     target.addEventListener('keydown', this.keyHandlerWrapper);
+    this.eventTarget = target;
+  };
+
+  removeEventListener = () => {
+    this.eventTarget?.removeEventListener('keydown', this.keyHandlerWrapper);
   };
 }

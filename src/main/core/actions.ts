@@ -1,78 +1,38 @@
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import MapFactory from '../maps/MapFactory';
-import MapInstance from '../maps/MapInstance';
+import { Renderer } from '../graphics/renderers/Renderer';
+import { InputHandler } from '../input/InputHandler';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import { checkNotNull } from '../utils/preconditions';
 import { GameDriver } from './GameDriver';
-import GameState from './GameState';
-import { InputHandler } from './InputHandler';
 import { GameEngine } from './GameEngine';
-import { Renderer } from '../graphics/renderers/Renderer';
+import GameState from './GameState';
 
-let engine: GameEngine | null = null;
-let firstMapPromise: Promise<MapInstance> | null = null;
+let inputHandler: InputHandler | null = null;
 
-const render = () => engine?.render();
-
-const loadNextMap = async () => {
-  const state = GameState.getInstance();
-  if (!state.hasNextMap()) {
-    Music.stop();
-    state.setScreen('VICTORY');
-  } else {
-    const t1 = new Date().getTime();
-    const nextMap = await state.getNextMap();
-    state.setMap(nextMap);
-    if (nextMap.music) {
-      await Music.playMusic(nextMap.music);
-    }
-    const t2 = new Date().getTime();
-    console.debug(`Loaded level in ${t2 - t1} ms`);
-  }
-};
-
-const preloadFirstMap = async () => {
-  const state = GameState.getInstance();
-  firstMapPromise = state.getNextMap();
-};
-
-const startGame = async () => {
+/**
+ * TODO needs refactoring, this is in a weird in-between state
+ */
+const initialize = async (
+  state: GameState,
+  renderer: Renderer,
+  driver: GameDriver
+): Promise<GameEngine> => {
   const t1 = new Date().getTime();
-  const firstMap = await checkNotNull(firstMapPromise);
-  GameState.getInstance().setMap(firstMap);
-  Music.stop();
-  // Music.playFigure(Music.TITLE_THEME);
-  // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  await render();
-  const t2 = new Date().getTime();
-  console.debug(`Loaded level in ${t2 - t1} ms`);
-};
-
-const startGameDebug = async () => {
-  console.log('debug mode');
-  const mapInstance = await MapFactory.loadMap({ type: 'generated', id: 'test' });
-  // const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
-  GameState.getInstance().setMap(mapInstance);
-  Music.stop();
-  // Music.playFigure(Music.TITLE_THEME);
-  // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  await render();
-};
-
-const initialize = async (state: GameState, renderer: Renderer) => {
-  const t1 = new Date().getTime();
-  engine = new GameEngine({ renderer });
+  const engine = new GameEngine({ state, renderer });
+  GameEngine.setInstance(engine);
   GameState.setInstance(state);
 
-  await render();
+  await engine.render();
   const t2 = new Date().getTime();
-  new InputHandler({ engine }).attachEvents((renderer as GameRenderer).getCanvas());
+  inputHandler?.removeEventListener();
+  inputHandler = new InputHandler({ engine, state, driver });
+  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   console.debug(`Loaded splash screen in ${t2 - t1} ms`);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  await preloadFirstMap();
+  await engine.preloadFirstMap();
+  return engine;
 };
 
 /**
@@ -112,10 +72,6 @@ const logFatalError = (message: string, error?: Error) => {
 export {
   gameOver,
   initialize,
-  loadNextMap,
   logFatalError,
-  render,
-  revealTiles,
-  startGame,
-  startGameDebug
+  revealTiles
 };

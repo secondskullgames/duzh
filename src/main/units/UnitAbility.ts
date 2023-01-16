@@ -1,6 +1,6 @@
 // TODO: There's a ton of repeated code among the various abilities, try to refactor more of this into the base class
 
-import { render } from '../core/actions';
+import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import {
@@ -142,9 +142,11 @@ class KnockbackAttack extends UnitAbility {
       throw new Error('KnockbackAttack requires a target!');
     }
 
+    const engine = GameEngine.getInstance();
+    const state = GameState.getInstance();
+
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     unit.setDirection({ dx, dy });
 
@@ -160,7 +162,7 @@ class KnockbackAttack extends UnitAbility {
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
       if (map.contains(first) && !map.isBlocked(first)) {
         targetUnit.setCoordinates(first);
-        await render();
+        await engine.render();
         await sleep(50);
         const second = Coordinates.plus(first, { dx, dy });
         if (map.contains(second) && !map.isBlocked(second)) {
@@ -226,13 +228,15 @@ class ShootArrow extends UnitAbility {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
+    const engine = GameEngine.getInstance();
+    const state = GameState.getInstance();
+
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await render();
+    await engine.render();
     unit.spendMana(this.manaCost);
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
@@ -269,13 +273,15 @@ class Bolt extends UnitAbility {
       throw new Error('Bolt requires a target!');
     }
 
+    const engine = GameEngine.getInstance();
+    const state = GameState.getInstance();
+
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await render();
+    await engine.render();
     unit.spendMana(this.manaCost);
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
@@ -317,6 +323,7 @@ class Dash extends UnitAbility {
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
+    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
 
@@ -331,7 +338,7 @@ class Dash extends UnitAbility {
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
         await unit.moveTo({ x, y });
         moved = true;
-        await render();
+        await engine.render();
         await sleep(50);
       } else {
         break;
