@@ -6,7 +6,7 @@ import Direction from '../geometry/Direction';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import EquipmentScript from './EquipmentScript';
+import { EquipmentScript } from './EquipmentScript';
 import Activity from '../types/Activity';
 
 const DRAW_BEHIND_PREFIX = '_B';

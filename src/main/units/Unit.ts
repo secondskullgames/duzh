@@ -2,7 +2,7 @@ import { UnitModel } from '../../gen-schema/unit.schema';
 import GameState from '../core/GameState';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
-import EquipmentScript from '../equipment/EquipmentScript';
+import { EquipmentScript } from '../equipment/EquipmentScript';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Animatable from '../graphics/animations/Animatable';
