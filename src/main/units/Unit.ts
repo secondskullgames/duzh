@@ -1,5 +1,5 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
-import { gameOver } from '../core/actions';
+import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
@@ -281,44 +281,6 @@ export default class Unit implements Entity, Animatable {
     }
   };
 
-  takeDamage = async (baseDamage: number, params?: TakeDamageParams) => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
-
-    const sourceUnit = params?.sourceUnit ?? null;
-    const adjustedDamage = this._calculateIncomingDamage(baseDamage, sourceUnit);
-    const damageTaken = Math.min(adjustedDamage, this.life);
-    this.life -= damageTaken;
-    this.turnsSinceCombatAction = 0;
-
-    if (sourceUnit) {
-      const ability = params?.ability ?? null;
-      // note: we're logging adjustedDamage here since, if we "overkilled",
-      // we still want to give you "credit" for the full damage amount
-      if (ability) {
-        ability.logDamage(sourceUnit, this, adjustedDamage);
-      } else {
-        state.logMessage(`${sourceUnit.getName()} hit ${this.getName()} for ${adjustedDamage} damage!`);
-      }
-    }
-
-    if (this.getLife() <= 0) {
-      map.removeUnit(this.getCoordinates());
-      if (this === playerUnit) {
-        await gameOver();
-        return;
-      } else {
-        playSound(Sounds.ENEMY_DIES);
-        state.logMessage(`${this.getName()} dies!`);
-      }
-
-      if (sourceUnit === playerUnit) {
-        sourceUnit.gainExperience(1);
-      }
-    }
-  };
-
   private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
     let adjustedDamage = baseDamage;
     for (const equipment of this.equipment.getAll()) {
@@ -332,6 +294,12 @@ export default class Unit implements Entity, Animatable {
       }
     }
     return Math.max(adjustedDamage, 0);
+  };
+
+  takeDamage = (amount: number, sourceUnit: Unit | null): number => {
+    const adjustedDamage = this._calculateIncomingDamage(amount, sourceUnit);
+    this.life = Math.max(this.life - amount, 0);
+    return adjustedDamage;
   };
 
   /**
@@ -366,6 +334,7 @@ export default class Unit implements Entity, Animatable {
   };
 
   isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
+  refreshCombat = () => { this.turnsSinceCombatAction = 0; };
 
   setActivity = (activity: Activity, frameNumber: number, direction: Direction | null) => {
     this.activity = activity;
@@ -377,8 +346,3 @@ export default class Unit implements Entity, Animatable {
     this.stunDuration = Math.max(this.stunDuration, duration);
   };
 }
-
-type TakeDamageParams = Readonly<{
-  sourceUnit?: Unit,
-  ability?: UnitAbility
-}>;

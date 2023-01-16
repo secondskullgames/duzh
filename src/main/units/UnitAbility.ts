@@ -53,6 +53,7 @@ class NormalAttack extends UnitAbility {
 
     const { x, y } = coordinates;
 
+    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
@@ -66,7 +67,11 @@ class NormalAttack extends UnitAbility {
         const damage = unit.getDamage();
         playSound(Sounds.PLAYER_HITS_ENEMY);
         await unit.startAttack(targetUnit);
-        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+        await engine.dealDamage(damage, {
+          sourceUnit: unit,
+          targetUnit,
+          ability: this
+        });
       }
 
       const door = map.getDoor({ x, y });
@@ -108,6 +113,7 @@ class HeavyAttack extends UnitAbility {
 
     const { x, y } = coordinates;
 
+    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
@@ -121,7 +127,11 @@ class HeavyAttack extends UnitAbility {
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
         await unit.startAttack(targetUnit);
-        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+        await engine.dealDamage(damage, {
+          sourceUnit: unit,
+          targetUnit,
+          ability: this
+        });
       }
     }
   };
@@ -156,7 +166,11 @@ class KnockbackAttack extends UnitAbility {
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
       await unit.startAttack(targetUnit);
-      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+      await engine.dealDamage(damage, {
+        sourceUnit: unit,
+        targetUnit,
+        ability: this
+      });
       targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
@@ -190,6 +204,7 @@ class StunAttack extends UnitAbility {
 
     const { x, y } = coordinates;
 
+    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
@@ -203,7 +218,11 @@ class StunAttack extends UnitAbility {
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage();
         await unit.startAttack(targetUnit);
-        await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+        await engine.dealDamage(damage, {
+          sourceUnit: unit,
+          targetUnit,
+          ability: this
+        });
         targetUnit.setStunned(2);
       }
     }
@@ -251,7 +270,11 @@ class ShootArrow extends UnitAbility {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+      await engine.dealDamage(damage, {
+        sourceUnit: unit,
+        targetUnit,
+        ability: this
+      });
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
     }
@@ -295,7 +318,11 @@ class Bolt extends UnitAbility {
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getDamage();
-      await targetUnit.takeDamage(damage, { sourceUnit: unit, ability: this });
+      await engine.dealDamage(damage, {
+        sourceUnit: unit,
+        targetUnit,
+        ability: this
+      });
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
     } else {
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);

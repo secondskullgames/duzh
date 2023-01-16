@@ -87,6 +87,6 @@ class InventoryRenderer extends AbstractRenderer {
   };
 }
 
-const _equipmentSlotToString = (slot: EquipmentSlot) => slot.toLowerCase().replaceAll('_', ' ');
+const _equipmentSlotToString = (slot: EquipmentSlot) => slot.toUpperCase().replaceAll('_', ' ');
 
 export default InventoryRenderer;

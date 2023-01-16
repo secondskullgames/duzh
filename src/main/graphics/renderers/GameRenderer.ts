@@ -1,4 +1,3 @@
-import { revealTiles } from '../../core/actions';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
@@ -67,16 +66,16 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderGameScreen = async () => {
-    this.bufferContext.fillStyle = Colors.BLACK.hex;
-    this.bufferContext.fillRect(0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
+    const { bufferContext, bufferCanvas } = this;
+    bufferContext.fillStyle = Colors.BLACK.hex;
+    bufferContext.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
-    await revealTiles();
     const [gameScreenImage, hudImage] = await Promise.all([
       this.gameScreenRenderer.render(),
       this.hudRenderer.render()
     ]);
-    this.bufferContext.putImageData(gameScreenImage, 0, 0);
-    this.bufferContext.putImageData(hudImage, 0, this.height - hudImage.height);
+    bufferContext.putImageData(gameScreenImage, 0, 0);
+    bufferContext.putImageData(hudImage, 0, this.height - hudImage.height);
     await this._renderMessages();
   };
 
