@@ -24,10 +24,8 @@
   },
   "scripts": {
     "gen-schema": "npx json2ts -i \"schema/*.schema.json\" -o src/gen-schema --cwd=./schema",
-    "prebuild": "npm run gen-schema",
-    "build": "npx webpack",
-    "preserve": "npm run gen-schema",
-    "serve": "npx webpack serve",
+    "build": "npm run gen-schema && npx webpack",
+    "serve": "npm run gen-schema && npx webpack serve",
     "clean": "npx rimraf build && npx rimraf src/gen-schema",
     "test": "jest",
     "electron": "cd electron && npx electron ."
