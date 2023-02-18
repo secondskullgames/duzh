@@ -25,10 +25,10 @@
   "scripts": {
     "gen-schema": "npx json2ts -i \"schema/*.schema.json\" -o src/gen-schema --cwd=./schema",
     "build": "npm run gen-schema && npx webpack",
-    "serve": "npm run gen-schema && npx webpack serve",
-    "clean": "npx rimraf build && npx rimraf src/gen-schema",
+    "serve": "npm run build && npx webpack serve",
+    "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
     "test": "jest",
-    "electron": "cd electron && npx electron ."
+    "electron": "npm run build && cd electron && npm i && npm run make && npx electron ."
   },
   "repository": {
     "type": "git",
