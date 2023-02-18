@@ -35,7 +35,7 @@ const main = async () => {
         singleQuote: true
       }
     });
-    const outFilename = `${outDir}/${filename}`;
+    const outFilename = `${outDir}/${filename.substring(0, filename.indexOf('.json'))}.ts`;
     await writeFile(outFilename, compiled)
     console.log(`wrote ${outFilename}`);
   }
