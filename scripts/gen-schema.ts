@@ -1,6 +1,6 @@
 import { compileFromFile } from 'json-schema-to-typescript'
 import glob from 'glob-promise';
-import { access, readFile, writeFile, stat } from 'fs/promises';
+import { mkdir, readFile, writeFile, stat } from 'fs/promises';
 import { createHash } from 'crypto';
 
 const schemaDir = 'schema';
@@ -25,6 +25,7 @@ const main = async () => {
     // hash file doesn't exist
     console.log('Hash file does not exist, regenerating schema');
   }
+  await mkdir(outDir, { recursive: true });
   await writeFile(hashFilename, hash);
 
   for (const filename of filenames) {
@@ -36,6 +37,7 @@ const main = async () => {
     });
     const outFilename = `${outDir}/${filename}`;
     await writeFile(outFilename, compiled)
+    console.log(`wrote ${outFilename}`);
   }
 };
 
