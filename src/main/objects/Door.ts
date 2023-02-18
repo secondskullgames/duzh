@@ -40,9 +40,11 @@ export default class Door implements Entity, Animatable {
   open = async () => {
     this._state = 'OPEN';
   };
+
   close = async () => {
     this._state = 'CLOSED';
   };
+
   toggleOpen = async () => {
     if (this._state === 'OPEN') {
       await this.close();
@@ -50,6 +52,7 @@ export default class Door implements Entity, Animatable {
       await this.open();
     }
   };
+
   getSprite = () => this.sprite;
 
   getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
