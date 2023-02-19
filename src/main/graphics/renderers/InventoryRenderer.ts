@@ -34,9 +34,8 @@ class InventoryRenderer extends AbstractRenderer {
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
     const itemsLeft = (canvas.width + INVENTORY_MARGIN) / 2;
 
-    const promises: Promise<any>[] = [];
-    promises.push(this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
-    promises.push(this._drawText('INVENTORY', Fonts.APPLE_II, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center'));
+    await this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center');
+    await this._drawText('INVENTORY', Fonts.APPLE_II, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center');
 
     // draw equipment items
     // for now, just display them all in one list
@@ -44,7 +43,7 @@ class InventoryRenderer extends AbstractRenderer {
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
-      promises.push(this._drawText(text, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left'));
+      await this._drawText(text, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left');
       y += LINE_HEIGHT;
     }
 
@@ -56,7 +55,7 @@ class InventoryRenderer extends AbstractRenderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       const top = INVENTORY_TOP + 40;
-      promises.push(this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, 'center'));
+      await this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, 'center');
       if (inventoryCategories[i] === inventory.selectedCategory) {
         context.fillStyle = Colors.WHITE.hex;
         context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
@@ -75,10 +74,9 @@ class InventoryRenderer extends AbstractRenderer {
         } else {
           color = Colors.WHITE;
         }
-        promises.push(this._drawText(items[i].name, Fonts.APPLE_II, { x, y }, color, 'left'));
+        await this._drawText(items[i].name, Fonts.APPLE_II, { x, y }, color, 'left');
       }
     }
-    await Promise.all(promises);
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {

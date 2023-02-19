@@ -22,10 +22,11 @@ const getInitialState = async (): Promise<GameState> => {
 };
 
 const main = async () => {
-  const renderer = new GameRenderer({
-    parent: document.getElementById('container')!
-  });
   const state = await getInitialState();
+  const renderer = new GameRenderer({
+    parent: document.getElementById('container')!,
+    state
+  });
   const gameDriver = new GameDriver({ renderer, state });
   const engine = gameDriver.getEngine();
   GameDriver.setInstance(gameDriver);
