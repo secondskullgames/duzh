@@ -4,12 +4,12 @@ import PaletteSwaps from '../PaletteSwaps';
 import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
 
-type CacheKey = {
+type CacheKey = Readonly<{
   filename: string,
   transparentColor?: Color | null,
   paletteSwaps?: PaletteSwaps,
   effects?: ImageEffect[]
-};
+}>;
 
 interface ImageCache {
   get: ({ filename, transparentColor, paletteSwaps }: CacheKey) => Image | null | undefined,

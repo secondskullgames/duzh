@@ -68,7 +68,7 @@ export default class GeneratedMapBuilder {
   };
 
   _generateUnits = async (): Promise<Unit[]> => {
-    const unitPromises: Promise<Unit>[] = [];
+    const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     let points = this.pointAllocation.enemies;
 
@@ -94,22 +94,22 @@ export default class GeneratedMapBuilder {
       } else {
         controller = HUMAN_REDESIGN;
       }
-      const promise = UnitFactory.createUnit({
+      const unit = await UnitFactory.createUnit({
         unitClass: model.id,
         controller,
         faction: 'ENEMY',
         coordinates: { x, y },
         level: this.level
       });
-      unitPromises.push(promise);
+      units.push(unit);
       points -= model.points!;
       this.objectLocations.add({ x, y });
     }
-    return Promise.all(unitPromises);
+    return units;
   };
 
   private _generateItems = async (): Promise<MapItem[]> => {
-    const itemPromises: Promise<MapItem>[] = [];
+    const items: MapItem[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 
     let points = this.pointAllocation.equipment;
@@ -128,8 +128,8 @@ export default class GeneratedMapBuilder {
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const { x, y } = candidateLocations.shift()!;
-      const promise = ItemFactory.createMapEquipment(equipmentClass.id, { x, y });
-      itemPromises.push(promise);
+      const item = await ItemFactory.createMapEquipment(equipmentClass.id, { x, y });
+      items.push(item);
       points -= equipmentClass.points!;
       this.objectLocations.add({ x, y });
     }
@@ -150,12 +150,12 @@ export default class GeneratedMapBuilder {
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const { x, y } = candidateLocations.shift()!;
-      const promise = ItemFactory.createMapItem(itemClass.id, { x, y });
-      itemPromises.push(promise);
+      const item = await ItemFactory.createMapItem(itemClass.id, { x, y });
+      items.push(item);
       points -= itemClass.points!;
       this.objectLocations.add({ x, y });
     }
 
-    return Promise.all(itemPromises);
+    return items;
   };
 }

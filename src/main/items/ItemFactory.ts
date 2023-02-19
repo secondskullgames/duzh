@@ -14,6 +14,7 @@ import InventoryItem from './InventoryItem';
 import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
+import { UnitModel } from '../../gen-schema/unit.schema';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -131,10 +132,12 @@ const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
     /\.json$/i
   );
 
-  return Promise.all(
-    requireContext.keys()
-      .map(filename => requireContext(filename) as EquipmentModel)
-  );
+  const models: EquipmentModel[] = [];
+  for (const filename of requireContext.keys()) {
+    const model = await requireContext(filename) as EquipmentModel;
+    models.push(model);
+  }
+  return models;
 };
 
 export default {

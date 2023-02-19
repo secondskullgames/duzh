@@ -9,6 +9,8 @@ import { loadModel } from '../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
+import Equipment from '../equipment/Equipment';
+import { fillTemplate } from '../utils/templates';
 
 type CreateUnitProps = {
   /**
@@ -24,12 +26,12 @@ type CreateUnitProps = {
 
 const createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
   const model: UnitModel = await loadModel(`units/${unitClass}`, 'unit');
-  const spritePromise: Promise<DynamicSprite<Unit>> = SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
-  const equipmentPromises = Promise.all(
-    (model.equipment ?? [])?.map(ItemFactory.createEquipment)
-  );
-
-  const [sprite, equipment] = await Promise.all([spritePromise, equipmentPromises]);
+  const sprite = await SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
+  const equipmentList: Equipment[] = [];
+  for (const equipmentClass of (model.equipment ?? [])) {
+    const equipment = await ItemFactory.createEquipment(equipmentClass);
+    equipmentList.push(equipment);
+  }
 
   return new Unit({
     name: name ?? model.name,
@@ -38,7 +40,7 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
     controller,
     level,
     coordinates,
-    equipment,
+    equipment: equipmentList,
     sprite
   });
 };
@@ -58,10 +60,12 @@ const loadAllModels = async (): Promise<UnitModel[]> => {
     /\.json$/i
   );
 
-  return Promise.all(
-    requireContext.keys()
-      .map(filename => requireContext(filename) as UnitModel)
-  );
+  const models: UnitModel[] = [];
+  for (const filename of requireContext.keys()) {
+    const model = await requireContext(filename) as UnitModel;
+    models.push(model);
+  }
+  return models;
 };
 
 export default {

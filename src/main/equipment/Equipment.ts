@@ -54,11 +54,10 @@ export default class Equipment implements Animatable {
     return `${Activity.toString(unit.getActivity())}_${Direction.toString(unit.getDirection())}_${unit.getFrameNumber()}`;
   };
 
-  getSprite = () => this.sprite;
+  getSprite = (): Sprite => this.sprite;
 
-  drawBehind = async (): Promise<boolean> => {
-    const image = await this.sprite.getImage();
-    const drawBehind = (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) ?? false;
-    return drawBehind;
+  drawBehind = (): boolean => {
+    const image = this.sprite.getImage();
+    return (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) ?? false;
   };
 }

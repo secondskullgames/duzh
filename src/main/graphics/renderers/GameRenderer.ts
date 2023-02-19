@@ -17,19 +17,22 @@ const TITLE_FILENAME = 'title';
 const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
-  parent: Element
+  parent: Element,
+  state: GameState
 }>;
 
 class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
+  private readonly state: GameState;
 
-  constructor({ parent }: Props) {
+  constructor({ parent, state }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
-    this.gameScreenRenderer = new GameScreenRenderer();
-    this.hudRenderer = new HUDRenderer();
+    this.gameScreenRenderer = new GameScreenRenderer({ state });
+    this.hudRenderer = new HUDRenderer({ state });
     this.inventoryRenderer = new InventoryRenderer();
+    this.state = state;
 
     const canvas = this.getCanvas();
     parent.appendChild(canvas);
@@ -41,7 +44,7 @@ class GameRenderer extends BufferedRenderer {
    * @override {@link BufferedRenderer#renderBuffer}
    */
   renderBuffer = async () => {
-    const screen = GameState.getInstance().getScreen();
+    const screen = this.state.getScreen();
     switch (screen) {
       case 'TITLE':
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
@@ -70,11 +73,9 @@ class GameRenderer extends BufferedRenderer {
     bufferContext.fillStyle = Colors.BLACK.hex;
     bufferContext.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
-    const [gameScreenImage, hudImage] = await Promise.all([
-      this.gameScreenRenderer.render(),
-      this.hudRenderer.render()
-    ]);
+    const gameScreenImage = await this.gameScreenRenderer.render();
     bufferContext.putImageData(gameScreenImage, 0, 0);
+    const hudImage = await this.hudRenderer.render();
     bufferContext.putImageData(hudImage, 0, this.height - hudImage.height);
     await this._renderMessages();
   };
@@ -85,8 +86,8 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderMessages = async () => {
-    const { bufferContext } = this;
-    const messages = GameState.getInstance().getMessages();
+    const { bufferContext, state } = this;
+    const messages = state.getMessages();
     bufferContext.fillStyle = Colors.BLACK.hex;
 
     const left = 0;

@@ -22,18 +22,23 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 class HUDRenderer extends AbstractRenderer {
-  constructor() {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
+    this.state = state;
   }
 
   _redraw = async () => {
     await this._renderFrame();
-    await Promise.all([
-      this._renderLeftPanel(),
-      this._renderMiddlePanel(),
-      this._renderRightPanel(),
-    ]);
+    await this._renderLeftPanel();
+    await this._renderMiddlePanel();
+    await this._renderRightPanel();
   };
 
   _renderFrame = async () => {
@@ -48,7 +53,7 @@ class HUDRenderer extends AbstractRenderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   _renderLeftPanel = async () => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
 
     const lines = [
       playerUnit.getName(),
@@ -63,41 +68,32 @@ class HUDRenderer extends AbstractRenderer {
     const left = BORDER_MARGIN + BORDER_PADDING;
     const top = BORDER_MARGIN + BORDER_PADDING;
 
-    const promises: Promise<void>[] = [];
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left'));
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
-    await Promise.all(promises);
   };
 
   _renderMiddlePanel = async () => {
     const top = BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
 
     let keyNumber = 1;
-    const promises: Promise<void>[] = [];
     const abilities = playerUnit.getAbilities();
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
-        // need to reassign this or it will get incremented before rendering...
-        const kn = keyNumber;
-        promises.push(new Promise(async (resolve) => {
-          await this._renderAbility(ability, left, top);
-          await this._drawText(`${kn}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
-          await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
-          resolve();
-        }));
+        await this._renderAbility(ability, left, top);
+        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
+        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
         keyNumber++;
       }
     }
-    await Promise.all(promises);
   };
 
   _renderRightPanel = async () => {
-    const state = GameState.getInstance();
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
@@ -115,16 +111,14 @@ class HUDRenderer extends AbstractRenderer {
       lines.push(`Experience: ${playerUnit.getExperience()}/${experienceToNextLevel}`);
     }
 
-    const promises: Promise<void>[] = [];
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      promises.push(this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left'));
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
     }
-    await Promise.all(promises);
   };
 
   _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
-    const state = GameState.getInstance();
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
 

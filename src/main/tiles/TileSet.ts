@@ -9,24 +9,20 @@ type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
 
 const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
   const tileSet: TileSet = {};
-  const promises: Partial<Record<TileType, Promise<Sprite[]>>> = {};
 
   for (const [tileType, filenames] of Object.entries(model.tiles)) {
-    const tilePromises: Promise<Sprite>[] = [];
+    const tileSprites: Sprite[] = [];
     for (let index = 0; index < filenames.length; index++) {
       const filename = filenames[index];
       if (filename) {
         const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
-        tilePromises.push(SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps));
+        const tileSprite = await SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps);
+        tileSprites.push(tileSprite);
       }
     }
-    promises[tileType as TileType] = Promise.all(tilePromises);
+    tileSet[tileType as TileType] = tileSprites;
   }
 
-  await Promise.all(Object.values(promises));
-  for (const [tileType, spritePromises] of Object.entries(promises)) {
-    tileSet[tileType as TileType] = await spritePromises;
-  }
   return tileSet;
 };
 

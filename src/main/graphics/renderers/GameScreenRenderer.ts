@@ -13,17 +13,24 @@ import AbstractRenderer from './AbstractRenderer';
 
 const SHADOW_FILENAME = 'shadow';
 
-type Element = {
+type Element = Readonly<{
   getSprite: () => Sprite | null;
-}
+}>;
+
+type Props = Readonly<{
+  state: GameState
+}>;
 
 class GameScreenRenderer extends AbstractRenderer {
-  constructor() {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
     super({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,
       id: 'game_screen'
     });
+    this.state = state;
   }
 
   _redraw = async () => {
@@ -35,13 +42,13 @@ class GameScreenRenderer extends AbstractRenderer {
     await this._renderEntities();
   };
 
-  private _renderElement = async (element: Element, { x, y }: Coordinates) => {
-    const pixel: Pixel = this._gridToPixel({ x, y });
+  private _renderElement = (element: Element, { x, y }: Coordinates) => {
+    const pixel = this._gridToPixel({ x, y });
 
     if (this._isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
-        await this._drawSprite(sprite, pixel);
+        this._drawSprite(sprite, pixel);
       }
     }
   };
@@ -55,8 +62,8 @@ class GameScreenRenderer extends AbstractRenderer {
     (y >= -TILE_HEIGHT) &&
     (y <= this.height + TILE_HEIGHT);
 
-  private _drawSprite = async (sprite: Sprite, { x, y }: Coordinates) => {
-    const image = await sprite.getImage();
+  private _drawSprite = (sprite: Sprite, { x, y }: Coordinates) => {
+    const image = sprite.getImage();
     if (image) {
       this.context.drawImage(image.bitmap, x + sprite.dx, y + sprite.dy);
     }
@@ -66,7 +73,7 @@ class GameScreenRenderer extends AbstractRenderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: ((x - playerX) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
@@ -74,68 +81,57 @@ class GameScreenRenderer extends AbstractRenderer {
     };
   };
 
-  private _renderTiles = async () => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
-    const promises: Promise<any>[] = [];
+  private _renderTiles = () => {
+    const map = this.state.getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (this._isTileRevealed({ x, y })) {
           const tile = map.getTile({ x, y });
           if (tile) {
-            promises.push(this._renderElement(tile, { x, y }));
+            this._renderElement(tile, { x, y });
           }
         }
       }
     }
-
-    await Promise.all(promises);
   };
 
   /**
    * Render all entities, one row at a time.
    */
   private _renderEntities = async () => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
+    const map = this.state.getMap();
 
     for (let y = 0; y < map.height; y++) {
-      const promises: Promise<any>[] = [];
-
       for (let x = 0; x < map.width; x++) {
         if (this._isTileRevealed({ x, y })) {
           const item = map.getItem({ x, y });
           if (item) {
-            promises.push(
-              this._drawEllipse({ x, y }, Colors.DARK_GRAY)
-                .then(() => this._renderElement(item, { x, y }))
-            );
+            await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
+            this._renderElement(item, { x, y });
           }
 
           const projectile = map.getProjectile({ x, y });
           if (projectile) {
-            promises.push(this._renderElement(projectile, { x, y }));
+            this._renderElement(projectile, { x, y });
           }
 
           const door = map.getDoor({ x, y });
           if (door) {
-            promises.push(this._renderElement(door, { x, y }));
+            this._renderElement(door, { x, y });
           }
 
           const spawner = map.getSpawner({ x, y });
           if (spawner) {
-            promises.push(this._renderElement(spawner, { x, y }));
+            this._renderElement(spawner, { x, y });
           }
 
           const unit = map.getUnit({ x, y });
           if (unit) {
-            promises.push(this._renderUnit(unit, x, y));
+            await this._renderUnit(unit, x, y);
           }
         }
       }
-
-      await Promise.all(promises);
     }
   };
 
@@ -146,7 +142,7 @@ class GameScreenRenderer extends AbstractRenderer {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
-      const drawBehind: boolean = await equipment.drawBehind();
+      const drawBehind = equipment.drawBehind();
       if (drawBehind) {
         behindEquipment.push(equipment);
       } else {
@@ -155,18 +151,19 @@ class GameScreenRenderer extends AbstractRenderer {
     }
 
     let shadowColor: Color;
-    if (unit === GameState.getInstance().getPlayerUnit()) {
+    if (unit === this.state.getPlayerUnit()) {
       shadowColor = Colors.GREEN;
     } else {
       shadowColor = Colors.DARK_GRAY;
     }
+
     await this._drawEllipse({ x, y }, shadowColor);
     for (const equipment of behindEquipment) {
-      await this._renderElement(equipment, { x, y });
+      this._renderElement(equipment, { x, y });
     }
-    await this._renderElement(unit, { x, y });
+    this._renderElement(unit, { x, y });
     for (const equipment of aheadEquipment) {
-      await this._renderElement(equipment, { x, y });
+      this._renderElement(equipment, { x, y });
     }
   };
 
@@ -184,7 +181,7 @@ class GameScreenRenderer extends AbstractRenderer {
   };
 
   private _isTileRevealed = ({ x, y }: Coordinates): boolean => {
-    const map = GameState.getInstance().getMap();
+    const map = this.state.getMap();
     // @ts-ignore
     return window.jwb.debug.isMapRevealed() || map.isTileRevealed({ x, y });
   };
