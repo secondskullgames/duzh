@@ -13,6 +13,9 @@ export default abstract class AbstractRenderer implements Renderer {
   protected readonly width: number;
   protected readonly height: number;
 
+  private totalRenderTimeMillis = 0;
+  private numRenders = 0;
+
   protected constructor({ width, height, id }: Props) {
     this.width = width;
     this.height = height;
@@ -31,7 +34,10 @@ export default abstract class AbstractRenderer implements Renderer {
     await this._redraw();
     const imageData = this.context.getImageData(0, 0, width, height);
     const t2 = new Date().getTime();
-    console.debug(`${id} rendered in ${t2 - t1} ms`);
+    this.totalRenderTimeMillis += (t2 - t1);
+    this.numRenders++;
+    const avgRenderTime = this.totalRenderTimeMillis / this.numRenders;
+    console.debug(`${id} rendered in ${t2 - t1} ms (average: ${avgRenderTime.toFixed(2)} ms)`);
     return imageData;
   };
 
