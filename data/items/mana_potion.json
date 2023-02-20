@@ -6,6 +6,5 @@
   "type": "mana_potion",
   "params": {
     "amount": "10"
-  },
-  "sound": "use_potion"
+  }
 }

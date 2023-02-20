@@ -6,6 +6,5 @@
   "type": "life_potion",
   "params": {
     "amount": "40"
-  },
-  "sound": "use_potion"
+  }
 }

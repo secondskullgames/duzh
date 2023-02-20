@@ -26,9 +26,6 @@
       "additionalProperties": {
         "type": "string"
       }
-    },
-    "sound": {
-      "type": "string"
     }
   },
   "required": [
