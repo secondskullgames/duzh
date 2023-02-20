@@ -1,9 +1,9 @@
 import RGB from './RGB';
 
-type Color = {
-  readonly hex: string;
-  readonly rgb: RGB;
-};
+type Color = Readonly<{
+  hex: string,
+  rgb: RGB
+}>;
 
 const colorMatcher = new RegExp(/^#[a-zA-Z0-9]{6}$/);
 

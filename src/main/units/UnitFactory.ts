@@ -1,18 +1,16 @@
 import { UnitModel } from '../../gen-schema/unit.schema';
 import Coordinates from '../geometry/Coordinates';
 import PaletteSwaps from '../graphics/PaletteSwaps';
-import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import ItemFactory from '../items/ItemFactory';
 import { Faction } from '../types/types';
-import { loadModel } from '../utils/models';
+import { loadUnitModel } from '../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
 import Equipment from '../equipment/Equipment';
-import { fillTemplate } from '../utils/templates';
 
-type CreateUnitProps = {
+type CreateUnitProps = Readonly<{
   /**
    * if undefined, default to unit model's name
    */
@@ -22,10 +20,10 @@ type CreateUnitProps = {
   controller: UnitController,
   level: number,
   coordinates: Coordinates
-};
+}>;
 
 const createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
-  const model: UnitModel = await loadModel(`units/${unitClass}`, 'unit');
+  const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of (model.equipment ?? [])) {

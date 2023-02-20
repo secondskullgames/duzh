@@ -9,12 +9,11 @@ import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
-import { loadEquipmentModel } from '../utils/models';
+import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
-import ItemClass from './ItemClass';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
-import { UnitModel } from '../../gen-schema/unit.schema';
+import { ConsumableItemModel } from '../../gen-schema/consumable-item.schema';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -118,11 +117,57 @@ const createEquipment = async (equipmentClass: string): Promise<Equipment> => {
   return equipment;
 };
 
-const createMapItem = async (itemClassId: string, { x, y }: Coordinates) => {
-  const itemClass = ItemClass.load(itemClassId);
-  const inventoryItem = await itemClass.getInventoryItem();
-  const sprite = await SpriteFactory.createStaticSprite(itemClass.mapSprite, itemClass.paletteSwaps);
+const createInventoryItem = async (model: ConsumableItemModel): Promise<InventoryItem> => {
+  switch (model.type) {
+    case 'life_potion': {
+      const amount = parseInt(model.params?.amount ?? '0');
+      return createLifePotion(amount);
+    }
+    case 'mana_potion': {
+      const amount = parseInt(model.params?.amount ?? '0');
+      return createManaPotion(amount);
+    }
+    case 'key': {
+      return createKey();
+    }
+    case 'scroll': {
+      const spell = model.params?.spell;
+      switch (spell) {
+        case 'floor_fire':
+          const damage = parseInt(model.params?.damage ?? '0');
+          return createScrollOfFloorFire(damage);
+        default:
+          throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);
+      }
+    }
+    default:
+      throw new Error(`Invalid item definition: ${JSON.stringify(model)}`);
+  }
+}
+
+const createMapItem = async (itemClass: string, { x, y }: Coordinates) => {
+  const model: ConsumableItemModel = await loadItemModel(itemClass);
+  const inventoryItem = await createInventoryItem(model);
+  const paletteSwaps = (model.paletteSwaps !== undefined)
+    ? PaletteSwaps.create(model.paletteSwaps)
+    : undefined;
+  const sprite = await SpriteFactory.createStaticSprite(model.mapSprite, paletteSwaps);
   return new MapItem({ x, y, sprite, inventoryItem });
+};
+
+const loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
+  const requireContext = require.context(
+    '../../../data/items',
+    false,
+    /\.json$/i
+  );
+
+  const models: ConsumableItemModel[] = [];
+  for (const filename of requireContext.keys()) {
+    const model = await requireContext(filename) as ConsumableItemModel;
+    models.push(model);
+  }
+  return models;
 };
 
 const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
@@ -148,5 +193,6 @@ export default {
   createLifePotion,
   createManaPotion,
   createScrollOfFloorFire,
+  loadAllConsumableModels,
   loadAllEquipmentModels
 };

@@ -2,7 +2,6 @@ import { GeneratedMapModel_PointAllocation } from '../../../gen-schema/generated
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
-import ItemClass from '../../items/ItemClass';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Tile from '../../tiles/Tile';
@@ -137,7 +136,7 @@ export default class GeneratedMapBuilder {
 
     points = this.pointAllocation.items;
     while (points > 0) {
-      const possibleItemClasses = ItemClass.values()
+      const possibleItemClasses = (await ItemFactory.loadAllConsumableModels())
         .filter(itemClass => itemClass.level !== null && itemClass.level <= this.level)
         .filter(itemClass => itemClass.points !== null && itemClass.points <= points);
 

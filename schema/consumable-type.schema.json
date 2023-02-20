@@ -1,0 +1,11 @@
+{
+  "$id": "consumable-type.schema.json",
+  "title": "ConsumableType",
+  "type": "string",
+  "enum": [
+    "life_potion",
+    "mana_potion",
+    "key",
+    "scroll"
+  ]
+}

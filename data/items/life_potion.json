@@ -1,0 +1,10 @@
+{
+  "id": "life_potion",
+  "level": 1,
+  "points": 20,
+  "mapSprite": "map_potion",
+  "type": "life_potion",
+  "params": {
+    "amount": "40"
+  }
+}

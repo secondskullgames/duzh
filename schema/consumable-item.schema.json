@@ -1,0 +1,39 @@
+{
+  "$id": "consumable-item.schema.json",
+  "title": "ConsumableItemModel",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "level": {
+      "type": ["number", "null"]
+    },
+    "points": {
+      "type": ["number", "null"]
+    },
+    "mapSprite": {
+      "type": "string"
+    },
+    "paletteSwaps": {
+       "$ref": "./palette-swaps.schema.json"
+    },
+    "type": {
+      "$ref": "./consumable-type.schema.json"
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "level",
+    "points",
+    "mapSprite",
+    "type"
+  ],
+  "additionalProperties": false
+}
