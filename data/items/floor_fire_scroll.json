@@ -1,0 +1,12 @@
+{
+  "id": "floor_fire_scroll",
+  "level": 2,
+  "points": 30,
+  "mapSprite": "map_scroll",
+  "type": "scroll",
+  "params": {
+    "spell": "floor_fire",
+    "damage": "50"
+  },
+  "sound": "player_hits_enemy"
+}

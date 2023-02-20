@@ -6,6 +6,8 @@ import { PredefinedMapModel } from '../../gen-schema/predefined-map.schema';
 import { StaticSpriteModel } from '../../gen-schema/static-sprite.schema';
 import { UnitModel } from '../../gen-schema/unit.schema';
 import SpriteCategory from '../graphics/sprites/SpriteCategory';
+import { ConsumableItemModel } from '../../gen-schema/consumable-item.schema';
+import { TileSetModel } from '../../gen-schema/tile-set.schema';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /data/schema)
@@ -27,7 +29,9 @@ export const schemaNames = [
   'generated-map',
   'static-sprite',
   'dynamic-sprite',
-  'tile-set'
+  'tile-set',
+  'consumable-type',
+  'consumable-item'
 ];
 
 type SchemaType =
@@ -40,7 +44,9 @@ type SchemaType =
   | 'generated-map'
   | 'static-sprite'
   | 'dynamic-sprite'
-  | 'tile-set';
+  | 'tile-set'
+  | 'consumable-type'
+  | 'consumable-item';
 
 const ajv = new Ajv();
 let loadedSchemas = false;
@@ -57,7 +63,7 @@ const _loadSchemas = async () => {
   }
 };
 
-export const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
+const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
   if (!loadedSchemas) {
     await _loadSchemas();
     loadedSchemas = true;
@@ -96,3 +102,9 @@ export const loadDynamicSpriteModel = async (id: string, category: SpriteCategor
 
 export const loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
   loadModel(`sprites/static/${id}`, 'static-sprite');
+
+export const loadTileSetModel = async (id: string): Promise<TileSetModel> =>
+  loadModel(`tilesets/${id}`, 'tile-set');
+
+export const loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
+  loadModel(`items/${id}`, 'consumable-item');

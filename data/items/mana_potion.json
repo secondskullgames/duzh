@@ -1,0 +1,11 @@
+{
+  "id": "life_potion",
+  "level": 3,
+  "points": 20,
+  "mapSprite": "map_potion",
+  "type": "mana_potion",
+  "params": {
+    "amount": "10"
+  },
+  "sound": "use_potion"
+}
