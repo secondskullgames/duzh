@@ -2,10 +2,10 @@ import GameState from '../core/GameState';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Entity from '../types/Entity';
-import { HUMAN_DETERMINISTIC } from '../units/controllers/AIUnitControllers';
 import Unit from '../units/Unit';
 import UnitFactory from '../units/UnitFactory';
 import Coordinates from '../geometry/Coordinates';
+import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 
 export type SpawnerState = 'ALIVE' | 'DEAD';
 export namespace SpawnerState {
@@ -73,7 +73,7 @@ export default class Spawner implements Entity, Animatable {
           unitClass: this.unitClass,
           coordinates: { x, y },
           level: 1,
-          controller: HUMAN_DETERMINISTIC,
+          controller: new HumanDeterministicController(),
           faction: 'ENEMY'
         });
         this.cooldown = this.maxCooldown;

@@ -6,7 +6,6 @@ import ItemClass from '../../items/ItemClass';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Tile from '../../tiles/Tile';
-import { ARCHER, HUMAN_REDESIGN } from '../../units/controllers/AIUnitControllers';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
@@ -14,6 +13,8 @@ import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import UnitController from '../../units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
+import ArcherController from '../../units/controllers/ArcherController';
+import HumanRedesignController from '../../units/controllers/HumanRedesignController';
 
 type Props = Readonly<{
   level: number,
@@ -90,9 +91,9 @@ export default class GeneratedMapBuilder {
       let controller: UnitController;
       // TODO super hack!
       if (model.name === 'Goblin Archer') {
-        controller = ARCHER;
+        controller = new ArcherController();
       } else {
-        controller = HUMAN_REDESIGN;
+        controller = new HumanRedesignController();
       }
       const unit = await UnitFactory.createUnit({
         unitClass: model.id,

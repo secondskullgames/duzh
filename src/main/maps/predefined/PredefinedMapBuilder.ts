@@ -14,13 +14,14 @@ import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import { HUMAN_REDESIGN, WIZARD } from '../../units/controllers/AIUnitControllers';
 import UnitController from '../../units/controllers/UnitController';
 import Unit from '../../units/Unit';
 import UnitFactory from '../../units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
+import WizardController from '../../units/controllers/WizardController';
+import HumanRedesignController from '../../units/controllers/HumanRedesignController';
 
 /**
  * TODO - there's a lot of duplication in the private methods here.
@@ -101,7 +102,9 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
         const enemyUnitClass = mapClass.enemyColors[color.hex] ?? null;
         if (enemyUnitClass !== null) {
           const enemyUnitModel = await loadUnitModel(enemyUnitClass);
-          const controller: UnitController = (enemyUnitModel.type === 'WIZARD') ? WIZARD : HUMAN_REDESIGN;
+          const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
+            ? new WizardController()
+            : new HumanRedesignController();
           const unit = await UnitFactory.createUnit({
             name: `${enemyUnitModel.name}_${id++}`,
             unitClass: enemyUnitClass,

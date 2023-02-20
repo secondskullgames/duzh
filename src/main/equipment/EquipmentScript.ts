@@ -1,8 +1,9 @@
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
-import UnitAbility from '../units/UnitAbility';
+import UnitAbility from '../units/abilities/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
+import { UnitAbilities } from '../units/abilities/UnitAbilities';
 
 export type EquipmentScript = 'bolt_sword';
 
@@ -24,7 +25,7 @@ export namespace EquipmentScript {
         }
 
         if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
-          await UnitAbility.BOLT.use(unit, target);
+          await UnitAbilities.BOLT.use(unit, target);
         }
       }
     }
