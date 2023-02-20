@@ -1,0 +1,27 @@
+import Coordinates from '../../geometry/Coordinates';
+import Unit from '../Unit';
+
+export type AbilityName = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'DASH' | 'TELEPORT' | 'SUMMON' | 'BOLT' | 'STRAFE';
+
+type Props = Readonly<{
+  name: string,
+  manaCost: number,
+  icon?: string | null
+}>;
+
+abstract class UnitAbility {
+  readonly name: string;
+  readonly manaCost: number;
+  readonly icon: string | null;
+
+  protected constructor({ name, manaCost, icon }: Props) {
+    this.name = name;
+    this.manaCost = manaCost;
+    this.icon = icon ?? null;
+  }
+
+  abstract use(unit: Unit, coordinates: Coordinates | null): Promise<void>;
+  abstract logDamage(unit: Unit, target: Unit, damageTaken: number): void;
+}
+
+export default UnitAbility;

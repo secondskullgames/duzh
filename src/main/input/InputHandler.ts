@@ -3,7 +3,7 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
-import UnitAbility from '../units/UnitAbility';
+import UnitAbility from '../units/abilities/UnitAbility';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from '../core/GameEngine';
@@ -11,6 +11,7 @@ import GameState from '../core/GameState';
 import { GameDriver } from '../core/GameDriver';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
+import { UnitAbilities } from '../units/abilities/UnitAbilities';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -98,12 +99,12 @@ export class InputHandler {
 
         let queuedOrder: PromiseSupplier | null = null;
         if (modifiers.includes('SHIFT')) {
-          if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbility.SHOOT_ARROW.manaCost)) {
-            queuedOrder = () => UnitAbility.SHOOT_ARROW.use(playerUnit, { x, y });
+          if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbilities.SHOOT_ARROW.manaCost)) {
+            queuedOrder = () => UnitAbilities.SHOOT_ARROW.use(playerUnit, { x, y });
           }
         } else if (modifiers.includes('ALT')) {
-          if (playerUnit.canSpendMana(UnitAbility.STRAFE.manaCost)) {
-            queuedOrder = () => UnitAbility.STRAFE.use(playerUnit, { x, y });
+          if (playerUnit.canSpendMana(UnitAbilities.STRAFE.manaCost)) {
+            queuedOrder = () => UnitAbilities.STRAFE.use(playerUnit, { x, y });
           }
         } else {
           const ability = state.getQueuedAbility();
@@ -113,7 +114,7 @@ export class InputHandler {
               await ability.use(playerUnit, { x, y });
             };
           } else {
-            queuedOrder = () => UnitAbility.ATTACK.use(playerUnit, { x, y });
+            queuedOrder = () => UnitAbilities.ATTACK.use(playerUnit, { x, y });
           }
         }
         const playerController = playerUnit.getController() as PlayerUnitController;

@@ -5,7 +5,7 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
-import UnitAbility from '../units/UnitAbility';
+import UnitAbility from '../units/abilities/UnitAbility';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
@@ -160,6 +160,7 @@ export class GameEngine {
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };
+  /** @deprecated */
   static getInstance = (): GameEngine => checkNotNull(INSTANCE);
 }
 

@@ -6,7 +6,9 @@ import { comparingReversed } from '../utils/arrays';
 import Pathfinder from '../geometry/Pathfinder';
 import { randChoice } from '../utils/random';
 import Unit from './Unit';
-import UnitAbility from './UnitAbility';
+import UnitAbility from './abilities/UnitAbility';
+import Teleport from './abilities/Teleport';
+import { UnitAbilities } from './abilities/UnitAbilities';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;
 
@@ -31,7 +33,7 @@ const _wanderAndAttack = async (unit: Unit) => {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    await UnitAbility.ATTACK.use(unit, { x, y });
+    await UnitAbilities.ATTACK.use(unit, { x, y });
   }
 };
 
@@ -51,7 +53,7 @@ const _wander = async (unit: Unit) => {
 
   if (tiles.length > 0) {
     const { x, y } = randChoice(tiles);
-    await UnitAbility.ATTACK.use(unit, { x, y });
+    await UnitAbilities.ATTACK.use(unit, { x, y });
   }
 };
 
@@ -80,7 +82,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
     const { x, y } = path[1]; // first tile is the unit's own tile
     const unitAtPoint = map.getUnit({ x, y });
     if (unitAtPoint === null || unitAtPoint === playerUnit) {
-      await UnitAbility.ATTACK.use(unit, { x, y });
+      await UnitAbilities.ATTACK.use(unit, { x, y });
     }
   }
 };
@@ -90,7 +92,7 @@ const _shootPlayerUnit = async (unit: Unit): Promise<void> => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 
-  if (unit.getMana() < UnitAbility.SHOOT_ARROW.manaCost) {
+  if (unit.getMana() < UnitAbilities.SHOOT_ARROW.manaCost) {
     return _attackPlayerUnit_withPath(unit);
   }
 
@@ -116,7 +118,7 @@ const _shootPlayerUnit = async (unit: Unit): Promise<void> => {
     y += dy;
   }
 
-  return UnitAbility.SHOOT_ARROW.use(unit, { x, y });
+  return UnitAbilities.SHOOT_ARROW.use(unit, { x, y });
 };
 
 const _teleportFromPlayerUnit = async (unit: Unit) => {
@@ -129,7 +131,7 @@ const _teleportFromPlayerUnit = async (unit: Unit) => {
     for (let x = 0; x < map.width; x++) {
       if (map.contains({ x, y })) {
         if (!map.isBlocked({ x, y })) {
-          if (manhattanDistance(unit.getCoordinates(), { x, y }) <= UnitAbility.TELEPORT.RANGE) {
+          if (manhattanDistance(unit.getCoordinates(), { x, y }) <= UnitAbilities.TELEPORT.RANGE) {
             tiles.push({ x, y });
           }
         }
@@ -141,7 +143,7 @@ const _teleportFromPlayerUnit = async (unit: Unit) => {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit.getCoordinates())));
 
     const { x, y } = orderedTiles[0];
-    await UnitAbility.TELEPORT.use(unit, { x, y });
+    await UnitAbilities.TELEPORT.use(unit, { x, y });
   }
 };
 
@@ -168,7 +170,7 @@ const _fleeFromPlayerUnit = async (unit: Unit) => {
     const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, playerUnit.getCoordinates())));
 
     const { x, y } = orderedTiles[0];
-    await UnitAbility.ATTACK.use(unit, { x, y });
+    await UnitAbilities.ATTACK.use(unit, { x, y });
   }
 };
 

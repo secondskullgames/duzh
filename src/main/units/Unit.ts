@@ -18,7 +18,8 @@ import { Faction } from '../types/types';
 import { checkArgument } from '../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { AbilityName } from './abilities/UnitAbility';
+import { UnitAbilities } from './abilities/UnitAbilities';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -105,9 +106,10 @@ export default class Unit implements Entity, Animatable {
     this.activity = 'STANDING';
     this.direction = Direction.S;
     this.frameNumber = 1;
+    // TODO make this type safe
     this.abilities = (model.abilities[1] ?? [])
-      .map(str => str as UnitAbility.Name)
-      .map(UnitAbility.forName);
+      .map(str => str as AbilityName)
+      .map(UnitAbilities.forName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -230,7 +232,7 @@ export default class Unit implements Entity, Animatable {
     this.damage += damagePerLevel;
     const abilities = this.abilitiesPerLevel[this.level] ?? [];
     for (const abilityName of abilities) {
-      this.abilities.push(UnitAbility.forName(abilityName as UnitAbility.Name));
+      this.abilities.push(UnitAbilities.forName(abilityName as AbilityName));
     }
   };
 
