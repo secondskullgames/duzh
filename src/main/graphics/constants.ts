@@ -1,15 +1,7 @@
-const TILE_WIDTH = 32;
-const TILE_HEIGHT = 24;
+export const TILE_WIDTH = 32;
+export const TILE_HEIGHT = 24;
 
-const SCREEN_WIDTH = 640;
-const SCREEN_HEIGHT = 360;
+export const SCREEN_WIDTH = 640;
+export const SCREEN_HEIGHT = 360;
 
-const LINE_HEIGHT = 12;
-
-export {
-  TILE_WIDTH,
-  TILE_HEIGHT,
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT,
-  LINE_HEIGHT
-};
+export const LINE_HEIGHT = 12;

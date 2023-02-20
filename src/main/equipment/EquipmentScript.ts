@@ -1,6 +1,5 @@
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
-import UnitAbility from '../units/abilities/UnitAbility';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 import { UnitAbilities } from '../units/abilities/UnitAbilities';

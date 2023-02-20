@@ -160,6 +160,7 @@ export class GameEngine {
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };
+  /** @deprecated */
   static getInstance = (): GameEngine => checkNotNull(INSTANCE);
 }
 
