@@ -1,4 +1,3 @@
-import { GeneratedMapModel_PointAllocation } from '../../../gen-schema/generated-map.schema';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
@@ -14,6 +13,7 @@ import UnitController from '../../units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import ArcherController from '../../units/controllers/ArcherController';
 import HumanRedesignController from '../../units/controllers/HumanRedesignController';
+import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 
 type Props = Readonly<{
   level: number,

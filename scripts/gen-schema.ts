@@ -1,58 +1,46 @@
-import { compileFromFile } from 'json-schema-to-typescript'
+import * as TJS from 'typescript-json-schema';
 import glob from 'glob-promise';
-import { mkdir, readFile, writeFile, stat } from 'fs/promises';
-import { createHash } from 'crypto';
+import { writeFile, mkdir } from 'fs/promises';
+import { Definition } from 'typescript-json-schema';
 
-const schemaDir = 'schema';
-const outDir = 'src/gen-schema';
-const hashFilename = `${outDir}/HASH`;
+const schemaDir = 'src/main/schemas';
+const outDir = 'src/gen-schema'
+const filenames = await glob.promise(`${schemaDir}/**/*.ts`);
+const modelNames = filenames.map(filename => {
+  filename = filename.split('/')[filename.split('/').length - 1];
+  filename = filename.substring(0, filename.indexOf('.d.ts'));
+  return filename;
+});
+console.log(`Model names: ${modelNames}`);
 
-const main = async () => {
-  const filenames = await glob.promise('**/*.schema.json', { cwd: schemaDir });
-
-  // hash the list of filenames and compare to the contents of the hash file, if it exists
-  const hash = await computeFileHash(filenames, schemaDir);
-
-  try {
-    const oldHash = await readFile(hashFilename, 'utf-8');
-    if (oldHash && hash === oldHash) {
-      console.log('Hash matches, skipping gen-schema');
-      return;
-    } else {
-      console.log('Hash file does not match content, regenerating schema');
-    }
-  } catch (e) {
-    // hash file doesn't exist
-    console.log('Hash file does not exist, regenerating schema');
-  }
-  await mkdir(outDir, { recursive: true });
-  await writeFile(hashFilename, hash);
-
-  for (const filename of filenames) {
-    const compiled = await compileFromFile(`${schemaDir}/${filename}`, {
-      cwd: schemaDir,
-      style: {
-        singleQuote: true
-      }
-    });
-    const outFilename = `${outDir}/${filename.substring(0, filename.indexOf('.json'))}.ts`;
-    await writeFile(outFilename, compiled)
-    console.log(`wrote ${outFilename}`);
-  }
+const compilerOptions = {
+  strictNullChecks: true,
 };
 
-const computeFileHash = async (filenames: string[], baseDir?: string) => {
-  const hash = createHash('md5');
-  // construct a string from the modification date, the filename and the filesize
-  for (let filename of filenames) {
-    const fullFilename = baseDir ? `${baseDir}/${filename}` : filename;
-    const statInfo = await stat(fullFilename);
-    // compute hash string name:size:mtime
-    const fileInfo = `${fullFilename}:${statInfo.size}:${statInfo.mtimeMs}`;
-    hash.update(fileInfo);
-  }
+const program = TJS.getProgramFromFiles(
+  filenames,
+  compilerOptions
+);
 
-  return hash.digest('base64');
+console.log(`Program root files: ${program.getRootFileNames()}`);
+
+await mkdir(outDir, { recursive: true });
+
+const prettyPrint = (schema: Definition): string =>
+  JSON.stringify(schema, null, 2);
+
+for (let i = 0; i < filenames.length; i++) {
+  const filename = filenames[i];
+  const modelName = modelNames[i];
+  console.log(`Generating schema for ${filename} (${modelName})`);
+  const schema = TJS.generateSchema(
+    program,
+    modelName,
+    {
+      id: modelName,
+      required: true,
+    }
+  );
+  const outFilename = `${outDir}/${modelName}.schema.json`;
+  await writeFile(outFilename, prettyPrint(schema!));
 }
-
-main().then(() => {}).catch(e => console.error(e));

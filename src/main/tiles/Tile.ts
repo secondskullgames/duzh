@@ -1,8 +1,8 @@
-import { TileType } from '../../gen-schema/tile-type.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import { randChoice } from '../utils/random';
 import TileSet from './TileSet';
 import { checkNotNull } from '../utils/preconditions';
+import TileType from '../schemas/TileType';
 
 interface Tile {
   type: TileType,

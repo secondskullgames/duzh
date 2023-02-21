@@ -27,7 +27,7 @@ const loadFile = async (filename: string): Promise<any> => {
 const ajv = new Ajv();
 
 const validate = async (schemaName: string, dataFilenames: string[]) => {
-  const validate = ajv.getSchema(`${schemaName}.schema.json`);
+  const validate = ajv.getSchema(schemaName);
   if (!validate) {
     throw new Error(`Failed to load schema ${schemaName}`);
   }
@@ -43,19 +43,19 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
 
 test('test validity of JSON data', async () => {
   for (const schemaName of schemaNames) {
-    const filename = `schema/${schemaName}.schema.json`;
+    const filename = `src/gen-schema/${schemaName}.schema.json`;
     console.log(`Loading schema ${filename}`);
     const schema = await loadFile(filename);
     ajv.addSchema(schema);
   }
-  await validate('unit', await getFilenamesRecursive('data/units'));
-  await validate('equipment', await getFilenamesRecursive('data/equipment'));
-  await validate('predefined-map', await getFilenamesRecursive('data/maps/predefined'));
-  await validate('generated-map', await getFilenamesRecursive('data/maps/generated'));
-  await validate('static-sprite', await getFilenamesRecursive('data/sprites/static'));
-  await validate('dynamic-sprite', await getFilenamesRecursive('data/sprites/units'));
-  await validate('dynamic-sprite', await getFilenamesRecursive('data/sprites/equipment'));
-  await validate('tile-set', await getFilenamesRecursive('data/tilesets'));
+  await validate('UnitModel', await getFilenamesRecursive('data/units'));
+  await validate('EquipmentModel', await getFilenamesRecursive('data/equipment'));
+  await validate('PredefinedMapModel', await getFilenamesRecursive('data/maps/predefined'));
+  await validate('GeneratedMapModel', await getFilenamesRecursive('data/maps/generated'));
+  await validate('StaticSpriteModel', await getFilenamesRecursive('data/sprites/static'));
+  await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/units'));
+  await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/equipment'));
+  await validate('TileSetModel', await getFilenamesRecursive('data/tilesets'));
 });
 
 export {};

@@ -5,7 +5,7 @@ import { shuffle } from '../../../utils/random';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
-import { TileType } from 'src/gen-schema/tile-type.schema';
+import TileType from '../../../schemas/TileType';
 
 const generateTiles = (
   width: number,

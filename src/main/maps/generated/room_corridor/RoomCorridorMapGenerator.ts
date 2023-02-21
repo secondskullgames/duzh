@@ -1,4 +1,3 @@
-import { TileType } from '../../../../gen-schema/tile-type.schema';
 import TileSet from '../../../tiles/TileSet';
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
@@ -9,6 +8,7 @@ import RegionConnector from './RegionConnector';
 import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
+import TileType from '../../../schemas/TileType';
 
 type Props = Readonly<{
   tileSet: TileSet,

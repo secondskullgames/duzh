@@ -1,4 +1,3 @@
-import { UnitModel } from '../../gen-schema/unit.schema';
 import GameState from '../core/GameState';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
@@ -20,6 +19,7 @@ import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
 import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
+import UnitModel from '../schemas/UnitModel';
 
 /**
  * Regenerate this fraction of the unit's health each turn

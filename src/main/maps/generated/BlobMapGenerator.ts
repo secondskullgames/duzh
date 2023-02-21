@@ -5,7 +5,7 @@ import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import AbstractMapGenerator from './AbstractMapGenerator';
-import { TileType } from 'src/gen-schema/tile-type.schema';
+import TileType from '../../schemas/TileType';
 
 class BlobMapGenerator extends AbstractMapGenerator {
   constructor(tileSet: TileSet) {

@@ -1,5 +1,5 @@
-import { TileType } from 'src/gen-schema/tile-type.schema';
 import Section from './Section';
+import TileType from '../../../schemas/TileType';
 
 interface TileGenerator {
   generateTiles: (section: Section) => TileType[][];

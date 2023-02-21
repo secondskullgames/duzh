@@ -1,4 +1,3 @@
-import { DynamicSpriteModel } from '../../../gen-schema/dynamic-sprite.schema';
 import Equipment from '../../equipment/Equipment';
 import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
@@ -15,6 +14,7 @@ import DynamicSprite from './DynamicSprite';
 import Sprite from './Sprite';
 import SpriteCategory from './SpriteCategory';
 import StaticSprite from './StaticSprite';
+import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 /**
  * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))

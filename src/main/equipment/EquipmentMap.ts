@@ -1,11 +1,13 @@
-import { EquipmentSlot } from '../../gen-schema/equipment-slot.schema';
 import Equipment from './Equipment';
+import EquipmentSlot from '../schemas/EquipmentSlot';
 
 /**
  * Represents a unit's equipment, mapped by slot.
  */
 export default class EquipmentMap {
-  private readonly _map: Partial<Record<EquipmentSlot, Equipment>>;
+  private readonly _map: {
+    [slot in EquipmentSlot]?: Equipment
+  };
 
   constructor() {
     this._map = {};

@@ -1,4 +1,3 @@
-import { TileType } from '../../../../gen-schema/tile-type.schema';
 import Rect from '../../../geometry/Rect';
 import TileSet from '../../../tiles/TileSet';
 import AbstractMapGenerator from '../AbstractMapGenerator';
@@ -7,6 +6,7 @@ import Section from './Section';
 import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
+import TileType from '../../../schemas/TileType';
 
 const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;
