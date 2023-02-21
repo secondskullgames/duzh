@@ -7,6 +7,5 @@
   "params": {
     "spell": "floor_fire",
     "damage": "50"
-  },
-  "foo": "bar"
+  }
 }

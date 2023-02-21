@@ -56,6 +56,7 @@ test('test validity of JSON data', async () => {
   await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/units'));
   await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/equipment'));
   await validate('TileSetModel', await getFilenamesRecursive('data/tilesets'));
+  await validate('ConsumableItemModel', await getFilenamesRecursive('data/items'));
 });
 
 export {};

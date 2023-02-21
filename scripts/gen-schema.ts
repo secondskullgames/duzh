@@ -39,6 +39,7 @@ for (let i = 0; i < filenames.length; i++) {
     {
       id: modelName,
       required: true,
+      noExtraProps: true
     }
   );
   const outFilename = `${outDir}/${modelName}.schema.json`;
