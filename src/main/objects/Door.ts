@@ -2,7 +2,7 @@ import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Animatable from '../graphics/animations/Animatable';
 import Entity from '../types/Entity';
 import Coordinates from '../geometry/Coordinates';
-import { DoorDirection } from 'src/gen-schema/door-direction.schema';
+import DoorDirection from '../schemas/DoorDirection';
 
 export type DoorState = 'OPEN' | 'CLOSED';
 export namespace DoorState {

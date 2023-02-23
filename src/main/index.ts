@@ -1,4 +1,4 @@
-import { MapSpec } from '../gen-schema/map-spec.schema';
+import type MapSpec from './schemas/MapSpec';
 import { Debug } from './core/Debug';
 import { GameDriver } from './core/GameDriver';
 import { GameEngine } from './core/GameEngine';
@@ -38,4 +38,7 @@ const main = async () => {
   await engine.preloadFirstMap();
 };
 
-main().then(() => {});
+main().catch(e => {
+  console.error(e);
+  alert(e)
+});

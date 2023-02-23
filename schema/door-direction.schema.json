@@ -1,6 +1,0 @@
-{
-  "$id": "door-direction.schema.json",
-  "title": "DoorDirection",
-  "type": "string",
-  "enum": ["horizontal", "vertical"]
-}

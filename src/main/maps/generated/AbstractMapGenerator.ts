@@ -1,10 +1,10 @@
-import { GeneratedMapModel } from '../../../gen-schema/generated-map.schema';
-import { TileType } from '../../../gen-schema/tile-type.schema';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
 import { getUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
+import GeneratedMapModel from '../../schemas/GeneratedMapModel';
+import TileType from '../../schemas/TileType';
 
 abstract class AbstractMapGenerator {
   protected readonly tileSet: TileSet;

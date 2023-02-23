@@ -1,5 +1,5 @@
-import { ItemCategory } from '../../gen-schema/item-category.schema';
 import Unit from '../units/Unit';
+import ItemCategory from '../schemas/ItemCategory';
 
 type Props = Readonly<{
   name: string,

@@ -1,52 +1,56 @@
 import Ajv from 'ajv';
-import { DynamicSpriteModel } from '../../gen-schema/dynamic-sprite.schema';
-import { EquipmentModel } from '../../gen-schema/equipment.schema';
-import { GeneratedMapModel } from '../../gen-schema/generated-map.schema';
-import { PredefinedMapModel } from '../../gen-schema/predefined-map.schema';
-import { StaticSpriteModel } from '../../gen-schema/static-sprite.schema';
-import { UnitModel } from '../../gen-schema/unit.schema';
 import SpriteCategory from '../graphics/sprites/SpriteCategory';
-import { ConsumableItemModel } from '../../gen-schema/consumable-item.schema';
-import { TileSetModel } from '../../gen-schema/tile-set.schema';
+import UnitModel from '../schemas/UnitModel';
+import EquipmentModel from '../schemas/EquipmentModel';
+import GeneratedMapModel from '../schemas/GeneratedMapModel';
+import PredefinedMapModel from '../schemas/PredefinedMapModel';
+import ConsumableItemModel from '../schemas/ConsumableItemModel';
+import TileSetModel from '../schemas/TileSetModel';
+import StaticSpriteModel from '../schemas/StaticSpriteModel';
+import DynamicSpriteModel from '../schemas/DynamicSpriteModel';
 
 /**
- * Utility methods for working with models (in /data/) and schemas (in /data/schema)
+ * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
  */
 
 export const schemaNames = [
-  'palette-swaps',
-  'door-direction',
-  'unit-type',
-  'tile-type',
-  'map-type',
-  'map-spec',
-  'unit',
-  'equipment-stats',
-  'equipment-slot',
-  'item-category',
-  'equipment',
-  'predefined-map',
-  'generated-map',
-  'static-sprite',
-  'dynamic-sprite',
-  'tile-set',
-  'consumable-type',
-  'consumable-item'
+  'DoorDirection',
+  'UnitType',
+  'TileType',
+  'MapType',
+  'MapSpec',
+  'UnitModel',
+  'EquipmentStats',
+  'EquipmentSlot',
+  'ItemCategory',
+  'EquipmentModel',
+  'PredefinedMapModel',
+  'GeneratedMapModel',
+  'StaticSpriteModel',
+  'DynamicSpriteModel',
+  'TileSetModel',
+  'ConsumableType',
+  'ConsumableItemModel'
 ];
 
 type SchemaType =
-  | 'palette-swaps'
-  | 'door-direction'
-  | 'unit'
-  | 'equipment-stats'
-  | 'equipment'
-  | 'predefined-map'
-  | 'generated-map'
-  | 'static-sprite'
-  | 'dynamic-sprite'
-  | 'tile-set'
-  | 'consumable-type'
-  | 'consumable-item';
+  | 'DoorDirection'
+  | 'UnitType'
+  | 'TileType'
+  | 'MapType'
+  | 'MapSpec'
+  | 'UnitModel'
+  | 'EquipmentStats'
+  | 'EquipmentSlot'
+  | 'ItemCategory'
+  | 'EquipmentModel'
+  | 'PredefinedMapModel'
+  | 'GeneratedMapModel'
+  | 'StaticSpriteModel'
+  | 'DynamicSpriteModel'
+  | 'TileSetModel'
+  | 'ConsumableType'
+  | 'ConsumableItemModel'
 
 const ajv = new Ajv();
 let loadedSchemas = false;
@@ -57,7 +61,7 @@ const _loadSchemas = async () => {
     const schema = (await import(
       /* webpackMode: "lazy-once" */
       /* webpackChunkName: "schemas" */
-      `../../../schema/${schemaName}.schema.json`
+      `../../gen-schema/${schemaName}.schema.json`
     )).default;
     ajv.addSchema(schema);
   }
@@ -68,7 +72,7 @@ const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
     await _loadSchemas();
     loadedSchemas = true;
   }
-  const validate = ajv.getSchema(`${schema}.schema.json`);
+  const validate = ajv.getSchema(schema);
   if (!validate) {
     throw new Error(`Failed to load schema ${schema}`);
   }
@@ -86,25 +90,25 @@ const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
 };
 
 export const loadUnitModel = async (id: string): Promise<UnitModel> =>
-  loadModel(`units/${id}`, 'unit');
+  loadModel(`units/${id}`, 'UnitModel');
 
 export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> =>
-  loadModel(`equipment/${id}`, 'equipment');
+  loadModel(`equipment/${id}`, 'EquipmentModel');
 
 export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> =>
-  loadModel(`maps/generated/${id}`, 'generated-map');
+  loadModel(`maps/generated/${id}`, 'GeneratedMapModel');
 
 export const loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> =>
-  loadModel(`maps/generated/${id}`, 'predefined-map');
+  loadModel(`maps/predefined/${id}`, 'PredefinedMapModel');
 
 export const loadDynamicSpriteModel = async (id: string, category: SpriteCategory): Promise<DynamicSpriteModel> =>
-  loadModel(`sprites/${category}/${id}`, 'dynamic-sprite');
+  loadModel(`sprites/${category}/${id}`, 'DynamicSpriteModel');
 
 export const loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
-  loadModel(`sprites/static/${id}`, 'static-sprite');
+  loadModel(`sprites/static/${id}`, 'StaticSpriteModel');
 
 export const loadTileSetModel = async (id: string): Promise<TileSetModel> =>
-  loadModel(`tilesets/${id}`, 'tile-set');
+  loadModel(`tilesets/${id}`, 'TileSetModel');
 
 export const loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
-  loadModel(`items/${id}`, 'consumable-item');
+  loadModel(`items/${id}`, 'ConsumableItemModel');

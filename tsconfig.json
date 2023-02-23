@@ -4,7 +4,7 @@
     "alwaysStrict": true,
     "baseUrl": ".",
     "lib": ["dom", "esnext"],
-    "target": "es2015",
+    "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,

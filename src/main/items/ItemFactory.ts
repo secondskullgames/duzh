@@ -1,4 +1,3 @@
-import { EquipmentModel } from '../../gen-schema/equipment.schema';
 import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import { playFloorFireAnimation } from '../graphics/animations/Animations';
@@ -13,7 +12,8 @@ import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
 import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
-import { ConsumableItemModel } from '../../gen-schema/consumable-item.schema';
+import ConsumableItemModel from '../schemas/ConsumableItemModel';
+import EquipmentModel from '../schemas/EquipmentModel';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 

@@ -1,14 +1,18 @@
-import { TileSetModel } from '../../gen-schema/tile-set.schema';
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import PaletteSwaps from '../graphics/PaletteSwaps';
-import { TileType } from 'src/gen-schema/tile-type.schema';
 import { loadTileSetModel } from '../utils/models';
+import TileType from '../schemas/TileType';
+import TileSetModel from '../schemas/TileSetModel';
 
-type TileSet = Partial<Record<TileType, (Sprite | null)[]>>;
+type TileSet = Readonly<{
+  [key in TileType]?: (Sprite | null)[]
+}>;
 
 const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
-  const tileSet: TileSet = {};
+  const tileSet: {
+    [key in TileType]?: (Sprite | null)[]
+  } = {};
 
   for (const [tileType, filenames] of Object.entries(model.tiles)) {
     const tileSprites: Sprite[] = [];
@@ -23,7 +27,7 @@ const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
     tileSet[tileType as TileType] = tileSprites;
   }
 
-  return tileSet;
+  return tileSet as TileSet;
 };
 
 namespace TileSet {

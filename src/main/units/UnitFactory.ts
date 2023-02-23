@@ -1,4 +1,3 @@
-import { UnitModel } from '../../gen-schema/unit.schema';
 import Coordinates from '../geometry/Coordinates';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
@@ -9,6 +8,7 @@ import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
 import Equipment from '../equipment/Equipment';
+import UnitModel from '../schemas/UnitModel';
 
 type CreateUnitProps = Readonly<{
   /**

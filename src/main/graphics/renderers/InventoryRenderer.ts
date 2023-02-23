@@ -1,4 +1,3 @@
-import { EquipmentSlot } from '../../../gen-schema/equipment-slot.schema';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
@@ -8,6 +7,7 @@ import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import AbstractRenderer from './AbstractRenderer';
+import EquipmentSlot from '../../schemas/EquipmentSlot';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;

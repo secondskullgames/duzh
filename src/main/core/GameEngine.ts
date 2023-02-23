@@ -31,6 +31,7 @@ export class GameEngine {
 
   preloadFirstMap = async () => {
     this.firstMapPromise = this.state.loadNextMap();
+    await this.firstMapPromise;
   };
 
   startGame = async () => {

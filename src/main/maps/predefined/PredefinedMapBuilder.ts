@@ -1,5 +1,3 @@
-import { PredefinedMapModel } from '../../../gen-schema/predefined-map.schema';
-import { TileType } from '../../../gen-schema/tile-type.schema';
 import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
@@ -22,6 +20,8 @@ import { checkNotNull } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../units/controllers/WizardController';
 import HumanRedesignController from '../../units/controllers/HumanRedesignController';
+import PredefinedMapModel from '../../schemas/PredefinedMapModel';
+import TileType from '../../schemas/TileType';
 
 /**
  * TODO - there's a lot of duplication in the private methods here.
