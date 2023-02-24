@@ -24,19 +24,22 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  itemFactory: ItemFactory
+  itemFactory: ItemFactory,
+  spriteFactory: SpriteFactory
 }>
 
 export default class UnitFactory {
   private readonly itemFactory: ItemFactory;
+  private readonly spriteFactory: SpriteFactory;
 
-  constructor({ itemFactory }: Props) {
+  constructor({ itemFactory, spriteFactory }: Props) {
     this.itemFactory = itemFactory;
+    this.spriteFactory = spriteFactory;
   }
 
   createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
     const model: UnitModel = await loadUnitModel(unitClass);
-    const sprite = await SpriteFactory.getInstance().createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
+    const sprite = await this.spriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of (model.equipment ?? [])) {
       const equipment = await this.itemFactory.createEquipment(equipmentClass);

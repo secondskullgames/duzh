@@ -88,7 +88,7 @@ export const getArrowAnimation = async (
 
   // arrow movement frames
   for (const { x, y } of visibleCoordinatesList) {
-    const projectile = await ProjectileFactory.createArrow({ x, y }, direction);
+    const projectile = await ProjectileFactory.getInstance().createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: 'SHOOTING' }],
       projectiles: [projectile]
@@ -155,7 +155,7 @@ export const getBoltAnimation = async (
 
   // arrow movement frames
   for (const { x, y } of visibleCoordinatesList) {
-    const projectile = await ProjectileFactory.createArrow({ x, y }, direction);
+    const projectile = await ProjectileFactory.getInstance().createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: 'ATTACKING' }],
       projectiles: [projectile]

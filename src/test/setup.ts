@@ -33,7 +33,7 @@ export const setup = async () => {
   SpriteFactory.setInstance(spriteFactory);
   const itemFactory = new ItemFactory({ state, engine, spriteFactory });
   ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory });
+  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
   state.setPlayerUnit(playerUnit);
   state.addMaps([() => Promise.resolve(map)]);

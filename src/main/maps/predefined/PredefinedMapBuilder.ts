@@ -173,6 +173,9 @@ const _loadDoors = async (mapClass: PredefinedMapModel, image: Image): Promise<D
 
 const _loadSpawners = async (mapClass: PredefinedMapModel, image: Image): Promise<Spawner[]> => {
   const spawners: Spawner[] = [];
+  const spawnerFactory = new SpawnerFactory({
+    spriteFactory: SpriteFactory.getInstance()
+  });
 
   for (let i = 0; i < image.data.data.length; i += 4) {
     const x = Math.floor(i / 4) % image.data.width;
@@ -182,7 +185,7 @@ const _loadSpawners = async (mapClass: PredefinedMapModel, image: Image): Promis
 
     const spawnerName = mapClass.spawnerColors?.[color.hex];
     if (spawnerName) {
-      spawners.push(await SpawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
+      spawners.push(await spawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
     }
   }
 

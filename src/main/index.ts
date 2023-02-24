@@ -46,7 +46,7 @@ const main = async () => {
   SpriteFactory.setInstance(spriteFactory);
   const itemFactory = new ItemFactory({ state, engine, spriteFactory });
   ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory });
+  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
   await addInitialState(state, unitFactory);
   const debug = new Debug({ engine, state });
