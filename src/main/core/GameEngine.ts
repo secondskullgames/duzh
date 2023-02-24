@@ -140,7 +140,8 @@ export class GameEngine {
       // note: we're logging adjustedDamage here since, if we "overkilled",
       // we still want to give you "credit" for the full damage amount
       if (ability) {
-        ability.getDamageLogMessage(sourceUnit, targetUnit, adjustedDamage);
+        const message = ability.getDamageLogMessage(sourceUnit, targetUnit, adjustedDamage);
+        state.logMessage(message);
       } else {
         state.logMessage(`${sourceUnit.getName()} hit ${targetUnit.getName()} for ${adjustedDamage} damage!`);
       }

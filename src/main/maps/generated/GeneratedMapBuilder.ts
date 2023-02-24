@@ -73,7 +73,7 @@ export default class GeneratedMapBuilder {
     let points = this.pointAllocation.enemies;
 
     while (points > 0) {
-      const possibleUnitModels = (await UnitFactory.loadAllModels())
+      const possibleUnitModels = (await UnitFactory.getInstance().loadAllModels())
         .filter(model => model.level !== null && model.level <= this.level)
         .filter(model => model.points !== null && model.points <= points);
 
@@ -94,7 +94,7 @@ export default class GeneratedMapBuilder {
       } else {
         controller = new HumanRedesignController();
       }
-      const unit = await UnitFactory.createUnit({
+      const unit = await UnitFactory.getInstance().createUnit({
         unitClass: model.id,
         controller,
         faction: 'ENEMY',

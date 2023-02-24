@@ -20,6 +20,7 @@ import UnitController from './controllers/UnitController';
 import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../schemas/UnitModel';
+import { GameEngine } from '../core/GameEngine';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -257,7 +258,9 @@ export default class Unit implements Entity, Animatable {
 
   startAttack = async (target: Unit) => {
     const { x, y } = target;
-    await getAttackingAnimation(this, target);
+    const animation = getAttackingAnimation(this, target);
+    await GameEngine.getInstance().playAnimation(animation);
+
     for (const equipment of this.equipment.getAll()) {
       if (equipment.script) {
         await EquipmentScript.onAttack(equipment, equipment.script, { x, y });

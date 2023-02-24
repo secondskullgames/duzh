@@ -56,7 +56,7 @@ export default class NormalAttack extends UnitAbility {
       const spawner = map.getSpawner({ x, y });
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
-        const animation = await getAttackingAnimation(unit);
+        const animation = getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         spawner.setState('DEAD');
       }

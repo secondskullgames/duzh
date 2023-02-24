@@ -7,9 +7,11 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './units/UnitFactory';
+import ItemFactory from './items/ItemFactory';
 
-const getInitialState = async (): Promise<GameState> => {
-  const playerUnit = await UnitFactory.createPlayerUnit();
+const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
+  const playerUnit = await unitFactory.createPlayerUnit();
+  state.setPlayerUnit(playerUnit);
 
   const mapSpecs = (await import(
     /* webpackChunkName: "models" */
@@ -18,20 +20,25 @@ const getInitialState = async (): Promise<GameState> => {
   const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
     return () => MapFactory.loadMap(mapSpec);
   });
-  return new GameState({ playerUnit, maps });
+  state.addMaps(maps);
 };
 
 const main = async () => {
-  const state = await getInitialState();
+  const state = new GameState();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state
   });
-  const gameDriver = new GameDriver({ renderer, state });
-  const engine = gameDriver.getEngine();
+  const engine = new GameEngine({ state, renderer });
+  const gameDriver = new GameDriver({ renderer, state, engine });
+  const itemFactory = new ItemFactory({ state, engine });
+  const unitFactory = new UnitFactory({ itemFactory });
+  await addInitialState(state, unitFactory);
   GameDriver.setInstance(gameDriver);
   GameState.setInstance(state);
   GameEngine.setInstance(engine);
+  ItemFactory.setInstance(itemFactory);
+  UnitFactory.setInstance(unitFactory);
   const debug = new Debug({ engine, state });
   debug.attachToWindow();
   await engine.render();

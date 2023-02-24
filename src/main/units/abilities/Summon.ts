@@ -29,7 +29,7 @@ export default class Summon extends UnitAbility {
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
-    const summonedUnit = await UnitFactory.createUnit({
+    const summonedUnit = await UnitFactory.getInstance().createUnit({
       unitClass,
       faction: unit.getFaction(),
       controller: new HumanDeterministicController(), // TODO

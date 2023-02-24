@@ -9,7 +9,8 @@ let _instance: GameDriver | null = null;
 
 type Props = Readonly<{
   renderer: GameRenderer,
-  state: GameState
+  state: GameState,
+  engine: GameEngine
 }>;
 
 /**
@@ -21,10 +22,11 @@ export class GameDriver {
   private readonly engine: GameEngine;
   private readonly inputHandler: InputHandler;
 
-  constructor({ renderer, state }: Props) {
+  constructor({ renderer, state, engine }: Props) {
     this.renderer = renderer;
     this.state = state;
-    this.engine = new GameEngine({ state, renderer });
+    this.engine = engine;
+
     this.inputHandler = new InputHandler({
       state,
       engine: this.engine,

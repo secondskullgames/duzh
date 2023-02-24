@@ -69,7 +69,7 @@ export default class Spawner implements Entity, Animatable {
     if (this.cooldown <= 0 && numSpawnedUnits < this.maxUnits) {
       const { x, y } = this;
       if (map.getUnit({ x, y }) === null) {
-        const spawnedUnit = await UnitFactory.createUnit({
+        const spawnedUnit = await UnitFactory.getInstance().createUnit({
           unitClass: this.unitClass,
           coordinates: { x, y },
           level: 1,

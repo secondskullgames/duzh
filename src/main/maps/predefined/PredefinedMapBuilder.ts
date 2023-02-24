@@ -105,7 +105,7 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
           const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
             ? new WizardController()
             : new HumanRedesignController();
-          const unit = await UnitFactory.createUnit({
+          const unit = await UnitFactory.getInstance().createUnit({
             name: `${enemyUnitModel.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
