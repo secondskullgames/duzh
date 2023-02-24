@@ -11,7 +11,20 @@ const ARROW_FRAME_LENGTH = 50; // milliseconds
 const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
+type Props = Readonly<{
+  state: GameState,
+  projectileFactory: ProjectileFactory
+}>;
+
 export default class AnimationFactory {
+  private readonly state: GameState;
+  private readonly projectileFactory: ProjectileFactory
+
+  constructor({ state, projectileFactory }: Props) {
+    this.state = state;
+    this.projectileFactory = projectileFactory;
+  }
+
   getAttackingAnimation = (source: Unit, target?: Unit): Animation => {
     if (target) {
       return {
@@ -68,11 +81,11 @@ export default class AnimationFactory {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(({ x, y }) => GameState.getInstance().getMap().isTileRevealed({ x, y }));
+    const visibleCoordinatesList = coordinatesList.filter(({ x, y }) => this.state.getMap().isTileRevealed({ x, y }));
 
     // arrow movement frames
     for (const { x, y } of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.getInstance().createArrow({ x, y }, direction);
+      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
         projectiles: [projectile]
@@ -114,9 +127,6 @@ export default class AnimationFactory {
     };
   };
 
-  /**
-   * TODO this is still using an arrow sprite
-   */
   getBoltAnimation = async (
     source: Unit,
     direction: Direction,
@@ -135,11 +145,12 @@ export default class AnimationFactory {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(GameState.getInstance().getMap().isTileRevealed);
+    const visibleCoordinatesList = coordinatesList.filter(this.state.getMap().isTileRevealed);
 
-    // arrow movement frames
+    // bolt movement frames
     for (const { x, y } of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.getInstance().createArrow({ x, y }, direction);
+      // TODO this is still using an arrow sprite
+      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],
         projectiles: [projectile]
