@@ -11,6 +11,8 @@ import ItemFactory from './items/ItemFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
+import AnimationFactory from './graphics/animations/AnimationFactory';
+import ProjectileFactory from './objects/ProjectileFactory';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -44,7 +46,10 @@ const main = async () => {
   GameDriver.setInstance(gameDriver);
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
-  const itemFactory = new ItemFactory({ state, engine, spriteFactory });
+  const projectileFactory = new ProjectileFactory({ spriteFactory });
+  const animationFactory = new AnimationFactory({ state, projectileFactory });
+  AnimationFactory.setInstance(animationFactory);
+  const itemFactory = new ItemFactory({ state, engine, spriteFactory, animationFactory });
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);

@@ -8,6 +8,8 @@ import { GameEngine } from '../main/core/GameEngine';
 import ItemFactory from '../main/items/ItemFactory';
 import SpriteFactory from '../main/graphics/sprites/SpriteFactory';
 import ImageFactory from '../main/graphics/images/ImageFactory';
+import ProjectileFactory from '../main/objects/ProjectileFactory';
+import AnimationFactory from '../main/graphics/animations/AnimationFactory';
 
 export const setup = async () => {
   const playerUnit = await UnitFactory.getInstance().createPlayerUnit();
@@ -31,7 +33,10 @@ export const setup = async () => {
   GameEngine.setInstance(engine);
   const spriteFactory = new SpriteFactory({ imageFactory: new ImageFactory() });
   SpriteFactory.setInstance(spriteFactory);
-  const itemFactory = new ItemFactory({ state, engine, spriteFactory });
+  const projectileFactory = new ProjectileFactory({ spriteFactory });
+  const animationFactory = new AnimationFactory({ state, projectileFactory });
+  AnimationFactory.setInstance(animationFactory);
+  const itemFactory = new ItemFactory({ state, engine, spriteFactory, animationFactory });
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);

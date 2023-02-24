@@ -20,18 +20,21 @@ type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 type Props = Readonly<{
   state: GameState,
   engine: GameEngine,
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  animationFactory: AnimationFactory
 }>;
 
 export default class ItemFactory {
   private readonly state: GameState;
   private readonly engine: GameEngine;
   private readonly spriteFactory: SpriteFactory;
+  private readonly animationFactory: AnimationFactory;
 
-  constructor({ state, engine, spriteFactory }: Props) {
+  constructor({ state, engine, spriteFactory, animationFactory }: Props) {
     this.state = state;
     this.engine = engine;
     this.spriteFactory = spriteFactory;
+    this.animationFactory = animationFactory;
   }
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -85,7 +88,7 @@ export default class ItemFactory {
       });
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const animation = await AnimationFactory.getInstance().getFloorFireAnimation(unit, adjacentUnits);
+      const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);
       await engine.playAnimation(animation);
 
       for (const adjacentUnit of adjacentUnits) {
