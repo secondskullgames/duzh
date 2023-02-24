@@ -5,8 +5,8 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { getBoltAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -45,10 +45,10 @@ export default class Bolt extends UnitAbility {
         targetUnit,
         ability: this
       });
-      const boltAnimation = await getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const boltAnimation = await AnimationFactory.getInstance().getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await engine.playAnimation(boltAnimation);
     } else {
-      const boltAnimation = await getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+      const boltAnimation = await AnimationFactory.getInstance().getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
       await engine.playAnimation(boltAnimation);
     }
   };

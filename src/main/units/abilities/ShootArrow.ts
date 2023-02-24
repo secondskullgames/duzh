@@ -5,8 +5,8 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { getArrowAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
 
 export default class ShootArrow extends UnitAbility {
   constructor() {
@@ -43,7 +43,7 @@ export default class ShootArrow extends UnitAbility {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await engine.playAnimation(arrowAnimation);
       await engine.dealDamage(damage, {
         sourceUnit: unit,
@@ -51,7 +51,7 @@ export default class ShootArrow extends UnitAbility {
         ability: this
       });
     } else {
-      const arrowAnimation = await getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
+      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
       await engine.playAnimation(arrowAnimation);
     }
   };

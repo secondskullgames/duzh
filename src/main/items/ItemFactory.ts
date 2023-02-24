@@ -1,6 +1,5 @@
 import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
-import { getFloorFireAnimation } from '../graphics/animations/Animations';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/SoundFX';
@@ -14,6 +13,7 @@ import MapItem from '../objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import { checkNotNull } from '../utils/preconditions';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -85,7 +85,7 @@ export default class ItemFactory {
       });
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const animation = await getFloorFireAnimation(unit, adjacentUnits);
+      const animation = await AnimationFactory.getInstance().getFloorFireAnimation(unit, adjacentUnits);
       await engine.playAnimation(animation);
 
       for (const adjacentUnit of adjacentUnits) {

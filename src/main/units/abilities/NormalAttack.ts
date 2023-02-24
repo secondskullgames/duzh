@@ -5,8 +5,8 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { getAttackingAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
 
 export default class NormalAttack extends UnitAbility {
   constructor() {
@@ -56,7 +56,7 @@ export default class NormalAttack extends UnitAbility {
       const spawner = map.getSpawner({ x, y });
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
-        const animation = getAttackingAnimation(unit);
+        const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         spawner.setState('DEAD');
       }

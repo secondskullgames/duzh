@@ -5,7 +5,6 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Animatable from '../graphics/animations/Animatable';
-import { getAttackingAnimation } from '../graphics/animations/Animations';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import InventoryMap from '../items/InventoryMap';
 import { isInStraightLine } from '../maps/MapUtils';
@@ -21,6 +20,7 @@ import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../schemas/UnitModel';
 import { GameEngine } from '../core/GameEngine';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -258,7 +258,7 @@ export default class Unit implements Entity, Animatable {
 
   startAttack = async (target: Unit) => {
     const { x, y } = target;
-    const animation = getAttackingAnimation(this, target);
+    const animation = AnimationFactory.getInstance().getAttackingAnimation(this, target);
     await GameEngine.getInstance().playAnimation(animation);
 
     for (const equipment of this.equipment.getAll()) {

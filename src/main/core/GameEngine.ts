@@ -10,10 +10,10 @@ import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
-import { Animation } from '../graphics/animations/Animations';
 import MapItem from '../objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import ItemFactory from '../items/ItemFactory';
+import { Animation } from '../graphics/animations/Animation';
 
 let INSTANCE: GameEngine | null = null;
 
