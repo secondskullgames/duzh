@@ -10,6 +10,7 @@ import UnitFactory from './units/UnitFactory';
 import ItemFactory from './items/ItemFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
+import { FontRenderer } from './graphics/FontRenderer';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -30,10 +31,12 @@ const main = async () => {
   GameState.setInstance(state);
   const imageFactory = new ImageFactory();
   ImageFactory.setInstance(imageFactory);
+  const fontRenderer = new FontRenderer({ imageFactory });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state,
-    imageFactory
+    imageFactory,
+    fontRenderer
   });
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);

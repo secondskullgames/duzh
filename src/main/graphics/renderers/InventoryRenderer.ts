@@ -3,11 +3,12 @@ import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
+import { FontDefinition, FontRenderer } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import AbstractRenderer from './AbstractRenderer';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
+import Fonts from '../Fonts';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -18,15 +19,21 @@ const INVENTORY_MARGIN = 10;
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory,
+  fontRenderer: FontRenderer
 }>;
 
 class InventoryRenderer extends AbstractRenderer {
   private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
+  private readonly fontRenderer: FontRenderer;
 
-  constructor({ state }: Props) {
+  constructor({ state, imageFactory, fontRenderer }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
     this.state = state;
+    this.imageFactory = imageFactory;
+    this.fontRenderer = fontRenderer;
   }
 
   _redraw = async () => {
@@ -34,7 +41,7 @@ class InventoryRenderer extends AbstractRenderer {
     const inventory = playerUnit.getInventory();
     const { canvas, context } = this;
 
-    const image = await ImageFactory.getInstance().getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    const image = await this.imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
     // draw equipment
@@ -87,7 +94,7 @@ class InventoryRenderer extends AbstractRenderer {
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await renderFont(text, font, color);
+    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
     drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }
