@@ -8,6 +8,8 @@ import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './units/UnitFactory';
 import ItemFactory from './items/ItemFactory';
+import SpriteFactory from './graphics/sprites/SpriteFactory';
+import ImageFactory from './graphics/images/ImageFactory';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -25,20 +27,25 @@ const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
 
 const main = async () => {
   const state = new GameState();
+  GameState.setInstance(state);
+  const imageFactory = new ImageFactory();
+  ImageFactory.setInstance(imageFactory);
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
-    state
+    state,
+    imageFactory
   });
   const engine = new GameEngine({ state, renderer });
-  const gameDriver = new GameDriver({ renderer, state, engine });
-  const itemFactory = new ItemFactory({ state, engine });
-  const unitFactory = new UnitFactory({ itemFactory });
-  await addInitialState(state, unitFactory);
-  GameDriver.setInstance(gameDriver);
-  GameState.setInstance(state);
   GameEngine.setInstance(engine);
+  const gameDriver = new GameDriver({ renderer, state, engine });
+  GameDriver.setInstance(gameDriver);
+  const spriteFactory = new SpriteFactory({ imageFactory });
+  SpriteFactory.setInstance(spriteFactory);
+  const itemFactory = new ItemFactory({ state, engine, spriteFactory });
   ItemFactory.setInstance(itemFactory);
+  const unitFactory = new UnitFactory({ itemFactory });
   UnitFactory.setInstance(unitFactory);
+  await addInitialState(state, unitFactory);
   const debug = new Debug({ engine, state });
   debug.attachToWindow();
   await engine.render();

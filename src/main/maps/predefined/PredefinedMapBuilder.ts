@@ -36,7 +36,7 @@ class PredefinedMapBuilder {
 
   build = async (): Promise<MapInstance> => {
     const model = await loadPredefinedMapModel(this.mapClass);
-    const image = await ImageFactory.getImage({
+    const image = await ImageFactory.getInstance().getImage({
       filename: `maps/${model.imageFilename}`
     });
 
@@ -156,7 +156,7 @@ const _loadDoors = async (mapClass: PredefinedMapModel, image: Image): Promise<D
 
     const doorDirection = mapClass.doorColors?.[color.hex] ?? null;
     if (doorDirection !== null) {
-      const sprite = await SpriteFactory.createDoorSprite();
+      const sprite = await SpriteFactory.getInstance().createDoorSprite();
       const door = new Door({
         direction: doorDirection,
         state: 'CLOSED',

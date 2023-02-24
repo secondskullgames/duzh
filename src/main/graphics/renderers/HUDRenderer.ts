@@ -42,7 +42,7 @@ class HUDRenderer extends AbstractRenderer {
   };
 
   _renderFrame = async () => {
-    const image = await ImageFactory.getImage({
+    const image = await ImageFactory.getInstance().getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -135,7 +135,7 @@ class HUDRenderer extends AbstractRenderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
-    const image = await ImageFactory.getImage({
+    const image = await ImageFactory.getInstance().getImage({
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });

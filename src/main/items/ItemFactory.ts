@@ -20,16 +20,19 @@ type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
 type Props = Readonly<{
   state: GameState,
-  engine: GameEngine
+  engine: GameEngine,
+  spriteFactory: SpriteFactory
 }>;
 
 export default class ItemFactory {
   private readonly state: GameState;
   private readonly engine: GameEngine;
+  private readonly spriteFactory: SpriteFactory;
 
-  constructor({ state, engine }: Props) {
+  constructor({ state, engine, spriteFactory }: Props) {
     this.state = state;
     this.engine = engine;
+    this.spriteFactory = spriteFactory;
   }
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -103,7 +106,7 @@ export default class ItemFactory {
 
   createMapEquipment = async (equipmentClass: string, { x, y }: Coordinates): Promise<MapItem> => {
     const model = await loadEquipmentModel(equipmentClass);
-    const sprite = await SpriteFactory.createStaticSprite(model.mapIcon, PaletteSwaps.create(model.paletteSwaps));
+    const sprite = await this.spriteFactory.createStaticSprite(model.mapIcon, PaletteSwaps.create(model.paletteSwaps));
     const inventoryItem: InventoryItem = await this._createInventoryWeapon(equipmentClass);
     return new MapItem({ x, y, sprite, inventoryItem });
   };
@@ -123,7 +126,7 @@ export default class ItemFactory {
   createEquipment = async (equipmentClass: string): Promise<Equipment> => {
     const model = await loadEquipmentModel(equipmentClass);
     const spriteName = model.sprite;
-    const sprite = await SpriteFactory.createEquipmentSprite(spriteName, PaletteSwaps.create(model.paletteSwaps));
+    const sprite = await this.spriteFactory.createEquipmentSprite(spriteName, PaletteSwaps.create(model.paletteSwaps));
     const inventoryItem = (model.itemCategory === 'WEAPON')
       ? await this._createInventoryWeapon(equipmentClass)
       : null;
@@ -166,7 +169,7 @@ export default class ItemFactory {
     const paletteSwaps = (model.paletteSwaps !== undefined)
       ? PaletteSwaps.create(model.paletteSwaps)
       : undefined;
-    const sprite = await SpriteFactory.createStaticSprite(model.mapSprite, paletteSwaps);
+    const sprite = await this.spriteFactory.createStaticSprite(model.mapSprite, paletteSwaps);
     return new MapItem({ x, y, sprite, inventoryItem });
   };
 

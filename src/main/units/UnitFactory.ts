@@ -36,7 +36,7 @@ export default class UnitFactory {
 
   createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
     const model: UnitModel = await loadUnitModel(unitClass);
-    const sprite = await SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
+    const sprite = await SpriteFactory.getInstance().createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of (model.equipment ?? [])) {
       const equipment = await this.itemFactory.createEquipment(equipmentClass);

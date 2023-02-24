@@ -5,7 +5,7 @@ import Spawner from './Spawner';
 type SpawnerClass = 'mirror';
 
 const createMirror = async ({ x, y }: Coordinates): Promise<Spawner> => {
-  const sprite = await SpriteFactory.createMirrorSprite();
+  const sprite = await SpriteFactory.getInstance().createMirrorSprite();
   const spawner = new Spawner({
     unitClass: 'shade',
     sprite,

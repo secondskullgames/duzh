@@ -6,6 +6,8 @@ import MapInstance from '../main/maps/MapInstance';
 import { Renderer } from '../main/graphics/renderers/Renderer';
 import { GameEngine } from '../main/core/GameEngine';
 import ItemFactory from '../main/items/ItemFactory';
+import SpriteFactory from '../main/graphics/sprites/SpriteFactory';
+import ImageFactory from '../main/graphics/images/ImageFactory';
 
 export const setup = async () => {
   const playerUnit = await UnitFactory.getInstance().createPlayerUnit();
@@ -26,8 +28,13 @@ export const setup = async () => {
     }
   };
   const engine = new GameEngine({ state, renderer });
-  const itemFactory = new ItemFactory({ state, engine });
+  GameEngine.setInstance(engine);
+  const spriteFactory = new SpriteFactory({ imageFactory: new ImageFactory() });
+  SpriteFactory.setInstance(spriteFactory);
+  const itemFactory = new ItemFactory({ state, engine, spriteFactory });
+  ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory });
+  UnitFactory.setInstance(unitFactory);
   state.setPlayerUnit(playerUnit);
   state.addMaps([() => Promise.resolve(map)]);
   const driver = new GameDriver({
@@ -35,4 +42,5 @@ export const setup = async () => {
     renderer: renderer as GameRenderer,
     engine
   });
+  GameDriver.setInstance(driver);
 };

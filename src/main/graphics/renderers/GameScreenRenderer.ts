@@ -172,7 +172,7 @@ class GameScreenRenderer extends AbstractRenderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
-    const image = await ImageFactory.getImage({
+    const image = await ImageFactory.getInstance().getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps

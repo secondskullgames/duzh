@@ -18,7 +18,8 @@ const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
   parent: Element,
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory
 }>;
 
 class GameRenderer extends BufferedRenderer {
@@ -27,14 +28,16 @@ class GameRenderer extends BufferedRenderer {
   private readonly inventoryRenderer: InventoryRenderer;
   private readonly minimapRenderer: MinimapRenderer;
   private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ parent, state }: Props) {
+  constructor({ parent, state, imageFactory }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
+    this.state = state;
+    this.imageFactory = imageFactory;
     this.gameScreenRenderer = new GameScreenRenderer({ state });
     this.hudRenderer = new HUDRenderer({ state });
     this.inventoryRenderer = new InventoryRenderer({ state });
     this.minimapRenderer = new MinimapRenderer({ state });
-    this.state = state;
 
     const canvas = this.getCanvas();
     parent.appendChild(canvas);
@@ -104,7 +107,7 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
-    const image = await ImageFactory.getImage({ filename });
+    const image = await ImageFactory.getInstance().getImage({ filename });
     this.bufferContext.drawImage(image.bitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };

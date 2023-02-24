@@ -34,7 +34,7 @@ class InventoryRenderer extends AbstractRenderer {
     const inventory = playerUnit.getInventory();
     const { canvas, context } = this;
 
-    const image = await ImageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    const image = await ImageFactory.getInstance().getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
 
     // draw equipment

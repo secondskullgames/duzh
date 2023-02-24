@@ -100,7 +100,7 @@ const _loadFont = async (definition: FontDefinition): Promise<FontInstance> => {
 
   const t1 = new Date().getTime();
   const width = NUM_CHARACTERS * definition.letterWidth;
-  const image = await ImageFactory.getImage({
+  const image = await ImageFactory.getInstance().getImage({
     filename: `fonts/${definition.src}`,
     transparentColor: Colors.WHITE
   });
