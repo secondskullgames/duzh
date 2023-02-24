@@ -20,7 +20,7 @@ const useItem = async (unit: Unit, item: InventoryItem) => {
 };
 
 const equipItem = async (item: InventoryItem, equipmentClass: string, unit: Unit) => {
-  const equipment = await ItemFactory.createEquipment(equipmentClass);
+  const equipment = await ItemFactory.getInstance().createEquipment(equipmentClass);
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
     const inventoryItem = currentEquipment.inventoryItem;

@@ -26,8 +26,9 @@ const createUnit = async ({ name, unitClass, faction, controller, level, coordin
   const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await SpriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
   const equipmentList: Equipment[] = [];
+  const itemFactory = ItemFactory.getInstance();
   for (const equipmentClass of (model.equipment ?? [])) {
-    const equipment = await ItemFactory.createEquipment(equipmentClass);
+    const equipment = await itemFactory.createEquipment(equipmentClass);
     equipmentList.push(equipment);
   }
 

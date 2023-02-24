@@ -123,6 +123,7 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
 
 const _loadItems = async (mapClass: PredefinedMapModel, image: Image): Promise<MapItem[]> => {
   const items: MapItem[] = [];
+  const itemFactory = ItemFactory.getInstance();
 
   for (let i = 0; i < image.data.data.length; i += 4) {
     const x = Math.floor(i / 4) % image.width;
@@ -132,12 +133,12 @@ const _loadItems = async (mapClass: PredefinedMapModel, image: Image): Promise<M
 
     const itemClass = mapClass.itemColors[color.hex] ?? null;
     if (itemClass !== null) {
-      items.push(await ItemFactory.createMapItem(itemClass, { x, y }));
+      items.push(await itemFactory.createMapItem(itemClass, { x, y }));
     }
 
     const equipmentClass = mapClass.equipmentColors[color.hex] ?? null;
     if (equipmentClass !== null) {
-      items.push(await ItemFactory.createMapEquipment(equipmentClass, { x, y }));
+      items.push(await itemFactory.createMapEquipment(equipmentClass, { x, y }));
     }
   }
 
