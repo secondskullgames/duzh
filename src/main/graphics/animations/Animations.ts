@@ -1,12 +1,10 @@
-import { GameEngine } from '../../core/GameEngine';
 import GameState from '../../core/GameState';
-import { createArrow } from '../../objects/ProjectileFactory';
 import Activity from '../../types/Activity';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../units/Unit';
-import { sleep } from '../../utils/promises';
 import Projectile from '../../types/Projectile';
+import ProjectileFactory from '../../objects/ProjectileFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
 const ARROW_FRAME_LENGTH = 50; // milliseconds
@@ -20,19 +18,19 @@ type UnitAnimationFrame = {
   direction?: Direction
 };
 
-type AnimationFrame = {
+type AnimationFrame = Readonly<{
   units: UnitAnimationFrame[],
   projectiles?: Projectile[]
-};
+}>;
 
-type Animation = {
+export type Animation = Readonly<{
   frames: AnimationFrame[],
   delay: number
-};
+}>;
 
-export const playAttackingAnimation = async (source: Unit, target?: Unit) => {
+export const getAttackingAnimation = (source: Unit, target?: Unit): Animation => {
   if (target) {
-    return _playAnimation({
+    return {
       frames: [
         {
           units: [
@@ -48,9 +46,9 @@ export const playAttackingAnimation = async (source: Unit, target?: Unit) => {
         }
       ],
       delay: FRAME_LENGTH
-    });
+    };
   } else {
-    return _playAnimation({
+    return {
       frames: [
         {
           units: [
@@ -64,11 +62,16 @@ export const playAttackingAnimation = async (source: Unit, target?: Unit) => {
         }
       ],
       delay: FRAME_LENGTH
-    });
+    };
   }
 };
 
-export const playArrowAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
+export const getArrowAnimation = async (
+  source: Unit,
+  direction: Direction,
+  coordinatesList: Coordinates[],
+  target: Unit | null
+): Promise<Animation> => {
   const frames: AnimationFrame[] = [];
   // first frame
   {
@@ -85,7 +88,7 @@ export const playArrowAnimation = async (source: Unit, direction: Direction, coo
 
   // arrow movement frames
   for (const { x, y } of visibleCoordinatesList) {
-    const projectile = await createArrow({ x, y }, direction);
+    const projectile = await ProjectileFactory.createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: 'SHOOTING' }],
       projectiles: [projectile]
@@ -121,14 +124,21 @@ export const playArrowAnimation = async (source: Unit, direction: Direction, coo
     frames.push(frame);
   }
 
-  return _playAnimation({
+  return {
     frames,
     delay: ARROW_FRAME_LENGTH
-  });
+  };
 };
 
-
-export const playBoltAnimation = async (source: Unit, direction: Direction, coordinatesList: Coordinates[], target: Unit | null) => {
+/**
+ * TODO this is still using an arrow sprite
+ */
+export const getBoltAnimation = async (
+  source: Unit,
+  direction: Direction,
+  coordinatesList: Coordinates[],
+  target: Unit | null
+): Promise<Animation> => {
   const frames: AnimationFrame[] = [];
   // first frame
   {
@@ -145,7 +155,7 @@ export const playBoltAnimation = async (source: Unit, direction: Direction, coor
 
   // arrow movement frames
   for (const { x, y } of visibleCoordinatesList) {
-    const projectile = await createArrow({ x, y }, direction);
+    const projectile = await ProjectileFactory.createArrow({ x, y }, direction);
     const frame: AnimationFrame = {
       units: [{ unit: source, activity: 'ATTACKING' }],
       projectiles: [projectile]
@@ -181,13 +191,13 @@ export const playBoltAnimation = async (source: Unit, direction: Direction, coor
     frames.push(frame);
   }
 
-  return _playAnimation({
+  return {
     frames,
     delay: BOLT_FRAME_LENGTH
-  });
+  };
 };
 
-export const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
+export const getFloorFireAnimation = async (source: Unit, targets: Unit[]): Promise<Animation> => {
   const frames: AnimationFrame[] = [];
   for (let i = 0; i < targets.length; i++) {
     const frame: UnitAnimationFrame[] = [];
@@ -207,13 +217,13 @@ export const playFloorFireAnimation = async (source: Unit, targets: Unit[]) => {
   }
   frames.push({ units: frame });
 
-  return _playAnimation({
+  return {
     frames,
     delay: FRAME_LENGTH
-  });
+  };
 };
 
-export const playWizardVanishingAnimation = async (source: Unit) => _playAnimation({
+export const getWizardVanishingAnimation = async (source: Unit): Promise<Animation> => ({
   frames: [
     { units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }] },
     { units: [{ unit: source, activity: 'VANISHING', frameNumber: 2 }] },
@@ -223,7 +233,7 @@ export const playWizardVanishingAnimation = async (source: Unit) => _playAnimati
   delay: WIZARD_TELEPORT_FRAME_LENGTH
 });
 
-export const playWizardAppearingAnimation = async (source: Unit) => _playAnimation({
+export const getWizardAppearingAnimation = async (source: Unit): Promise<Animation> => ({
   frames: [
     { units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }] },
     { units: [{ unit: source, activity: 'APPEARING', frameNumber: 2 }] },
@@ -233,31 +243,3 @@ export const playWizardAppearingAnimation = async (source: Unit) => _playAnimati
   ],
   delay: WIZARD_TELEPORT_FRAME_LENGTH
 });
-
-const _playAnimation = async (animation: Animation) => {
-  const { delay, frames } = animation;
-  const engine = GameEngine.getInstance();
-  const state = GameState.getInstance();
-  const map = state.getMap();
-
-  for (let i = 0; i < frames.length; i++) {
-    const frame = frames[i];
-    if (frame.projectiles) {
-      map.projectiles.push(...frame.projectiles);
-    }
-    for (let j = 0; j < frame.units.length; j++) {
-      const { unit, activity, frameNumber, direction } = frame.units[j];
-      unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
-    }
-
-    await engine.render();
-
-    if (i < (frames.length - 1)) {
-      await sleep(delay);
-    }
-
-    for (const projectile of (frame.projectiles ?? [])) {
-      map.removeProjectile(projectile.getCoordinates());
-    }
-  }
-};

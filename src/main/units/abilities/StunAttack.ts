@@ -43,8 +43,7 @@ export default class StunAttack extends UnitAbility {
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`);
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`;
   }
 }

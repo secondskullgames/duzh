@@ -17,13 +17,20 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 class InventoryRenderer extends AbstractRenderer {
-  constructor() {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
+    this.state = state;
   }
 
   _redraw = async () => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
     const { canvas, context } = this;
 

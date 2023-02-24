@@ -5,8 +5,9 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { playWizardAppearingAnimation, playWizardVanishingAnimation } from '../../graphics/animations/Animations';
+import { getWizardAppearingAnimation, getWizardVanishingAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
+import { GameEngine } from '../../core/GameEngine';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -30,15 +31,25 @@ export default class Teleport extends UnitAbility {
     const { x, y } = coordinates;
 
     const state = GameState.getInstance();
+    const engine = GameEngine.getInstance();
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
       playSound(Sounds.WIZARD_VANISH);
-      await playWizardVanishingAnimation(unit);
+
+      {
+        const animation = await getWizardVanishingAnimation(unit);
+        await engine.playAnimation(animation);
+      }
+
       await unit.moveTo({ x, y });
       playSound(Sounds.WIZARD_APPEAR);
-      await playWizardAppearingAnimation(unit);
+
+      {
+        const animation = await getWizardAppearingAnimation(unit);
+        await engine.playAnimation(animation);
+      }
 
       unit.spendMana(this.manaCost);
     } else {
@@ -46,7 +57,7 @@ export default class Teleport extends UnitAbility {
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  }
+  };
 }

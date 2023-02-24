@@ -25,13 +25,15 @@ class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
+  private readonly minimapRenderer: MinimapRenderer;
   private readonly state: GameState;
 
   constructor({ parent, state }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
     this.gameScreenRenderer = new GameScreenRenderer({ state });
     this.hudRenderer = new HUDRenderer({ state });
-    this.inventoryRenderer = new InventoryRenderer();
+    this.inventoryRenderer = new InventoryRenderer({ state });
+    this.minimapRenderer = new MinimapRenderer({ state });
     this.state = state;
 
     const canvas = this.getCanvas();
@@ -113,8 +115,7 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderMinimap = async () => {
-    const minimapRenderer = new MinimapRenderer();
-    const image = await minimapRenderer.render();
+    const image = await this.minimapRenderer.render();
     this.bufferContext.putImageData(image, 0, 0);
   };
 

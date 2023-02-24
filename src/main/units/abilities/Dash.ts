@@ -52,7 +52,7 @@ export default class Dash extends UnitAbility {
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
     throw new Error('can\'t get here');
   }
 }

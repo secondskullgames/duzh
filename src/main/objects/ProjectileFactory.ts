@@ -14,6 +14,17 @@ const createArrow = async ({ x, y }: Coordinates, direction: Direction): Promise
   });
 };
 
-export {
-  createArrow
+const createBolt = async ({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => {
+  const sprite = await SpriteFactory.createProjectileSprite('bolt', direction, PaletteSwaps.empty());
+  return new Projectile({
+    x,
+    y,
+    direction,
+    sprite
+  });
+};
+
+export default {
+  createArrow,
+  createBolt
 };

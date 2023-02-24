@@ -5,7 +5,7 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { playBoltAnimation } from '../../graphics/animations/Animations';
+import { getBoltAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
 
 export default class Bolt extends UnitAbility {
@@ -45,14 +45,15 @@ export default class Bolt extends UnitAbility {
         targetUnit,
         ability: this
       });
-      await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const boltAnimation = await getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      await engine.playAnimation(boltAnimation);
     } else {
-      await playBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+      const boltAnimation = await getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+      await engine.playAnimation(boltAnimation);
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`);
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+    return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
   }
 }

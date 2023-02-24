@@ -1,6 +1,6 @@
 import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
-import { playFloorFireAnimation } from '../graphics/animations/Animations';
+import { getFloorFireAnimation } from '../graphics/animations/Animations';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/SoundFX';
@@ -69,7 +69,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     });
 
     playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFloorFireAnimation(unit, adjacentUnits);
+    const animation = await getFloorFireAnimation(unit, adjacentUnits);
+    await engine.playAnimation(animation);
 
     for (const adjacentUnit of adjacentUnits) {
       await engine.dealDamage(damage, {

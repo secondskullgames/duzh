@@ -5,7 +5,7 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { playAttackingAnimation } from '../../graphics/animations/Animations';
+import { getAttackingAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
 
 export default class NormalAttack extends UnitAbility {
@@ -56,14 +56,14 @@ export default class NormalAttack extends UnitAbility {
       const spawner = map.getSpawner({ x, y });
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
-        await playAttackingAnimation(unit);
+        const animation = await getAttackingAnimation(unit);
+        await engine.playAnimation(animation);
         spawner.setState('DEAD');
       }
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`);
-  }
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
+  };
 }

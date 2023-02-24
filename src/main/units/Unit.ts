@@ -5,7 +5,7 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Animatable from '../graphics/animations/Animatable';
-import { playAttackingAnimation } from '../graphics/animations/Animations';
+import { getAttackingAnimation } from '../graphics/animations/Animations';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import InventoryMap from '../items/InventoryMap';
 import { isInStraightLine } from '../maps/MapUtils';
@@ -109,7 +109,7 @@ export default class Unit implements Entity, Animatable {
     // TODO make this type safe
     this.abilities = (model.abilities[1] ?? [])
       .map(str => str as AbilityName)
-      .map(UnitAbilities.forName);
+      .map(UnitAbilities.abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -232,7 +232,7 @@ export default class Unit implements Entity, Animatable {
     this.damage += damagePerLevel;
     const abilities = this.abilitiesPerLevel[this.level] ?? [];
     for (const abilityName of abilities) {
-      this.abilities.push(UnitAbilities.forName(abilityName as AbilityName));
+      this.abilities.push(UnitAbilities.abilityForName(abilityName as AbilityName));
     }
   };
 
@@ -257,7 +257,7 @@ export default class Unit implements Entity, Animatable {
 
   startAttack = async (target: Unit) => {
     const { x, y } = target;
-    await playAttackingAnimation(this, target);
+    await getAttackingAnimation(this, target);
     for (const equipment of this.equipment.getAll()) {
       if (equipment.script) {
         await EquipmentScript.onAttack(equipment, equipment.script, { x, y });

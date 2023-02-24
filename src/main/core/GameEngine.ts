@@ -9,6 +9,8 @@ import UnitAbility from '../units/abilities/UnitAbility';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
+import { sleep } from '../utils/promises';
+import { Animation } from '../graphics/animations/Animations';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -138,7 +140,7 @@ export class GameEngine {
       // note: we're logging adjustedDamage here since, if we "overkilled",
       // we still want to give you "credit" for the full damage amount
       if (ability) {
-        ability.logDamage(sourceUnit, targetUnit, adjustedDamage);
+        ability.getDamageLogMessage(sourceUnit, targetUnit, adjustedDamage);
       } else {
         state.logMessage(`${sourceUnit.getName()} hit ${targetUnit.getName()} for ${adjustedDamage} damage!`);
       }
@@ -156,6 +158,32 @@ export class GameEngine {
 
       if (sourceUnit === playerUnit) {
         sourceUnit.gainExperience(1);
+      }
+    }
+  };
+
+  playAnimation = async (animation: Animation) => {
+    const { delay, frames } = animation;
+    const map = this.state.getMap();
+
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i];
+      if (frame.projectiles) {
+        map.projectiles.push(...frame.projectiles);
+      }
+      for (let j = 0; j < frame.units.length; j++) {
+        const { unit, activity, frameNumber, direction } = frame.units[j];
+        unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
+      }
+
+      await this.render();
+
+      if (i < (frames.length - 1)) {
+        await sleep(delay);
+      }
+
+      for (const projectile of (frame.projectiles ?? [])) {
+        map.removeProjectile(projectile.getCoordinates());
       }
     }
   };

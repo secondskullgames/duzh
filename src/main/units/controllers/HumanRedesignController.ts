@@ -14,9 +14,9 @@ export default class HumanRedesignController implements UnitController {
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
-    let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
+    let behavior: UnitBehavior;
     if (!canMove(speed)) {
       behavior = UnitBehavior.STAY;
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {

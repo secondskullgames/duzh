@@ -23,7 +23,7 @@ export namespace UnitAbilities {
   export const BOLT: UnitAbility = new Bolt();
   export const STRAFE = new Strafe();
 
-  export const forName = (name: AbilityName): UnitAbility => {
+  export const abilityForName = (name: AbilityName): UnitAbility => {
     const ability = UnitAbilities[name];
     checkNotNull(ability, `Unknown ability ${name}`);
     return ability;

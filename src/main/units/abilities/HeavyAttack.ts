@@ -42,8 +42,7 @@ export default class HeavyAttack extends UnitAbility {
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`);
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+    return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
   }
 }

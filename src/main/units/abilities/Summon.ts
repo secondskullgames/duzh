@@ -40,7 +40,7 @@ export default class Summon extends UnitAbility {
     unit.spendMana(this.manaCost);
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  }
+  };
 }

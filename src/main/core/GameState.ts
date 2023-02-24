@@ -77,9 +77,11 @@ export default class GameState {
     this.queuedAbility = ability;
   };
 
-  getMessages = (): string[] => this.messages.getRecentMessages();
+  getMessages = (): string[] => {
+    return this.messages.getRecentMessages(this.turn);
+  }
   logMessage = (message: string): void => {
-    this.messages.log(message);
+    this.messages.log(message, this.turn);
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };

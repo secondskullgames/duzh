@@ -21,7 +21,7 @@ abstract class UnitAbility {
   }
 
   abstract use(unit: Unit, coordinates: Coordinates | null): Promise<void>;
-  abstract logDamage(unit: Unit, target: Unit, damageTaken: number): void;
+  abstract getDamageLogMessage(unit: Unit, target: Unit, damageTaken: number): string;
 }
 
 export default UnitAbility;
