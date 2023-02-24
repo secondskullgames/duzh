@@ -25,17 +25,20 @@ const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
   state: GameState,
-  fontRenderer: FontRenderer
+  fontRenderer: FontRenderer,
+  imageFactory: ImageFactory
 }>;
 
 class HUDRenderer extends AbstractRenderer {
   private readonly state: GameState;
   private readonly fontRenderer: FontRenderer;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ state, fontRenderer }: Props) {
+  constructor({ state, fontRenderer, imageFactory }: Props) {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
     this.state = state;
     this.fontRenderer = fontRenderer;
+    this.imageFactory = imageFactory;
   }
 
   _redraw = async () => {
@@ -46,7 +49,7 @@ class HUDRenderer extends AbstractRenderer {
   };
 
   _renderFrame = async () => {
-    const image = await ImageFactory.getInstance().getImage({
+    const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -139,7 +142,7 @@ class HUDRenderer extends AbstractRenderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
-    const image = await ImageFactory.getInstance().getImage({
+    const image = await this.imageFactory.getImage({
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });

@@ -43,8 +43,8 @@ class GameRenderer extends BufferedRenderer {
     this.state = state;
     this.imageFactory = imageFactory;
     this.fontRenderer = fontRenderer;
-    this.gameScreenRenderer = new GameScreenRenderer({ state });
-    this.hudRenderer = new HUDRenderer({ state, fontRenderer });
+    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory });
+    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory });
     this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory });
     this.minimapRenderer = new MinimapRenderer({ state });
 
@@ -116,7 +116,7 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
-    const image = await ImageFactory.getInstance().getImage({ filename });
+    const image = await this.imageFactory.getImage({ filename });
     this.bufferContext.drawImage(image.bitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };

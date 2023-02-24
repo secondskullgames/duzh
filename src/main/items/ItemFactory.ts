@@ -10,7 +10,6 @@ import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
-import { equipItem } from './ItemUtils';
 import MapItem from '../objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
@@ -113,7 +112,7 @@ export default class ItemFactory {
 
   private _createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
     const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
-      return equipItem(item, equipmentClass, unit);
+      return GameEngine.getInstance().equipItem(item, equipmentClass, unit);
     };
     const model = await loadEquipmentModel(equipmentClass);
     return new InventoryItem({

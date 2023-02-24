@@ -11,6 +11,9 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
 import { Animation } from '../graphics/animations/Animations';
+import MapItem from '../objects/MapItem';
+import InventoryItem from '../items/InventoryItem';
+import ItemFactory from '../items/ItemFactory';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -187,6 +190,33 @@ export class GameEngine {
         map.removeProjectile(projectile.getCoordinates());
       }
     }
+  };
+
+  pickupItem = (unit: Unit, mapItem: MapItem) => {
+    const { inventoryItem } = mapItem;
+    unit.getInventory().add(inventoryItem);
+    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
+    playSound(Sounds.PICK_UP_ITEM);
+  };
+
+  useItem = async (unit: Unit, item: InventoryItem) => {
+    await item.use(unit);
+    unit.getInventory().remove(item);
+  };
+
+  equipItem = async (item: InventoryItem, equipmentClass: string, unit: Unit) => {
+    const equipment = await ItemFactory.getInstance().createEquipment(equipmentClass);
+    const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
+    if (currentEquipment) {
+      const inventoryItem = currentEquipment.inventoryItem;
+      if (inventoryItem) {
+        unit.getInventory().add(inventoryItem);
+      }
+    }
+    unit.getEquipment().add(equipment);
+    equipment.attach(unit);
+    this.state.logMessage(`Equipped ${equipment.getName()}.`);
+    playSound(Sounds.BLOCKED);
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };

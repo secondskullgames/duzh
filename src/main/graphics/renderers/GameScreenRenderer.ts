@@ -18,19 +18,22 @@ type Element = Readonly<{
 }>;
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory
 }>;
 
 class GameScreenRenderer extends AbstractRenderer {
   private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ state }: Props) {
+  constructor({ state, imageFactory }: Props) {
     super({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,
       id: 'game_screen'
     });
     this.state = state;
+    this.imageFactory = imageFactory;
   }
 
   _redraw = async () => {
@@ -172,7 +175,7 @@ class GameScreenRenderer extends AbstractRenderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
-    const image = await ImageFactory.getInstance().getImage({
+    const image = await this.imageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps
