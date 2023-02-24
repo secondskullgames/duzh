@@ -2,16 +2,25 @@ import UnitController from './UnitController';
 import Unit from '../Unit';
 import GameState from '../../core/GameState';
 import { manhattanDistance } from '../../maps/MapUtils';
-import UnitAbility from '../abilities/UnitAbility';
 import UnitBehaviors from '../UnitBehaviors';
 import Direction from '../../geometry/Direction';
 import Coordinates from '../../geometry/Coordinates';
 import { randChoice } from '../../utils/random';
 import { UnitAbilities } from '../abilities/UnitAbilities';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export default class WizardController implements UnitController {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
+    this.state = state;
+  }
+
   issueOrder = async (unit: Unit) => {
-    const state = GameState.getInstance();
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 

@@ -58,7 +58,8 @@ export default class Spawner implements Entity, Animatable {
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 
-    const map = GameState.getInstance().getMap();
+    const state = GameState.getInstance();
+    const map = state.getMap();
     for (const spawnedUnit of [...this.spawnedUnits]) {
       if (!map.unitExists(spawnedUnit)) {
         this.spawnedUnits.delete(spawnedUnit);
@@ -73,7 +74,7 @@ export default class Spawner implements Entity, Animatable {
           unitClass: this.unitClass,
           coordinates: { x, y },
           level: 1,
-          controller: new HumanDeterministicController(),
+          controller: new HumanDeterministicController({ state }),
           faction: 'ENEMY'
         });
         this.cooldown = this.maxCooldown;

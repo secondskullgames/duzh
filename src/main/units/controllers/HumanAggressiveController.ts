@@ -5,9 +5,19 @@ import UnitBehavior from '../UnitBehaviors';
 import { manhattanDistance } from '../../maps/MapUtils';
 import { weightedRandom } from '../../utils/random';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export default class HumanAggressiveController implements UnitController {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
+    this.state = state;
+  }
+
   issueOrder = async (unit: Unit) => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
 
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());

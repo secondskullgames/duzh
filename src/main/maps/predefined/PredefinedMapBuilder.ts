@@ -79,6 +79,7 @@ const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile
 };
 
 const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<Unit[]> => {
+  const state = GameState.getInstance();
   const units: Unit[] = [];
   let id = 1;
 
@@ -95,7 +96,7 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
       }
       const startingPointColor = checkNotNull(Colors[mapClass.startingPointColor]);
       if (Color.equals(color, startingPointColor)) {
-        const playerUnit = GameState.getInstance().getPlayerUnit();
+        const playerUnit = state.getPlayerUnit();
         playerUnit.setCoordinates({ x, y });
         units.push(playerUnit);
       } else {
@@ -103,8 +104,8 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
         if (enemyUnitClass !== null) {
           const enemyUnitModel = await loadUnitModel(enemyUnitClass);
           const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-            ? new WizardController()
-            : new HumanRedesignController();
+            ? new WizardController({ state })
+            : new HumanRedesignController({ state });
           const unit = await UnitFactory.getInstance().createUnit({
             name: `${enemyUnitModel.name}_${id++}`,
             unitClass: enemyUnitClass,

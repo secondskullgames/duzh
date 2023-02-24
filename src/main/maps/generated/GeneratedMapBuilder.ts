@@ -68,12 +68,14 @@ export default class GeneratedMapBuilder {
   };
 
   _generateUnits = async (): Promise<Unit[]> => {
+    const state = GameState.getInstance();
+    const unitFactory = UnitFactory.getInstance();
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     let points = this.pointAllocation.enemies;
 
     while (points > 0) {
-      const possibleUnitModels = (await UnitFactory.getInstance().loadAllModels())
+      const possibleUnitModels = (await unitFactory.loadAllModels())
         .filter(model => model.level !== null && model.level <= this.level)
         .filter(model => model.points !== null && model.points <= points);
 
@@ -90,11 +92,11 @@ export default class GeneratedMapBuilder {
       let controller: UnitController;
       // TODO super hack!
       if (model.name === 'Goblin Archer') {
-        controller = new ArcherController();
+        controller = new ArcherController({ state });
       } else {
-        controller = new HumanRedesignController();
+        controller = new HumanRedesignController({ state });
       }
-      const unit = await UnitFactory.getInstance().createUnit({
+      const unit = await unitFactory.createUnit({
         unitClass: model.id,
         controller,
         faction: 'ENEMY',
@@ -109,9 +111,9 @@ export default class GeneratedMapBuilder {
   };
 
   private _generateItems = async (): Promise<MapItem[]> => {
+    const itemFactory = ItemFactory.getInstance();
     const items: MapItem[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
-    const itemFactory = ItemFactory.getInstance();
 
     let points = this.pointAllocation.equipment;
     while (points > 0) {

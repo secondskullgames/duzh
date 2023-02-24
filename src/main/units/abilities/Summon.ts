@@ -32,7 +32,7 @@ export default class Summon extends UnitAbility {
     const summonedUnit = await UnitFactory.getInstance().createUnit({
       unitClass,
       faction: unit.getFaction(),
-      controller: new HumanDeterministicController(), // TODO
+      controller: new HumanDeterministicController({ state }), // TODO
       level: 1, // whatever
       coordinates
     });
