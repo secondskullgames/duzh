@@ -1,5 +1,5 @@
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { InputHandler } from '../input/InputHandler';
+import InputHandler from '../input/InputHandler';
 import Music from '../sounds/Music';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from './GameEngine';
@@ -36,7 +36,8 @@ export class GameDriver {
   }
 
   showSplashScreen = async () => {
-    const { engine } = this;
+    const { engine, state } = this;
+    state.setScreen('TITLE');
     await engine.render();
     const evilTheme = await Music.loadMusic('evil');
     Music.playMusic(evilTheme);

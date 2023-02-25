@@ -19,7 +19,7 @@ type Props = Readonly<{
   driver: GameDriver
 }>;
 
-export class InputHandler {
+export default class InputHandler {
   private readonly engine: GameEngine;
   private readonly state: GameState;
   private readonly driver: GameDriver;
