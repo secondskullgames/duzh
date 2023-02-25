@@ -14,6 +14,7 @@ import MapItem from '../objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import ItemFactory from '../items/ItemFactory';
 import { Animation } from '../graphics/animations/Animation';
+import Equipment from '../equipment/Equipment';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -204,8 +205,7 @@ export class GameEngine {
     unit.getInventory().remove(item);
   };
 
-  equipItem = async (item: InventoryItem, equipmentClass: string, unit: Unit) => {
-    const equipment = await ItemFactory.getInstance().createEquipment(equipmentClass);
+  equipItem = async (item: InventoryItem, equipment: Equipment, unit: Unit) => {
     const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
     if (currentEquipment) {
       const inventoryItem = currentEquipment.inventoryItem;

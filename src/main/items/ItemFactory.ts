@@ -114,8 +114,9 @@ export default class ItemFactory {
   };
 
   private _createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
-    const onUse: ItemProc = (item: InventoryItem, unit: Unit) => {
-      return GameEngine.getInstance().equipItem(item, equipmentClass, unit);
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+      const equipment = await this.createEquipment(equipmentClass);
+      return this.engine.equipItem(item, equipment, unit);
     };
     const model = await loadEquipmentModel(equipmentClass);
     return new InventoryItem({
