@@ -7,16 +7,26 @@ import { manhattanDistance } from '../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../utils/random';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export default class HumanRedesignController implements UnitController {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
+    this.state = state;
+  }
+
   issueOrder = async (unit: Unit) => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
-    let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
+    let behavior: UnitBehavior;
     if (!canMove(speed)) {
       behavior = UnitBehavior.STAY;
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {

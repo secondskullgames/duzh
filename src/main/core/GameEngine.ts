@@ -9,6 +9,11 @@ import UnitAbility from '../units/abilities/UnitAbility';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
+import { sleep } from '../utils/promises';
+import MapItem from '../objects/MapItem';
+import InventoryItem from '../items/InventoryItem';
+import ItemFactory from '../items/ItemFactory';
+import { Animation } from '../graphics/animations/Animation';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -138,7 +143,8 @@ export class GameEngine {
       // note: we're logging adjustedDamage here since, if we "overkilled",
       // we still want to give you "credit" for the full damage amount
       if (ability) {
-        ability.logDamage(sourceUnit, targetUnit, adjustedDamage);
+        const message = ability.getDamageLogMessage(sourceUnit, targetUnit, adjustedDamage);
+        state.logMessage(message);
       } else {
         state.logMessage(`${sourceUnit.getName()} hit ${targetUnit.getName()} for ${adjustedDamage} damage!`);
       }
@@ -158,6 +164,59 @@ export class GameEngine {
         sourceUnit.gainExperience(1);
       }
     }
+  };
+
+  playAnimation = async (animation: Animation) => {
+    const { delay, frames } = animation;
+    const map = this.state.getMap();
+
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i];
+      if (frame.projectiles) {
+        map.projectiles.push(...frame.projectiles);
+      }
+      for (let j = 0; j < frame.units.length; j++) {
+        const { unit, activity, frameNumber, direction } = frame.units[j];
+        unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
+      }
+
+      await this.render();
+
+      if (i < (frames.length - 1)) {
+        await sleep(delay);
+      }
+
+      for (const projectile of (frame.projectiles ?? [])) {
+        map.removeProjectile(projectile.getCoordinates());
+      }
+    }
+  };
+
+  pickupItem = (unit: Unit, mapItem: MapItem) => {
+    const { inventoryItem } = mapItem;
+    unit.getInventory().add(inventoryItem);
+    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
+    playSound(Sounds.PICK_UP_ITEM);
+  };
+
+  useItem = async (unit: Unit, item: InventoryItem) => {
+    await item.use(unit);
+    unit.getInventory().remove(item);
+  };
+
+  equipItem = async (item: InventoryItem, equipmentClass: string, unit: Unit) => {
+    const equipment = await ItemFactory.getInstance().createEquipment(equipmentClass);
+    const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
+    if (currentEquipment) {
+      const inventoryItem = currentEquipment.inventoryItem;
+      if (inventoryItem) {
+        unit.getInventory().add(inventoryItem);
+      }
+    }
+    unit.getEquipment().add(equipment);
+    equipment.attach(unit);
+    this.state.logMessage(`Equipped ${equipment.getName()}.`);
+    playSound(Sounds.BLOCKED);
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };

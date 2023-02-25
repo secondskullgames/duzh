@@ -1,9 +1,7 @@
-import { pickupItem, useItem } from '../items/ItemUtils';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import PlayerUnitController from '../units/controllers/PlayerUnitController';
-import UnitAbility from '../units/abilities/UnitAbility';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from '../core/GameEngine';
@@ -21,7 +19,7 @@ type Props = Readonly<{
   driver: GameDriver
 }>;
 
-export class InputHandler {
+export default class InputHandler {
   private readonly engine: GameEngine;
   private readonly state: GameState;
   private readonly driver: GameDriver;
@@ -166,7 +164,7 @@ export class InputHandler {
         const { x, y } = playerUnit.getCoordinates();
         const item = map.getItem({ x, y });
         if (item) {
-          pickupItem(playerUnit, item);
+          this.engine.pickupItem(playerUnit, item);
           map.removeItem({ x, y });
         } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
@@ -181,7 +179,7 @@ export class InputHandler {
 
         if (selectedItem) {
           state.setScreen('GAME');
-          await useItem(playerUnit, selectedItem);
+          await this.engine.useItem(playerUnit, selectedItem);
           await this.engine.render();
         }
         break;

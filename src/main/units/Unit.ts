@@ -5,7 +5,6 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Animatable from '../graphics/animations/Animatable';
-import { playAttackingAnimation } from '../graphics/animations/Animations';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import InventoryMap from '../items/InventoryMap';
 import { isInStraightLine } from '../maps/MapUtils';
@@ -20,6 +19,8 @@ import UnitController from './controllers/UnitController';
 import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../schemas/UnitModel';
+import { GameEngine } from '../core/GameEngine';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -109,7 +110,7 @@ export default class Unit implements Entity, Animatable {
     // TODO make this type safe
     this.abilities = (model.abilities[1] ?? [])
       .map(str => str as AbilityName)
-      .map(UnitAbilities.forName);
+      .map(UnitAbilities.abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -232,7 +233,7 @@ export default class Unit implements Entity, Animatable {
     this.damage += damagePerLevel;
     const abilities = this.abilitiesPerLevel[this.level] ?? [];
     for (const abilityName of abilities) {
-      this.abilities.push(UnitAbilities.forName(abilityName as AbilityName));
+      this.abilities.push(UnitAbilities.abilityForName(abilityName as AbilityName));
     }
   };
 
@@ -257,7 +258,9 @@ export default class Unit implements Entity, Animatable {
 
   startAttack = async (target: Unit) => {
     const { x, y } = target;
-    await playAttackingAnimation(this, target);
+    const animation = AnimationFactory.getInstance().getAttackingAnimation(this, target);
+    await GameEngine.getInstance().playAnimation(animation);
+
     for (const equipment of this.equipment.getAll()) {
       if (equipment.script) {
         await EquipmentScript.onAttack(equipment, equipment.script, { x, y });

@@ -5,6 +5,7 @@ import ImageCache from './ImageCache';
 import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
+import { checkNotNull } from '../../utils/preconditions';
 
 type Props = Readonly<{
   filename?: string,
@@ -17,51 +18,52 @@ type Props = Readonly<{
 const CACHE: ImageCache = ImageCache.create();
 const rawCache: Record<string, ImageData | null> = {};
 
-const getImage = async (props: Props): Promise<Image> => {
-  let filenames: string[];
-  if (props.filenames) {
-    filenames = props.filenames;
-  } else if (props.filename) {
-    filenames = [props.filename];
-  } else {
-    throw new Error('No filenames were specified!');
-  }
-  const { transparentColor, paletteSwaps, effects } = props;
-
-  const images: (Image | null)[] = [];
-  for (const filename of filenames) {
-    const cacheKey = { filename, paletteSwaps, transparentColor, effects };
-    const cached: Image | null | undefined = CACHE.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    let imageData: ImageData | null;
-    if (rawCache[filename]) {
-      imageData = rawCache[filename];
+export default class ImageFactory {
+  getImage = async (props: Props): Promise<Image> => {
+    let filenames: string[];
+    if (props.filenames) {
+      filenames = props.filenames;
+    } else if (props.filename) {
+      filenames = [props.filename];
     } else {
-      imageData = await ImageLoader.loadImage(filename);
-      rawCache[filename] = imageData;
+      throw new Error('No filenames were specified!');
     }
-    if (imageData) {
-      if (transparentColor) {
-        imageData = applyTransparentColor(imageData, transparentColor);
+    const { transparentColor, paletteSwaps, effects } = props;
+
+    for (const filename of filenames) {
+      const cacheKey = { filename, paletteSwaps, transparentColor, effects };
+      const cached: Image | null | undefined = CACHE.get(cacheKey);
+      if (cached) {
+        return cached;
       }
-      if (paletteSwaps) {
-        imageData = replaceColors(imageData, paletteSwaps);
+
+      let imageData: ImageData | null;
+      if (rawCache[filename]) {
+        imageData = rawCache[filename];
+      } else {
+        imageData = await ImageLoader.loadImage(filename);
+        rawCache[filename] = imageData;
       }
-      for (const effect of (effects ?? [])) {
-        imageData = effect.apply(imageData);
+      if (imageData) {
+        if (transparentColor) {
+          imageData = applyTransparentColor(imageData, transparentColor);
+        }
+        if (paletteSwaps) {
+          imageData = replaceColors(imageData, paletteSwaps);
+        }
+        for (const effect of (effects ?? [])) {
+          imageData = effect.apply(imageData);
+        }
+        const image = await Image.create({ imageData, filename });
+        CACHE.put(cacheKey, image);
+        return image;
       }
-      const image = await Image.create({ imageData, filename });
-      CACHE.put(cacheKey, image);
-      return image;
     }
-  }
 
-  throw new Error(`Failed to load images: ${JSON.stringify(filenames)}`);
-};
+    throw new Error(`Failed to load images: ${JSON.stringify(filenames)}`);
+  };
 
-export default {
-  getImage
-};
+  private static instance: ImageFactory | null = null;
+  static getInstance = (): ImageFactory => checkNotNull(ImageFactory.instance);
+  static setInstance = (factory: ImageFactory) => { ImageFactory.instance = factory; };
+}

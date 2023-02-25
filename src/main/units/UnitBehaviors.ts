@@ -6,8 +6,6 @@ import { comparingReversed } from '../utils/arrays';
 import Pathfinder from '../geometry/Pathfinder';
 import { randChoice } from '../utils/random';
 import Unit from './Unit';
-import UnitAbility from './abilities/UnitAbility';
-import Teleport from './abilities/Teleport';
 import { UnitAbilities } from './abilities/UnitAbilities';
 
 type UnitBehavior = (unit: Unit) => Promise<void>;

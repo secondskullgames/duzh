@@ -5,17 +5,27 @@ import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import AbstractRenderer from './AbstractRenderer';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 class MinimapRenderer extends AbstractRenderer {
-  constructor() {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'minimap' });
+    this.state = state;
   }
 
+  /**
+   * @override {@link AbstractRenderer#_redraw}
+   */
   _redraw = async () => {
     const { canvas, context } = this;
     context.fillStyle = '#404040';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    const map = GameState.getInstance().getMap();
+    const map = this.state.getMap();
     const m = Math.floor(Math.min(
       canvas.width / map.width,
       canvas.height / map.height
@@ -35,7 +45,7 @@ class MinimapRenderer extends AbstractRenderer {
   };
 
   private _getColor = ({ x, y }: Coordinates): Color => {
-    const state = GameState.getInstance();
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 

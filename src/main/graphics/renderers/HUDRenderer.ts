@@ -4,11 +4,12 @@ import UnitAbility from '../../units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
+import { FontDefinition, FontRenderer } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import AbstractRenderer from './AbstractRenderer';
+import Fonts from '../Fonts';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -23,15 +24,21 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  fontRenderer: FontRenderer,
+  imageFactory: ImageFactory
 }>;
 
 class HUDRenderer extends AbstractRenderer {
   private readonly state: GameState;
+  private readonly fontRenderer: FontRenderer;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ state }: Props) {
+  constructor({ state, fontRenderer, imageFactory }: Props) {
     super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
     this.state = state;
+    this.fontRenderer = fontRenderer;
+    this.imageFactory = imageFactory;
   }
 
   _redraw = async () => {
@@ -42,7 +49,7 @@ class HUDRenderer extends AbstractRenderer {
   };
 
   _renderFrame = async () => {
-    const image = await ImageFactory.getImage({
+    const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -135,7 +142,7 @@ class HUDRenderer extends AbstractRenderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
-    const image = await ImageFactory.getImage({
+    const image = await this.imageFactory.getImage({
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });
@@ -143,7 +150,7 @@ class HUDRenderer extends AbstractRenderer {
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await renderFont(text, font, color);
+    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
     drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }

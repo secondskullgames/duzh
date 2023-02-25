@@ -2,16 +2,11 @@ import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
 import Unit from '../units/Unit';
 import UnitAbility from '../units/abilities/UnitAbility';
-import { checkNotNull } from '../utils/preconditions';
+import { checkNotNull, checkState } from '../utils/preconditions';
 import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';
 
 let INSTANCE: GameState | null = null;
-
-type Props = Readonly<{
-  playerUnit: Unit,
-  maps: MapSupplier[]
-}>;
 
 /**
  * Global mutable state
@@ -19,7 +14,7 @@ type Props = Readonly<{
 export default class GameState {
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
-  private readonly playerUnit: Unit;
+  private playerUnit: Unit | null;
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: MapInstance[];
   private mapIndex: number;
@@ -28,11 +23,11 @@ export default class GameState {
   private queuedAbility: UnitAbility | null;
   private map: MapInstance | null;
 
-  constructor({ playerUnit, maps }: Props) {
+  constructor() {
     this.screen = 'TITLE';
     this.prevScreen = null;
-    this.playerUnit = playerUnit;
-    this.mapSuppliers = maps;
+    this.playerUnit = null;
+    this.mapSuppliers = [];
     this.maps = [];
     this.mapIndex = -1;
     this.map = null;
@@ -53,7 +48,11 @@ export default class GameState {
     }
   };
 
-  getPlayerUnit = (): Unit => this.playerUnit;
+  getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
+  setPlayerUnit = (unit: Unit): void => {
+    checkState(this.playerUnit === null);
+    this.playerUnit = unit;
+  };
 
   hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
   getMapIndex = () => this.mapIndex;
@@ -63,6 +62,10 @@ export default class GameState {
     const map = await mapSupplier();
     this.maps.push(map);
     return map;
+  };
+
+  addMaps = (suppliers: MapSupplier[]) => {
+    this.mapSuppliers.push(...suppliers);
   };
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
@@ -77,9 +80,11 @@ export default class GameState {
     this.queuedAbility = ability;
   };
 
-  getMessages = (): string[] => this.messages.getRecentMessages();
+  getMessages = (): string[] => {
+    return this.messages.getRecentMessages(this.turn);
+  }
   logMessage = (message: string): void => {
-    this.messages.log(message);
+    this.messages.log(message, this.turn);
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };

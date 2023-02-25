@@ -3,7 +3,7 @@ import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontDefinition, Fonts, renderFont } from '../FontRenderer';
+import { FontDefinition, FontRenderer } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import BufferedRenderer from './BufferedRenderer';
@@ -11,6 +11,7 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
+import Fonts from '../Fonts';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -18,21 +19,34 @@ const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
   parent: Element,
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory,
+  fontRenderer: FontRenderer
 }>;
 
 class GameRenderer extends BufferedRenderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
+  private readonly minimapRenderer: MinimapRenderer;
   private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
+  private readonly fontRenderer: FontRenderer;
 
-  constructor({ parent, state }: Props) {
+  constructor({
+    parent,
+    state,
+    imageFactory,
+    fontRenderer
+  }: Props) {
     super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'game' });
-    this.gameScreenRenderer = new GameScreenRenderer({ state });
-    this.hudRenderer = new HUDRenderer({ state });
-    this.inventoryRenderer = new InventoryRenderer();
     this.state = state;
+    this.imageFactory = imageFactory;
+    this.fontRenderer = fontRenderer;
+    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory });
+    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory });
+    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory });
+    this.minimapRenderer = new MinimapRenderer({ state });
 
     const canvas = this.getCanvas();
     parent.appendChild(canvas);
@@ -102,19 +116,18 @@ class GameRenderer extends BufferedRenderer {
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
-    const image = await ImageFactory.getImage({ filename });
+    const image = await this.imageFactory.getImage({ filename });
     this.bufferContext.drawImage(image.bitmap, 0, 0, this.bufferCanvas.width, this.bufferCanvas.height);
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await renderFont(text, font, color);
+    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
     drawAligned(imageBitmap, this.bufferContext, { x, y }, textAlign);
   };
 
   private _renderMinimap = async () => {
-    const minimapRenderer = new MinimapRenderer();
-    const image = await minimapRenderer.render();
+    const image = await this.minimapRenderer.render();
     this.bufferContext.putImageData(image, 0, 0);
   };
 

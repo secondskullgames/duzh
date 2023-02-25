@@ -29,10 +29,10 @@ export default class Summon extends UnitAbility {
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
-    const summonedUnit = await UnitFactory.createUnit({
+    const summonedUnit = await UnitFactory.getInstance().createUnit({
       unitClass,
       faction: unit.getFaction(),
-      controller: new HumanDeterministicController(), // TODO
+      controller: new HumanDeterministicController({ state }), // TODO
       level: 1, // whatever
       coordinates
     });
@@ -40,7 +40,7 @@ export default class Summon extends UnitAbility {
     unit.spendMana(this.manaCost);
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  }
+  };
 }

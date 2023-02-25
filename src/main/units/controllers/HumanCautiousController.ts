@@ -7,9 +7,19 @@ import UnitBehavior from '../UnitBehaviors';
 import { weightedRandom } from '../../utils/random';
 import { canMove } from './ControllerUtils';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export default class HumanCautiousController implements UnitController {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
+    this.state = state;
+  }
+
   issueOrder = async (unit: Unit) => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_CAUTIOUS behavior requires aiParams!');
     const { speed, visionRange } = aiParameters;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());

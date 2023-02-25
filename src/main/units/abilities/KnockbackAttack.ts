@@ -52,8 +52,7 @@ export default class KnockbackAttack extends UnitAbility {
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`);
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
   }
 }

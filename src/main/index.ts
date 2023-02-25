@@ -7,9 +7,16 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './units/UnitFactory';
+import ItemFactory from './items/ItemFactory';
+import SpriteFactory from './graphics/sprites/SpriteFactory';
+import ImageFactory from './graphics/images/ImageFactory';
+import { FontRenderer } from './graphics/FontRenderer';
+import AnimationFactory from './graphics/animations/AnimationFactory';
+import ProjectileFactory from './objects/ProjectileFactory';
 
-const getInitialState = async (): Promise<GameState> => {
-  const playerUnit = await UnitFactory.createPlayerUnit();
+const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
+  const playerUnit = await unitFactory.createPlayerUnit();
+  state.setPlayerUnit(playerUnit);
 
   const mapSpecs = (await import(
     /* webpackChunkName: "models" */
@@ -18,20 +25,35 @@ const getInitialState = async (): Promise<GameState> => {
   const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
     return () => MapFactory.loadMap(mapSpec);
   });
-  return new GameState({ playerUnit, maps });
+  state.addMaps(maps);
 };
 
 const main = async () => {
-  const state = await getInitialState();
+  const state = new GameState();
+  GameState.setInstance(state);
+  const imageFactory = new ImageFactory();
+  ImageFactory.setInstance(imageFactory);
+  const fontRenderer = new FontRenderer({ imageFactory });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
-    state
+    state,
+    imageFactory,
+    fontRenderer
   });
-  const gameDriver = new GameDriver({ renderer, state });
-  const engine = gameDriver.getEngine();
-  GameDriver.setInstance(gameDriver);
-  GameState.setInstance(state);
+  const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
+  const gameDriver = new GameDriver({ renderer, state, engine });
+  GameDriver.setInstance(gameDriver);
+  const spriteFactory = new SpriteFactory({ imageFactory });
+  SpriteFactory.setInstance(spriteFactory);
+  const projectileFactory = new ProjectileFactory({ spriteFactory });
+  const animationFactory = new AnimationFactory({ state, projectileFactory });
+  AnimationFactory.setInstance(animationFactory);
+  const itemFactory = new ItemFactory({ state, engine, spriteFactory, animationFactory });
+  ItemFactory.setInstance(itemFactory);
+  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
+  UnitFactory.setInstance(unitFactory);
+  await addInitialState(state, unitFactory);
   const debug = new Debug({ engine, state });
   debug.attachToWindow();
   await engine.render();

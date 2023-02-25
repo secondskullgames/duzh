@@ -7,9 +7,19 @@ import { manhattanDistance } from '../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean } from '../../utils/random';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export default class HumanDeterministicController implements UnitController {
+  private readonly state: GameState;
+
+  constructor({ state }: Props) {
+    this.state = state;
+  }
+
   issueOrder = async (unit: Unit) => {
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = this.state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_DETERMINISTIC behavior requires aiParams!');
     const { speed, visionRange, fleeThreshold } = aiParameters;

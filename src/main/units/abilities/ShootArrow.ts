@@ -5,8 +5,8 @@ import GameState from '../../core/GameState';
 import { pointAt } from '../../utils/geometry';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
-import { playArrowAnimation } from '../../graphics/animations/Animations';
 import UnitAbility from './UnitAbility';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
 
 export default class ShootArrow extends UnitAbility {
   constructor() {
@@ -43,19 +43,20 @@ export default class ShootArrow extends UnitAbility {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      await engine.playAnimation(arrowAnimation);
       await engine.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit,
         ability: this
       });
     } else {
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null);
+      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
+      await engine.playAnimation(arrowAnimation);
     }
   };
 
-  logDamage(unit: Unit, target: Unit, damageTaken: number) {
-    const state = GameState.getInstance();
-    state.logMessage(`${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`);
-  }
+  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+    return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
+  };
 }

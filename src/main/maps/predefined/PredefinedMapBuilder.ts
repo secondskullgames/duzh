@@ -36,7 +36,7 @@ class PredefinedMapBuilder {
 
   build = async (): Promise<MapInstance> => {
     const model = await loadPredefinedMapModel(this.mapClass);
-    const image = await ImageFactory.getImage({
+    const image = await ImageFactory.getInstance().getImage({
       filename: `maps/${model.imageFilename}`
     });
 
@@ -79,6 +79,7 @@ const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile
 };
 
 const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<Unit[]> => {
+  const state = GameState.getInstance();
   const units: Unit[] = [];
   let id = 1;
 
@@ -95,7 +96,7 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
       }
       const startingPointColor = checkNotNull(Colors[mapClass.startingPointColor]);
       if (Color.equals(color, startingPointColor)) {
-        const playerUnit = GameState.getInstance().getPlayerUnit();
+        const playerUnit = state.getPlayerUnit();
         playerUnit.setCoordinates({ x, y });
         units.push(playerUnit);
       } else {
@@ -103,9 +104,9 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
         if (enemyUnitClass !== null) {
           const enemyUnitModel = await loadUnitModel(enemyUnitClass);
           const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-            ? new WizardController()
-            : new HumanRedesignController();
-          const unit = await UnitFactory.createUnit({
+            ? new WizardController({ state })
+            : new HumanRedesignController({ state });
+          const unit = await UnitFactory.getInstance().createUnit({
             name: `${enemyUnitModel.name}_${id++}`,
             unitClass: enemyUnitClass,
             faction: 'ENEMY',
@@ -123,6 +124,7 @@ const _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<U
 
 const _loadItems = async (mapClass: PredefinedMapModel, image: Image): Promise<MapItem[]> => {
   const items: MapItem[] = [];
+  const itemFactory = ItemFactory.getInstance();
 
   for (let i = 0; i < image.data.data.length; i += 4) {
     const x = Math.floor(i / 4) % image.width;
@@ -132,12 +134,12 @@ const _loadItems = async (mapClass: PredefinedMapModel, image: Image): Promise<M
 
     const itemClass = mapClass.itemColors[color.hex] ?? null;
     if (itemClass !== null) {
-      items.push(await ItemFactory.createMapItem(itemClass, { x, y }));
+      items.push(await itemFactory.createMapItem(itemClass, { x, y }));
     }
 
     const equipmentClass = mapClass.equipmentColors[color.hex] ?? null;
     if (equipmentClass !== null) {
-      items.push(await ItemFactory.createMapEquipment(equipmentClass, { x, y }));
+      items.push(await itemFactory.createMapEquipment(equipmentClass, { x, y }));
     }
   }
 
@@ -155,7 +157,7 @@ const _loadDoors = async (mapClass: PredefinedMapModel, image: Image): Promise<D
 
     const doorDirection = mapClass.doorColors?.[color.hex] ?? null;
     if (doorDirection !== null) {
-      const sprite = await SpriteFactory.createDoorSprite();
+      const sprite = await SpriteFactory.getInstance().createDoorSprite();
       const door = new Door({
         direction: doorDirection,
         state: 'CLOSED',
@@ -172,6 +174,9 @@ const _loadDoors = async (mapClass: PredefinedMapModel, image: Image): Promise<D
 
 const _loadSpawners = async (mapClass: PredefinedMapModel, image: Image): Promise<Spawner[]> => {
   const spawners: Spawner[] = [];
+  const spawnerFactory = new SpawnerFactory({
+    spriteFactory: SpriteFactory.getInstance()
+  });
 
   for (let i = 0; i < image.data.data.length; i += 4) {
     const x = Math.floor(i / 4) % image.data.width;
@@ -181,7 +186,7 @@ const _loadSpawners = async (mapClass: PredefinedMapModel, image: Image): Promis
 
     const spawnerName = mapClass.spawnerColors?.[color.hex];
     if (spawnerName) {
-      spawners.push(await SpawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
+      spawners.push(await spawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
     }
   }
 
