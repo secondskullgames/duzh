@@ -1,5 +1,4 @@
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import InputHandler from '../input/InputHandler';
 import Music from '../sounds/Music';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from './GameEngine';
@@ -20,19 +19,11 @@ export class GameDriver {
   private readonly state: GameState;
   private readonly renderer: GameRenderer;
   private readonly engine: GameEngine;
-  private readonly inputHandler: InputHandler;
 
   constructor({ renderer, state, engine }: Props) {
     this.renderer = renderer;
     this.state = state;
     this.engine = engine;
-
-    this.inputHandler = new InputHandler({
-      state,
-      engine: this.engine,
-      driver: this
-    });
-    this.inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   }
 
   showSplashScreen = async () => {

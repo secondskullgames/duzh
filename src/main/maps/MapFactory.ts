@@ -11,55 +11,58 @@ import MapInstance from './MapInstance';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
+import { checkNotNull } from '../utils/preconditions';
 
-const loadMap = async (map: MapSpec): Promise<MapInstance> => {
-  switch (map.type) {
-    case 'generated': {
-      const mapClass = await loadGeneratedMapModel(map.id);
-      const mapBuilder = await loadGeneratedMap(mapClass);
-      return mapBuilder.build();
-    }
-    case 'predefined': {
-      return loadPredefinedMap(map.id);
-    }
-  }
-};
-
-const loadGeneratedMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
-  const dungeonGenerator = _getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
-  return dungeonGenerator.generateMap(mapClass);
-};
-
-const loadPredefinedMap = async (mapClass: string): Promise<MapInstance> =>
-  new PredefinedMapBuilder(mapClass).build();
-
-const _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {
-  switch (mapLayout) {
-    case 'ROOMS_AND_CORRIDORS': {
-      const useNewMapGenerator = true;
-      if (useNewMapGenerator) {
-        return new RoomCorridorMapGenerator2(tileSet);
+export default class MapFactory {
+  loadMap = async (map: MapSpec): Promise<MapInstance> => {
+    switch (map.type) {
+      case 'generated': {
+        const mapClass = await loadGeneratedMapModel(map.id);
+        const mapBuilder = await this.loadGeneratedMap(mapClass);
+        return mapBuilder.build();
       }
-      const minRoomDimension = 3;
-      const maxRoomDimension = 7;
-      return new RoomCorridorMapGenerator({
-        tileSet,
-        minRoomDimension,
-        maxRoomDimension
-      });
+      case 'predefined': {
+        return this.loadPredefinedMap(map.id);
+      }
     }
-    case 'ROOMS_AND_CORRIDORS_3': {
-      return new RoomCorridorMapGenerator3(tileSet);
-    }
-    case 'BLOB':
-      return new BlobMapGenerator(tileSet);
-    case 'PATH':
-      return new PathMapGenerator(tileSet);
-    default:
-      throw new Error(`Unknown map layout ${mapLayout}`);
-  }
-};
+  };
 
-export default {
-  loadMap
-};
+  private loadGeneratedMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
+    const dungeonGenerator = this._getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
+    return dungeonGenerator.generateMap(mapClass);
+  };
+
+  private loadPredefinedMap = async (mapClass: string): Promise<MapInstance> =>
+    new PredefinedMapBuilder(mapClass).build();
+
+  private _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {
+    switch (mapLayout) {
+      case 'ROOMS_AND_CORRIDORS': {
+        const useNewMapGenerator = true;
+        if (useNewMapGenerator) {
+          return new RoomCorridorMapGenerator2(tileSet);
+        }
+        const minRoomDimension = 3;
+        const maxRoomDimension = 7;
+        return new RoomCorridorMapGenerator({
+          tileSet,
+          minRoomDimension,
+          maxRoomDimension
+        });
+      }
+      case 'ROOMS_AND_CORRIDORS_3': {
+        return new RoomCorridorMapGenerator3(tileSet);
+      }
+      case 'BLOB':
+        return new BlobMapGenerator(tileSet);
+      case 'PATH':
+        return new PathMapGenerator(tileSet);
+      default:
+        throw new Error(`Unknown map layout ${mapLayout}`);
+    }
+  };
+
+  static instance: MapFactory | null = null;
+  static getInstance = (): MapFactory => checkNotNull(MapFactory.instance);
+  static setInstance = (factory: MapFactory) => { MapFactory.instance = factory; };
+}

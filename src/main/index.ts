@@ -13,6 +13,7 @@ import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import AnimationFactory from './graphics/animations/AnimationFactory';
 import ProjectileFactory from './objects/ProjectileFactory';
+import InputHandler from './input/InputHandler';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -23,7 +24,7 @@ const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
     `../../data/maps.json`
     )).default as MapSpec[];
   const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
-    return () => MapFactory.loadMap(mapSpec);
+    return () => MapFactory.getInstance().loadMap(mapSpec);
   });
   state.addMaps(maps);
 };
@@ -42,8 +43,12 @@ const main = async () => {
   });
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
+  const mapFactory = new MapFactory();
+  MapFactory.setInstance(mapFactory);
   const gameDriver = new GameDriver({ renderer, state, engine });
   GameDriver.setInstance(gameDriver);
+  const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
+  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
   const projectileFactory = new ProjectileFactory({ spriteFactory });

@@ -12,7 +12,6 @@ import GameState from './GameState';
 import { sleep } from '../utils/promises';
 import MapItem from '../objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
-import ItemFactory from '../items/ItemFactory';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';
 
@@ -52,10 +51,8 @@ export class GameEngine {
     console.debug(`Loaded level in ${t2 - t1} ms`);
   };
 
-  startGameDebug = async () => {
+  startGameDebug = async (mapInstance: MapInstance) => {
     console.log('debug mode');
-    const mapInstance = await MapFactory.loadMap({ type: 'generated', id: 'test' });
-    // const mapInstance = await MapFactory.loadMap({ type: 'predefined', id: 'test' });
     this.state.setMap(mapInstance);
     Music.stop();
     // Music.playFigure(Music.TITLE_THEME);

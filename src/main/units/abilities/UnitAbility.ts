@@ -1,7 +1,18 @@
 import Coordinates from '../../geometry/Coordinates';
 import Unit from '../Unit';
 
-export type AbilityName = 'ATTACK' | 'HEAVY_ATTACK' | 'KNOCKBACK_ATTACK' | 'STUN_ATTACK' | 'SHOOT_ARROW' | 'DASH' | 'TELEPORT' | 'SUMMON' | 'BOLT' | 'STRAFE';
+export type AbilityName =
+  | 'ATTACK'
+  | 'HEAVY_ATTACK'
+  | 'KNOCKBACK_ATTACK'
+  | 'STUN_ATTACK'
+  | 'SHOOT_ARROW'
+  | 'DASH'
+  | 'TELEPORT'
+  | 'SUMMON'
+  | 'BOLT'
+  | 'STRAFE'
+  | 'PIERCE';
 
 type Props = Readonly<{
   name: string,
@@ -9,7 +20,7 @@ type Props = Readonly<{
   icon?: string | null
 }>;
 
-abstract class UnitAbility {
+export default abstract class UnitAbility {
   readonly name: string;
   readonly manaCost: number;
   readonly icon: string | null;
@@ -23,5 +34,3 @@ abstract class UnitAbility {
   abstract use(unit: Unit, coordinates: Coordinates | null): Promise<void>;
   abstract getDamageLogMessage(unit: Unit, target: Unit, damageTaken: number): string;
 }
-
-export default UnitAbility;

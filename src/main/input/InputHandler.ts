@@ -10,27 +10,31 @@ import { GameDriver } from '../core/GameDriver';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
 import { UnitAbilities } from '../units/abilities/UnitAbilities';
+import MapFactory from '../maps/MapFactory';
 
 type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
   engine: GameEngine,
   state: GameState,
-  driver: GameDriver
+  driver: GameDriver,
+  mapFactory: MapFactory
 }>;
 
 export default class InputHandler {
   private readonly engine: GameEngine;
   private readonly state: GameState;
   private readonly driver: GameDriver;
+  private readonly mapFactory: MapFactory;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ engine, state, driver }: Props) {
+  constructor({ engine, state, driver, mapFactory }: Props) {
     this.engine = engine;
     this.state = state;
     this.driver = driver;
+    this.mapFactory = mapFactory;
 
     this.busy = false;
     this.eventTarget = null;
@@ -187,7 +191,9 @@ export default class InputHandler {
       case 'TITLE':
         state.setScreen('GAME');
         if (modifiers.includes('SHIFT')) {
-          await this.engine.startGameDebug();
+          const mapInstance = await this.mapFactory.loadMap({ type: 'generated', id: 'test' });
+          // const mapInstance = await this.mapFactory..loadMap({ type: 'predefined', id: 'test' });
+          await this.engine.startGameDebug(mapInstance);
         } else {
           await this.engine.startGame();
         }
