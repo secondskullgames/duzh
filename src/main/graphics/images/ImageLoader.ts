@@ -1,3 +1,5 @@
+import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
+
 const loadImage = async (filename: string): Promise<ImageData | null> => {
   let image: string;
   try {
@@ -12,15 +14,15 @@ const loadImage = async (filename: string): Promise<ImageData | null> => {
   }
 
   return new Promise((resolve, reject) => {
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    canvas.style.display = 'none';
-
-    const img: HTMLImageElement = document.createElement('img');
+    const img = createImage();
 
     img.addEventListener('load', () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const context = canvas.getContext('2d');
+      const canvas = createCanvas({
+        width: img.width,
+        height: img.height
+      });
+      canvas.style.display = 'none';
+      const context = getCanvasContext(canvas);
       if (!context) {
         throw new Error('Couldn\'t get rendering context!');
       }

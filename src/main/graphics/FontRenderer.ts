@@ -3,6 +3,8 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
+import { createCanvas, getCanvasContext } from '../utils/dom';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
@@ -31,8 +33,12 @@ export interface FontInstance extends FontDefinition {
 const _loadedFonts: Record<string, FontInstance> = {};
 const _imageMemos: Record<string, ImageBitmap> = {};
 
-const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+// TODO this didn't specify dimensions previously
+const canvas = createCanvas({
+  width: SCREEN_WIDTH,
+  height: SCREEN_HEIGHT
+});
+const context = getCanvasContext(canvas);
 
 type Props = Readonly<{
   imageFactory: ImageFactory
@@ -95,10 +101,11 @@ export class FontRenderer {
       transparentColor: Colors.WHITE
     });
 
-    const canvas = document.createElement('canvas') as HTMLCanvasElement;
-    canvas.width = width;
-    canvas.height = definition.letterHeight;
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const canvas = createCanvas({
+      width,
+      height: definition.letterHeight
+    });
+    const context = getCanvasContext(canvas);
     context.drawImage(image.bitmap, 0, 0);
     const imageDataMap: Record<string, ImageData> = {};
 

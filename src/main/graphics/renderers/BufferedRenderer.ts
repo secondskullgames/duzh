@@ -1,4 +1,5 @@
 import AbstractRenderer from './AbstractRenderer';
+import { createCanvas, getCanvasContext } from '../../utils/dom';
 
 type Props = Readonly<{
   width: number,
@@ -17,11 +18,8 @@ export default abstract class BufferedRenderer extends AbstractRenderer {
   protected constructor({ width, height, id }: Props) {
     super({ width, height, id });
 
-    this.bufferCanvas = document.createElement('canvas');
-    this.bufferCanvas.width = width;
-    this.bufferCanvas.height = height;
-    this.bufferContext = this.bufferCanvas.getContext('2d') as CanvasRenderingContext2D;
-    this.bufferContext.imageSmoothingEnabled = false;
+    this.bufferCanvas = createCanvas({ width, height });
+    this.bufferContext = getCanvasContext(this.bufferCanvas);
   }
 
   _redraw = async (): Promise<void> => {
