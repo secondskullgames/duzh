@@ -6,7 +6,7 @@ import Spawner from '../entities/objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
-import { checkArgument } from '../utils/preconditions';
+import { checkArgument, checkState } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
 import Entity from '../entities/Entity';
 import Grid from '../types/Grid';
@@ -106,19 +106,12 @@ export default class MapInstance {
     this._entities.put({ x, y }, unit);
   };
 
-  removeUnit = ({ x, y }: Coordinates) => {
-    const unit = this._entities.get({ x, y })
-      .find(entity => entity.getType() === 'unit') as Unit;
-
-    if (unit) {
-      const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
-      if (index >= 0) {
-        this.units.splice(index, 1);
-      }
-      this._entities.remove({ x, y }, unit);
-    } else {
-      console.error(`Tried to remove unit at (${x}, ${y}) but couldn't find it`);
-    }
+  removeUnit = (unit: Unit) => {
+    const { x, y } = unit.getCoordinates();
+    const index = this.units.indexOf(unit);
+    checkState(index >= 0);
+    this.units.splice(index, 1);
+    this._entities.remove({ x, y }, unit);
   };
 
   removeItem = ({ x, y }: Coordinates) => {

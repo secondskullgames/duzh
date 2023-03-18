@@ -1,5 +1,5 @@
 import Coordinates from '../geometry/Coordinates';
-import { checkArgument } from '../utils/preconditions';
+import { checkArgument, checkState } from '../utils/preconditions';
 
 type Props = Readonly<{
   width: number,
@@ -38,9 +38,8 @@ export default class Grid<T> {
     checkArgument(this._contains({ x, y }));
     const items = this.array[y][x];
     const index = items.indexOf(item);
-    if (index > -1) {
-      items.splice(index);
-    }
+    checkState(index > -1);
+    items.splice(index, 1);
   };
 
   private _contains = ({ x, y }: Coordinates): boolean => {

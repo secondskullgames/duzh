@@ -64,7 +64,7 @@ const _attackPlayerUnit_withPath = async (unit: Unit) => {
 
   for (let y = 0; y < mapRect.height; y++) {
     for (let x = 0; x < mapRect.width; x++) {
-      if (!map.getTile({ x, y }).isBlocking) {
+      if (!map.getTile({ x, y }).isBlocking()) {
         unblockedTiles.push({ x, y });
       } else if (Coordinates.equals({ x, y }, playerUnit.getCoordinates())) {
         unblockedTiles.push({ x, y });

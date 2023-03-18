@@ -288,8 +288,14 @@ export default class Unit implements Entity, Animatable {
   };
 
   moveTo = async ({ x, y }: Coordinates) => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    map.removeUnit(this);
+
     this.setCoordinates({ x, y });
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    map.addUnit(this);
+
+    const playerUnit = state.getPlayerUnit();
     if (this === playerUnit) {
       playSound(Sounds.FOOTSTEP);
     }

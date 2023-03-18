@@ -149,7 +149,7 @@ export class GameEngine {
     }
 
     if (targetUnit.getLife() <= 0) {
-      map.removeUnit(targetUnit.getCoordinates());
+      map.removeUnit(targetUnit);
       if (targetUnit === playerUnit) {
         await this.gameOver();
         return;
