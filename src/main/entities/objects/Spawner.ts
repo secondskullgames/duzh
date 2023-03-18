@@ -1,11 +1,10 @@
-import GameState from '../core/GameState';
-import Sprite from '../graphics/sprites/Sprite';
-import Animatable from '../graphics/animations/Animatable';
-import Entity from '../entities/Entity';
-import Unit from '../entities/units/Unit';
-import UnitFactory from '../entities/units/UnitFactory';
-import Coordinates from '../geometry/Coordinates';
-import HumanDeterministicController from '../entities/units/controllers/HumanDeterministicController';
+import GameState from '../../core/GameState';
+import Sprite from '../../graphics/sprites/Sprite';
+import Animatable from '../../graphics/animations/Animatable';
+import Object from './Object';
+import Unit from '../units/Unit';
+import UnitFactory from '../units/UnitFactory';
+import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 
 export type SpawnerState = 'ALIVE' | 'DEAD';
 export namespace SpawnerState {
@@ -22,8 +21,7 @@ type Props = Readonly<{
   isBlocking: boolean
 }>;
 
-export default class Spawner implements Entity, Animatable {
-  private readonly sprite: Sprite;
+export default class Spawner extends Object implements Animatable {
   private state: SpawnerState;
   private readonly maxCooldown: number;
   private cooldown: number = 0;
@@ -31,13 +29,12 @@ export default class Spawner implements Entity, Animatable {
   private readonly maxUnits: number;
   private readonly spawnedUnits: Set<Unit>;
   private readonly _isBlocking: boolean;
-  private x: number;
-  private y: number;
 
   constructor({ x, y, sprite, cooldown, unitClass, maxUnits, isBlocking }: Props) {
-    this.x = x;
-    this.y = y;
-    this.sprite = sprite;
+    super({
+      coordinates: { x, y },
+      sprite
+    });
     this.maxCooldown = cooldown;
     this.unitClass = unitClass;
     this.maxUnits = maxUnits;
@@ -48,8 +45,6 @@ export default class Spawner implements Entity, Animatable {
   }
 
   getAnimationKey = (): string => `${this.state.toLowerCase()}`;
-
-  getSprite = (): Sprite => this.sprite;
 
   update = async () => {
     if (this.state === 'DEAD') {
@@ -68,7 +63,7 @@ export default class Spawner implements Entity, Animatable {
 
     const numSpawnedUnits = this.spawnedUnits.size;
     if (this.cooldown <= 0 && numSpawnedUnits < this.maxUnits) {
-      const { x, y } = this;
+      const { x, y } = this.getCoordinates();
       if (map.getUnit({ x, y }) === null) {
         const spawnedUnit = await UnitFactory.getInstance().createUnit({
           unitClass: this.unitClass,
@@ -87,6 +82,4 @@ export default class Spawner implements Entity, Animatable {
   setState = (state: SpawnerState) => { this.state = state; };
 
   isBlocking = () => this._isBlocking && this.state === 'ALIVE';
-
-  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
 }

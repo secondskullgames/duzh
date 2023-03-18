@@ -9,7 +9,7 @@ import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import InventoryItem from './InventoryItem';
-import MapItem from '../objects/MapItem';
+import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import { checkNotNull } from '../utils/preconditions';

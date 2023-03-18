@@ -4,11 +4,11 @@ import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import Door from '../../objects/Door';
+import Door from '../../entities/objects/Door';
 import ItemFactory from '../../items/ItemFactory';
-import MapItem from '../../objects/MapItem';
-import Spawner from '../../objects/Spawner';
-import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
+import MapItem from '../../entities/objects/MapItem';
+import Spawner from '../../entities/objects/Spawner';
+import SpawnerFactory, { SpawnerClass } from '../../entities/objects/SpawnerFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
@@ -70,13 +70,13 @@ const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile
     const tileType = tileColors[color.hex] ?? null;
     if (tileType !== null) {
       tiles[y][x] = new Tile({
-        type: tileType as TileType,
+        tileType: tileType as TileType,
         tileSet,
         coordinates: { x, y }
       });
     } else if (model.defaultTile) {
       tiles[y][x] = new Tile({
-        type: model.defaultTile,
+        tileType: model.defaultTile,
         tileSet,
         coordinates: { x, y }
       });

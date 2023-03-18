@@ -1,6 +1,6 @@
 import Equipment from '../../equipment/Equipment';
-import Door, { DoorState } from '../../objects/Door';
-import Spawner, { SpawnerState } from '../../objects/Spawner';
+import Door, { DoorState } from '../../entities/objects/Door';
+import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
 import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';

@@ -13,9 +13,10 @@ export const getUnoccupiedLocations = (
 
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
-      const tileType = tiles[y][x].hasOwnProperty('type')
-        ? (tiles[y][x] as Tile).getType()
+      const tileType = tiles[y][x].hasOwnProperty('getTileType')
+        ? (tiles[y][x] as Tile).getTileType()
         : tiles[y][x] as TileType;
+
       if (allowedTileTypes.includes(tileType)) {
         if (!occupiedLocations.find(loc => Coordinates.equals(loc, { x, y }))) {
           unoccupiedLocations.push({ x, y });

@@ -1,8 +1,7 @@
-import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import Animatable from '../graphics/animations/Animatable';
-import Entity from '../entities/Entity';
-import Coordinates from '../geometry/Coordinates';
-import DoorDirection from '../schemas/DoorDirection';
+import DynamicSprite from '../../graphics/sprites/DynamicSprite';
+import Animatable from '../../graphics/animations/Animatable';
+import DoorDirection from '../../schemas/DoorDirection';
+import Object from './Object';
 
 export type DoorState = 'OPEN' | 'CLOSED';
 export namespace DoorState {
@@ -17,24 +16,19 @@ type Props = Readonly<{
   sprite: DynamicSprite<Door>
 }>;
 
-export default class Door implements Entity, Animatable {
+export default class Door extends Object implements  Animatable {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
-  private x: number;
-  private y: number;
-  private readonly sprite: DynamicSprite<Door>;
 
   constructor({ direction, state, x, y, sprite }: Props) {
+    super({
+      coordinates: { x, y },
+      sprite
+    });
+    sprite.target = this;
     this._direction = direction;
     this._state = state;
-    this.x = x;
-    this.y = y;
-    this.sprite = sprite;
-    sprite.target = this;
   }
-
-  /** @override */
-  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
 
   isOpen = () => this._state === 'OPEN';
   isClosed = () => this._state === 'CLOSED';
@@ -55,14 +49,11 @@ export default class Door implements Entity, Animatable {
     }
   };
 
-  /** @override */
-  getSprite = () => this.sprite;
-
   getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
 
-  /** @override */
+  /** @override {@link Entity#update} */
   update = async () => {};
 
-  /** @override */
+  /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => this._state === 'CLOSED';
 }

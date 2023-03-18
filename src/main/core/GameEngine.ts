@@ -10,7 +10,7 @@ import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
-import MapItem from '../objects/MapItem';
+import MapItem from '../entities/objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';

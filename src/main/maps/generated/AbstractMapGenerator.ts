@@ -27,7 +27,7 @@ abstract class AbstractMapGenerator {
       const row: Tile[] = [];
       for (let x = 0; x < tileTypes[y].length; x++) {
         row.push(new Tile({
-          type: tileTypes[y][x],
+          tileType: tileTypes[y][x],
           tileSet: this.tileSet,
           coordinates: { x, y }
         }));

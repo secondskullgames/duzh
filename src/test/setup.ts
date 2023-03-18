@@ -8,7 +8,7 @@ import { GameEngine } from '../main/core/GameEngine';
 import ItemFactory from '../main/items/ItemFactory';
 import SpriteFactory from '../main/graphics/sprites/SpriteFactory';
 import ImageFactory from '../main/graphics/images/ImageFactory';
-import ProjectileFactory from '../main/objects/ProjectileFactory';
+import ProjectileFactory from '../main/entities/objects/ProjectileFactory';
 import AnimationFactory from '../main/graphics/animations/AnimationFactory';
 
 export const setup = async () => {

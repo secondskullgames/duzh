@@ -1,5 +1,5 @@
-import Coordinates from '../geometry/Coordinates';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import Coordinates from '../../geometry/Coordinates';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
 
 export type SpawnerClass = 'mirror';

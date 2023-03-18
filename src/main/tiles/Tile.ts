@@ -7,21 +7,21 @@ import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 
 type Props = Readonly<{
-  type: TileType,
+  tileType: TileType,
   tileSet: TileSet,
   coordinates: Coordinates
 }>;
 
 class Tile implements Entity {
   private readonly coordinates: Coordinates;
-  private readonly type: TileType;
+  private readonly tileType: TileType;
   private readonly sprite: Sprite | null;
 
-  constructor({ type, tileSet, coordinates }: Props) {
-    this.type = type;
+  constructor({ tileType, tileSet, coordinates }: Props) {
+    this.tileType = tileType;
     this.coordinates = coordinates;
 
-    const tilesOfType = checkNotNull(tileSet[type]);
+    const tilesOfType = checkNotNull(tileSet[tileType]);
     this.sprite = randChoice(tilesOfType);
   }
 
@@ -33,7 +33,7 @@ class Tile implements Entity {
 
   /** @override */
   isBlocking = (): boolean => {
-    switch (this.type) {
+    switch (this.tileType) {
       case 'WALL_HALL':
       case 'WALL_TOP':
       case 'WALL':
@@ -47,7 +47,12 @@ class Tile implements Entity {
   /** @override */
   update = async () => {};
 
-  getType = (): TileType => this.type;
+  getTileType = (): TileType => this.tileType;
+
+  /**
+   * @override {@link Entity#getType}
+   */
+  getType = (): EntityType => 'unit';
 }
 
 export default Tile;

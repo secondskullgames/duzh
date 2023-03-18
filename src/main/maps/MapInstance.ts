@@ -1,14 +1,15 @@
 import Rect from '../geometry/Rect';
-import Door from '../objects/Door';
-import MapItem from '../objects/MapItem';
+import Door from '../entities/objects/Door';
+import MapItem from '../entities/objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
-import Spawner from '../objects/Spawner';
+import Spawner from '../entities/objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
 import Entity from '../entities/Entity';
+import Grid from '../types/Grid';
 
 type Props = Readonly<{
   width: number,
@@ -28,6 +29,7 @@ export default class MapInstance {
    * [y][x]
    */
   private readonly _tiles: Tile[][];
+  private readonly _entities: Grid<Entity>;
   readonly units: Unit[];
   readonly items: MapItem[];
   readonly doors: Door[];
@@ -54,6 +56,11 @@ export default class MapInstance {
     this.units = units;
     this.items = items;
     this.projectiles = [];
+    this._entities = new Grid({ width, height });
+    for (const entity of [... doors, ...spawners, ...units, ...items]) {
+      const { x, y } = entity.getCoordinates();
+      this._entities.put({ x, y }, entity);
+    }
     this.revealedTiles = new Set();
     this.music = music;
   }
@@ -95,12 +102,20 @@ export default class MapInstance {
 
   addUnit = (unit: Unit) => {
     this.units.push(unit);
+    const { x, y } = unit.getCoordinates();
+    this._entities.put({ x, y }, unit);
   };
 
   removeUnit = ({ x, y }: Coordinates) => {
-    const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
-    if (index >= 0) {
-      this.units.splice(index, 1);
+    const unit = this._entities.get({ x, y })
+      .find(entity => entity instanceof Unit);
+
+    if (unit) {
+      const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
+      if (index >= 0) {
+        this.units.splice(index, 1);
+      }
+      this._entities.remove({ x, y }, unit);
     }
   };
 

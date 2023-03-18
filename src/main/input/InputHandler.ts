@@ -175,7 +175,7 @@ export default class InputHandler {
         if (item) {
           this.engine.pickupItem(playerUnit, item);
           map.removeItem({ x, y });
-        } else if (map.getTile({ x, y }).getType() === 'STAIRS_DOWN') {
+        } else if (map.getTile({ x, y }).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
           await this.engine.loadNextMap();
         }

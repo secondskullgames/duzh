@@ -366,4 +366,9 @@ export default class Unit implements Entity, Animatable {
   setStunned = (duration: number) => {
     this.stunDuration = Math.max(this.stunDuration, duration);
   };
+
+  /**
+   * @override {@link Entity#getType}
+   */
+  getType = (): EntityType => 'unit';
 }

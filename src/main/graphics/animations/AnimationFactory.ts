@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
-import ProjectileFactory from '../../objects/ProjectileFactory';
+import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import { checkNotNull } from '../../utils/preconditions';
 

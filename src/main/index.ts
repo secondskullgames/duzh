@@ -12,7 +12,7 @@ import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import AnimationFactory from './graphics/animations/AnimationFactory';
-import ProjectileFactory from './objects/ProjectileFactory';
+import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {

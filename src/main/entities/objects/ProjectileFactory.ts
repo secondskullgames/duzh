@@ -1,9 +1,9 @@
-import PaletteSwaps from '../graphics/PaletteSwaps';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
-import Projectile from '../types/Projectile';
-import { checkNotNull } from '../utils/preconditions';
+import PaletteSwaps from '../../graphics/PaletteSwaps';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import Coordinates from '../../geometry/Coordinates';
+import Direction from '../../geometry/Direction';
+import Projectile from '../../types/Projectile';
+import { checkNotNull } from '../../utils/preconditions';
 
 type Props = Readonly<{
   spriteFactory: SpriteFactory
