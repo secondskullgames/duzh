@@ -6,7 +6,7 @@ import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
-import UnitFactory from './units/UnitFactory';
+import UnitFactory from './entities/units/UnitFactory';
 import ItemFactory from './items/ItemFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';

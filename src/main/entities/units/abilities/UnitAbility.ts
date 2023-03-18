@@ -1,4 +1,4 @@
-import Coordinates from '../../geometry/Coordinates';
+import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
 
 export type AbilityName =

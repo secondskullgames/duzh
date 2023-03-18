@@ -1,7 +1,7 @@
 import MapInstance from '../maps/MapInstance';
 import { GameScreen } from '../types/types';
-import Unit from '../units/Unit';
-import UnitAbility from '../units/abilities/UnitAbility';
+import Unit from '../entities/units/Unit';
+import UnitAbility from '../entities/units/abilities/UnitAbility';
 import { checkNotNull, checkState } from '../utils/preconditions';
 import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';

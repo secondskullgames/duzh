@@ -1,4 +1,4 @@
-import Entity from './Entity';
+import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
@@ -23,9 +23,17 @@ export default class Projectile implements Entity {
     this.sprite = sprite;
   };
 
+  /** @override */
   getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+
   getDirection = (): Direction => this.direction;
+
+  /** @override */
   getSprite = (): Sprite => this.sprite;
 
+  /** @override */
   update = async () => {};
+
+  /** @override */
+  isBlocking = (): boolean => false;
 }

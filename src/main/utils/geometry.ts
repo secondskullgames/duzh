@@ -1,7 +1,7 @@
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { checkState } from './preconditions';
-import Unit from '../units/Unit';
+import Unit from '../entities/units/Unit';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));

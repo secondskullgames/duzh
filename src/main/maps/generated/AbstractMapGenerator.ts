@@ -22,9 +22,19 @@ abstract class AbstractMapGenerator {
     const stairsLocation = unoccupiedLocations.shift()!;
     tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
 
-    const tiles = tileTypes.map((row: TileType[]) =>
-      row.map(tileType => Tile.create(tileType, this.tileSet))
-    );
+    const tiles: Tile[][] = [];
+    for (let y = 0; y < tileTypes.length; y++) {
+      const row: Tile[] = [];
+      for (let x = 0; x < tileTypes[y].length; x++) {
+        row.push(new Tile({
+          type: tileTypes[y][x],
+          tileSet: this.tileSet,
+          coordinates: { x, y }
+        }));
+      }
+
+      tiles.push(row);
+    }
 
     return new GeneratedMapBuilder({
       level: mapClass.levelNumber,

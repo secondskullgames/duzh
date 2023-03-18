@@ -12,14 +12,14 @@ import SpawnerFactory, { SpawnerClass } from '../../objects/SpawnerFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import TileSet from '../../tiles/TileSet';
-import UnitController from '../../units/controllers/UnitController';
-import Unit from '../../units/Unit';
-import UnitFactory from '../../units/UnitFactory';
+import UnitController from '../../entities/units/controllers/UnitController';
+import Unit from '../../entities/units/Unit';
+import UnitFactory from '../../entities/units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
-import WizardController from '../../units/controllers/WizardController';
-import HumanRedesignController from '../../units/controllers/HumanRedesignController';
+import WizardController from '../../entities/units/controllers/WizardController';
+import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 
@@ -69,9 +69,17 @@ const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile
 
     const tileType = tileColors[color.hex] ?? null;
     if (tileType !== null) {
-      tiles[y][x] = Tile.create(tileType as TileType, tileSet);
+      tiles[y][x] = new Tile({
+        type: tileType as TileType,
+        tileSet,
+        coordinates: { x, y }
+      });
     } else if (model.defaultTile) {
-      tiles[y][x] = Tile.create(model.defaultTile, tileSet);
+      tiles[y][x] = new Tile({
+        type: model.defaultTile,
+        tileSet,
+        coordinates: { x, y }
+      });
     }
   }
 

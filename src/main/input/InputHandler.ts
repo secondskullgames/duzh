@@ -1,7 +1,7 @@
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
-import PlayerUnitController from '../units/controllers/PlayerUnitController';
+import PlayerUnitController from '../entities/units/controllers/PlayerUnitController';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from '../core/GameEngine';
@@ -9,7 +9,7 @@ import GameState from '../core/GameState';
 import { GameDriver } from '../core/GameDriver';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
-import { UnitAbilities } from '../units/abilities/UnitAbilities';
+import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
 
 type PromiseSupplier = () => Promise<void>;
@@ -175,7 +175,7 @@ export default class InputHandler {
         if (item) {
           this.engine.pickupItem(playerUnit, item);
           map.removeItem({ x, y });
-        } else if (map.getTile({ x, y }).type === 'STAIRS_DOWN') {
+        } else if (map.getTile({ x, y }).getType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
           await this.engine.loadNextMap();
         }

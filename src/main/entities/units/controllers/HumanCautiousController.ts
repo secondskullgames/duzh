@@ -1,10 +1,10 @@
 import UnitController from './UnitController';
 import Unit from '../Unit';
-import GameState from '../../core/GameState';
-import { checkNotNull } from '../../utils/preconditions';
-import { manhattanDistance } from '../../maps/MapUtils';
+import GameState from '../../../core/GameState';
+import { checkNotNull } from '../../../utils/preconditions';
+import { manhattanDistance } from '../../../maps/MapUtils';
 import UnitBehavior from '../UnitBehaviors';
-import { weightedRandom } from '../../utils/random';
+import { weightedRandom } from '../../../utils/random';
 import { canMove } from './ControllerUtils';
 
 type Props = Readonly<{

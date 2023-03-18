@@ -1,6 +1,6 @@
 import Unit from '../Unit';
-import Coordinates from '../../geometry/Coordinates';
-import GameState from '../../core/GameState';
+import Coordinates from '../../../geometry/Coordinates';
+import GameState from '../../../core/GameState';
 import UnitAbility from './UnitAbility';
 
 export default class Strafe extends UnitAbility {

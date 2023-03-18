@@ -1,13 +1,13 @@
 import Unit from '../Unit';
-import Coordinates from '../../geometry/Coordinates';
-import { manhattanDistance } from '../../maps/MapUtils';
-import GameState from '../../core/GameState';
-import { pointAt } from '../../utils/geometry';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
+import Coordinates from '../../../geometry/Coordinates';
+import { manhattanDistance } from '../../../maps/MapUtils';
+import GameState from '../../../core/GameState';
+import { pointAt } from '../../../utils/geometry';
+import { playSound } from '../../../sounds/SoundFX';
+import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
-import { GameEngine } from '../../core/GameEngine';
-import AnimationFactory from '../../graphics/animations/AnimationFactory';
+import { GameEngine } from '../../../core/GameEngine';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;

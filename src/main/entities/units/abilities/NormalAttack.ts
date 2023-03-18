@@ -1,27 +1,28 @@
 import Unit from '../Unit';
-import Coordinates from '../../geometry/Coordinates';
-import { GameEngine } from '../../core/GameEngine';
-import GameState from '../../core/GameState';
-import { pointAt } from '../../utils/geometry';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
+import Coordinates from '../../../geometry/Coordinates';
+import { GameEngine } from '../../../core/GameEngine';
+import GameState from '../../../core/GameState';
+import { pointAt } from '../../../utils/geometry';
+import { playSound } from '../../../sounds/SoundFX';
+import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
-import AnimationFactory from '../../graphics/animations/AnimationFactory';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class PiercingAttack extends UnitAbility {
+export default class NormalAttack extends UnitAbility {
   constructor() {
-    super({ name: 'PIERCE', manaCost: 0 });
+    super({ name: 'ATTACK', manaCost: 0 });
   }
 
   use = async (unit: Unit, coordinates: Coordinates | null) => {
     if (!coordinates) {
-      throw new Error('PiercingAttack requires a target!');
+      throw new Error('NormalAttack requires a target!');
     }
 
     const { x, y } = coordinates;
 
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
@@ -39,17 +40,17 @@ export default class PiercingAttack extends UnitAbility {
           ability: this
         });
       }
-      const nextCoordinates = Coordinates.plus({ x, y }, unit.getDirection());
-      const nextUnit = map.getUnit(nextCoordinates);
-      if (nextUnit) {
-        const damage = unit.getDamage();
-        playSound(Sounds.PLAYER_HITS_ENEMY);
-        await unit.startAttack(nextUnit);
-        await engine.dealDamage(damage, {
-          sourceUnit: unit,
-          targetUnit: nextUnit,
-          ability: this
-        });
+
+      const door = map.getDoor({ x, y });
+      if (door) {
+        const keys = playerUnit.getInventory().get('KEY');
+        if (keys.length > 0) {
+          playerUnit.getInventory().remove(keys[0]);
+          playSound(Sounds.OPEN_DOOR);
+          await door.open();
+        } else {
+          playSound(Sounds.BLOCKED);
+        }
       }
 
       const spawner = map.getSpawner({ x, y });
@@ -58,14 +59,6 @@ export default class PiercingAttack extends UnitAbility {
         const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         spawner.setState('DEAD');
-      }
-
-      const nextSpawner = map.getSpawner(nextCoordinates);
-      if (nextSpawner && nextSpawner.isBlocking()) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
-        await engine.playAnimation(animation);
-        nextSpawner.setState('DEAD');
       }
     }
   };

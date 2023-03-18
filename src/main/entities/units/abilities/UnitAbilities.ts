@@ -8,7 +8,7 @@ import Teleport from './Teleport';
 import Summon from './Summon';
 import Bolt from './Bolt';
 import Strafe from './Strafe';
-import { checkNotNull } from '../../utils/preconditions';
+import { checkNotNull } from '../../../utils/preconditions';
 import UnitAbility, { AbilityName } from './UnitAbility';
 import PiercingAttack from './PiercingAttack';
 

@@ -1,4 +1,4 @@
-import Unit from '../../units/Unit';
+import Unit from '../../entities/units/Unit';
 import Activity from '../../types/Activity';
 import Direction from '../../geometry/Direction';
 import Projectile from '../../types/Projectile';

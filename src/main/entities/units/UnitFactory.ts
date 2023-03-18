@@ -1,15 +1,15 @@
-import Coordinates from '../geometry/Coordinates';
-import PaletteSwaps from '../graphics/PaletteSwaps';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import ItemFactory from '../items/ItemFactory';
-import { Faction } from '../types/types';
-import { loadUnitModel } from '../utils/models';
+import Coordinates from '../../geometry/Coordinates';
+import PaletteSwaps from '../../graphics/PaletteSwaps';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import ItemFactory from '../../items/ItemFactory';
+import { Faction } from '../../types/types';
+import { loadUnitModel } from '../../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
 import UnitController from './controllers/UnitController';
 import Unit from './Unit';
-import Equipment from '../equipment/Equipment';
-import UnitModel from '../schemas/UnitModel';
-import { checkNotNull } from '../utils/preconditions';
+import Equipment from '../../equipment/Equipment';
+import UnitModel from '../../schemas/UnitModel';
+import { checkNotNull } from '../../utils/preconditions';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -68,7 +68,7 @@ export default class UnitFactory {
 
   loadAllModels = async (): Promise<UnitModel[]> => {
     const requireContext = require.context(
-      '../../../data/units',
+      '../../../../data/units',
       false,
       /\.json$/i
     );

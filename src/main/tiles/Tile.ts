@@ -3,35 +3,51 @@ import { randChoice } from '../utils/random';
 import TileSet from './TileSet';
 import { checkNotNull } from '../utils/preconditions';
 import TileType from '../schemas/TileType';
+import Entity from '../entities/Entity';
+import Coordinates from '../geometry/Coordinates';
 
-interface Tile {
+type Props = Readonly<{
   type: TileType,
-  isBlocking: boolean
-  getSprite: () => Sprite | null
-}
+  tileSet: TileSet,
+  coordinates: Coordinates
+}>;
 
-namespace Tile {
-  export const create = (type: TileType, tileSet: TileSet): Tile => {
+class Tile implements Entity {
+  private readonly coordinates: Coordinates;
+  private readonly type: TileType;
+  private readonly sprite: Sprite | null;
+
+  constructor({ type, tileSet, coordinates }: Props) {
+    this.type = type;
+    this.coordinates = coordinates;
+
     const tilesOfType = checkNotNull(tileSet[type]);
-    const sprite = randChoice(tilesOfType);
-    return {
-      type,
-      getSprite: () => sprite,
-      isBlocking: _isBlocking(type)
-    };
-  };
-}
-
-const _isBlocking = (tileType: TileType): boolean => {
-  switch (tileType) {
-    case 'WALL_HALL':
-    case 'WALL_TOP':
-    case 'WALL':
-    case 'NONE':
-      return true;
-    default:
-      return false;
+    this.sprite = randChoice(tilesOfType);
   }
-};
+
+  /** @override */
+  getCoordinates = (): Coordinates => this.coordinates;
+
+  /** @override */
+  getSprite = (): Sprite | null => this.sprite;
+
+  /** @override */
+  isBlocking = (): boolean => {
+    switch (this.type) {
+      case 'WALL_HALL':
+      case 'WALL_TOP':
+      case 'WALL':
+      case 'NONE':
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  /** @override */
+  update = async () => {};
+
+  getType = (): TileType => this.type;
+}
 
 export default Tile;

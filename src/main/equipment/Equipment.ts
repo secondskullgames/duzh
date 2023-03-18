@@ -1,7 +1,7 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
-import Unit from '../units/Unit';
+import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
 import { EquipmentScript } from './EquipmentScript';

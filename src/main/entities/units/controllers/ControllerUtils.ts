@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import GameState from '../../../core/GameState';
 
 export const canMove = (speed: number): boolean => {
   // deterministic version

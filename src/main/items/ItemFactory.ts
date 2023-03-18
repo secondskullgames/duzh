@@ -5,7 +5,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
-import Unit from '../units/Unit';
+import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import InventoryItem from './InventoryItem';

@@ -1,10 +1,10 @@
-import GameState from '../core/GameState';
-import { isInStraightLine, manhattanDistance } from '../maps/MapUtils';
-import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
-import { comparingReversed } from '../utils/arrays';
-import Pathfinder from '../geometry/Pathfinder';
-import { randChoice } from '../utils/random';
+import GameState from '../../core/GameState';
+import { isInStraightLine, manhattanDistance } from '../../maps/MapUtils';
+import Coordinates from '../../geometry/Coordinates';
+import Direction from '../../geometry/Direction';
+import { comparingReversed } from '../../utils/arrays';
+import Pathfinder from '../../geometry/Pathfinder';
+import { randChoice } from '../../utils/random';
 import Unit from './Unit';
 import { UnitAbilities } from './abilities/UnitAbilities';
 

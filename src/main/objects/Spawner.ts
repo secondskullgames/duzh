@@ -1,11 +1,11 @@
 import GameState from '../core/GameState';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
-import Entity from '../types/Entity';
-import Unit from '../units/Unit';
-import UnitFactory from '../units/UnitFactory';
+import Entity from '../entities/Entity';
+import Unit from '../entities/units/Unit';
+import UnitFactory from '../entities/units/UnitFactory';
 import Coordinates from '../geometry/Coordinates';
-import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
+import HumanDeterministicController from '../entities/units/controllers/HumanDeterministicController';
 
 export type SpawnerState = 'ALIVE' | 'DEAD';
 export namespace SpawnerState {

@@ -1,10 +1,10 @@
 import Unit from '../Unit';
-import Coordinates from '../../geometry/Coordinates';
-import { GameEngine } from '../../core/GameEngine';
-import GameState from '../../core/GameState';
-import { pointAt } from '../../utils/geometry';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
+import Coordinates from '../../../geometry/Coordinates';
+import { GameEngine } from '../../../core/GameEngine';
+import GameState from '../../../core/GameState';
+import { pointAt } from '../../../utils/geometry';
+import { playSound } from '../../../sounds/SoundFX';
+import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 
 export default class StunAttack extends UnitAbility {

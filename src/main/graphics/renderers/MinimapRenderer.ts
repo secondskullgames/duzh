@@ -54,7 +54,7 @@ class MinimapRenderer extends AbstractRenderer {
     }
 
     if (map.isTileRevealed({ x, y })) {
-      const tileType = map.getTile({ x, y }).type;
+      const tileType = map.getTile({ x, y }).getType();
       switch (tileType) {
         case 'STAIRS_DOWN':
           return Colors.BLUE;

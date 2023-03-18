@@ -4,15 +4,15 @@ import { CustomSet } from '../../types/CustomSet';
 import ItemFactory from '../../items/ItemFactory';
 import MapItem from '../../objects/MapItem';
 import Tile from '../../tiles/Tile';
-import Unit from '../../units/Unit';
-import UnitFactory from '../../units/UnitFactory';
+import Unit from '../../entities/units/Unit';
+import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
 import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
-import UnitController from '../../units/controllers/UnitController';
+import UnitController from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
-import ArcherController from '../../units/controllers/ArcherController';
-import HumanRedesignController from '../../units/controllers/HumanRedesignController';
+import ArcherController from '../../entities/units/controllers/ArcherController';
+import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 
 type Props = Readonly<{

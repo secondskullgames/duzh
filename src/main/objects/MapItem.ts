@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import Entity from '../types/Entity';
+import Entity from '../entities/Entity';
 import InventoryItem from '../items/InventoryItem';
 import Coordinates from '../geometry/Coordinates';
 
@@ -23,7 +23,15 @@ export default class MapItem implements Entity {
     this.inventoryItem = inventoryItem;
   }
 
+  /** @override */
   getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+
+  /** @override */
   getSprite = () => this.sprite;
+
+  /** @override */
   update = async () => {};
+
+  /** @override */
+  isBlocking = (): boolean => false;
 }

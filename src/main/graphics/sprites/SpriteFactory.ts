@@ -7,7 +7,7 @@ import Colors from '../Colors';
 import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
-import Unit from '../../units/Unit';
+import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import DynamicSprite from './DynamicSprite';

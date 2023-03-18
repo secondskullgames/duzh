@@ -1,11 +1,11 @@
 import UnitController from './UnitController';
 import Unit from '../Unit';
-import GameState from '../../core/GameState';
-import { manhattanDistance } from '../../maps/MapUtils';
+import GameState from '../../../core/GameState';
+import { manhattanDistance } from '../../../maps/MapUtils';
 import UnitBehaviors from '../UnitBehaviors';
-import Direction from '../../geometry/Direction';
-import Coordinates from '../../geometry/Coordinates';
-import { randChoice } from '../../utils/random';
+import Direction from '../../../geometry/Direction';
+import Coordinates from '../../../geometry/Coordinates';
+import { randChoice } from '../../../utils/random';
 import { UnitAbilities } from '../abilities/UnitAbilities';
 
 type Props = Readonly<{

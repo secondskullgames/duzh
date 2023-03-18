@@ -1,26 +1,27 @@
-import GameState from '../core/GameState';
-import Equipment from '../equipment/Equipment';
-import EquipmentMap from '../equipment/EquipmentMap';
-import { EquipmentScript } from '../equipment/EquipmentScript';
-import Coordinates from '../geometry/Coordinates';
-import Direction from '../geometry/Direction';
-import Animatable from '../graphics/animations/Animatable';
-import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import InventoryMap from '../items/InventoryMap';
-import { isInStraightLine } from '../maps/MapUtils';
-import { playSound } from '../sounds/SoundFX';
-import Sounds from '../sounds/Sounds';
-import Activity from '../types/Activity';
-import Entity from '../types/Entity';
-import { Faction } from '../types/types';
-import { checkArgument } from '../utils/preconditions';
+import GameState from '../../core/GameState';
+import Equipment from '../../equipment/Equipment';
+import EquipmentMap from '../../equipment/EquipmentMap';
+import { EquipmentScript } from '../../equipment/EquipmentScript';
+import Coordinates from '../../geometry/Coordinates';
+import Direction from '../../geometry/Direction';
+import Animatable from '../../graphics/animations/Animatable';
+import DynamicSprite from '../../graphics/sprites/DynamicSprite';
+import InventoryMap from '../../items/InventoryMap';
+import { isInStraightLine } from '../../maps/MapUtils';
+import { playSound } from '../../sounds/SoundFX';
+import Sounds from '../../sounds/Sounds';
+import Activity from '../../types/Activity';
+import Entity from '../Entity';
+import { Faction } from '../../types/types';
+import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
 import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
-import UnitModel from '../schemas/UnitModel';
-import { GameEngine } from '../core/GameEngine';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
+import UnitModel from '../../schemas/UnitModel';
+import { GameEngine } from '../../core/GameEngine';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
+import Sprite from '../../graphics/sprites/Sprite';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -162,11 +163,18 @@ export default class Unit implements Entity, Animatable {
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
   getController = (): UnitController => this.controller;
-  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+
+  /** @override */
+  getCoordinates = (): Coordinates => ({
+    x: this.x,
+    y: this.y
+  });
+
   setCoordinates = ({ x, y }: Coordinates) => {
     this.x = x;
     this.y = y;
   };
+
   getLife = () => this.life;
   getMaxLife = () => this.maxLife;
   getMana = () => this.mana;
@@ -180,9 +188,15 @@ export default class Unit implements Entity, Animatable {
   setDirection = (direction: Direction) => { this.direction = direction; };
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
-  getSprite = () => this.sprite;
+
+  /**
+   * @override
+   */
+  getSprite = (): Sprite => this.sprite;
+
   getSummonedUnitClass = () => this.summonedUnitClass;
 
+  /** @override */
   update = async () => {
     await this._upkeep();
     if (this.stunDuration === 0) {
@@ -191,6 +205,9 @@ export default class Unit implements Entity, Animatable {
     await this.sprite.getImage();
     await this._endOfTurn();
   };
+
+  /** @override */
+  isBlocking = (): boolean => true;
 
   getDamage = (): number => {
     let damage = this.damage;

@@ -1,9 +1,9 @@
 import UnitController from './UnitController';
 import Unit from '../Unit';
-import GameState from '../../core/GameState';
+import GameState from '../../../core/GameState';
 import UnitBehavior from '../UnitBehaviors';
-import { manhattanDistance } from '../../maps/MapUtils';
-import { weightedRandom } from '../../utils/random';
+import { manhattanDistance } from '../../../maps/MapUtils';
+import { weightedRandom } from '../../../utils/random';
 
 type Props = Readonly<{
   state: GameState

@@ -5,9 +5,10 @@ import Coordinates from '../geometry/Coordinates';
 import Spawner from '../objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
-import Unit from '../units/Unit';
+import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
+import Entity from '../entities/Entity';
 
 type Props = Readonly<{
   width: number,
@@ -87,7 +88,7 @@ export default class MapInstance {
     checkArgument(this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
     return !!this.getUnit({ x, y })
       || this.getDoor({ x, y })?.isClosed()
-      || this.getTile({ x, y }).isBlocking
+      || this.getTile({ x, y }).isBlocking()
       || this.getSpawner({ x, y })?.isBlocking()
       || false;
   };

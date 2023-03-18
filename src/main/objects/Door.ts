@@ -1,6 +1,6 @@
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
 import Animatable from '../graphics/animations/Animatable';
-import Entity from '../types/Entity';
+import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 import DoorDirection from '../schemas/DoorDirection';
 
@@ -33,7 +33,9 @@ export default class Door implements Entity, Animatable {
     sprite.target = this;
   }
 
+  /** @override */
   getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
+
   isOpen = () => this._state === 'OPEN';
   isClosed = () => this._state === 'CLOSED';
 
@@ -53,9 +55,14 @@ export default class Door implements Entity, Animatable {
     }
   };
 
+  /** @override */
   getSprite = () => this.sprite;
 
   getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
 
+  /** @override */
   update = async () => {};
+
+  /** @override */
+  isBlocking = (): boolean => this._state === 'CLOSED';
 }
