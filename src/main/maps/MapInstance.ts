@@ -108,7 +108,7 @@ export default class MapInstance {
 
   removeUnit = ({ x, y }: Coordinates) => {
     const unit = this._entities.get({ x, y })
-      .find(entity => entity instanceof Unit);
+      .find(entity => entity.getType() === 'unit') as Unit;
 
     if (unit) {
       const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
@@ -116,6 +116,8 @@ export default class MapInstance {
         this.units.splice(index, 1);
       }
       this._entities.remove({ x, y }, unit);
+    } else {
+      console.error(`Tried to remove unit at (${x}, ${y}) but couldn't find it`);
     }
   };
 
