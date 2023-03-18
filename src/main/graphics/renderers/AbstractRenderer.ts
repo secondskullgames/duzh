@@ -1,4 +1,5 @@
 import { Renderer } from './Renderer';
+import { createCanvas, getCanvasContext } from '../../utils/dom';
 
 type Props = Readonly<{
   width: number,
@@ -21,11 +22,9 @@ export default abstract class AbstractRenderer implements Renderer {
     this.height = height;
     this.id = id;
 
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = width;
-    this.canvas.height = height;
+    this.canvas = createCanvas({ width, height });
     this.canvas.classList.add(this.id);
-    this.context = this.canvas.getContext('2d')!;
+    this.context = getCanvasContext(this.canvas);
   }
 
   render = async (): Promise<ImageData> => {
