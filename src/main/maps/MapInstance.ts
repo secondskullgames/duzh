@@ -30,7 +30,7 @@ export default class MapInstance {
    */
   private readonly _tiles: Tile[][];
   private readonly _entities: Grid<Entity>;
-  readonly units: Unit[];
+  private readonly units: Set<Unit>;
   readonly items: MapItem[];
   readonly doors: Door[];
   readonly spawners: Spawner[];
@@ -53,7 +53,7 @@ export default class MapInstance {
     this._tiles = tiles;
     this.doors = doors;
     this.spawners = spawners;
-    this.units = units;
+    this.units = new Set(units);
     this.items = items;
     this.projectiles = [];
     this._entities = new Grid({ width, height });
@@ -72,8 +72,13 @@ export default class MapInstance {
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
-  getUnit = ({ x, y }: Coordinates): (Unit | null) =>
-    this.units.find(unit => Coordinates.equals(unit.getCoordinates(), { x, y })) ?? null;
+  getUnit = ({ x, y }: Coordinates): (Unit | null) => {
+    const entity = this._entities.get({ x, y })
+      .find(entity => entity.getType() === 'unit');
+    return entity ? entity as Unit : null;
+  }
+
+  getAllUnits = (): Unit[] => [...this.units];
 
   getItem = ({ x, y }: Coordinates): (MapItem | null) =>
     this.items.find(item => Coordinates.equals(item.getCoordinates(), { x, y })) ?? null;
@@ -101,16 +106,16 @@ export default class MapInstance {
   };
 
   addUnit = (unit: Unit) => {
-    this.units.push(unit);
+    checkState(!this.units.has(unit));
+    this.units.add(unit);
     const { x, y } = unit.getCoordinates();
     this._entities.put({ x, y }, unit);
   };
 
   removeUnit = (unit: Unit) => {
     const { x, y } = unit.getCoordinates();
-    const index = this.units.indexOf(unit);
-    checkState(index >= 0);
-    this.units.splice(index, 1);
+    checkState(this.units.has(unit));
+    this.units.delete(unit);
     this._entities.remove({ x, y }, unit);
   };
 
@@ -142,5 +147,5 @@ export default class MapInstance {
   revealTile = ({ x, y }: Coordinates) =>
     this.revealedTiles.add(JSON.stringify({ x, y }));
 
-  unitExists = (unit: Unit): boolean => !!this.units.find(u => u === unit);
+  unitExists = (unit: Unit): boolean => this.units.has(unit);
 }

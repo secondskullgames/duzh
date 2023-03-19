@@ -2,10 +2,14 @@ import Unit from '../Unit';
 import UnitController from './UnitController';
 import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
-import UnitBehavior from '../UnitBehaviors';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
+import UnitBehavior from '../behaviors/UnitBehavior';
+import StayBehavior from '../behaviors/StayBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
 
 type Props = Readonly<{
   state: GameState
@@ -28,24 +32,24 @@ export default class ArcherController implements UnitController {
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!canMove(speed)) {
-      behavior = UnitBehavior.STAY;
+      behavior = new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      behavior = UnitBehavior.FLEE_FROM_PLAYER;
+      behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        behavior = UnitBehavior.SHOOT_PLAYER;
+        behavior = new ShootUnitBehavior({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
-        behavior = UnitBehavior.SHOOT_PLAYER;
+        behavior = new ShootUnitBehavior({ targetUnit: playerUnit });
       } else {
-        behavior = UnitBehavior.WANDER;
+        behavior = new WanderBehavior();
       }
     } else {
       if (randBoolean()) {
-        behavior = UnitBehavior.STAY;
+        behavior = new StayBehavior();
       } else {
-        behavior = UnitBehavior.WANDER;
+        behavior = new WanderBehavior();
       }
     }
-    return behavior(unit);
+    return behavior.execute(unit);
   }
 };

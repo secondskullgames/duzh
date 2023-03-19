@@ -2,16 +2,21 @@ import { checkState } from './preconditions';
 
 type KeyFunction<T> = (t: T) => number;
 
-const sortBy = <T>(list: T[], keyFunction: KeyFunction<T>) =>
-  list.sort((a, b) => keyFunction(a) - keyFunction(b));
+const sortBy = <T>(list: T[], keyFunction: KeyFunction<T>): T[] => {
+  const copy = [...list];
+  copy.sort((a, b) => keyFunction(a) - keyFunction(b));
+  return copy;
+};
 
-const sortByReversed = <T>(list: T[], keyFunction: KeyFunction<T>) =>
-  list.sort((a, b) => keyFunction(b) - keyFunction(a));
+const sortByReversed = <T>(list: T[], keyFunction: KeyFunction<T>): T[] =>
+  sortBy(list, t => keyFunction(t) * -1);
 
-const comparing = <T>(keyFunction: KeyFunction<T>) =>
+type Comparator<T> = (a: T, b: T) => number;
+
+const comparing = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
   (a: T, b: T) => keyFunction(a) - keyFunction(b);
 
-const comparingReversed = <T>(keyFunction: KeyFunction<T>) =>
+const comparingReversed = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
   (a: T, b: T) => keyFunction(b) - keyFunction(a);
 
 const average = (list: number[]) => {

@@ -1,9 +1,12 @@
 import UnitController from './UnitController';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
-import UnitBehavior from '../UnitBehaviors';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { weightedRandom } from '../../../utils/random';
+import { randChoice, random } from '../../../utils/random';
+import UnitBehavior from '../behaviors/UnitBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
+import StayBehavior from '../behaviors/StayBehavior';
 
 type Props = Readonly<{
   state: GameState
@@ -23,19 +26,18 @@ export default class HumanAggressiveController implements UnitController {
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (distanceToPlayer === 1) {
-      behavior = UnitBehavior.ATTACK_PLAYER;
+      behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
     } else if (distanceToPlayer >= 6) {
-      behavior = weightedRandom({
-        'WANDER': 0.4,
-        'STAY': 0.4,
-        'ATTACK_PLAYER': 0.2
-      }, UnitBehavior);
+      behavior = randChoice([
+        () => new WanderBehavior(),
+        () => new StayBehavior(),
+        () => new AttackUnitBehavior({ targetUnit: playerUnit })
+      ])();
     } else {
-      behavior = weightedRandom({
-        'ATTACK_PLAYER': 0.9,
-        'STAY': 0.1
-      }, UnitBehavior);
+      behavior = (random() >= 0.1)
+        ? new AttackUnitBehavior({ targetUnit: playerUnit })
+        : new StayBehavior();
     }
-    return behavior(unit);
+    return behavior.execute(unit);
   }
 };

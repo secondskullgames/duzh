@@ -14,6 +14,7 @@ import MapItem from '../entities/objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';
+import Coordinates from '../geometry/Coordinates';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -70,11 +71,16 @@ export class GameEngine {
     const { state, renderer } = this;
     const map = state.getMap();
 
-    const sortedUnits = _sortUnits(map.units);
+    console.log('turn');
+    const sortedUnits = _sortUnits(map.getAllUnits());
+    console.log(sortedUnits.map(unit => unit.getDebugString()));
     for (const unit of sortedUnits) {
+
+      console.log(`${unit.getDebugString()} updating`);
       await unit.update();
     }
 
+    console.log('spawners');
     // TODO: update other things
     for (const spawner of map.spawners) {
       await spawner.update();

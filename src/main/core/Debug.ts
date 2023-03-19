@@ -34,7 +34,11 @@ export class Debug {
     const { state } = this;
     const map = state.getMap();
     const playerUnit = state.getPlayerUnit();
-    subtract(map.units, map.units.filter(u => u !== playerUnit));
+    for (const unit of map.getAllUnits()) {
+      if (unit !== playerUnit) {
+        map.removeUnit(unit);
+      }
+    }
     await this.engine.render();
   };
 

@@ -2,10 +2,14 @@ import UnitController from './UnitController';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
-import UnitBehavior from '../UnitBehaviors';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
+import StayBehavior from '../behaviors/StayBehavior';
+import UnitBehavior from '../behaviors/UnitBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
 
 type Props = Readonly<{
   state: GameState
@@ -28,24 +32,27 @@ export default class HumanRedesignController implements UnitController {
 
     let behavior: UnitBehavior;
     if (!canMove(speed)) {
-      behavior = UnitBehavior.STAY;
+      behavior = new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      behavior = UnitBehavior.FLEE_FROM_PLAYER;
+      behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        behavior = UnitBehavior.ATTACK_PLAYER;
+        behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
-        behavior = UnitBehavior.ATTACK_PLAYER;
+        behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
       } else {
-        behavior = UnitBehavior.WANDER;
+        behavior = new WanderBehavior();
       }
     } else {
       if (randBoolean()) {
-        behavior = UnitBehavior.STAY;
+        behavior = new StayBehavior();
       } else {
-        behavior = UnitBehavior.WANDER;
+        behavior = new WanderBehavior();
       }
     }
-    return behavior(unit);
+    if (distanceToPlayer <= 5) {
+      console.log(`${unit.getDebugString()} executing`);
+    }
+    return behavior.execute(unit);
   }
 };

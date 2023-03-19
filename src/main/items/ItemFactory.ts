@@ -80,12 +80,13 @@ export default class ItemFactory {
       const { state, engine } = this;
       const map = state.getMap();
 
-      const adjacentUnits: Unit[] = map.units.filter(u => {
-        const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
-        return ([-1,0,1].includes(dx))
-          && ([-1,0,1].includes(dy))
-          && !(dx === 0 && dy === 0);
-      });
+      const adjacentUnits: Unit[] = map.getAllUnits()
+        .filter(u => {
+          const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
+          return ([-1,0,1].includes(dx))
+            && ([-1,0,1].includes(dy))
+            && !(dx === 0 && dy === 0);
+        });
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);

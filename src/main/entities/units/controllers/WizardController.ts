@@ -2,11 +2,14 @@ import UnitController from './UnitController';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import UnitBehaviors from '../UnitBehaviors';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice } from '../../../utils/random';
 import { UnitAbilities } from '../abilities/UnitAbilities';
+import TeleportAwayBehavior from '../behaviors/TeleportAwayBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
 
 type Props = Readonly<{
   state: GameState
@@ -32,23 +35,23 @@ export default class WizardController implements UnitController {
       && unit.getMana() >= UnitAbilities.SUMMON.manaCost;
 
     if (canTeleport && distanceToPlayerUnit <= 3) {
-      return UnitBehaviors.TELEPORT_FROM_PLAYER(unit);
+      return new TeleportAwayBehavior({ targetUnit: playerUnit }).execute(unit);
     }
 
     if (canSummon && distanceToPlayerUnit >= 3) {
       const coordinates = Direction.values()
         .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
-        .filter(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates))
-        [0];
+        .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
       if (coordinates) {
         return UnitAbilities.SUMMON.use(unit, coordinates);
       }
     }
 
-    return randChoice([
-      UnitBehaviors.FLEE_FROM_PLAYER,
-      UnitBehaviors.ATTACK_PLAYER,
-      UnitBehaviors.WANDER
-    ])(unit);
+    const behavior = randChoice([
+      () => new AvoidUnitBehavior({ targetUnit: playerUnit }),
+      () => new AttackUnitBehavior({ targetUnit: playerUnit }),
+      () => new WanderBehavior()
+    ])();
+    return behavior.execute(unit);
   }
 };

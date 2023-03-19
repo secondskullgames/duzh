@@ -3,9 +3,13 @@ import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import UnitBehavior from '../UnitBehaviors';
-import { weightedRandom } from '../../../utils/random';
+import { randChoice, weightedRandom } from '../../../utils/random';
 import { canMove } from './ControllerUtils';
+import WanderBehavior from '../behaviors/WanderBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import UnitBehavior from '../behaviors/UnitBehavior';
+import StayBehavior from '../behaviors/StayBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 
 type Props = Readonly<{
   state: GameState
@@ -27,17 +31,17 @@ export default class HumanCautiousController implements UnitController {
     let behavior: UnitBehavior;
 
     if (!canMove(speed)) {
-      behavior = UnitBehavior.STAY;
+      behavior = new StayBehavior();
     } else if (distanceToPlayer === 1) {
-      behavior = weightedRandom({
-        'ATTACK_PLAYER': 0.7,
-        'FLEE_FROM_PLAYER': 0.3
-      }, UnitBehavior);
+      behavior = randChoice([
+        () => new AttackUnitBehavior({ targetUnit: playerUnit }),
+        () => new AvoidUnitBehavior({ targetUnit: playerUnit })
+      ])();
     } else if (distanceToPlayer <= visionRange) {
-      behavior = UnitBehavior.ATTACK_PLAYER;
+      behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
     } else {
-      behavior = UnitBehavior.WANDER;
+      behavior = new WanderBehavior();
     }
-    return behavior(unit);
+    return behavior.execute(unit);
   }
 };
