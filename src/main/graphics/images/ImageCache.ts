@@ -14,7 +14,6 @@ type CacheKey = Readonly<{
 interface ImageCache {
   get: ({ filename, transparentColor, paletteSwaps }: CacheKey) => Image | null | undefined,
   put: ({ filename, transparentColor, paletteSwaps }: CacheKey, image: Image | null) => void
-  stringify: (key: CacheKey) => string;
 }
 
 class Impl implements ImageCache {
@@ -23,17 +22,15 @@ class Impl implements ImageCache {
     this.map = {};
   }
 
-  get = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): Image | null => {
-    const key = this.stringify({ filename, transparentColor, paletteSwaps, effects });
-    return this.map[key];
+  get = (key: CacheKey): Image | null => {
+    return this.map[this._stringify(key)] ?? null;
   };
 
-  put = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey, image: Image | null) => {
-    const key = this.stringify({ filename, transparentColor, paletteSwaps, effects });
-    this.map[key] = image;
+  put = (key: CacheKey, image: Image | null) => {
+    this.map[this._stringify(key)] = image;
   };
 
-  stringify = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): string => {
+  private _stringify = ({ filename, transparentColor, paletteSwaps, effects }: CacheKey): string => {
     const stringifiedPaletteSwaps = paletteSwaps?.entries()
       .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
       .map(([src, dest]) => `${src.hex}:${dest.hex}`)

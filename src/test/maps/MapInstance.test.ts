@@ -1,8 +1,5 @@
 import MapInstance from '../../main/maps/MapInstance';
 import Unit from '../../main/entities/units/Unit';
-jest.mock('../../main/entities/units/Unit');
-import mocked = jest.mocked;
-const Unit_mock = mocked(Unit, { shallow: true });
 
 test('adds and removes a unit', () => {
   const map = _emptyMap();
@@ -15,9 +12,11 @@ test('adds and removes a unit', () => {
   map.addUnit(unit);
   expect(map.getAllUnits()).toStrictEqual([unit]);
   expect(map.getUnit(coordinates)).toBe(unit);
+  expect(map.unitExists(unit)).toBe(true);
   map.removeUnit(unit);
   expect(map.getAllUnits()).toStrictEqual([]);
   expect(map.getUnit(coordinates)).toBe(null);
+  expect(map.unitExists(unit)).toBe(false);
 });
 
 const _emptyMap = (): MapInstance => new MapInstance({
