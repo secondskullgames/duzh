@@ -71,16 +71,11 @@ export class GameEngine {
     const { state, renderer } = this;
     const map = state.getMap();
 
-    console.log('turn');
     const sortedUnits = _sortUnits(map.getAllUnits());
-    console.log(sortedUnits.map(unit => unit.getDebugString()));
     for (const unit of sortedUnits) {
-
-      console.log(`${unit.getDebugString()} updating`);
       await unit.update();
     }
 
-    console.log('spawners');
     // TODO: update other things
     for (const spawner of map.spawners) {
       await spawner.update();

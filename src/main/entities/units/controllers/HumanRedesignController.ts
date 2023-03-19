@@ -50,9 +50,6 @@ export default class HumanRedesignController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    if (distanceToPlayer <= 5) {
-      console.log(`${unit.getDebugString()} executing`);
-    }
     return behavior.execute(unit);
   }
 };

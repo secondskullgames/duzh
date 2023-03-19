@@ -377,6 +377,4 @@ export default class Unit implements Entity, Animatable {
    * @override {@link Entity#getType}
    */
   getType = (): EntityType => 'unit';
-
-  getDebugString = (): string => `unit ${this.name} + (${JSON.stringify(this.getCoordinates())})`;
 }
