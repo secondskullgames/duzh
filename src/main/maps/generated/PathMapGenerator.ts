@@ -1,15 +1,19 @@
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
-import TileSet from '../../tiles/TileSet';
 import { range } from '../../utils/arrays';
 import { randInt} from '../../utils/random';
 import AbstractMapGenerator from './AbstractMapGenerator';
 import EmptyMap from './EmptyMap';
 import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
+
+type Props = Readonly<{
+  tileFactory: TileFactory
+}>;
 
 class PathMapGenerator extends AbstractMapGenerator {
-  constructor(tileSet: TileSet) {
-    super(tileSet);
+  constructor({ tileFactory }: Props) {
+    super({ tileFactory });
   }
 
   /** @override {@link AbstractMapGenerator#generateEmptyMap} */

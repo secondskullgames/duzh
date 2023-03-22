@@ -1,5 +1,4 @@
 import Rect from '../../../geometry/Rect';
-import TileSet from '../../../tiles/TileSet';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import EmptyMap from '../EmptyMap';
 import Section from './Section';
@@ -7,11 +6,16 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import TileType from '../../../schemas/TileType';
+import TileFactory from '../../../tiles/TileFactory';
 
 const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;
 const HORIZONTAL_SECTION_PADDING = 2;
 const VERTICAL_SECTION_PADDING = 2;
+
+type Props = Readonly<{
+  tileFactory: TileFactory
+}>;
 
 /**
  * This class generates randomized room-and-corridor levels similar to those used in Rogue and other classic
@@ -41,8 +45,8 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor(tileSet: TileSet) {
-    super(tileSet);
+  constructor({ tileFactory }: Props) {
+    super({ tileFactory });
   }
 
   /**

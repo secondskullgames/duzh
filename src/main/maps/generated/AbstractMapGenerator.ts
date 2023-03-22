@@ -1,22 +1,28 @@
 import Tile from '../../tiles/Tile';
-import TileSet from '../../tiles/TileSet';
 import { getUnoccupiedLocations } from '../MapUtils';
 import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
-import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
+
+type Props = Readonly<{
+  tileFactory: TileFactory
+}>;
 
 abstract class AbstractMapGenerator {
-  protected readonly tileSet: TileSet;
+  private readonly tileFactory: TileFactory;
 
-  protected constructor(tileSet: TileSet) {
-    this.tileSet = tileSet;
+  protected constructor({ tileFactory }: Props) {
+    this.tileFactory = tileFactory;
   }
 
   generateMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapClass;
+    const { tileFactory } = this;
+
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
+    const tileSet = await tileFactory.getTileSet(mapClass.tileSet);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -26,11 +32,14 @@ abstract class AbstractMapGenerator {
     for (let y = 0; y < tileTypes.length; y++) {
       const row: Tile[] = [];
       for (let x = 0; x < tileTypes[y].length; x++) {
-        row.push(new Tile({
-          tileType: tileTypes[y][x],
-          tileSet: this.tileSet,
-          coordinates: { x, y }
-        }));
+        const coordinates = { x, y };
+        const tileType = tileTypes[y][x];
+        const tile = tileFactory.createTile({
+          tileType,
+          tileSet,
+          coordinates
+        });
+        row.push(tile);
       }
 
       tiles.push(row);

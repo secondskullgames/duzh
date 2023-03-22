@@ -14,6 +14,8 @@ import { FontRenderer } from './graphics/FontRenderer';
 import AnimationFactory from './graphics/animations/AnimationFactory';
 import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
+import SpawnerFactory from './entities/objects/SpawnerFactory';
+import TileFactory from './tiles/TileFactory';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -43,12 +45,8 @@ const main = async () => {
   });
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
-  const mapFactory = new MapFactory();
-  MapFactory.setInstance(mapFactory);
   const gameDriver = new GameDriver({ renderer, state, engine });
   GameDriver.setInstance(gameDriver);
-  const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
-  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
   const projectileFactory = new ProjectileFactory({ spriteFactory });
@@ -58,7 +56,21 @@ const main = async () => {
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
+  const spawnerFactory = new SpawnerFactory({ spriteFactory });
+  const tileFactory = new TileFactory({ spriteFactory });
+  const mapFactory = new MapFactory({
+    state,
+    imageFactory,
+    itemFactory,
+    spawnerFactory,
+    spriteFactory,
+    tileFactory,
+    unitFactory
+  });
+  MapFactory.setInstance(mapFactory);
   await addInitialState(state, unitFactory);
+  const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
+  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ engine, state });
   debug.attachToWindow();
   await engine.render();

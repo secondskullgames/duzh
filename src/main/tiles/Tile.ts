@@ -1,14 +1,11 @@
 import Sprite from '../graphics/sprites/Sprite';
-import { randChoice } from '../utils/random';
-import TileSet from './TileSet';
-import { checkNotNull } from '../utils/preconditions';
 import TileType from '../schemas/TileType';
 import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 
 type Props = Readonly<{
   tileType: TileType,
-  tileSet: TileSet,
+  sprite: Sprite | null,
   coordinates: Coordinates
 }>;
 
@@ -17,12 +14,10 @@ class Tile implements Entity {
   private readonly tileType: TileType;
   private readonly sprite: Sprite | null;
 
-  constructor({ tileType, tileSet, coordinates }: Props) {
+  constructor({ tileType, sprite, coordinates }: Props) {
     this.tileType = tileType;
     this.coordinates = coordinates;
-
-    const tilesOfType = checkNotNull(tileSet[tileType]);
-    this.sprite = randChoice(tilesOfType);
+    this.sprite = sprite;
   }
 
   /** @override */
