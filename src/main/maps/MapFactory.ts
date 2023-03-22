@@ -118,8 +118,4 @@ export default class MapFactory {
         throw new Error(`Unknown map layout ${mapLayout}`);
     }
   };
-
-  static instance: MapFactory | null = null;
-  static getInstance = (): MapFactory => checkNotNull(MapFactory.instance);
-  static setInstance = (factory: MapFactory) => { MapFactory.instance = factory; };
 }

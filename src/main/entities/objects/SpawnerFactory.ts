@@ -1,29 +1,45 @@
 import Coordinates from '../../geometry/Coordinates';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
+import UnitFactory from '../units/UnitFactory';
+import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
+import GameState from '../../core/GameState';
 
 export type SpawnerClass = 'mirror';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  unitFactory: UnitFactory,
+  state: GameState
 }>;
 
 export default class SpawnerFactory {
   private readonly spriteFactory: SpriteFactory;
+  private readonly unitFactory: UnitFactory;
+  private readonly state: GameState;
 
-  constructor({ spriteFactory }: Props) {
+  constructor({ spriteFactory, unitFactory, state }: Props) {
     this.spriteFactory = spriteFactory;
+    this.unitFactory = unitFactory;
+    this.state = state;
   }
 
   createMirror = async ({ x, y }: Coordinates): Promise<Spawner> => {
-    const sprite = await this.spriteFactory.createMirrorSprite();
-    const spawner = new Spawner({
+    const { state, spriteFactory, unitFactory } = this;
+    const sprite = await spriteFactory.createMirrorSprite();
+    const spawnFunction = ({ x, y }: Coordinates) => unitFactory.createUnit({
       unitClass: 'shade',
+      coordinates: { x, y },
+      level: 1,
+      controller: new HumanDeterministicController({ state }),
+      faction: 'ENEMY'
+    });
+    const spawner = new Spawner({
+      spawnFunction,
       sprite,
       maxUnits: 10,
       cooldown: 5,
-      x,
-      y,
+      coordinates: { x, y },
       isBlocking: true
     });
     sprite.target = spawner;

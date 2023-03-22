@@ -17,7 +17,7 @@ import InputHandler from './input/InputHandler';
 import SpawnerFactory from './entities/objects/SpawnerFactory';
 import TileFactory from './tiles/TileFactory';
 
-const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
+const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
   state.setPlayerUnit(playerUnit);
 
@@ -25,9 +25,7 @@ const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
     /* webpackChunkName: "models" */
     `../../data/maps.json`
     )).default as MapSpec[];
-  const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
-    return () => MapFactory.getInstance().loadMap(mapSpec);
-  });
+  const maps: MapSupplier[] = mapSpecs.map(spec => () => mapFactory.loadMap(spec));
   state.addMaps(maps);
 };
 
@@ -56,7 +54,7 @@ const main = async () => {
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const spawnerFactory = new SpawnerFactory({ spriteFactory });
+  const spawnerFactory = new SpawnerFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({
     state,
@@ -67,8 +65,7 @@ const main = async () => {
     tileFactory,
     unitFactory
   });
-  MapFactory.setInstance(mapFactory);
-  await addInitialState(state, unitFactory);
+  await addInitialState(state, unitFactory, mapFactory);
   const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ engine, state });

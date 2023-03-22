@@ -5,38 +5,40 @@ import Object from './Object';
 import Unit from '../units/Unit';
 import UnitFactory from '../units/UnitFactory';
 import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
+import Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerState = 'ALIVE' | 'DEAD';
 export namespace SpawnerState {
   export const values = (): SpawnerState[] => ['ALIVE', 'DEAD'];
 }
 
+type SpawnFunction = (coordinates: Coordinates) => Promise<Unit>;
+
 type Props = Readonly<{
+  spawnFunction: SpawnFunction,
   sprite: Sprite,
-  x: number,
-  y: number,
+  coordinates: Coordinates,
   cooldown: number,
-  unitClass: string,
   maxUnits: number,
   isBlocking: boolean
 }>;
 
 export default class Spawner extends Object implements Animatable {
+  private readonly spawnFunction: SpawnFunction;
   private state: SpawnerState;
   private readonly maxCooldown: number;
   private cooldown: number = 0;
-  private readonly unitClass: string;
   private readonly maxUnits: number;
   private readonly spawnedUnits: Set<Unit>;
   private readonly _isBlocking: boolean;
 
-  constructor({ x, y, sprite, cooldown, unitClass, maxUnits, isBlocking }: Props) {
+  constructor({ spawnFunction, coordinates, sprite, cooldown, maxUnits, isBlocking }: Props) {
     super({
-      coordinates: { x, y },
+      coordinates,
       sprite
     });
+    this.spawnFunction = spawnFunction;
     this.maxCooldown = cooldown;
-    this.unitClass = unitClass;
     this.maxUnits = maxUnits;
     this.cooldown = 0;
     this.spawnedUnits = new Set<Unit>();
@@ -65,13 +67,7 @@ export default class Spawner extends Object implements Animatable {
     if (this.cooldown <= 0 && numSpawnedUnits < this.maxUnits) {
       const { x, y } = this.getCoordinates();
       if (map.getUnit({ x, y }) === null) {
-        const spawnedUnit = await UnitFactory.getInstance().createUnit({
-          unitClass: this.unitClass,
-          coordinates: { x, y },
-          level: 1,
-          controller: new HumanDeterministicController({ state }),
-          faction: 'ENEMY'
-        });
+        const spawnedUnit = await this.spawnFunction({ x, y });
         this.cooldown = this.maxCooldown;
         map.addUnit(spawnedUnit);
         this.spawnedUnits.add(spawnedUnit);
