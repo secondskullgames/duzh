@@ -12,10 +12,10 @@ export type UnitAnimationFrame = {
 
 export type AnimationFrame = Readonly<{
   units: UnitAnimationFrame[],
-  projectiles?: Projectile[]
+  projectiles?: Projectile[],
+  postDelay?: number
 }>;
 
 export type Animation = Readonly<{
-  frames: AnimationFrame[],
-  delay: number
+  frames: AnimationFrame[]
 }>;

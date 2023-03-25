@@ -10,14 +10,17 @@
     <script defer="defer" src="main.bundle.js"></script>
   </head>
   <body>
-    <div id="container"></div>
-    <br />
-    <div id="debug">
-      <button onclick="jwb.debug.toggleRevealMap();">Reveal Map</button>
-      <button onclick="jwb.debug.killEnemies();">Kill Enemies</button>
-      <button onclick="jwb.debug.killPlayer();">Kill Player</button>
-      <button onclick="jwb.debug.levelUp();">Level Up</button>
-      <button onclick="jwb.debug.nextLevel();">Next Level</button>
-    </div>
+    <main>
+      <div id="container"></div>
+      <br />
+      <div id="debug">
+        <button onclick="jwb.debug.toggleRevealMap();">Reveal Map</button>
+        <button onclick="jwb.debug.killEnemies();">Kill Enemies</button>
+        <button onclick="jwb.debug.killPlayer();">Kill Player</button>
+        <button onclick="jwb.debug.levelUp();">Level Up</button>
+        <button onclick="jwb.debug.nextLevel();">Next Level</button>
+        <span id="fps"></span>
+      </div>
+    </main>
   </body>
 </html>

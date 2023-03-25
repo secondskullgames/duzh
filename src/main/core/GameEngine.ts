@@ -1,5 +1,4 @@
 import { Renderer } from '../graphics/renderers/Renderer';
-import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
@@ -14,7 +13,7 @@ import MapItem from '../entities/objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';
-import Coordinates from '../geometry/Coordinates';
+import Timer from '../utils/Timer';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -26,6 +25,7 @@ type Props = Readonly<{
 export class GameEngine {
   private readonly renderer: Renderer;
   private readonly state: GameState;
+  private readonly timer: Timer;
 
   private firstMapPromise: Promise<MapInstance> | null;
 
@@ -33,6 +33,7 @@ export class GameEngine {
     this.renderer = renderer;
     this.state = state;
     this.firstMapPromise = null;
+    this.timer = Timer.start();
   }
 
   preloadFirstMap = async () => {
@@ -47,7 +48,7 @@ export class GameEngine {
     Music.stop();
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     this._updateRevealedTiles();
-    await this.renderer.render();
+    await this.render();
     const t2 = new Date().getTime();
     console.debug(`Loaded level in ${t2 - t1} ms`);
   };
@@ -58,7 +59,7 @@ export class GameEngine {
     Music.stop();
     // Music.playFigure(Music.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-    await this.renderer.render();
+    await this.render();
   };
 
   gameOver = async () => {
@@ -68,7 +69,7 @@ export class GameEngine {
   };
 
   playTurn = async () => {
-    const { state, renderer } = this;
+    const { state } = this;
     const map = state.getMap();
 
     const sortedUnits = _sortUnits(map.getAllUnits());
@@ -82,11 +83,19 @@ export class GameEngine {
     }
 
     this._updateRevealedTiles();
-    await renderer.render();
+    await this.render();
     state.nextTurn();
   };
 
-  render = async () => this.renderer.render();
+  render = async () => {
+    const t = this.timer;
+    t.start('render');
+    await this.renderer.render();
+    t.log('render');
+    const e = document.getElementById('fps')!;
+    const fps = 1000 / t.getAverageMillis('render');
+    e.innerText = `${fps.toFixed(2)}`;
+  }
 
   loadNextMap = async () => {
     const { state } = this;
@@ -166,7 +175,7 @@ export class GameEngine {
   };
 
   playAnimation = async (animation: Animation) => {
-    const { delay, frames } = animation;
+    const { frames } = animation;
     const map = this.state.getMap();
 
     for (let i = 0; i < frames.length; i++) {
@@ -181,8 +190,9 @@ export class GameEngine {
 
       await this.render();
 
-      if (i < (frames.length - 1)) {
-        await sleep(delay);
+      if (!!frame.postDelay) {
+        console.log(`sleep ${frame.postDelay}`);
+        await sleep(frame.postDelay);
       }
 
       for (const projectile of (frame.projectiles ?? [])) {

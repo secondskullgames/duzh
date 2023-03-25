@@ -26,6 +26,7 @@ export default class AnimationFactory {
   }
 
   getAttackingAnimation = (source: Unit, target?: Unit): Animation => {
+    const frameLength = 150;
     if (target) {
       return {
         frames: [
@@ -34,6 +35,7 @@ export default class AnimationFactory {
               { unit: source, activity: 'ATTACKING' },
               { unit: target, activity: 'DAMAGED' }
             ],
+            postDelay: frameLength,
           },
           {
             units: [
@@ -41,8 +43,7 @@ export default class AnimationFactory {
               { unit: target, activity: 'STANDING' }
             ]
           }
-        ],
-        delay: FRAME_LENGTH
+        ]
       };
     } else {
       return {
@@ -51,14 +52,14 @@ export default class AnimationFactory {
             units: [
               { unit: source, activity: 'ATTACKING' }
             ],
+            postDelay: frameLength
           },
           {
             units: [
               { unit: source, activity: 'STANDING' }
             ]
           }
-        ],
-        delay: FRAME_LENGTH
+        ]
       };
     }
   };
@@ -73,7 +74,8 @@ export default class AnimationFactory {
     // first frame
     {
       const frame: AnimationFrame = {
-        units: [{ unit: source, activity: 'SHOOTING' }]
+        units: [{ unit: source, activity: 'SHOOTING' }],
+        postDelay: ARROW_FRAME_LENGTH
       };
       if (target) {
         frame.units.push({ unit: target, activity: 'STANDING' });
@@ -88,7 +90,8 @@ export default class AnimationFactory {
       const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
-        projectiles: [projectile]
+        projectiles: [projectile],
+        postDelay: ARROW_FRAME_LENGTH
       };
       if (target) {
         frame.units.push({ unit: target, activity: 'STANDING' });
@@ -102,7 +105,8 @@ export default class AnimationFactory {
       const frame: AnimationFrame = {
         units: [
           { unit: source, activity: 'STANDING' }
-        ]
+        ],
+        postDelay: ARROW_FRAME_LENGTH
       };
       if (target) {
         frame.units.push({ unit: target, activity: 'DAMAGED' });
@@ -122,8 +126,7 @@ export default class AnimationFactory {
     }
 
     return {
-      frames,
-      delay: ARROW_FRAME_LENGTH
+      frames
     };
   };
 
@@ -137,7 +140,8 @@ export default class AnimationFactory {
     // first frame
     {
       const frame: AnimationFrame = {
-        units: [{ unit: source, activity: 'ATTACKING' }]
+        units: [{ unit: source, activity: 'ATTACKING' }],
+        postDelay: BOLT_FRAME_LENGTH
       };
       if (target) {
         frame.units.push({ unit: target, activity: 'STANDING' });
@@ -153,7 +157,8 @@ export default class AnimationFactory {
       const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],
-        projectiles: [projectile]
+        projectiles: [projectile],
+        postDelay: BOLT_FRAME_LENGTH
       };
       if (target) {
         frame.units.push({ unit: target, activity: 'STANDING' });
@@ -187,56 +192,86 @@ export default class AnimationFactory {
     }
 
     return {
-      frames,
-      delay: BOLT_FRAME_LENGTH
+      frames
     };
   };
 
   getFloorFireAnimation = async (source: Unit, targets: Unit[]): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     for (let i = 0; i < targets.length; i++) {
-      const frame: UnitAnimationFrame[] = [];
-      frame.push({ unit: source, activity: 'STANDING' });
+      const unitFrames: UnitAnimationFrame[] = [];
+      unitFrames.push({ unit: source, activity: 'STANDING' });
+
       for (let j = 0; j < targets.length; j++) {
         const activity = (j === i) ? 'BURNED' : 'STANDING';
-        frame.push({ unit: targets[j], activity });
+        unitFrames.push({ unit: targets[j], activity });
       }
-      frames.push({ units: frame });
+
+      const frame = {
+        units: unitFrames,
+        postDelay: FRAME_LENGTH
+      };
+      frames.push(frame);
     }
 
     // last frame (all standing)
-    const frame: UnitAnimationFrame[] = [];
-    frame.push({ unit: source, activity: 'STANDING' });
+    const unitFrames: UnitAnimationFrame[] = [];
+    unitFrames.push({ unit: source, activity: 'STANDING' });
     for (let i = 0; i < targets.length; i++) {
-      frame.push({ unit: targets[i], activity: 'STANDING' });
+      unitFrames.push({ unit: targets[i], activity: 'STANDING' });
     }
-    frames.push({ units: frame });
+    const frame = {
+      units: unitFrames
+    };
+    frames.push(frame);
 
     return {
-      frames,
-      delay: FRAME_LENGTH
+      frames
     };
   };
 
   getWizardVanishingAnimation = async (source: Unit): Promise<Animation> => ({
     frames: [
-      { units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }] },
-      { units: [{ unit: source, activity: 'VANISHING', frameNumber: 2 }] },
-      { units: [{ unit: source, activity: 'VANISHING', frameNumber: 3 }] },
-      { units: [{ unit: source, activity: 'VANISHING', frameNumber: 4 }] }
-    ],
-    delay: WIZARD_TELEPORT_FRAME_LENGTH
+      {
+        units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'VANISHING', frameNumber: 2 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'VANISHING', frameNumber: 3 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'VANISHING', frameNumber: 4 }]
+      }
+    ]
   });
 
   getWizardAppearingAnimation = async (source: Unit): Promise<Animation> => ({
     frames: [
-      { units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }] },
-      { units: [{ unit: source, activity: 'APPEARING', frameNumber: 2 }] },
-      { units: [{ unit: source, activity: 'APPEARING', frameNumber: 3 }] },
-      { units: [{ unit: source, activity: 'APPEARING', frameNumber: 4 }] },
-      { units: [{ unit: source, activity: 'STANDING', direction: Direction.S }] },
-    ],
-    delay: WIZARD_TELEPORT_FRAME_LENGTH
+      {
+        units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'APPEARING', frameNumber: 2 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'APPEARING', frameNumber: 3 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'APPEARING', frameNumber: 4 }],
+        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
+      },
+      {
+        units: [{ unit: source, activity: 'STANDING', direction: Direction.S }]
+      },
+    ]
   });
 
   static instance: AnimationFactory | null;
