@@ -35,6 +35,7 @@ export default class Spawner extends Object implements Animatable {
   constructor({ spawnFunction, coordinates, sprite, cooldown, maxUnits, isBlocking }: Props) {
     super({
       coordinates,
+      objectType: 'spawner',
       sprite
     });
     this.spawnFunction = spawnFunction;

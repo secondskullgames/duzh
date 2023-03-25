@@ -12,16 +12,7 @@ type PredefinedMapModel = {
   enemyColors: {
     [key: string]: string
   },
-  equipmentColors: {
-    [key: string]: string
-  },
-  itemColors: {
-    [key: string]: string
-  },
-  doorColors: {
-    [key: string]: DoorDirection
-  },
-  spawnerColors: {
+  objectColors: {
     [key: string]: string
   },
   defaultTile: TileType,

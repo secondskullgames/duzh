@@ -16,7 +16,7 @@ import TileFactory from '../tiles/TileFactory';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import ItemFactory from '../items/ItemFactory';
-import SpawnerFactory from '../entities/objects/SpawnerFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 
@@ -24,7 +24,7 @@ type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
   itemFactory: ItemFactory,
-  spawnerFactory: SpawnerFactory,
+  spawnerFactory: ObjectFactory,
   spriteFactory: SpriteFactory,
   tileFactory: TileFactory,
   unitFactory: UnitFactory,
@@ -34,7 +34,7 @@ export default class MapFactory {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
-  private readonly spawnerFactory: SpawnerFactory;
+  private readonly spawnerFactory: ObjectFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
@@ -49,15 +49,15 @@ export default class MapFactory {
     this.unitFactory = props.unitFactory;
   }
 
-  loadMap = async (map: MapSpec): Promise<MapInstance> => {
-    switch (map.type) {
+  loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
+    switch (mapSpec.type) {
       case 'generated': {
-        const mapClass = await loadGeneratedMapModel(map.id);
+        const mapClass = await loadGeneratedMapModel(mapSpec.id);
         const mapBuilder = await this.loadGeneratedMap(mapClass);
         return mapBuilder.build();
       }
       case 'predefined': {
-        return this.loadPredefinedMap(map.id);
+        return this.loadPredefinedMap(mapSpec.id);
       }
     }
   };
@@ -67,7 +67,7 @@ export default class MapFactory {
     return dungeonGenerator.generateMap(mapClass);
   };
 
-  private loadPredefinedMap = async (mapClass: string): Promise<MapInstance> => {
+  private loadPredefinedMap = async (mapId: string): Promise<MapInstance> => {
     const {
       state,
       imageFactory,
@@ -78,7 +78,7 @@ export default class MapFactory {
       tileFactory
     } = this;
 
-    const builder =  new PredefinedMapBuilder({
+    const mapBuilder =  new PredefinedMapBuilder({
       state,
       imageFactory,
       itemFactory,
@@ -88,7 +88,7 @@ export default class MapFactory {
       tileFactory
     });
 
-    return builder.build(mapClass);
+    return mapBuilder.build(mapId);
   }
 
   private _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {

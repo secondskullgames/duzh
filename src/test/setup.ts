@@ -17,10 +17,8 @@ export const setup = async () => {
     width: 10,
     height: 0,
     tiles: [],
-    doors: [],
-    spawners: [],
     units: [],
-    items: [],
+    objects: [],
     music: []
   });
   const state = new GameState();

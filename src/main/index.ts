@@ -14,7 +14,7 @@ import { FontRenderer } from './graphics/FontRenderer';
 import AnimationFactory from './graphics/animations/AnimationFactory';
 import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
-import SpawnerFactory from './entities/objects/SpawnerFactory';
+import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
@@ -54,7 +54,7 @@ const main = async () => {
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const spawnerFactory = new SpawnerFactory({ spriteFactory, unitFactory, state });
+  const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({
     state,

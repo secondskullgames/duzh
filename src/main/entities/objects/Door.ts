@@ -2,6 +2,7 @@ import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
 import Object from './Object';
+import Coordinates from '../../geometry/Coordinates';
 
 export type DoorState = 'OPEN' | 'CLOSED';
 export namespace DoorState {
@@ -11,18 +12,18 @@ export namespace DoorState {
 type Props = Readonly<{
   direction: DoorDirection,
   state: DoorState,
-  x: number,
-  y: number,
+  coordinates: Coordinates,
   sprite: DynamicSprite<Door>
 }>;
 
-export default class Door extends Object implements  Animatable {
+export default class Door extends Object implements Animatable {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
 
-  constructor({ direction, state, x, y, sprite }: Props) {
+  constructor({ direction, state, coordinates, sprite }: Props) {
     super({
-      coordinates: { x, y },
+      coordinates,
+      objectType: 'door',
       sprite
     });
     sprite.target = this;

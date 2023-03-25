@@ -6,13 +6,12 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../entities/objects/Door';
 import ItemFactory from '../../items/ItemFactory';
-import MapItem from '../../entities/objects/MapItem';
-import Spawner from '../../entities/objects/Spawner';
-import SpawnerFactory, { SpawnerClass } from '../../entities/objects/SpawnerFactory';
+import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import UnitController from '../../entities/units/controllers/UnitController';
 import Unit from '../../entities/units/Unit';
+import Object from '../../entities/objects/Object';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
@@ -26,7 +25,7 @@ import TileFactory from '../../tiles/TileFactory';
 type Props = Readonly<{
   imageFactory: ImageFactory,
   itemFactory: ItemFactory,
-  spawnerFactory: SpawnerFactory,
+  spawnerFactory: ObjectFactory,
   spriteFactory: SpriteFactory
   tileFactory: TileFactory,
   unitFactory: UnitFactory,
@@ -36,7 +35,7 @@ type Props = Readonly<{
 class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
-  private readonly spawnerFactory: SpawnerFactory;
+  private readonly objectFactory: ObjectFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
@@ -45,15 +44,15 @@ class PredefinedMapBuilder {
   constructor(props: Props) {
     this.imageFactory = props.imageFactory;
     this.itemFactory = props.itemFactory;
-    this.spawnerFactory = props.spawnerFactory;
+    this.objectFactory = props.spawnerFactory;
     this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
     this.unitFactory = props.unitFactory;
     this.state = props.state;
   }
 
-  build = async (mapClass: string): Promise<MapInstance> => {
-    const model = await loadPredefinedMapModel(mapClass);
+  build = async (mapId: string): Promise<MapInstance> => {
+    const model = await loadPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
@@ -63,9 +62,7 @@ class PredefinedMapBuilder {
       height: image.bitmap.height,
       tiles: await this._loadTiles(model, image),
       units: await this._loadUnits(model, image),
-      items: await this._loadItems(model, image),
-      doors: await this._loadDoors(model, image),
-      spawners: await this._loadSpawners(model, image),
+      objects: await this._loadObjects(model, image),
       music: (model.music) ? await Music.loadMusic(model.music as string) : null
     });
   };
@@ -147,33 +144,9 @@ class PredefinedMapBuilder {
     return units;
   };
 
-  private _loadItems = async (mapClass: PredefinedMapModel, image: Image): Promise<MapItem[]> => {
-    const items: MapItem[] = [];
-    const { itemFactory } = this;
-
-    for (let i = 0; i < image.data.data.length; i += 4) {
-      const x = Math.floor(i / 4) % image.width;
-      const y = Math.floor(Math.floor(i / 4) / image.width);
-      const [r, g, b, a] = image.data.data.slice(i, i + 4);
-      const color = Color.fromRGB({ r, g, b });
-
-      const itemClass = mapClass.itemColors[color.hex] ?? null;
-      if (itemClass !== null) {
-        items.push(await itemFactory.createMapItem(itemClass, { x, y }));
-      }
-
-      const equipmentClass = mapClass.equipmentColors[color.hex] ?? null;
-      if (equipmentClass !== null) {
-        items.push(await itemFactory.createMapEquipment(equipmentClass, { x, y }));
-      }
-    }
-
-    return items;
-  };
-
-  private _loadDoors = async (mapClass: PredefinedMapModel, image: Image): Promise<Door[]> => {
+  private _loadObjects = async (mapClass: PredefinedMapModel, image: Image): Promise<Object[]> => {
     const { spriteFactory } = this;
-    const doors: Door[] = [];
+    const objects: Object[] = [];
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.data.width;
@@ -181,40 +154,37 @@ class PredefinedMapBuilder {
       const [r, g, b, a] = image.data.data.slice(i, i + 4);
       const color = Color.fromRGB({ r, g, b });
 
-      const doorDirection = mapClass.doorColors?.[color.hex] ?? null;
-      if (doorDirection !== null) {
-        const sprite = await spriteFactory.createDoorSprite();
-        const door = new Door({
-          direction: doorDirection,
-          state: 'CLOSED',
-          x,
-          y,
-          sprite
-        });
-        doors.push(door);
+      const objectName = mapClass.objectColors?.[color.hex] ?? null;
+      switch (objectName) {
+        case 'door_horizontal':
+        case 'door_vertical': {
+          const sprite = await spriteFactory.createDoorSprite();
+          const doorDirection = (objectName === 'door_horizontal')
+            ? 'horizontal'
+            : 'vertical';
+          const door = new Door({
+            direction: doorDirection,
+            state: 'CLOSED',
+            coordinates: { x, y },
+            sprite
+          });
+          objects.push(door);
+          break;
+        }
+        case 'mirror': {
+          const spawner = await this.objectFactory.createMirror({ x, y });
+          objects.push(spawner);
+          break;
+        }
+        case 'block': {
+          const block = await this.objectFactory.createMovableBlock({ x, y });
+          objects.push(block);
+          break;
+        }
       }
     }
 
-    return doors;
-  };
-
-  private _loadSpawners = async (mapClass: PredefinedMapModel, image: Image): Promise<Spawner[]> => {
-    const { spawnerFactory } = this;
-    const spawners: Spawner[] = [];
-
-    for (let i = 0; i < image.data.data.length; i += 4) {
-      const x = Math.floor(i / 4) % image.data.width;
-      const y = Math.floor(Math.floor(i / 4) / image.data.width);
-      const [r, g, b, a] = image.data.data.slice(i, i + 4);
-      const color = Color.fromRGB({ r, g, b });
-
-      const spawnerName = mapClass.spawnerColors?.[color.hex];
-      if (spawnerName) {
-        spawners.push(await spawnerFactory.createSpawner({ x, y }, spawnerName as SpawnerClass));
-      }
-    }
-
-    return spawners;
+    return objects;
   };
 }
 

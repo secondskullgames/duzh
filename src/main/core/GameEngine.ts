@@ -77,9 +77,8 @@ export class GameEngine {
       await unit.update();
     }
 
-    // TODO: update other things
-    for (const spawner of map.spawners) {
-      await spawner.update();
+    for (const object of map.getAllObjects()) {
+      await object.update();
     }
 
     this._updateRevealedTiles();

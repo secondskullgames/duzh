@@ -23,9 +23,7 @@ const _emptyMap = (): MapInstance => new MapInstance({
   width: 10,
   height: 10,
   tiles: [],
-  doors: [],
-  spawners: [],
   units: [],
-  items: [],
+  objects: [],
   music: null
 })

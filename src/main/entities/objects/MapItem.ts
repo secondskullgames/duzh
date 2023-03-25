@@ -15,6 +15,7 @@ export default class MapItem extends Object {
   constructor({ x, y, sprite, inventoryItem }: Props) {
     super({
       coordinates: { x, y },
+      objectType: 'item',
       sprite
     });
     this.inventoryItem = inventoryItem;

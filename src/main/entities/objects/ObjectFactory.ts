@@ -4,6 +4,8 @@ import Spawner from './Spawner';
 import UnitFactory from '../units/UnitFactory';
 import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 import GameState from '../../core/GameState';
+import Object from './Object';
+import Block from './Block';
 
 export type SpawnerClass = 'mirror';
 
@@ -13,7 +15,7 @@ type Props = Readonly<{
   state: GameState
 }>;
 
-export default class SpawnerFactory {
+export default class ObjectFactory {
   private readonly spriteFactory: SpriteFactory;
   private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
@@ -53,5 +55,14 @@ export default class SpawnerFactory {
       default:
         throw new Error(`Unknown spawner type: ${type}`);
     }
+  };
+
+  createMovableBlock = async (coordinates: Coordinates): Promise<Object> => {
+    const sprite = await this.spriteFactory.createStaticSprite('block');
+    return new Block({
+      coordinates,
+      sprite,
+      movable: true
+    });
   };
 }

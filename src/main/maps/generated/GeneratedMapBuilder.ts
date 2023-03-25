@@ -15,6 +15,7 @@ import ArcherController from '../../entities/units/controllers/ArcherController'
 import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 import { checkNotNull } from '../../utils/preconditions';
+import Object from '../../entities/objects/Object';
 
 type Props = Readonly<{
   level: number,
@@ -54,16 +55,14 @@ export default class GeneratedMapBuilder {
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.objectLocations.add(playerUnitCoordinates);
     const units = [playerUnit, ...await this._generateUnits()];
-    const items: MapItem[] = await this._generateItems();
+    const objects: Object[] = await this._generateObjects();
 
     return new MapInstance({
       width: this.width,
       height: this.height,
       tiles: this.tiles,
       units,
-      items,
-      doors: [],
-      spawners: [],
+      objects: [],
       music: null
     });
   };
@@ -111,9 +110,9 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateItems = async (): Promise<MapItem[]> => {
+  private _generateObjects = async (): Promise<Object[]> => {
+    const objects: Object[] = [];
     const itemFactory = ItemFactory.getInstance();
-    const items: MapItem[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 
     let points = this.pointAllocation.equipment;
@@ -133,7 +132,7 @@ export default class GeneratedMapBuilder {
       );
       const coordinates = checkNotNull(candidateLocations.shift());
       const item = await itemFactory.createMapEquipment(equipmentClass.id, coordinates);
-      items.push(item);
+      objects.push(item);
       points -= equipmentClass.points!;
       this.objectLocations.add(coordinates);
     }
@@ -155,11 +154,11 @@ export default class GeneratedMapBuilder {
       );
       const coordinates = checkNotNull(candidateLocations.shift());
       const item = await itemFactory.createMapItem(itemClass.id, coordinates);
-      items.push(item);
+      objects.push(item);
       points -= itemClass.points!;
       this.objectLocations.add(coordinates);
     }
 
-    return items;
+    return objects;
   };
 }
