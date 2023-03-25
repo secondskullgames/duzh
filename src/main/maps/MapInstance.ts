@@ -34,7 +34,7 @@ export default class MapInstance {
   private readonly _entities: Grid<Entity>;
   private readonly units: Set<Unit>;
   private readonly objects: Set<Object>;
-  readonly projectiles: Projectile[];
+  readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
 
@@ -51,7 +51,7 @@ export default class MapInstance {
     this._tiles = tiles;
     this.units = new Set(units);
     this.objects = new Set(objects);
-    this.projectiles = [];
+    this.projectiles = new Set();
     this._entities = new Grid({ width, height });
     for (const entity of [...units, ...objects]) {
       const { x, y } = entity.getCoordinates();
@@ -102,8 +102,8 @@ export default class MapInstance {
       .find(() => true) ?? null;
   };
 
-  getProjectile = ({ x, y }: Coordinates): (Projectile | null) =>
-    this.projectiles.find(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y })) ?? null;
+  getProjectile = (coordinates: Coordinates): (Projectile | null) =>
+    [...this.projectiles].find(projectile => Coordinates.equals(projectile.getCoordinates(), coordinates)) ?? null;
 
   contains = ({ x, y }: Coordinates): boolean =>
     (x >= 0 && x < this.width)
@@ -121,15 +121,15 @@ export default class MapInstance {
   addUnit = (unit: Unit) => {
     checkState(!this.units.has(unit));
     this.units.add(unit);
-    const { x, y } = unit.getCoordinates();
-    this._entities.put({ x, y }, unit);
+    const coordinates = unit.getCoordinates();
+    this._entities.put(coordinates, unit);
   };
 
   removeUnit = (unit: Unit) => {
-    const { x, y } = unit.getCoordinates();
+    const coordinates = unit.getCoordinates();
     checkState(this.units.has(unit));
     this.units.delete(unit);
-    this._entities.remove({ x, y }, unit);
+    this._entities.remove(coordinates, unit);
   };
 
   removeObject = (object: Object) => {
@@ -138,10 +138,9 @@ export default class MapInstance {
     }
   };
 
-  removeProjectile = ({ x, y }: Coordinates) => {
-    const index = this.projectiles.findIndex(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y }));
-    if (index >= 0) {
-      this.projectiles.splice(index, 1);
+  removeProjectile = (projectile: Projectile) => {
+    if (this.projectiles.has(projectile)) {
+      this.projectiles.delete(projectile);
     }
   };
 

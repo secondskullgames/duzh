@@ -62,7 +62,7 @@ export default class GeneratedMapBuilder {
       height: this.height,
       tiles: this.tiles,
       units,
-      objects: [],
+      objects,
       music: null
     });
   };

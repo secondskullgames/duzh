@@ -179,8 +179,8 @@ export class GameEngine {
 
     for (let i = 0; i < frames.length; i++) {
       const frame = frames[i];
-      if (frame.projectiles) {
-        map.projectiles.push(...frame.projectiles);
+      for (const projectile of (frame.projectiles ?? [])) {
+        map.projectiles.add(projectile);
       }
       for (let j = 0; j < frame.units.length; j++) {
         const { unit, activity, frameNumber, direction } = frame.units[j];
@@ -195,7 +195,7 @@ export class GameEngine {
       }
 
       for (const projectile of (frame.projectiles ?? [])) {
-        map.removeProjectile(projectile.getCoordinates());
+        map.removeProjectile(projectile);
       }
     }
   };

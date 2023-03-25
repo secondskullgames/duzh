@@ -21,6 +21,7 @@ import HumanRedesignController from '../../entities/units/controllers/HumanRedes
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import object from '../../entities/objects/Object';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
@@ -155,39 +156,42 @@ class PredefinedMapBuilder {
       const color = Color.fromRGB({ r, g, b });
 
       const objectName = mapClass.objectColors?.[color.hex] ?? null;
-      switch (objectName) {
-        case 'door_horizontal':
-        case 'door_vertical': {
-          const sprite = await spriteFactory.createDoorSprite();
-          const doorDirection = (objectName === 'door_horizontal')
-            ? 'horizontal'
-            : 'vertical';
-          const door = new Door({
-            direction: doorDirection,
-            state: 'CLOSED',
-            coordinates: { x, y },
-            sprite
-          });
-          objects.push(door);
-          break;
-        }
-        case 'mirror': {
-          const spawner = await this.objectFactory.createMirror({ x, y });
-          objects.push(spawner);
-          break;
-        }
-        case 'block': {
-          const block = await this.objectFactory.createMovableBlock({ x, y });
-          objects.push(block);
-          break;
-        }
+      if (objectName?.startsWith('door_')) {
+        const doorDirection = (objectName === 'door_horizontal')
+          ? 'horizontal'
+          : 'vertical';
+        const sprite = await spriteFactory.createDoorSprite();
+
+        const door = new Door({
+          direction: doorDirection,
+          state: 'CLOSED',
+          coordinates: { x, y },
+          sprite
+        });
+        objects.push(door);
+      } else if (objectName === 'mirror') {
+        const spawner = await this.objectFactory.createMirror({ x, y });
+        objects.push(spawner);
+      } else if (objectName === 'block') {
+        const block = await this.objectFactory.createMovableBlock({ x, y });
+        objects.push(block);
+      }
+
+      const itemId = (mapClass.itemColors?.[color.hex] ?? null);
+      if (itemId) {
+        const item = await this.itemFactory.createMapItem(itemId, { x, y });
+        objects.push(item);
+      }
+
+      const equipmentId = (mapClass.equipmentColors?.[color.hex] ?? null);
+      if (equipmentId) {
+        const equipment = await this.itemFactory.createMapEquipment(equipmentId, { x, y });
+        objects.push(equipment);
       }
     }
 
     return objects;
   };
 }
-
-
 
 export default PredefinedMapBuilder;

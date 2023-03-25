@@ -167,8 +167,8 @@ export default class ItemFactory {
     }
   }
 
-  createMapItem = async (itemClass: string, { x, y }: Coordinates) => {
-    const model: ConsumableItemModel = await loadItemModel(itemClass);
+  createMapItem = async (itemId: string, { x, y }: Coordinates) => {
+    const model: ConsumableItemModel = await loadItemModel(itemId);
     const inventoryItem = await this.createInventoryItem(model);
     const paletteSwaps = (model.paletteSwaps !== undefined)
       ? PaletteSwaps.create(model.paletteSwaps)
