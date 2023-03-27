@@ -1,7 +1,7 @@
-import Object from './Object';
-import StaticSprite from '../../graphics/sprites/StaticSprite';
+import GameObject from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
+import GameState from '../../core/GameState';
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -9,7 +9,7 @@ type Props = Readonly<{
   movable: boolean
 }>;
 
-export default class Block extends Object {
+export default class Block extends GameObject {
   private readonly movable: boolean;
 
   constructor({ coordinates, sprite, movable }: Props) {
@@ -28,4 +28,13 @@ export default class Block extends Object {
   isBlocking = (): boolean => true;
 
   isMovable = (): boolean => this.movable;
+
+  moveTo = async ({ x, y }: Coordinates) => {
+    const state = GameState.getInstance();
+    const map = state.getMap();
+    map.removeObject(this);
+
+    this.setCoordinates({ x, y });
+    map.addObject(this);
+  };
 }

@@ -15,7 +15,7 @@ import ArcherController from '../../entities/units/controllers/ArcherController'
 import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 import { checkNotNull } from '../../utils/preconditions';
-import Object from '../../entities/objects/Object';
+import GameObject from '../../entities/objects/GameObject';
 
 type Props = Readonly<{
   level: number,
@@ -55,7 +55,7 @@ export default class GeneratedMapBuilder {
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.objectLocations.add(playerUnitCoordinates);
     const units = [playerUnit, ...await this._generateUnits()];
-    const objects: Object[] = await this._generateObjects();
+    const objects: GameObject[] = await this._generateObjects();
 
     return new MapInstance({
       width: this.width,
@@ -110,8 +110,8 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async (): Promise<Object[]> => {
-    const objects: Object[] = [];
+  private _generateObjects = async (): Promise<GameObject[]> => {
+    const objects: GameObject[] = [];
     const itemFactory = ItemFactory.getInstance();
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 

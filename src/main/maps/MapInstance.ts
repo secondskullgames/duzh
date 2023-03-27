@@ -9,7 +9,7 @@ import Unit from '../entities/units/Unit';
 import { checkArgument, checkState } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
 import Entity from '../entities/Entity';
-import Object from '../entities/objects/Object';
+import GameObject from '../entities/objects/GameObject';
 import Grid from '../types/Grid';
 
 type Props = Readonly<{
@@ -17,7 +17,7 @@ type Props = Readonly<{
   height: number,
   tiles: Tile[][],
   units: Unit[],
-  objects: Object[],
+  objects: GameObject[],
   music: Figure[] | null
 }>;
 
@@ -33,7 +33,7 @@ export default class MapInstance {
    */
   private readonly _entities: Grid<Entity>;
   private readonly units: Set<Unit>;
-  private readonly objects: Set<Object>;
+  private readonly objects: Set<GameObject>;
   readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
@@ -76,10 +76,10 @@ export default class MapInstance {
 
   getAllUnits = (): Unit[] => [...this.units];
 
-  getObjects = ({ x, y }: Coordinates): Object[] =>
+  getObjects = ({ x, y }: Coordinates): GameObject[] =>
     [...this.objects].filter(object => Coordinates.equals(object.getCoordinates(), { x, y }));
 
-  getAllObjects = (): Object[] => [...this.objects];
+  getAllObjects = (): GameObject[] => [...this.objects];
 
   getSpawner = (coordinates: Coordinates): Spawner | null => {
     return this.getObjects(coordinates)
@@ -132,10 +132,16 @@ export default class MapInstance {
     this._entities.remove(coordinates, unit);
   };
 
-  removeObject = (object: Object) => {
+  addObject = (object: GameObject) => {
+    this.objects.add(object);
+    this._entities.put(object.getCoordinates(), object);
+  };
+
+  removeObject = (object: GameObject) => {
     if (this.objects.has(object)) {
       this.objects.delete(object);
     }
+    this._entities.remove(object.getCoordinates(), object)
   };
 
   removeProjectile = (projectile: Projectile) => {

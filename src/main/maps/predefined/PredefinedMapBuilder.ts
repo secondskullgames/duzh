@@ -11,7 +11,7 @@ import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import UnitController from '../../entities/units/controllers/UnitController';
 import Unit from '../../entities/units/Unit';
-import Object from '../../entities/objects/Object';
+import GameObject from '../../entities/objects/GameObject';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
@@ -21,7 +21,6 @@ import HumanRedesignController from '../../entities/units/controllers/HumanRedes
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import object from '../../entities/objects/Object';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
@@ -101,10 +100,12 @@ class PredefinedMapBuilder {
     return tiles;
   };
 
-  private _loadUnits = async (mapClass: PredefinedMapModel, image: Image): Promise<Unit[]> => {
+  private _loadUnits = async (model: PredefinedMapModel, image: Image): Promise<Unit[]> => {
     const state = this.state;
     const units: Unit[] = [];
     let id = 1;
+
+    const enemyColors = this._toHexColors(model.enemyColors);
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.width;
@@ -117,13 +118,13 @@ class PredefinedMapBuilder {
         if (!hexColors.has(color.hex)) {
           hexColors.add(color.hex);
         }
-        const startingPointColor = checkNotNull(Colors[mapClass.startingPointColor]);
+        const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
           const playerUnit = state.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);
         } else {
-          const enemyUnitClass = mapClass.enemyColors[color.hex] ?? null;
+          const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
@@ -134,7 +135,7 @@ class PredefinedMapBuilder {
               unitClass: enemyUnitClass,
               faction: 'ENEMY',
               controller,
-              level: mapClass.levelNumber,
+              level: model.levelNumber,
               coordinates: { x, y }
             });
             units.push(unit);
@@ -145,9 +146,11 @@ class PredefinedMapBuilder {
     return units;
   };
 
-  private _loadObjects = async (mapClass: PredefinedMapModel, image: Image): Promise<Object[]> => {
+  private _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
     const { spriteFactory } = this;
-    const objects: Object[] = [];
+    const objects: GameObject[] = [];
+
+    const objectColors = this._toHexColors(model.objectColors);
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.data.width;
@@ -155,7 +158,7 @@ class PredefinedMapBuilder {
       const [r, g, b, a] = image.data.data.slice(i, i + 4);
       const color = Color.fromRGB({ r, g, b });
 
-      const objectName = mapClass.objectColors?.[color.hex] ?? null;
+      const objectName = objectColors?.[color.hex] ?? null;
       if (objectName?.startsWith('door_')) {
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
@@ -172,18 +175,20 @@ class PredefinedMapBuilder {
       } else if (objectName === 'mirror') {
         const spawner = await this.objectFactory.createMirror({ x, y });
         objects.push(spawner);
-      } else if (objectName === 'block') {
+      } else if (objectName === 'movable_block') {
         const block = await this.objectFactory.createMovableBlock({ x, y });
         objects.push(block);
+      } else if (objectName) {
+        throw new Error(`Unrecognized object name: ${objectName}`);
       }
 
-      const itemId = (mapClass.itemColors?.[color.hex] ?? null);
+      const itemId = (model.itemColors?.[color.hex] ?? null);
       if (itemId) {
         const item = await this.itemFactory.createMapItem(itemId, { x, y });
         objects.push(item);
       }
 
-      const equipmentId = (mapClass.equipmentColors?.[color.hex] ?? null);
+      const equipmentId = (model.equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
         const equipment = await this.itemFactory.createMapEquipment(equipmentId, { x, y });
         objects.push(equipment);
@@ -192,6 +197,20 @@ class PredefinedMapBuilder {
 
     return objects;
   };
+
+  private _toHexColors = (
+    source?: { [colorName: string]: string }
+  ): { [hexColor: string]: string } => {
+    const hexColors: {
+      [hexColor: string]: string
+    } = {};
+
+    for (const [colorName, unitClass] of Object.entries(source ?? {})) {
+      const color = checkNotNull(Colors[colorName]);
+      hexColors[color.hex] = unitClass;
+    }
+    return hexColors;
+  }
 }
 
 export default PredefinedMapBuilder;

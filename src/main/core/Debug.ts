@@ -1,9 +1,3 @@
-/*
- * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
- * that are only intended for debugging purposes.
- */
-
-import { subtract } from '../utils/arrays';
 import { GameEngine } from './GameEngine';
 import GameState from './GameState';
 

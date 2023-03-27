@@ -12,8 +12,8 @@ type Props = Readonly<{
 
 export default class Projectile implements Entity {
   private coordinates: Coordinates
-  private direction: Direction;
-  private sprite: Sprite;
+  private readonly direction: Direction;
+  private readonly sprite: Sprite;
 
   constructor({ x, y, direction, sprite }: Props) {
     this.coordinates = { x, y };
@@ -23,6 +23,14 @@ export default class Projectile implements Entity {
 
   /** @override {@link Entity#getCoordinates} */
   getCoordinates = (): Coordinates => this.coordinates;
+
+  /**
+   * @override {@link Entity#setCoordinates}
+   * TODO we don't use this, we recreate the projectile... we should probably just move it
+   */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
+  };
 
   /** @override {@link Entity#getSprite} */
   getSprite = (): Sprite => this.sprite;

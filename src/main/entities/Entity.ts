@@ -7,6 +7,7 @@ import Sprite from '../graphics/sprites/Sprite';
  */
 interface Entity {
   getCoordinates: () => Coordinates;
+  setCoordinates: (coordinates: Coordinates) => void;
   getSprite: () => Sprite | null;
   update: () => Promise<void>;
   /**

@@ -59,6 +59,7 @@ export class GameEngine {
     Music.stop();
     // Music.playFigure(Music.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
+    this._updateRevealedTiles();
     await this.render();
   };
 

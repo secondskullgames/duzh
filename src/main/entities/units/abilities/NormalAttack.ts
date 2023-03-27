@@ -7,6 +7,8 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import Block from '../../objects/Block';
+import Direction from '../../../geometry/Direction';
 
 export default class NormalAttack extends UnitAbility {
   constructor() {
@@ -18,18 +20,18 @@ export default class NormalAttack extends UnitAbility {
       throw new Error('NormalAttack requires a target!');
     }
 
-    const { x, y } = coordinates;
-
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
+    if (!map.contains(coordinates)) {
+      // do nothing
+    } else if (!map.isBlocked(coordinates)) {
+      await unit.moveTo(coordinates);
     } else {
-      const targetUnit = map.getUnit({ x, y });
+      const targetUnit = map.getUnit(coordinates);
       if (targetUnit) {
         const damage = unit.getDamage();
         playSound(Sounds.PLAYER_HITS_ENEMY);
@@ -41,7 +43,7 @@ export default class NormalAttack extends UnitAbility {
         });
       }
 
-      const door = map.getDoor({ x, y });
+      const door = map.getDoor(coordinates);
       if (door) {
         const keys = playerUnit.getInventory().get('KEY');
         if (keys.length > 0) {
@@ -53,12 +55,26 @@ export default class NormalAttack extends UnitAbility {
         }
       }
 
-      const spawner = map.getSpawner({ x, y });
+      const spawner = map.getSpawner(coordinates);
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
         const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         spawner.setState('DEAD');
+      }
+
+      const block = map.getObjects(coordinates)
+        .filter(object => object.getObjectType() === 'block')
+        .map(object => object as Block)
+        .find(block => block.isMovable());
+
+      if (block) {
+        const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
+        const nextCoordinates = Coordinates.plus(coordinates, { dx, dy });
+        if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
+          await block.moveTo(nextCoordinates);
+          await unit.moveTo(coordinates);
+        }
       }
     }
   };

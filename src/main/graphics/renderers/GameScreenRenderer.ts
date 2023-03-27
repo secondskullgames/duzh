@@ -108,25 +108,16 @@ class GameScreenRenderer extends AbstractRenderer {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (this._isTileRevealed({ x, y })) {
-          const item = map.getItem({ x, y });
-          if (item) {
-            await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
-            this._renderElement(item, { x, y });
+          for (const object of map.getObjects({ x, y })) {
+            if (object.getObjectType() === 'item') {
+              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
+            }
+            this._renderElement(object, { x, y });
           }
 
           const projectile = map.getProjectile({ x, y });
           if (projectile) {
             this._renderElement(projectile, { x, y });
-          }
-
-          const door = map.getDoor({ x, y });
-          if (door) {
-            this._renderElement(door, { x, y });
-          }
-
-          const spawner = map.getSpawner({ x, y });
-          if (spawner) {
-            this._renderElement(spawner, { x, y });
           }
 
           const unit = map.getUnit({ x, y });

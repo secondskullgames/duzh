@@ -10,7 +10,7 @@ type Props = Readonly<{
 }>;
 
 class Tile implements Entity {
-  private readonly coordinates: Coordinates;
+  private coordinates: Coordinates;
   private readonly tileType: TileType;
   private readonly sprite: Sprite | null;
 
@@ -22,6 +22,10 @@ class Tile implements Entity {
 
   /** @override */
   getCoordinates = (): Coordinates => this.coordinates;
+  /** @override {@link Entity#setCoordinates} */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
+  };
 
   /** @override */
   getSprite = (): Sprite | null => this.sprite;

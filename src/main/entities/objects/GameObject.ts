@@ -1,6 +1,7 @@
 import Entity from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
+import coordinates from '../../geometry/Coordinates';
 
 type ObjectType = 'spawner' | 'door' | 'item' | 'block';
 
@@ -10,7 +11,7 @@ type Props = Readonly<{
   sprite: Sprite
 }>;
 
-abstract class Object implements Entity {
+export default abstract class GameObject implements Entity {
   private coordinates: Coordinates;
   private readonly objectType: ObjectType;
   private readonly sprite: Sprite | null;
@@ -23,6 +24,11 @@ abstract class Object implements Entity {
 
   /** @override */
   getCoordinates = (): Coordinates  => this.coordinates;
+
+  /** @override */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
+  };
 
   /** @override */
   getSprite = (): Sprite | null => this.sprite;
@@ -38,5 +44,3 @@ abstract class Object implements Entity {
   /** @override */
   getObjectType = (): ObjectType => this.objectType;
 }
-
-export default Object;

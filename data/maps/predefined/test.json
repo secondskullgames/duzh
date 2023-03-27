@@ -22,7 +22,8 @@
   },
   "objectColors": {
     "DARK_BROWN": "door_vertical",
-    "LIGHT_BROWN": "door_horizontal"
+    "LIGHT_BROWN": "door_horizontal",
+    "DARK_BLUE": "movable_block"
   },
   "startingPointColor": "RED"
 }

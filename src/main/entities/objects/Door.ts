@@ -1,7 +1,7 @@
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
-import Object from './Object';
+import GameObject from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 
 export type DoorState = 'OPEN' | 'CLOSED';
@@ -16,7 +16,7 @@ type Props = Readonly<{
   sprite: DynamicSprite<Door>
 }>;
 
-export default class Door extends Object implements Animatable {
+export default class Door extends GameObject implements Animatable {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
 

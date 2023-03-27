@@ -1,6 +1,6 @@
 import Sprite from '../../graphics/sprites/Sprite';
 import InventoryItem from '../../items/InventoryItem';
-import Object from './Object';
+import GameObject from './GameObject';
 
 type Props = Readonly<{
   x: number,
@@ -9,7 +9,7 @@ type Props = Readonly<{
   inventoryItem: InventoryItem
 }>;
 
-export default class MapItem extends Object {
+export default class MapItem extends GameObject {
   readonly inventoryItem: InventoryItem;
 
   constructor({ x, y, sprite, inventoryItem }: Props) {

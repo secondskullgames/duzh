@@ -70,7 +70,9 @@ export default class GameState {
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
 
-  setMap = (map: MapInstance) => { this.map = map; };
+  setMap = (map: MapInstance) => {
+    this.map = map;
+  };
 
   getTurn = () => this.turn;
   nextTurn = () => { this.turn++; };

@@ -1,7 +1,7 @@
 import GameState from '../../core/GameState';
 import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
-import Object from './Object';
+import GameObject from './GameObject';
 import Unit from '../units/Unit';
 import UnitFactory from '../units/UnitFactory';
 import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
@@ -23,7 +23,7 @@ type Props = Readonly<{
   isBlocking: boolean
 }>;
 
-export default class Spawner extends Object implements Animatable {
+export default class Spawner extends GameObject implements Animatable {
   private readonly spawnFunction: SpawnFunction;
   private state: SpawnerState;
   private readonly maxCooldown: number;

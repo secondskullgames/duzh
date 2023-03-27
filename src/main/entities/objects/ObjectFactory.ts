@@ -4,7 +4,7 @@ import Spawner from './Spawner';
 import UnitFactory from '../units/UnitFactory';
 import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 import GameState from '../../core/GameState';
-import Object from './Object';
+import GameObject from './GameObject';
 import Block from './Block';
 
 export type SpawnerClass = 'mirror';
@@ -57,8 +57,9 @@ export default class ObjectFactory {
     }
   };
 
-  createMovableBlock = async (coordinates: Coordinates): Promise<Object> => {
+  createMovableBlock = async (coordinates: Coordinates): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createStaticSprite('block');
+    console.log(sprite);
     return new Block({
       coordinates,
       sprite,
