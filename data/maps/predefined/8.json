@@ -19,10 +19,8 @@
     "YELLOW": "key"
   },
   "equipmentColors": {},
-  "doorColors": {
-    "DARK_BROWN": "vertical"
-  },
-  "spawnerColors": {
+  "objectColors": {
+    "DARK_BROWN": "door_vertical",
     "CYAN": "mirror"
   },
   "startingPointColor": "BLUE"
