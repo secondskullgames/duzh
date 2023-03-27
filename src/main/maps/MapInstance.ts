@@ -126,9 +126,9 @@ export default class MapInstance {
   };
 
   removeUnit = (unit: Unit) => {
-    const coordinates = unit.getCoordinates();
     checkState(this.units.has(unit));
     this.units.delete(unit);
+    const coordinates = unit.getCoordinates();
     this._entities.remove(coordinates, unit);
   };
 

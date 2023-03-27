@@ -29,12 +29,12 @@ export default class Block extends GameObject {
 
   isMovable = (): boolean => this.movable;
 
-  moveTo = async ({ x, y }: Coordinates) => {
+  moveTo = async (coordinates: Coordinates) => {
     const state = GameState.getInstance();
     const map = state.getMap();
     map.removeObject(this);
 
-    this.setCoordinates({ x, y });
+    this.setCoordinates(coordinates);
     map.addObject(this);
   };
 }
