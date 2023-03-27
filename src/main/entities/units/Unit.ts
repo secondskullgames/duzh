@@ -56,8 +56,7 @@ export default class Unit implements Entity, Animatable {
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
   private readonly aiParameters: AIParameters | null;
-  private x: number;
-  private y: number;
+  private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
   private experience: number;
@@ -90,8 +89,7 @@ export default class Unit implements Entity, Animatable {
     this.sprite.target = this;
     this.inventory = new InventoryMap();
 
-    this.x = props.coordinates.x;
-    this.y = props.coordinates.y;
+    this.coordinates = props.coordinates;
     this.name = props.name;
     this.level = 1;
     this.experience = 0;
@@ -165,14 +163,11 @@ export default class Unit implements Entity, Animatable {
   getController = (): UnitController => this.controller;
 
   /** @override */
-  getCoordinates = (): Coordinates => ({
-    x: this.x,
-    y: this.y
-  });
+  getCoordinates = (): Coordinates => this.coordinates;
 
-  setCoordinates = ({ x, y }: Coordinates) => {
-    this.x = x;
-    this.y = y;
+  /** @override */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
   };
 
   getLife = () => this.life;
@@ -274,25 +269,24 @@ export default class Unit implements Entity, Animatable {
   };
 
   startAttack = async (target: Unit) => {
-    const { x, y } = target;
     const animation = AnimationFactory.getInstance().getAttackingAnimation(this, target);
     await GameEngine.getInstance().playAnimation(animation);
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.script) {
-        await EquipmentScript.onAttack(equipment, equipment.script, { x, y });
+        await EquipmentScript.onAttack(equipment, equipment.script, target.getCoordinates());
       }
     }
 
     this.turnsSinceCombatAction = 0;
   };
 
-  moveTo = async ({ x, y }: Coordinates) => {
+  moveTo = async (coordinates: Coordinates) => {
     const state = GameState.getInstance();
     const map = state.getMap();
     map.removeUnit(this);
 
-    this.setCoordinates({ x, y });
+    this.setCoordinates(coordinates);
     map.addUnit(this);
 
     const playerUnit = state.getPlayerUnit();
@@ -302,8 +296,8 @@ export default class Unit implements Entity, Animatable {
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.script) {
-        const { dx, dy } = this.direction;
-        await EquipmentScript.onMove(equipment, equipment.script, { x: this.x + dx, y: this.y + dy });
+        const nextCoordinates = Coordinates.plus(this.coordinates, this.direction);
+        await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates);
       }
     }
   };
