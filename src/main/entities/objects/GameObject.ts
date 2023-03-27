@@ -1,7 +1,6 @@
 import Entity from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
-import coordinates from '../../geometry/Coordinates';
 
 type ObjectType = 'spawner' | 'door' | 'item' | 'block';
 

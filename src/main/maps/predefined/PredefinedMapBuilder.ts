@@ -14,7 +14,7 @@ import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
-import { checkNotNull } from '../../utils/preconditions';
+import { checkNotNull, checkState } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../entities/units/controllers/WizardController';
 import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
@@ -68,7 +68,7 @@ class PredefinedMapBuilder {
   };
 
   private _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
-    const tileColors = model.tileColors;
+    const tileColors = this._toHexColors(model.tileColors);
     const tileSet = await this.tileFactory.getTileSet(model.tileset);
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.bitmap.height; y++) {
@@ -106,6 +106,7 @@ class PredefinedMapBuilder {
     let id = 1;
 
     const enemyColors = this._toHexColors(model.enemyColors);
+    let addedStartingPoint = false;
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.width;
@@ -120,9 +121,11 @@ class PredefinedMapBuilder {
         }
         const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
+          console.log(`starting point = (${x}, ${y})`);
           const playerUnit = state.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);
+          addedStartingPoint = true;
         } else {
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
@@ -143,6 +146,7 @@ class PredefinedMapBuilder {
         }
       }
     }
+    checkState(addedStartingPoint, "No starting point");
     return units;
   };
 
