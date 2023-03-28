@@ -59,7 +59,6 @@ export default class ObjectFactory {
 
   createMovableBlock = async (coordinates: Coordinates): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createStaticSprite('block');
-    console.log(sprite);
     return new Block({
       coordinates,
       sprite,
