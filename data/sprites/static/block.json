@@ -1,9 +1,9 @@
 {
   "name": "block",
-  "filename": "tiles/dungeon/tile_wall",
+  "filename": "boulder",
   "offsets": {
-    "dx": 0,
-    "dy": 0
+    "dx": 4,
+    "dy": -4
   },
   "transparentColor": "WHITE"
 }

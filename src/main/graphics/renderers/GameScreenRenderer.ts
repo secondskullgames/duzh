@@ -112,6 +112,9 @@ class GameScreenRenderer extends AbstractRenderer {
             if (object.getObjectType() === 'item') {
               await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
             }
+            if (object.getObjectType() === 'block') {
+              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
+            }
             this._renderElement(object, { x, y });
           }
 
