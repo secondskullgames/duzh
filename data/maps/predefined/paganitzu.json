@@ -4,7 +4,7 @@
   "levelNumber": 1,
   "tileColors": {
     "BLACK": "FLOOR",
-    "LIGHT_GRAY": "WALL",
+    "LIGHT_GRAY": "WALL_TOP",
     "DARK_GRAY": "WALL",
     "GREEN": "STAIRS_DOWN"
   },
