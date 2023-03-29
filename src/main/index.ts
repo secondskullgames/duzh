@@ -55,6 +55,8 @@ const main = async () => {
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
+  const unitService = new UnitService({ state, engine, animationFactory });
+  UnitService.setInstance(unitService);
   const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({
@@ -69,7 +71,6 @@ const main = async () => {
   await addInitialState(state, unitFactory, mapFactory);
   const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
-  const unitService = new UnitService({ state, engine, animationFactory });
   const debug = new Debug({ engine, state, unitService });
   debug.attachToWindow();
   await engine.render();
