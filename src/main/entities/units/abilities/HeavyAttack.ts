@@ -6,6 +6,7 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
+import UnitService from '../UnitService';
 
 export default class HeavyAttack extends UnitAbility {
   constructor() {
@@ -17,22 +18,21 @@ export default class HeavyAttack extends UnitAbility {
       throw new Error('HeavyAttack requires a target!');
     }
 
-    const { x, y } = coordinates;
-
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
+    const unitService = UnitService.getInstance();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
+    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+      await unitService.moveUnit(unit, coordinates);
     } else {
-      const targetUnit = map.getUnit({ x, y });
+      const targetUnit = map.getUnit(coordinates);
       if (targetUnit) {
         playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
-        await unit.startAttack(targetUnit);
+        await unitService.startAttack(unit, targetUnit);
         await engine.dealDamage(damage, {
           sourceUnit: unit,
           targetUnit,

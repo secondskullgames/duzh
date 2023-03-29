@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import { GameEngine } from '../../../core/GameEngine';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import UnitService from '../UnitService';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -45,7 +46,7 @@ export default class Teleport extends UnitAbility {
         await engine.playAnimation(animation);
       }
 
-      await unit.moveTo({ x, y });
+      await UnitService.getInstance().moveUnit(unit, { x, y });
       playSound(Sounds.WIZARD_APPEAR);
 
       {

@@ -7,6 +7,7 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import UnitAbility from './UnitAbility';
+import UnitService from '../UnitService';
 
 export default class KnockbackAttack extends UnitAbility {
   constructor() {
@@ -31,7 +32,7 @@ export default class KnockbackAttack extends UnitAbility {
       unit.spendMana(this.manaCost);
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
-      await unit.startAttack(targetUnit);
+      await UnitService.getInstance().startAttack(unit, targetUnit);
       await engine.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit,

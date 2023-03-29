@@ -22,6 +22,7 @@ import UnitModel from '../../schemas/UnitModel';
 import { GameEngine } from '../../core/GameEngine';
 import AnimationFactory from '../../graphics/animations/AnimationFactory';
 import Sprite from '../../graphics/sprites/Sprite';
+import UnitService from './UnitService';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -35,9 +36,6 @@ const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
 const experienceToNextLevel = [4, 6, 8, 10, 12, 14, 16, 18, 20];
-const lifePerLevel = 0;
-const manaPerLevel = 2;
-const damagePerLevel = 0;
 
 type Props = Readonly<{
   name: string,
@@ -124,7 +122,7 @@ export default class Unit implements Entity, Animatable {
     }
 
     while (this.level < props.level) {
-      this.levelUp();
+      UnitService.getInstance().levelUp(this); // TODO
     }
   }
 
@@ -235,30 +233,8 @@ export default class Unit implements Entity, Animatable {
     return Math.round(damage);
   };
 
-  levelUp = () => {
-    this.level++;
-
-    this.maxLife += lifePerLevel;
-    this.life += lifePerLevel;
-    this.maxMana += manaPerLevel;
-    this.mana += manaPerLevel;
-    this.damage += damagePerLevel;
-    const abilities = this.abilitiesPerLevel[this.level] ?? [];
-    for (const abilityName of abilities) {
-      this.abilities.push(UnitAbilities.abilityForName(abilityName as AbilityName));
-    }
-  };
-
-  gainExperience = (experience: number) => {
-    if (this.faction === 'PLAYER') {
-      this.experience += experience;
-      const experienceToNextLevel = this.experienceToNextLevel();
-      while (experienceToNextLevel && this.experience >= experienceToNextLevel) {
-        this.experience -= experienceToNextLevel;
-        this.levelUp();
-        playSound(Sounds.LEVEL_UP);
-      }
-    }
+  gainExperience = (amount: number) => {
+    this.experience += amount;
   };
 
   experienceToNextLevel = (): (number | null) => {
@@ -266,40 +242,6 @@ export default class Unit implements Entity, Animatable {
       return experienceToNextLevel[this.level];
     }
     return null;
-  };
-
-  startAttack = async (target: Unit) => {
-    const animation = AnimationFactory.getInstance().getAttackingAnimation(this, target);
-    await GameEngine.getInstance().playAnimation(animation);
-
-    for (const equipment of this.equipment.getAll()) {
-      if (equipment.script) {
-        await EquipmentScript.onAttack(equipment, equipment.script, target.getCoordinates());
-      }
-    }
-
-    this.turnsSinceCombatAction = 0;
-  };
-
-  moveTo = async (coordinates: Coordinates) => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
-    map.removeUnit(this);
-
-    this.setCoordinates(coordinates);
-    map.addUnit(this);
-
-    const playerUnit = state.getPlayerUnit();
-    if (this === playerUnit) {
-      playSound(Sounds.FOOTSTEP);
-    }
-
-    for (const equipment of this.equipment.getAll()) {
-      if (equipment.script) {
-        const nextCoordinates = Coordinates.plus(this.coordinates, this.direction);
-        await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates);
-      }
-    }
   };
 
   private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
@@ -371,4 +313,28 @@ export default class Unit implements Entity, Animatable {
    * @override {@link Entity#getType}
    */
   getType = (): EntityType => 'unit';
+
+  incrementLevel = () => {
+    this.level++;
+  };
+
+  incrementMaxLife = (amount: number) => {
+    this.maxLife += amount;
+  };
+
+  incrementMaxMana = (amount: number) => {
+    this.maxMana += amount;
+  };
+
+  incrementDamage = (amount: number) => {
+    this.damage += amount;
+  };
+
+  addAbility = (ability: UnitAbility) => {
+    this.abilities.push(ability);
+  };
+
+  getNewAbilities = (level: number): string[] => {
+    return this.abilitiesPerLevel[level] ?? [];
+  };
 }

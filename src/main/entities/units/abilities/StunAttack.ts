@@ -6,6 +6,7 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
+import UnitService from '../UnitService';
 
 export default class StunAttack extends UnitAbility {
   constructor() {
@@ -22,17 +23,19 @@ export default class StunAttack extends UnitAbility {
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
+    const unitService = UnitService.getInstance();
+
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
+      await unitService.moveUnit(unit, { x, y });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
         playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage();
-        await unit.startAttack(targetUnit);
+        await unitService.startAttack(unit, targetUnit);
         await engine.dealDamage(damage, {
           sourceUnit: unit,
           targetUnit,

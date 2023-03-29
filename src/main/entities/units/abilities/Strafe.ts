@@ -2,6 +2,7 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import GameState from '../../../core/GameState';
 import UnitAbility from './UnitAbility';
+import UnitService from '../UnitService';
 
 export default class Strafe extends UnitAbility {
   constructor() {
@@ -13,10 +14,9 @@ export default class Strafe extends UnitAbility {
       throw new Error('Strafe requires a target!');
     }
     const map = GameState.getInstance().getMap();
-    const { x, y } = coordinates;
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unit.moveTo({ x, y });
+    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+      await UnitService.getInstance().moveUnit(unit, coordinates);
     }
   };
 

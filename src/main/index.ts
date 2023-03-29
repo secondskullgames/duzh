@@ -16,6 +16,7 @@ import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
+import UnitService from './entities/units/UnitService';
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
   const playerUnit = await unitFactory.createPlayerUnit();
@@ -68,7 +69,8 @@ const main = async () => {
   await addInitialState(state, unitFactory, mapFactory);
   const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
-  const debug = new Debug({ engine, state });
+  const unitService = new UnitService({ state, engine, animationFactory });
+  const debug = new Debug({ engine, state, unitService });
   debug.attachToWindow();
   await engine.render();
   await engine.preloadFirstMap();

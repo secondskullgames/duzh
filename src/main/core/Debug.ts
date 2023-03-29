@@ -1,19 +1,23 @@
 import { GameEngine } from './GameEngine';
 import GameState from './GameState';
+import UnitService from '../entities/units/UnitService';
 
 type Props = Readonly<{
   engine: GameEngine,
-  state: GameState
+  state: GameState,
+  unitService: UnitService
 }>;
 
 export class Debug {
   private readonly engine: GameEngine;
   private readonly state: GameState;
+  private readonly unitService: UnitService;
   private revealMap: boolean;
 
-  constructor({ engine, state }: Props) {
+  constructor({ engine, state, unitService }: Props) {
     this.engine = engine;
     this.state = state;
+    this.unitService = unitService;
     this.revealMap = false;
   }
 
@@ -51,7 +55,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    playerUnit.levelUp();
+    this.unitService.levelUp(playerUnit);
     await this.engine.render();
   };
 
