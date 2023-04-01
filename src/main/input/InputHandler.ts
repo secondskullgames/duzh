@@ -48,7 +48,12 @@ export default class InputHandler {
     }
   };
 
-  keyHandler = async (e: KeyboardEvent): Promise<void> => {
+  keyHandler = async (e: KeyboardEvent) => {
+    if (e.repeat) {
+      console.log('ignoring repeated event');
+      return;
+    }
+
     const command : (KeyCommand | null) = mapToCommand(e);
 
     if (!command) {
