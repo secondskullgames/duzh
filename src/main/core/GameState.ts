@@ -5,6 +5,7 @@ import UnitAbility from '../entities/units/abilities/UnitAbility';
 import { checkNotNull, checkState } from '../utils/preconditions';
 import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';
+import { clear } from '../utils/arrays';
 
 let INSTANCE: GameState | null = null;
 
@@ -58,6 +59,7 @@ export default class GameState {
   getMapIndex = () => this.mapIndex;
   loadNextMap = async (): Promise<MapInstance> => {
     this.mapIndex++;
+    checkState(this.mapIndex < this.mapSuppliers.length);
     const mapSupplier = this.mapSuppliers[this.mapIndex];
     const map = await mapSupplier();
     this.maps.push(map);
@@ -85,8 +87,22 @@ export default class GameState {
   getMessages = (): string[] => {
     return this.messages.getRecentMessages(this.turn);
   }
+
   logMessage = (message: string): void => {
     this.messages.log(message, this.turn);
+  };
+
+  reset = () => {
+    this.screen = 'TITLE';
+    this.prevScreen = null;
+    this.playerUnit = null;
+    clear(this.mapSuppliers);
+    clear(this.maps);
+    this.mapIndex = -1;
+    this.map = null;
+    this.messages.clear();
+    this.turn = 1;
+    this.queuedAbility = null;
   };
 
   static setInstance = (state: GameState) => { INSTANCE = state; };

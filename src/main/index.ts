@@ -18,18 +18,6 @@ import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
 import UnitService from './entities/units/UnitService';
 
-const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
-  const playerUnit = await unitFactory.createPlayerUnit();
-  state.setPlayerUnit(playerUnit);
-
-  const mapSpecs = (await import(
-    /* webpackChunkName: "models" */
-    `../../data/maps.json`
-    )).default as MapSpec[];
-  const maps: MapSupplier[] = mapSpecs.map(spec => () => mapFactory.loadMap(spec));
-  state.addMaps(maps);
-};
-
 const main = async () => {
   const state = new GameState();
   GameState.setInstance(state);
