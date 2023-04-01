@@ -7,6 +7,6 @@
     "WALL_HALL": ["tile_wall_hall"],
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
-    "NONE": [null]
+    "NONE": ["tile_wall_top"]
   }
 }
