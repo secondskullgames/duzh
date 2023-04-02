@@ -3,15 +3,10 @@ import Music from '../sounds/Music';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from './GameEngine';
 import GameState from './GameState';
-import MapSpec from '../schemas/MapSpec';
-import { MapSupplier } from '../maps/MapSupplier';
-import MapFactory from '../maps/MapFactory';
-import UnitFactory from '../entities/units/UnitFactory';
 
 let _instance: GameDriver | null = null;
 
 type Props = Readonly<{
-  renderer: GameRenderer,
   state: GameState,
   engine: GameEngine
 }>;
@@ -21,11 +16,9 @@ type Props = Readonly<{
  */
 export class GameDriver {
   private readonly state: GameState;
-  private readonly renderer: GameRenderer;
   private readonly engine: GameEngine;
 
-  constructor({ renderer, state, engine }: Props) {
-    this.renderer = renderer;
+  constructor({ state, engine }: Props) {
     this.state = state;
     this.engine = engine;
   }
@@ -38,10 +31,6 @@ export class GameDriver {
     Music.playMusic(evilTheme);
     await engine.preloadFirstMap();
   };
-
-  getState = () => this.state;
-  getRenderer = () => this.renderer;
-  getEngine = () => this.engine;
 
   /**
    * @deprecated

@@ -42,7 +42,6 @@ export const setup = async () => {
   state.addMaps([() => Promise.resolve(map)]);
   const driver = new GameDriver({
     state,
-    renderer: renderer as GameRenderer,
     engine
   });
   GameDriver.setInstance(driver);

@@ -32,7 +32,7 @@ const main = async () => {
   });
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
-  const gameDriver = new GameDriver({ renderer, state, engine });
+  const gameDriver = new GameDriver({ state, engine });
   GameDriver.setInstance(gameDriver);
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
