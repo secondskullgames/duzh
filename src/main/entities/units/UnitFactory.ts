@@ -1,7 +1,7 @@
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import ItemFactory from '../../items/ItemFactory';
+import ItemService from '../../items/ItemService';
 import { Faction } from '../../types/types';
 import { loadUnitModel } from '../../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
@@ -24,16 +24,16 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  itemFactory: ItemFactory,
+  itemService: ItemService,
   spriteFactory: SpriteFactory
 }>
 
 export default class UnitFactory {
-  private readonly itemFactory: ItemFactory;
+  private readonly itemService: ItemService;
   private readonly spriteFactory: SpriteFactory;
 
-  constructor({ itemFactory, spriteFactory }: Props) {
-    this.itemFactory = itemFactory;
+  constructor({ itemService, spriteFactory }: Props) {
+    this.itemService = itemService;
     this.spriteFactory = spriteFactory;
   }
 
@@ -42,7 +42,7 @@ export default class UnitFactory {
     const sprite = await this.spriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of (model.equipment ?? [])) {
-      const equipment = await this.itemFactory.createEquipment(equipmentClass);
+      const equipment = await this.itemService.createEquipment(equipmentClass);
       equipmentList.push(equipment);
     }
 

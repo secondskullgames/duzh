@@ -14,6 +14,7 @@ import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';
 import Timer from '../utils/Timer';
+import UnitService from '../entities/units/UnitService';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -106,6 +107,7 @@ export class GameEngine {
       const t1 = new Date().getTime();
       const nextMap = await state.loadNextMap();
       state.setMap(nextMap);
+      this._updateRevealedTiles();
       if (nextMap.music) {
         await Music.playMusic(nextMap.music);
       }
@@ -169,7 +171,7 @@ export class GameEngine {
       }
 
       if (sourceUnit === playerUnit) {
-        sourceUnit.gainExperience(1);
+        UnitService.getInstance().awardExperience(sourceUnit, 1);
       }
     }
   };
@@ -199,32 +201,6 @@ export class GameEngine {
         map.removeProjectile(projectile);
       }
     }
-  };
-
-  pickupItem = (unit: Unit, mapItem: MapItem) => {
-    const { inventoryItem } = mapItem;
-    unit.getInventory().add(inventoryItem);
-    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
-    playSound(Sounds.PICK_UP_ITEM);
-  };
-
-  useItem = async (unit: Unit, item: InventoryItem) => {
-    await item.use(unit);
-    unit.getInventory().remove(item);
-  };
-
-  equipItem = async (item: InventoryItem, equipment: Equipment, unit: Unit) => {
-    const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
-    if (currentEquipment) {
-      const inventoryItem = currentEquipment.inventoryItem;
-      if (inventoryItem) {
-        unit.getInventory().add(inventoryItem);
-      }
-    }
-    unit.getEquipment().add(equipment);
-    equipment.attach(unit);
-    this.state.logMessage(`Equipped ${equipment.getName()}.`);
-    playSound(Sounds.BLOCKED);
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };

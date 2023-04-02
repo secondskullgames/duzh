@@ -24,7 +24,7 @@ type Props = Readonly<{
   animationFactory: AnimationFactory
 }>;
 
-export default class ItemFactory {
+export default class ItemService {
   private readonly state: GameState;
   private readonly engine: GameEngine;
   private readonly spriteFactory: SpriteFactory;
@@ -117,7 +117,7 @@ export default class ItemFactory {
   private _createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
       const equipment = await this.createEquipment(equipmentClass);
-      return this.engine.equipItem(item, equipment, unit);
+      return this.equipItem(item, equipment, unit);
     };
     const model = await loadEquipmentModel(equipmentClass);
     return new InventoryItem({
@@ -207,7 +207,33 @@ export default class ItemFactory {
     return models;
   };
 
-  private static instance: ItemFactory | null;
-  static getInstance = (): ItemFactory => checkNotNull(ItemFactory.instance);
-  static setInstance = (factory: ItemFactory) => { ItemFactory.instance = factory; };
+  pickupItem = (unit: Unit, mapItem: MapItem) => {
+    const { inventoryItem } = mapItem;
+    unit.getInventory().add(inventoryItem);
+    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
+    playSound(Sounds.PICK_UP_ITEM);
+  };
+
+  useItem = async (unit: Unit, item: InventoryItem) => {
+    await item.use(unit);
+    unit.getInventory().remove(item);
+  };
+
+  equipItem = async (item: InventoryItem, equipment: Equipment, unit: Unit) => {
+    const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
+    if (currentEquipment) {
+      const inventoryItem = currentEquipment.inventoryItem;
+      if (inventoryItem) {
+        unit.getInventory().add(inventoryItem);
+      }
+    }
+    unit.getEquipment().add(equipment);
+    equipment.attach(unit);
+    this.state.logMessage(`Equipped ${equipment.getName()}.`);
+    playSound(Sounds.BLOCKED);
+  };
+
+  private static instance: ItemService | null;
+  static getInstance = (): ItemService => checkNotNull(ItemService.instance);
+  static setInstance = (instance: ItemService) => { ItemService.instance = instance; };
 }

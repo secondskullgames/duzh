@@ -11,11 +11,10 @@ import MapInstance from './MapInstance';
 import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
-import { checkNotNull } from '../utils/preconditions';
 import TileFactory from '../tiles/TileFactory';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
-import ItemFactory from '../items/ItemFactory';
+import ItemService from '../items/ItemService';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitFactory from '../entities/units/UnitFactory';
@@ -23,7 +22,7 @@ import UnitFactory from '../entities/units/UnitFactory';
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
-  itemFactory: ItemFactory,
+  itemService: ItemService,
   spawnerFactory: ObjectFactory,
   spriteFactory: SpriteFactory,
   tileFactory: TileFactory,
@@ -33,7 +32,7 @@ type Props = Readonly<{
 export default class MapFactory {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly itemFactory: ItemFactory;
+  private readonly itemService: ItemService;
   private readonly spawnerFactory: ObjectFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
@@ -42,7 +41,7 @@ export default class MapFactory {
   constructor(props: Props) {
     this.state = props.state;
     this.imageFactory = props.imageFactory;
-    this.itemFactory = props.itemFactory;
+    this.itemService = props.itemService;
     this.spawnerFactory = props.spawnerFactory;
     this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
@@ -71,17 +70,17 @@ export default class MapFactory {
     const {
       state,
       imageFactory,
-      itemFactory,
+      itemService,
       spawnerFactory,
       spriteFactory,
       unitFactory,
       tileFactory
     } = this;
 
-    const mapBuilder =  new PredefinedMapBuilder({
+    const mapBuilder = new PredefinedMapBuilder({
       state,
       imageFactory,
-      itemFactory,
+      itemService,
       spawnerFactory,
       spriteFactory,
       unitFactory,

@@ -5,7 +5,7 @@ import { Image } from '../../graphics/images/Image';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door from '../../entities/objects/Door';
-import ItemFactory from '../../items/ItemFactory';
+import ItemService from '../../items/ItemService';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
@@ -24,7 +24,7 @@ import TileFactory from '../../tiles/TileFactory';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
-  itemFactory: ItemFactory,
+  itemService: ItemService,
   spawnerFactory: ObjectFactory,
   spriteFactory: SpriteFactory
   tileFactory: TileFactory,
@@ -34,7 +34,7 @@ type Props = Readonly<{
 
 class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
-  private readonly itemFactory: ItemFactory;
+  private readonly itemService: ItemService;
   private readonly objectFactory: ObjectFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
@@ -43,7 +43,7 @@ class PredefinedMapBuilder {
 
   constructor(props: Props) {
     this.imageFactory = props.imageFactory;
-    this.itemFactory = props.itemFactory;
+    this.itemService = props.itemService;
     this.objectFactory = props.spawnerFactory;
     this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
@@ -188,13 +188,13 @@ class PredefinedMapBuilder {
 
       const itemId = (model.itemColors?.[color.hex] ?? null);
       if (itemId) {
-        const item = await this.itemFactory.createMapItem(itemId, { x, y });
+        const item = await this.itemService.createMapItem(itemId, { x, y });
         objects.push(item);
       }
 
       const equipmentId = (model.equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
-        const equipment = await this.itemFactory.createMapEquipment(equipmentId, { x, y });
+        const equipment = await this.itemService.createMapEquipment(equipmentId, { x, y });
         objects.push(equipment);
       }
     }

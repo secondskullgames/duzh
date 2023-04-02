@@ -11,6 +11,7 @@ import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
 import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
+import ItemService from '../items/ItemService';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -18,7 +19,8 @@ type Props = Readonly<{
   engine: GameEngine,
   state: GameState,
   driver: GameDriver,
-  mapFactory: MapFactory
+  mapFactory: MapFactory,
+  itemService: ItemService
 }>;
 
 export default class InputHandler {
@@ -26,15 +28,17 @@ export default class InputHandler {
   private readonly state: GameState;
   private readonly driver: GameDriver;
   private readonly mapFactory: MapFactory;
+  private readonly itemService: ItemService;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ engine, state, driver, mapFactory }: Props) {
+  constructor({ engine, state, driver, mapFactory, itemService }: Props) {
     this.engine = engine;
     this.state = state;
     this.driver = driver;
     this.mapFactory = mapFactory;
+    this.itemService = itemService;
 
     this.busy = false;
     this.eventTarget = null;
@@ -43,14 +47,18 @@ export default class InputHandler {
   keyHandlerWrapper = async (event: KeyboardEvent) => {
     if (!this.busy) {
       this.busy = true;
-      await this.keyHandler(event);
+      try {
+        await this.keyHandler(event)
+      } catch (e) {
+        console.error(e);
+        alert(e);
+      }
       this.busy = false;
     }
   };
 
   keyHandler = async (e: KeyboardEvent) => {
     if (e.repeat) {
-      console.log('ignoring repeated event');
       return;
     }
 
@@ -155,7 +163,7 @@ export default class InputHandler {
   };
 
   private _handleEnter = async (modifiers: ModifierKey[]) => {
-    const { state, driver } = this;
+    const { state, driver, engine, itemService } = this;
     const playerUnit = state.getPlayerUnit();
 
     if (modifiers.includes('ALT')) {
@@ -173,7 +181,7 @@ export default class InputHandler {
         const { x, y } = playerUnit.getCoordinates();
         const item = map.getItem({ x, y });
         if (item) {
-          this.engine.pickupItem(playerUnit, item);
+          itemService.pickupItem(playerUnit, item);
           map.removeObject(item);
         } else if (map.getTile({ x, y }).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
@@ -188,8 +196,8 @@ export default class InputHandler {
 
         if (selectedItem) {
           state.setScreen('GAME');
-          await this.engine.useItem(playerUnit, selectedItem);
-          await this.engine.render();
+          await itemService.useItem(playerUnit, selectedItem);
+          await engine.render();
         }
         break;
       }

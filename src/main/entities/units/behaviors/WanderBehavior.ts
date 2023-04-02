@@ -13,18 +13,18 @@ export default class WanderBehavior implements UnitBehavior {
     const map = state.getMap();
     const tiles: Coordinates[] = [];
 
-    for (const { dx, dy } of Direction.values()) {
-      const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-      if (map.contains({ x, y })) {
-        if (!map.isBlocked({ x, y })) {
-          tiles.push({ x, y });
+    for (const direction of Direction.values()) {
+      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+      if (map.contains(coordinates)) {
+        if (!map.isBlocked(coordinates)) {
+          tiles.push(coordinates);
         }
       }
     }
 
     if (tiles.length > 0) {
-      const { x, y } = randChoice(tiles);
-      await UnitAbilities.ATTACK.use(unit, { x, y });
+      const coordinates = randChoice(tiles);
+      await UnitAbilities.ATTACK.use(unit, coordinates);
     }
   };
 }
