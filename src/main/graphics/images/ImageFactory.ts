@@ -19,6 +19,8 @@ const CACHE: ImageCache = ImageCache.create();
 const rawCache: Record<string, ImageData | null> = {};
 
 export default class ImageFactory {
+  private readonly imageLoader = new ImageLoader();
+
   getImage = async (props: Props): Promise<Image> => {
     let filenames: string[];
     if (props.filenames) {
@@ -41,7 +43,7 @@ export default class ImageFactory {
       if (rawCache[filename]) {
         imageData = rawCache[filename];
       } else {
-        imageData = await ImageLoader.loadImage(filename);
+        imageData = await this.imageLoader.loadImage(filename);
         rawCache[filename] = imageData;
       }
       if (imageData) {

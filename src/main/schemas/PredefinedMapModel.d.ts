@@ -1,5 +1,4 @@
 import TileType from './TileType';
-import DoorDirection from './DoorDirection';
 
 type PredefinedMapModel = {
   imageFilename: string,
@@ -12,16 +11,13 @@ type PredefinedMapModel = {
   enemyColors: {
     [key: string]: string
   },
-  equipmentColors: {
+  equipmentColors?: {
     [key: string]: string
   },
-  itemColors: {
+  itemColors?: {
     [key: string]: string
   },
-  doorColors: {
-    [key: string]: DoorDirection
-  },
-  spawnerColors: {
+  objectColors?: {
     [key: string]: string
   },
   defaultTile: TileType,

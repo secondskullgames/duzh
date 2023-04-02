@@ -2,7 +2,7 @@ import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
-import { UnitAbilities } from '../units/abilities/UnitAbilities';
+import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 
 export type EquipmentScript = 'bolt_sword';
 

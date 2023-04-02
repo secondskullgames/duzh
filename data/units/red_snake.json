@@ -10,7 +10,7 @@
   },
   "life": 15,
   "mana": 0,
-  "damage": 9,
+  "damage": 7,
   "level": 1,
   "points": 8,
   "aiParameters": {

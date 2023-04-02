@@ -1,22 +1,23 @@
 import Rect from '../geometry/Rect';
-import Door from '../objects/Door';
-import MapItem from '../objects/MapItem';
+import Door from '../entities/objects/Door';
+import MapItem from '../entities/objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
-import Spawner from '../objects/Spawner';
+import Spawner from '../entities/objects/Spawner';
 import { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
-import Unit from '../units/Unit';
-import { checkArgument } from '../utils/preconditions';
+import Unit from '../entities/units/Unit';
+import { checkArgument, checkState } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
+import Entity from '../entities/Entity';
+import GameObject from '../entities/objects/GameObject';
+import Grid from '../types/Grid';
 
 type Props = Readonly<{
   width: number,
   height: number,
   tiles: Tile[][],
-  doors: Door[],
-  spawners: Spawner[],
   units: Unit[],
-  items: MapItem[],
+  objects: GameObject[],
   music: Figure[] | null
 }>;
 
@@ -27,11 +28,13 @@ export default class MapInstance {
    * [y][x]
    */
   private readonly _tiles: Tile[][];
-  readonly units: Unit[];
-  readonly items: MapItem[];
-  readonly doors: Door[];
-  readonly spawners: Spawner[];
-  readonly projectiles: Projectile[];
+  /**
+   * does NOT include tiles
+   */
+  private readonly _entities: Grid<Entity>;
+  private readonly units: Set<Unit>;
+  private readonly objects: Set<GameObject>;
+  readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
 
@@ -40,19 +43,20 @@ export default class MapInstance {
     height,
     tiles,
     units,
-    items,
-    doors,
-    spawners,
+    objects,
     music
   }: Props) {
     this.width = width;
     this.height = height;
     this._tiles = tiles;
-    this.doors = doors;
-    this.spawners = spawners;
-    this.units = units;
-    this.items = items;
-    this.projectiles = [];
+    this.units = new Set(units);
+    this.objects = new Set(objects);
+    this.projectiles = new Set();
+    this._entities = new Grid({ width, height });
+    for (const entity of [...units, ...objects]) {
+      const { x, y } = entity.getCoordinates();
+      this._entities.put({ x, y }, entity);
+    }
     this.revealedTiles = new Set();
     this.music = music;
   }
@@ -64,20 +68,42 @@ export default class MapInstance {
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
-  getUnit = ({ x, y }: Coordinates): (Unit | null) =>
-    this.units.find(unit => Coordinates.equals(unit.getCoordinates(), { x, y })) ?? null;
+  getUnit = ({ x, y }: Coordinates): (Unit | null) => {
+    const entity = this._entities.get({ x, y })
+      .find(entity => entity.getType() === 'unit');
+    return entity ? entity as Unit : null;
+  }
 
-  getItem = ({ x, y }: Coordinates): (MapItem | null) =>
-    this.items.find(item => Coordinates.equals(item.getCoordinates(), { x, y })) ?? null;
+  getAllUnits = (): Unit[] => [...this.units];
 
-  getDoor = ({ x, y }: Coordinates): (Door | null) =>
-    this.doors.find(door => Coordinates.equals(door.getCoordinates(), { x, y })) ?? null;
+  getObjects = ({ x, y }: Coordinates): GameObject[] =>
+    [...this.objects].filter(object => Coordinates.equals(object.getCoordinates(), { x, y }));
 
-  getSpawner = ({ x, y }: Coordinates): (Spawner | null) =>
-    this.spawners.find(spawner => Coordinates.equals(spawner.getCoordinates(), { x, y })) ?? null;
+  getAllObjects = (): GameObject[] => [...this.objects];
 
-  getProjectile = ({ x, y }: Coordinates): (Projectile | null) =>
-    this.projectiles.find(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y })) ?? null;
+  getSpawner = (coordinates: Coordinates): Spawner | null => {
+    return this.getObjects(coordinates)
+      .filter(object => object.getObjectType() === 'spawner')
+      .map(object => object as Spawner)
+      .find(() => true) ?? null;
+  };
+
+  getItem = (coordinates: Coordinates): MapItem | null => {
+    return this.getObjects(coordinates)
+      .filter(object => object.getObjectType() === 'item')
+      .map(object => object as MapItem)
+      .find(() => true) ?? null;
+  };
+
+  getDoor = (coordinates: Coordinates): Door | null => {
+    return this.getObjects(coordinates)
+      .filter(object => object.getObjectType() === 'door')
+      .map(object => object as Door)
+      .find(() => true) ?? null;
+  };
+
+  getProjectile = (coordinates: Coordinates): (Projectile | null) =>
+    [...this.projectiles].find(projectile => Coordinates.equals(projectile.getCoordinates(), coordinates)) ?? null;
 
   contains = ({ x, y }: Coordinates): boolean =>
     (x >= 0 && x < this.width)
@@ -85,35 +111,42 @@ export default class MapInstance {
 
   isBlocked = ({ x, y }: Coordinates): boolean => {
     checkArgument(this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
-    return !!this.getUnit({ x, y })
-      || this.getDoor({ x, y })?.isClosed()
-      || this.getTile({ x, y }).isBlocking
-      || this.getSpawner({ x, y })?.isBlocking()
-      || false;
+    if (this._tiles[y][x].isBlocking()) {
+      return true;
+    }
+    return this._entities.get({ x, y })
+      .some(e => e.isBlocking());
   };
 
   addUnit = (unit: Unit) => {
-    this.units.push(unit);
+    checkState(!this.units.has(unit));
+    this.units.add(unit);
+    const coordinates = unit.getCoordinates();
+    this._entities.put(coordinates, unit);
   };
 
-  removeUnit = ({ x, y }: Coordinates) => {
-    const index = this.units.findIndex(unit => Coordinates.equals(unit.getCoordinates(), { x, y }));
-    if (index >= 0) {
-      this.units.splice(index, 1);
+  removeUnit = (unit: Unit) => {
+    checkState(this.units.has(unit));
+    this.units.delete(unit);
+    const coordinates = unit.getCoordinates();
+    this._entities.remove(coordinates, unit);
+  };
+
+  addObject = (object: GameObject) => {
+    this.objects.add(object);
+    this._entities.put(object.getCoordinates(), object);
+  };
+
+  removeObject = (object: GameObject) => {
+    if (this.objects.has(object)) {
+      this.objects.delete(object);
     }
+    this._entities.remove(object.getCoordinates(), object)
   };
 
-  removeItem = ({ x, y }: Coordinates) => {
-    const index = this.items.findIndex(item => Coordinates.equals(item.getCoordinates(), { x, y }));
-    if (index >= 0) {
-      this.items.splice(index, 1);
-    }
-  };
-
-  removeProjectile = ({ x, y }: Coordinates) => {
-    const index = this.projectiles.findIndex(projectile => Coordinates.equals(projectile.getCoordinates(), { x, y }));
-    if (index >= 0) {
-      this.projectiles.splice(index, 1);
+  removeProjectile = (projectile: Projectile) => {
+    if (this.projectiles.has(projectile)) {
+      this.projectiles.delete(projectile);
     }
   };
 
@@ -131,5 +164,5 @@ export default class MapInstance {
   revealTile = ({ x, y }: Coordinates) =>
     this.revealedTiles.add(JSON.stringify({ x, y }));
 
-  unitExists = (unit: Unit): boolean => !!this.units.find(u => u === unit);
+  unitExists = (unit: Unit): boolean => this.units.has(unit);
 }

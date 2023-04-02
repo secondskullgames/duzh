@@ -1,37 +1,57 @@
 import Sprite from '../graphics/sprites/Sprite';
-import { randChoice } from '../utils/random';
-import TileSet from './TileSet';
-import { checkNotNull } from '../utils/preconditions';
 import TileType from '../schemas/TileType';
+import Entity from '../entities/Entity';
+import Coordinates from '../geometry/Coordinates';
 
-interface Tile {
-  type: TileType,
-  isBlocking: boolean
-  getSprite: () => Sprite | null
-}
+type Props = Readonly<{
+  tileType: TileType,
+  sprite: Sprite | null,
+  coordinates: Coordinates
+}>;
 
-namespace Tile {
-  export const create = (type: TileType, tileSet: TileSet): Tile => {
-    const tilesOfType = checkNotNull(tileSet[type]);
-    const sprite = randChoice(tilesOfType);
-    return {
-      type,
-      getSprite: () => sprite,
-      isBlocking: _isBlocking(type)
-    };
-  };
-}
+class Tile implements Entity {
+  private coordinates: Coordinates;
+  private readonly tileType: TileType;
+  private readonly sprite: Sprite | null;
 
-const _isBlocking = (tileType: TileType): boolean => {
-  switch (tileType) {
-    case 'WALL_HALL':
-    case 'WALL_TOP':
-    case 'WALL':
-    case 'NONE':
-      return true;
-    default:
-      return false;
+  constructor({ tileType, sprite, coordinates }: Props) {
+    this.tileType = tileType;
+    this.coordinates = coordinates;
+    this.sprite = sprite;
   }
-};
+
+  /** @override */
+  getCoordinates = (): Coordinates => this.coordinates;
+  /** @override {@link Entity#setCoordinates} */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
+  };
+
+  /** @override */
+  getSprite = (): Sprite | null => this.sprite;
+
+  /** @override */
+  isBlocking = (): boolean => {
+    switch (this.tileType) {
+      case 'WALL_HALL':
+      case 'WALL_TOP':
+      case 'WALL':
+      case 'NONE':
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  /** @override */
+  update = async () => {};
+
+  getTileType = (): TileType => this.tileType;
+
+  /**
+   * @override {@link Entity#getType}
+   */
+  getType = (): EntityType => 'unit';
+}
 
 export default Tile;

@@ -31,7 +31,7 @@ const _fromModel = async (model: TileSetModel): Promise<TileSet> => {
 };
 
 namespace TileSet {
-  export const load = async (id: string) => _fromModel(await loadTileSetModel(id));
+  export const load = async (id: string): Promise<TileSet> => _fromModel(await loadTileSetModel(id));
 }
 
 export default TileSet;

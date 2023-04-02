@@ -1,4 +1,4 @@
-import Entity from './Entity';
+import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
@@ -11,21 +11,38 @@ type Props = Readonly<{
 }>;
 
 export default class Projectile implements Entity {
-  private x: number;
-  private y: number;
-  private direction: Direction;
-  private sprite: Sprite;
+  private coordinates: Coordinates
+  private readonly direction: Direction;
+  private readonly sprite: Sprite;
 
   constructor({ x, y, direction, sprite }: Props) {
-    this.x = x;
-    this.y = y;
+    this.coordinates = { x, y };
     this.direction = direction;
     this.sprite = sprite;
   };
 
-  getCoordinates = (): Coordinates => ({ x: this.x, y: this.y });
-  getDirection = (): Direction => this.direction;
+  /** @override {@link Entity#getCoordinates} */
+  getCoordinates = (): Coordinates => this.coordinates;
+
+  /**
+   * @override {@link Entity#setCoordinates}
+   * TODO we don't use this, we recreate the projectile... we should probably just move it
+   */
+  setCoordinates = (coordinates: Coordinates) => {
+    this.coordinates = coordinates;
+  };
+
+  /** @override {@link Entity#getSprite} */
   getSprite = (): Sprite => this.sprite;
 
+  /** @override {@link Entity#update} */
   update = async () => {};
+
+  /** @override {@link Entity#isBlocking} */
+  isBlocking = (): boolean => false;
+
+  /** @override {@link Entity#getType} */
+  getType = (): EntityType => 'projectile';
+
+  getDirection = (): Direction => this.direction;
 }

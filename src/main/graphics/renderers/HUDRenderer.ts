@@ -1,6 +1,6 @@
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
-import UnitAbility from '../../units/abilities/UnitAbility';
+import UnitAbility from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';

@@ -1,19 +1,21 @@
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
-import ItemFactory from '../../items/ItemFactory';
-import MapItem from '../../objects/MapItem';
+import ItemService from '../../items/ItemService';
+import MapItem from '../../entities/objects/MapItem';
 import Tile from '../../tiles/Tile';
-import Unit from '../../units/Unit';
-import UnitFactory from '../../units/UnitFactory';
+import Unit from '../../entities/units/Unit';
+import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
 import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
-import UnitController from '../../units/controllers/UnitController';
+import UnitController from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
-import ArcherController from '../../units/controllers/ArcherController';
-import HumanRedesignController from '../../units/controllers/HumanRedesignController';
+import ArcherController from '../../entities/units/controllers/ArcherController';
+import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
+import { checkNotNull } from '../../utils/preconditions';
+import GameObject from '../../entities/objects/GameObject';
 
 type Props = Readonly<{
   level: number,
@@ -49,20 +51,18 @@ export default class GeneratedMapBuilder {
   build = async (): Promise<MapInstance> => {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     const playerUnit = GameState.getInstance().getPlayerUnit();
-    const playerUnitCoordinates = candidateLocations.shift()!;
+    const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.objectLocations.add(playerUnitCoordinates);
     const units = [playerUnit, ...await this._generateUnits()];
-    const items: MapItem[] = await this._generateItems();
+    const objects: GameObject[] = await this._generateObjects();
 
     return new MapInstance({
       width: this.width,
       height: this.height,
       tiles: this.tiles,
       units,
-      items,
-      doors: [],
-      spawners: [],
+      objects,
       music: null
     });
   };
@@ -110,14 +110,14 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateItems = async (): Promise<MapItem[]> => {
-    const itemFactory = ItemFactory.getInstance();
-    const items: MapItem[] = [];
+  private _generateObjects = async (): Promise<GameObject[]> => {
+    const objects: GameObject[] = [];
+    const itemService = ItemService.getInstance();
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 
     let points = this.pointAllocation.equipment;
     while (points > 0) {
-      const possibleEquipmentClasses = (await itemFactory.loadAllEquipmentModels())
+      const possibleEquipmentClasses = (await itemService.loadAllEquipmentModels())
         .filter(equipmentClass => equipmentClass.level !== null && equipmentClass.level <= this.level)
         .filter(equipmentClass => equipmentClass.points !== null && equipmentClass.points <= points);
 
@@ -130,16 +130,16 @@ export default class GeneratedMapBuilder {
         candidateLocations,
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
-      const { x, y } = candidateLocations.shift()!;
-      const item = await itemFactory.createMapEquipment(equipmentClass.id, { x, y });
-      items.push(item);
+      const coordinates = checkNotNull(candidateLocations.shift());
+      const item = await itemService.createMapEquipment(equipmentClass.id, coordinates);
+      objects.push(item);
       points -= equipmentClass.points!;
-      this.objectLocations.add({ x, y });
+      this.objectLocations.add(coordinates);
     }
 
     points = this.pointAllocation.items;
     while (points > 0) {
-      const possibleItemClasses = (await itemFactory.loadAllConsumableModels())
+      const possibleItemClasses = (await itemService.loadAllConsumableModels())
         .filter(itemClass => itemClass.level !== null && itemClass.level <= this.level)
         .filter(itemClass => itemClass.points !== null && itemClass.points <= points);
 
@@ -152,13 +152,13 @@ export default class GeneratedMapBuilder {
         candidateLocations,
         loc => Math.min(...this.objectLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
-      const { x, y } = candidateLocations.shift()!;
-      const item = await itemFactory.createMapItem(itemClass.id, { x, y });
-      items.push(item);
+      const coordinates = checkNotNull(candidateLocations.shift());
+      const item = await itemService.createMapItem(itemClass.id, coordinates);
+      objects.push(item);
       points -= itemClass.points!;
-      this.objectLocations.add({ x, y });
+      this.objectLocations.add(coordinates);
     }
 
-    return items;
+    return objects;
   };
 }

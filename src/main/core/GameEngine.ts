@@ -1,19 +1,20 @@
 import { Renderer } from '../graphics/renderers/Renderer';
-import MapFactory from '../maps/MapFactory';
 import MapInstance from '../maps/MapInstance';
 import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
-import Unit from '../units/Unit';
-import UnitAbility from '../units/abilities/UnitAbility';
+import Unit from '../entities/units/Unit';
+import UnitAbility from '../entities/units/abilities/UnitAbility';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
-import MapItem from '../objects/MapItem';
+import MapItem from '../entities/objects/MapItem';
 import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
 import Equipment from '../equipment/Equipment';
+import Timer from '../utils/Timer';
+import UnitService from '../entities/units/UnitService';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -25,6 +26,7 @@ type Props = Readonly<{
 export class GameEngine {
   private readonly renderer: Renderer;
   private readonly state: GameState;
+  private readonly timer: Timer;
 
   private firstMapPromise: Promise<MapInstance> | null;
 
@@ -32,6 +34,7 @@ export class GameEngine {
     this.renderer = renderer;
     this.state = state;
     this.firstMapPromise = null;
+    this.timer = Timer.start();
   }
 
   preloadFirstMap = async () => {
@@ -46,7 +49,7 @@ export class GameEngine {
     Music.stop();
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     this._updateRevealedTiles();
-    await this.renderer.render();
+    await this.render();
     const t2 = new Date().getTime();
     console.debug(`Loaded level in ${t2 - t1} ms`);
   };
@@ -57,7 +60,8 @@ export class GameEngine {
     Music.stop();
     // Music.playFigure(Music.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-    await this.renderer.render();
+    this._updateRevealedTiles();
+    await this.render();
   };
 
   gameOver = async () => {
@@ -67,25 +71,32 @@ export class GameEngine {
   };
 
   playTurn = async () => {
-    const { state, renderer } = this;
+    const { state } = this;
     const map = state.getMap();
 
-    const sortedUnits = _sortUnits(map.units);
+    const sortedUnits = _sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       await unit.update();
     }
 
-    // TODO: update other things
-    for (const spawner of map.spawners) {
-      await spawner.update();
+    for (const object of map.getAllObjects()) {
+      await object.update();
     }
 
     this._updateRevealedTiles();
-    await renderer.render();
+    await this.render();
     state.nextTurn();
   };
 
-  render = async () => this.renderer.render();
+  render = async () => {
+    const t = this.timer;
+    t.start('render');
+    await this.renderer.render();
+    t.log('render');
+    const e = document.getElementById('fps')!;
+    const fps = 1000 / t.getAverageMillis('render');
+    e.innerText = `${fps.toFixed(2)}`;
+  }
 
   loadNextMap = async () => {
     const { state } = this;
@@ -96,6 +107,7 @@ export class GameEngine {
       const t1 = new Date().getTime();
       const nextMap = await state.loadNextMap();
       state.setMap(nextMap);
+      this._updateRevealedTiles();
       if (nextMap.music) {
         await Music.playMusic(nextMap.music);
       }
@@ -149,7 +161,7 @@ export class GameEngine {
     }
 
     if (targetUnit.getLife() <= 0) {
-      map.removeUnit(targetUnit.getCoordinates());
+      map.removeUnit(targetUnit);
       if (targetUnit === playerUnit) {
         await this.gameOver();
         return;
@@ -159,19 +171,19 @@ export class GameEngine {
       }
 
       if (sourceUnit === playerUnit) {
-        sourceUnit.gainExperience(1);
+        UnitService.getInstance().awardExperience(sourceUnit, 1);
       }
     }
   };
 
   playAnimation = async (animation: Animation) => {
-    const { delay, frames } = animation;
+    const { frames } = animation;
     const map = this.state.getMap();
 
     for (let i = 0; i < frames.length; i++) {
       const frame = frames[i];
-      if (frame.projectiles) {
-        map.projectiles.push(...frame.projectiles);
+      for (const projectile of (frame.projectiles ?? [])) {
+        map.projectiles.add(projectile);
       }
       for (let j = 0; j < frame.units.length; j++) {
         const { unit, activity, frameNumber, direction } = frame.units[j];
@@ -180,44 +192,18 @@ export class GameEngine {
 
       await this.render();
 
-      if (i < (frames.length - 1)) {
-        await sleep(delay);
+      if (!!frame.postDelay) {
+        console.log(`sleep ${frame.postDelay}`);
+        await sleep(frame.postDelay);
       }
 
       for (const projectile of (frame.projectiles ?? [])) {
-        map.removeProjectile(projectile.getCoordinates());
+        map.removeProjectile(projectile);
       }
     }
-  };
-
-  pickupItem = (unit: Unit, mapItem: MapItem) => {
-    const { inventoryItem } = mapItem;
-    unit.getInventory().add(inventoryItem);
-    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
-    playSound(Sounds.PICK_UP_ITEM);
-  };
-
-  useItem = async (unit: Unit, item: InventoryItem) => {
-    await item.use(unit);
-    unit.getInventory().remove(item);
-  };
-
-  equipItem = async (item: InventoryItem, equipment: Equipment, unit: Unit) => {
-    const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
-    if (currentEquipment) {
-      const inventoryItem = currentEquipment.inventoryItem;
-      if (inventoryItem) {
-        unit.getInventory().add(inventoryItem);
-      }
-    }
-    unit.getEquipment().add(equipment);
-    equipment.attach(unit);
-    this.state.logMessage(`Equipped ${equipment.getName()}.`);
-    playSound(Sounds.BLOCKED);
   };
 
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };
-  /** @deprecated */
   static getInstance = (): GameEngine => checkNotNull(INSTANCE);
 }
 

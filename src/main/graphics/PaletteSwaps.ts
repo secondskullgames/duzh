@@ -2,11 +2,11 @@ import { checkNotNull } from '../utils/preconditions';
 import Color from './Color';
 import Colors from './Colors';
 
-export type PaletteSwaps = {
+export interface PaletteSwaps {
   entries: () => [Color, Color][],
   get: (color: Color) => Color | null,
   toString: () => string
-};
+}
 
 class Impl implements PaletteSwaps {
   private readonly _map: Record<string, Color>;
@@ -52,8 +52,6 @@ class Builder {
   };
 }
 
-const _empty: PaletteSwaps = new Builder().build();
-
 export namespace PaletteSwaps {
   /**
    * @param paletteSwaps Contains a map of color names, to be converted to hex format
@@ -69,7 +67,7 @@ export namespace PaletteSwaps {
   };
 
   export const builder = () => new Builder();
-  export const empty = (): PaletteSwaps => _empty;
+  export const empty = (): PaletteSwaps => new Builder().build();
 }
 
 export default PaletteSwaps;

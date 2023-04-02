@@ -68,3 +68,6 @@ body.fullscreen #debug {
 body.electron #debug {
   display: none;
 }
+
+#fps {
+}

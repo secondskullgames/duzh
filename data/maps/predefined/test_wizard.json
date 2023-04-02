@@ -18,11 +18,10 @@
   "equipmentColors": {
     "YELLOW": "bolt_sword"
   },
-  "doorColors": {
-    "DARK_BROWN": "vertical",
-    "LIGHT_BROWN": "horizontal"
+  "objectColors": {
+    "DARK_BROWN": "door_vertical",
+    "LIGHT_BROWN": "door_horizontal"
   },
-  "spawnerColors": {},
   "startingPointColor": "RED",
   "music": "evil"
 }

@@ -6,28 +6,17 @@ import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
-import UnitFactory from './units/UnitFactory';
-import ItemFactory from './items/ItemFactory';
+import UnitFactory from './entities/units/UnitFactory';
+import ItemService from './items/ItemService';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import AnimationFactory from './graphics/animations/AnimationFactory';
-import ProjectileFactory from './objects/ProjectileFactory';
+import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
-
-const addInitialState = async (state: GameState, unitFactory: UnitFactory) => {
-  const playerUnit = await unitFactory.createPlayerUnit();
-  state.setPlayerUnit(playerUnit);
-
-  const mapSpecs = (await import(
-    /* webpackChunkName: "models" */
-    `../../data/maps.json`
-    )).default as MapSpec[];
-  const maps: MapSupplier[] = mapSpecs.map(mapSpec => {
-    return () => MapFactory.getInstance().loadMap(mapSpec);
-  });
-  state.addMaps(maps);
-};
+import ObjectFactory from './entities/objects/ObjectFactory';
+import TileFactory from './tiles/TileFactory';
+import UnitService from './entities/units/UnitService';
 
 const main = async () => {
   const state = new GameState();
@@ -43,26 +32,55 @@ const main = async () => {
   });
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
-  const mapFactory = new MapFactory();
-  MapFactory.setInstance(mapFactory);
-  const gameDriver = new GameDriver({ renderer, state, engine });
+  const gameDriver = new GameDriver({ state, engine });
   GameDriver.setInstance(gameDriver);
-  const inputHandler = new InputHandler({ mapFactory, state, engine, driver: gameDriver });
-  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   const animationFactory = new AnimationFactory({ state, projectileFactory });
   AnimationFactory.setInstance(animationFactory);
-  const itemFactory = new ItemFactory({ state, engine, spriteFactory, animationFactory });
-  ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
+  const itemService = new ItemService({ state, engine, spriteFactory, animationFactory });
+  ItemService.setInstance(itemService);
+  const unitFactory = new UnitFactory({ itemService: itemService, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  await addInitialState(state, unitFactory);
-  const debug = new Debug({ engine, state });
+  const unitService = new UnitService({ state, engine, animationFactory });
+  UnitService.setInstance(unitService);
+  const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
+  const tileFactory = new TileFactory({ spriteFactory });
+  const mapFactory = new MapFactory({
+    state,
+    imageFactory,
+    itemService: itemService,
+    spawnerFactory,
+    spriteFactory,
+    tileFactory,
+    unitFactory
+  });
+  await addInitialState(state, unitFactory, mapFactory);
+  const inputHandler = new InputHandler({
+    mapFactory,
+    state,
+    engine,
+    driver: gameDriver,
+    itemService
+  });
+  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
+  const debug = new Debug({ engine, state, unitService });
   debug.attachToWindow();
   await engine.render();
   await engine.preloadFirstMap();
+};
+
+const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
+  const playerUnit = await unitFactory.createPlayerUnit();
+  state.setPlayerUnit(playerUnit);
+
+  const mapSpecs = (await import(
+    /* webpackChunkName: "models" */
+    `../../data/maps.json`
+    )).default as MapSpec[];
+  const maps: MapSupplier[] = mapSpecs.map(spec => () => mapFactory.loadMap(spec));
+  state.addMaps(maps);
 };
 
 main().catch(e => {

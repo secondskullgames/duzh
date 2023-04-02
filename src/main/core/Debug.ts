@@ -1,25 +1,23 @@
-/*
- * This file defines additional functions that will be exported to the "global namespace" (window.jwb.*)
- * that are only intended for debugging purposes.
- */
-
-import { subtract } from '../utils/arrays';
 import { GameEngine } from './GameEngine';
 import GameState from './GameState';
+import UnitService from '../entities/units/UnitService';
 
 type Props = Readonly<{
   engine: GameEngine,
-  state: GameState
+  state: GameState,
+  unitService: UnitService
 }>;
 
 export class Debug {
   private readonly engine: GameEngine;
   private readonly state: GameState;
+  private readonly unitService: UnitService;
   private revealMap: boolean;
 
-  constructor({ engine, state }: Props) {
+  constructor({ engine, state, unitService }: Props) {
     this.engine = engine;
     this.state = state;
+    this.unitService = unitService;
     this.revealMap = false;
   }
 
@@ -34,7 +32,11 @@ export class Debug {
     const { state } = this;
     const map = state.getMap();
     const playerUnit = state.getPlayerUnit();
-    subtract(map.units, map.units.filter(u => u !== playerUnit));
+    for (const unit of map.getAllUnits()) {
+      if (unit !== playerUnit) {
+        map.removeUnit(unit);
+      }
+    }
     await this.engine.render();
   };
 
@@ -53,7 +55,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    playerUnit.levelUp();
+    this.unitService.levelUp(playerUnit);
     await this.engine.render();
   };
 

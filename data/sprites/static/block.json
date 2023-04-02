@@ -1,0 +1,9 @@
+{
+  "name": "block",
+  "filename": "boulder",
+  "offsets": {
+    "dx": 4,
+    "dy": -4
+  },
+  "transparentColor": "WHITE"
+}

@@ -5,18 +5,18 @@ import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
 
-type Props<T> = Readonly<{
+type Props = Readonly<{
   offsets: Offsets,
   paletteSwaps?: PaletteSwaps,
   imageMap: Record<string, Image>
 }>;
 
-class DynamicSprite<T extends Animatable> extends Sprite {
+export default class DynamicSprite<T extends Animatable> extends Sprite {
   target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
   private readonly imageMap: Record<string, Image>;
 
-  constructor({ offsets, paletteSwaps, imageMap }: Props<T>) {
+  constructor({ offsets, paletteSwaps, imageMap }: Props) {
     super(offsets);
     this.target = null;
     this.paletteSwaps = paletteSwaps ?? PaletteSwaps.empty();
@@ -32,5 +32,3 @@ class DynamicSprite<T extends Animatable> extends Sprite {
     return this.imageMap[frameKey] ?? null;
   };
 }
-
-export default DynamicSprite;

@@ -1,0 +1,19 @@
+{
+  "imageFilename": "paganitzu",
+  "tileset": "dungeon",
+  "levelNumber": 1,
+  "tileColors": {
+    "BLACK": "FLOOR",
+    "LIGHT_GRAY": "WALL_TOP",
+    "DARK_GRAY": "WALL",
+    "GREEN": "STAIRS_DOWN"
+  },
+  "defaultTile": "FLOOR",
+  "enemyColors": {},
+  "itemColors": {},
+  "equipmentColors": {},
+  "objectColors": {
+    "DARK_BROWN": "movable_block"
+  },
+  "startingPointColor": "BLUE"
+}

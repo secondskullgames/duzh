@@ -1,14 +1,14 @@
 import { GameDriver } from '../main/core/GameDriver';
 import GameRenderer from '../main/graphics/renderers/GameRenderer';
-import UnitFactory from '../main/units/UnitFactory';
+import UnitFactory from '../main/entities/units/UnitFactory';
 import GameState from '../main/core/GameState';
 import MapInstance from '../main/maps/MapInstance';
 import { Renderer } from '../main/graphics/renderers/Renderer';
 import { GameEngine } from '../main/core/GameEngine';
-import ItemFactory from '../main/items/ItemFactory';
+import ItemService from '../main/items/ItemService';
 import SpriteFactory from '../main/graphics/sprites/SpriteFactory';
 import ImageFactory from '../main/graphics/images/ImageFactory';
-import ProjectileFactory from '../main/objects/ProjectileFactory';
+import ProjectileFactory from '../main/entities/objects/ProjectileFactory';
 import AnimationFactory from '../main/graphics/animations/AnimationFactory';
 
 export const setup = async () => {
@@ -17,10 +17,8 @@ export const setup = async () => {
     width: 10,
     height: 0,
     tiles: [],
-    doors: [],
-    spawners: [],
     units: [],
-    items: [],
+    objects: [],
     music: []
   });
   const state = new GameState();
@@ -36,15 +34,14 @@ export const setup = async () => {
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   const animationFactory = new AnimationFactory({ state, projectileFactory });
   AnimationFactory.setInstance(animationFactory);
-  const itemFactory = new ItemFactory({ state, engine, spriteFactory, animationFactory });
-  ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
+  const itemService = new ItemService({ state, engine, spriteFactory, animationFactory });
+  ItemService.setInstance(itemService);
+  const unitFactory = new UnitFactory({ itemService, spriteFactory });
   UnitFactory.setInstance(unitFactory);
   state.setPlayerUnit(playerUnit);
   state.addMaps([() => Promise.resolve(map)]);
   const driver = new GameDriver({
     state,
-    renderer: renderer as GameRenderer,
     engine
   });
   GameDriver.setInstance(driver);

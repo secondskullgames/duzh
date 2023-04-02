@@ -2,77 +2,69 @@ import { checkState } from './preconditions';
 
 type KeyFunction<T> = (t: T) => number;
 
-const sortBy = <T>(list: T[], keyFunction: KeyFunction<T>) =>
-  list.sort((a, b) => keyFunction(a) - keyFunction(b));
+/**
+ * Returns a sorted copy of the given list.  Does not mutate the input parameter.
+ */
+export const sortBy = <T>(list: T[], keyFunction: KeyFunction<T>): T[] => {
+  const copy = [...list];
+  copy.sort((a, b) => keyFunction(a) - keyFunction(b));
+  return copy;
+};
 
-const sortByReversed = <T>(list: T[], keyFunction: KeyFunction<T>) =>
-  list.sort((a, b) => keyFunction(b) - keyFunction(a));
+/**
+ * Returns a sorted copy of the given list.  Does not mutate the input parameter.
+ */
+export const sortByReversed = <T>(list: T[], keyFunction: KeyFunction<T>): T[] =>
+  sortBy(list, t => keyFunction(t) * -1);
 
-const comparing = <T>(keyFunction: KeyFunction<T>) =>
+type Comparator<T> = (a: T, b: T) => number;
+
+export const comparing = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
   (a: T, b: T) => keyFunction(a) - keyFunction(b);
 
-const comparingReversed = <T>(keyFunction: KeyFunction<T>) =>
+export const comparingReversed = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
   (a: T, b: T) => keyFunction(b) - keyFunction(a);
 
-const average = (list: number[]) => {
+export const average = (list: number[]) => {
   const sum = list.reduce((a, b) => a + b);
   return sum / list.length;
 };
 
-const min = (list: number[]): number => Math.min(...list);
-const max = (list: number[]): number => Math.max(...list);
+export const min = (list: number[]): number => Math.min(...list);
+export const max = (list: number[]): number => Math.max(...list);
 
-const minBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+export const minBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
   checkState(list.length > 0);
   return sortBy(list, keyFunction)[0];
 };
 
-const maxBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+export const maxBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
   checkState(list.length > 0);
   return sortBy(list, keyFunction)[list.length - 1];
 };
 
-const replace = <T>(array: T[], contents: T[]) => {
+export const replace = <T>(array: T[], contents: T[]): void => {
   clear(array);
   array.push(...contents);
 };
 
-const subtract = <T>(array: T[], toRemove: T[]) => {
+export const subtract = <T>(array: T[], toRemove: T[]): void => {
   const updated = array.filter(element => toRemove.indexOf(element) === -1);
   replace(array, updated);
 };
 
-const clear = (array: any[]) => {
+export const clear = (array: any[]): void => {
   array.splice(0, array.length);
 };
 
 /**
  * @param max inclusive
  */
-const range = (min: number, max: number) => new Array(max - min + 1)
+export const range = (min: number, max: number) => new Array(max - min + 1)
   .fill(null)
   .map((_, i) => i + min);
 
-const head = <T> (array: T[], count: number): T[] => array.slice(0, count);
-const tail = <T> (array: T[], count: number): T[] => array.slice(-count);
+export const head = <T> (array: T[], count: number): T[] => array.slice(0, count);
+export const tail = <T> (array: T[], count: number): T[] => array.slice(-count);
 
-const sum = (array: number[]) => array.reduce((a, b) => a + b);
-
-export {
-  average,
-  clear,
-  comparing,
-  comparingReversed,
-  head,
-  max,
-  maxBy,
-  min,
-  minBy,
-  range,
-  replace,
-  sortBy,
-  sortByReversed,
-  subtract,
-  sum,
-  tail
-};
+export const sum = (array: number[]) => array.reduce((a, b) => a + b);

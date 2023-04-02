@@ -2,7 +2,7 @@ import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
 import { Pixel } from '../../types/types';
-import Unit from '../../units/Unit';
+import Unit from '../../entities/units/Unit';
 import Color from '../Color';
 import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
@@ -108,25 +108,19 @@ class GameScreenRenderer extends AbstractRenderer {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         if (this._isTileRevealed({ x, y })) {
-          const item = map.getItem({ x, y });
-          if (item) {
-            await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
-            this._renderElement(item, { x, y });
+          for (const object of map.getObjects({ x, y })) {
+            if (object.getObjectType() === 'item') {
+              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
+            }
+            if (object.getObjectType() === 'block') {
+              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
+            }
+            this._renderElement(object, { x, y });
           }
 
           const projectile = map.getProjectile({ x, y });
           if (projectile) {
             this._renderElement(projectile, { x, y });
-          }
-
-          const door = map.getDoor({ x, y });
-          if (door) {
-            this._renderElement(door, { x, y });
-          }
-
-          const spawner = map.getSpawner({ x, y });
-          if (spawner) {
-            this._renderElement(spawner, { x, y });
           }
 
           const unit = map.getUnit({ x, y });

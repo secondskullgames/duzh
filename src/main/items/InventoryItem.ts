@@ -1,4 +1,4 @@
-import Unit from '../units/Unit';
+import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
 
 type Props = Readonly<{

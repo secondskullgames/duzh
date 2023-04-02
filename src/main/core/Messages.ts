@@ -1,4 +1,4 @@
-import { tail } from '../utils/arrays';
+import { clear, tail } from '../utils/arrays';
 
 const maxTurnsAgo = 8;
 const maxMessages = 4;
@@ -22,4 +22,8 @@ export default class Messages {
       maxMessages
     );
   };
+
+  clear = () => {
+    clear(this._messages);
+  }
 }

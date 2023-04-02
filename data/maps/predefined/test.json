@@ -20,10 +20,10 @@
     "YELLOW": "bolt_sword",
     "DARK_YELLOW": "iron_shield"
   },
-  "doorColors": {
-    "DARK_BROWN": "vertical",
-    "LIGHT_BROWN": "horizontal"
+  "objectColors": {
+    "DARK_BROWN": "door_vertical",
+    "LIGHT_BROWN": "door_horizontal",
+    "DARK_BLUE": "movable_block"
   },
-  "spawnerColors": {},
   "startingPointColor": "RED"
 }

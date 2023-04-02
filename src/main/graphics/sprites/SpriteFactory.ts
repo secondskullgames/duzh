@@ -1,13 +1,13 @@
 import Equipment from '../../equipment/Equipment';
-import Door, { DoorState } from '../../objects/Door';
-import Spawner, { SpawnerState } from '../../objects/Spawner';
+import Door, { DoorState } from '../../entities/objects/Door';
+import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
 import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';
 import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
-import Unit from '../../units/Unit';
+import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import DynamicSprite from './DynamicSprite';

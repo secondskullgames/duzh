@@ -1,4 +1,4 @@
-import Unit from '../../units/Unit';
+import Unit from '../../entities/units/Unit';
 import Activity from '../../types/Activity';
 import Direction from '../../geometry/Direction';
 import Projectile from '../../types/Projectile';
@@ -12,10 +12,10 @@ export type UnitAnimationFrame = {
 
 export type AnimationFrame = Readonly<{
   units: UnitAnimationFrame[],
-  projectiles?: Projectile[]
+  projectiles?: Projectile[],
+  postDelay?: number
 }>;
 
 export type Animation = Readonly<{
-  frames: AnimationFrame[],
-  delay: number
+  frames: AnimationFrame[]
 }>;
