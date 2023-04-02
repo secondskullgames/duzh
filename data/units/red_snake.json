@@ -2,7 +2,7 @@
   "id": "red_snake",
   "name": "Red Snake",
   "type": "ANIMAL",
-  "sprite": "scorpion",
+  "sprite": "snake",
   "paletteSwaps": {
     "GREEN": "RED",
     "DARK_GREEN": "DARK_RED",

@@ -1,0 +1,21 @@
+{
+  "id": "scorpion",
+  "name": "Scorpion",
+  "type": "ANIMAL",
+  "sprite": "scorpion",
+  "paletteSwaps": {},
+  "life": 45,
+  "mana": 0,
+  "damage": 16,
+  "level": 4,
+  "points": 20,
+  "aiParameters": {
+    "speed": 0.98,
+    "visionRange": 12,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
+  },
+  "abilities": {
+    "1": ["ATTACK"]
+  }
+}
