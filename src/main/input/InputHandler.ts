@@ -207,7 +207,7 @@ export default class InputHandler {
           // const mapInstance = await this.mapFactory.loadMap({ type: 'predefined', id: 'test' });
           const mapInstance = await this.mapFactory.loadMap({
             type: 'predefined',
-            id: 'paganitzu'
+            id: 'boulders_and_goblins'
           });
           await this.engine.startGameDebug(mapInstance);
         } else {
