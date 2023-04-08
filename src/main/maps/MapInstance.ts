@@ -10,6 +10,7 @@ import { checkArgument, checkState } from '../utils/preconditions';
 import Projectile from '../types/Projectile';
 import Entity from '../entities/Entity';
 import GameObject from '../entities/objects/GameObject';
+import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
 
 type Props = Readonly<{
@@ -27,11 +28,11 @@ export default class MapInstance {
   /**
    * [y][x]
    */
-  private readonly _tiles: Tile[][];
+  private readonly _tiles: Grid<Tile>;
   /**
    * does NOT include tiles
    */
-  private readonly _entities: Grid<Entity>;
+  private readonly _entities: MultiGrid<Entity>;
   private readonly units: Set<Unit>;
   private readonly objects: Set<GameObject>;
   readonly projectiles: Set<Projectile>;
@@ -48,11 +49,17 @@ export default class MapInstance {
   }: Props) {
     this.width = width;
     this.height = height;
-    this._tiles = tiles;
     this.units = new Set(units);
     this.objects = new Set(objects);
     this.projectiles = new Set();
-    this._entities = new Grid({ width, height });
+    this._tiles = new Grid({ width, height });
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        const tile = tiles[y][x];
+        this._tiles.put({ x, y }, tile);
+      }
+    }
+    this._entities = new MultiGrid({ width, height });
     for (const entity of [...units, ...objects]) {
       const { x, y } = entity.getCoordinates();
       this._entities.put({ x, y }, entity);
@@ -61,10 +68,11 @@ export default class MapInstance {
     this.music = music;
   }
 
-  getTile = ({ x, y }: Coordinates): Tile => {
-    if (x < this.width && y < this.height) {
-      return (this._tiles[y] ?? [])[x] ?? 'NONE';
+  getTile = (coordinates: Coordinates): Tile => {
+    if (this.contains(coordinates)) {
+      return this._tiles.get(coordinates)!;
     }
+    const { x, y } = coordinates;
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
@@ -109,12 +117,13 @@ export default class MapInstance {
     (x >= 0 && x < this.width)
     && (y >= 0 && y < this.height);
 
-  isBlocked = ({ x, y }: Coordinates): boolean => {
-    checkArgument(this.contains({ x, y }), `(${x}, ${y}) is not on the map`);
-    if (this._tiles[y][x].isBlocking()) {
+  isBlocked = (coordinates: Coordinates): boolean => {
+    const { x, y } = coordinates;
+    checkArgument(this.contains(coordinates), `(${x}, ${y}) is not on the map`);
+    if (this._tiles.get(coordinates)!.isBlocking()) {
       return true;
     }
-    return this._entities.get({ x, y })
+    return this._entities.get(coordinates)
       .some(e => e.isBlocking());
   };
 
@@ -165,4 +174,5 @@ export default class MapInstance {
     this.revealedTiles.add(JSON.stringify({ x, y }));
 
   unitExists = (unit: Unit): boolean => this.units.has(unit);
+
 }

@@ -9,7 +9,7 @@ type Props = Readonly<{
 export default class Grid<T> {
   private readonly width: number;
   private readonly height: number;
-  private readonly array: (T[])[][];
+  private readonly array: T[][];
 
   constructor({ width, height }: Props) {
     this.width = width;
@@ -18,28 +18,26 @@ export default class Grid<T> {
 
     for (let y = 0; y < height; y++) {
       this.array[y] = [];
-      for (let x = 0; x < width; x++) {
-        this.array[y][x] = [];
-      }
     }
   }
 
-  get = ({ x, y }: Coordinates): T[] => {
-    checkArgument(this._contains({ x, y }));
-    return this.array[y][x];
+  get = (coordinates: Coordinates): T | null => {
+    checkArgument(this._contains(coordinates));
+    const { x, y } = coordinates;
+    return this.array[y][x] ?? null;
   };
 
-  put = ({ x, y }: Coordinates, item: T) => {
-    checkArgument(this._contains({ x, y }));
-    this.array[y][x].push(item);
+  put = (coordinates: Coordinates, item: T) => {
+    checkArgument(this._contains(coordinates));
+    const { x, y } = coordinates;
+    this.array[y][x] = item;
   };
 
-  remove = ({ x, y }: Coordinates, item: T) => {
-    checkArgument(this._contains({ x, y }));
-    const items = this.array[y][x];
-    const index = items.indexOf(item);
-    checkState(index > -1);
-    items.splice(index, 1);
+  remove = (coordinates: Coordinates, item: T) => {
+    checkArgument(this._contains(coordinates));
+    const { x, y } = coordinates;
+    checkState(!!this.array[y][x]);
+    delete this.array[y][x];
   };
 
   private _contains = ({ x, y }: Coordinates): boolean => {
