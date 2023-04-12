@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
+import UnitActionsService from '../UnitActionsService';
 
 export default class PiercingAttack extends UnitAbility {
   constructor() {
@@ -23,6 +24,7 @@ export default class PiercingAttack extends UnitAbility {
     const state = GameState.getInstance();
     const map = state.getMap();
     const unitService = UnitService.getInstance();
+    const actionsService = UnitActionsService.getInstance();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
@@ -31,32 +33,19 @@ export default class PiercingAttack extends UnitAbility {
     } else {
       const targetUnit = map.getUnit(coordinates);
       if (targetUnit) {
-        const damage = unit.getDamage();
-        playSound(Sounds.PLAYER_HITS_ENEMY);
-        await unitService.startAttack(unit, targetUnit);
-        await engine.dealDamage(damage, {
-          sourceUnit: unit,
-          targetUnit,
-          ability: this
-        });
+        await actionsService.attack(unit, targetUnit);
       }
       const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
       const nextUnit = map.getUnit(nextCoordinates);
       if (nextUnit) {
-        const damage = unit.getDamage();
-        playSound(Sounds.PLAYER_HITS_ENEMY);
-        await unitService.startAttack(unit, nextUnit);
-        await engine.dealDamage(damage, {
-          sourceUnit: unit,
-          targetUnit: nextUnit,
-          ability: this
-        });
+        await actionsService.attack(unit, nextUnit);
       }
 
       const spawner = map.getSpawner(coordinates);
+      const animationFactory = AnimationFactory.getInstance();
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
-        const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
+        const animation = animationFactory.getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         spawner.setState('DEAD');
       }
@@ -64,7 +53,7 @@ export default class PiercingAttack extends UnitAbility {
       const nextSpawner = map.getSpawner(nextCoordinates);
       if (nextSpawner && nextSpawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
-        const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
+        const animation = animationFactory.getAttackingAnimation(unit);
         await engine.playAnimation(animation);
         nextSpawner.setState('DEAD');
       }

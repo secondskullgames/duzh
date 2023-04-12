@@ -21,6 +21,7 @@ export default class KnockbackAttack extends UnitAbility {
 
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
+    const unitService = UnitService.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
@@ -32,12 +33,13 @@ export default class KnockbackAttack extends UnitAbility {
       unit.spendMana(this.manaCost);
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
-      await UnitService.getInstance().startAttack(unit, targetUnit);
-      await engine.dealDamage(damage, {
+      await unitService.startAttack(unit, targetUnit);
+      const adjustedDamage = await unitService.dealDamage(damage, {
         sourceUnit: unit,
-        targetUnit,
-        ability: this
+        targetUnit
       });
+      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      state.logMessage(message);
       targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });

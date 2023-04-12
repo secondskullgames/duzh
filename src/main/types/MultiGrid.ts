@@ -24,14 +24,20 @@ export default class MultiGrid<T> {
     }
   }
 
-  get = ({ x, y }: Coordinates): T[] => {
-    checkArgument(this._contains({ x, y }));
-    return this.array[y][x];
+  get = (coordinates: Coordinates): T[] => {
+    checkArgument(this._contains(coordinates));
+    return this.array[coordinates.y][coordinates.x];
   };
 
-  put = ({ x, y }: Coordinates, item: T) => {
-    checkArgument(this._contains({ x, y }));
-    this.array[y][x].push(item);
+  put = (coordinates: Coordinates, item: T) => {
+    checkArgument(this._contains(coordinates));
+    this.array[coordinates.y][coordinates.x].push(item);
+  };
+
+  getAll = (): T[] => {
+    return Object.values(this.array)
+      .flatMap(row => row)
+      .flatMap(column => column);;
   };
 
   remove = ({ x, y }: Coordinates, item: T) => {

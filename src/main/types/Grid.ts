@@ -40,6 +40,11 @@ export default class Grid<T> {
     delete this.array[y][x];
   };
 
+  getAll = (): T[] => {
+    return Object.values(this.array)
+      .flatMap(row => row);
+  };
+
   private _contains = ({ x, y }: Coordinates): boolean => {
     return (x >= 0 && x < this.width) && (y >= 0 && y < this.height);
   };

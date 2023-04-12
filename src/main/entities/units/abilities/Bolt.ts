@@ -7,6 +7,7 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import UnitService from '../UnitService';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -20,6 +21,8 @@ export default class Bolt extends UnitAbility {
 
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
+    const unitService = UnitService.getInstance();
+    const animationFactory = AnimationFactory.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
@@ -40,15 +43,16 @@ export default class Bolt extends UnitAbility {
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getDamage();
-      await engine.dealDamage(damage, {
+      const adjustedDamage = await unitService.dealDamage(damage, {
         sourceUnit: unit,
-        targetUnit,
-        ability: this
+        targetUnit
       });
-      const boltAnimation = await AnimationFactory.getInstance().getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      state.logMessage(message);
+      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await engine.playAnimation(boltAnimation);
     } else {
-      const boltAnimation = await AnimationFactory.getInstance().getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
       await engine.playAnimation(boltAnimation);
     }
   };

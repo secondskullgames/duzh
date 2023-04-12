@@ -14,6 +14,7 @@ import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import { checkNotNull } from '../utils/preconditions';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import UnitService from '../entities/units/UnitService';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -93,7 +94,7 @@ export default class ItemService {
       await engine.playAnimation(animation);
 
       for (const adjacentUnit of adjacentUnits) {
-        await engine.dealDamage(damage, {
+        await UnitService.getInstance().dealDamage(damage, {
           sourceUnit: unit,
           targetUnit: unit
         });

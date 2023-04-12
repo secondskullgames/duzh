@@ -17,6 +17,7 @@ import InputHandler from './input/InputHandler';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
 import UnitService from './entities/units/UnitService';
+import UnitActionsService from './entities/units/UnitActionsService';
 
 const main = async () => {
   const state = new GameState();
@@ -45,6 +46,8 @@ const main = async () => {
   UnitFactory.setInstance(unitFactory);
   const unitService = new UnitService({ state, engine, animationFactory });
   UnitService.setInstance(unitService);
+  const unitActionsService = new UnitActionsService({ state, engine, unitService });
+  UnitActionsService.setInstance(unitActionsService);
   const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({

@@ -42,7 +42,7 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    await this.engine.dealDamage(playerUnit.getMaxLife(), {
+    await this.unitService.dealDamage(playerUnit.getMaxLife(), {
       targetUnit: playerUnit
     })
     await this.engine.render();

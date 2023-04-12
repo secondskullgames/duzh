@@ -274,7 +274,7 @@ export default class AnimationFactory {
     ]
   });
 
-  static instance: AnimationFactory | null;
+  private static instance: AnimationFactory | null;
   static getInstance = (): AnimationFactory => checkNotNull(AnimationFactory.instance);
   static setInstance = (factory: AnimationFactory) => { AnimationFactory.instance = factory; };
 }

@@ -4,17 +4,12 @@ import Music from '../sounds/Music';
 import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import Unit from '../entities/units/Unit';
-import UnitAbility from '../entities/units/abilities/UnitAbility';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
-import MapItem from '../entities/objects/MapItem';
-import InventoryItem from '../items/InventoryItem';
 import { Animation } from '../graphics/animations/Animation';
-import Equipment from '../equipment/Equipment';
 import Timer from '../utils/Timer';
-import UnitService from '../entities/units/UnitService';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -136,46 +131,6 @@ export class GameEngine {
     }
   };
 
-  dealDamage = async (baseDamage: number, params: DealDamageParams) => {
-    const { state } = this;
-
-    const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
-
-    const sourceUnit = params.sourceUnit ?? null;
-    const targetUnit = params.targetUnit;
-    const adjustedDamage = targetUnit.takeDamage(baseDamage, sourceUnit);
-    sourceUnit?.refreshCombat();
-    targetUnit.refreshCombat();
-
-    if (sourceUnit) {
-      const ability = params?.ability ?? null;
-      // note: we're logging adjustedDamage here since, if we "overkilled",
-      // we still want to give you "credit" for the full damage amount
-      if (ability) {
-        const message = ability.getDamageLogMessage(sourceUnit, targetUnit, adjustedDamage);
-        state.logMessage(message);
-      } else {
-        state.logMessage(`${sourceUnit.getName()} hit ${targetUnit.getName()} for ${adjustedDamage} damage!`);
-      }
-    }
-
-    if (targetUnit.getLife() <= 0) {
-      map.removeUnit(targetUnit);
-      if (targetUnit === playerUnit) {
-        await this.gameOver();
-        return;
-      } else {
-        playSound(Sounds.ENEMY_DIES);
-        state.logMessage(`${targetUnit.getName()} dies!`);
-      }
-
-      if (sourceUnit === playerUnit) {
-        UnitService.getInstance().awardExperience(sourceUnit, 1);
-      }
-    }
-  };
-
   playAnimation = async (animation: Animation) => {
     const { frames } = animation;
     const map = this.state.getMap();
@@ -215,9 +170,3 @@ const _sortUnits = (units: Unit[]): Unit[] => sortBy(
   units,
   unit => (unit.getFaction() === 'PLAYER') ? 0 : 1
 );
-
-type DealDamageParams = Readonly<{
-  sourceUnit?: Unit,
-  targetUnit: Unit,
-  ability?: UnitAbility
-}>;
