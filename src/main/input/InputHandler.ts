@@ -203,7 +203,7 @@ export default class InputHandler {
       }
       case 'TITLE':
         state.setScreen('GAME');
-          if (modifiers.includes('SHIFT')) {
+        if (modifiers.includes('SHIFT')) {
           const mapInstance = await this.mapFactory.loadMap({
             type: 'predefined',
             id: 'test'
