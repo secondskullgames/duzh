@@ -45,6 +45,8 @@ export default class AttackUnitBehavior implements UnitBehavior {
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
         await UnitAbilities.ATTACK.use(unit, coordinates);
       }
+    } else {
+      console.log('blocked');
     }
   };
 }

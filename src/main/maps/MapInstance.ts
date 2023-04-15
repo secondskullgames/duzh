@@ -24,12 +24,9 @@ type Props = Readonly<{
 export default class MapInstance {
   readonly width: number;
   readonly height: number;
-  /**
-   * [y][x]
-   */
-  private readonly _tiles: Grid<Tile>;
-  private readonly _units: Grid<Unit>;
-  private readonly _objects: MultiGrid<GameObject>;
+  private readonly tiles: Grid<Tile>;
+  private readonly units: Grid<Unit>;
+  private readonly objects: MultiGrid<GameObject>;
   readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
   readonly music: Figure[] | null;
@@ -44,20 +41,20 @@ export default class MapInstance {
   }: Props) {
     this.width = width;
     this.height = height;
-    this._units = new Grid({ width, height });
+    this.units = new Grid({ width, height });
     for (const unit of units) {
-      this._units.put(unit.getCoordinates(), unit);
+      this.units.put(unit.getCoordinates(), unit);
     }
-    this._objects = new MultiGrid({ width, height });
+    this.objects = new MultiGrid({ width, height });
     for (const object of objects) {
-      this._objects.put(object.getCoordinates(), object);
+      this.objects.put(object.getCoordinates(), object);
     }
     this.projectiles = new Set();
-    this._tiles = new Grid({ width, height });
+    this.tiles = new Grid({ width, height });
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
         const tile = tiles[y][x];
-        this._tiles.put({ x, y }, tile);
+        this.tiles.put({ x, y }, tile);
       }
     }
     this.revealedTiles = new Set();
@@ -66,23 +63,23 @@ export default class MapInstance {
 
   getTile = (coordinates: Coordinates): Tile => {
     if (this.contains(coordinates)) {
-      return this._tiles.get(coordinates)!;
+      return this.tiles.get(coordinates)!;
     }
     const { x, y } = coordinates;
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
   getUnit = (coordinates: Coordinates): (Unit | null) => {
-    return this._units.get(coordinates);
+    return this.units.get(coordinates);
   }
 
-  getAllUnits = (): Unit[] => this._units.getAll();
+  getAllUnits = (): Unit[] => this.units.getAll();
 
   getObjects = (coordinates: Coordinates): GameObject[] => {
-    return this._objects.get(coordinates);
+    return this.objects.get(coordinates);
   };
 
-  getAllObjects = (): GameObject[] => this._objects.getAll();
+  getAllObjects = (): GameObject[] => this.objects.getAll();
 
   getSpawner = (coordinates: Coordinates): Spawner | null => {
     return this.getObjects(coordinates)
@@ -112,32 +109,32 @@ export default class MapInstance {
   isBlocked = (coordinates: Coordinates): boolean => {
     const { x, y } = coordinates;
     checkArgument(this.contains(coordinates), `(${x}, ${y}) is not on the map`);
-    if (this._tiles.get(coordinates)!.isBlocking()) {
+    if (this.tiles.get(coordinates)!.isBlocking()) {
       return true;
     }
-    if (this._units.get(coordinates)?.isBlocking()) {
+    if (this.units.get(coordinates)?.isBlocking()) {
       return true;
     }
-    if (this._objects.get(coordinates).some(e => e.isBlocking())) {
+    if (this.objects.get(coordinates).some(e => e.isBlocking())) {
       return true;
     }
     return false;
   };
 
   addUnit = (unit: Unit) => {
-    this._units.put(unit.getCoordinates(), unit);
+    this.units.put(unit.getCoordinates(), unit);
   };
 
   removeUnit = (unit: Unit) => {
-    this._units.remove(unit.getCoordinates(), unit);
+    this.units.remove(unit.getCoordinates(), unit);
   };
 
   addObject = (object: GameObject) => {
-    this._objects.put(object.getCoordinates(), object);
+    this.objects.put(object.getCoordinates(), object);
   };
 
   removeObject = (object: GameObject) => {
-    this._objects.remove(object.getCoordinates(), object);
+    this.objects.remove(object.getCoordinates(), object);
   };
 
   removeProjectile = (projectile: Projectile) => {
@@ -162,6 +159,6 @@ export default class MapInstance {
 
   unitExists = (unit: Unit): boolean => {
     const coordinates = unit.getCoordinates();
-    return this._units.get(coordinates) === unit;
+    return this.units.get(coordinates) === unit;
   };
 }

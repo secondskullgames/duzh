@@ -23,6 +23,11 @@ class CoordinateSet {
   includes = ({ x, y }: Coordinates) => this._jsonSet.has(JSON.stringify({ x, y }));
 }
 
+type NodeWithCost = Readonly<{
+  node: Node,
+  cost: number
+}>;
+
 /**
  * @return the exact cost of the path from `start` to `coordinates`
  */
@@ -72,8 +77,8 @@ class Pathfinder {
    * @param tiles All allowable unblocked tiles
    * @return a path from {@code start} to {@code goal}, or an empty list if none was found
    */
-  findPath = (start: Coordinates, goal: Coordinates, _tiles: Coordinates[]): Coordinates[] => {
-    const tiles = new CoordinateSet(_tiles);
+  findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
+    const tileSet = new CoordinateSet(tiles);
     const t1 = new Date().getTime();
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
@@ -84,8 +89,6 @@ class Pathfinder {
       if (open.length === 0) {
         return [];
       }
-
-      type NodeWithCost = { node: Node, cost: number };
 
       const nodeCosts: NodeWithCost[] = open.map(node => ({ node, cost: f(node, start, goal) }))
         .sort((a, b) => a.cost - b.cost);
@@ -103,7 +106,7 @@ class Pathfinder {
         open.splice(open.indexOf(chosenNode), 1);
         closed.push(chosenNode);
 
-        const neighbors = this._findNeighbors(chosenNode, tiles);
+        const neighbors = this._findNeighbors(chosenNode, tileSet);
         for (const neighbor of neighbors) {
           if (closed.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
             // already been seen, don't need to look at it*
@@ -126,7 +129,7 @@ class Pathfinder {
   private _findNeighbors = (tile: Coordinates, tiles: CoordinateSet): Coordinates[] =>
     CARDINAL_DIRECTIONS
       .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
-      .filter(({ x, y }) => tiles.includes(tile));
+      .filter(coordinates => tiles.includes(coordinates));
 }
 
 export default Pathfinder;

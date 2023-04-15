@@ -8,7 +8,6 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import Block from '../../objects/Block';
-import UnitService from '../UnitService';
 import UnitActionsService from '../UnitActionsService';
 
 export default class NormalAttack extends UnitAbility {
@@ -23,25 +22,36 @@ export default class NormalAttack extends UnitAbility {
 
     const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
+    const playerUnit = state.getPlayerUnit();
+
+    console.log(`in NormalAttack.use(${coordinates.x},${coordinates.y}) ${playerUnit.getCoordinates().x} ${playerUnit.getCoordinates().y}`);
     const map = state.getMap();
     const actionsService = UnitActionsService.getInstance();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
     if (!map.contains(coordinates)) {
+      console.log('!contains');
       // do nothing
+      return;
     } else {
       if (!map.isBlocked(coordinates)) {
+        console.log('walking');
         await actionsService.walk(unit, direction);
+        return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
+          console.log('attacking');
           await actionsService.attack(unit, targetUnit);
+          return;
+        } else {
+          console.log('!targetUnit');
         }
-
         const door = map.getDoor(coordinates);
         if (door) {
           await actionsService.openDoor(unit, door);
+          return;
         }
 
         const spawner = map.getSpawner(coordinates);
@@ -50,6 +60,7 @@ export default class NormalAttack extends UnitAbility {
           const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
           await engine.playAnimation(animation);
           spawner.setState('DEAD');
+          return;
         }
 
         const block = map.getObjects(coordinates)
@@ -59,6 +70,7 @@ export default class NormalAttack extends UnitAbility {
 
         if (block) {
           await actionsService.pushBlock(unit, block);
+          return;
         }
       }
     }

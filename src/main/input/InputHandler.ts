@@ -203,11 +203,10 @@ export default class InputHandler {
       }
       case 'TITLE':
         state.setScreen('GAME');
-        if (modifiers.includes('SHIFT')) {
-          // const mapInstance = await this.mapFactory.loadMap({ type: 'predefined', id: 'test' });
+          if (modifiers.includes('SHIFT')) {
           const mapInstance = await this.mapFactory.loadMap({
             type: 'predefined',
-            id: 'boulders_and_goblins'
+            id: 'test'
           });
           await this.engine.startGameDebug(mapInstance);
         } else {
