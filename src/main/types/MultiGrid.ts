@@ -6,10 +6,10 @@ type Props = Readonly<{
   height: number
 }>;
 
-export default class Grid<T> {
+export default class MultiGrid<T> {
   private readonly width: number;
   private readonly height: number;
-  private readonly array: T[][];
+  private readonly array: (T[])[][];
 
   constructor({ width, height }: Props) {
     this.width = width;
@@ -18,31 +18,34 @@ export default class Grid<T> {
 
     for (let y = 0; y < height; y++) {
       this.array[y] = [];
+      for (let x = 0; x < width; x++) {
+        this.array[y][x] = [];
+      }
     }
   }
 
-  get = (coordinates: Coordinates): T | null => {
+  get = (coordinates: Coordinates): T[] => {
     checkArgument(this._contains(coordinates));
-    const { x, y } = coordinates;
-    return this.array[y][x] ?? null;
+    return this.array[coordinates.y][coordinates.x];
   };
 
   put = (coordinates: Coordinates, item: T) => {
     checkArgument(this._contains(coordinates));
-    const { x, y } = coordinates;
-    this.array[y][x] = item;
-  };
-
-  remove = (coordinates: Coordinates, item: T) => {
-    checkArgument(this._contains(coordinates));
-    const { x, y } = coordinates;
-    checkState(!!this.array[y][x]);
-    delete this.array[y][x];
+    this.array[coordinates.y][coordinates.x].push(item);
   };
 
   getAll = (): T[] => {
     return Object.values(this.array)
-      .flatMap(row => row);
+      .flatMap(row => row)
+      .flatMap(column => column);;
+  };
+
+  remove = ({ x, y }: Coordinates, item: T) => {
+    checkArgument(this._contains({ x, y }));
+    const items = this.array[y][x];
+    const index = items.indexOf(item);
+    checkState(index > -1);
+    items.splice(index, 1);
   };
 
   private _contains = ({ x, y }: Coordinates): boolean => {

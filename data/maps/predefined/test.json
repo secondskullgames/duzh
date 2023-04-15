@@ -5,11 +5,11 @@
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
-    "DARK_GRAY": "WALL",
-    "BLUE": "STAIRS_DOWN"
+    "DARK_GRAY": "WALL"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
+    "BLUE": "green_snake",
     "GREEN": "archer",
     "DARK_GREEN": "sorceress"
   },

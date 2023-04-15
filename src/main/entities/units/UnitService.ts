@@ -52,6 +52,16 @@ export default class UnitService {
     }
   };
 
+  /** @return the amount of adjusted damage taken */
+  dealDamage = async (baseDamage: number, params: DealDamageParams): Promise<number> => {
+    const sourceUnit = params.sourceUnit ?? null;
+    const targetUnit = params.targetUnit;
+    const adjustedDamage = targetUnit.takeDamage(baseDamage, sourceUnit);
+    sourceUnit?.refreshCombat();
+    targetUnit.refreshCombat();
+    return adjustedDamage;
+  };
+
   awardExperience = (unit: Unit, experience: number) => {
     if (unit.getFaction() === 'PLAYER') {
       unit.gainExperience(experience);
@@ -89,10 +99,15 @@ export default class UnitService {
     unit.refreshCombat();
   };
 
-  static INSTANCE: UnitService | null = null;
+  private static INSTANCE: UnitService | null = null;
   static setInstance = (instance: UnitService) => { UnitService.INSTANCE = instance; };
   /**
    * @deprecated
    */
   static getInstance = (): UnitService => checkNotNull(UnitService.INSTANCE);
 }
+
+type DealDamageParams = Readonly<{
+  sourceUnit?: Unit,
+  targetUnit: Unit
+}>;

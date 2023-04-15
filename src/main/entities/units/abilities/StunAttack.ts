@@ -36,11 +36,12 @@ export default class StunAttack extends UnitAbility {
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage();
         await unitService.startAttack(unit, targetUnit);
-        await engine.dealDamage(damage, {
+        const adjustedDamage = await unitService.dealDamage(damage, {
           sourceUnit: unit,
-          targetUnit,
-          ability: this
+          targetUnit
         });
+        const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+        state.logMessage(message);
         targetUnit.setStunned(2);
       }
     }

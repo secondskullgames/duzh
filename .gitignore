@@ -3,6 +3,7 @@
 *.iml
 
 build/
+coverage/
 node_modules/
 src/gen-schema
 electron/build

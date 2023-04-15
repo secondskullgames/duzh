@@ -26,10 +26,11 @@ export default class AttackUnitBehavior implements UnitBehavior {
 
     for (let y = 0; y < mapRect.height; y++) {
       for (let x = 0; x < mapRect.width; x++) {
-        if (!map.getTile({ x, y }).isBlocking()) {
-          unblockedTiles.push({ x, y });
-        } else if (Coordinates.equals({ x, y }, targetUnit.getCoordinates())) {
-          unblockedTiles.push({ x, y });
+        const coordinates = { x, y };
+        if (Coordinates.equals(coordinates, targetUnit.getCoordinates())) {
+          unblockedTiles.push(coordinates);
+        } else if (!map.isBlocked(coordinates)) {
+          unblockedTiles.push(coordinates);
         } else {
           // blocked
         }
@@ -39,11 +40,13 @@ export default class AttackUnitBehavior implements UnitBehavior {
     const path: Coordinates[] = new Pathfinder(() => 1).findPath(unit.getCoordinates(), targetUnit.getCoordinates(), unblockedTiles);
 
     if (path.length > 1) {
-      const { x, y } = path[1]; // first tile is the unit's own tile
-      const unitAtPoint = map.getUnit({ x, y });
+      const coordinates = path[1]; // first tile is the unit's own tile
+      const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
-        await UnitAbilities.ATTACK.use(unit, { x, y });
+        await UnitAbilities.ATTACK.use(unit, coordinates);
       }
+    } else {
+      console.log('blocked');
     }
   };
 }

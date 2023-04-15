@@ -32,6 +32,7 @@
     "serve": "npm run build && npx webpack serve",
     "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
     "test": "npm run build && jest",
+    "coverage": "npm run build && jest --coverage",
     "electron": "npm run build && cd electron && npm i && npm run make && npx electron ."
   },
   "repository": {

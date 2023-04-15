@@ -18,7 +18,6 @@ export default class HeavyAttack extends UnitAbility {
       throw new Error('HeavyAttack requires a target!');
     }
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
     const unitService = UnitService.getInstance();
@@ -33,11 +32,12 @@ export default class HeavyAttack extends UnitAbility {
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
         await unitService.startAttack(unit, targetUnit);
-        await engine.dealDamage(damage, {
+        const adjustedDamage = await unitService.dealDamage(damage, {
           sourceUnit: unit,
-          targetUnit,
-          ability: this
+          targetUnit
         });
+        const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+        state.logMessage(message);
       }
     }
   };
