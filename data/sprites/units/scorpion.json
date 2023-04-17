@@ -1,7 +1,7 @@
 {
   "name": "scorpion",
   "offsets": {
-    "dx": -4,
+    "dx": 0,
     "dy": -16
   },
   "pattern": "${sprite}_${direction}_${number}",
