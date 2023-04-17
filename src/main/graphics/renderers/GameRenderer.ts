@@ -12,6 +12,8 @@ import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
 import Fonts from '../Fonts';
+import { checkNotNull } from '../../utils/preconditions';
+import Timer from '../../utils/Timer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -169,6 +171,10 @@ class GameRenderer extends BufferedRenderer {
       await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, 'left');
     }
   };
+
+  private static INSTANCE: GameRenderer | null;
+  static getInstance = (): GameRenderer => checkNotNull(GameRenderer.INSTANCE);
+  static setInstance = (instance: GameRenderer) => { GameRenderer.INSTANCE = instance; };
 }
 
 export default GameRenderer;

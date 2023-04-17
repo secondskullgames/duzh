@@ -8,6 +8,7 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import UnitService from '../UnitService';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class Dash extends UnitAbility {
   constructor() {
@@ -39,7 +40,7 @@ export default class Dash extends UnitAbility {
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
         await UnitService.getInstance().moveUnit(unit, { x, y });
         moved = true;
-        await engine.render();
+        await GameRenderer.getInstance().render();
         await sleep(50);
       } else {
         break;

@@ -10,6 +10,7 @@ import GameState from './GameState';
 import { sleep } from '../utils/promises';
 import { Animation } from '../graphics/animations/Animation';
 import Timer from '../utils/Timer';
+import GameRenderer from '../graphics/renderers/GameRenderer';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -19,17 +20,13 @@ type Props = Readonly<{
 }>;
 
 export class GameEngine {
-  private readonly renderer: Renderer;
   private readonly state: GameState;
-  private readonly timer: Timer;
 
   private firstMapPromise: Promise<MapInstance> | null;
 
-  constructor({ state, renderer }: Props) {
-    this.renderer = renderer;
+  constructor({ state }: Props) {
     this.state = state;
     this.firstMapPromise = null;
-    this.timer = Timer.start();
   }
 
   preloadFirstMap = async () => {
@@ -44,7 +41,7 @@ export class GameEngine {
     Music.stop();
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     this._updateRevealedTiles();
-    await this.render();
+    await GameRenderer.getInstance().render();
     const t2 = new Date().getTime();
     console.debug(`Loaded level in ${t2 - t1} ms`);
   };
@@ -56,7 +53,7 @@ export class GameEngine {
     // Music.playFigure(Music.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     this._updateRevealedTiles();
-    await this.render();
+    await GameRenderer.getInstance().render();
   };
 
   gameOver = async () => {
@@ -79,19 +76,9 @@ export class GameEngine {
     }
 
     this._updateRevealedTiles();
-    await this.render();
+    await GameRenderer.getInstance().render();
     state.nextTurn();
   };
-
-  render = async () => {
-    const t = this.timer;
-    t.start('render');
-    await this.renderer.render();
-    t.log('render');
-    const e = document.getElementById('fps')!;
-    const fps = 1000 / t.getAverageMillis('render');
-    e.innerText = `${fps.toFixed(2)}`;
-  }
 
   loadNextMap = async () => {
     const { state } = this;
@@ -145,7 +132,7 @@ export class GameEngine {
         unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
       }
 
-      await this.render();
+      await GameRenderer.getInstance().render();
 
       if (!!frame.postDelay) {
         console.log(`sleep ${frame.postDelay}`);

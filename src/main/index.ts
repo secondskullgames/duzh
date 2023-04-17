@@ -31,6 +31,7 @@ const main = async () => {
     imageFactory,
     fontRenderer
   });
+  GameRenderer.setInstance(renderer);
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
   const gameDriver = new GameDriver({ state, engine });
@@ -68,9 +69,9 @@ const main = async () => {
     itemService
   });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
-  const debug = new Debug({ engine, state, unitService });
+  const debug = new Debug({ engine, state, renderer, unitService });
   debug.attachToWindow();
-  await engine.render();
+  await GameRenderer.getInstance().render();
   await engine.preloadFirstMap();
 };
 

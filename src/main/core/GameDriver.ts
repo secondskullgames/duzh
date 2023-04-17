@@ -26,7 +26,7 @@ export class GameDriver {
   showSplashScreen = async () => {
     const { engine, state } = this;
     state.reset();
-    await engine.render();
+    await GameRenderer.getInstance().render();
     const evilTheme = await Music.loadMusic('evil');
     Music.playMusic(evilTheme);
     await engine.preloadFirstMap();

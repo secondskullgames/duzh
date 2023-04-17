@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import UnitAbility from './UnitAbility';
 import UnitService from '../UnitService';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class KnockbackAttack extends UnitAbility {
   constructor() {
@@ -45,7 +46,7 @@ export default class KnockbackAttack extends UnitAbility {
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
       if (map.contains(first) && !map.isBlocked(first)) {
         targetUnit.setCoordinates(first);
-        await engine.render();
+        await GameRenderer.getInstance().render();
         await sleep(50);
         const second = Coordinates.plus(first, { dx, dy });
         if (map.contains(second) && !map.isBlocked(second)) {

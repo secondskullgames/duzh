@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class ShootArrow extends UnitAbility {
   constructor() {
@@ -29,7 +30,7 @@ export default class ShootArrow extends UnitAbility {
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await engine.render();
+    await GameRenderer.getInstance().render();
     unit.spendMana(this.manaCost);
 
     const map = state.getMap();

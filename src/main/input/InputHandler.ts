@@ -12,6 +12,7 @@ import { getDirection, mapToCommand } from './inputMappers';
 import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
 import ItemService from '../items/ItemService';
+import GameRenderer from '../graphics/renderers/GameRenderer';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -155,7 +156,7 @@ export default class InputHandler {
             inventory.nextCategory();
             break;
         }
-        await this.engine.render();
+        await GameRenderer.getInstance().render();
         break;
       default:
         break;
@@ -197,7 +198,7 @@ export default class InputHandler {
         if (selectedItem) {
           state.setScreen('GAME');
           await itemService.useItem(playerUnit, selectedItem);
-          await engine.render();
+          await GameRenderer.getInstance().render();
         }
         break;
       }
@@ -231,7 +232,7 @@ export default class InputHandler {
         state.setScreen('INVENTORY');
         break;
     }
-    await engine.render();
+    await GameRenderer.getInstance().render();
   };
 
   private _handleMap = async () => {
@@ -248,7 +249,7 @@ export default class InputHandler {
       default:
         break;
     }
-    await engine.render();
+    await GameRenderer.getInstance().render();
   };
 
   private _handleAbility = async (command: NumberKey) => {
@@ -262,7 +263,7 @@ export default class InputHandler {
       [index - 1];
     if (ability && playerUnit.canSpendMana(ability.manaCost)) {
       state.setQueuedAbility(ability);
-      await engine.render();
+      await GameRenderer.getInstance().render();
     }
   };
 
@@ -273,7 +274,7 @@ export default class InputHandler {
     } else {
       state.showPrevScreen();
     }
-    await engine.render();
+    await GameRenderer.getInstance().render();
   };
 
   addEventListener = (target: HTMLElement) => {
