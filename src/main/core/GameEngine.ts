@@ -9,8 +9,8 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import { sleep } from '../utils/promises';
 import { Animation } from '../graphics/animations/Animation';
-import Timer from '../utils/Timer';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { GameScreen } from '../types/types';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -57,7 +57,7 @@ export class GameEngine {
   };
 
   gameOver = async () => {
-    this.state.setScreen('GAME_OVER');
+    this.state.setScreen(GameScreen.GAME_OVER);
     Music.stop();
     playSound(Sounds.GAME_OVER);
   };
@@ -84,7 +84,7 @@ export class GameEngine {
     const { state } = this;
     if (!state.hasNextMap()) {
       Music.stop();
-      state.setScreen('VICTORY');
+      state.setScreen(GameScreen.VICTORY);
     } else {
       const t1 = new Date().getTime();
       const nextMap = await state.loadNextMap();

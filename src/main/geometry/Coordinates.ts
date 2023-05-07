@@ -1,9 +1,9 @@
 import Offsets from './Offsets';
 
-interface Coordinates {
+type Coordinates = Readonly<{
   x: number,
   y: number
-}
+}>;
 
 namespace Coordinates {
   export const equals = (first: Coordinates, second: Coordinates) =>

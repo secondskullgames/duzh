@@ -16,6 +16,7 @@ import HumanRedesignController from '../../entities/units/controllers/HumanRedes
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
+import { Faction } from '../../types/types';
 
 type Props = Readonly<{
   level: number,
@@ -99,7 +100,7 @@ export default class GeneratedMapBuilder {
       const unit = await unitFactory.createUnit({
         unitClass: model.id,
         controller,
-        faction: 'ENEMY',
+        faction: Faction.ENEMY,
         coordinates: { x, y },
         level: this.level
       });

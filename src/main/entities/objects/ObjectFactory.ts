@@ -1,4 +1,4 @@
-import Coordinates from '../../geometry/Coordinates';
+import type Coordinates from '../../geometry/Coordinates';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
 import UnitFactory from '../units/UnitFactory';
@@ -6,6 +6,7 @@ import HumanDeterministicController from '../units/controllers/HumanDeterministi
 import GameState from '../../core/GameState';
 import GameObject from './GameObject';
 import Block from './Block';
+import { Faction } from '../../types/types';
 
 export type SpawnerClass = 'mirror';
 
@@ -26,32 +27,32 @@ export default class ObjectFactory {
     this.state = state;
   }
 
-  createMirror = async ({ x, y }: Coordinates): Promise<Spawner> => {
+  createMirror = async (coordinates: Coordinates): Promise<Spawner> => {
     const { state, spriteFactory, unitFactory } = this;
     const sprite = await spriteFactory.createMirrorSprite();
-    const spawnFunction = ({ x, y }: Coordinates) => unitFactory.createUnit({
+    const spawnFunction = (coordinates: Coordinates) => unitFactory.createUnit({
       unitClass: 'shade',
-      coordinates: { x, y },
+      coordinates: coordinates,
       level: 1,
       controller: new HumanDeterministicController({ state }),
-      faction: 'ENEMY'
+      faction: Faction.ENEMY,
     });
     const spawner = new Spawner({
       spawnFunction,
       sprite,
       maxUnits: 10,
       cooldown: 5,
-      coordinates: { x, y },
+      coordinates: coordinates,
       isBlocking: true
     });
     sprite.target = spawner;
     return spawner;
   };
 
- createSpawner = async ({ x, y }: Coordinates, type: SpawnerClass): Promise<Spawner> => {
+ createSpawner = async (coordinates: Coordinates, type: SpawnerClass): Promise<Spawner> => {
     switch (type) {
       case 'mirror':
-        return this.createMirror({ x, y });
+        return this.createMirror(coordinates);
       default:
         throw new Error(`Unknown spawner type: ${type}`);
     }

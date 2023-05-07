@@ -1,7 +1,6 @@
 import Unit from './Unit';
 import Direction from '../../geometry/Direction';
 import Coordinates from '../../geometry/Coordinates';
-import { pointAt } from '../../utils/geometry';
 import GameState from '../../core/GameState';
 import { GameEngine } from '../../core/GameEngine';
 import UnitService from './UnitService';

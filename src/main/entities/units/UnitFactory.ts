@@ -60,7 +60,7 @@ export default class UnitFactory {
 
   createPlayerUnit = async (): Promise<Unit> => this.createUnit({
     unitClass: 'player',
-    faction: 'PLAYER',
+    faction: Faction.PLAYER,
     controller: PlayerUnitController.getInstance(),
     level: 1,
     coordinates: { x: 0, y: 0 }

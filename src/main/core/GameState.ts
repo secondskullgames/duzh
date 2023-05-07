@@ -7,8 +7,6 @@ import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 
-let INSTANCE: GameState | null = null;
-
 /**
  * Global mutable state
  */
@@ -19,13 +17,13 @@ export default class GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: MapInstance[];
   private mapIndex: number;
+  private map: MapInstance | null;
   private readonly messages: Messages;
   private turn: number;
   private queuedAbility: UnitAbility | null;
-  private map: MapInstance | null;
 
   constructor() {
-    this.screen = 'TITLE';
+    this.screen = GameScreen.TITLE;
     this.prevScreen = null;
     this.playerUnit = null;
     this.mapSuppliers = [];
@@ -93,7 +91,7 @@ export default class GameState {
   };
 
   reset = () => {
-    this.screen = 'TITLE';
+    this.screen = GameScreen.TITLE;
     this.prevScreen = null;
     this.playerUnit = null;
     clear(this.mapSuppliers);
@@ -105,9 +103,7 @@ export default class GameState {
     this.queuedAbility = null;
   };
 
-  static setInstance = (state: GameState) => { INSTANCE = state; };
-  /**
-   * @deprecated
-   */
-  static getInstance = (): GameState => checkNotNull(INSTANCE);
+  private static INSTANCE: GameState | null = null;
+  static setInstance = (state: GameState) => { GameState.INSTANCE = state; };
+  static getInstance = (): GameState => checkNotNull(GameState.INSTANCE);
 }

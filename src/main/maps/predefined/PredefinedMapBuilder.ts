@@ -21,6 +21,7 @@ import HumanRedesignController from '../../entities/units/controllers/HumanRedes
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { Faction } from '../../types/types';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
@@ -136,7 +137,7 @@ class PredefinedMapBuilder {
             const unit = await this.unitFactory.createUnit({
               name: `${enemyUnitModel.name}_${id++}`,
               unitClass: enemyUnitClass,
-              faction: 'ENEMY',
+              faction: Faction.ENEMY,
               controller,
               level: model.levelNumber,
               coordinates: { x, y }

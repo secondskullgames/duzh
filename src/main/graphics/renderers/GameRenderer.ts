@@ -13,7 +13,7 @@ import InventoryRenderer from './InventoryRenderer';
 import MinimapRenderer from './MinimapRenderer';
 import Fonts from '../Fonts';
 import { checkNotNull } from '../../utils/preconditions';
-import Timer from '../../utils/Timer';
+import { GameScreen } from '../../types/types';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -62,21 +62,21 @@ class GameRenderer extends BufferedRenderer {
   renderBuffer = async () => {
     const screen = this.state.getScreen();
     switch (screen) {
-      case 'TITLE':
+      case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
         return this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
-      case 'GAME':
+      case GameScreen.GAME:
         return this._renderGameScreen();
-      case 'INVENTORY':
+      case GameScreen.INVENTORY:
         await this._renderGameScreen();
         return this._renderInventory();
-      case 'VICTORY':
+      case GameScreen.VICTORY:
         return this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-      case 'GAME_OVER':
+      case GameScreen.GAME_OVER:
         return this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
-      case 'MINIMAP':
+      case GameScreen.MAP:
         return this._renderMinimap();
-      case 'HELP':
+      case GameScreen.HELP:
         return this._renderHelp();
       default:
         // unreachable

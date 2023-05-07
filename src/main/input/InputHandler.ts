@@ -13,6 +13,7 @@ import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
 import ItemService from '../items/ItemService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { GameScreen } from '../types/types';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -191,19 +192,19 @@ export default class InputHandler {
         await this.engine.playTurn();
         break;
       }
-      case 'INVENTORY': {
+      case GameScreen.INVENTORY: {
         const playerUnit = state.getPlayerUnit();
         const { selectedItem } = playerUnit.getInventory();
 
         if (selectedItem) {
-          state.setScreen('GAME');
+          state.setScreen(GameScreen.GAME);
           await itemService.useItem(playerUnit, selectedItem);
           await GameRenderer.getInstance().render();
         }
         break;
       }
-      case 'TITLE':
-        state.setScreen('GAME');
+      case GameScreen.TITLE:
+        state.setScreen(GameScreen.GAME);
         if (modifiers.includes('SHIFT')) {
           const mapInstance = await this.mapFactory.loadMap({
             type: 'predefined',
@@ -214,8 +215,8 @@ export default class InputHandler {
           await this.engine.startGame();
         }
         break;
-      case 'VICTORY':
-      case 'GAME_OVER': {
+      case GameScreen.VICTORY:
+      case GameScreen.GAME_OVER: {
         await driver.showSplashScreen();
       }
     }
@@ -225,11 +226,11 @@ export default class InputHandler {
     const { state, engine } = this;
 
     switch (state.getScreen()) {
-      case 'INVENTORY':
-        state.setScreen('GAME');
+      case GameScreen.INVENTORY:
+        state.setScreen(GameScreen.GAME);
         break;
       default:
-        state.setScreen('INVENTORY');
+        state.setScreen(GameScreen.INVENTORY);
         break;
     }
     await GameRenderer.getInstance().render();
@@ -239,12 +240,12 @@ export default class InputHandler {
     const { state, engine } = this;
 
     switch (state.getScreen()) {
-      case 'MINIMAP':
-        state.setScreen('GAME');
+      case GameScreen.MAP:
+        state.setScreen(GameScreen.GAME);
         break;
-      case 'GAME':
-      case 'INVENTORY':
-        state.setScreen('MINIMAP');
+      case GameScreen.GAME:
+      case GameScreen.INVENTORY:
+        state.setScreen(GameScreen.MAP);
         break;
       default:
         break;
@@ -269,8 +270,8 @@ export default class InputHandler {
 
   private _handleF1 = async () => {
     const { state, engine } = this;
-    if (['GAME', 'INVENTORY', 'MINIMAP'].includes(state.getScreen())) {
-      state.setScreen('HELP');
+    if ([GameScreen.GAME, GameScreen.INVENTORY, GameScreen.MAP].includes(state.getScreen())) {
+      state.setScreen(GameScreen.HELP);
     } else {
       state.showPrevScreen();
     }
