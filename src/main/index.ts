@@ -28,22 +28,19 @@ const main = async () => {
     fontRenderer
   });
   GameRenderer.setInstance(renderer);
-  const spriteFactory = new SpriteFactory({ imageFactory });
-  const projectileFactory = new ProjectileFactory({ spriteFactory });
-  const animationFactory = new AnimationFactory({ state, projectileFactory });
+  const animationFactory = new AnimationFactory({ state });
   AnimationFactory.setInstance(animationFactory);
-  const itemFactory = new ItemFactory({ state, spriteFactory, animationFactory });
+  const itemFactory = new ItemFactory({ state, animationFactory });
   ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
+  const unitFactory = new UnitFactory({ itemFactory });
   UnitFactory.setInstance(unitFactory);
-  const objectFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
-  const tileFactory = new TileFactory({ spriteFactory });
+  const objectFactory = new ObjectFactory({ unitFactory, state });
+  const tileFactory = new TileFactory();
   const mapFactory = new MapFactory({
     state,
     imageFactory,
     itemFactory,
     objectFactory,
-    spriteFactory,
     tileFactory,
     unitFactory
   });

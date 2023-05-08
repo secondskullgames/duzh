@@ -15,7 +15,6 @@ import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import ItemFactory from '../items/ItemFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 
 type Props = Readonly<{
@@ -23,7 +22,6 @@ type Props = Readonly<{
   imageFactory: ImageFactory,
   itemFactory: ItemFactory,
   objectFactory: ObjectFactory,
-  spriteFactory: SpriteFactory,
   tileFactory: TileFactory,
   unitFactory: UnitFactory,
 }>;
@@ -33,7 +31,6 @@ export default class MapFactory {
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
   private readonly objectFactory: ObjectFactory;
-  private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
 
@@ -42,7 +39,6 @@ export default class MapFactory {
     this.imageFactory = props.imageFactory;
     this.itemFactory = props.itemFactory;
     this.objectFactory = props.objectFactory;
-    this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
     this.unitFactory = props.unitFactory;
   }
@@ -71,7 +67,6 @@ export default class MapFactory {
       imageFactory,
       itemFactory,
       objectFactory,
-      spriteFactory,
       unitFactory,
       tileFactory
     } = this;
@@ -81,7 +76,6 @@ export default class MapFactory {
       imageFactory,
       itemFactory,
       objectFactory,
-      spriteFactory,
       unitFactory,
       tileFactory
     });

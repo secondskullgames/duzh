@@ -5,6 +5,8 @@ import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import { checkNotNull } from '../../utils/preconditions';
+import SpriteFactory from '../sprites/SpriteFactory';
+import ImageFactory from '../images/ImageFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
 const ARROW_FRAME_LENGTH = 50; // milliseconds
@@ -12,17 +14,14 @@ const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type Props = Readonly<{
-  state: GameState,
-  projectileFactory: ProjectileFactory
+  state: GameState
 }>;
 
 export default class AnimationFactory {
   private readonly state: GameState;
-  private readonly projectileFactory: ProjectileFactory
 
-  constructor({ state, projectileFactory }: Props) {
+  constructor({ state }: Props) {
     this.state = state;
-    this.projectileFactory = projectileFactory;
   }
 
   getAttackingAnimation = (source: Unit, target?: Unit): Animation => {
@@ -87,7 +86,9 @@ export default class AnimationFactory {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await this.projectileFactory.createArrow(coordinates, direction);
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
+        imageFactory: ImageFactory.getInstance()
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
         projectiles: [projectile],
@@ -153,7 +154,9 @@ export default class AnimationFactory {
 
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await this.projectileFactory.createBolt(coordinates, direction);
+      const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
+        imageFactory: ImageFactory.getInstance()
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],
         projectiles: [projectile],

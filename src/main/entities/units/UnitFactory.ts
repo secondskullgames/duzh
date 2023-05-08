@@ -10,6 +10,7 @@ import Unit from './Unit';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
 import { checkNotNull } from '../../utils/preconditions';
+import ImageFactory from '../../graphics/images/ImageFactory';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -24,22 +25,23 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  itemFactory: ItemFactory,
-  spriteFactory: SpriteFactory
+  itemFactory: ItemFactory
 }>
 
 export default class UnitFactory {
   private readonly itemFactory: ItemFactory;
-  private readonly spriteFactory: SpriteFactory;
 
-  constructor({ itemFactory, spriteFactory }: Props) {
+  constructor({ itemFactory }: Props) {
     this.itemFactory = itemFactory;
-    this.spriteFactory = spriteFactory;
   }
 
   createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
     const model: UnitModel = await loadUnitModel(unitClass);
-    const sprite = await this.spriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
+    const sprite = await SpriteFactory.createUnitSprite(
+      model.sprite,
+      PaletteSwaps.create(model.paletteSwaps),
+      { imageFactory: ImageFactory.getInstance() }
+    );
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of (model.equipment ?? [])) {
       const equipment = await this.itemFactory.createEquipment(equipmentClass);

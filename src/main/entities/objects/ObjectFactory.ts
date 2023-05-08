@@ -7,29 +7,30 @@ import GameObject from './GameObject';
 import Block from './Block';
 import { Faction } from '../../types/types';
 import HumanRedesignController from '../units/controllers/HumanRedesignController';
+import ImageFactory from '../../graphics/images/ImageFactory';
+import PaletteSwaps from '../../graphics/PaletteSwaps';
 
 export type SpawnerClass = 'mirror';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory,
   unitFactory: UnitFactory,
   state: GameState
 }>;
 
 export default class ObjectFactory {
-  private readonly spriteFactory: SpriteFactory;
   private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
 
-  constructor({ spriteFactory, unitFactory, state }: Props) {
-    this.spriteFactory = spriteFactory;
+  constructor({ unitFactory, state }: Props) {
     this.unitFactory = unitFactory;
     this.state = state;
   }
 
   createMirror = async (coordinates: Coordinates): Promise<Spawner> => {
-    const { state, spriteFactory, unitFactory } = this;
-    const sprite = await spriteFactory.createMirrorSprite();
+    const { state, unitFactory } = this;
+    const sprite = await SpriteFactory.createMirrorSprite({
+      imageFactory: ImageFactory.getInstance()
+    });
     const spawnFunction = (coordinates: Coordinates) => unitFactory.createUnit({
       unitClass: 'shade',
       coordinates: coordinates,
@@ -59,7 +60,12 @@ export default class ObjectFactory {
   };
 
   createMovableBlock = async (coordinates: Coordinates): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite('block');
+    const sprite = await SpriteFactory.createStaticSprite(
+      'block',
+      PaletteSwaps.empty(),
+      { imageFactory: ImageFactory.getInstance() }
+    );
+
     return new Block({
       coordinates,
       sprite,

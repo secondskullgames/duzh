@@ -8,10 +8,7 @@ import Tile from './Tile';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
-
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
+import ImageFactory from '../graphics/images/ImageFactory';
 
 type CreateTileProps = Readonly<{
   tileType: TileType,
@@ -20,12 +17,6 @@ type CreateTileProps = Readonly<{
 }>;
 
 export default class TileFactory {
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
-
   getTileSet = async (id: string): Promise<TileSet> => {
     const model = await loadTileSetModel(id);
     const tileSet: {
@@ -38,7 +29,9 @@ export default class TileFactory {
         const filename = filenames[index];
         if (filename) {
           const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
-          const tileSprite = await this.spriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps);
+          const tileSprite = await SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps, {
+            imageFactory: ImageFactory.getInstance()
+          });
           tileSprites.push(tileSprite);
         }
       }

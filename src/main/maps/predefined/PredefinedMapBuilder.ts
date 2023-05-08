@@ -27,7 +27,6 @@ type Props = Readonly<{
   imageFactory: ImageFactory,
   itemFactory: ItemFactory,
   objectFactory: ObjectFactory,
-  spriteFactory: SpriteFactory
   tileFactory: TileFactory,
   unitFactory: UnitFactory,
   state: GameState
@@ -37,7 +36,6 @@ class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
   private readonly objectFactory: ObjectFactory;
-  private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
@@ -46,7 +44,6 @@ class PredefinedMapBuilder {
     this.imageFactory = props.imageFactory;
     this.itemFactory = props.itemFactory;
     this.objectFactory = props.objectFactory;
-    this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
     this.unitFactory = props.unitFactory;
     this.state = props.state;
@@ -152,7 +149,6 @@ class PredefinedMapBuilder {
   };
 
   private _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
-    const { spriteFactory } = this;
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
@@ -168,7 +164,7 @@ class PredefinedMapBuilder {
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
           : 'vertical';
-        const sprite = await spriteFactory.createDoorSprite();
+        const sprite = await SpriteFactory.createDoorSprite({ imageFactory: ImageFactory.getInstance() });
 
         const door = new Door({
           direction: doorDirection,
