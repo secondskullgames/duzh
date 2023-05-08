@@ -13,10 +13,10 @@ import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import { checkNotNull } from '../utils/preconditions';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
-import UnitService from '../entities/units/UnitService';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { logMessage } from '../actions/logMessage';
+import { dealDamage } from '../actions/dealDamage';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -97,12 +97,12 @@ export default class ItemService {
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);
       await playAnimation(animation, {
-        state: GameState.getInstance(),
+        state: this.state,
         renderer: GameRenderer.getInstance()
       });
 
       for (const adjacentUnit of adjacentUnits) {
-        await UnitService.getInstance().dealDamage(damage, {
+        await dealDamage(damage, {
           sourceUnit: unit,
           targetUnit: unit
         });

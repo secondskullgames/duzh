@@ -6,7 +6,6 @@ import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
-import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { moveUnit } from '../../../actions/moveUnit';
 

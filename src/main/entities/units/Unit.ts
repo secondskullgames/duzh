@@ -1,15 +1,11 @@
-import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
-import { EquipmentScript } from '../../equipment/EquipmentScript';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
 import Activity from '../../types/Activity';
 import Entity from '../Entity';
 import { Faction } from '../../types/types';
@@ -20,7 +16,7 @@ import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
-import UnitService from './UnitService';
+import { levelUp } from '../../actions/levelUp';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -120,7 +116,7 @@ export default class Unit implements Entity, Animatable {
     }
 
     while (this.level < props.level) {
-      UnitService.getInstance().levelUp(this); // TODO
+      levelUp(this);
     }
   }
 

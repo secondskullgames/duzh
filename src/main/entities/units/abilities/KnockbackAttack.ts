@@ -6,9 +6,11 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import UnitAbility from './UnitAbility';
-import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { logMessage } from '../../../actions/logMessage';
+import { dealDamage } from '../../../actions/dealDamage';
+import { startAttack } from '../../../actions/startAttack';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class KnockbackAttack extends UnitAbility {
   constructor() {
@@ -21,7 +23,6 @@ export default class KnockbackAttack extends UnitAbility {
     }
 
     const state = GameState.getInstance();
-    const unitService = UnitService.getInstance();
     const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
@@ -34,8 +35,12 @@ export default class KnockbackAttack extends UnitAbility {
       unit.spendMana(this.manaCost);
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
-      await unitService.startAttack(unit, targetUnit);
-      const adjustedDamage = await unitService.dealDamage(damage, {
+      await startAttack(unit, targetUnit, {
+        state,
+        renderer,
+        animationFactory: AnimationFactory.getInstance()
+      });
+      const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });

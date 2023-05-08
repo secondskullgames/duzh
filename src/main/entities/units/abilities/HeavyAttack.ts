@@ -5,9 +5,12 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
-import UnitService from '../UnitService';
 import { moveUnit } from '../../../actions/moveUnit';
 import { logMessage } from '../../../actions/logMessage';
+import { dealDamage } from '../../../actions/dealDamage';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import { startAttack } from '../../../actions/startAttack';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class HeavyAttack extends UnitAbility {
   constructor() {
@@ -21,7 +24,7 @@ export default class HeavyAttack extends UnitAbility {
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    const unitService = UnitService.getInstance();
+
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
@@ -32,8 +35,12 @@ export default class HeavyAttack extends UnitAbility {
         playSound(Sounds.SPECIAL_ATTACK);
         unit.spendMana(this.manaCost);
         const damage = unit.getDamage() * 2;
-        await unitService.startAttack(unit, targetUnit);
-        const adjustedDamage = await unitService.dealDamage(damage, {
+        await startAttack(unit, targetUnit, {
+          state,
+          renderer: GameRenderer.getInstance(),
+          animationFactory: AnimationFactory.getInstance()
+        });
+        const adjustedDamage = await dealDamage(damage, {
           sourceUnit: unit,
           targetUnit
         });

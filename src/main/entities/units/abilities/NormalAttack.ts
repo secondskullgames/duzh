@@ -33,7 +33,6 @@ export default class NormalAttack extends UnitAbility {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        console.log('walking');
         await actionsService.walk(unit, direction);
         return;
       } else {
@@ -53,7 +52,7 @@ export default class NormalAttack extends UnitAbility {
           playSound(Sounds.SPECIAL_ATTACK);
           const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
           await playAnimation(animation, {
-            state: GameState.getInstance(),
+            state,
             renderer: GameRenderer.getInstance()
           });
           spawner.setState('DEAD');

@@ -14,7 +14,6 @@ import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
-import UnitService from './entities/units/UnitService';
 import UnitActionsService from './entities/units/UnitActionsService';
 
 const main = async () => {
@@ -39,9 +38,7 @@ const main = async () => {
   ItemService.setInstance(itemService);
   const unitFactory = new UnitFactory({ itemService: itemService, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const unitService = new UnitService({ state, animationFactory });
-  UnitService.setInstance(unitService);
-  const unitActionsService = new UnitActionsService({ state, unitService });
+  const unitActionsService = new UnitActionsService({ state });
   UnitActionsService.setInstance(unitActionsService);
   const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
@@ -61,7 +58,7 @@ const main = async () => {
     itemService
   });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
-  const debug = new Debug({ state, renderer, unitService });
+  const debug = new Debug({ state, renderer });
   debug.attachToWindow();
   await GameRenderer.getInstance().render();
 };

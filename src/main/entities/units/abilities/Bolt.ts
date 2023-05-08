@@ -6,10 +6,10 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
+import { dealDamage } from '../../../actions/dealDamage';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -22,7 +22,6 @@ export default class Bolt extends UnitAbility {
     }
 
     const state = GameState.getInstance();
-    const unitService = UnitService.getInstance();
     const animationFactory = AnimationFactory.getInstance();
     const renderer = GameRenderer.getInstance();
 
@@ -45,7 +44,7 @@ export default class Bolt extends UnitAbility {
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getDamage();
-      const adjustedDamage = await unitService.dealDamage(damage, {
+      const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });

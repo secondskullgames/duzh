@@ -2,7 +2,6 @@ import Unit from './Unit';
 import Direction from '../../geometry/Direction';
 import Coordinates from '../../geometry/Coordinates';
 import GameState from '../../core/GameState';
-import UnitService from './UnitService';
 import { checkNotNull } from '../../utils/preconditions';
 import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
@@ -11,19 +10,21 @@ import Block from '../objects/Block';
 import { gameOver } from '../../actions/gameOver';
 import { moveUnit } from '../../actions/moveUnit';
 import { logMessage } from '../../actions/logMessage';
+import { dealDamage } from '../../actions/dealDamage';
+import { awardExperience } from '../../actions/awardExperience';
+import { startAttack } from '../../actions/startAttack';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
+import AnimationFactory from '../../graphics/animations/AnimationFactory';
 
 type Props = {
-  state: GameState,
-  unitService: UnitService
+  state: GameState
 };
 
 export default class UnitActionsService {
   private readonly state: GameState;
-  private readonly unitService: UnitService;
 
-  constructor({ state, unitService }: Props) {
+  constructor({ state }: Props) {
     this.state = state;
-    this.unitService = unitService;
   }
 
   walk = async (unit: Unit, direction: Direction) => {
@@ -39,13 +40,17 @@ export default class UnitActionsService {
   };
 
   attack = async (attacker: Unit, defender: Unit) => {
-    const { state, unitService } = this;
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
 
     const damage = attacker.getDamage();
     playSound(Sounds.PLAYER_HITS_ENEMY);
-    await unitService.startAttack(attacker, defender);
-    const adjustedDamage = await unitService.dealDamage(damage, {
+    await startAttack(attacker, defender, {
+      state,
+      renderer: GameRenderer.getInstance(),
+      animationFactory: AnimationFactory.getInstance() // WTF
+    });
+    const adjustedDamage = await dealDamage(damage, {
       sourceUnit: attacker,
       targetUnit: defender
     });
@@ -58,7 +63,7 @@ export default class UnitActionsService {
     if (defender.getLife() <= 0) {
       await this._die(defender);
       if (attacker === playerUnit) {
-        unitService.awardExperience(attacker, 1);
+        awardExperience(attacker, 1);
       }
     }
   };

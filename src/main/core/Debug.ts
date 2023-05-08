@@ -1,38 +1,36 @@
 import GameState from './GameState';
-import UnitService from '../entities/units/UnitService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
+import { dealDamage } from '../actions/dealDamage';
+import { levelUp as _levelUp } from '../actions/levelUp';
 
 type Props = Readonly<{
   renderer: GameRenderer,
-  state: GameState,
-  unitService: UnitService
+  state: GameState
 }>;
 
 export class Debug {
   private readonly renderer: GameRenderer;
   private readonly state: GameState;
-  private readonly unitService: UnitService;
-  private revealMap: boolean;
+  private _isMapRevealed: boolean;
 
-  constructor({ renderer, state, unitService }: Props) {
+  constructor({ renderer, state }: Props) {
     this.renderer = renderer;
     this.state = state;
-    this.unitService = unitService;
-    this.revealMap = false;
+    this._isMapRevealed = false;
   }
 
   toggleRevealMap = async () => {
-    this.revealMap = !this.revealMap;
+    this._isMapRevealed = !this._isMapRevealed;
     await this.renderer.render();
   };
 
-  isMapRevealed = () => this.revealMap;
+  isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    await this.unitService.dealDamage(playerUnit.getMaxLife(), {
+    await dealDamage(playerUnit.getMaxLife(), {
       targetUnit: playerUnit
     })
     await this.renderer.render();
@@ -40,7 +38,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    this.unitService.levelUp(playerUnit);
+    _levelUp(playerUnit);
     await this.renderer.render();
   };
 
