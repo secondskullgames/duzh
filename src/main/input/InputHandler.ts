@@ -15,6 +15,9 @@ import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
 import { playTurn } from '../actions/playTurn';
 import { showSplashScreen } from '../actions/showSplashScreen';
+import { loadNextMap } from '../actions/loadNextMap';
+import { startGame } from '../actions/startGame';
+import { startGameDebug } from '../actions/startGameDebug';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -181,6 +184,7 @@ export default class InputHandler {
       return;
     }
 
+    const renderer = GameRenderer.getInstance();
     switch (state.getScreen()) {
       case 'GAME': {
         const map = checkNotNull(state.getMap(), 'Map is not loaded!');
@@ -191,11 +195,11 @@ export default class InputHandler {
           map.removeObject(item);
         } else if (map.getTile({ x, y }).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
-          await this.engine.loadNextMap();
+          await loadNextMap({ state });
         }
         await playTurn({
           state: this.state,
-          renderer: GameRenderer.getInstance()
+          renderer: renderer
         });
         break;
       }
@@ -206,7 +210,7 @@ export default class InputHandler {
         if (selectedItem) {
           state.setScreen(GameScreen.GAME);
           await itemService.useItem(playerUnit, selectedItem);
-          await GameRenderer.getInstance().render();
+          await renderer.render();
         }
         break;
       }
@@ -217,16 +221,22 @@ export default class InputHandler {
             type: 'predefined',
             id: 'test'
           });
-          await this.engine.startGameDebug(mapInstance);
+          await startGameDebug(mapInstance, {
+            state,
+            renderer
+          });
         } else {
-          await this.engine.startGame();
+          await startGame({
+            state,
+            renderer
+          });
         }
         break;
       case GameScreen.VICTORY:
       case GameScreen.GAME_OVER: {
         await showSplashScreen({
           state,
-          renderer: GameRenderer.getInstance()
+          renderer
         });
       }
     }

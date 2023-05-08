@@ -2,6 +2,7 @@ import { GameEngine } from './GameEngine';
 import GameState from './GameState';
 import UnitService from '../entities/units/UnitService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { loadNextMap } from '../actions/loadNextMap';
 
 type Props = Readonly<{
   engine: GameEngine,
@@ -53,7 +54,7 @@ export class Debug {
   };
 
   nextLevel = async () => {
-    await this.engine.loadNextMap();
+    await loadNextMap({ state: this.state });
     await this.renderer.render();
   };
 
