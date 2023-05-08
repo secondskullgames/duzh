@@ -13,22 +13,18 @@ import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import { playAnimation } from '../graphics/animations/playAnimation';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import { logMessage } from '../actions/logMessage';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { ItemProc, ItemProcProps } from './ItemProc';
 
-type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
-
-type Props = Readonly<{
-  state: GameState,
-  renderer: GameRenderer,
-  imageFactory: ImageFactory
-}>;
-
-const createLifePotion = (lifeRestored: number, { state, renderer }: Props): InventoryItem => {
-  const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+const createLifePotion = (lifeRestored: number): InventoryItem => {
+  const onUse: ItemProc = async (
+    item: InventoryItem,
+    unit: Unit,
+    { state, renderer, imageFactory }: ItemProcProps
+  ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
     logMessage(
@@ -44,8 +40,12 @@ const createLifePotion = (lifeRestored: number, { state, renderer }: Props): Inv
   });
 };
 
-const createManaPotion = (manaRestored: number, { state, renderer }: Props): InventoryItem => {
-  const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+const createManaPotion = (manaRestored: number): InventoryItem => {
+  const onUse: ItemProc = async (
+    item: InventoryItem,
+    unit: Unit,
+    { state, renderer, imageFactory }: ItemProcProps
+  ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
     logMessage(
@@ -61,7 +61,7 @@ const createManaPotion = (manaRestored: number, { state, renderer }: Props): Inv
   });
 };
 
-const createKey = ({ state, renderer }: Props): InventoryItem => {
+const createKey = (): InventoryItem => {
   const onUse: ItemProc = async () => {}; // TODO - for now just use these by walking into a door
 
   return new InventoryItem({
@@ -71,8 +71,12 @@ const createKey = ({ state, renderer }: Props): InventoryItem => {
   });
 };
 
-const createScrollOfFloorFire = async (damage: number, { state, renderer, imageFactory }: Props): Promise<InventoryItem> => {
-  const onUse: ItemProc = async (item, unit): Promise<void> => {
+const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
+  const onUse: ItemProc = async (
+    item: InventoryItem,
+    unit: Unit,
+    { state, renderer, imageFactory }: ItemProcProps
+  ) => {
     const map = state.getMap();
 
     const adjacentUnits: Unit[] = map.getAllUnits()
@@ -106,11 +110,16 @@ const createScrollOfFloorFire = async (damage: number, { state, renderer, imageF
   });
 };
 
-const createInventoryWeapon = async (equipmentClass: string, { state, renderer, imageFactory }: Props): Promise<InventoryItem> => {
-  const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
-    const equipment = await createEquipment(equipmentClass, { state, renderer, imageFactory });
+const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
+  const onUse: ItemProc = async (
+    item: InventoryItem,
+    unit: Unit,
+    { state, renderer, imageFactory }: ItemProcProps
+  ) => {
+    const equipment = await createEquipment(equipmentClass, { imageFactory });
     return equipItem(item, equipment, unit, { state });
   };
+
   const model = await loadEquipmentModel(equipmentClass);
   return new InventoryItem({
     name: model.name,
@@ -121,8 +130,7 @@ const createInventoryWeapon = async (equipmentClass: string, { state, renderer, 
 
 const createMapEquipment = async (
   equipmentClass: string,
-  coordinates: Coordinates,
-  { state, renderer, imageFactory }: Props
+  coordinates: Coordinates
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
   const sprite = await SpriteFactory.createStaticSprite(
@@ -130,11 +138,15 @@ const createMapEquipment = async (
     PaletteSwaps.create(model.paletteSwaps),
     { imageFactory: ImageFactory.getInstance()
   });
-  const inventoryItem: InventoryItem = await createInventoryWeapon(equipmentClass, { state, renderer, imageFactory });
+  const inventoryItem: InventoryItem = await createInventoryWeapon(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
-const createEquipment = async (equipmentClass: string, { state, renderer, imageFactory }: Props): Promise<Equipment> => {
+type CreateEquipmentProps = Readonly<{
+  imageFactory: ImageFactory
+}>;
+
+const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentProps): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(
@@ -142,8 +154,10 @@ const createEquipment = async (equipmentClass: string, { state, renderer, imageF
     PaletteSwaps.create(model.paletteSwaps),
     { imageFactory }
   );
+
+  // TODO wtf is this
   const inventoryItem = (model.itemCategory === 'WEAPON')
-    ? await createInventoryWeapon(equipmentClass, { state, renderer, imageFactory })
+    ? await createInventoryWeapon(equipmentClass)
     : null;
   const equipment = new Equipment({ model, sprite, inventoryItem });
   sprite.target = equipment;
@@ -151,27 +165,26 @@ const createEquipment = async (equipmentClass: string, { state, renderer, imageF
 };
 
 const createInventoryItem = async (
-  model: ConsumableItemModel,
-  { state, renderer, imageFactory }: Props
+  model: ConsumableItemModel
 ): Promise<InventoryItem> => {
   switch (model.type) {
     case 'life_potion': {
       const amount = parseInt(model.params?.amount ?? '0');
-      return createLifePotion(amount, { state, renderer, imageFactory });
+      return createLifePotion(amount);
     }
     case 'mana_potion': {
       const amount = parseInt(model.params?.amount ?? '0');
-      return createManaPotion(amount, { state, renderer, imageFactory });
+      return createManaPotion(amount);
     }
     case 'key': {
-      return createKey({ state, renderer, imageFactory });
+      return createKey();
     }
     case 'scroll': {
       const spell = model.params?.spell;
       switch (spell) {
         case 'floor_fire':
           const damage = parseInt(model.params?.damage ?? '0');
-          return createScrollOfFloorFire(damage, { state, renderer, imageFactory });
+          return createScrollOfFloorFire(damage);
         default:
           throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);
       }
@@ -181,13 +194,17 @@ const createInventoryItem = async (
   }
 };
 
+type CreateMapItemProps = Readonly<{
+  imageFactory: ImageFactory
+}>;
+
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { state, renderer, imageFactory }: Props
+  { imageFactory }: CreateEquipmentProps
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
-  const inventoryItem = await createInventoryItem(model, { state, renderer, imageFactory });
+  const inventoryItem = await createInventoryItem(model);
   const sprite = await SpriteFactory.createStaticSprite(
     model.mapSprite,
     PaletteSwaps.create(model.paletteSwaps),

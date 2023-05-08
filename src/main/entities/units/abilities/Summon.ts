@@ -6,8 +6,6 @@ import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import ImageFactory from '../../../graphics/images/ImageFactory';
 import { AbilityName } from './AbilityName';
 
 const manaCost = 25;
@@ -42,8 +40,6 @@ export const Summon: UnitAbility = {
         coordinates
       },
       {
-        state,
-        renderer,
         imageFactory
       }
     );

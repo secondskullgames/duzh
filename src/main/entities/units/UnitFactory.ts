@@ -10,8 +10,6 @@ import Unit from './Unit';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
 import ImageFactory from '../../graphics/images/ImageFactory';
-import GameRenderer from '../../graphics/renderers/GameRenderer';
-import GameState from '../../core/GameState';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -26,14 +24,12 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
 const createUnit = async (
   { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
-  { state, renderer, imageFactory }: Props
+  { imageFactory }: Props
 ): Promise<Unit> => {
   const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await SpriteFactory.createUnitSprite(
@@ -45,7 +41,7 @@ const createUnit = async (
   for (const equipmentClass of (model.equipment ?? [])) {
     const equipment = await ItemFactory.createEquipment(
       equipmentClass,
-      { state, renderer, imageFactory }
+      { imageFactory }
     );
     equipmentList.push(equipment);
   }
@@ -62,7 +58,7 @@ const createUnit = async (
   });
 };
 
-const createPlayerUnit = async ({ state, renderer, imageFactory }: Props): Promise<Unit> => createUnit(
+const createPlayerUnit = async ({ imageFactory }: Props): Promise<Unit> => createUnit(
   {
     unitClass: 'player',
     faction: Faction.PLAYER,
@@ -70,7 +66,7 @@ const createPlayerUnit = async ({ state, renderer, imageFactory }: Props): Promi
     level: 1,
     coordinates: { x: 0, y: 0 }
   },
-  { state, renderer, imageFactory }
+  { imageFactory }
 );
 
 const loadAllModels = async (): Promise<UnitModel[]> => {

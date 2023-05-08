@@ -32,8 +32,6 @@ const main = async () => {
 
 const addInitialState = async (state: GameState) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
-    state,
-    renderer: GameRenderer.getInstance(),
     imageFactory: ImageFactory.getInstance()
   });
   state.setPlayerUnit(playerUnit);

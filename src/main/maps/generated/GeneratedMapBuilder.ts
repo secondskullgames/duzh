@@ -105,8 +105,6 @@ export default class GeneratedMapBuilder {
           level: this.level
         },
         {
-          state: GameState.getInstance(),
-          renderer: GameRenderer.getInstance(),
           imageFactory: ImageFactory.getInstance()
         }
       );
@@ -122,6 +120,7 @@ export default class GeneratedMapBuilder {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 
     let points = this.pointAllocation.equipment;
+    const imageFactory = ImageFactory.getInstance();
     while (points > 0) {
       const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
         .filter(equipmentClass => equipmentClass.level !== null && equipmentClass.level <= this.level)
@@ -139,12 +138,7 @@ export default class GeneratedMapBuilder {
       const coordinates = checkNotNull(candidateLocations.shift());
       const item = await ItemFactory.createMapEquipment(
         equipmentClass.id,
-        coordinates,
-        {
-          state: GameState.getInstance(),
-          renderer: GameRenderer.getInstance(),
-          imageFactory: ImageFactory.getInstance()
-        }
+        coordinates
       );
       objects.push(item);
       points -= equipmentClass.points!;
@@ -170,11 +164,7 @@ export default class GeneratedMapBuilder {
       const item = await ItemFactory.createMapItem(
         itemClass.id,
         coordinates,
-        {
-          state: GameState.getInstance(),
-          renderer: GameRenderer.getInstance(),
-          imageFactory: ImageFactory.getInstance()
-        }
+        { imageFactory }
       );
       objects.push(item);
       points -= itemClass.points!;

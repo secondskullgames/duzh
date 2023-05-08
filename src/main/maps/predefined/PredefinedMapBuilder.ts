@@ -89,6 +89,8 @@ class PredefinedMapBuilder {
 
   private _loadUnits = async (model: PredefinedMapModel, image: Image): Promise<Unit[]> => {
     const state = this.state;
+    const imageFactory = ImageFactory.getInstance();
+
     const units: Unit[] = [];
     let id = 1;
 
@@ -130,9 +132,7 @@ class PredefinedMapBuilder {
                 coordinates: { x, y }
               },
               {
-                state,
-                renderer: GameRenderer.getInstance(),
-                imageFactory: ImageFactory.getInstance()
+                imageFactory
               }
             );
             units.push(unit);
@@ -156,11 +156,12 @@ class PredefinedMapBuilder {
       const color = Color.fromRGB({ r, g, b });
 
       const objectName = objectColors?.[color.hex] ?? null;
+      const imageFactory = ImageFactory.getInstance();
       if (objectName?.startsWith('door_')) {
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
           : 'vertical';
-        const sprite = await SpriteFactory.createDoorSprite({ imageFactory: ImageFactory.getInstance() });
+        const sprite = await SpriteFactory.createDoorSprite({ imageFactory });
 
         const door = new Door({
           direction: doorDirection,
@@ -169,28 +170,32 @@ class PredefinedMapBuilder {
           sprite
         });
         objects.push(door);
-      } else if (objectName === 'mirror') {
-        const spawner = await ObjectFactory.createMirror(
-          { x, y },
-          {
-            state: GameState.getInstance(),
-            renderer: GameRenderer.getInstance(),
-            imageFactory: ImageFactory.getInstance()
-          }
-        );
-        objects.push(spawner);
-      } else if (objectName === 'movable_block') {
-        const block = await ObjectFactory.createMovableBlock(
-          { x, y },
-          {
-            state: GameState.getInstance(),
-            renderer: GameRenderer.getInstance(),
-            imageFactory: ImageFactory.getInstance()
-          }
-        );
-        objects.push(block);
-      } else if (objectName) {
-        throw new Error(`Unrecognized object name: ${objectName}`);
+      } else {
+        const state = GameState.getInstance();
+        const renderer = GameRenderer.getInstance();
+        if (objectName === 'mirror') {
+          const spawner = await ObjectFactory.createMirror(
+            { x, y },
+            {
+              state,
+              renderer,
+              imageFactory
+            }
+          );
+          objects.push(spawner);
+        } else if (objectName === 'movable_block') {
+          const block = await ObjectFactory.createMovableBlock(
+            { x, y },
+            {
+              state,
+              renderer,
+              imageFactory
+            }
+          );
+          objects.push(block);
+        } else if (objectName) {
+          throw new Error(`Unrecognized object name: ${objectName}`);
+        }
       }
 
       const itemId = (model.itemColors?.[color.hex] ?? null);
@@ -198,11 +203,7 @@ class PredefinedMapBuilder {
         const item = await ItemFactory.createMapItem(
           itemId,
           { x, y },
-          {
-            state: GameState.getInstance(),
-            renderer: GameRenderer.getInstance(),
-            imageFactory: ImageFactory.getInstance()
-          }
+          { imageFactory }
         );
         objects.push(item);
       }
@@ -211,12 +212,7 @@ class PredefinedMapBuilder {
       if (equipmentId) {
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,
-          { x, y },
-          {
-            state: GameState.getInstance(),
-            renderer: GameRenderer.getInstance(),
-            imageFactory: ImageFactory.getInstance()
-          }
+          { x, y }
         );
         objects.push(equipment);
       }

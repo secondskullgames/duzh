@@ -1,24 +1,30 @@
 import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
+import { ItemProc, ItemProcProps } from './ItemProc';
 
 type Props = Readonly<{
   name: string,
   category: ItemCategory,
-  onUse: (item: InventoryItem, unit: Unit) => Promise<void>
+  onUse: ItemProc
 }>;
 
 class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
-  private readonly onUse: (unit: Unit) => Promise<void>;
+  private readonly onUse: ItemProc;
 
   constructor({ name, category, onUse }: Props) {
     this.name = name;
     this.category = category;
-    this.onUse = (unit: Unit) => onUse(this, unit);
+    this.onUse = onUse;
   }
 
-  use = (unit: Unit) => this.onUse(unit);
+  use = async (
+    unit: Unit,
+    { state, renderer, imageFactory }: ItemProcProps
+  ) => {
+    await this.onUse(this, unit, { state, renderer, imageFactory });
+  };
 }
 
 export default InventoryItem;

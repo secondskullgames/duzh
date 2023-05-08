@@ -50,7 +50,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: InputHandlerProps
 
   if (selectedItem) {
     state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem);
+    await useItem(playerUnit, selectedItem, { state, renderer, imageFactory });
   }
 };
 

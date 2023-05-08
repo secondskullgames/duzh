@@ -32,7 +32,7 @@ const createMirror = async (
       controller: new HumanRedesignController(),
       faction: Faction.ENEMY,
     },
-    { state, renderer, imageFactory }
+    { imageFactory }
   );
   const spawner = new Spawner({
     spawnFunction,
