@@ -1,12 +1,9 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility, { UnitAbilityProps } from './UnitAbility';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -19,14 +16,11 @@ export default class Bolt extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, animationFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
     }
-
-    const animationFactory = AnimationFactory.getInstance();
-    const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });

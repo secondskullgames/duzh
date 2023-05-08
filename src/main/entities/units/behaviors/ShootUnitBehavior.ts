@@ -18,19 +18,22 @@ export default class ShootUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit, { state }: UnitBehaviorProps): Promise<void> => {
+  execute = async (
+    unit: Unit,
+    { state, renderer, animationFactory }: UnitBehaviorProps
+  ) => {
     const { targetUnit } = this;
     const map = state.getMap();
 
     if (unit.getMana() < UnitAbilities.SHOOT_ARROW.manaCost) {
-      return this._attack(unit, targetUnit, { state });
+      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
     }
 
     if (!isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())) {
-      return this._attack(unit, targetUnit, { state });
+      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
     }
     if (manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) <= 1) {
-      return this._attack(unit, targetUnit, { state });
+      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
     }
 
     let { x, y } = unit.getCoordinates();
@@ -42,7 +45,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
 
     while (x !== playerX || y !== playerY) {
       if (map.isBlocked({ x, y })) {
-        return this._attack(unit, targetUnit, { state });
+        return this._attack(unit, targetUnit, { state, renderer, animationFactory });
       }
       x += dx;
       y += dy;
@@ -59,8 +62,12 @@ export default class ShootUnitBehavior implements UnitBehavior {
     );
   };
 
-  private _attack = async (unit: Unit, targetUnit: Unit, { state }: UnitBehaviorProps) => {
+  private _attack = async (
+    unit: Unit,
+    targetUnit: Unit,
+    { state, renderer, animationFactory }: UnitBehaviorProps
+  ) => {
     const behavior = new AttackUnitBehavior({ targetUnit });
-    return behavior.execute(unit, { state });
+    return behavior.execute(unit, { state, renderer, animationFactory });
   };
 };

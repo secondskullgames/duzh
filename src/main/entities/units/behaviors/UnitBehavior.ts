@@ -1,8 +1,12 @@
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export type UnitBehaviorProps = Readonly<{
-  state: GameState
+  state: GameState,
+  renderer: GameRenderer,
+  animationFactory: AnimationFactory
 }>;
 
 export default interface UnitBehavior {

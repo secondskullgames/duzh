@@ -1,12 +1,11 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import UnitAbility, { UnitAbilityProps } from './UnitAbility';
-import HumanDeterministicController from '../controllers/HumanDeterministicController';
+import HumanRedesignController from '../controllers/HumanRedesignController';
 
 export default class Summon extends UnitAbility {
   constructor() {
@@ -35,7 +34,7 @@ export default class Summon extends UnitAbility {
     const summonedUnit = await UnitFactory.getInstance().createUnit({
       unitClass,
       faction: unit.getFaction(),
-      controller: new HumanDeterministicController({ state }), // TODO
+      controller: new HumanRedesignController({ state }), // TODO
       level: 1, // whatever
       coordinates
     });

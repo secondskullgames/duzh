@@ -20,7 +20,7 @@ export default class StunAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, animationFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
@@ -45,11 +45,11 @@ export default class StunAttack extends UnitAbility {
           playSound(Sounds.SPECIAL_ATTACK);
           unit.spendMana(this.manaCost);
           const damage = unit.getDamage();
-          await startAttack(unit, targetUnit, {
-            state,
-            renderer: GameRenderer.getInstance(),
-            animationFactory: AnimationFactory.getInstance()
-          });
+          await startAttack(
+            unit,
+            targetUnit,
+            { state, renderer, animationFactory }
+          );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,
             targetUnit

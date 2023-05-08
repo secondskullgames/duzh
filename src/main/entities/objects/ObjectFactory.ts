@@ -2,11 +2,11 @@ import type Coordinates from '../../geometry/Coordinates';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
 import UnitFactory from '../units/UnitFactory';
-import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 import GameState from '../../core/GameState';
 import GameObject from './GameObject';
 import Block from './Block';
 import { Faction } from '../../types/types';
+import HumanRedesignController from '../units/controllers/HumanRedesignController';
 
 export type SpawnerClass = 'mirror';
 
@@ -34,7 +34,7 @@ export default class ObjectFactory {
       unitClass: 'shade',
       coordinates: coordinates,
       level: 1,
-      controller: new HumanDeterministicController({ state }),
+      controller: new HumanRedesignController({ state }),
       faction: Faction.ENEMY,
     });
     const spawner = new Spawner({

@@ -1,16 +1,13 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import UnitAbility, { UnitAbilityProps } from './UnitAbility';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class KnockbackAttack extends UnitAbility {
   constructor() {
@@ -20,13 +17,11 @@ export default class KnockbackAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, animationFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
     }
-
-    const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
@@ -38,11 +33,11 @@ export default class KnockbackAttack extends UnitAbility {
       unit.spendMana(this.manaCost);
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
-      await startAttack(unit, targetUnit, {
-        state,
-        renderer,
-        animationFactory: AnimationFactory.getInstance()
-      });
+      await startAttack(
+        unit,
+        targetUnit,
+        { state, renderer, animationFactory }
+      );
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit

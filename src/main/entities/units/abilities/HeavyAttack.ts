@@ -1,15 +1,12 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { startAttack } from '../../../actions/startAttack';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { walk } from '../../../actions/walk';
 
 export default class HeavyAttack extends UnitAbility {
@@ -20,7 +17,7 @@ export default class HeavyAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, animationFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
@@ -43,11 +40,11 @@ export default class HeavyAttack extends UnitAbility {
           playSound(Sounds.SPECIAL_ATTACK);
           unit.spendMana(this.manaCost);
           const damage = unit.getDamage() * 2;
-          await startAttack(unit, targetUnit, {
-            state,
-            renderer: GameRenderer.getInstance(),
-            animationFactory: AnimationFactory.getInstance()
-          });
+          await startAttack(
+            unit,
+            targetUnit,
+            { state, renderer, animationFactory }
+          );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,
             targetUnit

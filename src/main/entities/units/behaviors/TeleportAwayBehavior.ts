@@ -4,8 +4,6 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { UnitAbilities } from '../abilities/UnitAbilities';
 import { comparingReversed } from '../../../utils/arrays';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -19,7 +17,10 @@ export default class TeleportAwayBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit, { state }: UnitBehaviorProps) => {
+  execute = async (
+    unit: Unit,
+    { state, renderer, animationFactory }: UnitBehaviorProps
+  ) => {
     const { targetUnit } = this;
     const map = state.getMap();
     const tiles: Coordinates[] = [];
@@ -43,11 +44,7 @@ export default class TeleportAwayBehavior implements UnitBehavior {
       await UnitAbilities.TELEPORT.use(
         unit,
         coordinates,
-        {
-          state,
-          renderer: GameRenderer.getInstance(),
-          animationFactory: AnimationFactory.getInstance()
-        }
+        { state, renderer, animationFactory }
       );
     }
   };

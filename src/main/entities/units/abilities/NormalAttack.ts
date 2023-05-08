@@ -1,14 +1,11 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
 import Block from '../../objects/Block';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
 import { openDoor } from '../../../actions/openDoor';
@@ -22,14 +19,11 @@ export default class NormalAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, animationFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
     }
-
-    const renderer = GameRenderer.getInstance();
-    const animationFactory = AnimationFactory.getInstance();
 
     const map = state.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);

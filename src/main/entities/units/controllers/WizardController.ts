@@ -37,7 +37,11 @@ export default class WizardController implements UnitController {
       && unit.getMana() >= UnitAbilities.SUMMON.manaCost;
 
     if (canTeleport && distanceToPlayerUnit <= 3) {
-      return new TeleportAwayBehavior({ targetUnit: playerUnit }).execute(unit, { state });
+      return new TeleportAwayBehavior({ targetUnit: playerUnit }).execute(unit, {
+        state,
+        renderer: GameRenderer.getInstance(),
+        animationFactory: AnimationFactory.getInstance()
+      });
     }
 
     // TODO should this be a Behavior?
@@ -63,6 +67,10 @@ export default class WizardController implements UnitController {
       () => new AttackUnitBehavior({ targetUnit: playerUnit }),
       () => new WanderBehavior()
     ])();
-    return behavior.execute(unit, { state });
+    return behavior.execute(unit, {
+      state,
+      renderer: GameRenderer.getInstance(),
+      animationFactory: AnimationFactory.getInstance()
+    });
   }
 };

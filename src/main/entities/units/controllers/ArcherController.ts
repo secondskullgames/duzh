@@ -10,6 +10,8 @@ import StayBehavior from '../behaviors/StayBehavior';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   state: GameState
@@ -50,6 +52,10 @@ export default class ArcherController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    return behavior.execute(unit, { state: this.state });
+    return behavior.execute(unit, {
+      state: this.state,
+      renderer: GameRenderer.getInstance(),
+      animationFactory: AnimationFactory.getInstance()
+    });
   }
 };

@@ -10,6 +10,8 @@ import UnitBehavior from '../behaviors/UnitBehavior';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   state: GameState
@@ -50,6 +52,10 @@ export default class HumanRedesignController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    return behavior.execute(unit, { state: this.state });
+    return behavior.execute(unit, {
+      state: this.state,
+      renderer: GameRenderer.getInstance(),
+      animationFactory: AnimationFactory.getInstance()
+    });
   }
 };
