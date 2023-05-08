@@ -2,10 +2,10 @@ import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
+import { EntityType } from '../entities/EntityType';
 
 type Props = Readonly<{
-  x: number,
-  y: number,
+  coordinates: Coordinates
   direction: Direction,
   sprite: Sprite
 }>;
@@ -15,8 +15,8 @@ export default class Projectile implements Entity {
   private readonly direction: Direction;
   private readonly sprite: Sprite;
 
-  constructor({ x, y, direction, sprite }: Props) {
-    this.coordinates = { x, y };
+  constructor({ coordinates, direction, sprite }: Props) {
+    this.coordinates = coordinates;
     this.direction = direction;
     this.sprite = sprite;
   };
@@ -42,7 +42,7 @@ export default class Projectile implements Entity {
   isBlocking = (): boolean => false;
 
   /** @override {@link Entity#getType} */
-  getType = (): EntityType => 'projectile';
+  getType = (): EntityType => EntityType.PROJECTILE;
 
   getDirection = (): Direction => this.direction;
 }

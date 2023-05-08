@@ -3,40 +3,28 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../../types/Projectile';
-import { checkNotNull } from '../../utils/preconditions';
+import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory
+  imageFactory: ImageFactory
 }>;
 
-export default class ProjectileFactory {
-  private readonly spriteFactory: SpriteFactory;
+export default {
+  createArrow: async (coordinates: Coordinates, direction: Direction, { imageFactory }: Props): Promise<Projectile> => {
+    const sprite = await SpriteFactory.createProjectileSprite('arrow', direction, PaletteSwaps.empty(), { imageFactory });
+    return new Projectile({
+      coordinates,
+      direction,
+      sprite
+    });
+  },
 
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
+  createBolt: async (coordinates: Coordinates, direction: Direction, { imageFactory }: Props): Promise<Projectile> => {
+    const sprite = await SpriteFactory.createProjectileSprite('bolt', direction, PaletteSwaps.empty(), { imageFactory });
+    return new Projectile({
+      coordinates,
+      direction,
+      sprite
+    });
   }
-
-  createArrow = async ({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => {
-    const sprite = await this.spriteFactory.createProjectileSprite('arrow', direction, PaletteSwaps.empty());
-    return new Projectile({
-      x,
-      y,
-      direction,
-      sprite
-    });
-  };
-
-  createBolt = async ({ x, y }: Coordinates, direction: Direction): Promise<Projectile> => {
-    const sprite = await this.spriteFactory.createProjectileSprite('bolt', direction, PaletteSwaps.empty());
-    return new Projectile({
-      x,
-      y,
-      direction,
-      sprite
-    });
-  };
-
-  private static instance: ProjectileFactory | null = null;
-  static getInstance = (): ProjectileFactory => checkNotNull(ProjectileFactory.instance);
-  static setInstance = (factory: ProjectileFactory) => { this.instance = factory; };
 }

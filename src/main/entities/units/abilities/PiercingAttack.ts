@@ -1,66 +1,80 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import { type UnitAbility, UnitAbilityProps } from './UnitAbility';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
+import { walk } from '../../../actions/walk';
+import { attack } from '../../../actions/attack';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitService from '../UnitService';
-import UnitActionsService from '../UnitActionsService';
+import { SpawnerState } from '../../objects/Spawner';
+import { AbilityName } from './AbilityName';
 
-export default class PiercingAttack extends UnitAbility {
-  constructor() {
-    super({ name: 'PIERCE', manaCost: 0 });
-  }
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
+};
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+export const PiercingAttack: UnitAbility = {
+  name: AbilityName.PIERCE,
+  manaCost: 0,
+  icon: null,
+
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state, renderer, imageFactory }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
     }
 
-    const engine = GameEngine.getInstance();
-    const state = GameState.getInstance();
     const map = state.getMap();
-    const unitService = UnitService.getInstance();
-    const actionsService = UnitActionsService.getInstance();
 
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await unitService.moveUnit(unit, coordinates);
+    if (!map.contains(coordinates)) {
+      // do nothing
+      return;
     } else {
-      const targetUnit = map.getUnit(coordinates);
-      if (targetUnit) {
-        await actionsService.attack(unit, targetUnit);
-      }
-      const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
-      const nextUnit = map.getUnit(nextCoordinates);
-      if (nextUnit) {
-        await actionsService.attack(unit, nextUnit);
-      }
+      if (!map.isBlocked(coordinates)) {
+        await walk(unit, direction, { state, renderer, imageFactory });
+      } else {
+        const targetUnit = map.getUnit(coordinates);
+        if (targetUnit) {
+          await attack(unit, targetUnit, { state, renderer, imageFactory });
+        }
+        const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
+        const nextUnit = map.getUnit(nextCoordinates);
+        if (nextUnit) {
+          await attack(unit, nextUnit, { state, renderer, imageFactory });
+        }
 
-      const spawner = map.getSpawner(coordinates);
-      const animationFactory = AnimationFactory.getInstance();
-      if (spawner && spawner.isBlocking()) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        const animation = animationFactory.getAttackingAnimation(unit);
-        await engine.playAnimation(animation);
-        spawner.setState('DEAD');
-      }
+        const spawner = map.getSpawner(coordinates);
+        if (spawner && spawner.isBlocking()) {
+          playSound(Sounds.SPECIAL_ATTACK);
+          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
+          await playAnimation(animation, {
+            state,
+            renderer
+          });
+          spawner.setState(SpawnerState.DEAD);
+        }
 
-      const nextSpawner = map.getSpawner(nextCoordinates);
-      if (nextSpawner && nextSpawner.isBlocking()) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        const animation = animationFactory.getAttackingAnimation(unit);
-        await engine.playAnimation(animation);
-        nextSpawner.setState('DEAD');
+        const nextSpawner = map.getSpawner(nextCoordinates);
+        if (nextSpawner && nextSpawner.isBlocking()) {
+          playSound(Sounds.SPECIAL_ATTACK);
+          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
+          await playAnimation(animation, {
+            state,
+            renderer
+          });
+          nextSpawner.setState(SpawnerState.DEAD);
+        }
       }
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
-  };
+  getDamageLogMessage
 }

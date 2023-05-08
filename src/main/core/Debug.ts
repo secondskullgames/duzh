@@ -1,65 +1,44 @@
-import { GameEngine } from './GameEngine';
 import GameState from './GameState';
-import UnitService from '../entities/units/UnitService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { loadNextMap } from '../actions/loadNextMap';
+import { killEnemies } from '../actions/debug/killEnemies';
+import { dealDamage } from '../actions/dealDamage';
+import { levelUp as _levelUp } from '../actions/levelUp';
 
 type Props = Readonly<{
-  engine: GameEngine,
   renderer: GameRenderer,
-  state: GameState,
-  unitService: UnitService
+  state: GameState
 }>;
 
 export class Debug {
-  private readonly engine: GameEngine;
   private readonly renderer: GameRenderer;
   private readonly state: GameState;
-  private readonly unitService: UnitService;
-  private revealMap: boolean;
+  private _isMapRevealed: boolean;
 
-  constructor({ engine, renderer, state, unitService }: Props) {
-    this.engine = engine;
+  constructor({ renderer, state }: Props) {
     this.renderer = renderer;
     this.state = state;
-    this.unitService = unitService;
-    this.revealMap = false;
+    this._isMapRevealed = false;
   }
 
   toggleRevealMap = async () => {
-    this.revealMap = !this.revealMap;
+    this._isMapRevealed = !this._isMapRevealed;
     await this.renderer.render();
   };
 
-  isMapRevealed = () => this.revealMap;
-
-  killEnemies = async () => {
-    const { state } = this;
-    const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
-    for (const unit of map.getAllUnits()) {
-      if (unit !== playerUnit) {
-        map.removeUnit(unit);
-      }
-    }
-    await this.renderer.render();
-  };
+  isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    await this.unitService.dealDamage(playerUnit.getMaxLife(), {
+    await dealDamage(playerUnit.getMaxLife(), {
       targetUnit: playerUnit
     })
     await this.renderer.render();
   };
 
-  nextLevel = async () => {
-    await this.engine.loadNextMap();
-    await this.renderer.render();
-  };
-
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    this.unitService.levelUp(playerUnit);
+    _levelUp(playerUnit);
     await this.renderer.render();
   };
 
@@ -67,6 +46,13 @@ export class Debug {
     // @ts-ignore
     window.jwb = window.jwb ?? {};
     // @ts-ignore
-    window.jwb.debug = this;
+    window.jwb.debug = {
+      ...this,
+      killEnemies,
+      nextLevel: () => loadNextMap({
+        state: this.state,
+        renderer: this.renderer
+      })
+    };
   };
 }

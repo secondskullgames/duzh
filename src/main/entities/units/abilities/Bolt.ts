@@ -1,35 +1,38 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
+import { logMessage } from '../../../actions/logMessage';
+import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitService from '../UnitService';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { AbilityName } from './AbilityName';
 
-export default class Bolt extends UnitAbility {
-  constructor() {
-    super({ name: 'BOLT', manaCost: 0 });
-  }
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
+};
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+export const Bolt: UnitAbility = {
+  name: AbilityName.BOLT,
+  icon: null,
+  manaCost: 0,
+
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state, renderer }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
     }
 
-    const engine = GameEngine.getInstance();
-    const state = GameState.getInstance();
-    const unitService = UnitService.getInstance();
-    const animationFactory = AnimationFactory.getInstance();
-
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await GameRenderer.getInstance().render();
-    unit.spendMana(this.manaCost);
+    await renderer.render();
+    // unit.spendMana(0); // TODO
 
     const map = state.getMap();
     const coordinatesList = [];
@@ -44,21 +47,37 @@ export default class Bolt extends UnitAbility {
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getDamage();
-      const adjustedDamage = await unitService.dealDamage(damage, {
+      const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
-      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      state.logMessage(message);
-      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await engine.playAnimation(boltAnimation);
+      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      logMessage(message, { state });
+      const boltAnimation = await AnimationFactory.getBoltAnimation(
+        unit,
+        { dx, dy },
+        coordinatesList,
+        targetUnit,
+        { state }
+      );
+      await playAnimation(boltAnimation, {
+        state,
+        renderer
+      });
     } else {
-      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
-      await engine.playAnimation(boltAnimation);
+      const boltAnimation = await AnimationFactory.getBoltAnimation(
+        unit,
+        { dx, dy },
+        coordinatesList,
+        null,
+        { state }
+      );
+      await playAnimation(boltAnimation, {
+        state,
+        renderer
+      });
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
-  }
+  getDamageLogMessage
 }

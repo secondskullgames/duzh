@@ -1,66 +1,72 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
-import { GameEngine } from '../../../core/GameEngine';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
+import { moveUnit } from '../../../actions/moveUnit';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitService from '../UnitService';
+import { AbilityName } from './AbilityName';
 
-export default class Teleport extends UnitAbility {
-  readonly RANGE = 5;
+export const range = 5;
+const manaCost = 25;
 
-  constructor() {
-    super({ name: 'TELEPORT', manaCost: 24 });
-  }
+export const Teleport: UnitAbility = {
+  name: AbilityName.TELEPORT,
+  icon: null,
+  manaCost,
 
-  /**
-   * @override
-   */
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
-    const state = GameState.getInstance();
-    const engine = GameEngine.getInstance();
-    const animationFactory = AnimationFactory.getInstance();
-
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state, renderer, imageFactory }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
     }
 
-    if (manhattanDistance(unit.getCoordinates(), coordinates) > this.RANGE) {
-      throw new Error(`Can't teleport more than ${this.RANGE} units`);
+    if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
+      throw new Error(`Can't teleport more than ${range} units`);
     }
-
-    const { x, y } = coordinates;
 
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       playSound(Sounds.WIZARD_VANISH);
 
       {
-        const animation = await animationFactory.getWizardVanishingAnimation(unit);
-        await engine.playAnimation(animation);
+        const animation = await AnimationFactory.getWizardVanishingAnimation(unit, { state });
+        await playAnimation(animation, {
+          state,
+          renderer
+        });
       }
 
-      await UnitService.getInstance().moveUnit(unit, { x, y });
+      await moveUnit(
+        unit,
+        coordinates,
+        { state, renderer, imageFactory }
+      );
       playSound(Sounds.WIZARD_APPEAR);
 
       {
-        const animation = await animationFactory.getWizardAppearingAnimation(unit);
-        await engine.playAnimation(animation);
+        const animation = await AnimationFactory.getWizardAppearingAnimation(unit, { state });
+        await playAnimation(animation, {
+          state,
+          renderer
+        });
       }
 
-      unit.spendMana(this.manaCost);
+      unit.spendMana(manaCost);
     } else {
       playSound(Sounds.BLOCKED);
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  };
+  }
 }

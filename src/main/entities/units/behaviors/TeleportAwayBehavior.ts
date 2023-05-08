@@ -1,10 +1,9 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { UnitAbilities } from '../abilities/UnitAbilities';
+import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
-import UnitBehavior from './UnitBehavior';
+import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -18,9 +17,11 @@ export default class TeleportAwayBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit) => {
+  execute = async (
+    unit: Unit,
+    { state, renderer, imageFactory }: UnitBehaviorProps
+  ) => {
     const { targetUnit } = this;
-    const state = GameState.getInstance();
     const map = state.getMap();
     const tiles: Coordinates[] = [];
 
@@ -28,7 +29,7 @@ export default class TeleportAwayBehavior implements UnitBehavior {
       for (let x = 0; x < map.width; x++) {
         if (map.contains({ x, y })) {
           if (!map.isBlocked({ x, y })) {
-            if (manhattanDistance(unit.getCoordinates(), { x, y }) <= UnitAbilities.TELEPORT.RANGE) {
+            if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
               tiles.push({ x, y });
             }
           }
@@ -39,8 +40,12 @@ export default class TeleportAwayBehavior implements UnitBehavior {
     if (tiles.length > 0) {
       const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, targetUnit.getCoordinates())));
 
-      const { x, y } = orderedTiles[0];
-      await UnitAbilities.TELEPORT.use(unit, { x, y });
+      const coordinates = orderedTiles[0];
+      await Teleport.use(
+        unit,
+        coordinates,
+        { state, renderer, imageFactory }
+      );
     }
   };
 }

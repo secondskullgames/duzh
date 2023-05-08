@@ -1,8 +1,8 @@
-type RGB = {
+type RGB = Readonly<{
   r: number,
   g: number,
   b: number
-};
+}>;
 
 namespace RGB {
   export const equals = (first: RGB, second: RGB) => (

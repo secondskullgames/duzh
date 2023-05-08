@@ -1,12 +1,19 @@
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
-import GameObject from './GameObject';
+import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 
-export type DoorState = 'OPEN' | 'CLOSED';
+export enum DoorState {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED'
+}
+
 export namespace DoorState {
-  export const values = () => ['OPEN', 'CLOSED'];
+  export const values = (): DoorState[] => [
+    DoorState.OPEN,
+    DoorState.CLOSED
+  ];
 }
 
 type Props = Readonly<{
@@ -23,7 +30,7 @@ export default class Door extends GameObject implements Animatable {
   constructor({ direction, state, coordinates, sprite }: Props) {
     super({
       coordinates,
-      objectType: 'door',
+      objectType: ObjectType.DOOR,
       sprite
     });
     sprite.target = this;
@@ -31,19 +38,19 @@ export default class Door extends GameObject implements Animatable {
     this._state = state;
   }
 
-  isOpen = () => this._state === 'OPEN';
-  isClosed = () => this._state === 'CLOSED';
+  isOpen = () => this._state === DoorState.OPEN;
+  isClosed = () => this._state === DoorState.CLOSED;
 
   open = async () => {
-    this._state = 'OPEN';
+    this._state = DoorState.OPEN;
   };
 
   close = async () => {
-    this._state = 'CLOSED';
+    this._state = DoorState.CLOSED;
   };
 
   toggleOpen = async () => {
-    if (this._state === 'OPEN') {
+    if (this._state === DoorState.OPEN) {
       await this.close();
     } else {
       await this.open();
@@ -56,5 +63,5 @@ export default class Door extends GameObject implements Animatable {
   update = async () => {};
 
   /** @override {@link Entity#isBlocking} */
-  isBlocking = (): boolean => this._state === 'CLOSED';
+  isBlocking = (): boolean => this._state === DoorState.CLOSED;
 }

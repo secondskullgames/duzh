@@ -1,7 +1,6 @@
-import GameObject from './GameObject';
+import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
-import GameState from '../../core/GameState';
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -15,7 +14,7 @@ export default class Block extends GameObject {
   constructor({ coordinates, sprite, movable }: Props) {
     super({
       coordinates,
-      objectType: 'block',
+      objectType: ObjectType.BLOCK,
       sprite
     });
     this.movable = movable;
@@ -28,13 +27,4 @@ export default class Block extends GameObject {
   isBlocking = (): boolean => true;
 
   isMovable = (): boolean => this.movable;
-
-  moveTo = async (coordinates: Coordinates) => {
-    const state = GameState.getInstance();
-    const map = state.getMap();
-    map.removeObject(this);
-
-    this.setCoordinates(coordinates);
-    map.addObject(this);
-  };
 }

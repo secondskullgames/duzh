@@ -1,15 +1,20 @@
-import GameState from '../../core/GameState';
 import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
-import GameObject from './GameObject';
+import GameObject, { ObjectType } from './GameObject';
 import Unit from '../units/Unit';
-import UnitFactory from '../units/UnitFactory';
-import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 import Coordinates from '../../geometry/Coordinates';
+import { UpdateProps } from '../Entity';
 
-export type SpawnerState = 'ALIVE' | 'DEAD';
+export enum SpawnerState {
+  ALIVE = 'ALIVE',
+  DEAD = 'DEAD'
+}
+
 export namespace SpawnerState {
-  export const values = (): SpawnerState[] => ['ALIVE', 'DEAD'];
+  export const values = (): SpawnerState[] => [
+    SpawnerState.ALIVE,
+    SpawnerState.DEAD
+  ];
 }
 
 type SpawnFunction = (coordinates: Coordinates) => Promise<Unit>;
@@ -25,7 +30,7 @@ type Props = Readonly<{
 
 export default class Spawner extends GameObject implements Animatable {
   private readonly spawnFunction: SpawnFunction;
-  private state: SpawnerState;
+  private _state: SpawnerState;
   private readonly maxCooldown: number;
   private cooldown: number = 0;
   private readonly maxUnits: number;
@@ -35,7 +40,7 @@ export default class Spawner extends GameObject implements Animatable {
   constructor({ spawnFunction, coordinates, sprite, cooldown, maxUnits, isBlocking }: Props) {
     super({
       coordinates,
-      objectType: 'spawner',
+      objectType: ObjectType.SPAWNER,
       sprite
     });
     this.spawnFunction = spawnFunction;
@@ -43,20 +48,19 @@ export default class Spawner extends GameObject implements Animatable {
     this.maxUnits = maxUnits;
     this.cooldown = 0;
     this.spawnedUnits = new Set<Unit>();
-    this.state = 'ALIVE';
+    this._state = SpawnerState.ALIVE;
     this._isBlocking = isBlocking;
   }
 
-  getAnimationKey = (): string => `${this.state.toLowerCase()}`;
+  getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async () => {
-    if (this.state === 'DEAD') {
+  update = async ({ state }: UpdateProps) => {
+    if (this._state === 'DEAD') {
       return;
     }
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     for (const spawnedUnit of [...this.spawnedUnits]) {
       if (!map.unitExists(spawnedUnit)) {
@@ -76,7 +80,7 @@ export default class Spawner extends GameObject implements Animatable {
     }
   };
 
-  setState = (state: SpawnerState) => { this.state = state; };
+  setState = (state: SpawnerState) => { this._state = state; };
 
-  isBlocking = () => this._isBlocking && this.state === 'ALIVE';
+  isBlocking = () => this._isBlocking && this._state === SpawnerState.ALIVE;
 }

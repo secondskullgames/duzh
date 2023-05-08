@@ -1,9 +1,9 @@
-import Rect from '../geometry/Rect';
+import type Rect from '../geometry/Rect';
 import Door from '../entities/objects/Door';
 import MapItem from '../entities/objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
 import Spawner from '../entities/objects/Spawner';
-import { Figure } from '../sounds/types';
+import type { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
@@ -109,6 +109,7 @@ export default class MapInstance {
   isBlocked = (coordinates: Coordinates): boolean => {
     const { x, y } = coordinates;
     checkArgument(this.contains(coordinates), `(${x}, ${y}) is not on the map`);
+
     if (this.tiles.get(coordinates)!.isBlocking()) {
       return true;
     }

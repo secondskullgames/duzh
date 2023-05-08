@@ -1,5 +1,5 @@
 import Unit from '../Unit';
-import UnitController from './UnitController';
+import UnitController, { UnitControllerProps } from './UnitController';
 import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
@@ -11,19 +11,9 @@ import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 
-type Props = Readonly<{
-  state: GameState
-}>;
-
 export default class ArcherController implements UnitController {
-  private readonly state: GameState;
-
-  constructor({ state }: Props) {
-    this.state = state;
-  }
-
-  issueOrder = async (unit: Unit) => {
-    const playerUnit = this.state.getPlayerUnit();
+  issueOrder = async (unit: Unit, { state, renderer, imageFactory }: UnitControllerProps) => {
+    const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'ARCHER behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
@@ -31,7 +21,7 @@ export default class ArcherController implements UnitController {
     let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed)) {
+    if (!canMove(speed, { state })) {
       behavior = new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
@@ -50,6 +40,10 @@ export default class ArcherController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    return behavior.execute(unit);
+    return behavior.execute(unit, {
+      state,
+      renderer,
+      imageFactory
+    });
   }
 };

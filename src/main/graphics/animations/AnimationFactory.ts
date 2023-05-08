@@ -4,7 +4,7 @@ import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
-import { checkNotNull } from '../../utils/preconditions';
+import ImageFactory from '../images/ImageFactory';
 
 const FRAME_LENGTH = 150; // milliseconds
 const ARROW_FRAME_LENGTH = 50; // milliseconds
@@ -12,20 +12,11 @@ const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type Props = Readonly<{
-  state: GameState,
-  projectileFactory: ProjectileFactory
+  state: GameState
 }>;
 
-export default class AnimationFactory {
-  private readonly state: GameState;
-  private readonly projectileFactory: ProjectileFactory
-
-  constructor({ state, projectileFactory }: Props) {
-    this.state = state;
-    this.projectileFactory = projectileFactory;
-  }
-
-  getAttackingAnimation = (source: Unit, target?: Unit): Animation => {
+export default {
+  getAttackingAnimation: (source: Unit, target: Unit | null, { state }: Props): Animation => {
     const frameLength = 150;
     if (target) {
       return {
@@ -62,13 +53,14 @@ export default class AnimationFactory {
         ]
       };
     }
-  };
+  },
 
-  getArrowAnimation = async (
+  getArrowAnimation: async (
     source: Unit,
     direction: Direction,
     coordinatesList: Coordinates[],
-    target: Unit | null
+    target: Unit | null,
+    { state }: Props
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -83,11 +75,13 @@ export default class AnimationFactory {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(({ x, y }) => this.state.getMap().isTileRevealed({ x, y }));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates => state.getMap().isTileRevealed(coordinates));
 
     // arrow movement frames
-    for (const { x, y } of visibleCoordinatesList) {
-      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
+        imageFactory: ImageFactory.getInstance()
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
         projectiles: [projectile],
@@ -128,13 +122,14 @@ export default class AnimationFactory {
     return {
       frames
     };
-  };
+  },
 
-  getBoltAnimation = async (
+  getBoltAnimation: async (
     source: Unit,
     direction: Direction,
     coordinatesList: Coordinates[],
-    target: Unit | null
+    target: Unit | null,
+    { state }: Props
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -149,12 +144,13 @@ export default class AnimationFactory {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(this.state.getMap().isTileRevealed);
+    const visibleCoordinatesList = coordinatesList.filter(state.getMap().isTileRevealed);
 
     // bolt movement frames
-    for (const { x, y } of visibleCoordinatesList) {
-      // TODO this is still using an arrow sprite
-      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
+        imageFactory: ImageFactory.getInstance()
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],
         projectiles: [projectile],
@@ -194,9 +190,13 @@ export default class AnimationFactory {
     return {
       frames
     };
-  };
+  },
 
-  getFloorFireAnimation = async (source: Unit, targets: Unit[]): Promise<Animation> => {
+  getFloorFireAnimation: async (
+    source: Unit,
+    targets: Unit[],
+    { state }: Props
+  ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     for (let i = 0; i < targets.length; i++) {
       const unitFrames: UnitAnimationFrame[] = [];
@@ -228,9 +228,12 @@ export default class AnimationFactory {
     return {
       frames
     };
-  };
+  },
 
-  getWizardVanishingAnimation = async (source: Unit): Promise<Animation> => ({
+  getWizardVanishingAnimation: async (
+    source: Unit,
+    { state }: Props
+  ): Promise<Animation> => ({
     frames: [
       {
         units: [{ unit: source, activity: 'VANISHING', frameNumber: 1 }],
@@ -248,9 +251,12 @@ export default class AnimationFactory {
         units: [{ unit: source, activity: 'VANISHING', frameNumber: 4 }]
       }
     ]
-  });
+  }),
 
-  getWizardAppearingAnimation = async (source: Unit): Promise<Animation> => ({
+  getWizardAppearingAnimation: async (
+    source: Unit,
+    { state }: Props
+  ): Promise<Animation> => ({
     frames: [
       {
         units: [{ unit: source, activity: 'APPEARING', frameNumber: 1 }],
@@ -272,9 +278,5 @@ export default class AnimationFactory {
         units: [{ unit: source, activity: 'STANDING', direction: Direction.S }]
       },
     ]
-  });
-
-  private static instance: AnimationFactory | null;
-  static getInstance = (): AnimationFactory => checkNotNull(AnimationFactory.instance);
-  static setInstance = (factory: AnimationFactory) => { AnimationFactory.instance = factory; };
-}
+  })
+};

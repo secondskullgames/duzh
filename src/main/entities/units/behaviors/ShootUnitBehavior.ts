@@ -1,9 +1,8 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
-import UnitBehavior from './UnitBehavior';
+import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
 import AttackUnitBehavior from './AttackUnitBehavior';
+import { ShootArrow } from '../abilities/ShootArrow';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -17,20 +16,22 @@ export default class ShootUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit): Promise<void> => {
+  execute = async (
+    unit: Unit,
+    { state, renderer, imageFactory }: UnitBehaviorProps
+  ) => {
     const { targetUnit } = this;
-    const state = GameState.getInstance();
     const map = state.getMap();
 
-    if (unit.getMana() < UnitAbilities.SHOOT_ARROW.manaCost) {
-      return this._attack(unit, targetUnit);
+    if (unit.getMana() < ShootArrow.manaCost) {
+      return this._attack(unit, targetUnit, { state, renderer, imageFactory });
     }
 
     if (!isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())) {
-      return this._attack(unit, targetUnit);
+      return this._attack(unit, targetUnit, { state, renderer, imageFactory });
     }
     if (manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) <= 1) {
-      return this._attack(unit, targetUnit);
+      return this._attack(unit, targetUnit, { state, renderer, imageFactory });
     }
 
     let { x, y } = unit.getCoordinates();
@@ -42,16 +43,29 @@ export default class ShootUnitBehavior implements UnitBehavior {
 
     while (x !== playerX || y !== playerY) {
       if (map.isBlocked({ x, y })) {
-        return this._attack(unit, targetUnit);
+        return this._attack(unit, targetUnit, { state, renderer, imageFactory });
       }
       x += dx;
       y += dy;
     }
 
-    return UnitAbilities.SHOOT_ARROW.use(unit, { x, y });
+    return ShootArrow.use(
+      unit,
+      { x, y },
+      {
+        state,
+        renderer,
+        imageFactory
+      }
+    );
   };
 
-  private _attack = async (unit: Unit, targetUnit: Unit) => {
-    return new AttackUnitBehavior({ targetUnit }).execute(unit);
+  private _attack = async (
+    unit: Unit,
+    targetUnit: Unit,
+    { state, renderer, imageFactory }: UnitBehaviorProps
+  ) => {
+    const behavior = new AttackUnitBehavior({ targetUnit });
+    return behavior.execute(unit, { state, renderer, imageFactory });
   };
 };

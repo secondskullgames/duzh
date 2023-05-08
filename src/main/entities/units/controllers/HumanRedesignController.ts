@@ -1,6 +1,5 @@
-import UnitController from './UnitController';
+import UnitController, { UnitControllerProps } from './UnitController';
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
@@ -11,19 +10,12 @@ import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 
-type Props = Readonly<{
-  state: GameState
-}>;
-
 export default class HumanRedesignController implements UnitController {
-  private readonly state: GameState;
-
-  constructor({ state }: Props) {
-    this.state = state;
-  }
-
-  issueOrder = async (unit: Unit) => {
-    const playerUnit = this.state.getPlayerUnit();
+  issueOrder = async (
+    unit: Unit,
+    { state, renderer, imageFactory }: UnitControllerProps
+  ) => {
+    const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
@@ -31,7 +23,7 @@ export default class HumanRedesignController implements UnitController {
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     let behavior: UnitBehavior;
-    if (!canMove(speed)) {
+    if (!canMove(speed, { state })) {
       behavior = new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
@@ -50,6 +42,11 @@ export default class HumanRedesignController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    return behavior.execute(unit);
+
+    return behavior.execute(unit, {
+      state,
+      renderer,
+      imageFactory
+    });
   }
 };

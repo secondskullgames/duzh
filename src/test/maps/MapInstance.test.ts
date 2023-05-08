@@ -5,10 +5,10 @@ test('adds and removes a unit', () => {
   const map = _emptyMap();
   const coordinates = { x: 3, y: 3 };
   expect(map.getAllUnits()).toStrictEqual([]);
-  const unit = {
+  const unit = ({
     getCoordinates: () => coordinates,
     getType: () => 'unit'
-  } as Unit;
+  } as any) as Unit;
   map.addUnit(unit);
   expect(map.getAllUnits()).toStrictEqual([unit]);
   expect(map.getUnit(coordinates)).toBe(unit);

@@ -1,26 +1,30 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
-import UnitAbility from './UnitAbility';
-import UnitService from '../UnitService';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { moveUnit } from '../../../actions/moveUnit';
+import { AbilityName } from './AbilityName';
 
-export default class Strafe extends UnitAbility {
-  constructor() {
-    super({ name: 'STRAFE', manaCost: 0 });
-  }
+export const Strafe: UnitAbility = {
+  name: AbilityName.STRAFE,
+  manaCost: 0,
+  icon: null,
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state, renderer, imageFactory }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('Strafe requires a target!');
     }
-    const map = GameState.getInstance().getMap();
+    const map = state.getMap();
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await UnitService.getInstance().moveUnit(unit, coordinates);
+      await moveUnit(unit, coordinates, { state, renderer, imageFactory });
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
     throw new Error('can\'t get here');
   }
 }

@@ -4,8 +4,8 @@ import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import Door from '../../entities/objects/Door';
-import ItemService from '../../items/ItemService';
+import Door, { DoorState } from '../../entities/objects/Door';
+import ItemFactory from '../../items/ItemFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
@@ -21,33 +21,20 @@ import HumanRedesignController from '../../entities/units/controllers/HumanRedes
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { Faction } from '../../types/types';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
-  itemService: ItemService,
-  spawnerFactory: ObjectFactory,
-  spriteFactory: SpriteFactory
-  tileFactory: TileFactory,
-  unitFactory: UnitFactory,
   state: GameState
 }>;
 
 class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
-  private readonly itemService: ItemService;
-  private readonly objectFactory: ObjectFactory;
-  private readonly spriteFactory: SpriteFactory;
-  private readonly tileFactory: TileFactory;
-  private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
 
   constructor(props: Props) {
     this.imageFactory = props.imageFactory;
-    this.itemService = props.itemService;
-    this.objectFactory = props.spawnerFactory;
-    this.spriteFactory = props.spriteFactory;
-    this.tileFactory = props.tileFactory;
-    this.unitFactory = props.unitFactory;
     this.state = props.state;
   }
 
@@ -69,7 +56,7 @@ class PredefinedMapBuilder {
 
   private _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
     const tileColors = this._toHexColors(model.tileColors);
-    const tileSet = await this.tileFactory.getTileSet(model.tileset);
+    const tileSet = await TileFactory.getTileSet(model.tileset);
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.bitmap.height; y++) {
       tiles.push([]);
@@ -83,13 +70,13 @@ class PredefinedMapBuilder {
 
       const tileType = tileColors[color.hex] ?? null;
       if (tileType !== null) {
-        tiles[y][x] = this.tileFactory.createTile({
+        tiles[y][x] = TileFactory.createTile({
           tileType: tileType as TileType,
           tileSet,
           coordinates: { x, y }
         });
       } else if (model.defaultTile) {
-        tiles[y][x] = this.tileFactory.createTile({
+        tiles[y][x] = TileFactory.createTile({
           tileType: model.defaultTile,
           tileSet,
           coordinates: { x, y }
@@ -131,16 +118,23 @@ class PredefinedMapBuilder {
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-              ? new WizardController({ state })
-              : new HumanRedesignController({ state });
-            const unit = await this.unitFactory.createUnit({
-              name: `${enemyUnitModel.name}_${id++}`,
-              unitClass: enemyUnitClass,
-              faction: 'ENEMY',
-              controller,
-              level: model.levelNumber,
-              coordinates: { x, y }
-            });
+              ? new WizardController()
+              : new HumanRedesignController();
+            const unit = await UnitFactory.createUnit(
+              {
+                name: `${enemyUnitModel.name}_${id++}`,
+                unitClass: enemyUnitClass,
+                faction: Faction.ENEMY,
+                controller,
+                level: model.levelNumber,
+                coordinates: { x, y }
+              },
+              {
+                state,
+                renderer: GameRenderer.getInstance(),
+                imageFactory: ImageFactory.getInstance()
+              }
+            );
             units.push(unit);
           }
         }
@@ -151,7 +145,6 @@ class PredefinedMapBuilder {
   };
 
   private _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
-    const { spriteFactory } = this;
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
@@ -167,20 +160,34 @@ class PredefinedMapBuilder {
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
           : 'vertical';
-        const sprite = await spriteFactory.createDoorSprite();
+        const sprite = await SpriteFactory.createDoorSprite({ imageFactory: ImageFactory.getInstance() });
 
         const door = new Door({
           direction: doorDirection,
-          state: 'CLOSED',
+          state: DoorState.CLOSED,
           coordinates: { x, y },
           sprite
         });
         objects.push(door);
       } else if (objectName === 'mirror') {
-        const spawner = await this.objectFactory.createMirror({ x, y });
+        const spawner = await ObjectFactory.createMirror(
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(spawner);
       } else if (objectName === 'movable_block') {
-        const block = await this.objectFactory.createMovableBlock({ x, y });
+        const block = await ObjectFactory.createMovableBlock(
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(block);
       } else if (objectName) {
         throw new Error(`Unrecognized object name: ${objectName}`);
@@ -188,13 +195,29 @@ class PredefinedMapBuilder {
 
       const itemId = (model.itemColors?.[color.hex] ?? null);
       if (itemId) {
-        const item = await this.itemService.createMapItem(itemId, { x, y });
+        const item = await ItemFactory.createMapItem(
+          itemId,
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(item);
       }
 
       const equipmentId = (model.equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
-        const equipment = await this.itemService.createMapEquipment(equipmentId, { x, y });
+        const equipment = await ItemFactory.createMapEquipment(
+          equipmentId,
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(equipment);
       }
     }

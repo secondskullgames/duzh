@@ -6,15 +6,28 @@ import Rect from '../geometry/Rect';
  * an existing package.  In general, you should put types in their own file in an appropriate package.
  */
 
-export interface Pixel {
+export type Pixel = Readonly<{
   x: number,
   y: number
-}
+}>;
 
-export type GameScreen = 'GAME' | 'INVENTORY' | 'TITLE' | 'VICTORY' | 'GAME_OVER' | 'MINIMAP' | 'HELP';
+export enum GameScreen {
+  GAME = 'GAME',
+  INVENTORY =  'INVENTORY',
+  TITLE = 'TITLE',
+  VICTORY = 'VICTORY',
+  GAME_OVER = 'GAME_OVER',
+  MAP = 'MAP',
+  HELP = 'HELP'
+}
 
 export type Room = Rect & {
   exits: Coordinates[]
 }
 
-export type Faction = 'PLAYER' | 'FRIENDLY' | 'NEUTRAL' | 'ENEMY';
+export enum Faction {
+  PLAYER = 'PLAYER',
+  FRIENDLY = 'FRIENDLY',
+  NEUTRAL = 'NEUTRAL',
+  ENEMY = 'ENEMY'
+}

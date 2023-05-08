@@ -2,6 +2,7 @@ import Sprite from '../graphics/sprites/Sprite';
 import TileType from '../schemas/TileType';
 import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
+import { EntityType } from '../entities/EntityType';
 
 type Props = Readonly<{
   tileType: TileType,
@@ -51,7 +52,7 @@ class Tile implements Entity {
   /**
    * @override {@link Entity#getType}
    */
-  getType = (): EntityType => 'unit';
+  getType = (): EntityType => EntityType.UNIT;
 }
 
 export default Tile;

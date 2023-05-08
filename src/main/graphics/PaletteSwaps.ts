@@ -56,12 +56,14 @@ export namespace PaletteSwaps {
   /**
    * @param paletteSwaps Contains a map of color names, to be converted to hex format
    */
-  export const create = (paletteSwaps: Record<string, string>): PaletteSwaps => {
+  export const create = (paletteSwaps?: Record<string, string>): PaletteSwaps => {
     const builder = new Builder();
-    for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-      const srcColor: Color = checkNotNull(Colors[srcName], `Color '${srcName}' not found`);
-      const destColor: Color = checkNotNull(Colors[destName], `Color '${destName}' not found`);
-      builder.addMapping(srcColor, destColor);
+    if (paletteSwaps) {
+      for (const [srcName, destName] of Object.entries(paletteSwaps)) {
+        const srcColor: Color = checkNotNull(Colors[srcName], `Color '${srcName}' not found`);
+        const destColor: Color = checkNotNull(Colors[destName], `Color '${destName}' not found`);
+        builder.addMapping(srcColor, destColor);
+      }
     }
     return builder.build();
   };

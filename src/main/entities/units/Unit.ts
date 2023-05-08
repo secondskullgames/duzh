@@ -1,28 +1,24 @@
-import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
-import { EquipmentScript } from '../../equipment/EquipmentScript';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import { playSound } from '../../sounds/SoundFX';
-import Sounds from '../../sounds/Sounds';
 import Activity from '../../types/Activity';
-import Entity from '../Entity';
+import Entity, { UpdateProps } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
-import UnitAbility, { AbilityName } from './abilities/UnitAbility';
-import { UnitAbilities } from './abilities/UnitAbilities';
+import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
-import { GameEngine } from '../../core/GameEngine';
-import AnimationFactory from '../../graphics/animations/AnimationFactory';
 import Sprite from '../../graphics/sprites/Sprite';
-import UnitService from './UnitService';
+import { levelUp } from '../../actions/levelUp';
+import { EntityType } from '../EntityType';
+import { abilityForName } from './abilities/abilityForName';
+import { AbilityName } from './abilities/AbilityName';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -107,7 +103,7 @@ export default class Unit implements Entity, Animatable {
     // TODO make this type safe
     this.abilities = (model.abilities[1] ?? [])
       .map(str => str as AbilityName)
-      .map(UnitAbilities.abilityForName);
+      .map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -122,7 +118,7 @@ export default class Unit implements Entity, Animatable {
     }
 
     while (this.level < props.level) {
-      UnitService.getInstance().levelUp(this); // TODO
+      levelUp(this);
     }
   }
 
@@ -190,10 +186,10 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async () => {
+  update = async ({ state, renderer, imageFactory }: UpdateProps) => {
     await this._upkeep();
     if (this.stunDuration === 0) {
-      await this.controller.issueOrder(this);
+      await this.controller.issueOrder(this, { state, renderer, imageFactory });
     }
     await this.sprite.getImage();
     await this._endOfTurn();
@@ -312,7 +308,7 @@ export default class Unit implements Entity, Animatable {
   /**
    * @override {@link Entity#getType}
    */
-  getType = (): EntityType => 'unit';
+  getType = (): EntityType => EntityType.UNIT;
 
   incrementLevel = () => {
     this.level++;
