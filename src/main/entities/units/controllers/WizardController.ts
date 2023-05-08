@@ -1,4 +1,4 @@
-import UnitController from './UnitController';
+import UnitController, { UnitControllerProps } from './UnitController';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import { manhattanDistance } from '../../../maps/MapUtils';
@@ -9,24 +9,13 @@ import TeleportAwayBehavior from '../behaviors/TeleportAwayBehavior';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import { AbilityName } from '../abilities/UnitAbility';
 import { Teleport } from '../abilities/Teleport';
 import { Summon } from '../abilities/Summon';
+import { AbilityName } from '../abilities/AbilityName';
 
-type Props = Readonly<{
-  state: GameState
-}>;
 
 export default class WizardController implements UnitController {
-  private readonly state: GameState;
-
-  constructor({ state }: Props) {
-    this.state = state;
-  }
-
-  issueOrder = async (unit: Unit) => {
-    const { state } = this;
+  issueOrder = async (unit: Unit, { state, renderer, imageFactory }: UnitControllerProps) => {
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 
@@ -37,11 +26,11 @@ export default class WizardController implements UnitController {
     const canSummon = unit.getAbilities().find(ability => ability.name === AbilityName.TELEPORT)
       && unit.getMana() >= Summon.manaCost;
 
-    const renderer = GameRenderer.getInstance();
     if (canTeleport && distanceToPlayerUnit <= 3) {
       return new TeleportAwayBehavior({ targetUnit: playerUnit }).execute(unit, {
         state,
-        renderer
+        renderer,
+        imageFactory
       });
     }
 
@@ -54,7 +43,7 @@ export default class WizardController implements UnitController {
         return Summon.use(
           unit,
           coordinates,
-          { state, renderer }
+          { state, renderer, imageFactory }
         );
       }
     }
@@ -64,9 +53,11 @@ export default class WizardController implements UnitController {
       () => new AttackUnitBehavior({ targetUnit: playerUnit }),
       () => new WanderBehavior()
     ])();
+
     return behavior.execute(unit, {
       state,
-      renderer
+      renderer,
+      imageFactory
     });
   }
 };

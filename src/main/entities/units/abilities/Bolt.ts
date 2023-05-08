@@ -3,11 +3,12 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import { AbilityName } from './AbilityName';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;

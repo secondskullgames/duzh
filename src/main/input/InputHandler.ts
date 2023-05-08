@@ -20,24 +20,22 @@ import { useItem } from '../actions/useItem';
 import { ShootArrow } from '../entities/units/abilities/ShootArrow';
 import { Strafe } from '../entities/units/abilities/Strafe';
 import { NormalAttack } from '../entities/units/abilities/NormalAttack';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
-  state: GameState,
-  mapFactory: MapFactory
+  state: GameState
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
-  private readonly mapFactory: MapFactory;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ state, mapFactory }: Props) {
+  constructor({ state }: Props) {
     this.state = state;
-    this.mapFactory = mapFactory;
 
     this.busy = false;
     this.eventTarget = null;
@@ -79,7 +77,8 @@ export default class InputHandler {
         playSound(Sounds.FOOTSTEP);
         await playTurn({
           state: this.state,
-          renderer: GameRenderer.getInstance()
+          renderer: GameRenderer.getInstance(),
+          imageFactory: ImageFactory.getInstance()
         });
         break;
       case 'ENTER':
@@ -109,28 +108,29 @@ export default class InputHandler {
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { state } = this;
     const renderer = GameRenderer.getInstance();
+    const imageFactory = ImageFactory.getInstance();
 
     switch (state.getScreen()) {
       case 'GAME':
-        const { dx, dy } = getDirection(key);
+        const direction = getDirection(key);
         const playerUnit = state.getPlayerUnit();
-        const { x, y } = Coordinates.plus(playerUnit.getCoordinates(), { dx, dy });
+        const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
         let queuedOrder: PromiseSupplier | null = null;
         if (modifiers.includes('SHIFT')) {
           if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
             queuedOrder = () => ShootArrow.use(
               playerUnit,
-              { x, y },
-              { state, renderer }
+              coordinates,
+              { state, renderer, imageFactory }
             );
           }
         } else if (modifiers.includes('ALT')) {
           if (playerUnit.canSpendMana(Strafe.manaCost)) {
             queuedOrder = () => Strafe.use(
               playerUnit,
-              { x, y },
-              { state, renderer }
+              coordinates,
+              { state, renderer, imageFactory }
             );
           }
         } else {
@@ -140,22 +140,22 @@ export default class InputHandler {
               state.setQueuedAbility(null);
               await ability.use(
                 playerUnit,
-                { x, y },
-                { state, renderer }
+                coordinates,
+                { state, renderer, imageFactory }
               );
             };
           } else {
             queuedOrder = () => NormalAttack.use(
               playerUnit,
-              { x, y },
-              { state, renderer }
+              coordinates,
+              { state, renderer, imageFactory }
             );
           }
         }
         const playerController = playerUnit.getController() as PlayerUnitController;
         if (queuedOrder) {
           playerController.queuedOrder = queuedOrder;
-          await playTurn({ state, renderer });
+          await playTurn({ state, renderer, imageFactory });
         }
         break;
       case 'INVENTORY':
@@ -184,6 +184,8 @@ export default class InputHandler {
 
   private _handleEnter = async (modifiers: ModifierKey[]) => {
     const { state } = this;
+    const renderer = GameRenderer.getInstance();
+    const imageFactory = ImageFactory.getInstance();
     const playerUnit = state.getPlayerUnit();
 
     if (modifiers.includes('ALT')) {
@@ -195,7 +197,6 @@ export default class InputHandler {
       return;
     }
 
-    const renderer = GameRenderer.getInstance();
     switch (state.getScreen()) {
       case GameScreen.GAME: {
         const map = checkNotNull(state.getMap(), 'Map is not loaded!');
@@ -208,10 +209,7 @@ export default class InputHandler {
           playSound(Sounds.DESCEND_STAIRS);
           await loadNextMap({ state, renderer });
         }
-        await playTurn({
-          state: this.state,
-          renderer
-        });
+        await playTurn({ state, renderer, imageFactory });
         break;
       }
       case GameScreen.INVENTORY: {
@@ -228,10 +226,10 @@ export default class InputHandler {
       case GameScreen.TITLE:
         state.setScreen(GameScreen.GAME);
         if (modifiers.includes('SHIFT')) {
-          const mapInstance = await this.mapFactory.loadMap({
-            type: 'predefined',
-            id: 'test'
-          });
+          const mapInstance = await MapFactory.loadMap(
+            { type: 'predefined', id: 'test' },
+            { state, imageFactory }
+          );
           await startGameDebug(mapInstance, {
             state,
             renderer

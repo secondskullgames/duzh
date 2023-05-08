@@ -7,17 +7,18 @@ import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
 import Activity from '../../types/Activity';
-import Entity from '../Entity';
+import Entity, { UpdateProps } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
-import { type UnitAbility, AbilityName } from './abilities/UnitAbility';
+import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { levelUp } from '../../actions/levelUp';
 import { EntityType } from '../EntityType';
 import { abilityForName } from './abilities/abilityForName';
+import { AbilityName } from './abilities/AbilityName';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -185,10 +186,10 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async () => {
+  update = async ({ state, renderer, imageFactory }: UpdateProps) => {
     await this._upkeep();
     if (this.stunDuration === 0) {
-      await this.controller.issueOrder(this);
+      await this.controller.issueOrder(this, { state, renderer, imageFactory });
     }
     await this.sprite.getImage();
     await this._endOfTurn();

@@ -2,30 +2,13 @@ import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
-
-export enum AbilityName {
-  ATTACK = 'ATTACK',
-  HEAVY_ATTACK = 'HEAVY_ATTACK',
-  KNOCKBACK_ATTACK = 'KNOCKBACK_ATTACK',
-  STUN_ATTACK = 'STUN_ATTACK',
-  SHOOT_ARROW = 'SHOOT_ARROW',
-  DASH = 'DASH',
-  TELEPORT = 'TELEPORT',
-  SUMMON = 'SUMMON',
-  BOLT = 'BOLT',
-  STRAFE = 'STRAFE',
-  PIERCE = 'PIERCE'
-}
-
-type Props = Readonly<{
-  name: string,
-  manaCost: number,
-  icon?: string | null
-}>;
+import ImageFactory from '../../../graphics/images/ImageFactory';
+import { AbilityName } from './AbilityName';
 
 export type UnitAbilityProps = Readonly<{
   state: GameState,
-  renderer: GameRenderer
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
 }>;
 
 export type UnitAbility = Readonly<{

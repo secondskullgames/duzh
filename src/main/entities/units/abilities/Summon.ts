@@ -4,10 +4,11 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import ImageFactory from '../../../graphics/images/ImageFactory';
+import { AbilityName } from './AbilityName';
 
 const manaCost = 25;
 
@@ -19,7 +20,7 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
@@ -36,14 +37,14 @@ export const Summon: UnitAbility = {
       {
         unitClass,
         faction: unit.getFaction(),
-        controller: new HumanRedesignController({ state }), // TODO
+        controller: new HumanRedesignController(),
         level: 1, // whatever
         coordinates
       },
       {
         state,
-        renderer: GameRenderer.getInstance(),
-        imageFactory: ImageFactory.getInstance()
+        renderer,
+        imageFactory
       }
     );
     map.addUnit(summonedUnit);

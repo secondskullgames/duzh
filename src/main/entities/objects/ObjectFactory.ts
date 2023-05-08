@@ -29,7 +29,7 @@ const createMirror = async (
       unitClass: 'shade',
       coordinates: coordinates,
       level: 1,
-      controller: new HumanRedesignController({ state }),
+      controller: new HumanRedesignController(),
       faction: Faction.ENEMY,
     },
     { state, renderer, imageFactory }

@@ -4,10 +4,11 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { moveUnit } from '../../../actions/moveUnit';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import { AbilityName } from './AbilityName';
 
 export const range = 5;
 const manaCost = 25;
@@ -20,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -44,7 +45,11 @@ export const Teleport: UnitAbility = {
         });
       }
 
-      await moveUnit(unit, coordinates, { state });
+      await moveUnit(
+        unit,
+        coordinates,
+        { state, renderer, imageFactory }
+      );
       playSound(Sounds.WIZARD_APPEAR);
 
       {

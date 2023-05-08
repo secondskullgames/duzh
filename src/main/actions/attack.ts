@@ -3,22 +3,23 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { startAttack } from './startAttack';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 import { dealDamage } from './dealDamage';
 import { logMessage } from './logMessage';
 import { die } from './die';
 import { awardExperience } from './awardExperience';
 import GameState from '../core/GameState';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 type Props = Readonly<{
   state: GameState,
-  renderer: GameRenderer
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
 }>;
 
 export const attack = async (
   attacker: Unit,
   defender: Unit,
-  { state, renderer }: Props
+  { state, renderer, imageFactory }: Props
 ) => {
   const playerUnit = state.getPlayerUnit();
 
@@ -26,7 +27,8 @@ export const attack = async (
   playSound(Sounds.PLAYER_HITS_ENEMY);
   await startAttack(attacker, defender, {
     state,
-    renderer
+    renderer,
+    imageFactory
   });
   const adjustedDamage = await dealDamage(damage, {
     sourceUnit: attacker,

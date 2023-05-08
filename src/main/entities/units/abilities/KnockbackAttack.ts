@@ -4,10 +4,11 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
-import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
+import { AbilityName } from './AbilityName';
 
 const manaCost = 8;
 
@@ -22,16 +23,16 @@ export const KnockbackAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
     }
 
-    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
+    const direction = pointAt(unit.getCoordinates(), coordinates);
 
     const map = state.getMap();
-    unit.setDirection({ dx, dy });
+    unit.setDirection(direction);
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
@@ -41,7 +42,7 @@ export const KnockbackAttack: UnitAbility = {
       await startAttack(
         unit,
         targetUnit,
-        { state, renderer }
+        { state, renderer, imageFactory }
       );
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -51,12 +52,12 @@ export const KnockbackAttack: UnitAbility = {
       logMessage(message, { state });
       targetUnit.setStunned(1);
 
-      const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
+      const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
       if (map.contains(first) && !map.isBlocked(first)) {
         targetUnit.setCoordinates(first);
         await renderer.render();
         await sleep(50);
-        const second = Coordinates.plus(first, { dx, dy });
+        const second = Coordinates.plus(first, direction);
         if (map.contains(second) && !map.isBlocked(second)) {
           targetUnit.setCoordinates(second);
         }

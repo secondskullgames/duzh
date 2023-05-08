@@ -1,6 +1,6 @@
 
 import { checkNotNull } from '../../../utils/preconditions';
-import { AbilityName, type UnitAbility } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { Bolt } from './Bolt';
 import { Dash } from './Dash';
 import { HeavyAttack } from './HeavyAttack';
@@ -12,6 +12,7 @@ import { ShootArrow } from './ShootArrow';
 import { Strafe } from './Strafe';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
+import { AbilityName } from './AbilityName';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,

@@ -3,11 +3,12 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { walk } from '../../../actions/walk';
+import { AbilityName } from './AbilityName';
 
 const _getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
@@ -22,7 +23,7 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
@@ -38,7 +39,7 @@ export const HeavyAttack: UnitAbility = {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state });
+        await walk(unit, direction, { state, renderer, imageFactory });
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
@@ -48,7 +49,7 @@ export const HeavyAttack: UnitAbility = {
           await startAttack(
             unit,
             targetUnit,
-            { state, renderer }
+            { state, renderer, imageFactory }
           );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,

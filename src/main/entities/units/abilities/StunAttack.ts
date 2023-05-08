@@ -3,11 +3,12 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { walk } from '../../../actions/walk';
+import { AbilityName } from './AbilityName';
 
 const manaCost = 10;
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
@@ -22,7 +23,7 @@ export const StunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
@@ -40,7 +41,7 @@ export const StunAttack: UnitAbility = {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state });
+        await walk(unit, direction, { state, renderer, imageFactory });
       } else {
         const targetUnit = map.getUnit({ x, y });
         if (targetUnit) {
@@ -50,7 +51,7 @@ export const StunAttack: UnitAbility = {
           await startAttack(
             unit,
             targetUnit,
-            { state, renderer }
+            { state, renderer, imageFactory }
           );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,

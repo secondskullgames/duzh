@@ -20,7 +20,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitBehaviorProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -46,7 +46,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       await NormalAttack.use(
         unit,
         coordinates,
-        { state, renderer }
+        { state, renderer, imageFactory }
       );
     }
   };

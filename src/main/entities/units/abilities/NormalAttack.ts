@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import Block from '../../objects/Block';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
@@ -13,6 +13,7 @@ import { pushBlock } from '../../../actions/pushBlock';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { ObjectType } from '../../objects/GameObject';
 import { SpawnerState } from '../../objects/Spawner';
+import { AbilityName } from './AbilityName';
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
@@ -21,7 +22,7 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
@@ -36,12 +37,12 @@ export const NormalAttack: UnitAbility = {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state });
+        await walk(unit, direction, { state, renderer, imageFactory });
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await attack(unit, targetUnit, { state, renderer });
+          await attack(unit, targetUnit, { state, renderer, imageFactory });
           return;
         }
         const door = map.getDoor(coordinates);
@@ -68,7 +69,7 @@ export const NormalAttack: UnitAbility = {
           .find(block => block.isMovable());
 
         if (block) {
-          await pushBlock(unit, block, { state });
+          await pushBlock(unit, block, { state, renderer, imageFactory });
           return;
         }
       }

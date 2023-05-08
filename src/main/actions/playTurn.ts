@@ -3,22 +3,24 @@ import GameRenderer from '../graphics/renderers/GameRenderer';
 import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
 import GameState from '../core/GameState';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 type Props = Readonly<{
   state: GameState,
-  renderer: GameRenderer
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
 }>;
 
-export const playTurn = async ({ state, renderer }: Props) => {
+export const playTurn = async ({ state, renderer, imageFactory }: Props) => {
   const map = state.getMap();
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
-    await unit.update();
+    await unit.update({ state, renderer, imageFactory });
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state });
+    await object.update({ state, renderer, imageFactory });
   }
 
   updateRevealedTiles({ state });

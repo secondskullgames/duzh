@@ -118,8 +118,8 @@ class PredefinedMapBuilder {
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-              ? new WizardController({ state })
-              : new HumanRedesignController({ state });
+              ? new WizardController()
+              : new HumanRedesignController();
             const unit = await UnitFactory.createUnit(
               {
                 name: `${enemyUnitModel.name}_${id++}`,

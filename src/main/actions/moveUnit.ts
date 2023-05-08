@@ -4,12 +4,20 @@ import { playSound } from '../sounds/SoundFX';
 import Sounds from '../sounds/Sounds';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
+import GameRenderer from '../graphics/renderers/GameRenderer';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 type Props = Readonly<{
   state: GameState,
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
 }>;
 
-export const moveUnit = async (unit: Unit, coordinates: Coordinates, { state }: Props) => {
+export const moveUnit = async (
+  unit: Unit,
+  coordinates: Coordinates,
+  { state, renderer, imageFactory }: Props
+) => {
   const map = state.getMap();
   map.removeUnit(unit);
 
@@ -24,7 +32,12 @@ export const moveUnit = async (unit: Unit, coordinates: Coordinates, { state }: 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
       const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
-      await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates, { state });
+      await EquipmentScript.onMove(
+        equipment,
+        equipment.script,
+        nextCoordinates,
+        { state, renderer, imageFactory }
+      );
     }
   }
 };

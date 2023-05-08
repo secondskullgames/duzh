@@ -70,7 +70,6 @@ export default class GeneratedMapBuilder {
   };
 
   _generateUnits = async (): Promise<Unit[]> => {
-    const state = GameState.getInstance();
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     let points = this.pointAllocation.enemies;
@@ -93,9 +92,9 @@ export default class GeneratedMapBuilder {
       let controller: UnitController;
       // TODO super hack!
       if (model.name === 'Goblin Archer') {
-        controller = new ArcherController({ state });
+        controller = new ArcherController();
       } else {
-        controller = new HumanRedesignController({ state });
+        controller = new HumanRedesignController();
       }
       const unit = await UnitFactory.createUnit(
         {

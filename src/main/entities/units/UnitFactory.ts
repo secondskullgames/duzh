@@ -66,7 +66,7 @@ const createPlayerUnit = async ({ state, renderer, imageFactory }: Props): Promi
   {
     unitClass: 'player',
     faction: Faction.PLAYER,
-    controller: PlayerUnitController.getInstance(),
+    controller: new PlayerUnitController(),
     level: 1,
     coordinates: { x: 0, y: 0 }
   },

@@ -4,8 +4,9 @@ import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
+import { AbilityName } from './AbilityName';
 
 const manaCost = 6;
 
@@ -16,7 +17,7 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
@@ -35,7 +36,11 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(unit, { x, y }, { state });
+        await moveUnit(
+          unit,
+          { x, y },
+          { state, renderer, imageFactory }
+        );
         moved = true;
         await renderer.render();
         await sleep(50);

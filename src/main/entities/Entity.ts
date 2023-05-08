@@ -2,9 +2,13 @@ import Coordinates from '../geometry/Coordinates';
 import Sprite from '../graphics/sprites/Sprite';
 import { EntityType } from './EntityType';
 import GameState from '../core/GameState';
+import GameRenderer from '../graphics/renderers/GameRenderer';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 export type UpdateProps = Readonly<{
-  state: GameState
+  state: GameState,
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
 }>;
 
 /**

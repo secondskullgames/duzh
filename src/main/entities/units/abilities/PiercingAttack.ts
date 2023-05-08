@@ -3,12 +3,13 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, AbilityName, UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { SpawnerState } from '../../objects/Spawner';
+import { AbilityName } from './AbilityName';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
@@ -22,7 +23,7 @@ export const PiercingAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
@@ -38,16 +39,16 @@ export const PiercingAttack: UnitAbility = {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state });
+        await walk(unit, direction, { state, renderer, imageFactory });
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await attack(unit, targetUnit, { state, renderer });
+          await attack(unit, targetUnit, { state, renderer, imageFactory });
         }
         const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
         const nextUnit = map.getUnit(nextCoordinates);
         if (nextUnit) {
-          await attack(unit, nextUnit, { state, renderer });
+          await attack(unit, nextUnit, { state, renderer, imageFactory });
         }
 
         const spawner = map.getSpawner(coordinates);
