@@ -23,9 +23,7 @@ const main = async () => {
   });
   GameRenderer.setInstance(renderer);
   await addInitialState(state);
-  const inputHandler = new InputHandler({
-    state,
-  });
+  const inputHandler = new InputHandler();
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ state, renderer });
   debug.attachToWindow();
