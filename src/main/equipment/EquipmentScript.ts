@@ -2,8 +2,8 @@ import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
-import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { Bolt } from '../entities/units/abilities/Bolt';
 
 export type EquipmentScript = 'bolt_sword';
 
@@ -25,7 +25,7 @@ export namespace EquipmentScript {
         }
 
         if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
-          await UnitAbilities.BOLT.use(
+          await Bolt.use(
             unit,
             target,
             {

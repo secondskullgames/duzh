@@ -1,8 +1,8 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -44,7 +44,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const coordinates = path[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
-        await UnitAbilities.ATTACK.use(
+        await NormalAttack.use(
           unit,
           coordinates,
           { state, renderer }

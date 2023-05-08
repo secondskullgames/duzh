@@ -13,11 +13,11 @@ import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
 import { type UnitAbility, AbilityName } from './abilities/UnitAbility';
-import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { levelUp } from '../../actions/levelUp';
 import { EntityType } from '../EntityType';
+import { abilityForName } from './abilities/abilityForName';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -102,7 +102,7 @@ export default class Unit implements Entity, Animatable {
     // TODO make this type safe
     this.abilities = (model.abilities[1] ?? [])
       .map(str => str as AbilityName)
-      .map(UnitAbilities.abilityForName);
+      .map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 

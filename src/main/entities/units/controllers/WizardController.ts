@@ -5,12 +5,14 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice } from '../../../utils/random';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import TeleportAwayBehavior from '../behaviors/TeleportAwayBehavior';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { AbilityName } from '../abilities/UnitAbility';
+import { Teleport } from '../abilities/Teleport';
+import { Summon } from '../abilities/Summon';
 
 type Props = Readonly<{
   state: GameState
@@ -30,10 +32,10 @@ export default class WizardController implements UnitController {
 
     const distanceToPlayerUnit = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    const canTeleport = unit.getAbilities().includes(UnitAbilities.TELEPORT)
-      && unit.getMana() >= UnitAbilities.TELEPORT.manaCost;
-    const canSummon = unit.getAbilities().includes(UnitAbilities.SUMMON)
-      && unit.getMana() >= UnitAbilities.SUMMON.manaCost;
+    const canTeleport = unit.getAbilities().find(ability => ability.name === AbilityName.TELEPORT)
+      && unit.getMana() >= Teleport.manaCost;
+    const canSummon = unit.getAbilities().find(ability => ability.name === AbilityName.TELEPORT)
+      && unit.getMana() >= Summon.manaCost;
 
     const renderer = GameRenderer.getInstance();
     if (canTeleport && distanceToPlayerUnit <= 3) {
@@ -49,13 +51,10 @@ export default class WizardController implements UnitController {
         .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
         .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
       if (coordinates) {
-        return UnitAbilities.SUMMON.use(
+        return Summon.use(
           unit,
           coordinates,
-          {
-            state,
-            renderer
-          }
+          { state, renderer }
         );
       }
     }

@@ -2,8 +2,8 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { randChoice } from '../../../utils/random';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import UnitBehavior, { type UnitBehaviorProps } from './UnitBehavior';
+import { NormalAttack } from '../abilities/NormalAttack';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
@@ -25,7 +25,7 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (tiles.length > 0) {
       const coordinates = randChoice(tiles);
-      await UnitAbilities.ATTACK.use(
+      await NormalAttack.use(
         unit,
         coordinates,
         { state, renderer }

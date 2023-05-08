@@ -1,9 +1,9 @@
 import Unit from '../Unit';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
 import AttackUnitBehavior from './AttackUnitBehavior';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { ShootArrow } from '../abilities/ShootArrow';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -24,7 +24,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
     const { targetUnit } = this;
     const map = state.getMap();
 
-    if (unit.getMana() < UnitAbilities.SHOOT_ARROW.manaCost) {
+    if (unit.getMana() < ShootArrow.manaCost) {
       return this._attack(unit, targetUnit, { state, renderer });
     }
 
@@ -50,7 +50,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       y += dy;
     }
 
-    return UnitAbilities.SHOOT_ARROW.use(
+    return ShootArrow.use(
       unit,
       { x, y },
       {

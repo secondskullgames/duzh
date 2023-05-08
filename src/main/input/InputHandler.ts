@@ -7,7 +7,6 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from '../core/GameState';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
-import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
 import ItemFactory from '../items/ItemFactory';
 import GameRenderer from '../graphics/renderers/GameRenderer';
@@ -19,6 +18,9 @@ import { startGame } from '../actions/startGame';
 import { startGameDebug } from '../actions/startGameDebug';
 import { pickupItem } from '../actions/pickupItem';
 import { useItem } from '../actions/useItem';
+import { ShootArrow } from '../entities/units/abilities/ShootArrow';
+import { Strafe } from '../entities/units/abilities/Strafe';
+import { NormalAttack } from '../entities/units/abilities/NormalAttack';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -120,16 +122,16 @@ export default class InputHandler {
 
         let queuedOrder: PromiseSupplier | null = null;
         if (modifiers.includes('SHIFT')) {
-          if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbilities.SHOOT_ARROW.manaCost)) {
-            queuedOrder = () => UnitAbilities.SHOOT_ARROW.use(
+          if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
+            queuedOrder = () => ShootArrow.use(
               playerUnit,
               { x, y },
               { state, renderer }
             );
           }
         } else if (modifiers.includes('ALT')) {
-          if (playerUnit.canSpendMana(UnitAbilities.STRAFE.manaCost)) {
-            queuedOrder = () => UnitAbilities.STRAFE.use(
+          if (playerUnit.canSpendMana(Strafe.manaCost)) {
+            queuedOrder = () => Strafe.use(
               playerUnit,
               { x, y },
               { state, renderer }
@@ -147,7 +149,7 @@ export default class InputHandler {
               );
             };
           } else {
-            queuedOrder = () => UnitAbilities.ATTACK.use(
+            queuedOrder = () => NormalAttack.use(
               playerUnit,
               { x, y },
               { state, renderer }

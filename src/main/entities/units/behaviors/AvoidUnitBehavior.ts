@@ -3,8 +3,8 @@ import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { comparingReversed } from '../../../utils/arrays';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { UnitAbilities } from '../abilities/UnitAbilities';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -43,7 +43,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, targetUnit.getCoordinates())));
 
       const coordinates = orderedTiles[0];
-      await UnitAbilities.ATTACK.use(
+      await NormalAttack.use(
         unit,
         coordinates,
         { state, renderer }
