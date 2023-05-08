@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
@@ -25,7 +24,6 @@ export default class Dash extends UnitAbility {
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
 

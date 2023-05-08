@@ -2,7 +2,6 @@ import Unit from './Unit';
 import Direction from '../../geometry/Direction';
 import Coordinates from '../../geometry/Coordinates';
 import GameState from '../../core/GameState';
-import { GameEngine } from '../../core/GameEngine';
 import UnitService from './UnitService';
 import { checkNotNull } from '../../utils/preconditions';
 import { playSound } from '../../sounds/SoundFX';
@@ -13,18 +12,15 @@ import { gameOver } from '../../actions/gameOver';
 
 type Props = {
   state: GameState,
-  engine: GameEngine,
   unitService: UnitService
 };
 
 export default class UnitActionsService {
   private readonly state: GameState;
-  private readonly engine: GameEngine;
   private readonly unitService: UnitService;
 
-  constructor({ state, engine, unitService }: Props) {
+  constructor({ state, unitService }: Props) {
     this.state = state;
-    this.engine = engine;
     this.unitService = unitService;
   }
 

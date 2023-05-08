@@ -1,4 +1,3 @@
-import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';

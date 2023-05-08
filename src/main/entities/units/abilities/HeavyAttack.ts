@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';

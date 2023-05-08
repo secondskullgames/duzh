@@ -1,25 +1,21 @@
-import { GameEngine } from './GameEngine';
 import GameState from './GameState';
 import UnitService from '../entities/units/UnitService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { loadNextMap } from '../actions/loadNextMap';
 
 type Props = Readonly<{
-  engine: GameEngine,
   renderer: GameRenderer,
   state: GameState,
   unitService: UnitService
 }>;
 
 export class Debug {
-  private readonly engine: GameEngine;
   private readonly renderer: GameRenderer;
   private readonly state: GameState;
   private readonly unitService: UnitService;
   private revealMap: boolean;
 
-  constructor({ engine, renderer, state, unitService }: Props) {
-    this.engine = engine;
+  constructor({ renderer, state, unitService }: Props) {
     this.renderer = renderer;
     this.state = state;
     this.unitService = unitService;

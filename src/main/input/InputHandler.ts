@@ -4,7 +4,6 @@ import Coordinates from '../geometry/Coordinates';
 import PlayerUnitController from '../entities/units/controllers/PlayerUnitController';
 import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
-import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
@@ -22,14 +21,12 @@ import { startGameDebug } from '../actions/startGameDebug';
 type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
-  engine: GameEngine,
   state: GameState,
   mapFactory: MapFactory,
   itemService: ItemService
 }>;
 
 export default class InputHandler {
-  private readonly engine: GameEngine;
   private readonly state: GameState;
   private readonly mapFactory: MapFactory;
   private readonly itemService: ItemService;
@@ -37,8 +34,7 @@ export default class InputHandler {
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ engine, state, mapFactory, itemService }: Props) {
-    this.engine = engine;
+  constructor({  state, mapFactory, itemService }: Props) {
     this.state = state;
     this.mapFactory = mapFactory;
     this.itemService = itemService;
@@ -257,7 +253,7 @@ export default class InputHandler {
   };
 
   private _handleMap = async () => {
-    const { state, engine } = this;
+    const { state } = this;
 
     switch (state.getScreen()) {
       case GameScreen.MAP:
@@ -274,7 +270,7 @@ export default class InputHandler {
   };
 
   private _handleAbility = async (command: NumberKey) => {
-    const { state, engine } = this;
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
 
     // sketchy - player abilities are indexed as (0 => attack, others => specials)
@@ -289,7 +285,7 @@ export default class InputHandler {
   };
 
   private _handleF1 = async () => {
-    const { state, engine } = this;
+    const { state } = this;
     if ([GameScreen.GAME, GameScreen.INVENTORY, GameScreen.MAP].includes(state.getScreen())) {
       state.setScreen(GameScreen.HELP);
     } else {

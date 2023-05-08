@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
@@ -20,7 +19,6 @@ export default class StunAttack extends UnitAbility {
 
     const { x, y } = coordinates;
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
     const unitService = UnitService.getInstance();

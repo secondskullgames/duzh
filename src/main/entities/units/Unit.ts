@@ -19,8 +19,6 @@ import UnitController from './controllers/UnitController';
 import UnitAbility, { AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../../schemas/UnitModel';
-import { GameEngine } from '../../core/GameEngine';
-import AnimationFactory from '../../graphics/animations/AnimationFactory';
 import Sprite from '../../graphics/sprites/Sprite';
 import UnitService from './UnitService';
 

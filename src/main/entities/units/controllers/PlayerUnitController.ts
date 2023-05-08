@@ -3,7 +3,7 @@ import UnitController from './UnitController';
 
 type PromiseSupplier = () => Promise<void>
 
-class PlayerUnitController implements UnitController {
+export default class PlayerUnitController implements UnitController {
   queuedOrder: PromiseSupplier | null;
 
   private static INSTANCE = new PlayerUnitController();
@@ -12,16 +12,13 @@ class PlayerUnitController implements UnitController {
     this.queuedOrder = null;
   }
 
-  issueOrder(unit: Unit): Promise<any> {
+  issueOrder = async (unit: Unit) => {
     if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;
       return queuedOrder();
     }
-    return Promise.resolve();
-  }
+  };
 
   static getInstance = () => PlayerUnitController.INSTANCE;
 }
-
-export default PlayerUnitController;
