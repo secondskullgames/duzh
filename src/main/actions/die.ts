@@ -20,5 +20,6 @@ export const die = async (unit: Unit, { state }: Props) => {
   } else {
     playSound(Sounds.ENEMY_DIES);
     logMessage(`${unit.getName()} dies!`, { state });
+    console.log(`${unit.getName()} dies!`);
   }
 };

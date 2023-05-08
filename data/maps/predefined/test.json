@@ -9,7 +9,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "scorpion",
+    "BLUE": "green_snake",
     "GREEN": "archer",
     "DARK_GREEN": "sorceress"
   },

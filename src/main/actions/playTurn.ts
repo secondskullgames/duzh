@@ -16,7 +16,10 @@ export const playTurn = async ({ state, renderer, imageFactory }: Props) => {
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
-    await unit.update({ state, renderer, imageFactory });
+    // TODO: what's the best time to check for aliveness?
+    if (unit.getLife() > 0) {
+      await unit.update({ state, renderer, imageFactory });
+    }
   }
 
   for (const object of map.getAllObjects()) {
