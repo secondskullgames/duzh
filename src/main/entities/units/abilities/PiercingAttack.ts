@@ -6,10 +6,10 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitActionsService from '../UnitActionsService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import { moveUnit } from '../../../actions/moveUnit';
+import { walk } from '../../../actions/walk';
+import { attack } from '../../../actions/attack';
 
 export default class PiercingAttack extends UnitAbility {
   constructor() {
@@ -23,45 +23,50 @@ export default class PiercingAttack extends UnitAbility {
 
     const state = GameState.getInstance();
     const map = state.getMap();
-    const actionsService = UnitActionsService.getInstance();
+    const animationFactory = AnimationFactory.getInstance();
+    const renderer = GameRenderer.getInstance();
 
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state });
+    if (!map.contains(coordinates)) {
+      // do nothing
+      return;
     } else {
-      const targetUnit = map.getUnit(coordinates);
-      if (targetUnit) {
-        await actionsService.attack(unit, targetUnit);
-      }
-      const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
-      const nextUnit = map.getUnit(nextCoordinates);
-      if (nextUnit) {
-        await actionsService.attack(unit, nextUnit);
-      }
+      if (!map.isBlocked(coordinates)) {
+        await walk(unit, direction, { state });
+      } else {
+        const targetUnit = map.getUnit(coordinates);
+        if (targetUnit) {
+          await attack(unit, targetUnit, { state, renderer, animationFactory });
+        }
+        const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
+        const nextUnit = map.getUnit(nextCoordinates);
+        if (nextUnit) {
+          await attack(unit, nextUnit, { state, renderer, animationFactory });
+        }
 
-      const spawner = map.getSpawner(coordinates);
-      const animationFactory = AnimationFactory.getInstance();
-      const renderer = GameRenderer.getInstance();
-      if (spawner && spawner.isBlocking()) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        const animation = animationFactory.getAttackingAnimation(unit);
-        await playAnimation(animation, {
-          state,
-          renderer
-        });
-        spawner.setState('DEAD');
-      }
+        const spawner = map.getSpawner(coordinates);
+        if (spawner && spawner.isBlocking()) {
+          playSound(Sounds.SPECIAL_ATTACK);
+          const animation = animationFactory.getAttackingAnimation(unit);
+          await playAnimation(animation, {
+            state,
+            renderer
+          });
+          spawner.setState('DEAD');
+        }
 
-      const nextSpawner = map.getSpawner(nextCoordinates);
-      if (nextSpawner && nextSpawner.isBlocking()) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        const animation = animationFactory.getAttackingAnimation(unit);
-        await playAnimation(animation, {
-          state,
-          renderer
-        });
-        nextSpawner.setState('DEAD');
+        const nextSpawner = map.getSpawner(nextCoordinates);
+        if (nextSpawner && nextSpawner.isBlocking()) {
+          playSound(Sounds.SPECIAL_ATTACK);
+          const animation = animationFactory.getAttackingAnimation(unit);
+          await playAnimation(animation, {
+            state,
+            renderer
+          });
+          nextSpawner.setState('DEAD');
+        }
       }
     }
   };

@@ -11,6 +11,7 @@ import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { startAttack } from '../../../actions/startAttack';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { walk } from '../../../actions/walk';
 
 export default class HeavyAttack extends UnitAbility {
   constructor() {
@@ -25,27 +26,33 @@ export default class HeavyAttack extends UnitAbility {
     const state = GameState.getInstance();
     const map = state.getMap();
 
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state });
+    if (!map.contains(coordinates)) {
+      // do nothing
+      return;
     } else {
-      const targetUnit = map.getUnit(coordinates);
-      if (targetUnit) {
-        playSound(Sounds.SPECIAL_ATTACK);
-        unit.spendMana(this.manaCost);
-        const damage = unit.getDamage() * 2;
-        await startAttack(unit, targetUnit, {
-          state,
-          renderer: GameRenderer.getInstance(),
-          animationFactory: AnimationFactory.getInstance()
-        });
-        const adjustedDamage = await dealDamage(damage, {
-          sourceUnit: unit,
-          targetUnit
-        });
-        const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-        logMessage(message, { state });
+      if (!map.isBlocked(coordinates)) {
+        await walk(unit, direction, { state });
+      } else {
+        const targetUnit = map.getUnit(coordinates);
+        if (targetUnit) {
+          playSound(Sounds.SPECIAL_ATTACK);
+          unit.spendMana(this.manaCost);
+          const damage = unit.getDamage() * 2;
+          await startAttack(unit, targetUnit, {
+            state,
+            renderer: GameRenderer.getInstance(),
+            animationFactory: AnimationFactory.getInstance()
+          });
+          const adjustedDamage = await dealDamage(damage, {
+            sourceUnit: unit,
+            targetUnit
+          });
+          const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+          logMessage(message, { state });
+        }
       }
     }
   };

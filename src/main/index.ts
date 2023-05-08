@@ -14,7 +14,6 @@ import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import TileFactory from './tiles/TileFactory';
-import UnitActionsService from './entities/units/UnitActionsService';
 
 const main = async () => {
   const state = new GameState();
@@ -38,8 +37,6 @@ const main = async () => {
   ItemService.setInstance(itemService);
   const unitFactory = new UnitFactory({ itemService: itemService, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const unitActionsService = new UnitActionsService({ state });
-  UnitActionsService.setInstance(unitActionsService);
   const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({

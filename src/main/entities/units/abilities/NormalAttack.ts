@@ -7,9 +7,12 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import Block from '../../objects/Block';
-import UnitActionsService from '../UnitActionsService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { walk } from '../../../actions/walk';
+import { attack } from '../../../actions/attack';
+import { openDoor } from '../../../actions/openDoor';
+import { pushBlock } from '../../../actions/pushBlock';
 
 export default class NormalAttack extends UnitAbility {
   constructor() {
@@ -22,9 +25,10 @@ export default class NormalAttack extends UnitAbility {
     }
 
     const state = GameState.getInstance();
+    const renderer = GameRenderer.getInstance();
+    const animationFactory = AnimationFactory.getInstance();
 
     const map = state.getMap();
-    const actionsService = UnitActionsService.getInstance();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -33,27 +37,27 @@ export default class NormalAttack extends UnitAbility {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await actionsService.walk(unit, direction);
+        await walk(unit, direction, { state });
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await actionsService.attack(unit, targetUnit);
+          await attack(unit, targetUnit, { state, renderer, animationFactory });
           return;
         }
         const door = map.getDoor(coordinates);
         if (door) {
-          await actionsService.openDoor(unit, door);
+          await openDoor(unit, door);
           return;
         }
 
         const spawner = map.getSpawner(coordinates);
         if (spawner && spawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
+          const animation = animationFactory.getAttackingAnimation(unit);
           await playAnimation(animation, {
             state,
-            renderer: GameRenderer.getInstance()
+            renderer
           });
           spawner.setState('DEAD');
           return;
@@ -65,7 +69,7 @@ export default class NormalAttack extends UnitAbility {
           .find(block => block.isMovable());
 
         if (block) {
-          await actionsService.pushBlock(unit, block);
+          await pushBlock(unit, block, { state });
           return;
         }
       }
