@@ -21,22 +21,13 @@ type Props = Readonly<{
 export class GameEngine {
   private readonly state: GameState;
 
-  private firstMapPromise: Promise<MapInstance> | null;
-
   constructor({ state }: Props) {
     this.state = state;
-    this.firstMapPromise = null;
   }
-
-  preloadFirstMap = async () => {
-    this.firstMapPromise = this.state.loadNextMap();
-    await this.firstMapPromise;
-  };
 
   startGame = async () => {
     const t1 = new Date().getTime();
-    const firstMap = await checkNotNull(this.firstMapPromise);
-    this.state.setMap(firstMap);
+    await this.loadNextMap();
     Music.stop();
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     updateRevealedTiles({ state: this.state });

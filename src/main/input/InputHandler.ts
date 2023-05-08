@@ -6,7 +6,6 @@ import { toggleFullScreen } from '../utils/dom';
 import { checkNotNull } from '../utils/preconditions';
 import { GameEngine } from '../core/GameEngine';
 import GameState from '../core/GameState';
-import { GameDriver } from '../core/GameDriver';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
 import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
@@ -15,13 +14,13 @@ import ItemService from '../items/ItemService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
 import { playTurn } from '../actions/playTurn';
+import { showSplashScreen } from '../actions/showSplashScreen';
 
 type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
   engine: GameEngine,
   state: GameState,
-  driver: GameDriver,
   mapFactory: MapFactory,
   itemService: ItemService
 }>;
@@ -29,17 +28,15 @@ type Props = Readonly<{
 export default class InputHandler {
   private readonly engine: GameEngine;
   private readonly state: GameState;
-  private readonly driver: GameDriver;
   private readonly mapFactory: MapFactory;
   private readonly itemService: ItemService;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ engine, state, driver, mapFactory, itemService }: Props) {
+  constructor({ engine, state, mapFactory, itemService }: Props) {
     this.engine = engine;
     this.state = state;
-    this.driver = driver;
     this.mapFactory = mapFactory;
     this.itemService = itemService;
 
@@ -172,7 +169,7 @@ export default class InputHandler {
   };
 
   private _handleEnter = async (modifiers: ModifierKey[]) => {
-    const { state, driver, engine, itemService } = this;
+    const { state, itemService } = this;
     const playerUnit = state.getPlayerUnit();
 
     if (modifiers.includes('ALT')) {
@@ -227,13 +224,16 @@ export default class InputHandler {
         break;
       case GameScreen.VICTORY:
       case GameScreen.GAME_OVER: {
-        await driver.showSplashScreen();
+        await showSplashScreen({
+          state,
+          renderer: GameRenderer.getInstance()
+        });
       }
     }
   };
 
   private _handleTab = async () => {
-    const { state, engine } = this;
+    const { state } = this;
 
     switch (state.getScreen()) {
       case GameScreen.INVENTORY:

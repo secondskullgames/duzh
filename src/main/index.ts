@@ -1,6 +1,5 @@
 import type MapSpec from './schemas/MapSpec';
 import { Debug } from './core/Debug';
-import { GameDriver } from './core/GameDriver';
 import { GameEngine } from './core/GameEngine';
 import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
@@ -34,8 +33,6 @@ const main = async () => {
   GameRenderer.setInstance(renderer);
   const engine = new GameEngine({ state, renderer });
   GameEngine.setInstance(engine);
-  const gameDriver = new GameDriver({ state, engine });
-  GameDriver.setInstance(gameDriver);
   const spriteFactory = new SpriteFactory({ imageFactory });
   SpriteFactory.setInstance(spriteFactory);
   const projectileFactory = new ProjectileFactory({ spriteFactory });
@@ -65,14 +62,12 @@ const main = async () => {
     mapFactory,
     state,
     engine,
-    driver: gameDriver,
     itemService
   });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ engine, state, renderer, unitService });
   debug.attachToWindow();
   await GameRenderer.getInstance().render();
-  await engine.preloadFirstMap();
 };
 
 const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
