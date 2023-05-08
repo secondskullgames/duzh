@@ -17,7 +17,7 @@ export default class KnockbackAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
@@ -36,7 +36,7 @@ export default class KnockbackAttack extends UnitAbility {
       await startAttack(
         unit,
         targetUnit,
-        { state, renderer, animationFactory }
+        { state, renderer }
       );
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,

@@ -23,17 +23,14 @@ import ImageFactory from '../graphics/images/ImageFactory';
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
 type Props = Readonly<{
-  state: GameState,
-  animationFactory: AnimationFactory
+  state: GameState
 }>;
 
 export default class ItemFactory {
   private readonly state: GameState;
-  private readonly animationFactory: AnimationFactory;
 
-  constructor({ state, animationFactory }: Props) {
+  constructor({ state }: Props) {
     this.state = state;
-    this.animationFactory = animationFactory;
   }
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -81,6 +78,7 @@ export default class ItemFactory {
   };
 
   createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
+    const renderer = GameRenderer.getInstance();
     const onUse: ItemProc = async (item, unit): Promise<void> => {
       const { state } = this;
       const map = state.getMap();
@@ -94,10 +92,14 @@ export default class ItemFactory {
         });
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);
+      const animation = await AnimationFactory.getFloorFireAnimation(
+        unit,
+        adjacentUnits,
+        { state: this.state }
+      );
       await playAnimation(animation, {
         state: this.state,
-        renderer: GameRenderer.getInstance()
+        renderer
       });
 
       for (const adjacentUnit of adjacentUnits) {

@@ -54,8 +54,7 @@ export default class ArcherController implements UnitController {
     }
     return behavior.execute(unit, {
       state: this.state,
-      renderer: GameRenderer.getInstance(),
-      animationFactory: AnimationFactory.getInstance()
+      renderer: GameRenderer.getInstance()
     });
   }
 };

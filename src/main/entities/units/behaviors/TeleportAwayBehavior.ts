@@ -19,7 +19,7 @@ export default class TeleportAwayBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -44,7 +44,7 @@ export default class TeleportAwayBehavior implements UnitBehavior {
       await UnitAbilities.TELEPORT.use(
         unit,
         coordinates,
-        { state, renderer, animationFactory }
+        { state, renderer }
       );
     }
   };

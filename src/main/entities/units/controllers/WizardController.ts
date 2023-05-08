@@ -11,7 +11,6 @@ import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   state: GameState
@@ -36,11 +35,11 @@ export default class WizardController implements UnitController {
     const canSummon = unit.getAbilities().includes(UnitAbilities.SUMMON)
       && unit.getMana() >= UnitAbilities.SUMMON.manaCost;
 
+    const renderer = GameRenderer.getInstance();
     if (canTeleport && distanceToPlayerUnit <= 3) {
       return new TeleportAwayBehavior({ targetUnit: playerUnit }).execute(unit, {
         state,
-        renderer: GameRenderer.getInstance(),
-        animationFactory: AnimationFactory.getInstance()
+        renderer
       });
     }
 
@@ -55,8 +54,7 @@ export default class WizardController implements UnitController {
           coordinates,
           {
             state,
-            renderer: GameRenderer.getInstance(),
-            animationFactory: AnimationFactory.getInstance()
+            renderer
           }
         );
       }
@@ -69,8 +67,7 @@ export default class WizardController implements UnitController {
     ])();
     return behavior.execute(unit, {
       state,
-      renderer: GameRenderer.getInstance(),
-      animationFactory: AnimationFactory.getInstance()
+      renderer
     });
   }
 };

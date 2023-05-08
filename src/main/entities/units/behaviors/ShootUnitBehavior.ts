@@ -4,7 +4,6 @@ import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
 import AttackUnitBehavior from './AttackUnitBehavior';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -20,20 +19,20 @@ export default class ShootUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
 
     if (unit.getMana() < UnitAbilities.SHOOT_ARROW.manaCost) {
-      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
+      return this._attack(unit, targetUnit, { state, renderer });
     }
 
     if (!isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())) {
-      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
+      return this._attack(unit, targetUnit, { state, renderer });
     }
     if (manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) <= 1) {
-      return this._attack(unit, targetUnit, { state, renderer, animationFactory });
+      return this._attack(unit, targetUnit, { state, renderer });
     }
 
     let { x, y } = unit.getCoordinates();
@@ -45,7 +44,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
 
     while (x !== playerX || y !== playerY) {
       if (map.isBlocked({ x, y })) {
-        return this._attack(unit, targetUnit, { state, renderer, animationFactory });
+        return this._attack(unit, targetUnit, { state, renderer });
       }
       x += dx;
       y += dy;
@@ -56,8 +55,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       { x, y },
       {
         state,
-        renderer: GameRenderer.getInstance(),
-        animationFactory: AnimationFactory.getInstance()
+        renderer: GameRenderer.getInstance()
       }
     );
   };
@@ -65,9 +63,9 @@ export default class ShootUnitBehavior implements UnitBehavior {
   private _attack = async (
     unit: Unit,
     targetUnit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {
     const behavior = new AttackUnitBehavior({ targetUnit });
-    return behavior.execute(unit, { state, renderer, animationFactory });
+    return behavior.execute(unit, { state, renderer });
   };
 };

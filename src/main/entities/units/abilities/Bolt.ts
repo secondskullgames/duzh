@@ -7,6 +7,7 @@ import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -16,7 +17,7 @@ export default class Bolt extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
@@ -47,13 +48,25 @@ export default class Bolt extends UnitAbility {
       });
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
-      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      const boltAnimation = await AnimationFactory.getBoltAnimation(
+        unit,
+        { dx, dy },
+        coordinatesList,
+        targetUnit,
+        { state }
+      );
       await playAnimation(boltAnimation, {
         state,
         renderer
       });
     } else {
-      const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
+      const boltAnimation = await AnimationFactory.getBoltAnimation(
+        unit,
+        { dx, dy },
+        coordinatesList,
+        null,
+        { state }
+      );
       await playAnimation(boltAnimation, {
         state,
         renderer

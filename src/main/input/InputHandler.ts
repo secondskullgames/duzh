@@ -19,7 +19,6 @@ import { startGame } from '../actions/startGame';
 import { startGameDebug } from '../actions/startGameDebug';
 import { pickupItem } from '../actions/pickupItem';
 import { useItem } from '../actions/useItem';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -37,7 +36,7 @@ export default class InputHandler {
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({  state, mapFactory, itemFactory }: Props) {
+  constructor({ state, mapFactory, itemFactory }: Props) {
     this.state = state;
     this.mapFactory = mapFactory;
     this.itemFactory = itemFactory;
@@ -111,6 +110,7 @@ export default class InputHandler {
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { state } = this;
+    const renderer = GameRenderer.getInstance();
 
     switch (state.getScreen()) {
       case 'GAME':
@@ -124,11 +124,7 @@ export default class InputHandler {
             queuedOrder = () => UnitAbilities.SHOOT_ARROW.use(
               playerUnit,
               { x, y },
-              {
-                state,
-                renderer: GameRenderer.getInstance(),
-                animationFactory: AnimationFactory.getInstance()
-              }
+              { state, renderer }
             );
           }
         } else if (modifiers.includes('ALT')) {
@@ -136,11 +132,7 @@ export default class InputHandler {
             queuedOrder = () => UnitAbilities.STRAFE.use(
               playerUnit,
               { x, y },
-              {
-                state,
-                renderer: GameRenderer.getInstance(),
-                animationFactory: AnimationFactory.getInstance()
-              }
+              { state, renderer }
             );
           }
         } else {
@@ -151,32 +143,21 @@ export default class InputHandler {
               await ability.use(
                 playerUnit,
                 { x, y },
-                {
-                  state,
-                  renderer: GameRenderer.getInstance(),
-                  animationFactory: AnimationFactory.getInstance()
-                }
+                { state, renderer }
               );
             };
           } else {
             queuedOrder = () => UnitAbilities.ATTACK.use(
               playerUnit,
               { x, y },
-              {
-                state,
-                renderer: GameRenderer.getInstance(),
-                animationFactory: AnimationFactory.getInstance()
-              }
+              { state, renderer }
             );
           }
         }
         const playerController = playerUnit.getController() as PlayerUnitController;
         if (queuedOrder) {
           playerController.queuedOrder = queuedOrder;
-          await playTurn({
-            state: this.state,
-            renderer: GameRenderer.getInstance()
-          });
+          await playTurn({ state, renderer });
         }
         break;
       case 'INVENTORY':
@@ -196,7 +177,7 @@ export default class InputHandler {
             inventory.nextCategory();
             break;
         }
-        await GameRenderer.getInstance().render();
+        await renderer.render();
         break;
       default:
         break;
@@ -227,10 +208,7 @@ export default class InputHandler {
           map.removeObject(item);
         } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
-          await loadNextMap({
-            state,
-            renderer
-          });
+          await loadNextMap({ state, renderer });
         }
         await playTurn({
           state: this.state,
@@ -279,6 +257,7 @@ export default class InputHandler {
 
   private _handleTab = async () => {
     const { state } = this;
+    const renderer = GameRenderer.getInstance();
 
     switch (state.getScreen()) {
       case GameScreen.INVENTORY:
@@ -288,7 +267,7 @@ export default class InputHandler {
         state.setScreen(GameScreen.INVENTORY);
         break;
     }
-    await GameRenderer.getInstance().render();
+    await renderer.render();
   };
 
   private _handleMap = async () => {
@@ -310,6 +289,7 @@ export default class InputHandler {
 
   private _handleAbility = async (command: NumberKey) => {
     const { state } = this;
+    const renderer = GameRenderer.getInstance();
     const playerUnit = state.getPlayerUnit();
 
     // sketchy - player abilities are indexed as (0 => attack, others => specials)
@@ -319,18 +299,20 @@ export default class InputHandler {
       [index - 1];
     if (ability && playerUnit.canSpendMana(ability.manaCost)) {
       state.setQueuedAbility(ability);
-      await GameRenderer.getInstance().render();
+      await renderer.render();
     }
   };
 
   private _handleF1 = async () => {
     const { state } = this;
+    const renderer = GameRenderer.getInstance();
+
     if ([GameScreen.GAME, GameScreen.INVENTORY, GameScreen.MAP].includes(state.getScreen())) {
       state.setScreen(GameScreen.HELP);
     } else {
       state.showPrevScreen();
     }
-    await GameRenderer.getInstance().render();
+    await renderer.render();
   };
 
   addEventListener = (target: HTMLElement) => {

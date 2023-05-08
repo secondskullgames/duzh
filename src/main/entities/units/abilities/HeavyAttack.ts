@@ -17,7 +17,7 @@ export default class HeavyAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
@@ -43,7 +43,7 @@ export default class HeavyAttack extends UnitAbility {
           await startAttack(
             unit,
             targetUnit,
-            { state, renderer, animationFactory }
+            { state, renderer }
           );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,

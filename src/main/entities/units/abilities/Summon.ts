@@ -4,7 +4,7 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
 
 export default class Summon extends UnitAbility {

@@ -5,6 +5,6 @@ export default class StayBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {};
 }

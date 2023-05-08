@@ -7,6 +7,7 @@ import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class PiercingAttack extends UnitAbility {
   constructor() {
@@ -16,7 +17,7 @@ export default class PiercingAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
@@ -36,18 +37,18 @@ export default class PiercingAttack extends UnitAbility {
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await attack(unit, targetUnit, { state, renderer, animationFactory });
+          await attack(unit, targetUnit, { state, renderer });
         }
         const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
         const nextUnit = map.getUnit(nextCoordinates);
         if (nextUnit) {
-          await attack(unit, nextUnit, { state, renderer, animationFactory });
+          await attack(unit, nextUnit, { state, renderer });
         }
 
         const spawner = map.getSpawner(coordinates);
         if (spawner && spawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = animationFactory.getAttackingAnimation(unit);
+          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
           await playAnimation(animation, {
             state,
             renderer
@@ -58,7 +59,7 @@ export default class PiercingAttack extends UnitAbility {
         const nextSpawner = map.getSpawner(nextCoordinates);
         if (nextSpawner && nextSpawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = animationFactory.getAttackingAnimation(unit);
+          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
           await playAnimation(animation, {
             state,
             renderer

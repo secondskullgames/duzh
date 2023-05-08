@@ -7,6 +7,7 @@ import Sounds from '../../../sounds/Sounds';
 import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { moveUnit } from '../../../actions/moveUnit';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -21,7 +22,7 @@ export default class Teleport extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -38,7 +39,7 @@ export default class Teleport extends UnitAbility {
       playSound(Sounds.WIZARD_VANISH);
 
       {
-        const animation = await animationFactory.getWizardVanishingAnimation(unit);
+        const animation = await AnimationFactory.getWizardVanishingAnimation(unit, { state });
         await playAnimation(animation, {
           state,
           renderer
@@ -49,7 +50,7 @@ export default class Teleport extends UnitAbility {
       playSound(Sounds.WIZARD_APPEAR);
 
       {
-        const animation = await animationFactory.getWizardAppearingAnimation(unit);
+        const animation = await AnimationFactory.getWizardAppearingAnimation(unit, { state });
         await playAnimation(animation, {
           state,
           renderer

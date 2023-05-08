@@ -18,7 +18,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -47,7 +47,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
         await UnitAbilities.ATTACK.use(
           unit,
           coordinates,
-          { state, renderer, animationFactory }
+          { state, renderer }
         );
       }
     }

@@ -12,14 +12,13 @@ import GameState from '../core/GameState';
 
 type Props = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
-  animationFactory: AnimationFactory
+  renderer: GameRenderer
 }>;
 
 export const attack = async (
   attacker: Unit,
   defender: Unit,
-  { state, renderer, animationFactory }: Props
+  { state, renderer }: Props
 ) => {
   const playerUnit = state.getPlayerUnit();
 
@@ -27,8 +26,7 @@ export const attack = async (
   playSound(Sounds.PLAYER_HITS_ENEMY);
   await startAttack(attacker, defender, {
     state,
-    renderer,
-    animationFactory
+    renderer
   });
   const adjustedDamage = await dealDamage(damage, {
     sourceUnit: attacker,

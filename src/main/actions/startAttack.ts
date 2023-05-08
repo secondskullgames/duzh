@@ -7,16 +7,15 @@ import GameState from '../core/GameState';
 
 type Props = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
-  animationFactory: AnimationFactory
+  renderer: GameRenderer
 }>;
 
 export const startAttack = async (
   unit: Unit,
   target: Unit,
-  { state, renderer, animationFactory }: Props
+  { state, renderer }: Props
 ) => {
-  const animation = animationFactory.getAttackingAnimation(unit, target);
+  const animation = AnimationFactory.getAttackingAnimation(unit, target, { state });
   await playAnimation(animation, { state, renderer });
 
   for (const equipment of unit.getEquipment().getAll()) {

@@ -10,6 +10,7 @@ import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
 import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class NormalAttack extends UnitAbility {
   constructor() {
@@ -19,7 +20,7 @@ export default class NormalAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
@@ -39,7 +40,7 @@ export default class NormalAttack extends UnitAbility {
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await attack(unit, targetUnit, { state, renderer, animationFactory });
+          await attack(unit, targetUnit, { state, renderer });
           return;
         }
         const door = map.getDoor(coordinates);
@@ -51,7 +52,7 @@ export default class NormalAttack extends UnitAbility {
         const spawner = map.getSpawner(coordinates);
         if (spawner && spawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = animationFactory.getAttackingAnimation(unit);
+          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
           await playAnimation(animation, {
             state,
             renderer

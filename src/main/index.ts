@@ -6,14 +6,10 @@ import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './entities/units/UnitFactory';
 import ItemFactory from './items/ItemFactory';
-import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
-import AnimationFactory from './graphics/animations/AnimationFactory';
-import ProjectileFactory from './entities/objects/ProjectileFactory';
 import InputHandler from './input/InputHandler';
 import ObjectFactory from './entities/objects/ObjectFactory';
-import TileFactory from './tiles/TileFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -28,9 +24,7 @@ const main = async () => {
     fontRenderer
   });
   GameRenderer.setInstance(renderer);
-  const animationFactory = new AnimationFactory({ state });
-  AnimationFactory.setInstance(animationFactory);
-  const itemFactory = new ItemFactory({ state, animationFactory });
+  const itemFactory = new ItemFactory({ state });
   ItemFactory.setInstance(itemFactory);
   const unitFactory = new UnitFactory({ itemFactory });
   UnitFactory.setInstance(unitFactory);

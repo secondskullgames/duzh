@@ -4,7 +4,6 @@ import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 export type EquipmentScript = 'bolt_sword';
 
@@ -31,8 +30,7 @@ export namespace EquipmentScript {
             target,
             {
               state,
-              renderer: GameRenderer.getInstance(),
-              animationFactory: AnimationFactory.getInstance()
+              renderer: GameRenderer.getInstance()
             }
           );
         }

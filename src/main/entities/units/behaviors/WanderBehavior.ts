@@ -9,7 +9,7 @@ export default class WanderBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, animationFactory }: UnitBehaviorProps
+    { state, renderer }: UnitBehaviorProps
   ) => {
     const map = state.getMap();
     const tiles: Coordinates[] = [];
@@ -28,7 +28,7 @@ export default class WanderBehavior implements UnitBehavior {
       await UnitAbilities.ATTACK.use(
         unit,
         coordinates,
-        { state, renderer, animationFactory }
+        { state, renderer }
       );
     }
   };

@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
@@ -8,8 +7,6 @@ import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { walk } from '../../../actions/walk';
 
 export default class StunAttack extends UnitAbility {
@@ -20,7 +17,7 @@ export default class StunAttack extends UnitAbility {
   use = async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, animationFactory }: UnitAbilityProps
+    { state, renderer }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
@@ -48,7 +45,7 @@ export default class StunAttack extends UnitAbility {
           await startAttack(
             unit,
             targetUnit,
-            { state, renderer, animationFactory }
+            { state, renderer }
           );
           const adjustedDamage = await dealDamage(damage, {
             sourceUnit: unit,

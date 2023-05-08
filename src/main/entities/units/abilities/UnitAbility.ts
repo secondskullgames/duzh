@@ -1,7 +1,6 @@
 import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export type AbilityName =
@@ -25,8 +24,7 @@ type Props = Readonly<{
 
 export type UnitAbilityProps = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
-  animationFactory: AnimationFactory
+  renderer: GameRenderer
 }>;
 
 export default abstract class UnitAbility {
