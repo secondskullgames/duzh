@@ -7,9 +7,9 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import UnitService from '../UnitService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { moveUnit } from '../../../actions/moveUnit';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -38,25 +38,26 @@ export default class Teleport extends UnitAbility {
     const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       playSound(Sounds.WIZARD_VANISH);
 
+      const renderer = GameRenderer.getInstance();
       {
         const animation = await animationFactory.getWizardVanishingAnimation(unit);
         await playAnimation(animation, {
-          state: GameState.getInstance(),
-          renderer: GameRenderer.getInstance()
+          state,
+          renderer
         });
       }
 
-      await UnitService.getInstance().moveUnit(unit, { x, y });
+      await moveUnit(unit, coordinates, { state });
       playSound(Sounds.WIZARD_APPEAR);
 
       {
         const animation = await animationFactory.getWizardAppearingAnimation(unit);
         await playAnimation(animation, {
-          state: GameState.getInstance(),
-          renderer: GameRenderer.getInstance()
+          state,
+          renderer
         });
       }
 

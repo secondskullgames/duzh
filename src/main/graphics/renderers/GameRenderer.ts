@@ -103,7 +103,7 @@ class GameRenderer extends BufferedRenderer {
 
   private _renderMessages = async () => {
     const { bufferContext, state } = this;
-    const messages = state.getMessages();
+    const messages = state.getMessages().getRecentMessages(state.getTurn());
     bufferContext.fillStyle = Colors.BLACK.hex;
 
     const left = 0;

@@ -8,6 +8,7 @@ import { sleep } from '../../../utils/promises';
 import UnitAbility from './UnitAbility';
 import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { logMessage } from '../../../actions/logMessage';
 
 export default class KnockbackAttack extends UnitAbility {
   constructor() {
@@ -21,6 +22,7 @@ export default class KnockbackAttack extends UnitAbility {
 
     const state = GameState.getInstance();
     const unitService = UnitService.getInstance();
+    const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
 
@@ -38,13 +40,13 @@ export default class KnockbackAttack extends UnitAbility {
         targetUnit
       });
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      state.logMessage(message);
+      logMessage(message, { state });
       targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), { dx, dy });
       if (map.contains(first) && !map.isBlocked(first)) {
         targetUnit.setCoordinates(first);
-        await GameRenderer.getInstance().render();
+        await renderer.render();
         await sleep(50);
         const second = Coordinates.plus(first, { dx, dy });
         if (map.contains(second) && !map.isBlocked(second)) {

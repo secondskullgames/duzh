@@ -29,27 +29,6 @@ export default class UnitService {
     this.animationFactory = animationFactory;
   }
 
-  moveUnit = async (unit: Unit, coordinates: Coordinates) => {
-    const { state } = this;
-    const map = state.getMap();
-    map.removeUnit(unit);
-
-    unit.setCoordinates(coordinates);
-    map.addUnit(unit);
-
-    const playerUnit = state.getPlayerUnit();
-    if (unit === playerUnit) {
-      playSound(Sounds.FOOTSTEP);
-    }
-
-    for (const equipment of unit.getEquipment().getAll()) {
-      if (equipment.script) {
-        const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
-        await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates);
-      }
-    }
-  };
-
   /** @return the amount of adjusted damage taken */
   dealDamage = async (baseDamage: number, params: DealDamageParams): Promise<number> => {
     const sourceUnit = params.sourceUnit ?? null;

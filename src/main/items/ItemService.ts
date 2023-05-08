@@ -16,6 +16,7 @@ import AnimationFactory from '../graphics/animations/AnimationFactory';
 import UnitService from '../entities/units/UnitService';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import GameRenderer from '../graphics/renderers/GameRenderer';
+import { logMessage } from '../actions/logMessage';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -40,7 +41,10 @@ export default class ItemService {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
       playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      this.state.logMessage(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`);
+      logMessage(
+        `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
+        { state: this.state }
+      );
     };
 
     return new InventoryItem({
@@ -54,7 +58,10 @@ export default class ItemService {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
       playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      this.state.logMessage(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`);
+      logMessage(
+        `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
+        { state: this.state }
+      );
     };
 
     return new InventoryItem({
@@ -212,7 +219,7 @@ export default class ItemService {
   pickupItem = (unit: Unit, mapItem: MapItem) => {
     const { inventoryItem } = mapItem;
     unit.getInventory().add(inventoryItem);
-    this.state.logMessage(`Picked up a ${inventoryItem.name}.`);
+    logMessage(`Picked up a ${inventoryItem.name}.`, { state: this.state });
     playSound(Sounds.PICK_UP_ITEM);
   };
 
@@ -222,6 +229,7 @@ export default class ItemService {
   };
 
   equipItem = async (item: InventoryItem, equipment: Equipment, unit: Unit) => {
+    const state = GameState.getInstance();
     const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
     if (currentEquipment) {
       const inventoryItem = currentEquipment.inventoryItem;
@@ -231,7 +239,7 @@ export default class ItemService {
     }
     unit.getEquipment().add(equipment);
     equipment.attach(unit);
-    this.state.logMessage(`Equipped ${equipment.getName()}.`);
+    logMessage(`Equipped ${equipment.getName()}.`, { state });
     playSound(Sounds.BLOCKED);
   };
 

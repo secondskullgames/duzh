@@ -9,6 +9,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
+import { logMessage } from '../../../actions/logMessage';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -23,11 +24,12 @@ export default class Bolt extends UnitAbility {
     const state = GameState.getInstance();
     const unitService = UnitService.getInstance();
     const animationFactory = AnimationFactory.getInstance();
+    const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await GameRenderer.getInstance().render();
+    await renderer.render();
     unit.spendMana(this.manaCost);
 
     const map = state.getMap();
@@ -48,17 +50,17 @@ export default class Bolt extends UnitAbility {
         targetUnit
       });
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      state.logMessage(message);
+      logMessage(message, { state });
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playAnimation(boltAnimation, {
-        state: GameState.getInstance(),
-        renderer: GameRenderer.getInstance()
+        state,
+        renderer
       });
     } else {
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
       await playAnimation(boltAnimation, {
-        state: GameState.getInstance(),
-        renderer: GameRenderer.getInstance()
+        state,
+        renderer
       });
     }
   };

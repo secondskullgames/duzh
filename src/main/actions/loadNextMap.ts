@@ -2,12 +2,14 @@ import Music from '../sounds/Music';
 import { GameScreen } from '../types/types';
 import { updateRevealedTiles } from './updateRevealedTiles';
 import GameState from '../core/GameState';
+import GameRenderer from '../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  renderer: GameRenderer
 }>;
 
-export const loadNextMap = async ({ state }: Props) => {
+export const loadNextMap = async ({ state, renderer }: Props) => {
   if (!state.hasNextMap()) {
     Music.stop();
     state.setScreen(GameScreen.VICTORY);

@@ -6,6 +6,8 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import UnitService from '../UnitService';
+import { moveUnit } from '../../../actions/moveUnit';
+import { logMessage } from '../../../actions/logMessage';
 
 export default class StunAttack extends UnitAbility {
   constructor() {
@@ -25,8 +27,8 @@ export default class StunAttack extends UnitAbility {
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await unitService.moveUnit(unit, { x, y });
+    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+      await moveUnit(unit, coordinates, { state });
     } else {
       const targetUnit = map.getUnit({ x, y });
       if (targetUnit) {
@@ -39,7 +41,7 @@ export default class StunAttack extends UnitAbility {
           targetUnit
         });
         const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-        state.logMessage(message);
+        logMessage(message, { state });
         targetUnit.setStunned(2);
       }
     }

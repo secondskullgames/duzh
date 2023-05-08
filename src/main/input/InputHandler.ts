@@ -191,7 +191,10 @@ export default class InputHandler {
           map.removeObject(item);
         } else if (map.getTile({ x, y }).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
-          await loadNextMap({ state });
+          await loadNextMap({
+            state,
+            renderer
+          });
         }
         await playTurn({
           state: this.state,

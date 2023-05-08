@@ -82,13 +82,9 @@ export default class GameState {
     this.queuedAbility = ability;
   };
 
-  getMessages = (): string[] => {
-    return this.messages.getRecentMessages(this.turn);
+  getMessages = (): Messages => {
+    return this.messages;
   }
-
-  logMessage = (message: string): void => {
-    this.messages.log(message, this.turn);
-  };
 
   reset = () => {
     this.screen = GameScreen.TITLE;

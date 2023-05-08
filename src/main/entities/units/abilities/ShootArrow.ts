@@ -9,6 +9,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
+import { logMessage } from '../../../actions/logMessage';
 
 export default class ShootArrow extends UnitAbility {
   constructor() {
@@ -26,11 +27,12 @@ export default class ShootArrow extends UnitAbility {
     const state = GameState.getInstance();
     const unitService = UnitService.getInstance();
     const animationFactory = AnimationFactory.getInstance();
+    const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await GameRenderer.getInstance().render();
+    await renderer.render();
     unit.spendMana(this.manaCost);
 
     const map = state.getMap();
@@ -49,19 +51,19 @@ export default class ShootArrow extends UnitAbility {
       const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
       await playAnimation(arrowAnimation, {
         state: GameState.getInstance(),
-        renderer: GameRenderer.getInstance()
+        renderer: renderer
       });
       const adjustedDamage = await unitService.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      state.logMessage(message);
+      logMessage(message, { state });
     } else {
       const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
       await playAnimation(arrowAnimation, {
-        state: GameState.getInstance(),
-        renderer: GameRenderer.getInstance()
+        state,
+        renderer
       });
     }
   };

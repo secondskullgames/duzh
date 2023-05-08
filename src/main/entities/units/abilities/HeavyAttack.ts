@@ -6,6 +6,8 @@ import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
 import UnitService from '../UnitService';
+import { moveUnit } from '../../../actions/moveUnit';
+import { logMessage } from '../../../actions/logMessage';
 
 export default class HeavyAttack extends UnitAbility {
   constructor() {
@@ -23,7 +25,7 @@ export default class HeavyAttack extends UnitAbility {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await unitService.moveUnit(unit, coordinates);
+      await moveUnit(unit, coordinates, { state });
     } else {
       const targetUnit = map.getUnit(coordinates);
       if (targetUnit) {
@@ -36,7 +38,7 @@ export default class HeavyAttack extends UnitAbility {
           targetUnit
         });
         const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
-        state.logMessage(message);
+        logMessage(message, { state });
       }
     }
   };

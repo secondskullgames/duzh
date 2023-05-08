@@ -2,6 +2,7 @@ import GameState from './GameState';
 import UnitService from '../entities/units/UnitService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { loadNextMap } from '../actions/loadNextMap';
+import { killEnemies } from '../actions/debug/killEnemies';
 
 type Props = Readonly<{
   renderer: GameRenderer,
@@ -29,28 +30,11 @@ export class Debug {
 
   isMapRevealed = () => this.revealMap;
 
-  killEnemies = async () => {
-    const { state } = this;
-    const map = state.getMap();
-    const playerUnit = state.getPlayerUnit();
-    for (const unit of map.getAllUnits()) {
-      if (unit !== playerUnit) {
-        map.removeUnit(unit);
-      }
-    }
-    await this.renderer.render();
-  };
-
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
     await this.unitService.dealDamage(playerUnit.getMaxLife(), {
       targetUnit: playerUnit
     })
-    await this.renderer.render();
-  };
-
-  nextLevel = async () => {
-    await loadNextMap({ state: this.state });
     await this.renderer.render();
   };
 
@@ -64,6 +48,13 @@ export class Debug {
     // @ts-ignore
     window.jwb = window.jwb ?? {};
     // @ts-ignore
-    window.jwb.debug = this;
+    window.jwb.debug = {
+      ...this,
+      killEnemies,
+      nextLevel: () => loadNextMap({
+        state: this.state,
+        renderer: this.renderer
+      })
+    };
   };
 }

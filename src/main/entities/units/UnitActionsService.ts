@@ -9,6 +9,8 @@ import Sounds from '../../sounds/Sounds';
 import Door from '../objects/Door';
 import Block from '../objects/Block';
 import { gameOver } from '../../actions/gameOver';
+import { moveUnit } from '../../actions/moveUnit';
+import { logMessage } from '../../actions/logMessage';
 
 type Props = {
   state: GameState,
@@ -32,7 +34,7 @@ export default class UnitActionsService {
     if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
       // do nothing
     } else {
-      await this.unitService.moveUnit(unit, coordinates);
+      await moveUnit(unit, coordinates, { state });
     }
   };
 
@@ -48,7 +50,10 @@ export default class UnitActionsService {
       targetUnit: defender
     });
 
-    state.logMessage(`${attacker.getName()} hit ${defender.getName()} for ${adjustedDamage} damage!`);
+    logMessage(
+      `${attacker.getName()} hit ${defender.getName()} for ${adjustedDamage} damage!`,
+      { state }
+    );
 
     if (defender.getLife() <= 0) {
       await this._die(defender);
@@ -69,7 +74,7 @@ export default class UnitActionsService {
       return;
     } else {
       playSound(Sounds.ENEMY_DIES);
-      state.logMessage(`${defender.getName()} dies!`);
+      logMessage(`${defender.getName()} dies!`, { state });
     }
   };
 
@@ -85,7 +90,7 @@ export default class UnitActionsService {
   };
 
   pushBlock = async (unit: Unit, block: Block) => {
-    const { state, unitService } = this;
+    const { state } = this;
     const map = state.getMap();
     const coordinates = block.getCoordinates();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
@@ -93,7 +98,7 @@ export default class UnitActionsService {
 
     if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
       await block.moveTo(nextCoordinates);
-      await unitService.moveUnit(unit, coordinates);
+      await moveUnit(unit, coordinates, { state });
     }
   };
 
