@@ -16,6 +16,7 @@ import { checkNotNull } from '../utils/preconditions';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import UnitService from '../entities/units/UnitService';
 import { playAnimation } from '../graphics/animations/playAnimation';
+import GameRenderer from '../graphics/renderers/GameRenderer';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
@@ -89,7 +90,10 @@ export default class ItemService {
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);
-      await playAnimation(animation);
+      await playAnimation(animation, {
+        state: GameState.getInstance(),
+        renderer: GameRenderer.getInstance()
+      });
 
       for (const adjacentUnit of adjacentUnits) {
         await UnitService.getInstance().dealDamage(damage, {

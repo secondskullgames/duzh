@@ -9,6 +9,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import UnitActionsService from '../UnitActionsService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class PiercingAttack extends UnitAbility {
   constructor() {
@@ -45,7 +46,10 @@ export default class PiercingAttack extends UnitAbility {
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
         const animation = animationFactory.getAttackingAnimation(unit);
-        await playAnimation(animation);
+        await playAnimation(animation, {
+          state: GameState.getInstance(),
+          renderer: GameRenderer.getInstance()
+        });
         spawner.setState('DEAD');
       }
 
@@ -53,7 +57,10 @@ export default class PiercingAttack extends UnitAbility {
       if (nextSpawner && nextSpawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
         const animation = animationFactory.getAttackingAnimation(unit);
-        await playAnimation(animation);
+        await playAnimation(animation, {
+          state: GameState.getInstance(),
+          renderer: GameRenderer.getInstance()
+        });
         nextSpawner.setState('DEAD');
       }
     }

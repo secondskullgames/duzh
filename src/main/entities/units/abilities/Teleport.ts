@@ -9,6 +9,7 @@ import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -42,7 +43,10 @@ export default class Teleport extends UnitAbility {
 
       {
         const animation = await animationFactory.getWizardVanishingAnimation(unit);
-        await playAnimation(animation);
+        await playAnimation(animation, {
+          state: GameState.getInstance(),
+          renderer: GameRenderer.getInstance()
+        });
       }
 
       await UnitService.getInstance().moveUnit(unit, { x, y });
@@ -50,7 +54,10 @@ export default class Teleport extends UnitAbility {
 
       {
         const animation = await animationFactory.getWizardAppearingAnimation(unit);
-        await playAnimation(animation);
+        await playAnimation(animation, {
+          state: GameState.getInstance(),
+          renderer: GameRenderer.getInstance()
+        });
       }
 
       unit.spendMana(this.manaCost);

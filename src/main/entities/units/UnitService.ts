@@ -9,6 +9,7 @@ import { UnitAbilities } from './abilities/UnitAbilities';
 import { AbilityName } from './abilities/UnitAbility';
 import AnimationFactory from '../../graphics/animations/AnimationFactory';
 import { playAnimation } from '../../graphics/animations/playAnimation';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 const lifePerLevel = 0;
 const manaPerLevel = 2;
@@ -85,7 +86,10 @@ export default class UnitService {
 
   startAttack = async (unit: Unit, target: Unit) => {
     const animation = this.animationFactory.getAttackingAnimation(unit, target);
-    await playAnimation(animation);
+    await playAnimation(animation, {
+      state: this.state,
+      renderer: GameRenderer.getInstance()
+    });
 
     for (const equipment of unit.getEquipment().getAll()) {
       if (equipment.script) {

@@ -47,7 +47,10 @@ export default class ShootArrow extends UnitAbility {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await playAnimation(arrowAnimation);
+      await playAnimation(arrowAnimation, {
+        state: GameState.getInstance(),
+        renderer: GameRenderer.getInstance()
+      });
       const adjustedDamage = await unitService.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
@@ -56,7 +59,10 @@ export default class ShootArrow extends UnitAbility {
       state.logMessage(message);
     } else {
       const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
-      await playAnimation(arrowAnimation);
+      await playAnimation(arrowAnimation, {
+        state: GameState.getInstance(),
+        renderer: GameRenderer.getInstance()
+      });
     }
   };
 

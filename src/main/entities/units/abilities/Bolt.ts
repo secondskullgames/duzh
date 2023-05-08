@@ -50,10 +50,16 @@ export default class Bolt extends UnitAbility {
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
       state.logMessage(message);
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await playAnimation(boltAnimation);
+      await playAnimation(boltAnimation, {
+        state: GameState.getInstance(),
+        renderer: GameRenderer.getInstance()
+      });
     } else {
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
-      await playAnimation(boltAnimation);
+      await playAnimation(boltAnimation, {
+        state: GameState.getInstance(),
+        renderer: GameRenderer.getInstance()
+      });
     }
   };
 

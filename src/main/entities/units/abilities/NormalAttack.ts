@@ -9,6 +9,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import Block from '../../objects/Block';
 import UnitActionsService from '../UnitActionsService';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
 export default class NormalAttack extends UnitAbility {
   constructor() {
@@ -21,7 +22,6 @@ export default class NormalAttack extends UnitAbility {
     }
 
     const state = GameState.getInstance();
-    const playerUnit = state.getPlayerUnit();
 
     const map = state.getMap();
     const actionsService = UnitActionsService.getInstance();
@@ -52,7 +52,10 @@ export default class NormalAttack extends UnitAbility {
         if (spawner && spawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
           const animation = AnimationFactory.getInstance().getAttackingAnimation(unit);
-          await playAnimation(animation);
+          await playAnimation(animation, {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance()
+          });
           spawner.setState('DEAD');
           return;
         }

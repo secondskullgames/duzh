@@ -3,9 +3,12 @@ import GameRenderer from '../renderers/GameRenderer';
 import { sleep } from '../../utils/promises';
 import GameState from '../../core/GameState';
 
-export const playAnimation = async (animation: Animation) => {
-  const state = GameState.getInstance();
-  const renderer = GameRenderer.getInstance();
+type Props = Readonly<{
+  state: GameState,
+  renderer: GameRenderer
+}>;
+
+export const playAnimation = async (animation: Animation, { state, renderer }: Props) => {
   const map = state.getMap();
 
   for (let i = 0; i < animation.frames.length; i++) {
