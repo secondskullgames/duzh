@@ -15,7 +15,6 @@ import Sprite from './Sprite';
 import SpriteCategory from './SpriteCategory';
 import StaticSprite from './StaticSprite';
 import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
-import { checkNotNull } from '../../utils/preconditions';
 
 type Props = Readonly<{
   imageFactory: ImageFactory
@@ -196,8 +195,4 @@ export default class SpriteFactory {
 
     return imageMap;
   };
-
-  private static instance: SpriteFactory | null = null;
-  static getInstance = () => checkNotNull(SpriteFactory.instance);
-  static setInstance = (factory: SpriteFactory) => { SpriteFactory.instance = factory; };
 }

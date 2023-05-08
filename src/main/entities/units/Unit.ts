@@ -17,6 +17,7 @@ import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { levelUp } from '../../actions/levelUp';
+import { EntityType } from '../EntityType';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -306,7 +307,7 @@ export default class Unit implements Entity, Animatable {
   /**
    * @override {@link Entity#getType}
    */
-  getType = (): EntityType => 'unit';
+  getType = (): EntityType => EntityType.UNIT;
 
   incrementLevel = () => {
     this.level++;

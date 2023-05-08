@@ -1,6 +1,7 @@
 import Entity from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
+import { EntityType } from '../EntityType';
 
 type ObjectType = 'spawner' | 'door' | 'item' | 'block';
 
@@ -33,7 +34,7 @@ export default abstract class GameObject implements Entity {
   getSprite = (): Sprite | null => this.sprite;
 
   /** @override */
-  getType = (): EntityType => 'object';
+  getType = (): EntityType => EntityType.OBJECT;
 
   /** @override */
   abstract update: () => Promise<void>;

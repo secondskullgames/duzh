@@ -29,7 +29,6 @@ const main = async () => {
   });
   GameRenderer.setInstance(renderer);
   const spriteFactory = new SpriteFactory({ imageFactory });
-  SpriteFactory.setInstance(spriteFactory);
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   const animationFactory = new AnimationFactory({ state, projectileFactory });
   AnimationFactory.setInstance(animationFactory);
