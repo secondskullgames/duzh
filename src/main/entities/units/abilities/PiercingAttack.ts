@@ -3,18 +3,22 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class PiercingAttack extends UnitAbility {
-  constructor() {
-    super({ name: 'PIERCE', manaCost: 0 });
-  }
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
+};
 
-  use = async (
+export const PiercingAttack: UnitAbility = {
+  name: AbilityName.PIERCE,
+  manaCost: 0,
+  icon: null,
+
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -68,9 +72,7 @@ export default class PiercingAttack extends UnitAbility {
         }
       }
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
-  };
+  getDamageLogMessage
 }

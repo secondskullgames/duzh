@@ -4,18 +4,16 @@ import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 
-export default class Dash extends UnitAbility {
-  constructor() {
-    super({ name: 'DASH', manaCost: 6, icon: 'icon5' });
-  }
+const manaCost = 6;
 
-  /**
-   * @override
-   */
-  use = async (
+export const Dash: UnitAbility = {
+  name: AbilityName.DASH,
+  manaCost,
+  icon: 'icon5',
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -47,13 +45,13 @@ export default class Dash extends UnitAbility {
     }
 
     if (moved) {
-      unit.spendMana(this.manaCost);
+      unit.spendMana(manaCost);
     } else {
       playSound(Sounds.BLOCKED);
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
     throw new Error('can\'t get here');
   }
 }

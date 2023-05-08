@@ -1,14 +1,14 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 
-export default class Strafe extends UnitAbility {
-  constructor() {
-    super({ name: 'STRAFE', manaCost: 0 });
-  }
+export const Strafe: UnitAbility = {
+  name: AbilityName.STRAFE,
+  manaCost: 0,
+  icon: null,
 
-  use = async (
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state }: UnitAbilityProps
@@ -21,9 +21,9 @@ export default class Strafe extends UnitAbility {
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, { state });
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
     throw new Error('can\'t get here');
   }
 }

@@ -3,18 +3,23 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { walk } from '../../../actions/walk';
 
-export default class StunAttack extends UnitAbility {
-  constructor() {
-    super({ name: 'STUN_ATTACK', manaCost: 10, icon: 'icon2' });
-  }
+const manaCost = 10;
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`;
+};
 
-  use = async (
+export const StunAttack: UnitAbility = {
+  name: AbilityName.STUN_ATTACK,
+  manaCost,
+  icon: 'icon2',
+
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -40,7 +45,7 @@ export default class StunAttack extends UnitAbility {
         const targetUnit = map.getUnit({ x, y });
         if (targetUnit) {
           playSound(Sounds.SPECIAL_ATTACK);
-          unit.spendMana(this.manaCost);
+          unit.spendMana(manaCost);
           const damage = unit.getDamage();
           await startAttack(
             unit,
@@ -51,15 +56,13 @@ export default class StunAttack extends UnitAbility {
             sourceUnit: unit,
             targetUnit
           });
-          const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+          const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
           logMessage(message, { state });
           targetUnit.setStunned(2);
         }
       }
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`;
-  }
+  getDamageLogMessage
 }

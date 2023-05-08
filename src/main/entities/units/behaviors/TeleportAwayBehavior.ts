@@ -2,6 +2,7 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { UnitAbilities } from '../abilities/UnitAbilities';
+import { range as TELEPORT_RANGE } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
 import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
 
@@ -29,7 +30,7 @@ export default class TeleportAwayBehavior implements UnitBehavior {
       for (let x = 0; x < map.width; x++) {
         if (map.contains({ x, y })) {
           if (!map.isBlocked({ x, y })) {
-            if (manhattanDistance(unit.getCoordinates(), { x, y }) <= UnitAbilities.TELEPORT.RANGE) {
+            if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
               tiles.push({ x, y });
             }
           }

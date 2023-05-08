@@ -4,22 +4,20 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { moveUnit } from '../../../actions/moveUnit';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class Teleport extends UnitAbility {
-  readonly RANGE = 5;
+export const range = 5;
+const manaCost = 25;
 
-  constructor() {
-    super({ name: 'TELEPORT', manaCost: 24 });
-  }
+export const Teleport: UnitAbility = {
+  name: AbilityName.TELEPORT,
+  icon: null,
+  manaCost,
 
-  /**
-   * @override
-   */
-  use = async (
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -28,8 +26,8 @@ export default class Teleport extends UnitAbility {
       throw new Error('Teleport requires a target!');
     }
 
-    if (manhattanDistance(unit.getCoordinates(), coordinates) > this.RANGE) {
-      throw new Error(`Can't teleport more than ${this.RANGE} units`);
+    if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
+      throw new Error(`Can't teleport more than ${range} units`);
     }
 
     const map = state.getMap();
@@ -57,13 +55,13 @@ export default class Teleport extends UnitAbility {
         });
       }
 
-      unit.spendMana(this.manaCost);
+      unit.spendMana(manaCost);
     } else {
       playSound(Sounds.BLOCKED);
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  };
+  }
 }

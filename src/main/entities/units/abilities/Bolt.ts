@@ -3,18 +3,22 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class Bolt extends UnitAbility {
-  constructor() {
-    super({ name: 'BOLT', manaCost: 0 });
-  }
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
+};
 
-  use = async (
+export const Bolt: UnitAbility = {
+  name: AbilityName.BOLT,
+  icon: null,
+  manaCost: 0,
+
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -27,7 +31,7 @@ export default class Bolt extends UnitAbility {
     unit.setDirection({ dx, dy });
 
     await renderer.render();
-    unit.spendMana(this.manaCost);
+    // unit.spendMana(0); // TODO
 
     const map = state.getMap();
     const coordinatesList = [];
@@ -46,7 +50,7 @@ export default class Bolt extends UnitAbility {
         sourceUnit: unit,
         targetUnit
       });
-      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
       const boltAnimation = await AnimationFactory.getBoltAnimation(
         unit,
@@ -72,9 +76,7 @@ export default class Bolt extends UnitAbility {
         renderer
       });
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
-  }
+  getDamageLogMessage
 }

@@ -4,17 +4,22 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
-import UnitAbility, { UnitAbilityProps } from './UnitAbility';
+import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 
-export default class KnockbackAttack extends UnitAbility {
-  constructor() {
-    super({ name: 'KNOCKBACK_ATTACK', manaCost: 8, icon: 'icon6' });
-  }
+const manaCost = 8;
 
-  use = async (
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
+}
+
+export const KnockbackAttack: UnitAbility = {
+  name: AbilityName.KNOCKBACK_ATTACK,
+  manaCost,
+  icon: 'icon6',
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -30,7 +35,7 @@ export default class KnockbackAttack extends UnitAbility {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(this.manaCost);
+      unit.spendMana(manaCost);
       playSound(Sounds.SPECIAL_ATTACK);
       const damage = unit.getDamage();
       await startAttack(
@@ -42,7 +47,7 @@ export default class KnockbackAttack extends UnitAbility {
         sourceUnit: unit,
         targetUnit
       });
-      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
       targetUnit.setStunned(1);
 
@@ -57,9 +62,6 @@ export default class KnockbackAttack extends UnitAbility {
         }
       }
     }
-  };
-
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
-    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
-  }
-}
+  },
+  getDamageLogMessage
+};

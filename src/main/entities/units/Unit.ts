@@ -12,7 +12,7 @@ import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
 import UnitController from './controllers/UnitController';
-import UnitAbility, { AbilityName } from './abilities/UnitAbility';
+import { type UnitAbility, AbilityName } from './abilities/UnitAbility';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';

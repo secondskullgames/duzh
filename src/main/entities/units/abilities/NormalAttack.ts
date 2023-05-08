@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, AbilityName, type UnitAbilityProps } from './UnitAbility';
 import Block from '../../objects/Block';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
@@ -12,12 +12,11 @@ import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class NormalAttack extends UnitAbility {
-  constructor() {
-    super({ name: 'ATTACK', manaCost: 0 });
-  }
-
-  use = async (
+export const NormalAttack: UnitAbility = {
+  name: AbilityName.ATTACK,
+  icon: null,
+  manaCost: 0,
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -72,9 +71,9 @@ export default class NormalAttack extends UnitAbility {
         }
       }
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
     return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
-  };
-}
+  }
+};

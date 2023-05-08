@@ -3,18 +3,19 @@ import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 
-export type AbilityName =
-  | 'ATTACK'
-  | 'HEAVY_ATTACK'
-  | 'KNOCKBACK_ATTACK'
-  | 'STUN_ATTACK'
-  | 'SHOOT_ARROW'
-  | 'DASH'
-  | 'TELEPORT'
-  | 'SUMMON'
-  | 'BOLT'
-  | 'STRAFE'
-  | 'PIERCE';
+export enum AbilityName {
+  ATTACK = 'ATTACK',
+  HEAVY_ATTACK = 'HEAVY_ATTACK',
+  KNOCKBACK_ATTACK = 'KNOCKBACK_ATTACK',
+  STUN_ATTACK = 'STUN_ATTACK',
+  SHOOT_ARROW = 'SHOOT_ARROW',
+  DASH = 'DASH',
+  TELEPORT = 'TELEPORT',
+  SUMMON = 'SUMMON',
+  BOLT = 'BOLT',
+  STRAFE = 'STRAFE',
+  PIERCE = 'PIERCE'
+}
 
 type Props = Readonly<{
   name: string,
@@ -27,21 +28,16 @@ export type UnitAbilityProps = Readonly<{
   renderer: GameRenderer
 }>;
 
-export default abstract class UnitAbility {
-  readonly name: string;
-  readonly manaCost: number;
-  readonly icon: string | null;
+export type UnitAbility = Readonly<{
+  name: AbilityName,
+  manaCost: number,
+  icon: string | null,
 
-  protected constructor({ name, manaCost, icon }: Props) {
-    this.name = name;
-    this.manaCost = manaCost;
-    this.icon = icon ?? null;
-  }
-
-  abstract use: (
+  use: (
     unit: Unit,
     coordinates: Coordinates | null,
     { state }: UnitAbilityProps
   ) => Promise<void>;
-  abstract getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string;
-}
+
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string;
+}>;

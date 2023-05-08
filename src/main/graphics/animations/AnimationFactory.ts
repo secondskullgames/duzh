@@ -4,7 +4,6 @@ import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
-import { checkNotNull } from '../../utils/preconditions';
 import ImageFactory from '../images/ImageFactory';
 
 const FRAME_LENGTH = 150; // milliseconds

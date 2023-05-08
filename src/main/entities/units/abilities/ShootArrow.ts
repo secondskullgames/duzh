@@ -3,18 +3,24 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
+import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
-export default class ShootArrow extends UnitAbility {
-  constructor() {
-    super({ name: 'SHOOT_ARROW', manaCost: 6 });
-  }
+const manaCost = 6;
 
-  use = async (
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
+};
+
+export const ShootArrow: UnitAbility = {
+  name: AbilityName.SHOOT_ARROW,
+  icon: null,
+  manaCost,
+
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state, renderer }: UnitAbilityProps
@@ -30,7 +36,7 @@ export default class ShootArrow extends UnitAbility {
     unit.setDirection({ dx, dy });
 
     await renderer.render();
-    unit.spendMana(this.manaCost);
+    unit.spendMana(manaCost);
 
     const map = state.getMap();
     const coordinatesList = [];
@@ -60,7 +66,7 @@ export default class ShootArrow extends UnitAbility {
         sourceUnit: unit,
         targetUnit
       });
-      const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
     } else {
       const arrowAnimation = await AnimationFactory.getArrowAnimation(
@@ -75,9 +81,7 @@ export default class ShootArrow extends UnitAbility {
         renderer
       });
     }
-  };
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
-  };
+  getDamageLogMessage
 }

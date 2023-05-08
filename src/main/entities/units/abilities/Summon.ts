@@ -4,18 +4,17 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import UnitAbility, { type UnitAbilityProps } from './UnitAbility';
+import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
 
-export default class Summon extends UnitAbility {
-  constructor() {
-    super({ name: 'SUMMON', manaCost: 25 });
-  }
+const manaCost = 25;
 
-  /**
-   * @override
-   */
-  use = async (
+export const Summon: UnitAbility = {
+  name: AbilityName.SUMMON,
+  manaCost,
+  icon: null,
+
+  use: async (
     unit: Unit,
     coordinates: Coordinates | null,
     { state }: UnitAbilityProps
@@ -39,10 +38,10 @@ export default class Summon extends UnitAbility {
       coordinates
     });
     map.addUnit(summonedUnit);
-    unit.spendMana(this.manaCost);
-  };
+    unit.spendMana(manaCost);
+  },
 
-  getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => {
     throw new Error('can\'t get here');
-  };
-}
+  }
+};
