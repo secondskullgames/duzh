@@ -14,6 +14,7 @@ import MapFactory from '../maps/MapFactory';
 import ItemService from '../items/ItemService';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
+import { playTurn } from '../actions/playTurn';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -80,7 +81,10 @@ export default class InputHandler {
         return this._handleArrowKey(command.key, command.modifiers);
       case 'SPACEBAR':
         playSound(Sounds.FOOTSTEP);
-        return this.engine.playTurn();
+        await playTurn({
+          state: this.state,
+          renderer: GameRenderer.getInstance()
+        });
       case 'ENTER':
         return this._handleEnter(command.modifiers);
       case 'TAB':
@@ -137,7 +141,10 @@ export default class InputHandler {
         const playerController = playerUnit.getController() as PlayerUnitController;
         if (queuedOrder) {
           playerController.queuedOrder = queuedOrder;
-          await this.engine.playTurn();
+          await playTurn({
+            state: this.state,
+            renderer: GameRenderer.getInstance()
+          });
         }
         break;
       case 'INVENTORY':
@@ -189,7 +196,10 @@ export default class InputHandler {
           playSound(Sounds.DESCEND_STAIRS);
           await this.engine.loadNextMap();
         }
-        await this.engine.playTurn();
+        await playTurn({
+          state: this.state,
+          renderer: GameRenderer.getInstance()
+        });
         break;
       }
       case GameScreen.INVENTORY: {

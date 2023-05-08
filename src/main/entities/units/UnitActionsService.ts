@@ -9,6 +9,7 @@ import { playSound } from '../../sounds/SoundFX';
 import Sounds from '../../sounds/Sounds';
 import Door from '../objects/Door';
 import Block from '../objects/Block';
+import { gameOver } from '../../actions/gameOver';
 
 type Props = {
   state: GameState,
@@ -62,13 +63,13 @@ export default class UnitActionsService {
   };
 
   private _die = async (defender: Unit) => {
-    const { state, engine } = this;
+    const { state } = this;
     const map = state.getMap();
     const playerUnit = state.getPlayerUnit();
 
     map.removeUnit(defender);
     if (defender === playerUnit) {
-      await engine.gameOver();
+      await gameOver({ state });
       return;
     } else {
       playSound(Sounds.ENEMY_DIES);

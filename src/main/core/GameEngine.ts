@@ -7,10 +7,9 @@ import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
-import { sleep } from '../utils/promises';
-import { Animation } from '../graphics/animations/Animation';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
+import { updateRevealedTiles } from '../actions/updateRevealedTiles';
 
 let INSTANCE: GameEngine | null = null;
 
@@ -40,7 +39,7 @@ export class GameEngine {
     this.state.setMap(firstMap);
     Music.stop();
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-    this._updateRevealedTiles();
+    updateRevealedTiles({ state: this.state });
     await GameRenderer.getInstance().render();
     const t2 = new Date().getTime();
     console.debug(`Loaded level in ${t2 - t1} ms`);
@@ -52,32 +51,8 @@ export class GameEngine {
     Music.stop();
     // Music.playFigure(Music.TITLE_THEME);
     // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-    this._updateRevealedTiles();
+    updateRevealedTiles({ state: this.state });
     await GameRenderer.getInstance().render();
-  };
-
-  gameOver = async () => {
-    this.state.setScreen(GameScreen.GAME_OVER);
-    Music.stop();
-    playSound(Sounds.GAME_OVER);
-  };
-
-  playTurn = async () => {
-    const { state } = this;
-    const map = state.getMap();
-
-    const sortedUnits = _sortUnits(map.getAllUnits());
-    for (const unit of sortedUnits) {
-      await unit.update();
-    }
-
-    for (const object of map.getAllObjects()) {
-      await object.update();
-    }
-
-    this._updateRevealedTiles();
-    await GameRenderer.getInstance().render();
-    state.nextTurn();
   };
 
   loadNextMap = async () => {
@@ -89,7 +64,7 @@ export class GameEngine {
       const t1 = new Date().getTime();
       const nextMap = await state.loadNextMap();
       state.setMap(nextMap);
-      this._updateRevealedTiles();
+      updateRevealedTiles({ state: this.state })
       if (nextMap.music) {
         await Music.playMusic(nextMap.music);
       }
@@ -98,35 +73,6 @@ export class GameEngine {
     }
   };
 
-  /**
-   * Add any tiles the player can currently see to the map's revealed tiles list.
-   */
-  private _updateRevealedTiles = () => {
-    const { state } = this;
-    const playerUnit = state.getPlayerUnit();
-    const map = state.getMap();
-
-    const radius = 3;
-
-    const { x: playerX, y: playerY } = playerUnit.getCoordinates();
-    for (let y = playerY - radius; y <= playerY + radius; y++) {
-      for (let x = playerX - radius; x <= playerX + radius; x++) {
-        if (!map.isTileRevealed({ x, y })) {
-          map.revealTile({ x, y });
-        }
-      }
-    }
-  };
-
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };
   static getInstance = (): GameEngine => checkNotNull(INSTANCE);
 }
-
-/**
- * Sort the list of units such that the player unit is first in the order,
- * and other units appear in unspecified order
- */
-const _sortUnits = (units: Unit[]): Unit[] => sortBy(
-  units,
-  unit => (unit.getFaction() === 'PLAYER') ? 0 : 1
-);
