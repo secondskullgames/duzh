@@ -35,13 +35,11 @@ const main = async () => {
   const unitFactory = new UnitFactory({ itemFactory });
   UnitFactory.setInstance(unitFactory);
   const objectFactory = new ObjectFactory({ unitFactory, state });
-  const tileFactory = new TileFactory();
   const mapFactory = new MapFactory({
     state,
     imageFactory,
     itemFactory,
     objectFactory,
-    tileFactory,
     unitFactory
   });
   await addInitialState(state, unitFactory, mapFactory);

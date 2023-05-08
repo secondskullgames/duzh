@@ -16,8 +16,8 @@ type CreateTileProps = Readonly<{
   coordinates: Coordinates
 }>;
 
-export default class TileFactory {
-  getTileSet = async (id: string): Promise<TileSet> => {
+export default {
+  getTileSet: async (id: string): Promise<TileSet> => {
     const model = await loadTileSetModel(id);
     const tileSet: {
       [key in TileType]?: (Sprite | null)[]
@@ -39,11 +39,11 @@ export default class TileFactory {
     }
 
     return tileSet as TileSet;
-  };
+  },
 
-  createTile = ({ tileType, tileSet, coordinates }: CreateTileProps): Tile => {
+  createTile: ({ tileType, tileSet, coordinates }: CreateTileProps): Tile => {
     const tilesOfType = checkNotNull(tileSet[tileType]);
     const sprite = randChoice(tilesOfType);
     return new Tile({ tileType, sprite, coordinates });
-  };
+  }
 }

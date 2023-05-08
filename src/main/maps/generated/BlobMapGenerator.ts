@@ -5,15 +5,10 @@ import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import AbstractMapGenerator from './AbstractMapGenerator';
 import TileType from '../../schemas/TileType';
-import TileFactory from '../../tiles/TileFactory';
-
-type Props = Readonly<{
-  tileFactory: TileFactory
-}>;
 
 class BlobMapGenerator extends AbstractMapGenerator {
-  constructor({ tileFactory }: Props) {
-    super({ tileFactory });
+  constructor() {
+    super();
   }
 
   /**

@@ -5,15 +5,10 @@ import { randInt} from '../../utils/random';
 import AbstractMapGenerator from './AbstractMapGenerator';
 import EmptyMap from './EmptyMap';
 import TileType from '../../schemas/TileType';
-import TileFactory from '../../tiles/TileFactory';
-
-type Props = Readonly<{
-  tileFactory: TileFactory
-}>;
 
 class PathMapGenerator extends AbstractMapGenerator {
-  constructor({ tileFactory }: Props) {
-    super({ tileFactory });
+  constructor() {
+    super();
   }
 
   /** @override {@link AbstractMapGenerator#generateEmptyMap} */

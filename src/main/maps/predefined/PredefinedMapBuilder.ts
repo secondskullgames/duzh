@@ -27,7 +27,6 @@ type Props = Readonly<{
   imageFactory: ImageFactory,
   itemFactory: ItemFactory,
   objectFactory: ObjectFactory,
-  tileFactory: TileFactory,
   unitFactory: UnitFactory,
   state: GameState
 }>;
@@ -36,7 +35,6 @@ class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
   private readonly objectFactory: ObjectFactory;
-  private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
 
@@ -44,7 +42,6 @@ class PredefinedMapBuilder {
     this.imageFactory = props.imageFactory;
     this.itemFactory = props.itemFactory;
     this.objectFactory = props.objectFactory;
-    this.tileFactory = props.tileFactory;
     this.unitFactory = props.unitFactory;
     this.state = props.state;
   }
@@ -67,7 +64,7 @@ class PredefinedMapBuilder {
 
   private _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
     const tileColors = this._toHexColors(model.tileColors);
-    const tileSet = await this.tileFactory.getTileSet(model.tileset);
+    const tileSet = await TileFactory.getTileSet(model.tileset);
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.bitmap.height; y++) {
       tiles.push([]);
@@ -81,13 +78,13 @@ class PredefinedMapBuilder {
 
       const tileType = tileColors[color.hex] ?? null;
       if (tileType !== null) {
-        tiles[y][x] = this.tileFactory.createTile({
+        tiles[y][x] = TileFactory.createTile({
           tileType: tileType as TileType,
           tileSet,
           coordinates: { x, y }
         });
       } else if (model.defaultTile) {
-        tiles[y][x] = this.tileFactory.createTile({
+        tiles[y][x] = TileFactory.createTile({
           tileType: model.defaultTile,
           tileSet,
           coordinates: { x, y }
