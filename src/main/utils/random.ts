@@ -3,17 +3,17 @@ import { head } from './arrays';
 /**
  * @param max inclusive
  */
-const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
-const randBoolean = () => randInt(0, 1) === 1;
-const random = () => Math.random();
-const randChance = (chance: number) => Math.random() <= chance;
+export const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+export const randBoolean = () => randInt(0, 1) === 1;
+export const random = () => Math.random();
+export const randChance = (chance: number) => Math.random() <= chance;
 
-const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
+export const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
 
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
  */
-const shuffle = <T>(list: T[]) => {
+export const shuffle = <T>(list: T[]) => {
   let n = list.length;
 
   // While there remain elements to shuffle...
@@ -29,7 +29,7 @@ const shuffle = <T>(list: T[]) => {
   }
 };
 
-const weightedRandom = <T>(
+export const weightedRandom = <T>(
   probabilities: Record<string, number>,
   mappedObjects: Record<string, T>
 ): T => {
@@ -53,22 +53,11 @@ const weightedRandom = <T>(
  * TODO: not Fisher-Yates, whatever
  * TODO: undefined behavior if length < count
  */
-const sample = <T> (list: T[], count?: number): T[] => {
+export const sample = <T> (list: T[], count?: number): T[] => {
   const shuffled = [...list];
   shuffle(shuffled);
   if (count === undefined) {
     count = randInt(1, list.length - 1);
   }
   return head(shuffled, count);
-};
-
-export {
-  random,
-  randBoolean,
-  randChance,
-  randChoice,
-  randInt,
-  sample,
-  shuffle,
-  weightedRandom
 };

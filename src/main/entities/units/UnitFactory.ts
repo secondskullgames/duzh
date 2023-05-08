@@ -1,7 +1,7 @@
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import ItemService from '../../items/ItemService';
+import ItemFactory from '../../items/ItemFactory';
 import { Faction } from '../../types/types';
 import { loadUnitModel } from '../../utils/models';
 import PlayerUnitController from './controllers/PlayerUnitController';
@@ -24,16 +24,16 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  itemService: ItemService,
+  itemFactory: ItemFactory,
   spriteFactory: SpriteFactory
 }>
 
 export default class UnitFactory {
-  private readonly itemService: ItemService;
+  private readonly itemFactory: ItemFactory;
   private readonly spriteFactory: SpriteFactory;
 
-  constructor({ itemService, spriteFactory }: Props) {
-    this.itemService = itemService;
+  constructor({ itemFactory, spriteFactory }: Props) {
+    this.itemFactory = itemFactory;
     this.spriteFactory = spriteFactory;
   }
 
@@ -42,7 +42,7 @@ export default class UnitFactory {
     const sprite = await this.spriteFactory.createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of (model.equipment ?? [])) {
-      const equipment = await this.itemService.createEquipment(equipmentClass);
+      const equipment = await this.itemFactory.createEquipment(equipmentClass);
       equipmentList.push(equipment);
     }
 
@@ -81,8 +81,8 @@ export default class UnitFactory {
     return models;
   };
 
-  private static instance: UnitFactory | null = null;
+  private static INSTANCE: UnitFactory | null = null;
 
-  static getInstance = (): UnitFactory => checkNotNull(UnitFactory.instance);
-  static setInstance = (factory: UnitFactory) => { UnitFactory.instance = factory; };
+  static getInstance = (): UnitFactory => checkNotNull(UnitFactory.INSTANCE);
+  static setInstance = (factory: UnitFactory) => { UnitFactory.INSTANCE = factory; };
 }

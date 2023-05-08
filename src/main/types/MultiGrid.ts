@@ -37,7 +37,7 @@ export default class MultiGrid<T> {
   getAll = (): T[] => {
     return Object.values(this.array)
       .flatMap(row => row)
-      .flatMap(column => column);;
+      .flatMap(column => column);
   };
 
   remove = ({ x, y }: Coordinates, item: T) => {

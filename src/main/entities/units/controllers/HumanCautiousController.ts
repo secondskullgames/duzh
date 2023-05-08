@@ -3,7 +3,7 @@ import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { randChoice, weightedRandom } from '../../../utils/random';
+import { randChoice } from '../../../utils/random';
 import { canMove } from './ControllerUtils';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';

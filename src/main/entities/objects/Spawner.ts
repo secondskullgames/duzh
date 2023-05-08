@@ -3,8 +3,6 @@ import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
 import GameObject from './GameObject';
 import Unit from '../units/Unit';
-import UnitFactory from '../units/UnitFactory';
-import HumanDeterministicController from '../units/controllers/HumanDeterministicController';
 import Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerState = 'ALIVE' | 'DEAD';

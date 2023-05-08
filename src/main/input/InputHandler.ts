@@ -9,7 +9,7 @@ import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
 import { UnitAbilities } from '../entities/units/abilities/UnitAbilities';
 import MapFactory from '../maps/MapFactory';
-import ItemService from '../items/ItemService';
+import ItemFactory from '../items/ItemFactory';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
 import { playTurn } from '../actions/playTurn';
@@ -17,27 +17,29 @@ import { showSplashScreen } from '../actions/showSplashScreen';
 import { loadNextMap } from '../actions/loadNextMap';
 import { startGame } from '../actions/startGame';
 import { startGameDebug } from '../actions/startGameDebug';
+import { pickupItem } from '../actions/pickupItem';
+import { useItem } from '../actions/useItem';
 
 type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
   state: GameState,
   mapFactory: MapFactory,
-  itemService: ItemService
+  itemFactory: ItemFactory
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
   private readonly mapFactory: MapFactory;
-  private readonly itemService: ItemService;
+  private readonly itemFactory: ItemFactory;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({  state, mapFactory, itemService }: Props) {
+  constructor({  state, mapFactory, itemFactory }: Props) {
     this.state = state;
     this.mapFactory = mapFactory;
-    this.itemService = itemService;
+    this.itemFactory = itemFactory;
 
     this.busy = false;
     this.eventTarget = null;
@@ -81,6 +83,7 @@ export default class InputHandler {
           state: this.state,
           renderer: GameRenderer.getInstance()
         });
+        break;
       case 'ENTER':
         return this._handleEnter(command.modifiers);
       case 'TAB':
@@ -168,7 +171,7 @@ export default class InputHandler {
   };
 
   private _handleEnter = async (modifiers: ModifierKey[]) => {
-    const { state, itemService } = this;
+    const { state } = this;
     const playerUnit = state.getPlayerUnit();
 
     if (modifiers.includes('ALT')) {
@@ -182,14 +185,14 @@ export default class InputHandler {
 
     const renderer = GameRenderer.getInstance();
     switch (state.getScreen()) {
-      case 'GAME': {
+      case GameScreen.GAME: {
         const map = checkNotNull(state.getMap(), 'Map is not loaded!');
-        const { x, y } = playerUnit.getCoordinates();
-        const item = map.getItem({ x, y });
+        const coordinates = playerUnit.getCoordinates();
+        const item = map.getItem(coordinates);
         if (item) {
-          itemService.pickupItem(playerUnit, item);
+          pickupItem(playerUnit, item, { state });
           map.removeObject(item);
-        } else if (map.getTile({ x, y }).getTileType() === 'STAIRS_DOWN') {
+        } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
           playSound(Sounds.DESCEND_STAIRS);
           await loadNextMap({
             state,
@@ -198,7 +201,7 @@ export default class InputHandler {
         }
         await playTurn({
           state: this.state,
-          renderer: renderer
+          renderer
         });
         break;
       }
@@ -208,7 +211,7 @@ export default class InputHandler {
 
         if (selectedItem) {
           state.setScreen(GameScreen.GAME);
-          await itemService.useItem(playerUnit, selectedItem);
+          await useItem(playerUnit, selectedItem);
           await renderer.render();
         }
         break;

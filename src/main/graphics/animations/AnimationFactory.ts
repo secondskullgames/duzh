@@ -83,11 +83,11 @@ export default class AnimationFactory {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(({ x, y }) => this.state.getMap().isTileRevealed({ x, y }));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates => this.state.getMap().isTileRevealed(coordinates));
 
     // arrow movement frames
-    for (const { x, y } of visibleCoordinatesList) {
-      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await this.projectileFactory.createArrow(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
         projectiles: [projectile],
@@ -152,9 +152,8 @@ export default class AnimationFactory {
     const visibleCoordinatesList = coordinatesList.filter(this.state.getMap().isTileRevealed);
 
     // bolt movement frames
-    for (const { x, y } of visibleCoordinatesList) {
-      // TODO this is still using an arrow sprite
-      const projectile = await this.projectileFactory.createArrow({ x, y }, direction);
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await this.projectileFactory.createBolt(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],
         projectiles: [projectile],

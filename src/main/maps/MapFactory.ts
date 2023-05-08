@@ -1,4 +1,3 @@
-import TileSet from '../tiles/TileSet';
 import { loadGeneratedMapModel } from '../utils/models';
 import BlobMapGenerator from './generated/BlobMapGenerator';
 import AbstractMapGenerator from './generated/AbstractMapGenerator';
@@ -14,7 +13,7 @@ import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import TileFactory from '../tiles/TileFactory';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
-import ItemService from '../items/ItemService';
+import ItemFactory from '../items/ItemFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import UnitFactory from '../entities/units/UnitFactory';
@@ -22,8 +21,8 @@ import UnitFactory from '../entities/units/UnitFactory';
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
-  itemService: ItemService,
-  spawnerFactory: ObjectFactory,
+  itemFactory: ItemFactory,
+  objectFactory: ObjectFactory,
   spriteFactory: SpriteFactory,
   tileFactory: TileFactory,
   unitFactory: UnitFactory,
@@ -32,8 +31,8 @@ type Props = Readonly<{
 export default class MapFactory {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly itemService: ItemService;
-  private readonly spawnerFactory: ObjectFactory;
+  private readonly itemFactory: ItemFactory;
+  private readonly objectFactory: ObjectFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
   private readonly unitFactory: UnitFactory;
@@ -41,8 +40,8 @@ export default class MapFactory {
   constructor(props: Props) {
     this.state = props.state;
     this.imageFactory = props.imageFactory;
-    this.itemService = props.itemService;
-    this.spawnerFactory = props.spawnerFactory;
+    this.itemFactory = props.itemFactory;
+    this.objectFactory = props.objectFactory;
     this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
     this.unitFactory = props.unitFactory;
@@ -62,7 +61,7 @@ export default class MapFactory {
   };
 
   private loadGeneratedMap = async (mapClass: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
-    const dungeonGenerator = this._getDungeonGenerator(mapClass.layout, await TileSet.load(mapClass.tileSet));
+    const dungeonGenerator = this._getDungeonGenerator(mapClass.layout);
     return dungeonGenerator.generateMap(mapClass);
   };
 
@@ -70,8 +69,8 @@ export default class MapFactory {
     const {
       state,
       imageFactory,
-      itemService,
-      spawnerFactory,
+      itemFactory,
+      objectFactory,
       spriteFactory,
       unitFactory,
       tileFactory
@@ -80,8 +79,8 @@ export default class MapFactory {
     const mapBuilder = new PredefinedMapBuilder({
       state,
       imageFactory,
-      itemService,
-      spawnerFactory,
+      itemFactory,
+      objectFactory,
       spriteFactory,
       unitFactory,
       tileFactory
@@ -90,7 +89,7 @@ export default class MapFactory {
     return mapBuilder.build(mapId);
   }
 
-  private _getDungeonGenerator = (mapLayout: string, tileSet: TileSet): AbstractMapGenerator => {
+  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
     const { tileFactory } = this;
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {

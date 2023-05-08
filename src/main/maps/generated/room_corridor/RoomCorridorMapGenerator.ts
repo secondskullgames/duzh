@@ -1,4 +1,3 @@
-import TileSet from '../../../tiles/TileSet';
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
 import AbstractMapGenerator from '../AbstractMapGenerator';

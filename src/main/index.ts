@@ -5,7 +5,7 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './entities/units/UnitFactory';
-import ItemService from './items/ItemService';
+import ItemFactory from './items/ItemFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
@@ -33,17 +33,17 @@ const main = async () => {
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   const animationFactory = new AnimationFactory({ state, projectileFactory });
   AnimationFactory.setInstance(animationFactory);
-  const itemService = new ItemService({ state, spriteFactory, animationFactory });
-  ItemService.setInstance(itemService);
-  const unitFactory = new UnitFactory({ itemService: itemService, spriteFactory });
+  const itemFactory = new ItemFactory({ state, spriteFactory, animationFactory });
+  ItemFactory.setInstance(itemFactory);
+  const unitFactory = new UnitFactory({ itemFactory, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const spawnerFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
+  const objectFactory = new ObjectFactory({ spriteFactory, unitFactory, state });
   const tileFactory = new TileFactory({ spriteFactory });
   const mapFactory = new MapFactory({
     state,
     imageFactory,
-    itemService: itemService,
-    spawnerFactory,
+    itemFactory,
+    objectFactory,
     spriteFactory,
     tileFactory,
     unitFactory
@@ -52,7 +52,7 @@ const main = async () => {
   const inputHandler = new InputHandler({
     mapFactory,
     state,
-    itemService
+    itemFactory
   });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ state, renderer });

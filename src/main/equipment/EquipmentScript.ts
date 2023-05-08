@@ -8,7 +8,6 @@ export type EquipmentScript = 'bolt_sword';
 
 export namespace EquipmentScript {
   export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates) => {
-    const unit = checkNotNull(equipment.getUnit());
   };
 
   export const onMove = async (equipment: Equipment, script: EquipmentScript, target: Coordinates) => {
