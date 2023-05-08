@@ -9,35 +9,40 @@ import { Faction } from '../../types/types';
 import HumanRedesignController from '../units/controllers/HumanRedesignController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 export type SpawnerClass = 'mirror';
 
 type Props = Readonly<{
-  unitFactory: UnitFactory,
   state: GameState
 }>;
 
 export default class ObjectFactory {
-  private readonly unitFactory: UnitFactory;
   private readonly state: GameState;
 
-  constructor({ unitFactory, state }: Props) {
-    this.unitFactory = unitFactory;
+  constructor({ state }: Props) {
     this.state = state;
   }
 
   createMirror = async (coordinates: Coordinates): Promise<Spawner> => {
-    const { state, unitFactory } = this;
+    const { state } = this;
     const sprite = await SpriteFactory.createMirrorSprite({
       imageFactory: ImageFactory.getInstance()
     });
-    const spawnFunction = (coordinates: Coordinates) => unitFactory.createUnit({
-      unitClass: 'shade',
-      coordinates: coordinates,
-      level: 1,
-      controller: new HumanRedesignController({ state }),
-      faction: Faction.ENEMY,
-    });
+    const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
+      {
+        unitClass: 'shade',
+        coordinates: coordinates,
+        level: 1,
+        controller: new HumanRedesignController({ state }),
+        faction: Faction.ENEMY,
+      },
+      {
+        state,
+        renderer: GameRenderer.getInstance(),
+        imageFactory: ImageFactory.getInstance()
+      }
+    );
     const spawner = new Spawner({
       spawnFunction,
       sprite,

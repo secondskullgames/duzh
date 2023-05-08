@@ -18,7 +18,7 @@ export const playTurn = async ({ state, renderer }: Props) => {
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update();
+    await object.update({ state });
   }
 
   updateRevealedTiles({ state });

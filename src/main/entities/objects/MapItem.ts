@@ -1,10 +1,10 @@
 import Sprite from '../../graphics/sprites/Sprite';
 import InventoryItem from '../../items/InventoryItem';
-import GameObject from './GameObject';
+import GameObject, { ObjectType } from './GameObject';
+import Coordinates from '../../geometry/Coordinates';
 
 type Props = Readonly<{
-  x: number,
-  y: number,
+  coordinates: Coordinates,
   sprite: Sprite,
   inventoryItem: InventoryItem
 }>;
@@ -12,10 +12,10 @@ type Props = Readonly<{
 export default class MapItem extends GameObject {
   readonly inventoryItem: InventoryItem;
 
-  constructor({ x, y, sprite, inventoryItem }: Props) {
+  constructor({ coordinates, sprite, inventoryItem }: Props) {
     super({
-      coordinates: { x, y },
-      objectType: 'item',
+      coordinates,
+      objectType: ObjectType.ITEM,
       sprite
     });
     this.inventoryItem = inventoryItem;

@@ -9,8 +9,9 @@ import UnitController from './controllers/UnitController';
 import Unit from './Unit';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
-import { checkNotNull } from '../../utils/preconditions';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
+import GameState from '../../core/GameState';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -25,50 +26,57 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Props = Readonly<{
-  itemFactory: ItemFactory
-}>
+  state: GameState,
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
+}>;
 
-export default class UnitFactory {
-  private readonly itemFactory: ItemFactory;
-
-  constructor({ itemFactory }: Props) {
-    this.itemFactory = itemFactory;
+const createUnit = async (
+  { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
+  { state, renderer, imageFactory }: Props
+): Promise<Unit> => {
+  const model: UnitModel = await loadUnitModel(unitClass);
+  const sprite = await SpriteFactory.createUnitSprite(
+    model.sprite,
+    PaletteSwaps.create(model.paletteSwaps),
+    { imageFactory }
+  );
+  const equipmentList: Equipment[] = [];
+  for (const equipmentClass of (model.equipment ?? [])) {
+    const equipment = await ItemFactory.createEquipment(
+      equipmentClass,
+      { state, renderer, imageFactory }
+    );
+    equipmentList.push(equipment);
   }
 
-  createUnit = async ({ name, unitClass, faction, controller, level, coordinates }: CreateUnitProps): Promise<Unit> => {
-    const model: UnitModel = await loadUnitModel(unitClass);
-    const sprite = await SpriteFactory.createUnitSprite(
-      model.sprite,
-      PaletteSwaps.create(model.paletteSwaps),
-      { imageFactory: ImageFactory.getInstance() }
-    );
-    const equipmentList: Equipment[] = [];
-    for (const equipmentClass of (model.equipment ?? [])) {
-      const equipment = await this.itemFactory.createEquipment(equipmentClass);
-      equipmentList.push(equipment);
-    }
-
-    return new Unit({
-      name: name ?? model.name,
-      model,
-      faction,
-      controller,
-      level,
-      coordinates,
-      equipment: equipmentList,
-      sprite
-    });
-  };
-
-  createPlayerUnit = async (): Promise<Unit> => this.createUnit({
-    unitClass: 'player',
-    faction: Faction.PLAYER,
-    controller: PlayerUnitController.getInstance(),
-    level: 1,
-    coordinates: { x: 0, y: 0 }
+  return new Unit({
+    name: name ?? model.name,
+    model,
+    faction,
+    controller,
+    level,
+    coordinates,
+    equipment: equipmentList,
+    sprite
   });
+};
 
-  loadAllModels = async (): Promise<UnitModel[]> => {
+
+export default {
+  createUnit,
+  createPlayerUnit: async ({ state, renderer, imageFactory }: Props): Promise<Unit> => createUnit(
+    {
+      unitClass: 'player',
+      faction: Faction.PLAYER,
+      controller: PlayerUnitController.getInstance(),
+      level: 1,
+      coordinates: { x: 0, y: 0 }
+    },
+    { state, renderer, imageFactory }
+  ),
+
+  loadAllModels: async (): Promise<UnitModel[]> => {
     const requireContext = require.context(
       '../../../../data/units',
       false,
@@ -81,10 +89,5 @@ export default class UnitFactory {
       models.push(model);
     }
     return models;
-  };
-
-  private static INSTANCE: UnitFactory | null = null;
-
-  static getInstance = (): UnitFactory => checkNotNull(UnitFactory.INSTANCE);
-  static setInstance = (factory: UnitFactory) => { UnitFactory.INSTANCE = factory; };
+  }
 }

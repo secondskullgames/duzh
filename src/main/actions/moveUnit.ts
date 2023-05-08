@@ -24,7 +24,7 @@ export const moveUnit = async (unit: Unit, coordinates: Coordinates, { state }: 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
       const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
-      await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates);
+      await EquipmentScript.onMove(equipment, equipment.script, nextCoordinates, { state });
     }
   }
 };

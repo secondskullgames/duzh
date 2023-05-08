@@ -7,14 +7,17 @@ import { Bolt } from '../entities/units/abilities/Bolt';
 
 export type EquipmentScript = 'bolt_sword';
 
+type Props = Readonly<{
+  state: GameState
+}>;
+
 export namespace EquipmentScript {
-  export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates) => {
+  export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates, { state }: Props) => {
   };
 
-  export const onMove = async (equipment: Equipment, script: EquipmentScript, target: Coordinates) => {
+  export const onMove = async (equipment: Equipment, script: EquipmentScript, target: Coordinates, { state }: Props) => {
     const unit = checkNotNull(equipment.getUnit());
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     switch (script) {
       case 'bolt_sword': {

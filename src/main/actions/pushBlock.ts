@@ -3,6 +3,7 @@ import Block from '../entities/objects/Block';
 import Coordinates from '../geometry/Coordinates';
 import { moveUnit } from './moveUnit';
 import GameState from '../core/GameState';
+import { moveObject } from './moveObject';
 
 type Props = Readonly<{
   state: GameState
@@ -15,7 +16,7 @@ export const pushBlock = async (unit: Unit, block: Block, { state }: Props) => {
   const nextCoordinates = Coordinates.plus(coordinates, { dx, dy });
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
-    await block.moveTo(nextCoordinates);
+    await moveObject(block, nextCoordinates, { state });
     await moveUnit(unit, coordinates, { state });
   }
 };

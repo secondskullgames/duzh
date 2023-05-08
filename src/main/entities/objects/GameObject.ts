@@ -1,9 +1,14 @@
-import Entity from '../Entity';
+import Entity, { UpdateProps } from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 
-type ObjectType = 'spawner' | 'door' | 'item' | 'block';
+export enum ObjectType {
+  SPAWNER = 'spawner',
+  DOOR = 'door',
+  ITEM = 'item',
+  BLOCK = 'block'
+}
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -37,7 +42,7 @@ export default abstract class GameObject implements Entity {
   getType = (): EntityType => EntityType.OBJECT;
 
   /** @override */
-  abstract update: () => Promise<void>;
+  abstract update: ({ state }: UpdateProps) => Promise<void>;
   /** @override */
   abstract isBlocking: () => boolean;
 

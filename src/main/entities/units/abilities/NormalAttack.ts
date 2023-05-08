@@ -11,6 +11,8 @@ import { attack } from '../../../actions/attack';
 import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import { ObjectType } from '../../objects/GameObject';
+import { SpawnerState } from '../../objects/Spawner';
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
@@ -56,12 +58,12 @@ export const NormalAttack: UnitAbility = {
             state,
             renderer
           });
-          spawner.setState('DEAD');
+          spawner.setState(SpawnerState.DEAD);
           return;
         }
 
         const block = map.getObjects(coordinates)
-          .filter(object => object.getObjectType() === 'block')
+          .filter(object => object.getObjectType() === ObjectType.BLOCK)
           .map(object => object as Block)
           .find(block => block.isMovable());
 

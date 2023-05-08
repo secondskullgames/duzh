@@ -19,24 +19,18 @@ import UnitFactory from '../entities/units/UnitFactory';
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
-  itemFactory: ItemFactory,
   objectFactory: ObjectFactory,
-  unitFactory: UnitFactory,
 }>;
 
 export default class MapFactory {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly itemFactory: ItemFactory;
   private readonly objectFactory: ObjectFactory;
-  private readonly unitFactory: UnitFactory;
 
   constructor(props: Props) {
     this.state = props.state;
     this.imageFactory = props.imageFactory;
-    this.itemFactory = props.itemFactory;
     this.objectFactory = props.objectFactory;
-    this.unitFactory = props.unitFactory;
   }
 
   loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
@@ -61,17 +55,13 @@ export default class MapFactory {
     const {
       state,
       imageFactory,
-      itemFactory,
-      objectFactory,
-      unitFactory
+      objectFactory
     } = this;
 
     const mapBuilder = new PredefinedMapBuilder({
       state,
       imageFactory,
-      itemFactory,
-      objectFactory,
-      unitFactory
+      objectFactory
     });
 
     return mapBuilder.build(mapId);

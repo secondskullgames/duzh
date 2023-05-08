@@ -8,7 +8,6 @@ import GameState from '../core/GameState';
 import { ArrowKey, KeyCommand, ModifierKey, NumberKey } from './inputTypes';
 import { getDirection, mapToCommand } from './inputMappers';
 import MapFactory from '../maps/MapFactory';
-import ItemFactory from '../items/ItemFactory';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
 import { playTurn } from '../actions/playTurn';
@@ -26,22 +25,19 @@ type PromiseSupplier = () => Promise<void>;
 
 type Props = Readonly<{
   state: GameState,
-  mapFactory: MapFactory,
-  itemFactory: ItemFactory
+  mapFactory: MapFactory
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
   private readonly mapFactory: MapFactory;
-  private readonly itemFactory: ItemFactory;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
 
-  constructor({ state, mapFactory, itemFactory }: Props) {
+  constructor({ state, mapFactory }: Props) {
     this.state = state;
     this.mapFactory = mapFactory;
-    this.itemFactory = itemFactory;
 
     this.busy = false;
     this.eventTarget = null;

@@ -6,6 +6,8 @@ import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import { AbilityName, type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import ImageFactory from '../../../graphics/images/ImageFactory';
 
 const manaCost = 25;
 
@@ -30,13 +32,20 @@ export const Summon: UnitAbility = {
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
-    const summonedUnit = await UnitFactory.getInstance().createUnit({
-      unitClass,
-      faction: unit.getFaction(),
-      controller: new HumanRedesignController({ state }), // TODO
-      level: 1, // whatever
-      coordinates
-    });
+    const summonedUnit = await UnitFactory.createUnit(
+      {
+        unitClass,
+        faction: unit.getFaction(),
+        controller: new HumanRedesignController({ state }), // TODO
+        level: 1, // whatever
+        coordinates
+      },
+      {
+        state,
+        renderer: GameRenderer.getInstance(),
+        imageFactory: ImageFactory.getInstance()
+      }
+    );
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);
   },

@@ -20,7 +20,12 @@ export const startAttack = async (
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
-      await EquipmentScript.onAttack(equipment, equipment.script, target.getCoordinates());
+      await EquipmentScript.onAttack(
+        equipment,
+        equipment.script,
+        target.getCoordinates(),
+        { state }
+      );
     }
   }
 

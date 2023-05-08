@@ -24,23 +24,16 @@ const main = async () => {
     fontRenderer
   });
   GameRenderer.setInstance(renderer);
-  const itemFactory = new ItemFactory({ state });
-  ItemFactory.setInstance(itemFactory);
-  const unitFactory = new UnitFactory({ itemFactory });
-  UnitFactory.setInstance(unitFactory);
-  const objectFactory = new ObjectFactory({ unitFactory, state });
+  const objectFactory = new ObjectFactory({ state });
   const mapFactory = new MapFactory({
     state,
     imageFactory,
-    itemFactory,
     objectFactory,
-    unitFactory
   });
-  await addInitialState(state, unitFactory, mapFactory);
+  await addInitialState(state, mapFactory);
   const inputHandler = new InputHandler({
     mapFactory,
     state,
-    itemFactory
   });
   inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
   const debug = new Debug({ state, renderer });
@@ -48,8 +41,12 @@ const main = async () => {
   await GameRenderer.getInstance().render();
 };
 
-const addInitialState = async (state: GameState, unitFactory: UnitFactory, mapFactory: MapFactory) => {
-  const playerUnit = await unitFactory.createPlayerUnit();
+const addInitialState = async (state: GameState, mapFactory: MapFactory) => {
+  const playerUnit = await UnitFactory.createPlayerUnit({
+    state,
+    renderer: GameRenderer.getInstance(),
+    imageFactory: ImageFactory.getInstance()
+  });
   state.setPlayerUnit(playerUnit);
 
   const mapSpecs = (await import(
