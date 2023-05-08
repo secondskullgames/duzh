@@ -5,11 +5,9 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import MapFactory from './maps/MapFactory';
 import { MapSupplier } from './maps/MapSupplier';
 import UnitFactory from './entities/units/UnitFactory';
-import ItemFactory from './items/ItemFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import InputHandler from './input/InputHandler';
-import ObjectFactory from './entities/objects/ObjectFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -24,11 +22,9 @@ const main = async () => {
     fontRenderer
   });
   GameRenderer.setInstance(renderer);
-  const objectFactory = new ObjectFactory({ state });
   const mapFactory = new MapFactory({
     state,
-    imageFactory,
-    objectFactory,
+    imageFactory
   });
   await addInitialState(state, mapFactory);
   const inputHandler = new InputHandler({

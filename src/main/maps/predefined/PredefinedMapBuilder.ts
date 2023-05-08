@@ -26,18 +26,15 @@ import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
-  objectFactory: ObjectFactory,
   state: GameState
 }>;
 
 class PredefinedMapBuilder {
   private readonly imageFactory: ImageFactory;
-  private readonly objectFactory: ObjectFactory;
   private readonly state: GameState;
 
   constructor(props: Props) {
     this.imageFactory = props.imageFactory;
-    this.objectFactory = props.objectFactory;
     this.state = props.state;
   }
 
@@ -173,10 +170,24 @@ class PredefinedMapBuilder {
         });
         objects.push(door);
       } else if (objectName === 'mirror') {
-        const spawner = await this.objectFactory.createMirror({ x, y });
+        const spawner = await ObjectFactory.createMirror(
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(spawner);
       } else if (objectName === 'movable_block') {
-        const block = await this.objectFactory.createMovableBlock({ x, y });
+        const block = await ObjectFactory.createMovableBlock(
+          { x, y },
+          {
+            state: GameState.getInstance(),
+            renderer: GameRenderer.getInstance(),
+            imageFactory: ImageFactory.getInstance()
+          }
+        );
         objects.push(block);
       } else if (objectName) {
         throw new Error(`Unrecognized object name: ${objectName}`);

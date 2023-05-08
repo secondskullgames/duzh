@@ -12,25 +12,20 @@ import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
-import ItemFactory from '../items/ItemFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import UnitFactory from '../entities/units/UnitFactory';
 
 type Props = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory,
-  objectFactory: ObjectFactory,
+  imageFactory: ImageFactory
 }>;
 
 export default class MapFactory {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly objectFactory: ObjectFactory;
 
   constructor(props: Props) {
     this.state = props.state;
     this.imageFactory = props.imageFactory;
-    this.objectFactory = props.objectFactory;
   }
 
   loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
@@ -54,14 +49,12 @@ export default class MapFactory {
   private loadPredefinedMap = async (mapId: string): Promise<MapInstance> => {
     const {
       state,
-      imageFactory,
-      objectFactory
+      imageFactory
     } = this;
 
     const mapBuilder = new PredefinedMapBuilder({
       state,
-      imageFactory,
-      objectFactory
+      imageFactory
     });
 
     return mapBuilder.build(mapId);
