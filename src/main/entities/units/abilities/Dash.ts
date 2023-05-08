@@ -5,7 +5,7 @@ import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { moveUnit } from '../../../actions/moveUnit';
 
@@ -17,14 +17,17 @@ export default class Dash extends UnitAbility {
   /**
    * @override
    */
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
     }
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
-    const state = GameState.getInstance();
     const map = state.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));

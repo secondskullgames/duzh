@@ -4,7 +4,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
@@ -16,12 +16,15 @@ export default class PiercingAttack extends UnitAbility {
     super({ name: 'PIERCE', manaCost: 0 });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
     }
 
-    const state = GameState.getInstance();
     const map = state.getMap();
     const animationFactory = AnimationFactory.getInstance();
     const renderer = GameRenderer.getInstance();

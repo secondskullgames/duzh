@@ -4,7 +4,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
@@ -17,14 +17,17 @@ export default class StunAttack extends UnitAbility {
     super({ name: 'STUN_ATTACK', manaCost: 10, icon: 'icon2' });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
     }
 
     const { x, y } = coordinates;
 
-    const state = GameState.getInstance();
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);

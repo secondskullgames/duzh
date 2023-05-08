@@ -44,6 +44,6 @@ export default class HumanDeterministicController implements UnitController {
         behavior = new WanderBehavior();
       }
     }
-    return behavior.execute(unit);
+    return behavior.execute(unit, { state: this.state });
   }
 };

@@ -4,7 +4,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
@@ -16,7 +16,11 @@ export default class ShootArrow extends UnitAbility {
     super({ name: 'SHOOT_ARROW', manaCost: 6 });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
     }
@@ -24,7 +28,6 @@ export default class ShootArrow extends UnitAbility {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const state = GameState.getInstance();
     const animationFactory = AnimationFactory.getInstance();
     const renderer = GameRenderer.getInstance();
 

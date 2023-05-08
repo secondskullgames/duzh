@@ -5,7 +5,7 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -17,12 +17,15 @@ export default class KnockbackAttack extends UnitAbility {
     super({ name: 'KNOCKBACK_ATTACK', manaCost: 8, icon: 'icon6' });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
     }
 
-    const state = GameState.getInstance();
     const renderer = GameRenderer.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);

@@ -4,7 +4,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
@@ -17,12 +17,15 @@ export default class HeavyAttack extends UnitAbility {
     super({ name: 'HEAVY_ATTACK', manaCost: 8, icon: 'icon1' });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
     }
 
-    const state = GameState.getInstance();
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);

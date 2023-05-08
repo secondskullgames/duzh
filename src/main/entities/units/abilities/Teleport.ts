@@ -5,7 +5,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
@@ -21,8 +21,11 @@ export default class Teleport extends UnitAbility {
   /**
    * @override
    */
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
-    const state = GameState.getInstance();
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     const animationFactory = AnimationFactory.getInstance();
 
     if (!coordinates) {

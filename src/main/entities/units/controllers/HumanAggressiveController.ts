@@ -38,6 +38,6 @@ export default class HumanAggressiveController implements UnitController {
         ? new AttackUnitBehavior({ targetUnit: playerUnit })
         : new StayBehavior();
     }
-    return behavior.execute(unit);
+    return behavior.execute(unit, { state: this.state });
   }
 };

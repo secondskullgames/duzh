@@ -1,9 +1,10 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
 import { UnitAbilities } from '../abilities/UnitAbilities';
-import UnitBehavior from './UnitBehavior';
+import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -17,9 +18,8 @@ export default class AttackUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit) => {
+  execute = async (unit: Unit, { state }: UnitBehaviorProps) => {
     const { targetUnit } = this;
-    const state = GameState.getInstance();
     const map = state.getMap();
     const mapRect = map.getRect();
     const unblockedTiles: Coordinates[] = [];
@@ -43,10 +43,15 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const coordinates = path[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
-        await UnitAbilities.ATTACK.use(unit, coordinates);
+        await UnitAbilities.ATTACK.use(
+          unit,
+          coordinates,
+          {
+            state,
+            renderer: GameRenderer.getInstance(),
+            animationFactory: AnimationFactory.getInstance()
+          });
       }
-    } else {
-      console.log('blocked');
     }
   };
 }

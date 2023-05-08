@@ -1,15 +1,15 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { randChoice } from '../../../utils/random';
 import { UnitAbilities } from '../abilities/UnitAbilities';
-import UnitBehavior from './UnitBehavior';
+import UnitBehavior, { type UnitBehaviorProps } from './UnitBehavior';
+import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#execute} */
-  execute = async (unit: Unit) => {
-    const state = GameState.getInstance();
+  execute = async (unit: Unit, { state }: UnitBehaviorProps) => {
     const map = state.getMap();
     const tiles: Coordinates[] = [];
 
@@ -24,7 +24,15 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (tiles.length > 0) {
       const coordinates = randChoice(tiles);
-      await UnitAbilities.ATTACK.use(unit, coordinates);
+      await UnitAbilities.ATTACK.use(
+        unit,
+        coordinates,
+        {
+          state,
+          renderer: GameRenderer.getInstance(),
+          animationFactory: AnimationFactory.getInstance()
+        }
+      );
     }
   };
 }

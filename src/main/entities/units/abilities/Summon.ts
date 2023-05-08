@@ -5,7 +5,7 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import HumanDeterministicController from '../controllers/HumanDeterministicController';
 
 export default class Summon extends UnitAbility {
@@ -16,12 +16,15 @@ export default class Summon extends UnitAbility {
   /**
    * @override
    */
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
     }
 
-    const state = GameState.getInstance();
     const map = state.getMap();
 
     const unitClass = checkNotNull(unit.getSummonedUnitClass());

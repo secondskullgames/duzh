@@ -19,6 +19,7 @@ import { startGame } from '../actions/startGame';
 import { startGameDebug } from '../actions/startGameDebug';
 import { pickupItem } from '../actions/pickupItem';
 import { useItem } from '../actions/useItem';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type PromiseSupplier = () => Promise<void>;
 
@@ -120,21 +121,53 @@ export default class InputHandler {
         let queuedOrder: PromiseSupplier | null = null;
         if (modifiers.includes('SHIFT')) {
           if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(UnitAbilities.SHOOT_ARROW.manaCost)) {
-            queuedOrder = () => UnitAbilities.SHOOT_ARROW.use(playerUnit, { x, y });
+            queuedOrder = () => UnitAbilities.SHOOT_ARROW.use(
+              playerUnit,
+              { x, y },
+              {
+                state,
+                renderer: GameRenderer.getInstance(),
+                animationFactory: AnimationFactory.getInstance()
+              }
+            );
           }
         } else if (modifiers.includes('ALT')) {
           if (playerUnit.canSpendMana(UnitAbilities.STRAFE.manaCost)) {
-            queuedOrder = () => UnitAbilities.STRAFE.use(playerUnit, { x, y });
+            queuedOrder = () => UnitAbilities.STRAFE.use(
+              playerUnit,
+              { x, y },
+              {
+                state,
+                renderer: GameRenderer.getInstance(),
+                animationFactory: AnimationFactory.getInstance()
+              }
+            );
           }
         } else {
           const ability = state.getQueuedAbility();
           if (ability !== null) {
             queuedOrder = async () => {
               state.setQueuedAbility(null);
-              await ability.use(playerUnit, { x, y });
+              await ability.use(
+                playerUnit,
+                { x, y },
+                {
+                  state,
+                  renderer: GameRenderer.getInstance(),
+                  animationFactory: AnimationFactory.getInstance()
+                }
+              );
             };
           } else {
-            queuedOrder = () => UnitAbilities.ATTACK.use(playerUnit, { x, y });
+            queuedOrder = () => UnitAbilities.ATTACK.use(
+              playerUnit,
+              { x, y },
+              {
+                state,
+                renderer: GameRenderer.getInstance(),
+                animationFactory: AnimationFactory.getInstance()
+              }
+            );
           }
         }
         const playerController = playerUnit.getController() as PlayerUnitController;

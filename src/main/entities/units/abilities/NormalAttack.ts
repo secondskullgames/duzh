@@ -4,7 +4,7 @@ import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
-import UnitAbility from './UnitAbility';
+import UnitAbility, { UnitAbilityProps } from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import Block from '../../objects/Block';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
@@ -19,12 +19,15 @@ export default class NormalAttack extends UnitAbility {
     super({ name: 'ATTACK', manaCost: 0 });
   }
 
-  use = async (unit: Unit, coordinates: Coordinates | null) => {
+  use = async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    { state }: UnitAbilityProps
+  ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
     }
 
-    const state = GameState.getInstance();
     const renderer = GameRenderer.getInstance();
     const animationFactory = AnimationFactory.getInstance();
 
