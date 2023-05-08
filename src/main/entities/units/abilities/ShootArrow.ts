@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
@@ -9,6 +8,7 @@ import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
 
 export default class ShootArrow extends UnitAbility {
   constructor() {
@@ -23,9 +23,9 @@ export default class ShootArrow extends UnitAbility {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const unitService = UnitService.getInstance();
+    const animationFactory = AnimationFactory.getInstance();
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
@@ -46,8 +46,8 @@ export default class ShootArrow extends UnitAbility {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await engine.playAnimation(arrowAnimation);
+      const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
+      await playAnimation(arrowAnimation);
       const adjustedDamage = await unitService.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
@@ -55,8 +55,8 @@ export default class ShootArrow extends UnitAbility {
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
       state.logMessage(message);
     } else {
-      const arrowAnimation = await AnimationFactory.getInstance().getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
-      await engine.playAnimation(arrowAnimation);
+      const arrowAnimation = await animationFactory.getArrowAnimation(unit, { dx, dy }, coordinatesList, null);
+      await playAnimation(arrowAnimation);
     }
   };
 

@@ -118,33 +118,6 @@ export class GameEngine {
     }
   };
 
-  playAnimation = async (animation: Animation) => {
-    const { frames } = animation;
-    const map = this.state.getMap();
-
-    for (let i = 0; i < frames.length; i++) {
-      const frame = frames[i];
-      for (const projectile of (frame.projectiles ?? [])) {
-        map.projectiles.add(projectile);
-      }
-      for (let j = 0; j < frame.units.length; j++) {
-        const { unit, activity, frameNumber, direction } = frame.units[j];
-        unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
-      }
-
-      await GameRenderer.getInstance().render();
-
-      if (!!frame.postDelay) {
-        console.log(`sleep ${frame.postDelay}`);
-        await sleep(frame.postDelay);
-      }
-
-      for (const projectile of (frame.projectiles ?? [])) {
-        map.removeProjectile(projectile);
-      }
-    }
-  };
-
   static setInstance = (instance: GameEngine) => { INSTANCE = instance; };
   static getInstance = (): GameEngine => checkNotNull(INSTANCE);
 }

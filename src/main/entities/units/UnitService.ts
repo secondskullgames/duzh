@@ -8,7 +8,7 @@ import { checkNotNull } from '../../utils/preconditions';
 import { UnitAbilities } from './abilities/UnitAbilities';
 import { AbilityName } from './abilities/UnitAbility';
 import AnimationFactory from '../../graphics/animations/AnimationFactory';
-import { GameEngine } from '../../core/GameEngine';
+import { playAnimation } from '../../graphics/animations/playAnimation';
 
 const lifePerLevel = 0;
 const manaPerLevel = 2;
@@ -16,18 +16,15 @@ const damagePerLevel = 0;
 
 type Props = Readonly<{
   state: GameState,
-  engine: GameEngine,
   animationFactory: AnimationFactory
 }>;
 
 export default class UnitService {
   private readonly state: GameState;
-  private readonly engine: GameEngine;
   private readonly animationFactory: AnimationFactory;
 
-  constructor({ state, engine, animationFactory }: Props) {
+  constructor({ state, animationFactory }: Props) {
     this.state = state;
-    this.engine = engine;
     this.animationFactory = animationFactory;
   }
 
@@ -88,7 +85,7 @@ export default class UnitService {
 
   startAttack = async (unit: Unit, target: Unit) => {
     const animation = this.animationFactory.getAttackingAnimation(unit, target);
-    await this.engine.playAnimation(animation);
+    await playAnimation(animation);
 
     for (const equipment of unit.getEquipment().getAll()) {
       if (equipment.script) {

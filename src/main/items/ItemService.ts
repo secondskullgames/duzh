@@ -15,25 +15,23 @@ import EquipmentModel from '../schemas/EquipmentModel';
 import { checkNotNull } from '../utils/preconditions';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import UnitService from '../entities/units/UnitService';
+import { playAnimation } from '../graphics/animations/playAnimation';
 
 type ItemProc = (item: InventoryItem, unit: Unit) => Promise<void>;
 
 type Props = Readonly<{
   state: GameState,
-  engine: GameEngine,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory
 }>;
 
 export default class ItemService {
   private readonly state: GameState;
-  private readonly engine: GameEngine;
   private readonly spriteFactory: SpriteFactory;
   private readonly animationFactory: AnimationFactory;
 
-  constructor({ state, engine, spriteFactory, animationFactory }: Props) {
+  constructor({ state,  spriteFactory, animationFactory }: Props) {
     this.state = state;
-    this.engine = engine;
     this.spriteFactory = spriteFactory;
     this.animationFactory = animationFactory;
   }
@@ -78,7 +76,7 @@ export default class ItemService {
 
   createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
     const onUse: ItemProc = async (item, unit): Promise<void> => {
-      const { state, engine } = this;
+      const { state } = this;
       const map = state.getMap();
 
       const adjacentUnits: Unit[] = map.getAllUnits()
@@ -91,7 +89,7 @@ export default class ItemService {
 
       playSound(Sounds.PLAYER_HITS_ENEMY);
       const animation = await this.animationFactory.getFloorFireAnimation(unit, adjacentUnits);
-      await engine.playAnimation(animation);
+      await playAnimation(animation);
 
       for (const adjacentUnit of adjacentUnits) {
         await UnitService.getInstance().dealDamage(damage, {

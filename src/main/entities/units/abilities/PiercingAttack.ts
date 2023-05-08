@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
@@ -9,6 +8,7 @@ import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import UnitActionsService from '../UnitActionsService';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
 
 export default class PiercingAttack extends UnitAbility {
   constructor() {
@@ -20,7 +20,6 @@ export default class PiercingAttack extends UnitAbility {
       throw new Error('PiercingAttack requires a target!');
     }
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const map = state.getMap();
     const unitService = UnitService.getInstance();
@@ -46,7 +45,7 @@ export default class PiercingAttack extends UnitAbility {
       if (spawner && spawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
         const animation = animationFactory.getAttackingAnimation(unit);
-        await engine.playAnimation(animation);
+        await playAnimation(animation);
         spawner.setState('DEAD');
       }
 
@@ -54,7 +53,7 @@ export default class PiercingAttack extends UnitAbility {
       if (nextSpawner && nextSpawner.isBlocking()) {
         playSound(Sounds.SPECIAL_ATTACK);
         const animation = animationFactory.getAttackingAnimation(unit);
-        await engine.playAnimation(animation);
+        await playAnimation(animation);
         nextSpawner.setState('DEAD');
       }
     }

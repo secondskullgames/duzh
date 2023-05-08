@@ -6,9 +6,9 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
 import Sounds from '../../../sounds/Sounds';
 import UnitAbility from './UnitAbility';
-import { GameEngine } from '../../../core/GameEngine';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
 
 export default class Teleport extends UnitAbility {
   readonly RANGE = 5;
@@ -22,7 +22,6 @@ export default class Teleport extends UnitAbility {
    */
   use = async (unit: Unit, coordinates: Coordinates | null) => {
     const state = GameState.getInstance();
-    const engine = GameEngine.getInstance();
     const animationFactory = AnimationFactory.getInstance();
 
     if (!coordinates) {
@@ -43,7 +42,7 @@ export default class Teleport extends UnitAbility {
 
       {
         const animation = await animationFactory.getWizardVanishingAnimation(unit);
-        await engine.playAnimation(animation);
+        await playAnimation(animation);
       }
 
       await UnitService.getInstance().moveUnit(unit, { x, y });
@@ -51,7 +50,7 @@ export default class Teleport extends UnitAbility {
 
       {
         const animation = await animationFactory.getWizardAppearingAnimation(unit);
-        await engine.playAnimation(animation);
+        await playAnimation(animation);
       }
 
       unit.spendMana(this.manaCost);

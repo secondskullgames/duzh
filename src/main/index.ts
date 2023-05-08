@@ -41,11 +41,11 @@ const main = async () => {
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   const animationFactory = new AnimationFactory({ state, projectileFactory });
   AnimationFactory.setInstance(animationFactory);
-  const itemService = new ItemService({ state, engine, spriteFactory, animationFactory });
+  const itemService = new ItemService({ state, spriteFactory, animationFactory });
   ItemService.setInstance(itemService);
   const unitFactory = new UnitFactory({ itemService: itemService, spriteFactory });
   UnitFactory.setInstance(unitFactory);
-  const unitService = new UnitService({ state, engine, animationFactory });
+  const unitService = new UnitService({ state, animationFactory });
   UnitService.setInstance(unitService);
   const unitActionsService = new UnitActionsService({ state, engine, unitService });
   UnitActionsService.setInstance(unitActionsService);

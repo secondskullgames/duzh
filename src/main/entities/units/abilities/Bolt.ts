@@ -1,6 +1,5 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { GameEngine } from '../../../core/GameEngine';
 import GameState from '../../../core/GameState';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/SoundFX';
@@ -9,6 +8,7 @@ import UnitAbility from './UnitAbility';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import UnitService from '../UnitService';
 import GameRenderer from '../../../graphics/renderers/GameRenderer';
+import { playAnimation } from '../../../graphics/animations/playAnimation';
 
 export default class Bolt extends UnitAbility {
   constructor() {
@@ -20,7 +20,6 @@ export default class Bolt extends UnitAbility {
       throw new Error('Bolt requires a target!');
     }
 
-    const engine = GameEngine.getInstance();
     const state = GameState.getInstance();
     const unitService = UnitService.getInstance();
     const animationFactory = AnimationFactory.getInstance();
@@ -51,10 +50,10 @@ export default class Bolt extends UnitAbility {
       const message = this.getDamageLogMessage(unit, targetUnit, adjustedDamage);
       state.logMessage(message);
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit);
-      await engine.playAnimation(boltAnimation);
+      await playAnimation(boltAnimation);
     } else {
       const boltAnimation = await animationFactory.getBoltAnimation(unit, { dx, dy }, coordinatesList, null);
-      await engine.playAnimation(boltAnimation);
+      await playAnimation(boltAnimation);
     }
   };
 
