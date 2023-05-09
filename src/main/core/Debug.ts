@@ -4,6 +4,7 @@ import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { dealDamage } from '../actions/dealDamage';
 import { levelUp as _levelUp } from '../actions/levelUp';
+import { die } from '../actions/die';
 
 type Props = Readonly<{
   renderer: GameRenderer,
@@ -30,9 +31,7 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    await dealDamage(playerUnit.getMaxLife(), {
-      targetUnit: playerUnit
-    })
+    await die(playerUnit, { state: this.state });
     await this.renderer.render();
   };
 

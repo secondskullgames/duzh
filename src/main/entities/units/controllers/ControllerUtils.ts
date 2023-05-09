@@ -6,7 +6,7 @@ type CanMoveProps = Readonly<{
 
 export const canMove = (speed: number, { state }: CanMoveProps): boolean => {
   // deterministic version
-  const turn = GameState.getInstance().getTurn();
+  const turn = state.getTurn();
   return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version

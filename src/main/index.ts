@@ -1,13 +1,10 @@
-import type MapSpec from './schemas/MapSpec';
 import { Debug } from './core/Debug';
 import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
-import MapFactory from './maps/MapFactory';
-import { MapSupplier } from './maps/MapSupplier';
-import UnitFactory from './entities/units/UnitFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import InputHandler from './input/InputHandler';
+import { addInitialState } from './actions/addInitialState';
 
 const main = async () => {
   const state = new GameState();
@@ -22,31 +19,12 @@ const main = async () => {
     fontRenderer
   });
   GameRenderer.setInstance(renderer);
-  await addInitialState(state);
+  await addInitialState({ state, imageFactory });
   const inputHandler = new InputHandler();
-  inputHandler.addEventListener((renderer as GameRenderer).getCanvas());
+  inputHandler.addEventListener(renderer.getCanvas());
   const debug = new Debug({ state, renderer });
   debug.attachToWindow();
-  await GameRenderer.getInstance().render();
-};
-
-const addInitialState = async (state: GameState) => {
-  const playerUnit = await UnitFactory.createPlayerUnit({
-    imageFactory: ImageFactory.getInstance()
-  });
-  state.setPlayerUnit(playerUnit);
-
-  const mapSpecs = (await import(
-    /* webpackChunkName: "models" */
-    `../../data/maps.json`
-    )).default as MapSpec[];
-  const maps: MapSupplier[] = mapSpecs.map(spec => {
-    return () => MapFactory.loadMap(spec, {
-      state,
-      imageFactory: ImageFactory.getInstance()
-    });
-  });
-  state.addMaps(maps);
+  await renderer.render();
 };
 
 main().catch(e => {

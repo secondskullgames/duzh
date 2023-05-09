@@ -7,7 +7,8 @@ const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFac
     case 'ENTER':
       await showSplashScreen({
         state,
-        renderer
+        renderer,
+        imageFactory
       });
   }
 };
