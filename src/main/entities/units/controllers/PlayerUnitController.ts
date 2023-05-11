@@ -17,7 +17,7 @@ export default class PlayerUnitController implements UnitController {
   /**
    * @override UnitController#issueOrder
    */
-  issueOrder = (unit: Unit, { state, renderer }: UnitControllerProps): UnitOrder => {
+  issueOrder = (unit: Unit, { state }: UnitControllerProps): UnitOrder => {
     if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;

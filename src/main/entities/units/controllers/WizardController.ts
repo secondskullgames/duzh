@@ -17,7 +17,7 @@ import UnitOrder, { type UnitOrderProps } from '../orders/UnitOrder';
 export default class WizardController implements UnitController {
   issueOrder = (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitControllerProps
+    { state }: UnitControllerProps
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
