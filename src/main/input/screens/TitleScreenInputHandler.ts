@@ -1,11 +1,11 @@
-import InputHandlerType, { InputHandlerProps } from './InputHandlerType';
+import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
 import { GameScreen } from '../../types/types';
 import MapFactory from '../../maps/MapFactory';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { KeyCommand } from '../inputTypes';
 
-const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: InputHandlerProps) => {
+const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerProps) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'ENTER':
@@ -29,7 +29,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFac
   }
 };
 
-const TitleScreenInputHandler: InputHandlerType = {
+const TitleScreenInputHandler: ScreenHandler = {
   handleKeyCommand
 };
 

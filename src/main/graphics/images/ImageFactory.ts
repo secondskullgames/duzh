@@ -64,8 +64,4 @@ export default class ImageFactory {
 
     throw new Error(`Failed to load images: ${JSON.stringify(filenames)}`);
   };
-
-  private static instance: ImageFactory | null = null;
-  static getInstance = (): ImageFactory => checkNotNull(ImageFactory.instance);
-  static setInstance = (factory: ImageFactory) => { ImageFactory.instance = factory; };
 }

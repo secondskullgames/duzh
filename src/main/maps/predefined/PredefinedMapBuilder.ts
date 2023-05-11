@@ -55,7 +55,10 @@ class PredefinedMapBuilder {
 
   private _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
     const tileColors = this._toHexColors(model.tileColors);
-    const tileSet = await TileFactory.getTileSet(model.tileset);
+    const tileSet = await TileFactory.getTileSet(
+      model.tileset,
+      { imageFactory: this.imageFactory }
+    );
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.bitmap.height; y++) {
       tiles.push([]);
@@ -88,7 +91,6 @@ class PredefinedMapBuilder {
 
   private _loadUnits = async (model: PredefinedMapModel, image: Image): Promise<Unit[]> => {
     const state = this.state;
-    const imageFactory = ImageFactory.getInstance();
 
     const units: Unit[] = [];
     let id = 1;
@@ -130,9 +132,7 @@ class PredefinedMapBuilder {
                 level: model.levelNumber,
                 coordinates: { x, y }
               },
-              {
-                imageFactory
-              }
+              { imageFactory: this.imageFactory }
             );
             units.push(unit);
           }
@@ -201,7 +201,8 @@ class PredefinedMapBuilder {
       if (equipmentId) {
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,
-          { x, y }
+          { x, y },
+          { imageFactory }
         );
         objects.push(equipment);
       }

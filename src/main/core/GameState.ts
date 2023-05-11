@@ -98,8 +98,4 @@ export default class GameState {
     this.turn = 1;
     this.queuedAbility = null;
   };
-
-  private static INSTANCE: GameState | null = null;
-  static setInstance = (state: GameState) => { GameState.INSTANCE = state; };
-  static getInstance = (): GameState => checkNotNull(GameState.INSTANCE);
 }

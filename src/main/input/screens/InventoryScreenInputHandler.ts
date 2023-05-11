@@ -1,4 +1,4 @@
-import InputHandlerType, { InputHandlerProps } from './InputHandlerType';
+import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
 import { KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../types/types';
@@ -6,7 +6,7 @@ import { useItem } from '../../actions/useItem';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, renderer, imageFactory }: InputHandlerProps
+  { state, renderer, imageFactory }: ScreenHandlerProps
 ) => {
   const { key, modifiers } = command;
   const inventory = state.getPlayerUnit().getInventory();
@@ -44,7 +44,7 @@ const handleKeyCommand = async (
   await renderer.render();
 };
 
-const _handleEnter = async ({ state, renderer, imageFactory }: InputHandlerProps) => {
+const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerProps) => {
   const playerUnit = state.getPlayerUnit();
   const { selectedItem } = playerUnit.getInventory();
 
@@ -54,7 +54,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: InputHandlerProps
   }
 };
 
-const InventoryScreenInputHandler: InputHandlerType = {
+const InventoryScreenInputHandler: ScreenHandler = {
   handleKeyCommand
 };
 

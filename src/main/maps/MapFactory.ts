@@ -23,7 +23,7 @@ const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Props): Promis
     case 'generated': {
       const mapClass = await loadGeneratedMapModel(mapSpec.id);
       const mapBuilder = await loadGeneratedMap(mapClass, { state, imageFactory });
-      return mapBuilder.build();
+      return mapBuilder.build({ state, imageFactory });
     }
     case 'predefined': {
       return loadPredefinedMap(mapSpec.id, { state, imageFactory });
@@ -33,7 +33,7 @@ const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Props): Promis
 
 const loadGeneratedMap = async (mapClass: GeneratedMapModel, { state, imageFactory }: Props): Promise<GeneratedMapBuilder> => {
   const dungeonGenerator = getDungeonGenerator(mapClass.layout, { state, imageFactory });
-  return dungeonGenerator.generateMap(mapClass);
+  return dungeonGenerator.generateMap(mapClass, { imageFactory });
 };
 
 const loadPredefinedMap = async (mapId: string, { state, imageFactory }: Props): Promise<MapInstance> => {

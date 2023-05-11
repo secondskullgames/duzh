@@ -1,14 +1,14 @@
-import InputHandlerType, { InputHandlerProps } from './InputHandlerType';
+import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
 import { KeyCommand } from '../inputTypes';
 
-const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: InputHandlerProps) => {
+const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerProps) => {
   switch (command.key) {
     case 'F1':
       state.showPrevScreen();
   }
 };
 
-const HelpScreenInputHandler: InputHandlerType = {
+const HelpScreenInputHandler: ScreenHandler = {
   handleKeyCommand
 };
 

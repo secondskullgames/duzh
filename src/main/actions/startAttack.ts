@@ -17,7 +17,11 @@ export const startAttack = async (
   target: Unit,
   { state, renderer, imageFactory }: Props
 ) => {
-  const animation = AnimationFactory.getAttackingAnimation(unit, target, { state });
+  const animation = AnimationFactory.getAttackingAnimation(
+    unit,
+    target,
+    { state, imageFactory }
+  );
   await playAnimation(animation, { state, renderer });
 
   for (const equipment of unit.getEquipment().getAll()) {

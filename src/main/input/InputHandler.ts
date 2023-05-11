@@ -7,14 +7,14 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
 import TitleScreenInputHandler from './screens/TitleScreenInputHandler';
-import InputHandlerType from './screens/InputHandlerType';
+import ScreenHandler from './screens/ScreenHandler';
 import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
 import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 
-const screenHandlers: Record<GameScreen, InputHandlerType> = {
+const screenHandlers: Record<GameScreen, ScreenHandler> = {
   [GameScreen.GAME]:      GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
   [GameScreen.HELP]:      HelpScreenInputHandler,
@@ -23,6 +23,14 @@ const screenHandlers: Record<GameScreen, InputHandlerType> = {
   [GameScreen.TITLE]:     TitleScreenInputHandler,
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
 };
+
+type Props = Readonly<{
+  state: GameState,
+  renderer: GameRenderer,
+  imageFactory: ImageFactory
+}>;
+
+let boundHandler: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
 export default class InputHandler {
   private busy: boolean;
@@ -33,11 +41,11 @@ export default class InputHandler {
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (event: KeyboardEvent) => {
+  keyHandlerWrapper = async (event: KeyboardEvent, props: Props) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event)
+        await this.keyHandler(event, props)
       } catch (e) {
         console.error(e);
         alert(e);
@@ -46,7 +54,7 @@ export default class InputHandler {
     }
   };
 
-  keyHandler = async (e: KeyboardEvent) => {
+  keyHandler = async (e: KeyboardEvent, props: Props) => {
     if (e.repeat) {
       return;
     }
@@ -59,19 +67,20 @@ export default class InputHandler {
 
     e.preventDefault();
 
-    const state = GameState.getInstance();
-    const renderer = GameRenderer.getInstance();
-    const imageFactory = ImageFactory.getInstance();
-    const handler: InputHandlerType = checkNotNull(screenHandlers[state.getScreen()]);
+    const { state, renderer, imageFactory } = props;
+    const handler: ScreenHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, renderer, imageFactory });
   };
 
-  addEventListener = (target: HTMLElement) => {
-    target.addEventListener('keydown', this.keyHandlerWrapper);
+  addEventListener = (target: HTMLElement, props: Props) => {
+    boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, props);
+    target.addEventListener('keydown', boundHandler);
     this.eventTarget = target;
   };
 
   removeEventListener = () => {
-    this.eventTarget?.removeEventListener('keydown', this.keyHandlerWrapper);
+    if (boundHandler) {
+      this.eventTarget?.removeEventListener('keydown', boundHandler);
+    }
   };
 }

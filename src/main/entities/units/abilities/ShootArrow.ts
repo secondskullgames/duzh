@@ -24,7 +24,7 @@ export const ShootArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
@@ -57,7 +57,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state }
+        { state, imageFactory }
       );
       await playAnimation(arrowAnimation, {
         state,
@@ -75,7 +75,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state }
+        { state, imageFactory }
       );
       await playAnimation(arrowAnimation, {
         state,

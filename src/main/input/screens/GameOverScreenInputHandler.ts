@@ -1,8 +1,8 @@
-import InputHandlerType, { InputHandlerProps } from './InputHandlerType';
+import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
 import { KeyCommand } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
 
-const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: InputHandlerProps) => {
+const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerProps) => {
   switch (command.key) {
     case 'ENTER':
       await showSplashScreen({
@@ -13,7 +13,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFac
   }
 };
 
-const GameOverScreenInputHandler: InputHandlerType = {
+const GameOverScreenInputHandler: ScreenHandler = {
   handleKeyCommand
 };
 
