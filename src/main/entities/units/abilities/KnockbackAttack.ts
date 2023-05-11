@@ -1,7 +1,7 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/SoundFX';
+import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';

@@ -1,6 +1,6 @@
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';

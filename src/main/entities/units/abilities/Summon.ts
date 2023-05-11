@@ -1,7 +1,7 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
-import { playSound } from '../../../sounds/SoundFX';
+import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';

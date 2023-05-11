@@ -1,7 +1,7 @@
 import Unit from '../entities/units/Unit';
 import MapItem from '../entities/objects/MapItem';
 import { logMessage } from './logMessage';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import GameState from '../core/GameState';
 

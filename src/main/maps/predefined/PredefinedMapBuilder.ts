@@ -22,7 +22,6 @@ import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import { Faction } from '../../types/types';
-import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
@@ -145,6 +144,7 @@ class PredefinedMapBuilder {
   };
 
   private _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
+    const { imageFactory } = this;
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
@@ -156,7 +156,6 @@ class PredefinedMapBuilder {
       const color = Color.fromRGB({ r, g, b });
 
       const objectName = objectColors?.[color.hex] ?? null;
-      const imageFactory = ImageFactory.getInstance();
       if (objectName?.startsWith('door_')) {
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
@@ -171,26 +170,16 @@ class PredefinedMapBuilder {
         });
         objects.push(door);
       } else {
-        const state = GameState.getInstance();
-        const renderer = GameRenderer.getInstance();
         if (objectName === 'mirror') {
           const spawner = await ObjectFactory.createMirror(
             { x, y },
-            {
-              state,
-              renderer,
-              imageFactory
-            }
+            { imageFactory }
           );
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
           const block = await ObjectFactory.createMovableBlock(
             { x, y },
-            {
-              state,
-              renderer,
-              imageFactory
-            }
+            { imageFactory }
           );
           objects.push(block);
         } else if (objectName) {

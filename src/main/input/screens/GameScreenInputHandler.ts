@@ -6,7 +6,7 @@ import { NormalAttack } from '../../entities/units/abilities/NormalAttack';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
-import { playSound } from '../../sounds/SoundFX';
+import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { GameScreen } from '../../types/types';
 import { toggleFullScreen } from '../../utils/dom';
@@ -80,7 +80,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
     }
   } else {
     const ability = state.getQueuedAbility() ?? NormalAttack;
-    order = new AbilityOrder({ ability, direction });
+    order = new AbilityOrder({ ability, coordinates });
   }
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {

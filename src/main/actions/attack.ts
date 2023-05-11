@@ -1,5 +1,5 @@
 import Unit from '../entities/units/Unit';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { startAttack } from './startAttack';
 import GameRenderer from '../graphics/renderers/GameRenderer';

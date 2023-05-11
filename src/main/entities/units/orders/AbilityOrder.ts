@@ -17,6 +17,9 @@ export class AbilityOrder implements UnitOrder {
     this.ability = ability;
   }
 
+  /**
+   * @override {@link UnitOrder#execute}
+   */
   execute = async (
     unit: Unit,
     { state, renderer, imageFactory }: UnitOrderProps

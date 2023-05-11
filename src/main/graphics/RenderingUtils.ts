@@ -1,8 +1,13 @@
-import type { Pixel } from '../types/types';
+import { Pixel } from './Pixel';
 
-type Alignment = 'left' | 'center' | 'right';
+export type Alignment = 'left' | 'center' | 'right';
 
-const drawAligned = (imageBitmap: ImageBitmap, context: CanvasRenderingContext2D, { x, y }: Pixel, alignment: Alignment) => {
+export const drawAligned = (
+  imageBitmap: ImageBitmap,
+  context: CanvasRenderingContext2D,
+  { x, y }: Pixel,
+  alignment: Alignment
+) => {
   let left;
   switch (alignment) {
     case 'left':
@@ -17,6 +22,3 @@ const drawAligned = (imageBitmap: ImageBitmap, context: CanvasRenderingContext2D
   }
   context.drawImage(imageBitmap, left, y);
 };
-
-export { drawAligned };
-export type { Alignment };
