@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
-import UnitOrder, { UnitOrderProps } from './UnitOrder';
+import UnitOrder, { OrderContext } from './UnitOrder';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -19,7 +19,7 @@ export default class TeleportAwayOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();

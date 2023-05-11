@@ -1,7 +1,7 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import UnitOrder, { type UnitOrderProps } from './UnitOrder';
+import UnitOrder, { type OrderContext } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { AbilityName } from '../abilities/AbilityName';
@@ -21,7 +21,7 @@ export default class AttackUnitOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();

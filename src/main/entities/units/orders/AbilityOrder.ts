@@ -1,4 +1,4 @@
-import UnitOrder, { UnitOrderProps } from './UnitOrder';
+import UnitOrder, { OrderContext } from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -22,7 +22,7 @@ export class AbilityOrder implements UnitOrder {
    */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ): Promise<void> => {
     await this.ability.use(
       unit,

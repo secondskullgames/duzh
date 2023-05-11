@@ -80,6 +80,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
     }
   } else {
     const ability = state.getQueuedAbility() ?? NormalAttack;
+    state.setQueuedAbility(null);
     order = new AbilityOrder({ ability, coordinates });
   }
   const playerController = playerUnit.getController() as PlayerUnitController;

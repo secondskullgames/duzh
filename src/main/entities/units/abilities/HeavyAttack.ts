@@ -10,7 +10,6 @@ import { startAttack } from '../../../actions/startAttack';
 import { walk } from '../../../actions/walk';
 import { AbilityName } from './AbilityName';
 import { die } from '../../../actions/die';
-import { awardExperience } from '../../../actions/awardExperience';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
