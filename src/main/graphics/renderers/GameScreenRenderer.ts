@@ -10,6 +10,7 @@ import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import AbstractRenderer from './AbstractRenderer';
 import { Pixel } from '../Pixel';
+import Entity from '../../entities/Entity';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -36,7 +37,7 @@ class GameScreenRenderer extends AbstractRenderer {
     this.imageFactory = imageFactory;
   }
 
-  _redraw = async () => {
+  protected _redraw = async () => {
     const { canvas, context } = this;
     context.fillStyle = Colors.BLACK.hex;
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -45,8 +46,8 @@ class GameScreenRenderer extends AbstractRenderer {
     await this._renderEntities();
   };
 
-  private _renderElement = (element: Element, { x, y }: Coordinates) => {
-    const pixel = this._gridToPixel({ x, y });
+  private _renderElement = (element: Element, coordinates: Coordinates) => {
+    const pixel = this._gridToPixel(coordinates);
 
     if (this._isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();

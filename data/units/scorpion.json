@@ -5,7 +5,7 @@
   "sprite": "scorpion",
   "paletteSwaps": {},
   "life": 45,
-  "mana": 0,
+  "mana": 10,
   "damage": 16,
   "level": 4,
   "points": 20,
@@ -16,6 +16,6 @@
     "fleeThreshold": 0
   },
   "abilities": {
-    "1": ["ATTACK"]
+    "1": ["ATTACK", "HEAVY_ATTACK"]
   }
 }

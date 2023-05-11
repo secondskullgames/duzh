@@ -23,13 +23,13 @@ type CreateUnitProps = Readonly<{
   coordinates: Coordinates
 }>;
 
-type Props = Readonly<{
+type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
 const createUnit = async (
   { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
-  { imageFactory }: Props
+  { imageFactory }: Context
 ): Promise<Unit> => {
   const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await SpriteFactory.createUnitSprite(
@@ -58,7 +58,7 @@ const createUnit = async (
   });
 };
 
-const createPlayerUnit = async ({ imageFactory }: Props): Promise<Unit> => createUnit(
+const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => createUnit(
   {
     unitClass: 'player',
     faction: Faction.PLAYER,

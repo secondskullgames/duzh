@@ -10,7 +10,7 @@ type Props = Readonly<{
   coordinates: Coordinates
 }>;
 
-class Tile implements Entity {
+export default class Tile implements Entity {
   private coordinates: Coordinates;
   private readonly tileType: TileType;
   private readonly sprite: Sprite | null;
@@ -52,7 +52,5 @@ class Tile implements Entity {
   /**
    * @override {@link Entity#getType}
    */
-  getType = (): EntityType => EntityType.UNIT;
+  getType = (): EntityType => EntityType.TILE;
 }
-
-export default Tile;

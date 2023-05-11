@@ -1,4 +1,4 @@
-import Entity, { UpdateProps } from '../Entity';
+import Entity, { UpdateContext } from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
@@ -42,7 +42,7 @@ export default abstract class GameObject implements Entity {
   getType = (): EntityType => EntityType.OBJECT;
 
   /** @override */
-  abstract update: ({ state }: UpdateProps) => Promise<void>;
+  abstract update: ({ state }: UpdateContext) => Promise<void>;
   /** @override */
   abstract isBlocking: () => boolean;
 

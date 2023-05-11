@@ -6,8 +6,8 @@ import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import Activity from '../../types/Activity';
-import Entity, { UpdateProps } from '../Entity';
+import Activity from './Activity';
+import Entity, { UpdateContext } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
@@ -186,7 +186,7 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, renderer, imageFactory }: UpdateProps) => {
+  update = async ({ state, renderer, imageFactory }: UpdateContext) => {
     await this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });

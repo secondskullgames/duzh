@@ -10,6 +10,7 @@ import { attack } from '../../../actions/attack';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { SpawnerState } from '../../objects/Spawner';
 import { AbilityName } from './AbilityName';
+import { die } from '../../../actions/die';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
@@ -44,11 +45,19 @@ export const PiercingAttack: UnitAbility = {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
           await attack(unit, targetUnit, { state, renderer, imageFactory });
+          if (targetUnit.getLife() <= 0) {
+            await die(targetUnit, { state });
+          }
         }
+
+
         const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
         const nextUnit = map.getUnit(nextCoordinates);
         if (nextUnit) {
           await attack(unit, nextUnit, { state, renderer, imageFactory });
+          if (nextUnit.getLife() <= 0) {
+            await die(nextUnit, { state });
+          }
         }
 
         const spawner = map.getSpawner(coordinates);

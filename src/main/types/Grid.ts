@@ -22,19 +22,19 @@ export default class Grid<T> {
   }
 
   get = (coordinates: Coordinates): T | null => {
-    checkArgument(this._contains(coordinates));
+    checkArgument(this.contains(coordinates));
     const { x, y } = coordinates;
     return this.array[y][x] ?? null;
   };
 
   put = (coordinates: Coordinates, item: T) => {
-    checkArgument(this._contains(coordinates));
+    checkArgument(this.contains(coordinates));
     const { x, y } = coordinates;
     this.array[y][x] = item;
   };
 
   remove = (coordinates: Coordinates, item: T) => {
-    checkArgument(this._contains(coordinates));
+    checkArgument(this.contains(coordinates));
     const { x, y } = coordinates;
     checkState(!!this.array[y][x]);
     delete this.array[y][x];
@@ -45,7 +45,7 @@ export default class Grid<T> {
       .flatMap(row => row);
   };
 
-  private _contains = ({ x, y }: Coordinates): boolean => {
+  contains = ({ x, y }: Coordinates): boolean => {
     return (x >= 0 && x < this.width) && (y >= 0 && y < this.height);
   };
 };

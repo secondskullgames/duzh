@@ -9,6 +9,8 @@ import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { walk } from '../../../actions/walk';
 import { AbilityName } from './AbilityName';
+import { die } from '../../../actions/die';
+import { awardExperience } from '../../../actions/awardExperience';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
@@ -57,6 +59,10 @@ export const HeavyAttack: UnitAbility = {
           });
           const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
           logMessage(message, { state });
+
+          if (targetUnit.getLife() <= 0) {
+            await die(targetUnit, { state });
+          }
         }
       }
     }

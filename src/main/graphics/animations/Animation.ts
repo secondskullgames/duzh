@@ -1,5 +1,5 @@
 import Unit from '../../entities/units/Unit';
-import Activity from '../../types/Activity';
+import Activity from '../../entities/units/Activity';
 import Direction from '../../geometry/Direction';
 import Projectile from '../../entities/Projectile';
 
