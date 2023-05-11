@@ -16,34 +16,43 @@ type CreateTileProps = Readonly<{
   coordinates: Coordinates
 }>;
 
-export default {
-  getTileSet: async (id: string): Promise<TileSet> => {
-    const model = await loadTileSetModel(id);
-    const tileSet: {
-      [key in TileType]?: (Sprite | null)[]
-    } = {};
+const createTile = ({tileType, tileSet, coordinates}: CreateTileProps): Tile => {
+  const tilesOfType = checkNotNull(tileSet[tileType]);
+  const sprite = randChoice(tilesOfType);
+  return new Tile({tileType, sprite, coordinates});
+};
 
-    for (const [tileType, filenames] of Object.entries(model.tiles)) {
-      const tileSprites: Sprite[] = [];
-      for (let index = 0; index < filenames.length; index++) {
-        const filename = filenames[index];
-        if (filename) {
-          const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
-          const tileSprite = await SpriteFactory.createTileSprite(`${model.path}/${filename}`, paletteSwaps, {
-            imageFactory: ImageFactory.getInstance()
-          });
-          tileSprites.push(tileSprite);
-        }
+type GetTileSetProps = Readonly<{
+  imageFactory: ImageFactory
+}>;
+
+const getTileSet = async (id: string, { imageFactory }: GetTileSetProps): Promise<TileSet> => {
+  const model = await loadTileSetModel(id);
+  const tileSet: {
+    [key in TileType]?: (Sprite | null)[]
+  } = {};
+
+  for (const [tileType, filenames] of Object.entries(model.tiles)) {
+    const tileSprites: Sprite[] = [];
+    for (let index = 0; index < filenames.length; index++) {
+      const filename = filenames[index];
+      if (filename) {
+        const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
+        const tileSprite = await SpriteFactory.createTileSprite(
+          `${model.path}/${filename}`,
+          paletteSwaps,
+          {imageFactory}
+        );
+        tileSprites.push(tileSprite);
       }
-      tileSet[tileType as TileType] = tileSprites;
     }
-
-    return tileSet as TileSet;
-  },
-
-  createTile: ({ tileType, tileSet, coordinates }: CreateTileProps): Tile => {
-    const tilesOfType = checkNotNull(tileSet[tileType]);
-    const sprite = randChoice(tilesOfType);
-    return new Tile({ tileType, sprite, coordinates });
+    tileSet[tileType as TileType] = tileSprites;
   }
+
+  return tileSet as TileSet;
+};
+
+export default {
+  getTileSet,
+  createTile
 }

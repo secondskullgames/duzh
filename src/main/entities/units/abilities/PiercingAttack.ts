@@ -54,22 +54,30 @@ export const PiercingAttack: UnitAbility = {
         const spawner = map.getSpawner(coordinates);
         if (spawner && spawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
-          await playAnimation(animation, {
-            state,
-            renderer
-          });
+          const animation = AnimationFactory.getAttackingAnimation(
+            unit,
+            null,
+            { state, imageFactory }
+          );
+          await playAnimation(
+            animation,
+            { state, renderer }
+          );
           spawner.setState(SpawnerState.DEAD);
         }
 
         const nextSpawner = map.getSpawner(nextCoordinates);
         if (nextSpawner && nextSpawner.isBlocking()) {
           playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getAttackingAnimation(unit, null, { state });
-          await playAnimation(animation, {
-            state,
-            renderer
-          });
+          const animation = AnimationFactory.getAttackingAnimation(
+            unit,
+            null,
+            { state, imageFactory }
+          );
+          await playAnimation(
+            animation,
+            { state, renderer }
+          );
           nextSpawner.setState(SpawnerState.DEAD);
         }
       }

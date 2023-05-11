@@ -12,11 +12,16 @@ const BOLT_FRAME_LENGTH = 50; // milliseconds
 const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory
 }>;
 
 export default {
-  getAttackingAnimation: (source: Unit, target: Unit | null, { state }: Props): Animation => {
+  getAttackingAnimation: (
+    source: Unit,
+    target: Unit | null,
+    { state, imageFactory }: Props
+  ): Animation => {
     const frameLength = 150;
     if (target) {
       return {
@@ -60,7 +65,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { state }: Props
+    { state, imageFactory }: Props
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -79,9 +84,11 @@ export default {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
-        imageFactory: ImageFactory.getInstance()
-      });
+      const projectile = await ProjectileFactory.createArrow(
+        coordinates,
+        direction,
+        { imageFactory }
+      );
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'SHOOTING' }],
         projectiles: [projectile],
@@ -129,7 +136,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { state }: Props
+    { state, imageFactory }: Props
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -149,7 +156,7 @@ export default {
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
-        imageFactory: ImageFactory.getInstance()
+        imageFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: 'ATTACKING' }],

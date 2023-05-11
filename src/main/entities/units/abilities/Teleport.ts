@@ -38,11 +38,14 @@ export const Teleport: UnitAbility = {
       playSound(Sounds.WIZARD_VANISH);
 
       {
-        const animation = await AnimationFactory.getWizardVanishingAnimation(unit, { state });
-        await playAnimation(animation, {
-          state,
-          renderer
-        });
+        const animation = await AnimationFactory.getWizardVanishingAnimation(
+          unit,
+          { state, imageFactory }
+        );
+        await playAnimation(
+          animation,
+          { state, renderer }
+        );
       }
 
       await moveUnit(
@@ -53,11 +56,14 @@ export const Teleport: UnitAbility = {
       playSound(Sounds.WIZARD_APPEAR);
 
       {
-        const animation = await AnimationFactory.getWizardAppearingAnimation(unit, { state });
-        await playAnimation(animation, {
-          state,
-          renderer
-        });
+        const animation = await AnimationFactory.getWizardAppearingAnimation(
+          unit,
+          { state, imageFactory }
+        );
+        await playAnimation(
+          animation,
+          { state, renderer }
+        );
       }
 
       unit.spendMana(manaCost);

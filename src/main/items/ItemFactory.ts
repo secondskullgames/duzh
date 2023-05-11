@@ -74,10 +74,11 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer }: ItemProcProps
+    { state, renderer, imageFactory }: ItemProcProps
   ) => {
     const map = state.getMap();
 
+    // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits()
       .filter(u => {
         const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
@@ -90,7 +91,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const animation = await AnimationFactory.getFloorFireAnimation(
       unit,
       adjacentUnits,
-      { state }
+      { state, imageFactory }
     );
     await playAnimation(animation, { state, renderer });
 
@@ -127,16 +128,21 @@ const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryI
   });
 };
 
+type CreateMapEquipmentProps = Readonly<{
+  imageFactory: ImageFactory
+}>;
+
 const createMapEquipment = async (
   equipmentClass: string,
-  coordinates: Coordinates
+  coordinates: Coordinates,
+  { imageFactory }: CreateMapEquipmentProps
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
   const sprite = await SpriteFactory.createStaticSprite(
     model.mapIcon,
     PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory: ImageFactory.getInstance()
-  });
+    { imageFactory }
+  );
   const inventoryItem: InventoryItem = await createInventoryWeapon(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };

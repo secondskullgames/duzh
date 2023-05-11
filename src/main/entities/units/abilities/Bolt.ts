@@ -22,7 +22,7 @@ export const Bolt: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer }: UnitAbilityProps
+    { state, renderer, imageFactory}: UnitAbilityProps
   ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
@@ -58,7 +58,7 @@ export const Bolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state }
+        { state, imageFactory }
       );
       await playAnimation(boltAnimation, {
         state,
@@ -70,7 +70,7 @@ export const Bolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state }
+        { state, imageFactory }
       );
       await playAnimation(boltAnimation, {
         state,

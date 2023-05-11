@@ -8,9 +8,7 @@ import { addInitialState } from './actions/addInitialState';
 
 const main = async () => {
   const state = new GameState();
-  GameState.setInstance(state);
   const imageFactory = new ImageFactory();
-  ImageFactory.setInstance(imageFactory);
   const fontRenderer = new FontRenderer({ imageFactory });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
@@ -18,10 +16,9 @@ const main = async () => {
     imageFactory,
     fontRenderer
   });
-  GameRenderer.setInstance(renderer);
   await addInitialState({ state, imageFactory });
   const inputHandler = new InputHandler();
-  inputHandler.addEventListener(renderer.getCanvas());
+  inputHandler.addEventListener(renderer.getCanvas(), { state, renderer, imageFactory });
   const debug = new Debug({ state, renderer });
   debug.attachToWindow();
   await renderer.render();

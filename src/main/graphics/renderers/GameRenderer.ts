@@ -171,10 +171,6 @@ class GameRenderer extends BufferedRenderer {
       await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, 'left');
     }
   };
-
-  private static INSTANCE: GameRenderer | null;
-  static getInstance = (): GameRenderer => checkNotNull(GameRenderer.INSTANCE);
-  static setInstance = (instance: GameRenderer) => { GameRenderer.INSTANCE = instance; };
 }
 
 export default GameRenderer;

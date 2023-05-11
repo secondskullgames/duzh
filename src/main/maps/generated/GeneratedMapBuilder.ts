@@ -17,6 +17,7 @@ import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   level: number,
@@ -24,6 +25,11 @@ type Props = Readonly<{
   height: number,
   tiles: Tile[][],
   pointAllocation: GeneratedMapModel_PointAllocation
+}>;
+
+type BuildProps = Readonly<{
+  state: GameState,
+  imageFactory: ImageFactory
 }>;
 
 export default class GeneratedMapBuilder {
@@ -49,14 +55,14 @@ export default class GeneratedMapBuilder {
     this.objectLocations = new CustomSet();
   }
 
-  build = async (): Promise<MapInstance> => {
+  build = async ({ state, imageFactory }: BuildProps): Promise<MapInstance> => {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
-    const playerUnit = GameState.getInstance().getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.objectLocations.add(playerUnitCoordinates);
-    const units = [playerUnit, ...await this._generateUnits()];
-    const objects: GameObject[] = await this._generateObjects();
+    const units = [playerUnit, ...await this._generateUnits({ state, imageFactory })];
+    const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
 
     return new MapInstance({
       width: this.width,
@@ -68,7 +74,7 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  _generateUnits = async (): Promise<Unit[]> => {
+  _generateUnits = async ({ state, imageFactory }: BuildProps): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     let points = this.pointAllocation.enemies;
@@ -104,7 +110,7 @@ export default class GeneratedMapBuilder {
           level: this.level
         },
         {
-          imageFactory: ImageFactory.getInstance()
+          imageFactory
         }
       );
       units.push(unit);
@@ -114,12 +120,11 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async (): Promise<GameObject[]> => {
+  private _generateObjects = async ({ state, imageFactory }: BuildProps): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
 
     let points = this.pointAllocation.equipment;
-    const imageFactory = ImageFactory.getInstance();
     while (points > 0) {
       const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
         .filter(equipmentClass => equipmentClass.level !== null && equipmentClass.level <= this.level)
@@ -137,7 +142,8 @@ export default class GeneratedMapBuilder {
       const coordinates = checkNotNull(candidateLocations.shift());
       const item = await ItemFactory.createMapEquipment(
         equipmentClass.id,
-        coordinates
+        coordinates,
+        { imageFactory }
       );
       objects.push(item);
       points -= equipmentClass.points!;
