@@ -15,6 +15,9 @@ import { ObjectType } from '../../objects/GameObject';
 import { SpawnerState } from '../../objects/Spawner';
 import { AbilityName } from './AbilityName';
 
+/**
+ * TODO: this should probably not include a bunch of non-attack stuff
+ */
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
   icon: null,

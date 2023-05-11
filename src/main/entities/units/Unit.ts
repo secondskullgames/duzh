@@ -11,7 +11,7 @@ import Entity, { UpdateProps } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
-import UnitController from './controllers/UnitController';
+import { UnitController } from './controllers/UnitController';
 import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';

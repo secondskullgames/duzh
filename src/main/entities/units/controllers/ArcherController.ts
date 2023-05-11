@@ -1,49 +1,48 @@
 import Unit from '../Unit';
-import UnitController, { UnitControllerProps } from './UnitController';
-import GameState from '../../../core/GameState';
+import { UnitController, type UnitControllerProps } from './UnitController';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
-import UnitBehavior from '../behaviors/UnitBehavior';
-import StayBehavior from '../behaviors/StayBehavior';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
+import UnitOrder from '../orders/UnitOrder';
+import StayOrder from '../orders/StayOrder';
+import AvoidUnitOrder from '../orders/AvoidUnitOrder';
+import ShootUnitOrder from '../orders/ShootUnitOrder';
+import WanderOrder from '../orders/WanderOrder';
 
 export default class ArcherController implements UnitController {
-  issueOrder = async (unit: Unit, { state, renderer, imageFactory }: UnitControllerProps) => {
+  /**
+   * @override {@link UnitController#issueOrder}
+   */
+  issueOrder = (
+    unit: Unit,
+    { state }: UnitControllerProps
+  ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'ARCHER behavior requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
-    let behavior: UnitBehavior;
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!canMove(speed, { state })) {
-      behavior = new StayBehavior();
+      return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
+      return new AvoidUnitOrder({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        behavior = new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootUnitOrder({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
-        behavior = new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootUnitOrder({ targetUnit: playerUnit });
       } else {
-        behavior = new WanderBehavior();
+        return new WanderOrder();
       }
     } else {
       if (randBoolean()) {
-        behavior = new StayBehavior();
+        return new StayOrder();
       } else {
-        behavior = new WanderBehavior();
+        return new WanderOrder();
       }
     }
-    return behavior.execute(unit, {
-      state,
-      renderer,
-      imageFactory
-    });
   }
 };

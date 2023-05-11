@@ -9,7 +9,7 @@ import ItemFactory from '../../items/ItemFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
-import UnitController from '../../entities/units/controllers/UnitController';
+import { UnitController } from '../../entities/units/controllers/UnitController';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import UnitFactory from '../../entities/units/UnitFactory';

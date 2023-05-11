@@ -3,23 +3,23 @@ import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
-import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import UnitOrder, { UnitOrderProps } from './UnitOrder';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class TeleportAwayBehavior implements UnitBehavior {
+export default class TeleportAwayOrder implements UnitOrder {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitBehavior#execute} */
+  /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();

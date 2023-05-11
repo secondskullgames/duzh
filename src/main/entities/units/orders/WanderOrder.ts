@@ -2,14 +2,14 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { randChoice } from '../../../utils/random';
-import UnitBehavior, { type UnitBehaviorProps } from './UnitBehavior';
+import UnitOrder, { type UnitOrderProps } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 
-export default class WanderBehavior implements UnitBehavior {
-  /** @override {@link UnitBehavior#execute} */
+export default class WanderOrder implements UnitOrder {
+  /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
     const map = state.getMap();
     const tiles: Coordinates[] = [];
