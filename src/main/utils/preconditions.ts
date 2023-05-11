@@ -1,6 +1,6 @@
 export const checkArgument = (condition: boolean, message: string | null = null) => {
   if (!condition) {
-    throw new Error(message ? `Illegal argument: ${message}` : 'Illegal state');
+    throw new Error(message ? `Illegal argument: ${message}` : 'Illegal argument');
   }
 };
 

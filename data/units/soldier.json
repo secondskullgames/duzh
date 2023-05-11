@@ -15,7 +15,7 @@
     "PLAYER_FEET": "BLACK"
   },
   "life": 60,
-  "mana": 0,
+  "mana": 10,
   "damage": 3,
   "level": 3,
   "equipment": [
@@ -30,7 +30,7 @@
     "fleeThreshold": 0.1
   },
   "abilities": {
-    "1": ["ATTACK"]
+    "1": ["ATTACK", "HEAVY_ATTACK"]
   },
   "points": 20
 }

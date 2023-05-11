@@ -16,7 +16,7 @@ export const updateRevealedTiles = ({ state }: Props) => {
   const { x: playerX, y: playerY } = playerUnit.getCoordinates();
   for (let y = playerY - radius; y <= playerY + radius; y++) {
     for (let x = playerX - radius; x <= playerX + radius; x++) {
-      if (!map.isTileRevealed({ x, y })) {
+      if (map.contains({ x, y }) && !map.isTileRevealed({ x, y })) {
         map.revealTile({ x, y });
       }
     }

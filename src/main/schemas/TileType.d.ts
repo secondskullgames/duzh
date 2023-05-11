@@ -6,5 +6,5 @@ type TileType =
   | 'WALL'
   | 'NONE'
   | 'STAIRS_DOWN';
-    
+
 export default TileType;

@@ -5,7 +5,7 @@ import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
 import { EquipmentScript } from './EquipmentScript';
-import Activity from '../types/Activity';
+import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
 

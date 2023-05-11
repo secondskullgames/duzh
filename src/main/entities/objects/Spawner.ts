@@ -3,7 +3,7 @@ import Animatable from '../../graphics/animations/Animatable';
 import GameObject, { ObjectType } from './GameObject';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
-import { UpdateProps } from '../Entity';
+import { UpdateContext } from '../Entity';
 
 export enum SpawnerState {
   ALIVE = 'ALIVE',
@@ -54,7 +54,7 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ state }: UpdateProps) => {
+  update = async ({ state }: UpdateContext) => {
     if (this._state === 'DEAD') {
       return;
     }

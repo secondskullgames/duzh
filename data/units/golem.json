@@ -15,7 +15,7 @@
   "damage": 14,
   "level": 5,
   "life": 100,
-  "mana": 0,
+  "mana": 12,
   "points": 30,
   "aiParameters": {
     "speed": 0.9,
@@ -24,6 +24,6 @@
     "fleeThreshold": 0
   },
   "abilities": {
-    "1": ["ATTACK"]
+    "1": ["ATTACK", "HEAVY_ATTACK"]
   }
 }

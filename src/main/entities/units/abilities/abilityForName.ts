@@ -1,4 +1,3 @@
-
 import { checkNotNull } from '../../../utils/preconditions';
 import { type UnitAbility } from './UnitAbility';
 import { Bolt } from './Bolt';

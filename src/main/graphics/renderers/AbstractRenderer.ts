@@ -40,5 +40,5 @@ export default abstract class AbstractRenderer implements Renderer {
     return imageData;
   };
 
-  abstract _redraw: () => Promise<void>;
+  protected abstract _redraw: () => Promise<void>;
 }

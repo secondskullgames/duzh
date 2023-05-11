@@ -9,6 +9,7 @@ import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { AbilityName } from './AbilityName';
+import { die } from '../../../actions/die';
 
 const manaCost = 8;
 
@@ -50,6 +51,12 @@ export const KnockbackAttack: UnitAbility = {
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
+
+      if (targetUnit.getLife() <= 0) {
+        await die(targetUnit, { state });
+        return;
+      }
+
       targetUnit.setStunned(1);
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), direction);

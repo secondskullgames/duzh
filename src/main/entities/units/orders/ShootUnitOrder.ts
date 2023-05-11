@@ -1,6 +1,6 @@
 import Unit from '../Unit';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
-import UnitOrder, { UnitOrderProps } from './UnitOrder';
+import UnitOrder, { OrderContext } from './UnitOrder';
 import AttackUnitOrder from './AttackUnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
 
@@ -18,7 +18,7 @@ export default class ShootUnitOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -63,7 +63,7 @@ export default class ShootUnitOrder implements UnitOrder {
   private _attack = async (
     unit: Unit,
     targetUnit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ) => {
     const behavior = new AttackUnitOrder({ targetUnit });
     return behavior.execute(unit, { state, renderer, imageFactory });

@@ -1,8 +1,11 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import UnitOrder, { type UnitOrderProps } from './UnitOrder';
+import UnitOrder, { type OrderContext } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
+import { UnitAbility } from '../abilities/UnitAbility';
+import { AbilityName } from '../abilities/AbilityName';
+import { randChoice } from '../../../utils/random';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -18,7 +21,7 @@ export default class AttackUnitOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitOrderProps
+    { state, renderer, imageFactory }: OrderContext
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -44,7 +47,8 @@ export default class AttackUnitOrder implements UnitOrder {
       const coordinates = path[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
-        await NormalAttack.use(
+        const ability = this._chooseAbility(unit);
+        await ability.use(
           unit,
           coordinates,
           { state, renderer, imageFactory }
@@ -52,4 +56,21 @@ export default class AttackUnitOrder implements UnitOrder {
       }
     }
   };
+
+  private _chooseAbility = (unit: Unit): UnitAbility => {
+    const allowedSpecialAbilityNames = [
+      AbilityName.HEAVY_ATTACK,
+      AbilityName.KNOCKBACK_ATTACK,
+      AbilityName.STUN_ATTACK
+    ];
+
+    const possibleAbilities = unit.getAbilities()
+      .filter(ability => allowedSpecialAbilityNames.includes(ability.name))
+      .filter(ability => unit.getMana() >= ability.manaCost);
+
+    if (possibleAbilities.length > 0) {
+      return randChoice(possibleAbilities);
+    }
+    return NormalAttack;
+  }
 }
