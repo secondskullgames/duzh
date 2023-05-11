@@ -20,7 +20,7 @@ export default class ArcherController implements UnitController {
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getAiParameters(), 'ARCHER controller requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'ArcherController requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());

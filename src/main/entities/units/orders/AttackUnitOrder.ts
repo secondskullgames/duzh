@@ -1,7 +1,7 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import UnitOrder, { UnitOrderProps } from './UnitOrder';
+import UnitOrder, { type UnitOrderProps } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{

@@ -11,10 +11,14 @@ import WanderOrder from '../orders/WanderOrder';
 import { Teleport } from '../abilities/Teleport';
 import { Summon } from '../abilities/Summon';
 import { AbilityName } from '../abilities/AbilityName';
-import UnitOrder, { type UnitOrderProps } from '../orders/UnitOrder';
+import UnitOrder from '../orders/UnitOrder';
+import { AbilityOrder } from '../orders/AbilityOrder';
 
 
 export default class WizardController implements UnitController {
+  /**
+   * @override {@link UnitController#issueOrder}
+   */
   issueOrder = (
     unit: Unit,
     { state }: UnitControllerProps
@@ -33,21 +37,15 @@ export default class WizardController implements UnitController {
       return new TeleportAwayOrder({ targetUnit: playerUnit });
     }
 
-    // TODO this should be an Order
     if (canSummon && distanceToPlayerUnit >= 3) {
       const coordinates = Direction.values()
         .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
         .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
       if (coordinates) {
-        return {
-          execute: async (unit: Unit, { state, renderer, imageFactory }: UnitOrderProps) => {
-            await Summon.use(
-              unit,
-              coordinates,
-              { state, renderer, imageFactory }
-            );
-          }
-        };
+        return new AbilityOrder({
+          ability: Summon,
+          coordinates
+        });
       }
     }
 

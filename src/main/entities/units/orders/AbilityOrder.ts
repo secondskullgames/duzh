@@ -1,20 +1,19 @@
 import UnitOrder, { UnitOrderProps } from './UnitOrder';
 import Unit from '../Unit';
-import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
 
 type Props = Readonly<{
-  direction: Direction,
+  coordinates: Coordinates,
   ability: UnitAbility
 }>;
 
 export class AbilityOrder implements UnitOrder {
-  private readonly direction: Direction;
+  private readonly coordinates: Coordinates;
   private readonly ability: UnitAbility;
 
-  constructor({ direction, ability }: Props) {
-    this.direction = direction;
+  constructor({ coordinates, ability }: Props) {
+    this.coordinates = coordinates;
     this.ability = ability;
   }
 
@@ -22,10 +21,9 @@ export class AbilityOrder implements UnitOrder {
     unit: Unit,
     { state, renderer, imageFactory }: UnitOrderProps
   ): Promise<void> => {
-    const coordinates = Coordinates.plus(unit.getCoordinates(), this.direction);
     await this.ability.use(
       unit,
-      coordinates,
+      this.coordinates,
       { state, renderer, imageFactory }
     );
   }

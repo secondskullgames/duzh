@@ -20,7 +20,7 @@ export default class HumanRedesignController implements UnitController {
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'HumanRedesignController requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
