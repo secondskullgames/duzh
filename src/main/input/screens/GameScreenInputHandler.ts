@@ -59,10 +59,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   const playerUnit = state.getPlayerUnit();
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
-  let queuedOrder: PromiseSupplier | null = null;
+  let order: PromiseSupplier | null = null;
   if (modifiers.includes('SHIFT')) {
     if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
-      queuedOrder = () => ShootArrow.use(
+      order = () => ShootArrow.use(
         playerUnit,
         coordinates,
         { state, renderer, imageFactory }
@@ -70,7 +70,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
     }
   } else if (modifiers.includes('ALT')) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
-      queuedOrder = () => Strafe.use(
+      order = () => Strafe.use(
         playerUnit,
         coordinates,
         { state, renderer, imageFactory }
@@ -79,7 +79,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   } else {
     const ability = state.getQueuedAbility();
     if (ability !== null) {
-      queuedOrder = async () => {
+      order = async () => {
         state.setQueuedAbility(null);
         await ability.use(
           playerUnit,
@@ -88,7 +88,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
         );
       };
     } else {
-      queuedOrder = () => NormalAttack.use(
+      order = () => NormalAttack.use(
         playerUnit,
         coordinates,
         { state, renderer, imageFactory }
@@ -96,8 +96,8 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
     }
   }
   const playerController = playerUnit.getController() as PlayerUnitController;
-  if (queuedOrder) {
-    playerController.queuedOrder = queuedOrder;
+  if (order) {
+    playerController.queueOrder(order);
     await playTurn({ state, renderer, imageFactory });
   }
 };

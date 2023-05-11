@@ -2,7 +2,6 @@ import GameState from './GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
-import { dealDamage } from '../actions/dealDamage';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 

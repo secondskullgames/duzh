@@ -11,7 +11,7 @@ type Props = Readonly<{
 
 export const startGame = async ({ state, renderer }: Props) => {
   const t1 = new Date().getTime();
-  await loadNextMap({ state, renderer });
+  await loadNextMap({ state });
   Music.stop();
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   updateRevealedTiles({ state });
