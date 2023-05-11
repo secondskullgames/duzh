@@ -64,13 +64,9 @@ export const mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
 
 export const getDirection = (key: ArrowKey): Direction => {
   switch (key) {
-    case 'UP':
-      return { dx: 0, dy: -1 };
-    case 'DOWN':
-      return { dx: 0, dy: 1 };
-    case 'LEFT':
-      return { dx: -1, dy: 0 };
-    case 'RIGHT':
-      return { dx: 1, dy: 0 };
+    case 'UP':    return Direction.N;
+    case 'DOWN':  return Direction.S;
+    case 'LEFT':  return Direction.W;
+    case 'RIGHT': return Direction.E;
   }
 };

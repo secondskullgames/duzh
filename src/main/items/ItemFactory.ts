@@ -1,4 +1,3 @@
-import GameState from '../core/GameState';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/SoundFX';
@@ -23,7 +22,7 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state }: ItemProcProps
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
@@ -44,7 +43,7 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state }: ItemProcProps
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
@@ -75,7 +74,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state, renderer }: ItemProcProps
   ) => {
     const map = state.getMap();
 
@@ -114,7 +113,7 @@ const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryI
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state, imageFactory }: ItemProcProps
   ) => {
     const equipment = await createEquipment(equipmentClass, { imageFactory });
     return equipItem(item, equipment, unit, { state });
@@ -201,7 +200,7 @@ type CreateMapItemProps = Readonly<{
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateEquipmentProps
+  { imageFactory }: CreateMapItemProps
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
   const inventoryItem = await createInventoryItem(model);
