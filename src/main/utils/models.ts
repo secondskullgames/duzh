@@ -1,5 +1,5 @@
 import Ajv from 'ajv';
-import SpriteCategory from '../graphics/sprites/SpriteCategory';
+import { SpriteCategory } from '../graphics/sprites/SpriteCategory';
 import UnitModel from '../schemas/UnitModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';

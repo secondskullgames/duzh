@@ -12,7 +12,7 @@ import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import DynamicSprite from './DynamicSprite';
 import Sprite from './Sprite';
-import SpriteCategory from './SpriteCategory';
+import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
 import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
@@ -47,8 +47,8 @@ export default {
   },
 
   createUnitSprite: async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props): Promise<DynamicSprite<Unit>> => {
-    const model = await loadDynamicSpriteModel(spriteName, 'units');
-    const imageMap = await _loadAnimations('units', model, paletteSwaps, { imageFactory });
+    const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.UNITS);
+    const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps, { imageFactory });
 
     return new DynamicSprite<Unit>({
       paletteSwaps,
@@ -58,8 +58,8 @@ export default {
   },
 
   createEquipmentSprite: async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props) => {
-    const model = await loadDynamicSpriteModel(spriteName, 'equipment');
-    const imageMap = await _loadAnimations('equipment', model, paletteSwaps, { imageFactory });
+    const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.EQUIPMENT);
+    const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps, { imageFactory });
 
     return new DynamicSprite<Equipment>({
       paletteSwaps,

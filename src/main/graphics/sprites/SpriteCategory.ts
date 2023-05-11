@@ -1,3 +1,5 @@
-type SpriteCategory = 'units' | 'equipment' | 'static';
-
-export default SpriteCategory;
+export enum SpriteCategory {
+  UNITS = 'units',
+  EQUIPMENT = 'equipment',
+  STATIC ='static'
+}
