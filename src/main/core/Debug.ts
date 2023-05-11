@@ -48,8 +48,7 @@ export class Debug {
       ...this,
       killEnemies,
       nextLevel: () => loadNextMap({
-        state: this.state,
-        renderer: this.renderer
+        state: this.state
       })
     };
   };

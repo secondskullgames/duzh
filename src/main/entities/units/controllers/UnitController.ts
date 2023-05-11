@@ -10,7 +10,7 @@ export type UnitControllerProps = Readonly<{
 }>;
 
 interface UnitController {
-  issueOrder: (unit: Unit, { state }: UnitControllerProps) => Promise<void>;
+  issueOrder: (unit: Unit, { state, renderer, imageFactory }: UnitControllerProps) => Promise<void>;
 }
 
 export default UnitController;

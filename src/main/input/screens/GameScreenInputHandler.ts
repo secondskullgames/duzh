@@ -126,7 +126,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: InputHandlerProps
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state, renderer });
+    await loadNextMap({ state });
   }
   await playTurn({ state, renderer, imageFactory });
 };
