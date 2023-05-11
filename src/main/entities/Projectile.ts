@@ -1,8 +1,8 @@
-import Entity from '../entities/Entity';
+import Entity from './Entity';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
-import { EntityType } from '../entities/EntityType';
+import { EntityType } from './EntityType';
 
 type Props = Readonly<{
   coordinates: Coordinates
@@ -11,7 +11,7 @@ type Props = Readonly<{
 }>;
 
 export default class Projectile implements Entity {
-  private coordinates: Coordinates
+  private coordinates: Coordinates;
   private readonly direction: Direction;
   private readonly sprite: Sprite;
 

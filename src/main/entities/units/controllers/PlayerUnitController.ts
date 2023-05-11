@@ -1,27 +1,28 @@
 import Unit from '../Unit';
-import UnitController, { UnitControllerProps } from './UnitController';
-
-type PromiseSupplier = () => Promise<void>
+import { UnitController, type UnitControllerProps } from './UnitController';
+import StayOrder from '../orders/StayOrder';
+import UnitOrder from '../orders/UnitOrder';
 
 export default class PlayerUnitController implements UnitController {
-  private queuedOrder: PromiseSupplier | null;
+  private queuedOrder: UnitOrder | null;
 
   constructor() {
     this.queuedOrder = null;
   }
 
-  queueOrder = (order: PromiseSupplier) => {
+  queueOrder = (order: UnitOrder) => {
     this.queuedOrder = order;
   }
 
   /**
    * @override UnitController#issueOrder
    */
-  issueOrder = async (unit: Unit, { state, renderer }: UnitControllerProps) => {
+  issueOrder = (unit: Unit, {}: UnitControllerProps): UnitOrder => {
     if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;
-      return queuedOrder();
+      return queuedOrder;
     }
+    return new StayOrder();
   };
 }

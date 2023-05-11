@@ -12,7 +12,7 @@ import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import DynamicSprite from './DynamicSprite';
 import Sprite from './Sprite';
-import SpriteCategory from './SpriteCategory';
+import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
 import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
@@ -20,124 +20,135 @@ type Props = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-export default {
-  /**
-   * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
-   */
-  createTileSprite: async (filename: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props): Promise<Sprite> => {
-    const offsets = { dx: 0, dy: 0 };
-    const transparentColor = Colors.WHITE;
-    const image = await imageFactory.getImage({
-      filename: `tiles/${filename}`,
-      paletteSwaps,
-      transparentColor
-    });
-    return new StaticSprite(image, offsets);
-  },
+/**
+ * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
+ */
+const createTileSprite = async (
+  filename: string,
+  paletteSwaps: PaletteSwaps,
+  { imageFactory }: Props
+): Promise<Sprite> => {
+  const offsets = { dx: 0, dy: 0 };
+  const transparentColor = Colors.WHITE;
+  const image = await imageFactory.getImage({
+    filename: `tiles/${filename}`,
+    paletteSwaps,
+    transparentColor
+  });
+  return new StaticSprite(image, offsets);
+};
 
-  createStaticSprite: async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props): Promise<Sprite> => {
-    const model = await loadStaticSpriteModel(spriteName);
-    const { filename, offsets, transparentColor } = model;
-    const image = await imageFactory.getImage({
-      filename,
-      paletteSwaps,
-      transparentColor: (transparentColor) ? Colors[transparentColor] : null
-    });
-    return new StaticSprite(image, offsets);
-  },
+const createStaticSprite = async (
+  spriteName: string,
+  paletteSwaps: PaletteSwaps,
+  { imageFactory }: Props
+): Promise<Sprite> => {
+  const model = await loadStaticSpriteModel(spriteName);
+  const { filename, offsets, transparentColor } = model;
+  const image = await imageFactory.getImage({
+    filename,
+    paletteSwaps,
+    transparentColor: (transparentColor) ? Colors[transparentColor] : null
+  });
+  return new StaticSprite(image, offsets);
+};
 
-  createUnitSprite: async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props): Promise<DynamicSprite<Unit>> => {
-    const model = await loadDynamicSpriteModel(spriteName, 'units');
-    const imageMap = await _loadAnimations('units', model, paletteSwaps, { imageFactory });
+const createUnitSprite = async (
+  spriteName: string,
+  paletteSwaps: PaletteSwaps,
+  { imageFactory }: Props
+): Promise<DynamicSprite<Unit>> => {
+  const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.UNITS);
+  const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps, { imageFactory });
 
-    return new DynamicSprite<Unit>({
-      paletteSwaps,
-      imageMap,
-      offsets: model.offsets
-    });
-  },
+  return new DynamicSprite<Unit>({
+    paletteSwaps,
+    imageMap,
+    offsets: model.offsets
+  });
+};
 
-  createEquipmentSprite: async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props) => {
-    const model = await loadDynamicSpriteModel(spriteName, 'equipment');
-    const imageMap = await _loadAnimations('equipment', model, paletteSwaps, { imageFactory });
+const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Props) => {
+  const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.EQUIPMENT);
+  const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps, { imageFactory });
 
-    return new DynamicSprite<Equipment>({
-      paletteSwaps,
-      imageMap,
-      offsets: model.offsets
-    });
-  },
+  return new DynamicSprite<Equipment>({
+    paletteSwaps,
+    imageMap,
+    offsets: model.offsets
+  });
+};
 
-  /**
-   * TODO - these aren't in JSON but hardcoded here
-   */
-  createProjectileSprite: async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps, { imageFactory }: Props) => {
-    const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
-    const offsets = { dx: 0, dy: -8 };
-    const image = await imageFactory.getImage({
-      filename,
-      paletteSwaps,
-      transparentColor: Colors.WHITE
-    });
-    return new StaticSprite(image, offsets);
-  },
+/**
+ * TODO - these aren't in JSON but hardcoded here
+ */
+const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps, { imageFactory }: Props) => {
+  const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
+  const offsets = { dx: 0, dy: -8 };
+  const image = await imageFactory.getImage({
+    filename,
+    paletteSwaps,
+    transparentColor: Colors.WHITE
+  });
+  return new StaticSprite(image, offsets);
+};
 
-  /**
-   * TODO - hardcoded
-   */
-  createDoorSprite: async ({ imageFactory }: Props): Promise<DynamicSprite<Door>> => {
-    const offsets = { dx: 0, dy: -24 };
-      // TODO hardcoded
-    const paletteSwaps = PaletteSwaps.builder()
-      .addMapping(Colors.DARK_RED, Colors.YELLOW_CGA)
-      .addMapping(Colors.DARK_BROWN, Colors.LIGHT_MAGENTA_CGA)
-      .addMapping(Colors.BLACK, Colors.BLACK_CGA)
-      .build();
-    const imageMap: Record<string, Image> = {};
-    for (const direction of ['horizontal', 'vertical']) {
-      for (const state of DoorState.values()) {
-        const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
-        const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
-        const image = await imageFactory.getImage({
-          filename,
-          paletteSwaps,
-          transparentColor: Colors.WHITE
-        });
-        imageMap[key] = image;
-      }
-    }
-    return new DynamicSprite<Door>({
-      offsets,
-      paletteSwaps,
-      imageMap
-    });
-  },
-
-  createMirrorSprite: async ({ imageFactory }: Props): Promise<DynamicSprite<Spawner>> => {
-    const imageMap: Record<string, Image> = {};
-    for (const state of SpawnerState.values()) {
-      const key = `${state.toLowerCase()}`;
-      const filename: string = (() => {
-        switch (state) {
-          case 'ALIVE': return 'mirror';
-          case 'DEAD':  return 'mirror_broken';
-          default:      throw new Error(`Unknown mirror state ${state}`);
-        }
-      })();
+/**
+ * TODO - hardcoded
+ */
+const createDoorSprite = async ({ imageFactory }: Props): Promise<DynamicSprite<Door>> => {
+  const offsets = { dx: 0, dy: -24 };
+  // TODO hardcoded
+  const paletteSwaps = PaletteSwaps.builder()
+    .addMapping(Colors.DARK_RED, Colors.YELLOW_CGA)
+    .addMapping(Colors.DARK_BROWN, Colors.LIGHT_MAGENTA_CGA)
+    .addMapping(Colors.BLACK, Colors.BLACK_CGA)
+    .build();
+  const imageMap: Record<string, Image> = {};
+  for (const direction of ['horizontal', 'vertical']) {
+    for (const state of DoorState.values()) {
+      const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
+      const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
       const image = await imageFactory.getImage({
         filename,
+        paletteSwaps,
         transparentColor: Colors.WHITE
       });
       imageMap[key] = image;
     }
+  }
+  return new DynamicSprite<Door>({
+    offsets,
+    paletteSwaps,
+    imageMap
+  });
+};
 
-    const offsets = { dx: -4, dy: -20 };
-    return new DynamicSprite<Spawner>({
-      offsets,
-      imageMap
+const createMirrorSprite = async ({ imageFactory }: Props): Promise<DynamicSprite<Spawner>> => {
+  const imageMap: Record<string, Image> = {};
+  for (const state of SpawnerState.values()) {
+    const key = `${state.toLowerCase()}`;
+    const filename: string = (() => {
+      switch (state) {
+        case 'ALIVE': return 'mirror';
+        case 'DEAD':  return 'mirror_broken';
+        default:      throw new Error(`Unknown mirror state ${state}`);
+      }
+    })();
+
+    const image = await imageFactory.getImage({
+      filename,
+      transparentColor: Colors.WHITE
     });
-  },
-}
+    imageMap[key] = image;
+  }
+
+  const offsets = { dx: -4, dy: -20 };
+  return new DynamicSprite<Spawner>({
+    offsets,
+    imageMap
+  });
+};
 
 const _loadAnimations = async (
   spriteCategory: SpriteCategory,
@@ -190,4 +201,14 @@ const _loadAnimations = async (
   }
 
   return imageMap;
+};
+
+export default {
+  createTileSprite,
+  createStaticSprite,
+  createUnitSprite,
+  createEquipmentSprite,
+  createProjectileSprite,
+  createDoorSprite,
+  createMirrorSprite,
 };

@@ -1,6 +1,6 @@
 import Unit from '../entities/units/Unit';
 import Door from '../entities/objects/Door';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
 export const openDoor = async (unit: Unit, door: Door) => {

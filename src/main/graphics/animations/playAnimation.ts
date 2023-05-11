@@ -8,7 +8,10 @@ type Props = Readonly<{
   renderer: GameRenderer
 }>;
 
-export const playAnimation = async (animation: Animation, { state, renderer }: Props) => {
+export const playAnimation = async (
+  animation: Animation,
+  { state, renderer }: Props
+) => {
   const map = state.getMap();
 
   for (let i = 0; i < animation.frames.length; i++) {
@@ -24,7 +27,6 @@ export const playAnimation = async (animation: Animation, { state, renderer }: P
     await renderer.render();
 
     if (!!frame.postDelay) {
-      console.log(`sleep ${frame.postDelay}`);
       await sleep(frame.postDelay);
     }
 

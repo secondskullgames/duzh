@@ -1,7 +1,7 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/SoundFX';
+import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
 import Block from '../../objects/Block';
@@ -15,6 +15,9 @@ import { ObjectType } from '../../objects/GameObject';
 import { SpawnerState } from '../../objects/Spawner';
 import { AbilityName } from './AbilityName';
 
+/**
+ * TODO: this should probably not include a bunch of non-attack stuff
+ */
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
   icon: null,

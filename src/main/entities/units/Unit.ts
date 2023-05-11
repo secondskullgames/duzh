@@ -11,7 +11,7 @@ import Entity, { UpdateProps } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import AIParameters from './controllers/AIParameters';
-import UnitController from './controllers/UnitController';
+import { UnitController } from './controllers/UnitController';
 import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
@@ -189,9 +189,9 @@ export default class Unit implements Entity, Animatable {
   update = async ({ state, renderer, imageFactory }: UpdateProps) => {
     await this._upkeep();
     if (this.stunDuration === 0) {
-      await this.controller.issueOrder(this, { state, renderer, imageFactory });
+      const order = this.controller.issueOrder(this, { state });
+      await order.execute(this, { state, renderer, imageFactory });
     }
-    await this.sprite.getImage();
     await this._endOfTurn();
   };
 

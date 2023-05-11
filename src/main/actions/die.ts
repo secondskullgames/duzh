@@ -1,6 +1,6 @@
 import Unit from '../entities/units/Unit';
 import { gameOver } from './gameOver';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { logMessage } from './logMessage';
 import GameState from '../core/GameState';

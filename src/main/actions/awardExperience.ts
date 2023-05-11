@@ -1,6 +1,6 @@
 import Unit from '../entities/units/Unit';
 import { levelUp } from './levelUp';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
 export const awardExperience = (unit: Unit, experience: number) => {

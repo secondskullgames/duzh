@@ -6,11 +6,6 @@ import Rect from '../geometry/Rect';
  * an existing package.  In general, you should put types in their own file in an appropriate package.
  */
 
-export type Pixel = Readonly<{
-  x: number,
-  y: number
-}>;
-
 export enum GameScreen {
   GAME = 'GAME',
   INVENTORY =  'INVENTORY',

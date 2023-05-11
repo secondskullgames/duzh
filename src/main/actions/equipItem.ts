@@ -3,7 +3,7 @@ import Equipment from '../equipment/Equipment';
 import Unit from '../entities/units/Unit';
 import GameState from '../core/GameState';
 import { logMessage } from './logMessage';
-import { playSound } from '../sounds/SoundFX';
+import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
 type Props = Readonly<{

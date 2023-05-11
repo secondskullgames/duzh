@@ -7,8 +7,8 @@ import type { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
-import Projectile from '../types/Projectile';
-import GameObject from '../entities/objects/GameObject';
+import Projectile from '../entities/Projectile';
+import GameObject, { ObjectType } from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
 
@@ -28,7 +28,7 @@ export default class MapInstance {
   private readonly units: Grid<Unit>;
   private readonly objects: MultiGrid<GameObject>;
   readonly projectiles: Set<Projectile>;
-  private readonly revealedTiles: Set<string>; // stores JSON-stringified tiles
+  private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
 
   constructor({
@@ -57,7 +57,7 @@ export default class MapInstance {
         this.tiles.put({ x, y }, tile);
       }
     }
-    this.revealedTiles = new Set();
+    this.revealedTiles = new Grid({ width, height });
     this.music = music;
   }
 
@@ -83,19 +83,19 @@ export default class MapInstance {
 
   getSpawner = (coordinates: Coordinates): Spawner | null => {
     return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === 'spawner')
+      .filter(object => object.getObjectType() === ObjectType.SPAWNER)
       .map(object => object as Spawner)[0] ?? null;
   };
 
   getItem = (coordinates: Coordinates): MapItem | null => {
     return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === 'item')
+      .filter(object => object.getObjectType() === ObjectType.ITEM)
       .map(object => object as MapItem)[0] ?? null;
   };
 
   getDoor = (coordinates: Coordinates): Door | null => {
     return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === 'door')
+      .filter(object => object.getObjectType() === ObjectType.DOOR)
       .map(object => object as Door)[0] ?? null;
   };
 
@@ -151,12 +151,14 @@ export default class MapInstance {
     height: this.height
   });
 
-  isTileRevealed = ({ x, y }: Coordinates): boolean =>
+  isTileRevealed = (coordinates: Coordinates): boolean =>
     // @ts-ignore
-    window.jwb.debug.isMapRevealed() || this.revealedTiles.has(JSON.stringify({ x, y }));
+    window.jwb.debug.isMapRevealed()
+      || !!this.revealedTiles.get(coordinates);
 
-  revealTile = ({ x, y }: Coordinates) =>
-    this.revealedTiles.add(JSON.stringify({ x, y }));
+  revealTile = (coordinates: Coordinates) => {
+    this.revealedTiles.put(coordinates, true);
+  }
 
   unitExists = (unit: Unit): boolean => {
     const coordinates = unit.getCoordinates();

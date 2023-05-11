@@ -1,24 +1,24 @@
 import Unit from '../Unit';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
-import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
-import AttackUnitBehavior from './AttackUnitBehavior';
+import UnitOrder, { UnitOrderProps } from './UnitOrder';
+import AttackUnitOrder from './AttackUnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class ShootUnitBehavior implements UnitBehavior {
+export default class ShootUnitOrder implements UnitOrder {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitBehavior#execute} */
+  /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -63,9 +63,9 @@ export default class ShootUnitBehavior implements UnitBehavior {
   private _attack = async (
     unit: Unit,
     targetUnit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
-    const behavior = new AttackUnitBehavior({ targetUnit });
+    const behavior = new AttackUnitOrder({ targetUnit });
     return behavior.execute(unit, { state, renderer, imageFactory });
   };
 };

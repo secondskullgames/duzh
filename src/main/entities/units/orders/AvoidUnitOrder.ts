@@ -3,24 +3,24 @@ import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { comparingReversed } from '../../../utils/arrays';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import UnitOrder, { UnitOrderProps } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class AvoidUnitBehavior implements UnitBehavior {
+export default class AvoidUnitOrder implements UnitOrder {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitBehavior#execute} */
+  /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();

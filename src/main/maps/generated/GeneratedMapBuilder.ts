@@ -8,7 +8,7 @@ import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
 import { randChoice } from '../../utils/random';
 import MapInstance from '../MapInstance';
-import UnitController from '../../entities/units/controllers/UnitController';
+import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
@@ -16,7 +16,6 @@ import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapMod
 import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
-import GameRenderer from '../../graphics/renderers/GameRenderer';
 import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Props = Readonly<{

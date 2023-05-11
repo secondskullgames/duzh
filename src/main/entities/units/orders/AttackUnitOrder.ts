@@ -1,24 +1,24 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import UnitBehavior, { UnitBehaviorProps } from './UnitBehavior';
+import UnitOrder, { type UnitOrderProps } from './UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class AttackUnitBehavior implements UnitBehavior {
+export default class AttackUnitOrder implements UnitOrder {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitBehavior#execute} */
+  /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitBehaviorProps
+    { state, renderer, imageFactory }: UnitOrderProps
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();

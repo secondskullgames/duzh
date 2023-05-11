@@ -6,7 +6,7 @@ import { NormalAttack } from '../../entities/units/abilities/NormalAttack';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
-import { playSound } from '../../sounds/SoundFX';
+import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { GameScreen } from '../../types/types';
 import { toggleFullScreen } from '../../utils/dom';
@@ -14,8 +14,9 @@ import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
 import InputHandlerType, { InputHandlerProps } from './InputHandlerType';
-
-type PromiseSupplier = () => Promise<void>;
+import UnitOrder from '../../entities/units/orders/UnitOrder';
+import ShootUnitOrder from '../../entities/units/orders/ShootUnitOrder';
+import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -59,41 +60,27 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   const playerUnit = state.getPlayerUnit();
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
-  let order: PromiseSupplier | null = null;
+  let order: UnitOrder | null = null;
   if (modifiers.includes('SHIFT')) {
     if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
-      order = () => ShootArrow.use(
-        playerUnit,
-        coordinates,
-        { state, renderer, imageFactory }
-      );
+      order = new ShootUnitOrder({ targetUnit: playerUnit });
     }
   } else if (modifiers.includes('ALT')) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
-      order = () => Strafe.use(
-        playerUnit,
-        coordinates,
-        { state, renderer, imageFactory }
-      );
+      // TODO make this into an Order
+      order = {
+        execute: async (unit, { state, renderer, imageFactory }) => {
+          await Strafe.use(
+            playerUnit,
+            coordinates,
+            { state, renderer, imageFactory }
+          );
+        }
+      };
     }
   } else {
-    const ability = state.getQueuedAbility();
-    if (ability !== null) {
-      order = async () => {
-        state.setQueuedAbility(null);
-        await ability.use(
-          playerUnit,
-          coordinates,
-          { state, renderer, imageFactory }
-        );
-      };
-    } else {
-      order = () => NormalAttack.use(
-        playerUnit,
-        coordinates,
-        { state, renderer, imageFactory }
-      );
-    }
+    const ability = state.getQueuedAbility() ?? NormalAttack;
+    order = new AbilityOrder({ ability, coordinates });
   }
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {

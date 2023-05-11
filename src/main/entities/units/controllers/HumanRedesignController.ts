@@ -1,52 +1,48 @@
-import UnitController, { UnitControllerProps } from './UnitController';
+import { UnitController, UnitControllerProps } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
-import StayBehavior from '../behaviors/StayBehavior';
-import UnitBehavior from '../behaviors/UnitBehavior';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
+import StayOrder from '../orders/StayOrder';
+import UnitOrder from '../orders/UnitOrder';
+import AvoidUnitOrder from '../orders/AvoidUnitOrder';
+import AttackUnitOrder from '../orders/AttackUnitOrder';
+import WanderOrder from '../orders/WanderOrder';
 
 export default class HumanRedesignController implements UnitController {
-  issueOrder = async (
+  /**
+   * @override {@link UnitController#issueOrder}
+   */
+  issueOrder = (
     unit: Unit,
-    { state, renderer, imageFactory }: UnitControllerProps
-  ) => {
+    { state }: UnitControllerProps
+  ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getAiParameters(), 'HUMAN_REDESIGN behavior requires aiParams!');
+    const aiParameters = checkNotNull(unit.getAiParameters(), 'HumanRedesignController requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    let behavior: UnitBehavior;
     if (!canMove(speed, { state })) {
-      behavior = new StayBehavior();
+      return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      behavior = new AvoidUnitBehavior({ targetUnit: playerUnit });
+      return new AvoidUnitOrder({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
+        return new AttackUnitOrder({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
-        behavior = new AttackUnitBehavior({ targetUnit: playerUnit });
+        return new AttackUnitOrder({ targetUnit: playerUnit });
       } else {
-        behavior = new WanderBehavior();
+        return new WanderOrder();
       }
     } else {
       if (randBoolean()) {
-        behavior = new StayBehavior();
+        return new StayOrder();
       } else {
-        behavior = new WanderBehavior();
+        return new WanderOrder();
       }
     }
-
-    return behavior.execute(unit, {
-      state,
-      renderer,
-      imageFactory
-    });
   }
 };

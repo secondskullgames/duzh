@@ -1,7 +1,6 @@
 import GameState from '../../core/GameState';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
-import { Pixel } from '../../types/types';
 import Unit from '../../entities/units/Unit';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -10,6 +9,7 @@ import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import AbstractRenderer from './AbstractRenderer';
+import { Pixel } from '../Pixel';
 
 const SHADOW_FILENAME = 'shadow';
 

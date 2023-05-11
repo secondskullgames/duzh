@@ -1,7 +1,7 @@
 import Unit from '../../entities/units/Unit';
 import Activity from '../../types/Activity';
 import Direction from '../../geometry/Direction';
-import Projectile from '../../types/Projectile';
+import Projectile from '../../entities/Projectile';
 
 export type UnitAnimationFrame = {
   unit: Unit,
