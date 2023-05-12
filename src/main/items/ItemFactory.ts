@@ -16,13 +16,13 @@ import { logMessage } from '../actions/logMessage';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
-import { ItemProc, ItemProcProps } from './ItemProc';
+import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state }: ItemProcProps
+    { state }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
@@ -43,7 +43,7 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state }: ItemProcProps
+    { state }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
@@ -74,7 +74,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state, renderer, imageFactory }: ItemProcContext
   ) => {
     const map = state.getMap();
 
@@ -114,7 +114,7 @@ const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryI
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory }: ItemProcProps
+    { state, imageFactory }: ItemProcContext
   ) => {
     const equipment = await createEquipment(equipmentClass, { imageFactory });
     return equipItem(item, equipment, unit, { state });
@@ -128,14 +128,14 @@ const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryI
   });
 };
 
-type CreateMapEquipmentProps = Readonly<{
+type CreateMapEquipmentContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
 const createMapEquipment = async (
   equipmentClass: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapEquipmentProps
+  { imageFactory }: CreateMapEquipmentContext
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
   const sprite = await SpriteFactory.createStaticSprite(
@@ -147,11 +147,11 @@ const createMapEquipment = async (
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
-type CreateEquipmentProps = Readonly<{
+type CreateEquipmentContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentProps): Promise<Equipment> => {
+const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentContext): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(
@@ -199,14 +199,14 @@ const createInventoryItem = async (
   }
 };
 
-type CreateMapItemProps = Readonly<{
+type CreateMapItemContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapItemProps
+  { imageFactory }: CreateMapItemContext
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
   const inventoryItem = await createInventoryItem(model);

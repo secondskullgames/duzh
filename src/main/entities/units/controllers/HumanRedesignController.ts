@@ -1,4 +1,4 @@
-import { UnitController, UnitControllerProps } from './UnitController';
+import { UnitController, UnitControllerContext } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
@@ -16,7 +16,7 @@ export default class HumanRedesignController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerProps
+    { state }: UnitControllerContext
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 

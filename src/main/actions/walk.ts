@@ -6,7 +6,7 @@ import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -15,7 +15,7 @@ type Props = Readonly<{
 export const walk = async (
   unit: Unit,
   direction: Direction,
-  { state, renderer, imageFactory }: Props
+  { state, renderer, imageFactory }: Context
 ) => {
   const map = state.getMap();
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);

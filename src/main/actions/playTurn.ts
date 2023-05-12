@@ -5,13 +5,13 @@ import { sortBy } from '../utils/arrays';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
-export const playTurn = async ({ state, renderer, imageFactory }: Props) => {
+export const playTurn = async ({ state, renderer, imageFactory }: Context) => {
   const map = state.getMap();
 
   const sortedUnits = _sortUnits(map.getAllUnits());

@@ -4,11 +4,11 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
-export const gameOver = async ({ state }: Props) => {
+export const gameOver = async ({ state }: Context) => {
   state.setScreen(GameScreen.GAME_OVER);
   Music.stop();
   playSound(Sounds.GAME_OVER);

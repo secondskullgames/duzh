@@ -4,13 +4,13 @@ import GameState from '../core/GameState';
 import { addInitialState } from './addInitialState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
-export const showSplashScreen = async ({ state, renderer, imageFactory }: Props) => {
+export const showSplashScreen = async ({ state, renderer, imageFactory }: Context) => {
   state.reset();
   await addInitialState({ state, imageFactory })
   await renderer.render();

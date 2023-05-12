@@ -4,7 +4,7 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { moveUnit } from '../../../actions/moveUnit';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
@@ -21,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');

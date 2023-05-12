@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerProps } from './UnitController';
+import { UnitController, type UnitControllerContext } from './UnitController';
 import Unit from '../Unit';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
@@ -21,7 +21,7 @@ export default class WizardController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerProps
+    { state }: UnitControllerContext
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();

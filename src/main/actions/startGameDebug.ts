@@ -4,12 +4,15 @@ import { updateRevealedTiles } from './updateRevealedTiles';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer
 }>;
 
-export const startGameDebug = async (mapInstance: MapInstance, { state, renderer }: Props) => {
+export const startGameDebug = async (
+  mapInstance: MapInstance,
+  { state, renderer }: Context
+) => {
   console.log('debug mode');
   state.setMap(mapInstance);
   Music.stop();

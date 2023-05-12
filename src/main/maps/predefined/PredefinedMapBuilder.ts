@@ -23,41 +23,40 @@ import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import { Faction } from '../../types/types';
 
-type Props = Readonly<{
+type Context = Readonly<{
   imageFactory: ImageFactory,
   state: GameState
 }>;
 
 class PredefinedMapBuilder {
-  private readonly imageFactory: ImageFactory;
-  private readonly state: GameState;
-
-  constructor(props: Props) {
-    this.imageFactory = props.imageFactory;
-    this.state = props.state;
-  }
-
-  build = async (mapId: string): Promise<MapInstance> => {
+  build = async (
+    mapId: string,
+    { state, imageFactory }: Context
+  ): Promise<MapInstance> => {
     const model = await loadPredefinedMapModel(mapId);
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
 
     return new MapInstance({
       width: image.bitmap.width,
       height: image.bitmap.height,
-      tiles: await this._loadTiles(model, image),
-      units: await this._loadUnits(model, image),
-      objects: await this._loadObjects(model, image),
+      tiles: await this._loadTiles(model, image, { state, imageFactory }),
+      units: await this._loadUnits(model, image, { state, imageFactory }),
+      objects: await this._loadObjects(model, image, { state, imageFactory }),
       music: (model.music) ? await Music.loadMusic(model.music as string) : null
     });
   };
 
-  private _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
+  private _loadTiles = async (
+    model: PredefinedMapModel,
+    image: Image,
+    { imageFactory }: Context
+  ): Promise<Tile[][]> => {
     const tileColors = this._toHexColors(model.tileColors);
     const tileSet = await TileFactory.getTileSet(
       model.tileset,
-      { imageFactory: this.imageFactory }
+      { imageFactory }
     );
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.bitmap.height; y++) {
@@ -89,9 +88,11 @@ class PredefinedMapBuilder {
     return tiles;
   };
 
-  private _loadUnits = async (model: PredefinedMapModel, image: Image): Promise<Unit[]> => {
-    const state = this.state;
-
+  private _loadUnits = async (
+    model: PredefinedMapModel,
+    image: Image,
+    { state, imageFactory }: Context
+  ): Promise<Unit[]> => {
     const units: Unit[] = [];
     let id = 1;
 
@@ -132,7 +133,7 @@ class PredefinedMapBuilder {
                 level: model.levelNumber,
                 coordinates: { x, y }
               },
-              { imageFactory: this.imageFactory }
+              { imageFactory }
             );
             units.push(unit);
           }
@@ -143,8 +144,11 @@ class PredefinedMapBuilder {
     return units;
   };
 
-  private _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
-    const { imageFactory } = this;
+  private _loadObjects = async (
+    model: PredefinedMapModel,
+    image: Image,
+    { state, imageFactory }: Context
+  ): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);

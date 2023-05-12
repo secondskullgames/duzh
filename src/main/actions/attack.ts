@@ -10,7 +10,7 @@ import { awardExperience } from './awardExperience';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -19,7 +19,7 @@ type Props = Readonly<{
 export const attack = async (
   attacker: Unit,
   defender: Unit,
-  { state, renderer, imageFactory }: Props
+  { state, renderer, imageFactory }: Context
 ) => {
   const playerUnit = state.getPlayerUnit();
 

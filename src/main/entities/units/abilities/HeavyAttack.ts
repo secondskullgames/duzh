@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import type { UnitAbility, UnitAbilityProps } from './UnitAbility';
+import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
@@ -24,7 +24,7 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');

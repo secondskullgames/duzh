@@ -5,7 +5,7 @@ import GameRenderer from '../../../graphics/renderers/GameRenderer';
 import ImageFactory from '../../../graphics/images/ImageFactory';
 import { AbilityName } from './AbilityName';
 
-export type UnitAbilityProps = Readonly<{
+export type UnitAbilityContext = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -19,7 +19,7 @@ export type UnitAbility = Readonly<{
   use: (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityProps
+    { state }: UnitAbilityContext
   ) => Promise<void>;
 
   getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string;

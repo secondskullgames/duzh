@@ -13,14 +13,14 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
+import ScreenInputHandler, { ScreenHandlerContext } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import ShootUnitOrder from '../../entities/units/orders/ShootUnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, renderer, imageFactory }: ScreenHandlerProps
+  { state, renderer, imageFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   if (_isArrowKey(key)) {
@@ -55,7 +55,7 @@ const _isNumberKey = (key: Key) => {
   return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(key);
 };
 
-const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state, renderer, imageFactory }: ScreenHandlerProps) => {
+const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state, renderer, imageFactory }: ScreenHandlerContext) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
@@ -90,7 +90,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   }
 };
 
-const _handleAbility = async (key: NumberKey, { state, renderer, imageFactory }: ScreenHandlerProps) => {
+const _handleAbility = async (key: NumberKey, { state, renderer, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
 
   // sketchy - player abilities are indexed as (0 => attack, others => specials)
@@ -104,7 +104,7 @@ const _handleAbility = async (key: NumberKey, { state, renderer, imageFactory }:
   }
 };
 
-const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerProps) => {
+const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
@@ -119,7 +119,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerProp
   await playTurn({ state, renderer, imageFactory });
 };
 
-const GameScreenInputHandler: ScreenHandler = {
+const GameScreenInputHandler: ScreenInputHandler = {
   handleKeyCommand
 };
 

@@ -5,12 +5,12 @@ import MapSpec from '../schemas/MapSpec';
 import { MapSupplier } from '../maps/MapSupplier';
 import MapFactory from '../maps/MapFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   imageFactory: ImageFactory
 }>;
 
-export const addInitialState = async ({ state, imageFactory }: Props) => {
+export const addInitialState = async ({ state, imageFactory }: Context) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });

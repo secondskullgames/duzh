@@ -6,7 +6,7 @@ import AnimationFactory from '../graphics/animations/AnimationFactory';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -15,7 +15,7 @@ type Props = Readonly<{
 export const startAttack = async (
   unit: Unit,
   target: Unit,
-  { state, renderer, imageFactory }: Props
+  { state, renderer, imageFactory }: Context
 ) => {
   const animation = AnimationFactory.getAttackingAnimation(
     unit,

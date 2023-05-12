@@ -4,7 +4,7 @@ import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -13,7 +13,7 @@ type Props = Readonly<{
 export const useItem = async (
   unit: Unit,
   item: InventoryItem,
-  { state, renderer, imageFactory }: Props
+  { state, renderer, imageFactory }: Context
 ) => {
   await item.use(unit, { state, renderer, imageFactory });
   unit.getInventory().remove(item);

@@ -1,8 +1,8 @@
-import ScreenHandler, { ScreenHandlerProps } from './ScreenHandler';
+import ScreenInputHandler, { ScreenHandlerContext } from './ScreenInputHandler';
 import { KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../types/types';
 
-const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerProps) => {
+const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerContext) => {
   switch (command.key) {
     case 'M':
       state.setScreen(GameScreen.GAME);
@@ -14,7 +14,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFac
   }
 };
 
-const MapScreenInputHandler: ScreenHandler = {
+const MapScreenInputHandler: ScreenInputHandler = {
   handleKeyCommand
 };
 

@@ -4,7 +4,7 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import HumanRedesignController from '../controllers/HumanRedesignController';
 import { AbilityName } from './AbilityName';
 
@@ -18,7 +18,7 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');

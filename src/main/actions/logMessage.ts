@@ -1,9 +1,9 @@
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
-export const logMessage = (message: string, { state }: Props): void => {
+export const logMessage = (message: string, { state }: Context): void => {
   state.getMessages().log(message, state.getTurn());
 };

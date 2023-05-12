@@ -1,5 +1,5 @@
 import Unit from '../Unit';
-import { UnitController, type UnitControllerProps } from './UnitController';
+import { UnitController, type UnitControllerContext } from './UnitController';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
@@ -16,7 +16,7 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerProps
+    { state }: UnitControllerContext
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 

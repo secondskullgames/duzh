@@ -1,6 +1,6 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 
@@ -12,7 +12,7 @@ export const Strafe: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Strafe requires a target!');

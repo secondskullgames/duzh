@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -24,7 +24,7 @@ export const ShootArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');

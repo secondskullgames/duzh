@@ -13,12 +13,12 @@ import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   imageFactory: ImageFactory
 }>;
 
-const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Props): Promise<MapInstance> => {
+const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Context): Promise<MapInstance> => {
   switch (mapSpec.type) {
     case 'generated': {
       const mapClass = await loadGeneratedMapModel(mapSpec.id);
@@ -31,21 +31,18 @@ const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Props): Promis
   }
 };
 
-const loadGeneratedMap = async (mapClass: GeneratedMapModel, { state, imageFactory }: Props): Promise<GeneratedMapBuilder> => {
-  const dungeonGenerator = getDungeonGenerator(mapClass.layout, { state, imageFactory });
+const loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
+  const dungeonGenerator = getDungeonGenerator(mapClass.layout);
   return dungeonGenerator.generateMap(mapClass, { imageFactory });
 };
 
-const loadPredefinedMap = async (mapId: string, { state, imageFactory }: Props): Promise<MapInstance> => {
-  const mapBuilder = new PredefinedMapBuilder({
-    state,
-    imageFactory
-  });
+const loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
+  const mapBuilder = new PredefinedMapBuilder();
 
-  return mapBuilder.build(mapId);
+  return mapBuilder.build(mapId, { state, imageFactory });
 };
 
-const getDungeonGenerator = (mapLayout: string, { state, imageFactory }: Props): AbstractMapGenerator => {
+const getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
   switch (mapLayout) {
     case 'ROOMS_AND_CORRIDORS': {
       const useNewMapGenerator = true;

@@ -40,14 +40,14 @@ const canvas = createCanvas({
 });
 const context = getCanvasContext(canvas);
 
-type Props = Readonly<{
+type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
 export class FontRenderer {
   private readonly imageFactory: ImageFactory;
 
-  constructor({ imageFactory }: Props) {
+  constructor({ imageFactory }: Context) {
     this.imageFactory = imageFactory;
   }
 
