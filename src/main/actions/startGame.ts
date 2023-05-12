@@ -4,12 +4,12 @@ import { updateRevealedTiles } from './updateRevealedTiles';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer
 }>;
 
-export const startGame = async ({ state, renderer }: Props) => {
+export const startGame = async ({ state, renderer }: Context) => {
   const t1 = new Date().getTime();
   await loadNextMap({ state });
   Music.stop();

@@ -1,13 +1,13 @@
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-export const updateRevealedTiles = ({ state }: Props) => {
+export const updateRevealedTiles = ({ state }: Context) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 

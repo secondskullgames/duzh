@@ -5,11 +5,11 @@ import Sounds from '../sounds/Sounds';
 import { logMessage } from './logMessage';
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
-export const die = async (unit: Unit, { state }: Props) => {
+export const die = async (unit: Unit, { state }: Context) => {
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
 

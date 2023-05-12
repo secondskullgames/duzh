@@ -7,14 +7,14 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
 import TitleScreenInputHandler from './screens/TitleScreenInputHandler';
-import ScreenHandler from './screens/ScreenHandler';
+import ScreenInputHandler from './screens/ScreenInputHandler';
 import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
 import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 
-const screenHandlers: Record<GameScreen, ScreenHandler> = {
+const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.GAME]:      GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
   [GameScreen.HELP]:      HelpScreenInputHandler,
@@ -24,7 +24,7 @@ const screenHandlers: Record<GameScreen, ScreenHandler> = {
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
 };
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -41,11 +41,14 @@ export default class InputHandler {
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (event: KeyboardEvent, props: Props) => {
+  keyHandlerWrapper = async (
+    event: KeyboardEvent,
+    { state, renderer, imageFactory }: Context
+  ) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, props)
+        await this.keyHandler(event, { state, renderer, imageFactory })
       } catch (e) {
         console.error(e);
         alert(e);
@@ -54,7 +57,10 @@ export default class InputHandler {
     }
   };
 
-  keyHandler = async (e: KeyboardEvent, props: Props) => {
+  keyHandler = async (
+    e: KeyboardEvent,
+    { state, renderer, imageFactory }: Context
+  ) => {
     if (e.repeat) {
       return;
     }
@@ -67,13 +73,12 @@ export default class InputHandler {
 
     e.preventDefault();
 
-    const { state, renderer, imageFactory } = props;
-    const handler: ScreenHandler = checkNotNull(screenHandlers[state.getScreen()]);
+    const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, renderer, imageFactory });
   };
 
-  addEventListener = (target: HTMLElement, props: Props) => {
-    boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, props);
+  addEventListener = (target: HTMLElement, context: Context) => {
+    boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
     target.addEventListener('keydown', boundHandler);
     this.eventTarget = target;
   };

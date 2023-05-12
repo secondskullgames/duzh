@@ -5,11 +5,11 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import GameState from '../core/GameState';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
-export const pickupItem = (unit: Unit, mapItem: MapItem, { state }: Props) => {
+export const pickupItem = (unit: Unit, mapItem: MapItem, { state }: Context) => {
   const { inventoryItem } = mapItem;
   unit.getInventory().add(inventoryItem);
   logMessage(`Picked up a ${inventoryItem.name}.`, { state });

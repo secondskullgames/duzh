@@ -7,7 +7,7 @@ import { moveObject } from './moveObject';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -16,7 +16,7 @@ type Props = Readonly<{
 export const pushBlock = async (
   unit: Unit,
   block: Block,
-  { state, renderer, imageFactory }: Props
+  { state, renderer, imageFactory }: Context
 ) => {
   const map = state.getMap();
   const coordinates = block.getCoordinates();

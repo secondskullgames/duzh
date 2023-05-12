@@ -3,7 +3,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityProps } from './UnitAbility';
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import Block from '../../objects/Block';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { walk } from '../../../actions/walk';
@@ -25,7 +25,7 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityProps
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');

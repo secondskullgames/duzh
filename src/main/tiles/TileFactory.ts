@@ -10,23 +10,28 @@ import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-type CreateTileProps = Readonly<{
+type CreateTileContext = Readonly<{
   tileType: TileType,
   tileSet: TileSet,
   coordinates: Coordinates
 }>;
 
-const createTile = ({tileType, tileSet, coordinates}: CreateTileProps): Tile => {
+const createTile = (
+  { tileType, tileSet, coordinates }: CreateTileContext
+): Tile => {
   const tilesOfType = checkNotNull(tileSet[tileType]);
   const sprite = randChoice(tilesOfType);
   return new Tile({tileType, sprite, coordinates});
 };
 
-type GetTileSetProps = Readonly<{
+type GetTileSetContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-const getTileSet = async (id: string, { imageFactory }: GetTileSetProps): Promise<TileSet> => {
+const getTileSet = async (
+  id: string,
+  { imageFactory }: GetTileSetContext
+): Promise<TileSet> => {
   const model = await loadTileSetModel(id);
   const tileSet: {
     [key in TileType]?: (Sprite | null)[]

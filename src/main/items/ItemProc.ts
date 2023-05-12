@@ -4,7 +4,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import GameState from '../core/GameState';
 
-export type ItemProcProps = Readonly<{
+export type ItemProcContext = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
@@ -13,5 +13,5 @@ export type ItemProcProps = Readonly<{
 export type ItemProc = (
   item: InventoryItem,
   unit: Unit,
-  { state, renderer, imageFactory }: ItemProcProps
+  { state, renderer, imageFactory }: ItemProcContext
 ) => Promise<void>;

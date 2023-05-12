@@ -8,21 +8,21 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 export type EquipmentScript = 'bolt_sword';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState,
   renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
 export namespace EquipmentScript {
-  export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates, { state }: Props) => {
+  export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates, { state }: Context) => {
   };
 
   export const onMove = async (
     equipment: Equipment,
     script: EquipmentScript,
     target: Coordinates,
-    { state, renderer, imageFactory }: Props
+    { state, renderer, imageFactory }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 

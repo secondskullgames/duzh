@@ -6,7 +6,7 @@ import { logMessage } from './logMessage';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
-type Props = Readonly<{
+type Context = Readonly<{
   state: GameState
 }>;
 
@@ -14,7 +14,7 @@ export const equipItem = async (
   item: InventoryItem,
   equipment: Equipment,
   unit: Unit,
-  { state }: Props
+  { state }: Context
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {

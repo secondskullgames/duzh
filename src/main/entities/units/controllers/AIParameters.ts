@@ -1,4 +1,4 @@
-type AIParameters = {
+type AIParameters = Readonly<{
   /**
    * between 0 and 1
    */
@@ -17,6 +17,6 @@ type AIParameters = {
    * ratio of (current life / max life)
    */
   fleeThreshold: number
-};
+}>;
 
 export default AIParameters;

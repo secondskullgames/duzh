@@ -1,6 +1,6 @@
 import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
-import { ItemProc, ItemProcProps } from './ItemProc';
+import { ItemProc, ItemProcContext } from './ItemProc';
 
 type Props = Readonly<{
   name: string,
@@ -21,7 +21,7 @@ class InventoryItem {
 
   use = async (
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcProps
+    { state, renderer, imageFactory }: ItemProcContext
   ) => {
     await this.onUse(this, unit, { state, renderer, imageFactory });
   };
