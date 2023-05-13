@@ -17,7 +17,7 @@ import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull, checkState } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../entities/units/controllers/WizardController';
-import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
+import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
@@ -123,7 +123,7 @@ class PredefinedMapBuilder {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
               ? new WizardController()
-              : new HumanRedesignController();
+              : new BasicEnemyController();
             const unit = await UnitFactory.createUnit(
               {
                 name: `${enemyUnitModel.name}_${id++}`,

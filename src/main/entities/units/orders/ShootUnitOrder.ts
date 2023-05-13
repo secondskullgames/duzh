@@ -1,8 +1,10 @@
 import Unit from '../Unit';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import UnitOrder, { OrderContext } from './UnitOrder';
-import AttackUnitOrder from './AttackUnitOrder';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import { ShootArrow } from '../abilities/ShootArrow';
+import { AbilityOrder } from './AbilityOrder';
+import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -52,11 +54,7 @@ export default class ShootUnitOrder implements UnitOrder {
     return ShootArrow.use(
       unit,
       { x, y },
-      {
-        state,
-        renderer,
-        imageFactory
-      }
+      { state, renderer, imageFactory }
     );
   };
 
@@ -65,7 +63,9 @@ export default class ShootUnitOrder implements UnitOrder {
     targetUnit: Unit,
     { state, renderer, imageFactory }: OrderContext
   ) => {
-    const behavior = new AttackUnitOrder({ targetUnit });
-    return behavior.execute(unit, { state, renderer, imageFactory });
+    return new AbilityOrder({
+      ability: NormalAttack,
+      coordinates: targetUnit.getCoordinates()
+    }).execute(unit, { state, renderer, imageFactory });
   };
 };

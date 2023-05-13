@@ -5,7 +5,7 @@ import UnitFactory from '../units/UnitFactory';
 import GameObject from './GameObject';
 import Block from './Block';
 import { Faction } from '../../types/types';
-import HumanRedesignController from '../units/controllers/HumanRedesignController';
+import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 
@@ -25,7 +25,7 @@ const createMirror = async (
       unitClass: 'shade',
       coordinates: coordinates,
       level: 1,
-      controller: new HumanRedesignController(),
+      controller: new BasicEnemyController(),
       faction: Faction.ENEMY,
     },
     { imageFactory }

@@ -41,10 +41,7 @@ export const attack = async (
   await renderer.render();
 
   const damage = attacker.getDamage();
-  const adjustedDamage = await dealDamage(damage, {
-    sourceUnit: attacker,
-    targetUnit: defender
-  });
+  const adjustedDamage = defender.takeDamage(damage, attacker);
   playSound(Sounds.PLAYER_HITS_ENEMY);
 
   logMessage(

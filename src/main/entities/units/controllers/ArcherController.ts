@@ -6,9 +6,9 @@ import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
-import AvoidUnitOrder from '../orders/AvoidUnitOrder';
+import AvoidUnitBehavior from '../orders/AvoidUnitBehavior';
 import ShootUnitOrder from '../orders/ShootUnitOrder';
-import WanderOrder from '../orders/WanderOrder';
+import WanderBehavior from '../behaviors/WanderBehavior';
 
 export default class ArcherController implements UnitController {
   /**
@@ -28,20 +28,21 @@ export default class ArcherController implements UnitController {
     if (!canMove(speed, { state })) {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      return new AvoidUnitOrder({ targetUnit: playerUnit });
+      return new AvoidUnitBehavior({ targetUnit: playerUnit })
+        .issueOrder(unit, { state });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
         return new ShootUnitOrder({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
         return new ShootUnitOrder({ targetUnit: playerUnit });
       } else {
-        return new WanderOrder();
+        return new WanderBehavior().issueOrder(unit, { state });
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
-        return new WanderOrder();
+        return new WanderBehavior().issueOrder(unit, { state });
       }
     }
   }

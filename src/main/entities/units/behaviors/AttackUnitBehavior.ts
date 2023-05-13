@@ -1,28 +1,31 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { AbilityName } from '../abilities/AbilityName';
 import { randChoice } from '../../../utils/random';
+import { UnitController, UnitControllerContext } from '../controllers/UnitController';
+import { AbilityOrder } from '../orders/AbilityOrder';
+import StayOrder from '../orders/StayOrder';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class AttackUnitOrder implements UnitOrder {
+export default class AttackUnitBehavior implements UnitController {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitOrder#execute} */
-  execute = async (
+  /** @override {@link UnitController#issueOrder} */
+  issueOrder = (
     unit: Unit,
-    { state, renderer, imageFactory }: OrderContext
-  ) => {
+    { state }: UnitControllerContext
+  ): UnitOrder => {
     const { targetUnit } = this;
     const map = state.getMap();
     const mapRect = map.getRect();
@@ -48,13 +51,10 @@ export default class AttackUnitOrder implements UnitOrder {
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null || unitAtPoint === targetUnit) {
         const ability = this._chooseAbility(unit);
-        await ability.use(
-          unit,
-          coordinates,
-          { state, renderer, imageFactory }
-        );
+        return new AbilityOrder({ ability, coordinates });
       }
     }
+    return new StayOrder();
   };
 
   private _chooseAbility = (unit: Unit): UnitAbility => {

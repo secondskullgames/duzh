@@ -5,9 +5,9 @@ import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice } from '../../../utils/random';
 import TeleportAwayOrder from '../orders/TeleportAwayOrder';
-import AvoidUnitOrder from '../orders/AvoidUnitOrder';
-import AttackUnitOrder from '../orders/AttackUnitOrder';
-import WanderOrder from '../orders/WanderOrder';
+import AvoidUnitBehavior from '../orders/AvoidUnitBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
 import { Teleport } from '../abilities/Teleport';
 import { Summon } from '../abilities/Summon';
 import { AbilityName } from '../abilities/AbilityName';
@@ -49,10 +49,11 @@ export default class WizardController implements UnitController {
       }
     }
 
-    return randChoice([
-      () => new AvoidUnitOrder({ targetUnit: playerUnit }),
-      () => new AttackUnitOrder({ targetUnit: playerUnit }),
-      () => new WanderOrder()
+    const behavior = randChoice([
+      () => new AvoidUnitBehavior({ targetUnit: playerUnit }),
+      () => new AttackUnitBehavior({ targetUnit: playerUnit }),
+      () => new WanderBehavior()
     ])();
+    return behavior.issueOrder(unit, { state });
   }
 };
