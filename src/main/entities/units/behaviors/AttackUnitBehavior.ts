@@ -9,6 +9,7 @@ import { randChoice } from '../../../utils/random';
 import { UnitController, UnitControllerContext } from '../controllers/UnitController';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
+import { MoveOrder } from '../orders/MoveOrder';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -49,7 +50,9 @@ export default class AttackUnitBehavior implements UnitController {
     if (path.length > 1) {
       const coordinates = path[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
-      if (unitAtPoint === null || unitAtPoint === targetUnit) {
+      if (unitAtPoint === null) {
+        return new MoveOrder({ coordinates });
+      } else if (unitAtPoint === targetUnit) {
         const ability = this._chooseAbility(unit);
         return new AbilityOrder({ ability, coordinates });
       }
