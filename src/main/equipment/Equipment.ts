@@ -4,7 +4,7 @@ import Direction from '../geometry/Direction';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import { EquipmentScript } from './EquipmentScript';
+import { EquipmentScriptName } from './EquipmentScript';
 import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
@@ -25,7 +25,7 @@ export default class Equipment implements Animatable {
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   private readonly name: string;
-  readonly script: EquipmentScript | null;
+  readonly script: EquipmentScriptName | null;
   private _unit: Unit | null;
 
   constructor({ model, sprite, inventoryItem }: Props) {
@@ -36,7 +36,7 @@ export default class Equipment implements Animatable {
     this.absorbAmount = model.stats.absorbAmount ?? 0;
     this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
-    this.script = (model.script) ? model.script as EquipmentScript : null;
+    this.script = (model.script) ? model.script as EquipmentScriptName : null;
     this._unit = null;
   }
 

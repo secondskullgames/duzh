@@ -6,7 +6,7 @@ import GameRenderer from '../graphics/renderers/GameRenderer';
 import { Bolt } from '../entities/units/abilities/Bolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 
-export type EquipmentScript = 'bolt_sword';
+export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
   state: GameState,
@@ -14,39 +14,54 @@ type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-export namespace EquipmentScript {
-  export const onAttack = async (equipment: Equipment, script: EquipmentScript, target: Coordinates, { state }: Context) => {
-  };
-
-  export const onMove = async (
+export type EquipmentScript = Readonly<{
+  onAttack?: (
     equipment: Equipment,
-    script: EquipmentScript,
+    target: Coordinates,
+    { state }: Context
+  ) => Promise<void>;
+
+  onMove?: (
+    equipment: Equipment,
+    target: Coordinates,
+    { state, renderer, imageFactory }: Context
+  ) => Promise<void>;
+}>;
+
+const BoltSwordScript: EquipmentScript = {
+  onMove: async (
+    equipment: Equipment,
     target: Coordinates,
     { state, renderer, imageFactory }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
     const map = state.getMap();
-    switch (script) {
-      case 'bolt_sword': {
-        const direction = unit.getDirection();
-        let coordinates = Coordinates.plus(unit.getCoordinates(), direction);
-        while (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-          coordinates = Coordinates.plus(coordinates, direction);
-        }
-
-        if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
-          await Bolt.use(
-            unit,
-            target,
-            {
-              state,
-              renderer,
-              imageFactory
-            }
-          );
-        }
-      }
+    const direction = unit.getDirection();
+    let coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+    while (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+      coordinates = Coordinates.plus(coordinates, direction);
     }
-  };
+
+    if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
+      await Bolt.use(
+        unit,
+        target,
+        {
+          state,
+          renderer,
+          imageFactory
+        }
+      );
+    }
+  }
+};
+
+export namespace EquipmentScript {
+  export const forName = (name: EquipmentScriptName): EquipmentScript => {
+    switch (name) {
+      case 'bolt_sword': return BoltSwordScript;
+      default:           throw new Error(`Unknown equipment script ${name}`);
+    }
+  }
 }

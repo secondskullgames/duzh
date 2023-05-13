@@ -2,7 +2,7 @@ import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import { EquipmentScript } from '../equipment/EquipmentScript';
+import { EquipmentScript, EquipmentScriptName } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
@@ -32,9 +32,8 @@ export const moveUnit = async (
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
       const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
-      await EquipmentScript.onMove(
+      await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
-        equipment.script,
         nextCoordinates,
         { state, renderer, imageFactory }
       );

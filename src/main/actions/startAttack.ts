@@ -1,10 +1,10 @@
 import Unit from '../entities/units/Unit';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { EquipmentScript } from '../equipment/EquipmentScript';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { EquipmentScript } from '../equipment/EquipmentScript';
 
 type Context = Readonly<{
   state: GameState,
@@ -26,9 +26,8 @@ export const startAttack = async (
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
-      await EquipmentScript.onAttack(
+      await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
-        equipment.script,
         target.getCoordinates(),
         { state, renderer, imageFactory }
       );
