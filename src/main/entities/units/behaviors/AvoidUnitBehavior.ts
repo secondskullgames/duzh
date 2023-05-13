@@ -3,11 +3,11 @@ import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { comparingReversed } from '../../../utils/arrays';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import UnitOrder from './UnitOrder';
+import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitController, UnitControllerContext } from '../controllers/UnitController';
-import { AbilityOrder } from './AbilityOrder';
-import StayOrder from './StayOrder';
+import { AbilityOrder } from '../orders/AbilityOrder';
+import StayOrder from '../orders/StayOrder';
 
 type Props = Readonly<{
   targetUnit: Unit

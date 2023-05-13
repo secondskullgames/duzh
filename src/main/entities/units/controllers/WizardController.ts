@@ -5,7 +5,7 @@ import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice } from '../../../utils/random';
 import TeleportAwayOrder from '../orders/TeleportAwayOrder';
-import AvoidUnitBehavior from '../orders/AvoidUnitBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import { Teleport } from '../abilities/Teleport';

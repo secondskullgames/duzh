@@ -6,7 +6,7 @@ import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
-import AvoidUnitBehavior from '../orders/AvoidUnitBehavior';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import ShootUnitOrder from '../orders/ShootUnitOrder';
 import WanderBehavior from '../behaviors/WanderBehavior';
 
