@@ -187,12 +187,12 @@ export default class Unit implements Entity, Animatable {
 
   /** @override */
   update = async ({ state, renderer, imageFactory }: UpdateContext) => {
-    await this._upkeep();
+    this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });
       await order.execute(this, { state, renderer, imageFactory });
     }
-    await this._endOfTurn();
+    this._endOfTurn();
   };
 
   /** @override */

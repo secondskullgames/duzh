@@ -14,7 +14,6 @@ import { AbilityName } from '../abilities/AbilityName';
 import UnitOrder from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 
-
 export default class WizardController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
