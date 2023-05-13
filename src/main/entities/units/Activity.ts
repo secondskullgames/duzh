@@ -1,23 +1,24 @@
-type Activity =
-  'STANDING'
-| 'WALKING'
-| 'ATTACKING'
-| 'SHOOTING'
-| 'DAMAGED'
-| 'BURNED'
-| 'VANISHING'
-| 'APPEARING';
+export enum Activity {
+  STANDING = 'STANDING',
+  WALKING = 'WALKING',
+  ATTACKING = 'ATTACKING',
+  SHOOTING = 'SHOOTING',
+  DAMAGED = 'DAMAGED',
+  BURNED = 'BURNED',
+  VANISHING = 'VANISHING',
+  APPEARING = 'APPEARING'
+}
 
-namespace Activity {
+export namespace Activity {
   export const values = (): Activity[] => [
-    'STANDING',
-    'WALKING',
-    'ATTACKING',
-    'SHOOTING',
-    'DAMAGED',
-    'BURNED',
-    'VANISHING',
-    'APPEARING'
+    Activity.STANDING,
+    Activity.WALKING,
+    Activity.ATTACKING,
+    Activity.SHOOTING,
+    Activity.DAMAGED,
+    Activity.BURNED,
+    Activity.VANISHING,
+    Activity.APPEARING
   ];
 
   export const toString = (activity: Activity) => activity.toLowerCase();

@@ -97,7 +97,7 @@ export default class Unit implements Entity, Animatable {
     this.manaRemainder = 0;
     this.damage = model.damage;
     this.controller = props.controller;
-    this.activity = 'STANDING';
+    this.activity = Activity.STANDING;
     this.direction = Direction.S;
     this.frameNumber = 1;
     // TODO make this type safe
