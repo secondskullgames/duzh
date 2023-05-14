@@ -17,16 +17,28 @@ import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull, checkState } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../entities/units/controllers/WizardController';
-import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
+import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import { Faction } from '../../types/types';
+import UnitModel from '../../schemas/UnitModel';
+import ArcherController from '../../entities/units/controllers/ArcherController';
 
 type Context = Readonly<{
   imageFactory: ImageFactory,
   state: GameState
 }>;
+
+const _getEnemyController = (enemyUnitModel: UnitModel) => {
+  if (enemyUnitModel.type === 'WIZARD') {
+    return new WizardController()
+  } else if (enemyUnitModel.id === 'archer') {
+    return new ArcherController();
+  } else {
+    return new BasicEnemyController();
+  }
+};
 
 class PredefinedMapBuilder {
   build = async (
@@ -76,12 +88,15 @@ class PredefinedMapBuilder {
           tileSet,
           coordinates: { x, y }
         });
-      } else if (model.defaultTile) {
-        tiles[y][x] = TileFactory.createTile({
-          tileType: model.defaultTile,
-          tileSet,
-          coordinates: { x, y }
-        });
+      } else {
+        console.log(`unrecognized color ${color.hex}`);
+        if (model.defaultTile) {
+          tiles[y][x] = TileFactory.createTile({
+            tileType: model.defaultTile,
+            tileSet,
+            coordinates: { x, y }
+          });
+        }
       }
     }
 
@@ -121,9 +136,7 @@ class PredefinedMapBuilder {
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
-            const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-              ? new WizardController()
-              : new HumanRedesignController();
+            const controller = _getEnemyController(enemyUnitModel);
             const unit = await UnitFactory.createUnit(
               {
                 name: `${enemyUnitModel.name}_${id++}`,
@@ -152,6 +165,8 @@ class PredefinedMapBuilder {
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
+    const itemColors = this._toHexColors(model.itemColors);
+    const equipmentColors = this._toHexColors(model.equipmentColors);
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.data.width;
@@ -191,7 +206,7 @@ class PredefinedMapBuilder {
         }
       }
 
-      const itemId = (model.itemColors?.[color.hex] ?? null);
+      const itemId = (itemColors?.[color.hex] ?? null);
       if (itemId) {
         const item = await ItemFactory.createMapItem(
           itemId,
@@ -201,7 +216,7 @@ class PredefinedMapBuilder {
         objects.push(item);
       }
 
-      const equipmentId = (model.equipmentColors?.[color.hex] ?? null);
+      const equipmentId = (equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,

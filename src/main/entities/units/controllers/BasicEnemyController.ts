@@ -1,4 +1,4 @@
-import { UnitController, UnitControllerContext } from './UnitController';
+import { UnitController, type UnitControllerContext } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
@@ -6,11 +6,11 @@ import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import StayOrder from '../orders/StayOrder';
 import UnitOrder from '../orders/UnitOrder';
-import AvoidUnitOrder from '../orders/AvoidUnitOrder';
-import AttackUnitOrder from '../orders/AttackUnitOrder';
-import WanderOrder from '../orders/WanderOrder';
+import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import WanderBehavior from '../behaviors/WanderBehavior';
 
-export default class HumanRedesignController implements UnitController {
+export default class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
@@ -28,20 +28,25 @@ export default class HumanRedesignController implements UnitController {
     if (!canMove(speed, { state })) {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      return new AvoidUnitOrder({ targetUnit: playerUnit });
+      return new AvoidUnitBehavior({ targetUnit: playerUnit })
+        .issueOrder(unit, { state });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        return new AttackUnitOrder({ targetUnit: playerUnit });
+        return new AttackUnitBehavior({ targetUnit: playerUnit })
+          .issueOrder(unit, { state });
       } else if (randChance(aggressiveness)) {
-        return new AttackUnitOrder({ targetUnit: playerUnit });
+        return new AttackUnitBehavior({ targetUnit: playerUnit })
+          .issueOrder(unit, { state });
       } else {
-        return new WanderOrder();
+        return new WanderBehavior()
+          .issueOrder(unit, { state });
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
-        return new WanderOrder();
+        return new WanderBehavior()
+          .issueOrder(unit, { state });
       }
     }
   }

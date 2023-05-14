@@ -17,6 +17,7 @@ import ScreenInputHandler, { ScreenHandlerContext } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import ShootUnitOrder from '../../entities/units/orders/ShootUnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
+import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -79,9 +80,13 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
       };
     }
   } else {
-    const ability = state.getQueuedAbility() ?? NormalAttack;
+    const ability = state.getQueuedAbility();
     state.setQueuedAbility(null);
-    order = new AbilityOrder({ ability, coordinates });
+    if (ability) {
+      order = new AbilityOrder({ ability, coordinates });
+    } else {
+      order = new AttackMoveOrder({ ability: NormalAttack, coordinates });
+    }
   }
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {

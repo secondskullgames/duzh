@@ -97,7 +97,7 @@ export default class Unit implements Entity, Animatable {
     this.manaRemainder = 0;
     this.damage = model.damage;
     this.controller = props.controller;
-    this.activity = 'STANDING';
+    this.activity = Activity.STANDING;
     this.direction = Direction.S;
     this.frameNumber = 1;
     // TODO make this type safe
@@ -177,6 +177,9 @@ export default class Unit implements Entity, Animatable {
   setDirection = (direction: Direction) => { this.direction = direction; };
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
+  hasAbility = (abilityName: AbilityName): boolean => {
+    return !!this.abilities.find(ability => ability.name === abilityName);
+  }
 
   /**
    * @override
@@ -187,12 +190,12 @@ export default class Unit implements Entity, Animatable {
 
   /** @override */
   update = async ({ state, renderer, imageFactory }: UpdateContext) => {
-    await this._upkeep();
+    this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });
       await order.execute(this, { state, renderer, imageFactory });
     }
-    await this._endOfTurn();
+    this._endOfTurn();
   };
 
   /** @override */

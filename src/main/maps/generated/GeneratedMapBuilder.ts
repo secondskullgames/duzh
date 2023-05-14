@@ -11,7 +11,7 @@ import MapInstance from '../MapInstance';
 import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import ArcherController from '../../entities/units/controllers/ArcherController';
-import HumanRedesignController from '../../entities/units/controllers/HumanRedesignController';
+import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
 import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
 import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
@@ -99,7 +99,7 @@ export default class GeneratedMapBuilder {
       if (model.name === 'Goblin Archer') {
         controller = new ArcherController();
       } else {
-        controller = new HumanRedesignController();
+        controller = new BasicEnemyController();
       }
       const unit = await UnitFactory.createUnit(
         {

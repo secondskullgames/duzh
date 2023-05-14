@@ -5,7 +5,7 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
-import HumanRedesignController from '../controllers/HumanRedesignController';
+import BasicEnemyController from '../controllers/BasicEnemyController';
 import { AbilityName } from './AbilityName';
 
 const manaCost = 25;
@@ -35,7 +35,7 @@ export const Summon: UnitAbility = {
       {
         unitClass,
         faction: unit.getFaction(),
-        controller: new HumanRedesignController(),
+        controller: new BasicEnemyController(),
         level: 1, // whatever
         coordinates
       },
