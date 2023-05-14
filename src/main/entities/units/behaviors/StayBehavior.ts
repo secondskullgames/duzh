@@ -1,13 +1,13 @@
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import { UnitController, UnitControllerContext } from '../controllers/UnitController';
 import StayOrder from '../orders/StayOrder';
+import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 
-export default class StayBehavior implements UnitController {
-  /** @override {@link UnitController#issueOrder} */
+export default class StayBehavior implements UnitBehavior {
+  /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state }: UnitBehaviorContext
   ): UnitOrder => {
     return new StayOrder();
   };

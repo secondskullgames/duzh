@@ -5,14 +5,14 @@ import { randChoice } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
-import { UnitController, UnitControllerContext } from '../controllers/UnitController';
+import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 import StayOrder from '../orders/StayOrder';
 
-export default class WanderBehavior implements UnitController {
-  /** @override {@link UnitController#issueOrder} */
+export default class WanderBehavior implements UnitBehavior {
+  /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state }: UnitBehaviorContext
   ): UnitOrder => {
     const map = state.getMap();
     const tiles: Coordinates[] = [];

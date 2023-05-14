@@ -6,26 +6,26 @@ import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { AbilityName } from '../abilities/AbilityName';
 import { randChoice } from '../../../utils/random';
-import { UnitController, UnitControllerContext } from '../controllers/UnitController';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
+import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class AttackUnitBehavior implements UnitController {
+export default class AttackUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitController#issueOrder} */
+  /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
     const map = state.getMap();

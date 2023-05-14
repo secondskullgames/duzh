@@ -5,25 +5,25 @@ import { maxBy } from '../../../utils/arrays';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
-import { UnitController, UnitControllerContext } from '../controllers/UnitController';
 import StayOrder from '../orders/StayOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
+import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class AvoidUnitBehavior implements UnitController {
+export default class AvoidUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitController#issueOrder} */
+  /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
     const map = state.getMap();

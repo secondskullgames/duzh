@@ -1,29 +1,29 @@
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { AbilityName } from '../abilities/AbilityName';
-import { UnitController, UnitControllerContext } from '../controllers/UnitController';
 import { ShootArrow } from '../abilities/ShootArrow';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import { hasUnblockedStraightLineBetween } from '../../../utils/geometry';
 import GameState from '../../../core/GameState';
 import ShootUnitOrder from '../orders/ShootUnitOrder';
 import AttackUnitBehavior from './AttackUnitBehavior';
+import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 
 type Props = Readonly<{
   targetUnit: Unit
 }>;
 
-export default class ShootUnitBehavior implements UnitController {
+export default class ShootUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitController#issueOrder} */
+  /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
 
