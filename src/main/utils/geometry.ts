@@ -2,6 +2,8 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { checkState } from './preconditions';
 import Unit from '../entities/units/Unit';
+import { OrderContext } from '../entities/units/orders/UnitOrder';
+import GameState from '../core/GameState';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));
@@ -14,9 +16,25 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   }
 };
 
-export const areStrictlyAdjacent = (first: Unit, second: Unit) => {
-  const { dx, dy } = Coordinates.difference(first.getCoordinates(), second.getCoordinates());
-  return ([-1,0,1].includes(dx))
-    && ([-1,0,1].includes(dy))
-    && !(dx === 0 && dy === 0);
+export const hasUnblockedStraightLineBetween = (
+  startCoordinates: Coordinates,
+  targetCoordinates: Coordinates,
+  { state }: { state: GameState }
+): boolean => {
+  const map = state.getMap();
+  let { x, y } = startCoordinates;
+  const { x: targetX, y: targetY } = targetCoordinates;
+  const dx = Math.sign(targetX - x);
+  const dy = Math.sign(targetY - y);
+  x += dx;
+  y += dy;
+
+  while (x !== targetX || y !== targetY) {
+    if (map.isBlocked({ x, y })) {
+      return false;
+    }
+    x += dx;
+    y += dy;
+  }
+  return true;
 };

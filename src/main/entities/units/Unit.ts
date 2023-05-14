@@ -177,6 +177,9 @@ export default class Unit implements Entity, Animatable {
   setDirection = (direction: Direction) => { this.direction = direction; };
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
+  hasAbility = (abilityName: AbilityName): boolean => {
+    return !!this.abilities.find(ability => ability.name === abilityName);
+  }
 
   /**
    * @override

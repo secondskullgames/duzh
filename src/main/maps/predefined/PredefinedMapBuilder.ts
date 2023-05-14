@@ -22,11 +22,23 @@ import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import { Faction } from '../../types/types';
+import UnitModel from '../../schemas/UnitModel';
+import ArcherController from '../../entities/units/controllers/ArcherController';
 
 type Context = Readonly<{
   imageFactory: ImageFactory,
   state: GameState
 }>;
+
+const _getEnemyController = (enemyUnitModel: UnitModel) => {
+  if (enemyUnitModel.type === 'WIZARD') {
+    return new WizardController()
+  } else if (enemyUnitModel.id === 'archer') {
+    return new ArcherController();
+  } else {
+    return new BasicEnemyController();
+  }
+};
 
 class PredefinedMapBuilder {
   build = async (
@@ -121,9 +133,7 @@ class PredefinedMapBuilder {
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
-            const controller: UnitController = (enemyUnitModel.type === 'WIZARD')
-              ? new WizardController()
-              : new BasicEnemyController();
+            const controller = _getEnemyController(enemyUnitModel);
             const unit = await UnitFactory.createUnit(
               {
                 name: `${enemyUnitModel.name}_${id++}`,

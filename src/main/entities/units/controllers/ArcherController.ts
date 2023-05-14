@@ -5,10 +5,10 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import ShootUnitOrder from '../orders/ShootUnitOrder';
 import WanderBehavior from '../behaviors/WanderBehavior';
+import StayBehavior from '../behaviors/StayBehavior';
+import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 
 export default class ArcherController implements UnitController {
   /**
@@ -18,6 +18,14 @@ export default class ArcherController implements UnitController {
     unit: Unit,
     { state }: UnitControllerContext
   ): UnitOrder => {
+    const behavior = this._getBehavior(unit, { state });
+    return behavior.issueOrder(unit, { state });
+  }
+
+  private _getBehavior = (
+    unit: Unit,
+    { state }: UnitControllerContext
+  ): UnitController => {
     const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'ArcherController requires aiParams!');
@@ -26,23 +34,22 @@ export default class ArcherController implements UnitController {
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
     if (!canMove(speed, { state })) {
-      return new StayOrder();
+      return new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
-      return new AvoidUnitBehavior({ targetUnit: playerUnit })
-        .issueOrder(unit, { state });
+      return new AvoidUnitBehavior({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        return new ShootUnitOrder({ targetUnit: playerUnit });
+        return new ShootUnitBehavior({ targetUnit: playerUnit });
       } else if (randChance(aggressiveness)) {
-        return new ShootUnitOrder({ targetUnit: playerUnit });
+        return new ShootUnitBehavior({ targetUnit: playerUnit });
       } else {
-        return new WanderBehavior().issueOrder(unit, { state });
+        return new WanderBehavior();
       }
     } else {
       if (randBoolean()) {
-        return new StayOrder();
+        return new StayBehavior();
       } else {
-        return new WanderBehavior().issueOrder(unit, { state });
+        return new WanderBehavior();
       }
     }
   }
