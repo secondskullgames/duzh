@@ -88,12 +88,15 @@ class PredefinedMapBuilder {
           tileSet,
           coordinates: { x, y }
         });
-      } else if (model.defaultTile) {
-        tiles[y][x] = TileFactory.createTile({
-          tileType: model.defaultTile,
-          tileSet,
-          coordinates: { x, y }
-        });
+      } else {
+        console.log(`unrecognized color ${color.hex}`);
+        if (model.defaultTile) {
+          tiles[y][x] = TileFactory.createTile({
+            tileType: model.defaultTile,
+            tileSet,
+            coordinates: { x, y }
+          });
+        }
       }
     }
 
@@ -162,6 +165,8 @@ class PredefinedMapBuilder {
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
+    const itemColors = this._toHexColors(model.itemColors);
+    const equipmentColors = this._toHexColors(model.equipmentColors);
 
     for (let i = 0; i < image.data.data.length; i += 4) {
       const x = Math.floor(i / 4) % image.data.width;
@@ -201,7 +206,7 @@ class PredefinedMapBuilder {
         }
       }
 
-      const itemId = (model.itemColors?.[color.hex] ?? null);
+      const itemId = (itemColors?.[color.hex] ?? null);
       if (itemId) {
         const item = await ItemFactory.createMapItem(
           itemId,
@@ -211,7 +216,7 @@ class PredefinedMapBuilder {
         objects.push(item);
       }
 
-      const equipmentId = (model.equipmentColors?.[color.hex] ?? null);
+      const equipmentId = (equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,

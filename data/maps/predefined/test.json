@@ -9,13 +9,13 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "archer"
+    "BLUE": "robed_wizard"
   },
   "itemColors": {
     "MAGENTA": "life_potion"
   },
   "equipmentColors": {
-    "YELLOW": "bolt_sword",
+    "YELLOW": "fire_sword",
     "DARK_YELLOW": "iron_shield"
   },
   "objectColors": {
