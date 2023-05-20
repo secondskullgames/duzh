@@ -7,11 +7,11 @@ import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCor
 import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
-import PredefinedMapBuilder from './predefined/PredefinedMapBuilder';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { buildPredefinedMap } from './predefined/buildPredefinedMap';
 
 type Context = Readonly<{
   state: GameState,
@@ -37,9 +37,7 @@ const loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: C
 };
 
 const loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
-  const mapBuilder = new PredefinedMapBuilder();
-
-  return mapBuilder.build(mapId, { state, imageFactory });
+  return buildPredefinedMap(mapId, { state, imageFactory });
 };
 
 const getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {

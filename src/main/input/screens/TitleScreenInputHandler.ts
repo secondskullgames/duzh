@@ -5,7 +5,10 @@ import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { KeyCommand } from '../inputTypes';
 
-const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (
+  command: KeyCommand,
+  { state, renderer, imageFactory }: ScreenHandlerContext
+) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'ENTER':

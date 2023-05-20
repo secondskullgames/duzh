@@ -6,7 +6,7 @@ import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
 import ImageFactory from '../../graphics/images/ImageFactory';
 
-type GenerateProps = Readonly<{
+type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
@@ -15,7 +15,7 @@ abstract class AbstractMapGenerator {
 
   generateMap = async (
     mapClass: GeneratedMapModel,
-    { imageFactory }: GenerateProps
+    { imageFactory }: Context
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapClass;
 
