@@ -70,9 +70,5 @@ export const Teleport: UnitAbility = {
     } else {
       playSound(Sounds.BLOCKED);
     }
-  },
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => {
-    throw new Error('can\'t get here');
   }
 }

@@ -77,7 +77,5 @@ export const Bolt: UnitAbility = {
         renderer
       });
     }
-  },
-
-  getDamageLogMessage
+  }
 }

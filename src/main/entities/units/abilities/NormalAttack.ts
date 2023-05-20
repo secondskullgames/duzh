@@ -4,6 +4,7 @@ import { pointAt } from '../../../utils/geometry';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { attack } from '../../../actions/attack';
 import { AbilityName } from './AbilityName';
+import Sounds from '../../../sounds/Sounds';
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
@@ -24,12 +25,20 @@ export const NormalAttack: UnitAbility = {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attack(unit, targetUnit, { state, renderer, imageFactory });
-      return;
+      await attack(
+        {
+          attacker: unit,
+          defender: targetUnit,
+          getDamage: unit => unit.getDamage(),
+          getDamageLogMessage,
+          sound: Sounds.PLAYER_HITS_ENEMY
+        },
+        { state, renderer, imageFactory }
+      );
     }
-  },
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
-    return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
   }
 };
+
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
+}

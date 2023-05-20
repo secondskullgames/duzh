@@ -11,6 +11,15 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
+import { SoundEffect } from '../sounds/types';
+
+type Props = Readonly<{
+  attacker: Unit,
+  defender: Unit,
+  getDamage: (unit: Unit) => number,
+  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string,
+  sound: SoundEffect
+}>;
 
 type Context = Readonly<{
   state: GameState,
@@ -19,8 +28,7 @@ type Context = Readonly<{
 }>;
 
 export const attack = async (
-  attacker: Unit,
-  defender: Unit,
+  { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
   { state, renderer, imageFactory }: Context
 ) => {
   const playerUnit = state.getPlayerUnit();
@@ -40,14 +48,12 @@ export const attack = async (
   defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
   await renderer.render();
 
-  const damage = attacker.getDamage();
+  const damage = getDamage(attacker);
   const adjustedDamage = defender.takeDamage(damage, attacker);
-  playSound(Sounds.PLAYER_HITS_ENEMY);
+  playSound(sound);
 
-  logMessage(
-    `${attacker.getName()} hit ${defender.getName()} for ${adjustedDamage} damage!`,
-    { state }
-  );
+  const message = getDamageLogMessage(attacker, defender, adjustedDamage);
+  logMessage(message, { state });
 
   attacker.refreshCombat();
   defender.refreshCombat();
