@@ -1,5 +1,5 @@
-import ScreenInputHandler, { ScreenHandlerContext } from './ScreenInputHandler';
-import { KeyCommand } from '../inputTypes';
+import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
+import { type KeyCommand } from '../inputTypes';
 
 const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFactory }: ScreenHandlerContext) => {
   switch (command.key) {

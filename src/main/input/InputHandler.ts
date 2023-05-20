@@ -7,7 +7,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
 import TitleScreenInputHandler from './screens/TitleScreenInputHandler';
-import ScreenInputHandler from './screens/ScreenInputHandler';
+import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
 import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';

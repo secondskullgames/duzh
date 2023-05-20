@@ -13,7 +13,7 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import ScreenInputHandler, { ScreenHandlerContext } from './ScreenInputHandler';
+import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import ShootUnitOrder from '../../entities/units/orders/ShootUnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';

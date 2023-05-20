@@ -9,7 +9,7 @@ export type ScreenHandlerContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-export default interface ScreenInputHandler {
+export interface ScreenInputHandler {
   handleKeyCommand: (
     command: KeyCommand,
     { state, renderer, imageFactory }: ScreenHandlerContext
