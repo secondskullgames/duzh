@@ -110,7 +110,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   });
 };
 
-const createInventoryWeapon = async (equipmentClass: string): Promise<InventoryItem> => {
+const createInventoryEquipment = async (equipmentClass: string): Promise<InventoryItem> => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
@@ -143,7 +143,7 @@ const createMapEquipment = async (
     PaletteSwaps.create(model.paletteSwaps),
     { imageFactory }
   );
-  const inventoryItem: InventoryItem = await createInventoryWeapon(equipmentClass);
+  const inventoryItem: InventoryItem = await createInventoryEquipment(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
@@ -161,9 +161,7 @@ const createEquipment = async (equipmentClass: string, { imageFactory }: CreateE
   );
 
   // TODO wtf is this
-  const inventoryItem = (model.itemCategory === 'WEAPON')
-    ? await createInventoryWeapon(equipmentClass)
-    : null;
+  const inventoryItem = await createInventoryEquipment(equipmentClass);
   const equipment = new Equipment({ model, sprite, inventoryItem });
   sprite.target = equipment;
   return equipment;
@@ -250,6 +248,7 @@ const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
 
 export default {
   createEquipment,
+  createInventoryEquipment,
   createMapItem,
   createMapEquipment,
   loadAllConsumableModels,

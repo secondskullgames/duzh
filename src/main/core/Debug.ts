@@ -4,20 +4,29 @@ import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
+import ItemFactory from '../items/ItemFactory';
+import ImageFactory from '../graphics/images/ImageFactory';
+import { pickupItem } from '../actions/pickupItem';
+import { logMessage } from '../actions/logMessage';
+import { playSound } from '../sounds/playSound';
+import Sounds from '../sounds/Sounds';
 
 type Props = Readonly<{
   renderer: GameRenderer,
-  state: GameState
+  state: GameState,
+  imageFactory: ImageFactory
 }>;
 
 export class Debug {
   private readonly renderer: GameRenderer;
   private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
   private _isMapRevealed: boolean;
 
-  constructor({ renderer, state }: Props) {
+  constructor({ renderer, state, imageFactory }: Props) {
     this.renderer = renderer;
     this.state = state;
+    this.imageFactory = imageFactory;
     this._isMapRevealed = false;
   }
 
@@ -40,13 +49,26 @@ export class Debug {
     await this.renderer.render();
   };
 
+  awardEquipment = async () => {
+    const id = prompt('Enter a valid equipment_id')!;
+    const item = await ItemFactory.createInventoryEquipment(id);
+    const playerUnit = this.state.getPlayerUnit();
+    playerUnit.getInventory().add(item);
+    logMessage(`Picked up a ${item.name}.`, { state: this.state });
+    playSound(Sounds.PICK_UP_ITEM);
+    await this.renderer.render();
+  };
+
   attachToWindow = () => {
     // @ts-ignore
     window.jwb = window.jwb ?? {};
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies,
+      killEnemies: () => killEnemies({
+        state: this.state,
+        renderer: this.renderer
+      }),
       nextLevel: () => loadNextMap({
         state: this.state
       })

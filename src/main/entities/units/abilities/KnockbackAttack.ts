@@ -10,6 +10,7 @@ import { dealDamage } from '../../../actions/dealDamage';
 import { startAttack } from '../../../actions/startAttack';
 import { AbilityName } from './AbilityName';
 import { die } from '../../../actions/die';
+import { moveUnit } from '../../../actions/moveUnit';
 
 const manaCost = 8;
 
@@ -61,12 +62,12 @@ export const KnockbackAttack: UnitAbility = {
 
       const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
       if (map.contains(first) && !map.isBlocked(first)) {
-        targetUnit.setCoordinates(first);
+        await moveUnit(targetUnit, first, { state, renderer, imageFactory });
         await renderer.render();
         await sleep(50);
         const second = Coordinates.plus(first, direction);
         if (map.contains(second) && !map.isBlocked(second)) {
-          targetUnit.setCoordinates(second);
+          await moveUnit(targetUnit, second, { state, renderer, imageFactory });
         }
       }
     }

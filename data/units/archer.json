@@ -32,7 +32,7 @@
     "fleeThreshold": 0.1
   },
   "abilities": {
-    "1": ["ATTACK", "SHOOT_ARROW"]
+    "1": ["ATTACK"]
   },
   "points": 25
 }

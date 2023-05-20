@@ -42,7 +42,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
     targetUnit: Unit,
     { state }: { state: GameState }
   ): boolean => {
-    return unit.hasAbility(AbilityName.SHOOT_ARROW)
+    return unit.getEquipment().getBySlot('RANGED_WEAPON') !== null
       && unit.getMana() >= ShootArrow.manaCost
       && isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())
       && hasUnblockedStraightLineBetween(

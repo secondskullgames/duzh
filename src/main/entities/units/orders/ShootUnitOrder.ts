@@ -46,7 +46,7 @@ export default class ShootUnitOrder implements UnitOrder {
     targetUnit: Unit,
     context: OrderContext
   ): boolean => {
-    return unit.hasAbility(AbilityName.SHOOT_ARROW)
+    return unit.getEquipment().getBySlot('RANGED_WEAPON') !== null
       && unit.getMana() >= ShootArrow.manaCost
       && isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())
       && hasUnblockedStraightLineBetween(

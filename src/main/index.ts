@@ -4,7 +4,7 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import ImageFactory from './graphics/images/ImageFactory';
 import { FontRenderer } from './graphics/FontRenderer';
 import InputHandler from './input/InputHandler';
-import { addInitialState } from './actions/addInitialState';
+import { showSplashScreen } from './actions/showSplashScreen';
 
 const main = async () => {
   const state = new GameState();
@@ -16,12 +16,11 @@ const main = async () => {
     imageFactory,
     fontRenderer
   });
-  await addInitialState({ state, imageFactory });
   const inputHandler = new InputHandler();
   inputHandler.addEventListener(renderer.getCanvas(), { state, renderer, imageFactory });
-  const debug = new Debug({ state, renderer });
+  const debug = new Debug({ state, renderer, imageFactory });
   debug.attachToWindow();
-  await renderer.render();
+  await showSplashScreen({ state, renderer, imageFactory });
 };
 
 main().catch(e => {
