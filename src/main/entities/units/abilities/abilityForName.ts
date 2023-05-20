@@ -12,19 +12,21 @@ import { Strafe } from './Strafe';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
 import { AbilityName } from './AbilityName';
+import { MinorStunAttack } from './MinorStunAttack';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,
+  [AbilityName.BOLT]: Bolt,
+  [AbilityName.DASH]: Dash,
   [AbilityName.HEAVY_ATTACK]: HeavyAttack,
   [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
-  [AbilityName.STUN_ATTACK]: StunAttack,
+  [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
+  [AbilityName.PIERCE]: PiercingAttack,
   [AbilityName.SHOOT_ARROW]: ShootArrow,
-  [AbilityName.DASH]: Dash,
-  [AbilityName.TELEPORT]: Teleport,
-  [AbilityName.SUMMON]: Summon,
-  [AbilityName.BOLT]: Bolt,
   [AbilityName.STRAFE]: Strafe,
-  [AbilityName.PIERCE]: PiercingAttack
+  [AbilityName.STUN_ATTACK]: StunAttack,
+  [AbilityName.SUMMON]: Summon,
+  [AbilityName.TELEPORT]: Teleport
 };
 
 export const abilityForName = (name: AbilityName): UnitAbility => {
