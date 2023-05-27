@@ -1,13 +1,13 @@
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import { AbilityName } from '../abilities/AbilityName';
 import { ShootArrow } from '../abilities/ShootArrow';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
-import { hasUnblockedStraightLineBetween } from '../../../utils/geometry';
+import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import GameState from '../../../core/GameState';
-import ShootUnitOrder from '../orders/ShootUnitOrder';
 import AttackUnitBehavior from './AttackUnitBehavior';
 import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
+import { AbilityOrder } from '../orders/AbilityOrder';
+import Coordinates from '../../../geometry/Coordinates';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -31,7 +31,12 @@ export default class ShootUnitBehavior implements UnitBehavior {
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1
       && this._canShoot(unit, targetUnit, { state })
     ) {
-      return new ShootUnitOrder({ targetUnit });
+      const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
+      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+      return new AbilityOrder({
+        coordinates,
+        ability: ShootArrow
+      });
     }
 
     return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, { state });
