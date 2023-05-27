@@ -45,9 +45,5 @@ export const Summon: UnitAbility = {
     );
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);
-  },
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => {
-    throw new Error('can\'t get here');
   }
 };

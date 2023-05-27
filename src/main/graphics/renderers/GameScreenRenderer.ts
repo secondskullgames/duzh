@@ -108,25 +108,21 @@ class GameScreenRenderer extends AbstractRenderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        if (this._isTileRevealed({ x, y })) {
-          for (const object of map.getObjects({ x, y })) {
-            if (object.getObjectType() === 'item') {
-              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
-            }
-            if (object.getObjectType() === 'block') {
-              await this._drawEllipse({ x, y }, Colors.DARK_GRAY);
-            }
-            this._renderElement(object, { x, y });
+        const coordinates = { x, y };
+        if (this._isTileRevealed(coordinates)) {
+          await this._drawShadow(coordinates);
+          for (const object of map.getObjects(coordinates)) {
+            this._renderElement(object, coordinates);
           }
 
-          const projectile = map.getProjectile({ x, y });
+          const projectile = map.getProjectile(coordinates);
           if (projectile) {
-            this._renderElement(projectile, { x, y });
+            this._renderElement(projectile, coordinates);
           }
 
-          const unit = map.getUnit({ x, y });
+          const unit = map.getUnit(coordinates);
           if (unit) {
-            await this._renderUnit(unit, x, y);
+            this._renderUnit(unit, coordinates);
           }
         }
       }
@@ -136,7 +132,7 @@ class GameScreenRenderer extends AbstractRenderer {
   /**
    * Render the unit, all of its equipment, and the ceorresponding overlay.
    */
-  private _renderUnit = async (unit: Unit, x: number, y: number) => {
+  private _renderUnit = (unit: Unit, coordinates: Coordinates) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
@@ -148,25 +144,43 @@ class GameScreenRenderer extends AbstractRenderer {
       }
     }
 
-    let shadowColor: Color;
-    if (unit === this.state.getPlayerUnit()) {
-      shadowColor = Colors.GREEN;
-    } else {
-      shadowColor = Colors.DARK_GRAY;
-    }
-
-    await this._drawEllipse({ x, y }, shadowColor);
     for (const equipment of behindEquipment) {
-      this._renderElement(equipment, { x, y });
+      this._renderElement(equipment, coordinates);
     }
-    this._renderElement(unit, { x, y });
+    this._renderElement(unit, coordinates);
     for (const equipment of aheadEquipment) {
-      this._renderElement(equipment, { x, y });
+      this._renderElement(equipment, coordinates);
     }
   };
 
-  private _drawEllipse = async ({ x, y }: Coordinates, color: Color) => {
-    const { x: left, y: top } = this._gridToPixel({ x, y });
+  private _isTileRevealed = (coordinates: Coordinates): boolean => {
+    const map = this.state.getMap();
+    // @ts-ignore
+    return window.jwb.debug.isMapRevealed() || map.isTileRevealed(coordinates);
+  };
+
+  private _drawShadow = async (coordinates: Coordinates) => {
+    const map = this.state.getMap();
+    const unit = map.getUnit(coordinates);
+    const objects = map.getObjects(coordinates);
+
+    if (unit) {
+      if (unit === this.state.getPlayerUnit()) {
+        return this._drawEllipse(coordinates, Colors.GREEN);
+      } else {
+        return this._drawEllipse(coordinates, Colors.DARK_GRAY);
+      }
+    }
+    if (objects.find(object =>
+      object.getObjectType() === 'item'
+      || object.getObjectType() === 'block'
+    )) {
+      return this._drawEllipse(coordinates, Colors.DARK_GRAY);
+    }
+  }
+
+  private _drawEllipse = async (coordinates: Coordinates, color: Color) => {
+    const pixel = this._gridToPixel(coordinates);
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
@@ -175,13 +189,7 @@ class GameScreenRenderer extends AbstractRenderer {
       transparentColor: Colors.WHITE,
       paletteSwaps
     });
-    this.context.drawImage(image.bitmap, left, top);
-  };
-
-  private _isTileRevealed = ({ x, y }: Coordinates): boolean => {
-    const map = this.state.getMap();
-    // @ts-ignore
-    return window.jwb.debug.isMapRevealed() || map.isTileRevealed({ x, y });
+    this.context.drawImage(image.bitmap, pixel.x, pixel.y);
   };
 }
 

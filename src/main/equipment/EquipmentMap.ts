@@ -18,7 +18,7 @@ export default class EquipmentMap {
   };
 
   remove = (item: Equipment) => {
-    this._map[item.slot] = undefined;
+    delete this._map[item.slot];
   };
 
   getBySlot = (slot: EquipmentSlot): Equipment | null => this._map[slot] ?? null;

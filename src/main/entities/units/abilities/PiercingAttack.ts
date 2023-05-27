@@ -5,7 +5,6 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
-import { walk } from '../../../actions/walk';
 import { attack } from '../../../actions/attack';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { SpawnerState } from '../../objects/Spawner';
@@ -35,63 +34,70 @@ export const PiercingAttack: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    if (!map.contains(coordinates)) {
-      // do nothing
-      return;
-    } else {
-      if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state, renderer, imageFactory });
-      } else {
-        const targetUnit = map.getUnit(coordinates);
-        if (targetUnit) {
-          await attack(unit, targetUnit, { state, renderer, imageFactory });
-          if (targetUnit.getLife() <= 0) {
-            await die(targetUnit, { state });
-          }
-        }
-
-
-        const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
-        const nextUnit = map.getUnit(nextCoordinates);
-        if (nextUnit) {
-          await attack(unit, nextUnit, { state, renderer, imageFactory });
-          if (nextUnit.getLife() <= 0) {
-            await die(nextUnit, { state });
-          }
-        }
-
-        const spawner = map.getSpawner(coordinates);
-        if (spawner && spawner.isBlocking()) {
-          playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getAttackingAnimation(
-            unit,
-            null,
-            { state, imageFactory }
-          );
-          await playAnimation(
-            animation,
-            { state, renderer }
-          );
-          spawner.setState(SpawnerState.DEAD);
-        }
-
-        const nextSpawner = map.getSpawner(nextCoordinates);
-        if (nextSpawner && nextSpawner.isBlocking()) {
-          playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getAttackingAnimation(
-            unit,
-            null,
-            { state, imageFactory }
-          );
-          await playAnimation(
-            animation,
-            { state, renderer }
-          );
-          nextSpawner.setState(SpawnerState.DEAD);
-        }
+    const targetUnit = map.getUnit(coordinates);
+    if (targetUnit) {
+      await attack(
+        {
+          attacker: unit,
+          defender: targetUnit,
+          getDamage: unit => unit.getDamage(),
+          sound: Sounds.SPECIAL_ATTACK,
+          getDamageLogMessage
+        },
+        { state, renderer, imageFactory }
+      );
+      if (targetUnit.getLife() <= 0) {
+        await die(targetUnit, { state });
       }
     }
-  },
 
-  getDamageLogMessage
+
+    const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
+    const nextUnit = map.getUnit(nextCoordinates);
+    if (nextUnit) {
+      await attack(
+        {
+          attacker: unit,
+          defender: nextUnit,
+          getDamage: unit => unit.getDamage(),
+          sound: Sounds.SPECIAL_ATTACK,
+          getDamageLogMessage
+        },
+        { state, renderer, imageFactory }
+      );
+      if (nextUnit.getLife() <= 0) {
+        await die(nextUnit, { state });
+      }
+    }
+
+    const spawner = map.getSpawner(coordinates);
+    if (spawner && spawner.isBlocking()) {
+      playSound(Sounds.SPECIAL_ATTACK);
+      const animation = AnimationFactory.getAttackingAnimation(
+        unit,
+        null,
+        { state, imageFactory }
+      );
+      await playAnimation(
+        animation,
+        { state, renderer }
+      );
+      spawner.setState(SpawnerState.DEAD);
+    }
+
+    const nextSpawner = map.getSpawner(nextCoordinates);
+    if (nextSpawner && nextSpawner.isBlocking()) {
+      playSound(Sounds.SPECIAL_ATTACK);
+      const animation = AnimationFactory.getAttackingAnimation(
+        unit,
+        null,
+        { state, imageFactory }
+      );
+      await playAnimation(
+        animation,
+        { state, renderer }
+      );
+      nextSpawner.setState(SpawnerState.DEAD);
+    }
+  }
 }

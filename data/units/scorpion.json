@@ -4,18 +4,18 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 45,
-  "mana": 10,
-  "damage": 16,
+  "life": 70,
+  "mana": 15,
+  "damage": 12,
   "level": 4,
   "points": 20,
   "aiParameters": {
-    "speed": 0.98,
+    "speed": 0.95,
     "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "abilities": {
-    "1": ["ATTACK", "STUN_ATTACK"]
+    "1": ["ATTACK", "MINOR_STUN_ATTACK"]
   }
 }

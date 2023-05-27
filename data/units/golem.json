@@ -12,10 +12,10 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "damage": 14,
+  "damage": 12,
   "level": 5,
   "life": 100,
-  "mana": 12,
+  "mana": 8,
   "points": 30,
   "aiParameters": {
     "speed": 0.9,

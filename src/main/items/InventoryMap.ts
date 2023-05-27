@@ -12,7 +12,7 @@ const displayCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'
  * as well as data about the selected item/category in the inventory menu
  * (although this is only applicable to the player unit)
  */
-class InventoryMap {
+export default class InventoryMap {
   private readonly _map: Record<ItemCategory, InventoryItem[]>;
   selectedCategory: ItemCategory;
   selectedItem: InventoryItem | null;
@@ -27,55 +27,53 @@ class InventoryMap {
     this.selectedItem = null;
   }
 
-  add(item: InventoryItem) {
+  add = (item: InventoryItem) => {
     this._map[item.category]?.push(item);
     if (this.selectedCategory === item.category && this.selectedItem === null) {
       this.selectedItem = item;
     }
-  }
+  };
 
-  remove(item: InventoryItem) {
+  remove = (item: InventoryItem) => {
     const items = this._map[item.category];
     const index = items.indexOf(item);
     items.splice(index, 1);
     if (this.selectedItem === item) {
       this.selectedItem = items[index % items.length] ?? null;
     }
-  }
+  };
 
-  nextCategory() {
+  nextCategory = () => {
     const index = displayCategories.indexOf(this.selectedCategory);
     this.selectedCategory = displayCategories[(index + 1) % displayCategories.length];
     this.selectedItem = this._map[this.selectedCategory][0] ?? null;
-  }
+  };
 
-  previousCategory() {
+  previousCategory = () => {
     const index = displayCategories.indexOf(this.selectedCategory);
     this.selectedCategory = displayCategories[(index - 1 + displayCategories.length) % displayCategories.length];
     this.selectedItem = this._map[this.selectedCategory][0] ?? null;
-  }
+  };
 
-  get(category: ItemCategory): InventoryItem[] {
+  get = (category: ItemCategory): InventoryItem[] => {
     return [...this._map[category]];
-  }
+  };
 
-  nextItem() {
+  nextItem = () => {
     const items = this._map[this.selectedCategory];
     if (items.length > 0 && this.selectedItem !== null) {
       const index = items.indexOf(this.selectedItem);
       this.selectedItem = items[(index + 1) % items.length];
     }
-  }
+  };
 
-  previousItem() {
+  previousItem = () => {
     const items = this._map[this.selectedCategory];
     if (items.length > 0 && this.selectedItem !== null) {
       const index = items.indexOf(this.selectedItem);
       this.selectedItem = items[(index - 1 + items.length) % items.length];
     }
-  }
+  };
 
   getCategories = (): ItemCategory[] => displayCategories;
 }
-
-export default InventoryMap;

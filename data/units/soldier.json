@@ -15,8 +15,8 @@
     "PLAYER_FEET": "BLACK"
   },
   "life": 60,
-  "mana": 10,
-  "damage": 3,
+  "mana": 8,
+  "damage": 2,
   "level": 3,
   "equipment": [
     "green_chain_mail",

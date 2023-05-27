@@ -54,9 +54,5 @@ export const Dash: UnitAbility = {
     } else {
       playSound(Sounds.BLOCKED);
     }
-  },
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
-    throw new Error('can\'t get here');
   }
 }

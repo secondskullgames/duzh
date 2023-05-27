@@ -21,6 +21,4 @@ export type UnitAbility = Readonly<{
     coordinates: Coordinates | null,
     { state }: UnitAbilityContext
   ) => Promise<void>;
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string;
 }>;

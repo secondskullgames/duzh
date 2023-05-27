@@ -15,7 +15,6 @@ import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
 import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
-import ShootUnitOrder from '../../entities/units/orders/ShootUnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 
@@ -64,7 +63,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   let order: UnitOrder | null = null;
   if (modifiers.includes('SHIFT')) {
     if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
-      order = new ShootUnitOrder({ targetUnit: playerUnit });
+      order = new AbilityOrder({ coordinates, ability: ShootArrow });
     }
   } else if (modifiers.includes('ALT')) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {

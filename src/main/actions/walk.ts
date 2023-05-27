@@ -5,6 +5,8 @@ import { moveUnit } from './moveUnit';
 import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { playSound } from '../sounds/playSound';
+import Sounds from '../sounds/Sounds';
 
 type Context = Readonly<{
   state: GameState,
@@ -18,11 +20,16 @@ export const walk = async (
   { state, renderer, imageFactory }: Context
 ) => {
   const map = state.getMap();
+
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
     await moveUnit(unit, coordinates, { state, renderer, imageFactory });
+    const playerUnit = state.getPlayerUnit();
+    if (unit === playerUnit) {
+      playSound(Sounds.FOOTSTEP);
+    }
   }
 };

@@ -1,16 +1,12 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
-import { logMessage } from '../../../actions/logMessage';
-import { dealDamage } from '../../../actions/dealDamage';
-import { startAttack } from '../../../actions/startAttack';
 import { AbilityName } from './AbilityName';
-import { die } from '../../../actions/die';
 import { moveUnit } from '../../../actions/moveUnit';
+import { attack } from '../../../actions/attack';
 
 const manaCost = 8;
 
@@ -39,24 +35,16 @@ export const KnockbackAttack: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
-      playSound(Sounds.SPECIAL_ATTACK);
-      const damage = unit.getDamage();
-      await startAttack(
-        unit,
-        targetUnit,
+      await attack(
+        {
+          attacker: unit,
+          defender: targetUnit,
+          getDamage: unit => unit.getDamage(),
+          getDamageLogMessage,
+          sound: Sounds.SPECIAL_ATTACK
+        },
         { state, renderer, imageFactory }
       );
-      const adjustedDamage = await dealDamage(damage, {
-        sourceUnit: unit,
-        targetUnit
-      });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      logMessage(message, { state });
-
-      if (targetUnit.getLife() <= 0) {
-        await die(targetUnit, { state });
-        return;
-      }
 
       targetUnit.setStunned(1);
 
@@ -71,6 +59,5 @@ export const KnockbackAttack: UnitAbility = {
         }
       }
     }
-  },
-  getDamageLogMessage
+  }
 };

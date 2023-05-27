@@ -82,7 +82,5 @@ export const ShootArrow: UnitAbility = {
         renderer
       });
     }
-  },
-
-  getDamageLogMessage
+  }
 }

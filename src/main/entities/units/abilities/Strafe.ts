@@ -22,9 +22,5 @@ export const Strafe: UnitAbility = {
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, { state, renderer, imageFactory });
     }
-  },
-
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number): string => {
-    throw new Error('can\'t get here');
   }
 }

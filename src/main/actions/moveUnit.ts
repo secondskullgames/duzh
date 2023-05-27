@@ -24,11 +24,6 @@ export const moveUnit = async (
   unit.setCoordinates(coordinates);
   map.addUnit(unit);
 
-  const playerUnit = state.getPlayerUnit();
-  if (unit === playerUnit) {
-    playSound(Sounds.FOOTSTEP);
-  }
-
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
       const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());

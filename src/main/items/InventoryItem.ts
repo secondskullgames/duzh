@@ -8,7 +8,7 @@ type Props = Readonly<{
   onUse: ItemProc
 }>;
 
-class InventoryItem {
+export default class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
   private readonly onUse: ItemProc;
@@ -26,5 +26,3 @@ class InventoryItem {
     await this.onUse(this, unit, { state, renderer, imageFactory });
   };
 }
-
-export default InventoryItem;
