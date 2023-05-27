@@ -47,15 +47,18 @@ export const KnockbackAttack: UnitAbility = {
       );
 
       targetUnit.setStunned(1);
-
-      const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
-      if (map.contains(first) && !map.isBlocked(first)) {
-        await moveUnit(targetUnit, first, { state, renderer, imageFactory });
-        await renderer.render();
-        await sleep(50);
-        const second = Coordinates.plus(first, direction);
-        if (map.contains(second) && !map.isBlocked(second)) {
-          await moveUnit(targetUnit, second, { state, renderer, imageFactory });
+      if (targetUnit.getLife() > 0) {
+        const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
+        if (map.contains(first) && !map.isBlocked(first)) {
+          await moveUnit(targetUnit, first, { state, renderer, imageFactory });
+          await renderer.render();
+          await sleep(50);
+          if (targetUnit.getLife() > 0) {
+            const second = Coordinates.plus(first, direction);
+            if (map.contains(second) && !map.isBlocked(second)) {
+              await moveUnit(targetUnit, second, { state, renderer, imageFactory });
+            }
+          }
         }
       }
     }
