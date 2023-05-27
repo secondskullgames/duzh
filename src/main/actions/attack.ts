@@ -1,8 +1,6 @@
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import Sounds from '../sounds/Sounds';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { dealDamage } from './dealDamage';
 import { logMessage } from './logMessage';
 import { die } from './die';
 import { awardExperience } from './awardExperience';
@@ -69,8 +67,4 @@ export const attack = async (
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
-
-  if (defender.getLife() <= 0) {
-    await die(defender, { state });
-  }
 };
