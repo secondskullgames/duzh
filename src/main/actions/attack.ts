@@ -69,4 +69,8 @@ export const attack = async (
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
+
+  if (defender.getLife() <= 0) {
+    await die(defender, { state });
+  }
 };

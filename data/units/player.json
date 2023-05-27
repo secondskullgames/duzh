@@ -21,7 +21,7 @@
   "damage": 6,
   "level": null,
   "life": 100,
-  "mana": 6,
+  "mana": 10,
   "points": null,
   "abilities": {
     "1": ["DASH"],
