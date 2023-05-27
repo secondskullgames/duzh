@@ -8,7 +8,7 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 
-const manaCost = 6;
+const manaCost = 5;
 
 export const Dash: UnitAbility = {
   name: AbilityName.DASH,
