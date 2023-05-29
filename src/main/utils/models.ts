@@ -1,13 +1,13 @@
 import Ajv from 'ajv';
 import { SpriteCategory } from '../graphics/sprites/SpriteCategory';
-import UnitModel from '../schemas/UnitModel';
-import EquipmentModel from '../schemas/EquipmentModel';
-import GeneratedMapModel from '../schemas/GeneratedMapModel';
-import PredefinedMapModel from '../schemas/PredefinedMapModel';
-import ConsumableItemModel from '../schemas/ConsumableItemModel';
-import TileSetModel from '../schemas/TileSetModel';
-import StaticSpriteModel from '../schemas/StaticSpriteModel';
-import DynamicSpriteModel from '../schemas/DynamicSpriteModel';
+import type UnitModel from '../schemas/UnitModel';
+import type EquipmentModel from '../schemas/EquipmentModel';
+import type GeneratedMapModel from '../schemas/GeneratedMapModel';
+import type PredefinedMapModel from '../schemas/PredefinedMapModel';
+import type ConsumableItemModel from '../schemas/ConsumableItemModel';
+import type TileSetModel from '../schemas/TileSetModel';
+import type StaticSpriteModel from '../schemas/StaticSpriteModel';
+import type DynamicSpriteModel from '../schemas/DynamicSpriteModel';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
@@ -56,8 +56,8 @@ const ajv = new Ajv();
 let loadedSchemas = false;
 
 const _loadSchemas = async () => {
+  console.time('_loadSchemas');
   for (const schemaName of schemaNames) {
-    console.debug(`Loading schema ${schemaName}`);
     const schema = (await import(
       /* webpackMode: "lazy-once" */
       /* webpackChunkName: "schemas" */
@@ -65,6 +65,7 @@ const _loadSchemas = async () => {
     )).default;
     ajv.addSchema(schema);
   }
+  console.timeEnd('_loadSchemas');
 };
 
 const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
@@ -72,6 +73,7 @@ const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
     await _loadSchemas();
     loadedSchemas = true;
   }
+
   const validate = ajv.getSchema(schema);
   if (!validate) {
     throw new Error(`Failed to load schema ${schema}`);

@@ -11,11 +11,11 @@ type Context = Readonly<{
 }>;
 
 export const addInitialState = async ({ state, imageFactory }: Context) => {
+  console.time('addInitialState');
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });
   state.setPlayerUnit(playerUnit);
-
   const mapSpecs = (await import(
     /* webpackChunkName: "models" */
     `../../../data/maps.json`
@@ -27,4 +27,5 @@ export const addInitialState = async ({ state, imageFactory }: Context) => {
     });
   });
   state.addMaps(maps);
+  console.timeEnd('addInitialState');
 };

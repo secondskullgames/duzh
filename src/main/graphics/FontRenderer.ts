@@ -56,7 +56,7 @@ export class FontRenderer {
     if (_imageMemos[key]) {
       return _imageMemos[key];
     }
-    const t1 = new Date().getTime();
+    console.time('font');
 
     const width = text.length * font.letterWidth;
     const height = font.letterHeight;
@@ -82,8 +82,7 @@ export class FontRenderer {
       .addMapping(Colors.BLACK, color)
       .build();
     const imageBitmap = await createImageBitmap(replaceColors(imageData, paletteSwaps));
-    const t2 = new Date().getTime();
-    console.debug(`font rendered in ${t2 - t1} ms`);
+    console.timeEnd('font');
 
     _imageMemos[key] = imageBitmap;
     return imageBitmap;
