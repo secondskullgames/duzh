@@ -135,9 +135,9 @@ export default class GameRenderer implements Renderer {
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
   };
 
-  private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
+  private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
-    drawAligned(imageBitmap, this.context, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.context, coordinates, textAlign);
   };
 
   private _renderMinimap = async () => {

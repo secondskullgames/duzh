@@ -1,6 +1,19 @@
 import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 
 export default class ImageLoader {
+  private readonly canvas: HTMLCanvasElement;
+  private readonly context: CanvasRenderingContext2D;
+
+  constructor() {
+    this.canvas = createCanvas({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT
+    });
+    this.canvas.style.display = 'none';
+    this.context = getCanvasContext(this.canvas);
+  }
+
   loadImage = async (filename: string): Promise<ImageData | null> => {
     let image: string;
     try {
@@ -18,25 +31,7 @@ export default class ImageLoader {
       const img = createImage();
 
       img.addEventListener('load', () => {
-        const canvas = createCanvas({
-          width: img.width,
-          height: img.height
-        });
-        canvas.style.display = 'none';
-        const context = getCanvasContext(canvas);
-        if (!context) {
-          throw new Error('Couldn\'t get rendering context!');
-        }
-        context.drawImage(img, 0, 0);
-
-        const imageData = context.getImageData(0, 0, img.width, img.height);
-        if (img.parentElement) {
-          img.parentElement.removeChild(img);
-        }
-        if (canvas.parentElement) {
-          canvas.parentElement.removeChild(canvas);
-        }
-        resolve(imageData);
+        resolve(this.createImageData(img));
       });
 
       img.style.display = 'none';
@@ -46,4 +41,14 @@ export default class ImageLoader {
       img.src = image;
     });
   };
+
+  createImageData = (img: HTMLImageElement): ImageData => {
+    console.time('createImageData');
+    const { context } = this;
+    context.drawImage(img, 0, 0);
+
+    const imageData = context.getImageData(0, 0, img.width, img.height);
+    console.timeEnd('createImageData');
+    return imageData;
+  }
 }
