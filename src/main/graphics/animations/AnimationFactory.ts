@@ -6,11 +6,7 @@ import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
-
-const FRAME_LENGTH = 150; // milliseconds
-const ARROW_FRAME_LENGTH = 50; // milliseconds
-const BOLT_FRAME_LENGTH = 50; // milliseconds
-const WIZARD_TELEPORT_FRAME_LENGTH = 60; // milliseconds
+import { LONG_SLEEP, SHORT_SLEEP } from '../../utils/promises';
 
 type Props = Readonly<{
   state: GameState,
@@ -18,49 +14,6 @@ type Props = Readonly<{
 }>;
 
 export default {
-  getAttackingAnimation: (
-    source: Unit,
-    target: Unit | null,
-    { state, imageFactory }: Props
-  ): Animation => {
-    const frameLength = 150;
-    if (target) {
-      return {
-        frames: [
-          {
-            units: [
-              { unit: source, activity: Activity.ATTACKING },
-              { unit: target, activity: Activity.DAMAGED }
-            ],
-            postDelay: frameLength,
-          },
-          {
-            units: [
-              { unit: source, activity: Activity.STANDING },
-              { unit: target, activity: Activity.STANDING }
-            ]
-          }
-        ]
-      };
-    } else {
-      return {
-        frames: [
-          {
-            units: [
-              { unit: source, activity: Activity.ATTACKING }
-            ],
-            postDelay: frameLength
-          },
-          {
-            units: [
-              { unit: source, activity: Activity.STANDING }
-            ]
-          }
-        ]
-      };
-    }
-  },
-
   getArrowAnimation: async (
     source: Unit,
     direction: Direction,
@@ -73,7 +26,7 @@ export default {
     {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
-        postDelay: ARROW_FRAME_LENGTH
+        postDelay: SHORT_SLEEP
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -93,7 +46,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
-        postDelay: ARROW_FRAME_LENGTH
+        postDelay: SHORT_SLEEP
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -108,7 +61,7 @@ export default {
         units: [
           { unit: source, activity: Activity.STANDING }
         ],
-        postDelay: ARROW_FRAME_LENGTH
+        postDelay: SHORT_SLEEP
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.DAMAGED });
@@ -144,7 +97,7 @@ export default {
     {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
-        postDelay: BOLT_FRAME_LENGTH
+        postDelay: SHORT_SLEEP
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -162,7 +115,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
         projectiles: [projectile],
-        postDelay: BOLT_FRAME_LENGTH
+        postDelay: SHORT_SLEEP
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -217,7 +170,7 @@ export default {
 
       const frame = {
         units: unitFrames,
-        postDelay: FRAME_LENGTH
+        postDelay: LONG_SLEEP
       };
       frames.push(frame);
     }
@@ -236,55 +189,5 @@ export default {
     return {
       frames
     };
-  },
-
-  getWizardVanishingAnimation: async (
-    source: Unit,
-    { state }: Props
-  ): Promise<Animation> => ({
-    frames: [
-      {
-        units: [{ unit: source, activity: Activity.VANISHING, frameNumber: 1 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.VANISHING, frameNumber: 2 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.VANISHING, frameNumber: 3 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.VANISHING, frameNumber: 4 }]
-      }
-    ]
-  }),
-
-  getWizardAppearingAnimation: async (
-    source: Unit,
-    { state }: Props
-  ): Promise<Animation> => ({
-    frames: [
-      {
-        units: [{ unit: source, activity: Activity.APPEARING, frameNumber: 1 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.APPEARING, frameNumber: 2 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.APPEARING, frameNumber: 3 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.APPEARING, frameNumber: 4 }],
-        postDelay: WIZARD_TELEPORT_FRAME_LENGTH
-      },
-      {
-        units: [{ unit: source, activity: Activity.STANDING, direction: Direction.S }]
-      },
-    ]
-  })
+  }
 };

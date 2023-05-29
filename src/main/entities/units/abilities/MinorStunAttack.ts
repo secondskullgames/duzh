@@ -4,7 +4,7 @@ import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import { attack } from '../../../actions/attack';
+import { attackUnit } from '../../../actions/attackUnit';
 
 const manaCost = 15;
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
@@ -38,7 +38,7 @@ export const MinorStunAttack: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       unit.spendMana(manaCost);
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: targetUnit,

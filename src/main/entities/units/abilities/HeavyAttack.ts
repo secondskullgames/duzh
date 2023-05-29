@@ -4,7 +4,7 @@ import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import { attack } from '../../../actions/attack';
+import { attackUnit } from '../../../actions/attackUnit';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
@@ -33,7 +33,7 @@ export const HeavyAttack: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: targetUnit,

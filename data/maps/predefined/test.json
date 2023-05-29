@@ -9,7 +9,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "archer"
+    "BLUE": "robed_wizard"
   },
   "itemColors": {
     "MAGENTA": "life_potion"

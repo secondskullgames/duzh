@@ -2,7 +2,7 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
-import { attack } from '../../../actions/attack';
+import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
@@ -25,7 +25,7 @@ export const NormalAttack: UnitAbility = {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: targetUnit,

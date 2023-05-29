@@ -5,10 +5,11 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
-import { attack } from '../../../actions/attack';
+import { attackUnit } from '../../../actions/attackUnit';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { SpawnerState } from '../../objects/Spawner';
 import { AbilityName } from './AbilityName';
+import { attackObject } from '../../../actions/attackObject';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
@@ -35,7 +36,7 @@ export const PiercingAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: targetUnit,
@@ -51,7 +52,7 @@ export const PiercingAttack: UnitAbility = {
     const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
     const nextUnit = map.getUnit(nextCoordinates);
     if (nextUnit) {
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: nextUnit,
@@ -65,32 +66,12 @@ export const PiercingAttack: UnitAbility = {
 
     const spawner = map.getSpawner(coordinates);
     if (spawner && spawner.isBlocking()) {
-      playSound(Sounds.SPECIAL_ATTACK);
-      const animation = AnimationFactory.getAttackingAnimation(
-        unit,
-        null,
-        { state, imageFactory }
-      );
-      await playAnimation(
-        animation,
-        { state, renderer }
-      );
-      spawner.setState(SpawnerState.DEAD);
+      await attackObject(unit, spawner);
     }
 
     const nextSpawner = map.getSpawner(nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
-      playSound(Sounds.SPECIAL_ATTACK);
-      const animation = AnimationFactory.getAttackingAnimation(
-        unit,
-        null,
-        { state, imageFactory }
-      );
-      await playAnimation(
-        animation,
-        { state, renderer }
-      );
-      nextSpawner.setState(SpawnerState.DEAD);
+      await attackObject(unit, nextSpawner);
     }
   }
 }

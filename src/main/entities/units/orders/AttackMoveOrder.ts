@@ -5,14 +5,10 @@ import { UnitAbility} from '../abilities/UnitAbility';
 import { pointAt } from '../../../utils/geometry';
 import { walk } from '../../../actions/walk';
 import { openDoor } from '../../../actions/openDoor';
-import { playSound } from '../../../sounds/playSound';
-import Sounds from '../../../sounds/Sounds';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import { playAnimation } from '../../../graphics/animations/playAnimation';
-import { SpawnerState } from '../../objects/Spawner';
 import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { pushBlock } from '../../../actions/pushBlock';
+import { attackObject } from '../../../actions/attackObject';
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -61,18 +57,7 @@ export class AttackMoveOrder implements UnitOrder {
 
         const spawner = map.getSpawner(coordinates);
         if (spawner && spawner.isBlocking()) {
-          playSound(Sounds.SPECIAL_ATTACK);
-          const animation = AnimationFactory.getAttackingAnimation(
-            unit,
-            null,
-            { state, imageFactory }
-          );
-          await playAnimation(
-            animation,
-            { state, renderer }
-          );
-          spawner.setState(SpawnerState.DEAD);
-          return;
+          await attackObject(unit, spawner);
         }
 
         const block = map.getObjects(coordinates)

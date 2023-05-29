@@ -25,7 +25,7 @@ type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
-export const attack = async (
+export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
   { state, renderer, imageFactory }: Context
 ) => {

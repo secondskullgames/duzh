@@ -6,7 +6,7 @@ import { sleep } from '../../../utils/promises';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
-import { attack } from '../../../actions/attack';
+import { attackUnit } from '../../../actions/attackUnit';
 
 const manaCost = 8;
 
@@ -35,7 +35,7 @@ export const KnockbackAttack: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
-      await attack(
+      await attackUnit(
         {
           attacker: unit,
           defender: targetUnit,
