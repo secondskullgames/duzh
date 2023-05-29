@@ -260,7 +260,7 @@ export default class Unit implements Entity, Animatable {
 
   takeDamage = (amount: number, sourceUnit: Unit | null): number => {
     const adjustedDamage = this._calculateIncomingDamage(amount, sourceUnit);
-    this.life = Math.max(this.life - amount, 0);
+    this.life = Math.max(this.life - adjustedDamage, 0);
     return adjustedDamage;
   };
 
