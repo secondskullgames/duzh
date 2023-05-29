@@ -43,12 +43,12 @@ export default class ImageLoader {
   };
 
   createImageData = (img: HTMLImageElement): ImageData => {
-    console.time('createImageData');
+    //console.time('createImageData');
     const { context } = this;
     context.drawImage(img, 0, 0);
 
     const imageData = context.getImageData(0, 0, img.width, img.height);
-    console.timeEnd('createImageData');
+    //console.timeEnd('createImageData');
     return imageData;
   }
 }
