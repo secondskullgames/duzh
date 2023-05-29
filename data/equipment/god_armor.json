@@ -1,0 +1,14 @@
+{
+  "id": "god_armor",
+  "name": "God Armor",
+  "sprite": "mail",
+  "mapIcon": "map_mail",
+  "itemCategory": "ARMOR",
+  "slot": "CHEST",
+  "paletteSwaps": {},
+  "points": 420,
+  "level": 69,
+  "stats": {
+    "absorbAmount": 1.0
+  }
+}

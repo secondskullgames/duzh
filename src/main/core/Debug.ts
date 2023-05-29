@@ -69,9 +69,12 @@ export class Debug {
         state: this.state,
         renderer: this.renderer
       }),
-      nextLevel: () => loadNextMap({
-        state: this.state
-      })
+      nextLevel: async () => {
+        await loadNextMap({
+          state: this.state
+        });
+        await this.renderer.render();
+      }
     };
   };
 }

@@ -1,8 +1,7 @@
 import { manhattanDistance } from '../maps/MapUtils';
 import Coordinates from './Coordinates';
 import { randChoice } from '../utils/random';
-
-const CARDINAL_DIRECTIONS = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+import Direction from './Direction';
 
 interface Node extends Coordinates {
   parent: Node | null,
@@ -19,8 +18,10 @@ class CoordinateSet {
     }
   }
 
-  add = ({ x, y }: Coordinates) => this._jsonSet.add(JSON.stringify({ x, y }));
-  includes = ({ x, y }: Coordinates) => this._jsonSet.has(JSON.stringify({ x, y }));
+  private _stringify = ({ x, y }: Coordinates) => `${x},${y}`;
+
+  add = ({ x, y }: Coordinates) => this._jsonSet.add(this._stringify({ x, y }));
+  includes = ({ x, y }: Coordinates) => this._jsonSet.has(this._stringify({ x, y }));
 }
 
 type NodeWithCost = Readonly<{
@@ -59,7 +60,7 @@ const traverseParents = (node: Node): Coordinates[] => {
 /**
  * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
  */
-class Pathfinder {
+export default class Pathfinder {
   private readonly _tileCostCalculator: (first: Coordinates, second: Coordinates) => number;
 
   /**
@@ -78,15 +79,16 @@ class Pathfinder {
    * @return a path from {@code start} to {@code goal}, or an empty list if none was found
    */
   findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
+    console.time('pathfinder');
     const tileSet = new CoordinateSet(tiles);
-    const t1 = new Date().getTime();
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
     ];
-    const closed: Coordinates[] = [];
+    const closed = new CoordinateSet([]);
 
     while (true) {
       if (open.length === 0) {
+        console.timeEnd('pathfinder');
         return [];
       }
 
@@ -97,18 +99,17 @@ class Pathfinder {
       if (Coordinates.equals(bestNode, goal)) {
         // Done!
         const path = traverseParents(bestNode);
-        const t2 = new Date().getTime();
-        console.debug(`Found path in ${t2 - t1} ms`);
+        console.timeEnd('pathfinder');
         return path;
       } else {
         const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
-        closed.push(chosenNode);
+        closed.add(chosenNode);
 
         const neighbors = this._findNeighbors(chosenNode, tileSet);
         for (const neighbor of neighbors) {
-          if (closed.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
+          if (closed.includes(neighbor)) {
             // already been seen, don't need to look at it*
           } else if (open.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
             // don't need to look at it now, will look later?
@@ -127,9 +128,7 @@ class Pathfinder {
   };
 
   private _findNeighbors = (tile: Coordinates, tiles: CoordinateSet): Coordinates[] =>
-    CARDINAL_DIRECTIONS
-      .map(([dx, dy]) => ({ x: tile.x + dx, y: tile.y + dy }))
+    Direction.values()
+      .map(({ dx, dy }) => ({ x: tile.x + dx, y: tile.y + dy }))
       .filter(coordinates => tiles.includes(coordinates));
 }
-
-export default Pathfinder;
