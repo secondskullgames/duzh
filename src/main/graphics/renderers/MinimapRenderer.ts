@@ -42,8 +42,6 @@ export default class MinimapRenderer implements Renderer {
         context.fillRect(x * m + left, y * m + top, m, m);
       }
     }
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    await createImageBitmap(imageData);
   };
 
   private _getColor = ({ x, y }: Coordinates): Color => {

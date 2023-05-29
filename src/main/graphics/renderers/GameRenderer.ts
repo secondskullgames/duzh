@@ -136,7 +136,7 @@ export default class GameRenderer implements Renderer {
   };
 
   private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
+    const imageBitmap = await this.fontRenderer.renderText(text, font, color);
     drawAligned(imageBitmap, this.context, coordinates, textAlign);
   };
 

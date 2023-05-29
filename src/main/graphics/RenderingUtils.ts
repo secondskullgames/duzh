@@ -3,7 +3,7 @@ import { Pixel } from './Pixel';
 export type Alignment = 'left' | 'center' | 'right';
 
 export const drawAligned = (
-  imageBitmap: ImageBitmap,
+  imageData: ImageData,
   context: CanvasRenderingContext2D,
   { x, y }: Pixel,
   alignment: Alignment
@@ -14,11 +14,11 @@ export const drawAligned = (
       left = x;
       break;
     case 'center':
-      left = Math.floor(x - imageBitmap.width / 2);
+      left = Math.floor(x - imageData.width / 2);
       break;
     case 'right':
-      left = x + imageBitmap.width;
+      left = x + imageData.width;
       break;
   }
-  context.drawImage(imageBitmap, left, y);
+  context.putImageData(imageData, left, y);
 };
