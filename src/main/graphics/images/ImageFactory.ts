@@ -5,7 +5,6 @@ import ImageCache from './ImageCache';
 import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
-import { checkNotNull } from '../../utils/preconditions';
 
 type Props = Readonly<{
   filename?: string,

@@ -1,14 +1,14 @@
 import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
 
   constructor() {
+    // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT
+      width: 2000,
+      height: 2000
     });
     this.canvas.style.display = 'none';
     this.context = getCanvasContext(this.canvas);

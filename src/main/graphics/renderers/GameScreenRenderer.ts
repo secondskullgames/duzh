@@ -9,7 +9,6 @@ import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
-import { getCanvasContext } from '../../utils/dom';
 import { Renderer } from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
