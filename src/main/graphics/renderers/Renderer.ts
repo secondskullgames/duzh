@@ -1,3 +1,3 @@
 export interface Renderer {
-  render: () => Promise<ImageData>;
+  render: () => Promise<void>;
 }

@@ -6,9 +6,9 @@ import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, FontRenderer } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import AbstractRenderer from './AbstractRenderer';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
 import Fonts from '../Fonts';
+import { Renderer } from './Renderer';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -21,25 +21,31 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
-  fontRenderer: FontRenderer
+  fontRenderer: FontRenderer,
+  context: CanvasRenderingContext2D
 }>;
 
-class InventoryRenderer extends AbstractRenderer {
+class InventoryRenderer implements Renderer {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly fontRenderer: FontRenderer;
+  private readonly context: CanvasRenderingContext2D;
 
-  constructor({ state, imageFactory, fontRenderer }: Props) {
-    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'inventory' });
+  constructor({ state, imageFactory, fontRenderer, context }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this.fontRenderer = fontRenderer;
+    this.context = context;
   }
 
-  _redraw = async () => {
+  /**
+   * @override {@link Renderer#render}
+   */
+  render = async () => {
     const playerUnit = this.state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
-    const { canvas, context } = this;
+    const { context } = this;
+    const { canvas } = context;
 
     const image = await this.imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);

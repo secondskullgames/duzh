@@ -8,9 +8,9 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
-import AbstractRenderer from './AbstractRenderer';
 import { Pixel } from '../Pixel';
-import Entity from '../../entities/Entity';
+import { getCanvasContext } from '../../utils/dom';
+import { Renderer } from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -20,25 +20,24 @@ type Element = Readonly<{
 
 type Props = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  context: CanvasRenderingContext2D
 }>;
 
-class GameScreenRenderer extends AbstractRenderer {
+export default class GameScreenRenderer implements Renderer {
+  private readonly context: CanvasRenderingContext2D;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
 
-  constructor({ state, imageFactory }: Props) {
-    super({
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT,
-      id: 'game_screen'
-    });
+  constructor({ state, imageFactory, context }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
+    this.context = context;
   }
 
-  protected _redraw = async () => {
-    const { canvas, context } = this;
+  render = async () => {
+    const { context } = this;
+    const { canvas } = context;
     context.fillStyle = Colors.BLACK.hex;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -49,7 +48,7 @@ class GameScreenRenderer extends AbstractRenderer {
   private _renderElement = (element: Element, coordinates: Coordinates) => {
     const pixel = this._gridToPixel(coordinates);
 
-    if (this._isPixelOnScreen(pixel)) {
+    if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
         this._drawSprite(sprite, pixel);
@@ -57,19 +56,10 @@ class GameScreenRenderer extends AbstractRenderer {
     }
   };
 
-  /**
-   * Allow for a one-tile buffer in each direction
-   */
-  private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
-    (x >= -TILE_WIDTH) &&
-    (x <= this.width + TILE_WIDTH) &&
-    (y >= -TILE_HEIGHT) &&
-    (y <= this.height + TILE_HEIGHT);
-
-  private _drawSprite = (sprite: Sprite, { x, y }: Coordinates) => {
+  private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
-      this.context.drawImage(image.bitmap, x + sprite.dx, y + sprite.dy);
+      this.context.drawImage(image.bitmap, pixel.x + sprite.dx, pixel.y + sprite.dy);
     }
   };
 
@@ -80,8 +70,8 @@ class GameScreenRenderer extends AbstractRenderer {
     const playerUnit = this.state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: ((x - playerX) * TILE_WIDTH) + (this.width - TILE_WIDTH) / 2,
-      y: ((y - playerY) * TILE_HEIGHT) + (this.height - TILE_HEIGHT) / 2
+      x: ((x - playerX) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
+      y: ((y - playerY) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
     };
   };
 
@@ -90,10 +80,11 @@ class GameScreenRenderer extends AbstractRenderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        if (this._isTileRevealed({ x, y })) {
-          const tile = map.getTile({ x, y });
+        const coordinates = { x, y };
+        if (this._isTileRevealed(coordinates)) {
+          const tile = map.getTile(coordinates);
           if (tile) {
-            this._renderElement(tile, { x, y });
+            this._renderElement(tile, coordinates);
           }
         }
       }
@@ -193,4 +184,11 @@ class GameScreenRenderer extends AbstractRenderer {
   };
 }
 
-export default GameScreenRenderer;
+/**
+ * Allow for a one-tile buffer in each direction
+ */
+const _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
+  (x >= -TILE_WIDTH) &&
+  (x <= SCREEN_WIDTH + TILE_WIDTH) &&
+  (y >= -TILE_HEIGHT) &&
+  (y <= SCREEN_HEIGHT + TILE_HEIGHT);
