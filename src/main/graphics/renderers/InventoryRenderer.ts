@@ -100,7 +100,7 @@ class InventoryRenderer implements Renderer {
   };
 
   private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
+    const imageBitmap = await this.fontRenderer.renderText(text, font, color);
     drawAligned(imageBitmap, this.context, { x, y }, textAlign);
   };
 }

@@ -157,8 +157,8 @@ class HUDRenderer implements Renderer {
   };
 
   private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
-    drawAligned(imageBitmap, this.context, pixel, textAlign);
+    const imageData = await this.fontRenderer.renderText(text, font, color);
+    drawAligned(imageData, this.context, pixel, textAlign);
   };
 }
 
