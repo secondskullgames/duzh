@@ -3,17 +3,19 @@ import Coordinates from '../../geometry/Coordinates';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
-import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontDefinition, FontRenderer } from '../FontRenderer';
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import AbstractRenderer from './AbstractRenderer';
 import Fonts from '../Fonts';
+import { Renderer } from './Renderer';
+import { Pixel } from '../Pixel';
 
 const HUD_FILENAME = 'brick_hud_3';
 
 const HEIGHT = 64;
+const TOP = SCREEN_HEIGHT - HEIGHT;
 const LEFT_PANE_WIDTH = 163;
 const RIGHT_PANE_WIDTH = 163;
 const MIDDLE_PANE_WIDTH = SCREEN_WIDTH - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
@@ -26,40 +28,45 @@ const ABILITY_ICON_WIDTH = 20;
 type Props = Readonly<{
   state: GameState,
   fontRenderer: FontRenderer,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  context: CanvasRenderingContext2D
 }>;
 
-class HUDRenderer extends AbstractRenderer {
+class HUDRenderer implements Renderer {
   private readonly state: GameState;
   private readonly fontRenderer: FontRenderer;
   private readonly imageFactory: ImageFactory;
+  private readonly context: CanvasRenderingContext2D;
 
-  constructor({ state, fontRenderer, imageFactory }: Props) {
-    super({ width: SCREEN_WIDTH, height: HEIGHT, id: 'hud' });
+  constructor({ state, fontRenderer, imageFactory, context }: Props) {
     this.state = state;
     this.fontRenderer = fontRenderer;
     this.imageFactory = imageFactory;
+    this.context = context;
   }
 
-  _redraw = async () => {
+  /**
+   * @override {@link Renderer#render}
+   */
+  render = async () => {
     await this._renderFrame();
     await this._renderLeftPanel();
     await this._renderMiddlePanel();
     await this._renderRightPanel();
   };
 
-  _renderFrame = async () => {
+  private _renderFrame = async () => {
     const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
-    this.context.drawImage(image.bitmap, 0, 0, image.width, image.height);
+    this.context.drawImage(image.bitmap, 0, TOP, image.width, image.height);
   };
 
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  _renderLeftPanel = async () => {
+  private _renderLeftPanel = async () => {
     const playerUnit = this.state.getPlayerUnit();
 
     const lines = [
@@ -73,7 +80,7 @@ class HUDRenderer extends AbstractRenderer {
     }
 
     const left = BORDER_MARGIN + BORDER_PADDING;
-    const top = BORDER_MARGIN + BORDER_PADDING;
+    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
@@ -81,8 +88,8 @@ class HUDRenderer extends AbstractRenderer {
     }
   };
 
-  _renderMiddlePanel = async () => {
-    const top = BORDER_MARGIN + BORDER_PADDING;
+  private _renderMiddlePanel = async () => {
+    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = this.state.getPlayerUnit();
 
     let keyNumber = 1;
@@ -91,7 +98,7 @@ class HUDRenderer extends AbstractRenderer {
       const ability = abilities[i];
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
-        await this._renderAbility(ability, left, top);
+        await this._renderAbility(ability, { x: left, y: top });
         await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
         await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
         keyNumber++;
@@ -99,14 +106,14 @@ class HUDRenderer extends AbstractRenderer {
     }
   };
 
-  _renderRightPanel = async () => {
+  private _renderRightPanel = async () => {
     const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
 
     const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
-    const top = this.height - HEIGHT + BORDER_MARGIN + BORDER_PADDING;
+    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
 
     const lines = [
       `Turn: ${turn}`,
@@ -124,7 +131,7 @@ class HUDRenderer extends AbstractRenderer {
     }
   };
 
-  _renderAbility = async (ability: UnitAbility, left: number, top: number) => {
+  _renderAbility = async (ability: UnitAbility, topLeft: Pixel) => {
     const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
@@ -146,12 +153,12 @@ class HUDRenderer extends AbstractRenderer {
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });
-    this.context.drawImage(image.bitmap, left, top);
+    this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
   };
 
-  private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
+  private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderFont(text, font, color);
-    drawAligned(imageBitmap, this.context, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.context, pixel, textAlign);
   };
 }
 

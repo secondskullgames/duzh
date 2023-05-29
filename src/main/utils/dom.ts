@@ -26,9 +26,11 @@ export const createImage = (): HTMLImageElement => document.createElement('img')
  * https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
  */
 export const getCanvasContext = (canvas: HTMLCanvasElement): CanvasRenderingContext2D => {
+  console.time('getCanvasContext');
   const context = canvas.getContext('2d', {
     willReadFrequently: true
   })!;
   context.imageSmoothingEnabled = false;
+  console.timeEnd('getCanvasContext');
   return context;
 };

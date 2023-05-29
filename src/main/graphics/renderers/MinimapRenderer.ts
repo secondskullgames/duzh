@@ -2,26 +2,28 @@ import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import AbstractRenderer from './AbstractRenderer';
+import { Renderer } from './Renderer';
 
 type Props = Readonly<{
-  state: GameState
+  state: GameState,
+  context: CanvasRenderingContext2D
 }>;
 
-class MinimapRenderer extends AbstractRenderer {
+export default class MinimapRenderer implements Renderer {
   private readonly state: GameState;
+  private readonly context: CanvasRenderingContext2D;
 
-  constructor({ state }: Props) {
-    super({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, id: 'minimap' });
+  constructor({ state, context }: Props) {
     this.state = state;
+    this.context = context;
   }
 
   /**
-   * @override {@link AbstractRenderer#_redraw}
+   * @override {@link Renderer#render}
    */
-  _redraw = async () => {
-    const { canvas, context } = this;
+  render = async () => {
+    const { context } = this;
+    const { canvas } = context;
     context.fillStyle = '#404040';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -80,5 +82,3 @@ class MinimapRenderer extends AbstractRenderer {
     }
   };
 }
-
-export default MinimapRenderer;
