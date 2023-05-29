@@ -1,0 +1,18 @@
+{
+  "id": "god_sword",
+  "name": "God Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "DARK_GRAY": "YELLOW",
+    "LIGHT_GRAY": "RED",
+    "BLACK": "DARK_RED"
+  },
+  "points": 420,
+  "level": 69,
+  "stats": {
+    "damage": 100
+  }
+}
