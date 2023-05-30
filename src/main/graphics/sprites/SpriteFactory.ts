@@ -14,7 +14,7 @@ import DynamicSprite from './DynamicSprite';
 import Sprite from './Sprite';
 import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
-import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
+import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 type Context = Readonly<{
   imageFactory: ImageFactory
