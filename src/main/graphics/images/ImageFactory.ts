@@ -1,6 +1,6 @@
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import { Image } from './Image';
+import Image from './Image';
 import ImageCache from './ImageCache';
 import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';

@@ -4,7 +4,7 @@ import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
 import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';
-import { Image } from '../images/Image';
+import Image from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
@@ -14,7 +14,7 @@ import DynamicSprite from './DynamicSprite';
 import Sprite from './Sprite';
 import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
-import DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
+import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 type Context = Readonly<{
   imageFactory: ImageFactory

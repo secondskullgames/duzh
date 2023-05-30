@@ -1,6 +1,6 @@
 import Offsets from '../../geometry/Offsets';
 import Animatable from '../animations/Animatable';
-import { Image } from '../images/Image';
+import Image from '../images/Image';
 import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 import Sprite from './Sprite';
