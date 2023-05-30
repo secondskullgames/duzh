@@ -1,11 +1,11 @@
 import RGB from '../RGB';
 import { Pixel } from '../Pixel';
 
-type Image = Readonly<{
-  readonly bitmap: ImageBitmap,
-  readonly width: number,
-  readonly height: number,
-  readonly filename: string | null,
+export type Image = Readonly<{
+  bitmap: ImageBitmap,
+  width: number,
+  height: number,
+  filename: string | null,
   getRGB: (pixel: Pixel) => RGB;
 }>;
 

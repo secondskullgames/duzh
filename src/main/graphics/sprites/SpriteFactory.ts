@@ -4,7 +4,7 @@ import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
 import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';
-import Image from '../images/Image';
+import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';

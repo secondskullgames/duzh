@@ -1,7 +1,7 @@
 import { comparing } from '../../utils/arrays';
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import Image from './Image';
+import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
 
 type CacheKey = Readonly<{
