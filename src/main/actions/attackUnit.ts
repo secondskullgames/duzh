@@ -7,7 +7,7 @@ import { awardExperience } from './awardExperience';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
-import { sleep } from '../utils/promises';
+import { MEDIUM_SLEEP, SHORT_SLEEP, sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
 
@@ -63,8 +63,9 @@ export const attackUnit = async (
     }
   }
 
-  await sleep(150);
+  await sleep(MEDIUM_SLEEP);
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
+  await sleep(SHORT_SLEEP);
 };

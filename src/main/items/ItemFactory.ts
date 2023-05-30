@@ -98,7 +98,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     for (const adjacentUnit of adjacentUnits) {
       await dealDamage(damage, {
         sourceUnit: unit,
-        targetUnit: unit
+        targetUnit: adjacentUnit
       });
     }
   };
