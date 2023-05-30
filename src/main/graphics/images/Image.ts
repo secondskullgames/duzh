@@ -1,34 +1,34 @@
 import RGB from '../RGB';
 import { Pixel } from '../Pixel';
 
+type Image = Readonly<{
+  readonly bitmap: ImageBitmap,
+  readonly width: number,
+  readonly height: number,
+  readonly filename: string | null,
+  getRGB: (pixel: Pixel) => RGB;
+}>;
+
 type Props = Readonly<{
   imageData: ImageData,
   filename?: string | null
 }>;
 
-export default class Image {
-  private constructor(
-    private readonly data: ImageData,
-    readonly bitmap: ImageBitmap,
-    readonly width: number,
-    readonly height: number,
-    readonly filename: string | null
-  ) {}
-
-  getRGB = ({ x, y }: Pixel): RGB => {
-    const i = (x * 4) + (y * 4 * this.width);
-    const [r, g, b] = this.data.data.slice(i, i + 3);
-    return { r, g, b };
-  };
-
-  static create = async ({ imageData, filename }: Props): Promise<Image> => {
+export namespace Image {
+  export const create = async ({ imageData, filename }: Props): Promise<Image> => {
     const bitmap = await createImageBitmap(imageData);
-    return new Image(
-      imageData,
+    const getRGB = ({ x, y }: Pixel): RGB => {
+      const i = (x * 4) + (y * 4 * imageData.width);
+      const [r, g, b] = imageData.data.slice(i, i + 3);
+      return { r, g, b };
+    };
+
+    return {
       bitmap,
-      bitmap.width,
-      bitmap.height,
-      filename ?? null
-    );
+      filename: filename ?? null,
+      width: imageData.width,
+      height: imageData.height,
+      getRGB
+    };
   };
 }
