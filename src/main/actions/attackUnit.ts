@@ -3,7 +3,7 @@ import { playSound } from '../sounds/playSound';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { logMessage } from './logMessage';
 import { die } from './die';
-import { awardExperience } from './awardExperience';
+import { recordKill } from './recordKill';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
@@ -29,8 +29,6 @@ export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
   { state, renderer, imageFactory }: Context
 ) => {
-  const playerUnit = state.getPlayerUnit();
-
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
@@ -48,8 +46,8 @@ export const attackUnit = async (
 
   const damage = getDamage(attacker);
   const adjustedDamage = defender.takeDamage(damage, attacker);
+  attacker.recordDamageDealt(adjustedDamage);
   playSound(sound);
-
   const message = getDamageLogMessage(attacker, defender, adjustedDamage);
   logMessage(message, { state });
 
@@ -58,9 +56,7 @@ export const attackUnit = async (
 
   if (defender.getLife() <= 0) {
     await die(defender, { state });
-    if (attacker === playerUnit) {
-      awardExperience(attacker, 1);
-    }
+    recordKill(attacker);
   }
 
   await sleep(MEDIUM_SLEEP);

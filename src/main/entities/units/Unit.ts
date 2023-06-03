@@ -31,7 +31,17 @@ const LIFE_REGEN_THRESHOLD = 1;
 const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
-const experienceToNextLevel = [4, 6, 8, 10, 12, 14, 16, 18, 20];
+const cumulativeKillsToNextLevel = [
+  4,  // 4,
+  10, // 6,
+  18, // 8,
+  28, // 10,
+  40, // 12,
+  54, // 14,
+  70, // 16,
+  88, // 18,
+  108 // 20
+];
 
 type Props = Readonly<{
   name: string,
@@ -53,7 +63,6 @@ export default class Unit implements Entity, Animatable {
   private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
-  private experience: number;
   private life: number;
   private maxLife: number;
   private mana: number;
@@ -77,6 +86,12 @@ export default class Unit implements Entity, Animatable {
   private readonly abilitiesPerLevel: Record<string, string[]>;
   private readonly summonedUnitClass: string | null;
 
+  private lifetimeDamageDealt: number;
+  private lifetimeDamageTaken: number;
+  private lifetimeKills: number;
+  private lifetimeManaSpent: number;
+  private lifetimeStepsTaken: number;
+
   constructor(props: Props) {
     this.faction = props.faction;
     this.sprite = props.sprite;
@@ -86,7 +101,11 @@ export default class Unit implements Entity, Animatable {
     this.coordinates = props.coordinates;
     this.name = props.name;
     this.level = 1;
-    this.experience = 0;
+    this.lifetimeDamageDealt = 0;
+    this.lifetimeDamageTaken = 0;
+    this.lifetimeKills = 0;
+    this.lifetimeManaSpent = 0;
+    this.lifetimeStepsTaken = 0;
 
     const { model } = props;
     this.life = model.life;
@@ -122,35 +141,6 @@ export default class Unit implements Entity, Animatable {
     }
   }
 
-  private _upkeep = () => {
-    // life regeneration
-    if (this.life < this.maxLife * LIFE_REGEN_THRESHOLD) {
-      const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
-      this.lifeRemainder += lifePerTurn;
-      const deltaLife = Math.floor(this.lifeRemainder);
-      this.lifeRemainder -= deltaLife;
-      this.life = Math.min(this.life + deltaLife, this.maxLife);
-    }
-
-    // mana regeneration
-    if (this.mana !== null && this.maxMana !== null) {
-      const manaPerTurn = 1;
-      this.manaRemainder += manaPerTurn;
-      const deltaMana = Math.floor(this.manaRemainder);
-      this.manaRemainder -= deltaMana;
-      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
-    }
-
-    if (this.turnsSinceCombatAction !== null) {
-      this.turnsSinceCombatAction++;
-    }
-  };
-
-  private _endOfTurn = () => {
-    // decrement stun duration
-    this.stunDuration = Math.max(this.stunDuration - 1, 0);
-  };
-
   getAiParameters = (): AIParameters | null => this.aiParameters;
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
@@ -169,7 +159,6 @@ export default class Unit implements Entity, Animatable {
   getMana = () => this.mana;
   getMaxMana = () => this.maxMana;
   getLevel = () => this.level;
-  getExperience = () => this.experience;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
   getActivity = () => this.activity;
@@ -213,6 +202,22 @@ export default class Unit implements Entity, Animatable {
     return damage;
   };
 
+  /**
+   * @param amount the *actual* amount of damage dealt
+   *        (not counting mitigated damage, overkill, etc.)
+   */
+  recordDamageDealt = (amount: number) => {
+    this.lifetimeDamageDealt += amount;
+  };
+
+  recordKill = () => {
+    this.lifetimeKills++;
+  };
+
+  recordStepTaken = () => {
+    this.lifetimeStepsTaken++;
+  };
+
   getRangedDamage = (): number => {
     let damage = this.damage;
 
@@ -232,36 +237,28 @@ export default class Unit implements Entity, Animatable {
     return Math.round(damage);
   };
 
-  gainExperience = (amount: number) => {
-    this.experience += amount;
-  };
-
-  experienceToNextLevel = (): (number | null) => {
-    if (this.faction === 'PLAYER' && (this.level < MAX_PLAYER_LEVEL)) {
-      return experienceToNextLevel[this.level];
+  getKillsToNextLevel = (): (number | null) => {
+    if (this.faction === Faction.PLAYER && (this.level < MAX_PLAYER_LEVEL)) {
+      return cumulativeKillsToNextLevel[this.level - 1];
     }
     return null;
   };
 
-  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
-    let adjustedDamage = baseDamage;
-    for (const equipment of this.equipment.getAll()) {
-      if (equipment.absorbAmount !== null) {
-        adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
-      }
-      if (equipment.blockAmount !== null) {
-        if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
-          adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.blockAmount ?? 0)));
-        }
-      }
-    }
-    return Math.max(adjustedDamage, 0);
-  };
+  getLifetimeDamageDealt = (): number => this.lifetimeDamageDealt;
+  getLifetimeDamageTaken = (): number => this.lifetimeDamageTaken;
+  getLifetimeKills = (): number => this.lifetimeKills;
+  getLifetimeManaSpent = (): number => this.lifetimeManaSpent;
+  getLifetimeStepsTaken = (): number => this.lifetimeStepsTaken;
 
+  /**
+   * @return the actual amount of damage taken, after mitigation and not including overkill
+   */
   takeDamage = (amount: number, sourceUnit: Unit | null): number => {
     const adjustedDamage = this._calculateIncomingDamage(amount, sourceUnit);
-    this.life = Math.max(this.life - adjustedDamage, 0);
-    return adjustedDamage;
+    const actualDamageTaken = Math.min(adjustedDamage, this.life);
+    this.life -= actualDamageTaken;
+    this.lifetimeDamageTaken += actualDamageTaken;
+    return actualDamageTaken;
   };
 
   /**
@@ -293,6 +290,7 @@ export default class Unit implements Entity, Animatable {
     checkArgument(amount <= this.mana);
     checkArgument(amount >= 0);
     this.mana -= amount;
+    this.lifetimeManaSpent += amount;
   };
 
   isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
@@ -335,5 +333,49 @@ export default class Unit implements Entity, Animatable {
 
   getNewAbilities = (level: number): string[] => {
     return this.abilitiesPerLevel[level] ?? [];
+  };
+
+  private _upkeep = () => {
+    // life regeneration
+    if (this.life < this.maxLife * LIFE_REGEN_THRESHOLD) {
+      const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
+      this.lifeRemainder += lifePerTurn;
+      const deltaLife = Math.floor(this.lifeRemainder);
+      this.lifeRemainder -= deltaLife;
+      this.life = Math.min(this.life + deltaLife, this.maxLife);
+    }
+
+    // mana regeneration
+    if (this.mana !== null && this.maxMana !== null) {
+      const manaPerTurn = 1;
+      this.manaRemainder += manaPerTurn;
+      const deltaMana = Math.floor(this.manaRemainder);
+      this.manaRemainder -= deltaMana;
+      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
+    }
+
+    if (this.turnsSinceCombatAction !== null) {
+      this.turnsSinceCombatAction++;
+    }
+  };
+
+  private _endOfTurn = () => {
+    // decrement stun duration
+    this.stunDuration = Math.max(this.stunDuration - 1, 0);
+  };
+
+  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
+    let adjustedDamage = baseDamage;
+    for (const equipment of this.equipment.getAll()) {
+      if (equipment.absorbAmount !== null) {
+        adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
+      }
+      if (equipment.blockAmount !== null) {
+        if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
+          adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.blockAmount ?? 0)));
+        }
+      }
+    }
+    return Math.max(adjustedDamage, 0);
   };
 }

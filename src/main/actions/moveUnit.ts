@@ -23,6 +23,7 @@ export const moveUnit = async (
 
   unit.setCoordinates(coordinates);
   map.addUnit(unit);
+  unit.recordStepTaken();
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {

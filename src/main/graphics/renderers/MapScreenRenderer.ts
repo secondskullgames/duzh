@@ -9,7 +9,7 @@ type Props = Readonly<{
   context: CanvasRenderingContext2D
 }>;
 
-export default class MinimapRenderer implements Renderer {
+export default class MapScreenRenderer implements Renderer {
   private readonly state: GameState;
   private readonly context: CanvasRenderingContext2D;
 

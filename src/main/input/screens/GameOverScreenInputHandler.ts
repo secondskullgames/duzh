@@ -16,8 +16,6 @@ const handleKeyCommand = async (
   }
 };
 
-const GameOverScreenInputHandler: ScreenInputHandler = {
+export default {
   handleKeyCommand
-};
-
-export default GameOverScreenInputHandler;
+} as ScreenInputHandler;

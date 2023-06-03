@@ -1,6 +1,10 @@
 import { Pixel } from './Pixel';
 
-export type Alignment = 'left' | 'center' | 'right';
+export enum Alignment {
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right'
+}
 
 export const drawAligned = (
   imageData: ImageData,
@@ -10,13 +14,13 @@ export const drawAligned = (
 ) => {
   let left;
   switch (alignment) {
-    case 'left':
+    case Alignment.LEFT:
       left = x;
       break;
-    case 'center':
+    case Alignment.CENTER:
       left = Math.floor(x - imageData.width / 2);
       break;
-    case 'right':
+    case Alignment.RIGHT:
       left = x + imageData.width;
       break;
   }
