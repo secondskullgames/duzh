@@ -13,15 +13,18 @@
     "TEAL": "CYAN"
   },
   "damage": 12,
-  "level": 5,
   "life": 100,
   "mana": 8,
-  "points": 30,
   "aiParameters": {
     "speed": 0.9,
     "visionRange": 8,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 5,
+    "maxLevel": 99,
+    "points": 35
   },
   "abilities": {
     "1": ["ATTACK", "HEAVY_ATTACK"]

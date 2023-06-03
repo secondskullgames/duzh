@@ -63,6 +63,7 @@ export default class InputHandler {
     e: KeyboardEvent,
     { state, renderer, imageFactory }: Context
   ) => {
+    console.time('keyHandler');
     if (e.repeat) {
       return;
     }
@@ -77,9 +78,11 @@ export default class InputHandler {
 
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, renderer, imageFactory });
+    console.timeEnd('keyHandler');
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {
+    console.log('WTF');
     boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
     target.addEventListener('keydown', boundHandler);
     this.eventTarget = target;

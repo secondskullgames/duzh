@@ -1,5 +1,10 @@
 import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
 
+const img = createImage();
+img.style.display = 'none';
+let _listener: (() => void) | null = null;
+let _errorListener: (() => void) | null = null;
+
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
@@ -27,17 +32,21 @@ export default class ImageLoader {
       return null;
     }
 
+    if (_listener) {
+      img.removeEventListener('load', _listener);
+    }
+    if (_errorListener) {
+      img.removeEventListener('error', _errorListener);
+    }
     return new Promise((resolve, reject) => {
-      const img = createImage();
-
-      img.addEventListener('load', () => {
+      _listener = () => {
         resolve(this.createImageData(img));
-      });
-
-      img.style.display = 'none';
-      img.onerror = () => {
+      };
+      img.addEventListener('load', _listener);
+      _errorListener = () => {
         reject(`Failed to load image ${img.src}`);
       };
+      img.addEventListener('error', _errorListener);
       img.src = image;
     });
   };

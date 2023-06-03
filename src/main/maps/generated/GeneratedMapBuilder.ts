@@ -27,7 +27,7 @@ type Props = Readonly<{
   pointAllocation: GeneratedMapModel_PointAllocation
 }>;
 
-type BuildProps = Readonly<{
+type Context = Readonly<{
   state: GameState,
   imageFactory: ImageFactory
 }>;
@@ -55,7 +55,7 @@ export default class GeneratedMapBuilder {
     this.entityLocations = new CustomSet();
   }
 
-  build = async ({ state, imageFactory }: BuildProps): Promise<MapInstance> => {
+  build = async ({ state, imageFactory }: Context): Promise<MapInstance> => {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     const playerUnit = state.getPlayerUnit();
     const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
@@ -74,7 +74,7 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  _generateUnits = async ({ state, imageFactory }: BuildProps): Promise<Unit[]> => {
+  _generateUnits = async ({ imageFactory }: Context): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
@@ -82,8 +82,15 @@ export default class GeneratedMapBuilder {
 
     while (points > 0) {
       const possibleUnitModels = (await UnitFactory.loadAllModels())
-        .filter(model => model.level !== null && model.level <= this.level)
-        .filter(model => model.points !== null && model.points <= points);
+        .filter(model => {
+          const { levelParameters } = model;
+          if (levelParameters) {
+            return levelParameters.points <= points
+              && levelParameters.minLevel <= this.level
+              && levelParameters.maxLevel >= this.level;
+          }
+          return false;
+        });
 
       if (possibleUnitModels.length === 0) {
         break;
@@ -94,7 +101,7 @@ export default class GeneratedMapBuilder {
         candidateLocations,
         loc => Math.min(...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
-      const { x, y } = candidateLocations.shift()!;
+      const coordinates = candidateLocations.shift()!;
       let controller: UnitController;
       // TODO super hack!
       if (model.name === 'Goblin Archer') {
@@ -107,7 +114,7 @@ export default class GeneratedMapBuilder {
           unitClass: model.id,
           controller,
           faction: Faction.ENEMY,
-          coordinates: { x, y },
+          coordinates,
           level: this.level
         },
         {
@@ -115,13 +122,13 @@ export default class GeneratedMapBuilder {
         }
       );
       units.push(unit);
-      points -= model.points!;
-      this.entityLocations.add({ x, y });
+      points -= model.levelParameters!.points;
+      this.entityLocations.add(coordinates);
     }
     return units;
   };
 
-  private _generateObjects = async ({ state, imageFactory }: BuildProps): Promise<GameObject[]> => {
+  private _generateObjects = async ({ imageFactory }: Context): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));

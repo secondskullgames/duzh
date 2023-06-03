@@ -37,15 +37,18 @@ type UnitModel = {
   equipment?: string[],
   damage: number,
   /**
-   * null if this should not be randomly placed as an enemy
+   * undefined if this should not be randomly placed as an enemy
    */
-  level: number | null,
+  levelParameters?: {
+    minLevel: number,
+    maxLevel: number,
+    points: number
+  },
   life: number,
   mana: number,
   paletteSwaps: {
     [key: string]: string
   },
-  points: number | null,
   sprite: string,
   summonedUnitClass?: string,
   type: UnitType

@@ -11,13 +11,16 @@
   "life": 15,
   "mana": 0,
   "damage": 7,
-  "level": 1,
-  "points": 8,
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 1,
+    "maxLevel": 3,
+    "points": 6
   },
   "abilities": {
     "1": ["ATTACK"]

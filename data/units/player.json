@@ -19,10 +19,8 @@
     "PLAYER_THIGHS": "DARK_BROWN"
   },
   "damage": 6,
-  "level": null,
   "life": 100,
   "mana": 10,
-  "points": null,
   "abilities": {
     "1": ["DASH"],
     "2": ["HEAVY_ATTACK"],

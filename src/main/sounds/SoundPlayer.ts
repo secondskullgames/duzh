@@ -33,6 +33,11 @@ export default class SoundPlayer {
   };
 
   private _cleanup = () => {
+    for (const oscillator of this.oscillators) {
+      if (oscillator.isComplete()) {
+        oscillator.cleanup();
+      }
+    }
     this.oscillators = this.oscillators.filter(o => !o.isComplete());
   };
 }

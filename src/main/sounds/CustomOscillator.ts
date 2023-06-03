@@ -1,20 +1,21 @@
-import { Sample } from './types';
+import type { Sample } from './types';
 
-class CustomOscillator {
+export default class CustomOscillator {
   private readonly delegate: OscillatorNode;
   private readonly isRepeating: boolean;
   private _isComplete: boolean;
+  private _listener: (() => void) | null;
 
   constructor(context: AudioContext, gainNode: GainNode, repeating: boolean) {
     this.delegate = context.createOscillator();
     this.delegate.type = 'square';
     this.delegate.connect(gainNode);
-
     this._isComplete = false;
     this.isRepeating = repeating;
+    this._listener = null;
   }
 
-  play(samples: Sample[], context: AudioContext) {
+  play = (samples: Sample[], context: AudioContext) => {
     if (samples.length) {
       const startTime = context.currentTime;
       let nextStartTime = startTime;
@@ -26,7 +27,7 @@ class CustomOscillator {
       const runtime = samples.map(([freq, ms]) => ms).reduce((a, b) => a + b);
       this.delegate.start();
 
-      this.delegate.onended = () => {
+      this._listener = () => {
         if (this.isRepeating && !this._isComplete) {
           this.play(samples, context);
         } else {
@@ -35,16 +36,21 @@ class CustomOscillator {
       };
       this.delegate.stop(startTime + runtime / 1000);
     }
-  }
+  };
 
-  isComplete() {
+  isComplete = () => {
     return this._isComplete;
-  }
+  };
 
-  stop() {
+  stop = () => {
     this.delegate.stop(0);
     this._isComplete = true;
-  }
-}
+  };
 
-export default CustomOscillator;
+  cleanup = () => {
+    if (this._listener) {
+      this.delegate.removeEventListener('ended', this._listener);
+    }
+    this.delegate.disconnect();
+  };
+}
