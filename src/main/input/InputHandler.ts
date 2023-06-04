@@ -4,10 +4,11 @@ import { mapToCommand } from './inputMappers';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import { GameScreen } from '../types/types';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
 import TitleScreenInputHandler from './screens/TitleScreenInputHandler';
-import { ScreenInputHandler } from './screens/ScreenInputHandler';
+import CharacterScreenInputHandler from './screens/CharacterScreenInputHandler';
 import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
 import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
@@ -19,6 +20,7 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
   [GameScreen.HELP]:      HelpScreenInputHandler,
   [GameScreen.INVENTORY]: InventoryScreenInputHandler,
+  [GameScreen.CHARACTER]: CharacterScreenInputHandler,
   [GameScreen.MAP]:       MapScreenInputHandler,
   [GameScreen.TITLE]:     TitleScreenInputHandler,
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
@@ -61,6 +63,7 @@ export default class InputHandler {
     e: KeyboardEvent,
     { state, renderer, imageFactory }: Context
   ) => {
+    console.time('keyHandler');
     if (e.repeat) {
       return;
     }
@@ -75,9 +78,11 @@ export default class InputHandler {
 
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, renderer, imageFactory });
+    console.timeEnd('keyHandler');
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {
+    console.log('WTF');
     boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
     target.addEventListener('keydown', boundHandler);
     this.eventTarget = target;

@@ -19,12 +19,10 @@
     "DARK_TEAL": "DARK_BLUE_CGA"
   },
   "damage": 6,
-  "level": null,
   "life": 100,
   "mana": 6,
-  "points": null,
   "abilities": {
-    "1": [],
+    "1": ["DASH"],
     "2": ["HEAVY_ATTACK"],
     "3": ["KNOCKBACK_ATTACK"],
     "4": ["STUN_ATTACK"]

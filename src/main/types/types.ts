@@ -9,6 +9,7 @@ import Rect from '../geometry/Rect';
 export enum GameScreen {
   GAME = 'GAME',
   INVENTORY =  'INVENTORY',
+  CHARACTER = 'CHARACTER',
   TITLE = 'TITLE',
   VICTORY = 'VICTORY',
   GAME_OVER = 'GAME_OVER',

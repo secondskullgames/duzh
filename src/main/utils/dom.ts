@@ -20,7 +20,9 @@ export const createCanvas = ({ width, height }: CanvasProps): HTMLCanvasElement 
   return canvas;
 };
 
-export const createImage = (): HTMLImageElement => document.createElement('img');
+export const createImage = (): HTMLImageElement => {
+  return document.createElement('img');
+}
 
 /**
  * https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently

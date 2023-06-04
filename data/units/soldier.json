@@ -14,10 +14,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 60,
+  "life": 50,
   "mana": 8,
   "damage": 2,
-  "level": 3,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
@@ -29,8 +28,12 @@
     "aggressiveness": 0.7,
     "fleeThreshold": 0.1
   },
+  "levelParameters": {
+    "minLevel": 3,
+    "maxLevel": 99,
+    "points": 20
+  },
   "abilities": {
     "1": ["ATTACK", "HEAVY_ATTACK"]
-  },
-  "points": 20
+  }
 }

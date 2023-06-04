@@ -1,5 +1,4 @@
 import GameState from '../../core/GameState';
-import Coordinates from '../../geometry/Coordinates';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -32,7 +31,7 @@ type Props = Readonly<{
   context: CanvasRenderingContext2D
 }>;
 
-class HUDRenderer implements Renderer {
+export default class HUDRenderer implements Renderer {
   private readonly state: GameState;
   private readonly fontRenderer: FontRenderer;
   private readonly imageFactory: ImageFactory;
@@ -84,7 +83,7 @@ class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
@@ -99,8 +98,8 @@ class HUDRenderer implements Renderer {
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top });
-        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, 'center');
-        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, 'center');
+        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
+        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
         keyNumber++;
       }
     }
@@ -120,18 +119,20 @@ class HUDRenderer implements Renderer {
       `Floor: ${mapIndex + 1}`,
     ];
 
-    const experienceToNextLevel = playerUnit.experienceToNextLevel();
-    if (experienceToNextLevel !== null) {
-      lines.push(`Experience: ${playerUnit.getExperience()}/${experienceToNextLevel}`);
+    const killsToNextLevel = playerUnit.getKillsToNextLevel();
+    if (killsToNextLevel !== null) {
+      lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);
+    } else {
+      lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
     }
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
-  _renderAbility = async (ability: UnitAbility, topLeft: Pixel) => {
+  private _renderAbility = async (ability: UnitAbility, topLeft: Pixel) => {
     const { state } = this;
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
@@ -161,5 +162,3 @@ class HUDRenderer implements Renderer {
     drawAligned(imageData, this.context, pixel, textAlign);
   };
 }
-
-export default HUDRenderer;

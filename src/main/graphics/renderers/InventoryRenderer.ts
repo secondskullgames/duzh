@@ -1,5 +1,4 @@
 import GameState from '../../core/GameState';
-import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -9,6 +8,7 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
 import Fonts from '../Fonts';
 import { Renderer } from './Renderer';
+import { Pixel } from '../Pixel';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -25,7 +25,7 @@ type Props = Readonly<{
   context: CanvasRenderingContext2D
 }>;
 
-class InventoryRenderer implements Renderer {
+export default class InventoryRenderer implements Renderer {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly fontRenderer: FontRenderer;
@@ -54,8 +54,8 @@ class InventoryRenderer implements Renderer {
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
     const itemsLeft = (canvas.width + INVENTORY_MARGIN) / 2;
 
-    await this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center');
-    await this._drawText('INVENTORY', Fonts.APPLE_II, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, 'center');
+    await this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('INVENTORY', Fonts.APPLE_II, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
 
     // draw equipment items
     // for now, just display them all in one list
@@ -63,7 +63,7 @@ class InventoryRenderer implements Renderer {
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
-      await this._drawText(text, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, 'left');
+      await this._drawText(text, Fonts.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, Alignment.LEFT);
       y += LINE_HEIGHT;
     }
 
@@ -75,7 +75,7 @@ class InventoryRenderer implements Renderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       const top = INVENTORY_TOP + 40;
-      await this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, 'center');
+      await this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, Alignment.CENTER);
       if (inventoryCategories[i] === inventory.selectedCategory) {
         context.fillStyle = Colors.WHITE.hex;
         context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
@@ -94,17 +94,15 @@ class InventoryRenderer implements Renderer {
         } else {
           color = Colors.WHITE;
         }
-        await this._drawText(items[i].name, Fonts.APPLE_II, { x, y }, color, 'left');
+        await this._drawText(items[i].name, Fonts.APPLE_II, { x, y }, color, Alignment.LEFT);
       }
     }
   };
 
-  private _drawText = async (text: string, font: FontDefinition, { x, y }: Coordinates, color: Color, textAlign: Alignment) => {
+  private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageBitmap, this.context, { x, y }, textAlign);
+    drawAligned(imageBitmap, this.context, pixel, textAlign);
   };
 }
 
 const _equipmentSlotToString = (slot: EquipmentSlot) => slot.toUpperCase().replaceAll('_', ' ');
-
-export default InventoryRenderer;

@@ -84,7 +84,15 @@ const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSw
  */
 const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps, { imageFactory }: Context) => {
   const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
-  const offsets = { dx: 0, dy: -8 };
+  const offsets = (() => {
+    switch (spriteName) {
+      case 'arrow':
+        return { dx: 0, dy: -8 };
+      case 'bolt':
+      default:
+        return { dx: 0, dy: -0 };
+    }
+  })();
   const image = await imageFactory.getImage({
     filename,
     paletteSwaps,

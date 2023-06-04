@@ -13,7 +13,6 @@
     "TEAL": "YELLOW"
   },
   "damage": 8,
-  "level": 4,
   "life": 60,
   "mana": 0,
   "aiParameters": {
@@ -22,8 +21,12 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
+  "levelParameters": {
+    "minLevel": 4,
+    "maxLevel": 99,
+    "points": 25
+  },
   "abilities": {
     "1": ["ATTACK"]
-  },
-  "points": 25
+  }
 }

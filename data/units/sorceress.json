@@ -23,8 +23,6 @@
   "life": 100,
   "mana": 15,
   "damage": 6,
-  "level": null,
-  "points": null,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,

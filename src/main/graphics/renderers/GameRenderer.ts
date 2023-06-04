@@ -9,11 +9,12 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
-import MinimapRenderer from './MinimapRenderer';
+import MapScreenRenderer from './MapScreenRenderer';
 import Fonts from '../Fonts';
 import { GameScreen } from '../../types/types';
 import { Renderer } from './Renderer';
 import { createCanvas, getCanvasContext } from '../../utils/dom';
+import CharacterScreenRenderer from './CharacterScreenRenderer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -32,7 +33,8 @@ export default class GameRenderer implements Renderer {
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
-  private readonly minimapRenderer: MinimapRenderer;
+  private readonly mapScreenRenderer: MapScreenRenderer;
+  private readonly characterScreenRenderer: CharacterScreenRenderer;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly fontRenderer: FontRenderer;
@@ -53,7 +55,8 @@ export default class GameRenderer implements Renderer {
     this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, context });
     this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, context });
     this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, context });
-    this.minimapRenderer = new MinimapRenderer({ state, context });
+    this.mapScreenRenderer = new MapScreenRenderer({ state, context });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, context });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -70,14 +73,16 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, 'center');
+        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
         break;
       case GameScreen.GAME:
         await this._renderGameScreen();
         break;
       case GameScreen.INVENTORY:
-        await this._renderGameScreen();
-        await this._renderInventory();
+        await this._renderInventoryScreen();
+        break;
+      case GameScreen.CHARACTER:
+        await this._renderCharacterScreen();
         break;
       case GameScreen.VICTORY:
         await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
@@ -86,7 +91,7 @@ export default class GameRenderer implements Renderer {
         await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
         break;
       case GameScreen.MAP:
-        await this._renderMinimap();
+        await this._renderMapScreen();
         break;
       case GameScreen.HELP:
         await this._renderHelp();
@@ -108,8 +113,16 @@ export default class GameRenderer implements Renderer {
     await this._renderMessages();
   };
 
-  private _renderInventory = async () => {
+  private _renderInventoryScreen = async () => {
     await this.inventoryRenderer.render();
+  };
+
+  private _renderMapScreen = async () => {
+    await this.mapScreenRenderer.render();
+  };
+
+  private _renderCharacterScreen = async () => {
+    await this.characterScreenRenderer.render();
   };
 
   private _renderMessages = async () => {
@@ -125,23 +138,19 @@ export default class GameRenderer implements Renderer {
       const y = top + (LINE_HEIGHT * i);
       context.fillStyle = Colors.BLACK.hex;
       context.fillRect(left, y, canvas.width, LINE_HEIGHT);
-      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, 'left');
+      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
     this.context.drawImage(image.bitmap, 0, 0, this.canvas.width, this.canvas.height);
-    await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, 'center');
+    await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
   private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
     drawAligned(imageBitmap, this.context, coordinates, textAlign);
-  };
-
-  private _renderMinimap = async () => {
-    await this.minimapRenderer.render();
   };
 
   private _renderHelp = async () => {
@@ -164,13 +173,14 @@ export default class GameRenderer implements Renderer {
       ['Number keys (1-9)',   'Special moves (press arrow to execute)'],
       ['Shift + (direction)', 'Use bow and arrows'],
       ['Alt + (direction)',   'Strafe'],
-      ['M',                   'View map'],
+      ['M',                   'View map screen'],
+      ['C',                   'View character screen'],
       ['F1',                  'View this screen']
     ];
 
     for (let i = 0; i < intro.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(intro[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
+      await this._drawText(intro[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
 
     for (let i = 0; i < keys.length; i++) {
@@ -178,8 +188,8 @@ export default class GameRenderer implements Renderer {
       this.context.fillStyle = Colors.BLACK.hex;
       this.context.fillRect(left, y, this.canvas.width, LINE_HEIGHT);
       const [key, description] = keys[i];
-      await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, 'left');
-      await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, 'left');
+      await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 

@@ -36,6 +36,9 @@ const handleKeyCommand = async (
   } else if (key === 'M') {
     state.setScreen(GameScreen.MAP);
     await renderer.render();
+  } else if (key === 'C') {
+    state.setScreen(GameScreen.CHARACTER);
+    await renderer.render();
   } else if (key === 'ENTER') {
     if (modifiers.includes('ALT')) {
       await toggleFullScreen();
@@ -123,8 +126,6 @@ const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerCont
   await playTurn({ state, renderer, imageFactory });
 };
 
-const GameScreenInputHandler: ScreenInputHandler = {
+export default {
   handleKeyCommand
-};
-
-export default GameScreenInputHandler;
+} as ScreenInputHandler;

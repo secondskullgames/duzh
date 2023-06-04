@@ -15,9 +15,8 @@
     "PLAYER_FEET": "DARK_BROWN"
   },
   "damage": 2,
-  "level": 3,
   "life": 50,
-  "mana": 10,
+  "mana": 6,
   "equipment": [
     "bronze_sword",
     "red_chain_mail",
@@ -31,8 +30,12 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
+  "levelParameters": {
+    "minLevel": 3,
+    "maxLevel": 99,
+    "points": 25
+  },
   "abilities": {
     "1": ["ATTACK"]
-  },
-  "points": 25
+  }
 }

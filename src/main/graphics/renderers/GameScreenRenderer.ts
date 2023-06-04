@@ -40,7 +40,7 @@ export default class GameScreenRenderer implements Renderer {
     context.fillStyle = Colors.BLACK.hex;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    await this._renderTiles();
+    this._renderTiles();
     await this._renderEntities();
   };
 
