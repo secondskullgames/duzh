@@ -9,12 +9,14 @@ import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
+import { sleep } from '../../../utils/promises';
+import { die } from '../../../actions/die';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const Bolt: UnitAbility = {
+export const ShootBolt: UnitAbility = {
   name: AbilityName.BOLT,
   icon: null,
   manaCost: 0,
@@ -52,7 +54,6 @@ export const Bolt: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      logMessage(message, { state });
       const boltAnimation = await AnimationFactory.getBoltAnimation(
         unit,
         { dx, dy },
@@ -64,6 +65,11 @@ export const Bolt: UnitAbility = {
         state,
         renderer
       });
+      logMessage(message, { state });
+      if (targetUnit.getLife() <= 0) {
+        await sleep(100);
+        await die(targetUnit, { state });
+      }
     } else {
       const boltAnimation = await AnimationFactory.getBoltAnimation(
         unit,

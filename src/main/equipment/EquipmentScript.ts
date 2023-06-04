@@ -3,7 +3,7 @@ import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { Bolt } from '../entities/units/abilities/Bolt';
+import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 
 export type EquipmentScriptName = 'bolt_sword';
@@ -44,7 +44,7 @@ const BoltSwordScript: EquipmentScript = {
     }
 
     if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
-      await Bolt.use(
+      await ShootBolt.use(
         unit,
         target,
         {

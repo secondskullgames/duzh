@@ -1,6 +1,6 @@
 import { checkNotNull } from '../../../utils/preconditions';
 import { type UnitAbility } from './UnitAbility';
-import { Bolt } from './Bolt';
+import { ShootBolt } from './ShootBolt';
 import { Dash } from './Dash';
 import { HeavyAttack } from './HeavyAttack';
 import { KnockbackAttack } from './KnockbackAttack';
@@ -16,7 +16,7 @@ import { MinorStunAttack } from './MinorStunAttack';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,
-  [AbilityName.BOLT]: Bolt,
+  [AbilityName.BOLT]: ShootBolt,
   [AbilityName.DASH]: Dash,
   [AbilityName.HEAVY_ATTACK]: HeavyAttack,
   [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
