@@ -13,8 +13,9 @@ import MapScreenRenderer from './MapScreenRenderer';
 import Fonts from '../Fonts';
 import { GameScreen } from '../../types/types';
 import { Renderer } from './Renderer';
-import { createCanvas, getCanvasContext } from '../../utils/dom';
+import { createCanvas } from '../../utils/dom';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
+import { Graphics } from '../Graphics';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -29,7 +30,7 @@ type Props = Readonly<{
 
 export default class GameRenderer implements Renderer {
   private readonly canvas: HTMLCanvasElement;
-  private readonly context: CanvasRenderingContext2D;
+  private readonly graphics: Graphics;
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
@@ -46,17 +47,17 @@ export default class GameRenderer implements Renderer {
     fontRenderer
   }: Props) {
     this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
-    this.context = getCanvasContext(this.canvas);
-    const { canvas, context } = this;
+    this.graphics = Graphics.forCanvas(this.canvas);
+    const { canvas, graphics } = this;
 
     this.state = state;
     this.imageFactory = imageFactory;
     this.fontRenderer = fontRenderer;
-    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, context });
-    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, context });
-    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, context });
-    this.mapScreenRenderer = new MapScreenRenderer({ state, context });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, context });
+    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics });
+    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, graphics });
+    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, graphics });
+    this.mapScreenRenderer = new MapScreenRenderer({ state, graphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, graphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -104,9 +105,8 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderGameScreen = async () => {
-    const { context, canvas } = this;
-    context.fillStyle = Colors.BLACK.hex;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    const { graphics, canvas } = this;
+    graphics.fillRect({ left: 0, top: 0, width: canvas.width, height: canvas.height }, Colors.BLACK);
 
     await this.gameScreenRenderer.render();
     await this.hudRenderer.render();
@@ -126,36 +126,32 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderMessages = async () => {
-    const { context, state } = this;
-    const { canvas } = context;
+    const { graphics, state } = this;
     const messages = state.getMessages().getRecentMessages(state.getTurn());
-    context.fillStyle = Colors.BLACK.hex;
 
     const left = 0;
     const top = 0;
 
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      context.fillStyle = Colors.BLACK.hex;
-      context.fillRect(left, y, canvas.width, LINE_HEIGHT);
+      graphics.fillRect({ left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT }, Colors.BLACK);
       await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
-    this.context.drawImage(image.bitmap, 0, 0, this.canvas.width, this.canvas.height);
+    this.graphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
   private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageBitmap, this.context, coordinates, textAlign);
+    drawAligned(imageBitmap, this.graphics, coordinates, textAlign);
   };
 
   private _renderHelp = async () => {
-    this.context.fillStyle = Colors.BLACK.hex;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.graphics.fill(Colors.BLACK);
 
     const left = 4;
     const top = 4;
@@ -185,8 +181,7 @@ export default class GameRenderer implements Renderer {
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + (LINE_HEIGHT * (i + intro.length + 2));
-      this.context.fillStyle = Colors.BLACK.hex;
-      this.context.fillRect(left, y, this.canvas.width, LINE_HEIGHT);
+      this.graphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
       const [key, description] = keys[i];
       await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
       await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);

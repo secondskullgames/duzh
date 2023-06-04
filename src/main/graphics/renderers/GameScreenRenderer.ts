@@ -10,6 +10,7 @@ import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Renderer } from './Renderer';
+import { Graphics } from '../Graphics';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -20,25 +21,22 @@ type Element = Readonly<{
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
-  context: CanvasRenderingContext2D
+  graphics: Graphics;
 }>;
 
 export default class GameScreenRenderer implements Renderer {
-  private readonly context: CanvasRenderingContext2D;
+  private readonly graphics: Graphics;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
 
-  constructor({ state, imageFactory, context }: Props) {
+  constructor({ state, imageFactory, graphics }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
-    this.context = context;
+    this.graphics = graphics;
   }
 
   render = async () => {
-    const { context } = this;
-    const { canvas } = context;
-    context.fillStyle = Colors.BLACK.hex;
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    this.graphics.fill(Colors.BLACK);
 
     this._renderTiles();
     await this._renderEntities();
@@ -58,7 +56,7 @@ export default class GameScreenRenderer implements Renderer {
   private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
-      this.context.drawImage(image.bitmap, pixel.x + sprite.dx, pixel.y + sprite.dy);
+      this.graphics.drawImage(image, { x: pixel.x + sprite.dx, y: pixel.y + sprite.dy });
     }
   };
 
@@ -179,7 +177,7 @@ export default class GameScreenRenderer implements Renderer {
       transparentColor: Colors.WHITE,
       paletteSwaps
     });
-    this.context.drawImage(image.bitmap, pixel.x, pixel.y);
+    this.graphics.drawImage(image, pixel);
   };
 }
 

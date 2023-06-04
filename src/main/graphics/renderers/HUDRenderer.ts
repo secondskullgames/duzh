@@ -10,6 +10,7 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import Fonts from '../Fonts';
 import { Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
+import { Graphics } from '../Graphics';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -28,20 +29,20 @@ type Props = Readonly<{
   state: GameState,
   fontRenderer: FontRenderer,
   imageFactory: ImageFactory,
-  context: CanvasRenderingContext2D
+  graphics: Graphics
 }>;
 
 export default class HUDRenderer implements Renderer {
   private readonly state: GameState;
   private readonly fontRenderer: FontRenderer;
   private readonly imageFactory: ImageFactory;
-  private readonly context: CanvasRenderingContext2D;
+  private readonly graphics: Graphics;
 
-  constructor({ state, fontRenderer, imageFactory, context }: Props) {
+  constructor({ state, fontRenderer, imageFactory, graphics }: Props) {
     this.state = state;
     this.fontRenderer = fontRenderer;
     this.imageFactory = imageFactory;
-    this.context = context;
+    this.graphics = graphics;
   }
 
   /**
@@ -59,7 +60,7 @@ export default class HUDRenderer implements Renderer {
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
-    this.context.drawImage(image.bitmap, 0, TOP, image.width, image.height);
+    this.graphics.drawImage(image, { x: 0, y: TOP });
   };
 
   /**
@@ -154,11 +155,11 @@ export default class HUDRenderer implements Renderer {
       filename: `abilities/${ability.icon}`,
       paletteSwaps
     });
-    this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
+    this.graphics.drawImage(image, topLeft);
   };
 
   private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
     const imageData = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageData, this.context, pixel, textAlign);
+    drawAligned(imageData, this.graphics, pixel, textAlign);
   };
 }

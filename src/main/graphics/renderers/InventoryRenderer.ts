@@ -9,6 +9,7 @@ import EquipmentSlot from '../../schemas/EquipmentSlot';
 import Fonts from '../Fonts';
 import { Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
+import { Graphics } from '../Graphics';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -22,20 +23,20 @@ type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
   fontRenderer: FontRenderer,
-  context: CanvasRenderingContext2D
+  graphics: Graphics
 }>;
 
 export default class InventoryRenderer implements Renderer {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly fontRenderer: FontRenderer;
-  private readonly context: CanvasRenderingContext2D;
+  private readonly graphics: Graphics;
 
-  constructor({ state, imageFactory, fontRenderer, context }: Props) {
+  constructor({ state, imageFactory, fontRenderer, graphics }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this.fontRenderer = fontRenderer;
-    this.context = context;
+    this.graphics = graphics;
   }
 
   /**
@@ -44,18 +45,17 @@ export default class InventoryRenderer implements Renderer {
   render = async () => {
     const playerUnit = this.state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
-    const { context } = this;
-    const { canvas } = context;
+    const { graphics } = this;
 
     const image = await this.imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
-    context.drawImage(image.bitmap, INVENTORY_LEFT, INVENTORY_TOP, INVENTORY_WIDTH, INVENTORY_HEIGHT);
+    graphics.drawImage(image, { x:INVENTORY_LEFT, y: INVENTORY_TOP });
 
     // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
-    const itemsLeft = (canvas.width + INVENTORY_MARGIN) / 2;
+    const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
 
-    await this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: canvas.width / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
-    await this._drawText('INVENTORY', Fonts.APPLE_II, { x: canvas.width * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('EQUIPMENT', Fonts.APPLE_II, { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('INVENTORY', Fonts.APPLE_II, { x: INVENTORY_WIDTH * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
 
     // draw equipment items
     // for now, just display them all in one list
@@ -77,8 +77,14 @@ export default class InventoryRenderer implements Renderer {
       const top = INVENTORY_TOP + 40;
       await this._drawText(inventoryCategories[i], Fonts.APPLE_II, { x, y: top }, Colors.WHITE, Alignment.CENTER);
       if (inventoryCategories[i] === inventory.selectedCategory) {
-        context.fillStyle = Colors.WHITE.hex;
-        context.fillRect(x - (categoryWidth / 2) + 4, INVENTORY_TOP + 54, categoryWidth - 8, 1);
+        // TODO can we make a `drawLine`?
+        const rect = {
+          left: x - (categoryWidth / 2) + 4,
+          top: INVENTORY_TOP + 54,
+          width: categoryWidth - 8,
+          height: 1
+        };
+        this.graphics.fillRect(rect, Colors.WHITE);
       }
     }
 
@@ -101,7 +107,7 @@ export default class InventoryRenderer implements Renderer {
 
   private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageBitmap, this.context, pixel, textAlign);
+    drawAligned(imageBitmap, this.graphics, pixel, textAlign);
   };
 }
 
