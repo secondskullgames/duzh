@@ -122,8 +122,9 @@ export default class HUDRenderer implements Renderer {
     const killsToNextLevel = playerUnit.getKillsToNextLevel();
     if (killsToNextLevel !== null) {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);
+    } else {
+      lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
     }
-    lines.push(`Damage Dealt: ${playerUnit.getLifetimeDamageDealt()}`);
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);

@@ -9,6 +9,7 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 
 const manaCost = 8;
+const damageCoefficient = 0.5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
@@ -39,7 +40,7 @@ export const KnockbackAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => Math.round(unit.getDamage() * damageCoefficient),
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
