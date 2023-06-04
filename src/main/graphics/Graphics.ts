@@ -8,10 +8,12 @@ export interface Graphics {
   fillRect: (rect: Rect, color: Color) => void;
   fill: (color: Color) => void;
   drawImage: (image: Image, topLeft: Pixel) => void;
+  drawImageBitmap: (bitmap: ImageBitmap, topLeft: Pixel) => void;
   drawScaledImage: (image: Image, rect: Rect) => void;
   putImageData: (imageData: ImageData, topLeft: Pixel) => void;
   getWidth: () => number;
   getHeight: () => number;
+  getImageBitmap: () => Promise<ImageBitmap>;
 }
 
 class CanvasGraphics implements Graphics {
@@ -39,6 +41,10 @@ class CanvasGraphics implements Graphics {
     this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
   };
 
+  drawImageBitmap = (bitmap: ImageBitmap, topLeft: Pixel) => {
+    this.context.drawImage(bitmap, topLeft.x, topLeft.y);
+  };
+
   drawScaledImage = (image: Image, rect: Rect) => {
     this.context.drawImage(image.bitmap, rect.left, rect.top, rect.width, rect.height);
   };
@@ -49,6 +55,10 @@ class CanvasGraphics implements Graphics {
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;
+  getImageBitmap = async (): Promise<ImageBitmap> => {
+    const imageData = this.context.getImageData(0, 0, this.getWidth(), this.getHeight());
+    return createImageBitmap(imageData);
+  };
 }
 
 class OffscreenCanvasGraphics implements Graphics {
@@ -76,6 +86,10 @@ class OffscreenCanvasGraphics implements Graphics {
     this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
   };
 
+  drawImageBitmap = (bitmap: ImageBitmap, topLeft: Pixel) => {
+    this.context.drawImage(bitmap, topLeft.x, topLeft.y);
+  };
+
   drawScaledImage = (image: Image, rect: Rect) => {
     this.context.drawImage(image.bitmap, rect.left, rect.top, rect.width, rect.height);
   };
@@ -86,6 +100,10 @@ class OffscreenCanvasGraphics implements Graphics {
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;
+
+  getImageBitmap = async (): Promise<ImageBitmap> => {
+    return this.canvas.transferToImageBitmap();
+  };
 }
 
 export namespace Graphics {

@@ -8,6 +8,7 @@ import Fonts from '../Fonts';
 import { Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 10;
@@ -40,7 +41,12 @@ export default class CharacterScreenRenderer implements Renderer {
     const playerUnit = state.getPlayerUnit();
 
     const image = await this.imageFactory.getImage({ filename: BACKGROUND_FILENAME });
-    graphics.drawImage(image, { x: 0, y: 0 });
+    graphics.drawScaledImage(image, {
+      left: 0,
+      top: 0,
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT
+    });
 
     let top = 20;
     await this._drawText('Character Statistics', Fonts.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);

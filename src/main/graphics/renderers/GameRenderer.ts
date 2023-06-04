@@ -29,6 +29,8 @@ type Props = Readonly<{
 }>;
 
 export default class GameRenderer implements Renderer {
+  private readonly buffer: OffscreenCanvas;
+  private readonly bufferGraphics: Graphics;
   private readonly canvas: HTMLCanvasElement;
   private readonly graphics: Graphics;
   private readonly gameScreenRenderer: GameScreenRenderer;
@@ -46,18 +48,20 @@ export default class GameRenderer implements Renderer {
     imageFactory,
     fontRenderer
   }: Props) {
+    this.buffer = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+    this.bufferGraphics = Graphics.forOffscreenCanvas(this.buffer);
     this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
     this.graphics = Graphics.forCanvas(this.canvas);
-    const { canvas, graphics } = this;
+    const { canvas, bufferGraphics } = this;
 
     this.state = state;
     this.imageFactory = imageFactory;
     this.fontRenderer = fontRenderer;
-    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics });
-    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, graphics });
-    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, graphics });
-    this.mapScreenRenderer = new MapScreenRenderer({ state, graphics });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, graphics });
+    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics: bufferGraphics });
+    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
+    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
+    this.mapScreenRenderer = new MapScreenRenderer({ state, graphics: bufferGraphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -101,6 +105,10 @@ export default class GameRenderer implements Renderer {
         // unreachable
         throw new Error(`Invalid screen ${screen}`);
     }
+    console.time('GameRenderer#copyBuffer');
+    const bitmap = await this.bufferGraphics.getImageBitmap();
+    this.graphics.drawImageBitmap(bitmap, { x: 0, y: 0 });
+    console.timeEnd('GameRenderer#copyBuffer');
     console.timeEnd('GameRenderer#render');
   };
 

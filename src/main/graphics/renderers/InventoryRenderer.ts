@@ -48,7 +48,13 @@ export default class InventoryRenderer implements Renderer {
     const { graphics } = this;
 
     const image = await this.imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
-    graphics.drawImage(image, { x:INVENTORY_LEFT, y: INVENTORY_TOP });
+    // TODO: need a 640x360 version of this image
+    graphics.drawScaledImage(image, {
+      left: INVENTORY_LEFT,
+      top: INVENTORY_TOP,
+      width: INVENTORY_WIDTH,
+      height: INVENTORY_HEIGHT
+    });
 
     // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
