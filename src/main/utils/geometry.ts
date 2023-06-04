@@ -1,8 +1,6 @@
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { checkState } from './preconditions';
-import Unit from '../entities/units/Unit';
-import { OrderContext } from '../entities/units/orders/UnitOrder';
 import GameState from '../core/GameState';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {

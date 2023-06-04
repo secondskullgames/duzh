@@ -173,7 +173,8 @@ export default class GameRenderer implements Renderer {
       ['Number keys (1-9)',   'Special moves (press arrow to execute)'],
       ['Shift + (direction)', 'Use bow and arrows'],
       ['Alt + (direction)',   'Strafe'],
-      ['M',                   'View map'],
+      ['M',                   'View map screen'],
+      ['C',                   'View character screen'],
       ['F1',                  'View this screen']
     ];
 

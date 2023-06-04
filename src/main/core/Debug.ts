@@ -6,7 +6,6 @@ import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 import ItemFactory from '../items/ItemFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
-import { pickupItem } from '../actions/pickupItem';
 import { logMessage } from '../actions/logMessage';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';

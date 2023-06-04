@@ -17,7 +17,6 @@ import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
 import ImageFactory from '../../graphics/images/ImageFactory';
-import GameRenderer from '../../graphics/renderers/GameRenderer';
 
 type Props = Readonly<{
   level: number,

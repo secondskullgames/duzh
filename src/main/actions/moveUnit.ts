@@ -1,8 +1,6 @@
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
-import { playSound } from '../sounds/playSound';
-import Sounds from '../sounds/Sounds';
-import { EquipmentScript, EquipmentScriptName } from '../equipment/EquipmentScript';
+import { EquipmentScript } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';

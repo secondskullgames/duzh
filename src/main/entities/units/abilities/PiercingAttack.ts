@@ -1,13 +1,9 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
-import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { attackUnit } from '../../../actions/attackUnit';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import { SpawnerState } from '../../objects/Spawner';
 import { AbilityName } from './AbilityName';
 import { attackObject } from '../../../actions/attackObject';
 

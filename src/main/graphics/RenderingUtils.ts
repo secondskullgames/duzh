@@ -12,7 +12,7 @@ export const drawAligned = (
   { x, y }: Pixel,
   alignment: Alignment
 ) => {
-  let left;
+  let left: number;
   switch (alignment) {
     case Alignment.LEFT:
       left = x;
