@@ -26,7 +26,5 @@
     "maxLevel": 99,
     "points": 35
   },
-  "abilities": {
-    "1": ["ATTACK", "HEAVY_ATTACK"]
-  }
+  "abilities": ["ATTACK", "HEAVY_ATTACK"]
 }

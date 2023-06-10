@@ -18,7 +18,5 @@
     "maxLevel": 99,
     "points": 25
   },
-  "abilities": {
-    "1": ["ATTACK", "MINOR_STUN_ATTACK"]
-  }
+  "abilities": ["ATTACK", "MINOR_STUN_ATTACK"]
 }

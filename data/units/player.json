@@ -21,10 +21,5 @@
   "damage": 6,
   "life": 100,
   "mana": 10,
-  "abilities": {
-    "1": ["DASH"],
-    "2": ["HEAVY_ATTACK"],
-    "3": ["KNOCKBACK_ATTACK"],
-    "4": ["STUN_ATTACK"]
-  }
+  "abilities": ["ATTACK", "SHOOT_ARROW"]
 }

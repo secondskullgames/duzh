@@ -63,6 +63,7 @@ export default class Unit implements Entity, Animatable {
   private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
+  private abilityPoints: number;
   private life: number;
   private maxLife: number;
   private mana: number;
@@ -83,7 +84,6 @@ export default class Unit implements Entity, Animatable {
    * Used by AI to make certain decisions
    */
   private turnsSinceCombatAction: number | null;
-  private readonly abilitiesPerLevel: Record<string, string[]>;
   private readonly summonedUnitClass: string | null;
 
   private lifetimeDamageDealt: number;
@@ -101,6 +101,7 @@ export default class Unit implements Entity, Animatable {
     this.coordinates = props.coordinates;
     this.name = props.name;
     this.level = 1;
+    this.abilityPoints = 0;
     this.lifetimeDamageDealt = 0;
     this.lifetimeDamageTaken = 0;
     this.lifetimeKills = 0;
@@ -120,14 +121,13 @@ export default class Unit implements Entity, Animatable {
     this.direction = Direction.S;
     this.frameNumber = 1;
     // TODO make this type safe
-    this.abilities = (model.abilities[1] ?? [])
+    this.abilities = model.abilities //
       .map(str => str as AbilityName)
       .map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
     this.aiParameters = model.aiParameters ?? null;
-    this.abilitiesPerLevel = model.abilities;
     this.summonedUnitClass = model.summonedUnitClass ?? null;
 
     this.equipment = new EquipmentMap();
@@ -331,8 +331,8 @@ export default class Unit implements Entity, Animatable {
     this.abilities.push(ability);
   };
 
-  getNewAbilities = (level: number): string[] => {
-    return this.abilitiesPerLevel[level] ?? [];
+  awardAbilityPoint = () => {
+    this.abilityPoints++;
   };
 
   private _upkeep = () => {
