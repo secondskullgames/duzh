@@ -34,3 +34,9 @@ export const getCanvasContext = (canvas: HTMLCanvasElement): CanvasRenderingCont
   context.imageSmoothingEnabled = false;
   return context;
 };
+
+export const getOffscreenCanvasContext = (canvas: OffscreenCanvas): OffscreenCanvasRenderingContext2D => {
+  return canvas.getContext('2d', {
+    willReadFrequently: true
+  }) as OffscreenCanvasRenderingContext2D;
+};

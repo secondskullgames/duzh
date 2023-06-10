@@ -32,7 +32,7 @@ export default class GameRenderer implements Renderer {
   private readonly buffer: OffscreenCanvas;
   private readonly bufferGraphics: Graphics;
   private readonly canvas: HTMLCanvasElement;
-  private readonly graphics: Graphics;
+  private readonly _graphics: Graphics;
   private readonly gameScreenRenderer: GameScreenRenderer;
   private readonly hudRenderer: HUDRenderer;
   private readonly inventoryRenderer: InventoryRenderer;
@@ -51,7 +51,7 @@ export default class GameRenderer implements Renderer {
     this.buffer = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     this.bufferGraphics = Graphics.forOffscreenCanvas(this.buffer);
     this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
-    this.graphics = Graphics.forCanvas(this.canvas);
+    this._graphics = Graphics.forCanvas(this.canvas);
     const { canvas, bufferGraphics } = this;
 
     this.state = state;
@@ -107,13 +107,13 @@ export default class GameRenderer implements Renderer {
     }
     console.time('GameRenderer#copyBuffer');
     const bitmap = await this.bufferGraphics.getImageBitmap();
-    this.graphics.drawImageBitmap(bitmap, { x: 0, y: 0 });
+    this._graphics.drawImageBitmap(bitmap, { x: 0, y: 0 });
     console.timeEnd('GameRenderer#copyBuffer');
     console.timeEnd('GameRenderer#render');
   };
 
   private _renderGameScreen = async () => {
-    const { graphics, canvas } = this;
+    const { bufferGraphics: graphics, canvas } = this;
     graphics.fillRect({ left: 0, top: 0, width: canvas.width, height: canvas.height }, Colors.BLACK);
 
     await this.gameScreenRenderer.render();
@@ -134,7 +134,7 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderMessages = async () => {
-    const { graphics, state } = this;
+    const { bufferGraphics: graphics, state } = this;
     const messages = state.getMessages().getRecentMessages(state.getTurn());
 
     const left = 0;
@@ -149,17 +149,17 @@ export default class GameRenderer implements Renderer {
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
-    this.graphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
+    this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
     await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
   private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageBitmap, this.graphics, coordinates, textAlign);
+    drawAligned(imageBitmap, this.bufferGraphics, coordinates, textAlign);
   };
 
   private _renderHelp = async () => {
-    this.graphics.fill(Colors.BLACK);
+    this.bufferGraphics.fill(Colors.BLACK);
 
     const left = 4;
     const top = 4;
@@ -189,7 +189,7 @@ export default class GameRenderer implements Renderer {
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + (LINE_HEIGHT * (i + intro.length + 2));
-      this.graphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
+      this.bufferGraphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
       const [key, description] = keys[i];
       await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
       await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);

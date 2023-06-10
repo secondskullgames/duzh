@@ -1,4 +1,4 @@
-import { createImage } from '../../utils/dom';
+import { createImage, getOffscreenCanvasContext } from '../../utils/dom';
 
 export default class ImageLoader {
   private readonly canvas: OffscreenCanvas;
@@ -15,7 +15,7 @@ export default class ImageLoader {
       2000,
       2000
     );
-    this.context = this.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+    this.context = getOffscreenCanvasContext(this.canvas);
     this.img = createImage();
     this.img.style.display = 'none';
 
