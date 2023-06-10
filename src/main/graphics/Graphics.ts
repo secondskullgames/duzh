@@ -67,7 +67,7 @@ class OffscreenCanvasGraphics implements Graphics {
 
   constructor(canvas: OffscreenCanvas) {
     this.canvas = canvas;
-    this.context = canvas.getContext('2d')!;
+    this.context = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
   }
 
   fillRect = (rect: Rect, color: Color) => {

@@ -15,7 +15,7 @@ export default class ImageLoader {
       2000,
       2000
     );
-    this.context = this.canvas.getContext('2d')!;
+    this.context = this.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
     this.img = createImage();
     this.img.style.display = 'none';
 
