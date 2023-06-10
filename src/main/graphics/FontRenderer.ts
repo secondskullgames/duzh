@@ -3,7 +3,7 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { createCanvas, getCanvasContext } from '../utils/dom';
+import { getOffscreenCanvasContext } from '../utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
@@ -30,11 +30,8 @@ export interface FontInstance extends FontDefinition {
   imageDataMap: Record<string, ImageData>;
 }
 
-const canvas = createCanvas({
-  width: SCREEN_WIDTH,
-  height: SCREEN_HEIGHT
-});
-const context = getCanvasContext(canvas);
+const canvas = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
+const context = getOffscreenCanvasContext(canvas);
 
 type Context = Readonly<{
   imageFactory: ImageFactory
@@ -91,11 +88,11 @@ export class FontRenderer {
       transparentColor: Colors.WHITE
     });
 
-    const canvas = createCanvas({
+    const canvas = new OffscreenCanvas(
       width,
-      height: definition.letterHeight
-    });
-    const context = getCanvasContext(canvas);
+      definition.letterHeight
+    );
+    const context = getOffscreenCanvasContext(canvas);
     context.drawImage(image.bitmap, 0, 0);
     const imageDataMap: Record<string, ImageData> = {};
 
@@ -113,7 +110,11 @@ export class FontRenderer {
     return fontInstance;
   };
 
-  private _getCharacterData = (definition: FontDefinition, context: CanvasRenderingContext2D, char: number) => {
+  private _getCharacterData = (
+    definition: FontDefinition,
+    context: OffscreenCanvasRenderingContext2D,
+    char: number
+  ) => {
     const offset = this._getCharOffset(char);
     return context.getImageData(offset * definition.letterWidth, 0, definition.letterWidth, definition.letterHeight);
   };

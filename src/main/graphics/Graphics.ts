@@ -1,4 +1,4 @@
-import { getCanvasContext } from '../utils/dom';
+import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
 import Color from './Color';
 import Rect from '../geometry/Rect';
 import { Image } from './images/Image';
@@ -67,7 +67,7 @@ class OffscreenCanvasGraphics implements Graphics {
 
   constructor(canvas: OffscreenCanvas) {
     this.canvas = canvas;
-    this.context = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+    this.context = getOffscreenCanvasContext(canvas);
   }
 
   fillRect = (rect: Rect, color: Color) => {
