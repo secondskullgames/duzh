@@ -2,19 +2,21 @@ import { Debug } from './core/Debug';
 import GameState from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import ImageFactory from './graphics/images/ImageFactory';
-import { FontRenderer } from './graphics/FontRenderer';
+import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
+import { loadFonts } from './graphics/Fonts';
 
 const main = async () => {
   const state = new GameState();
   const imageFactory = new ImageFactory();
-  const fontRenderer = new FontRenderer({ imageFactory });
+  const fonts = await loadFonts({ imageFactory });
+  const textRenderer = new TextRenderer({ imageFactory, fonts });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state,
     imageFactory,
-    fontRenderer
+    textRenderer
   });
   const inputHandler = new InputHandler();
   inputHandler.addEventListener(renderer.getCanvas(), { state, renderer, imageFactory });
