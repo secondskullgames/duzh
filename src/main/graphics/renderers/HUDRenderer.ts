@@ -3,14 +3,14 @@ import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontDefinition, FontRenderer } from '../FontRenderer';
+import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import Fonts from '../Fonts';
 import { Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
+import { FontName } from '../Fonts';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -27,20 +27,20 @@ const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
   state: GameState,
-  fontRenderer: FontRenderer,
+  textRenderer: TextRenderer,
   imageFactory: ImageFactory,
   graphics: Graphics
 }>;
 
 export default class HUDRenderer implements Renderer {
   private readonly state: GameState;
-  private readonly fontRenderer: FontRenderer;
+  private readonly textRenderer: TextRenderer;
   private readonly imageFactory: ImageFactory;
   private readonly graphics: Graphics;
 
-  constructor({ state, fontRenderer, imageFactory, graphics }: Props) {
+  constructor({ state, textRenderer, imageFactory, graphics }: Props) {
     this.state = state;
-    this.fontRenderer = fontRenderer;
+    this.textRenderer = textRenderer;
     this.imageFactory = imageFactory;
     this.graphics = graphics;
   }
@@ -84,7 +84,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
@@ -99,8 +99,8 @@ export default class HUDRenderer implements Renderer {
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top });
-        await this._drawText(`${keyNumber}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
-        await this._drawText(`${ability.manaCost}`, Fonts.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
+        await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
+        await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
         keyNumber++;
       }
     }
@@ -129,7 +129,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
@@ -158,8 +158,8 @@ export default class HUDRenderer implements Renderer {
     this.graphics.drawImage(image, topLeft);
   };
 
-  private _drawText = async (text: string, font: FontDefinition, pixel: Pixel, color: Color, textAlign: Alignment) => {
-    const imageData = await this.fontRenderer.renderText(text, font, color);
+  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+    const imageData = await this.textRenderer.renderText(text, font, color);
     drawAligned(imageData, this.graphics, pixel, textAlign);
   };
 }

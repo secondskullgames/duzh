@@ -3,19 +3,19 @@ import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontDefinition, FontRenderer } from '../FontRenderer';
+import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MapScreenRenderer from './MapScreenRenderer';
-import Fonts from '../Fonts';
 import { GameScreen } from '../../types/types';
 import { Renderer } from './Renderer';
 import { createCanvas } from '../../utils/dom';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import { Graphics } from '../Graphics';
+import { FontName } from '../Fonts';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -25,7 +25,7 @@ type Props = Readonly<{
   parent: Element,
   state: GameState,
   imageFactory: ImageFactory,
-  fontRenderer: FontRenderer
+  textRenderer: TextRenderer
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -40,13 +40,13 @@ export default class GameRenderer implements Renderer {
   private readonly characterScreenRenderer: CharacterScreenRenderer;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly fontRenderer: FontRenderer;
+  private readonly fontRenderer: TextRenderer;
 
   constructor({
     parent,
     state,
     imageFactory,
-    fontRenderer
+    textRenderer
   }: Props) {
     this.buffer = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
     this.bufferGraphics = Graphics.forOffscreenCanvas(this.buffer);
@@ -56,12 +56,12 @@ export default class GameRenderer implements Renderer {
 
     this.state = state;
     this.imageFactory = imageFactory;
-    this.fontRenderer = fontRenderer;
+    this.fontRenderer = textRenderer;
     this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics: bufferGraphics });
-    this.hudRenderer = new HUDRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
-    this.inventoryRenderer = new InventoryRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
+    this.hudRenderer = new HUDRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
+    this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
     this.mapScreenRenderer = new MapScreenRenderer({ state, graphics: bufferGraphics });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ state, fontRenderer, imageFactory, graphics: bufferGraphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -78,7 +78,7 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', Fonts.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
         break;
       case GameScreen.GAME:
         await this._renderGameScreen();
@@ -143,17 +143,17 @@ export default class GameRenderer implements Renderer {
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
       graphics.fillRect({ left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT }, Colors.BLACK);
-      await this._drawText(messages[i], Fonts.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
-    await this._drawText(text, Fonts.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
-  private _drawText = async (text: string, font: FontDefinition, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
+  private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const imageBitmap = await this.fontRenderer.renderText(text, font, color);
     drawAligned(imageBitmap, this.bufferGraphics, coordinates, textAlign);
   };
@@ -184,15 +184,15 @@ export default class GameRenderer implements Renderer {
 
     for (let i = 0; i < intro.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(intro[i], Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + (LINE_HEIGHT * (i + intro.length + 2));
       this.bufferGraphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
       const [key, description] = keys[i];
-      await this._drawText(key, Fonts.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
-      await this._drawText(description, Fonts.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
