@@ -1,4 +1,5 @@
 import { Pixel } from './Pixel';
+import { Graphics } from './Graphics';
 
 export enum Alignment {
   LEFT = 'left',
@@ -8,7 +9,7 @@ export enum Alignment {
 
 export const drawAligned = (
   imageData: ImageData,
-  context: CanvasRenderingContext2D,
+  graphics: Graphics,
   { x, y }: Pixel,
   alignment: Alignment
 ) => {
@@ -24,5 +25,5 @@ export const drawAligned = (
       left = x + imageData.width;
       break;
   }
-  context.putImageData(imageData, left, y);
+  graphics.putImageData(imageData, { x: left, y });
 };

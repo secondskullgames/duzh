@@ -3,43 +3,50 @@ import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { Renderer } from './Renderer';
+import { Graphics } from '../Graphics';
+
+const backgroundColor = Color.fromHex('#404040');
 
 type Props = Readonly<{
   state: GameState,
-  context: CanvasRenderingContext2D
+  graphics: Graphics
 }>;
 
 export default class MapScreenRenderer implements Renderer {
   private readonly state: GameState;
-  private readonly context: CanvasRenderingContext2D;
+  private readonly graphics: Graphics;
 
-  constructor({ state, context }: Props) {
+  constructor({ state, graphics }: Props) {
     this.state = state;
-    this.context = context;
+    this.graphics = graphics;
   }
 
   /**
    * @override {@link Renderer#render}
    */
   render = async () => {
-    const { context } = this;
-    const { canvas } = context;
-    context.fillStyle = '#404040';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    const { graphics } = this;
+    graphics.fill(backgroundColor);
 
     const map = this.state.getMap();
-    const m = Math.floor(Math.min(
-      canvas.width / map.width,
-      canvas.height / map.height
+    const cellDimension = Math.floor(Math.min(
+      graphics.getWidth() / map.width,
+      graphics.getHeight() / map.height
     ));
 
-    const left = (canvas.width - (map.width * m)) / 2;
-    const top = (canvas.height - (map.height * m)) / 2;
+    const left = (graphics.getWidth() - (map.width * cellDimension)) / 2;
+    const top = (graphics.getHeight() - (map.height * cellDimension)) / 2;
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        context.fillStyle = this._getColor({ x, y }).hex;
-        context.fillRect(x * m + left, y * m + top, m, m);
+        const color = this._getColor({ x, y })!;
+        const rect = {
+          left: x * cellDimension + left,
+          top: y * cellDimension + top,
+          width: cellDimension,
+          height: cellDimension
+        };
+        graphics.fillRect(rect, color);
       }
     }
   };
