@@ -19,16 +19,16 @@ for (let c = MIN_CHARACTER_CODE; c <= MAX_CHARACTER_CODE; c++) {
   CHARACTERS.push(String.fromCodePoint(c));
 }
 
-export interface FontDefinition {
+export type FontDefinition = Readonly<{
   name: string;
   src: string;
   letterWidth: number;
   letterHeight: number;
-}
+}>;
 
-export interface FontInstance extends FontDefinition {
-  imageDataMap: Record<string, ImageData>;
-}
+export type FontInstance = Readonly<{
+  renderCharacter: (char: string) => ImageData
+}>;
 
 const canvas = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
 const context = getOffscreenCanvasContext(canvas);
@@ -59,9 +59,9 @@ export class FontRenderer {
 
     const fontInstance = await this._loadFont(font);
     for (let i = 0; i < text.length; i++) {
-      const c = text.charAt(i);
-      const letterData = fontInstance.imageDataMap[c] ?? fontInstance.imageDataMap[DEFAULT_CHAR];
-      context.putImageData(letterData, fontInstance.letterWidth * i, 0);
+      const char = text.charAt(i);
+      const letterData = fontInstance.renderCharacter(char);
+      context.putImageData(letterData, font.letterWidth * i, 0);
     }
 
     const imageData = context.getImageData(0, 0, width, height);
@@ -101,8 +101,9 @@ export class FontRenderer {
     }
 
     const fontInstance: FontInstance = {
-      ...definition,
-      imageDataMap
+      renderCharacter: (char: string): ImageData => {
+        return imageDataMap[char] ?? imageDataMap[DEFAULT_CHAR];
+      }
     };
 
     this._loadedFonts[definition.name] = fontInstance;
