@@ -1,28 +1,32 @@
-import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
-
-const img = createImage();
-img.style.display = 'none';
-let _listener: (() => void) | null = null;
-let _errorListener: (() => void) | null = null;
+import { createImage } from '../../utils/dom';
 
 export default class ImageLoader {
-  private readonly canvas: HTMLCanvasElement;
-  private readonly context: CanvasRenderingContext2D;
+  private readonly canvas: OffscreenCanvas;
+  private readonly context: OffscreenCanvasRenderingContext2D;
+
+  private img: HTMLImageElement;
+
+  private _listener: (() => void) | null;
+  private _errorListener: (() => void) | null;
 
   constructor() {
     // this is way bigger than the screen because of fonts
-    this.canvas = createCanvas({
-      width: 2000,
-      height: 2000
-    });
-    this.canvas.style.display = 'none';
-    this.context = getCanvasContext(this.canvas);
+    this.canvas = new OffscreenCanvas(
+      2000,
+      2000
+    );
+    this.context = this.canvas.getContext('2d')!;
+    this.img = createImage();
+    this.img.style.display = 'none';
+
+    this._listener = null;
+    this._errorListener = null;
   }
 
   loadImage = async (filename: string): Promise<ImageData | null> => {
-    let image: string;
+    let imageDataUrl: string;
     try {
-      image = (await import(
+      imageDataUrl = (await import(
         /* webpackMode: "lazy-once" */
         /* webpackChunkName: "images" */
         `../../../../png/${filename}.png`
@@ -32,22 +36,23 @@ export default class ImageLoader {
       return null;
     }
 
-    if (_listener) {
-      img.removeEventListener('load', _listener);
+    const { img } = this;
+    if (this._listener) {
+      img.removeEventListener('load', this._listener);
     }
-    if (_errorListener) {
-      img.removeEventListener('error', _errorListener);
+    if (this._errorListener) {
+      img.removeEventListener('error', this._errorListener);
     }
     return new Promise((resolve, reject) => {
-      _listener = () => {
+      this._listener = () => {
         resolve(this.createImageData(img));
       };
-      img.addEventListener('load', _listener);
-      _errorListener = () => {
+      img.addEventListener('load', this._listener);
+      this._errorListener = () => {
         reject(`Failed to load image ${img.src}`);
       };
-      img.addEventListener('error', _errorListener);
-      img.src = image;
+      img.addEventListener('error', this._errorListener);
+      img.src = imageDataUrl;
     });
   };
 
