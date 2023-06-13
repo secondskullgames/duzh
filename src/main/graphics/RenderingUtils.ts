@@ -1,5 +1,7 @@
 import { Pixel } from './Pixel';
 import { Graphics } from './Graphics';
+import Colors from './Colors';
+import { Image } from './images/Image';
 
 export enum Alignment {
   LEFT = 'left',
@@ -8,7 +10,7 @@ export enum Alignment {
 }
 
 export const drawAligned = (
-  imageData: ImageData,
+  image: Image,
   graphics: Graphics,
   { x, y }: Pixel,
   alignment: Alignment
@@ -19,11 +21,11 @@ export const drawAligned = (
       left = x;
       break;
     case Alignment.CENTER:
-      left = Math.floor(x - imageData.width / 2);
+      left = Math.floor(x - image.width / 2);
       break;
     case Alignment.RIGHT:
-      left = x + imageData.width;
+      left = x + image.width;
       break;
   }
-  graphics.putImageData(imageData, { x: left, y });
+  graphics.drawImage(image, { x: left, y });
 };

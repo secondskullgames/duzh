@@ -3,10 +3,10 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { createCanvas, getCanvasContext } from '../utils/dom';
+import { createCanvas, createImage, getCanvasContext } from '../utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
-import { checkNotNull } from '../utils/preconditions';
+import { Image } from './images/Image';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
@@ -19,7 +19,7 @@ export class TextRenderer {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
 
-  private readonly imageCache: Record<string, ImageData> = {};
+  private readonly imageCache: Record<string, Image> = {};
 
   constructor({ imageFactory, fonts }: Props) {
     this.imageFactory = imageFactory;
@@ -28,8 +28,8 @@ export class TextRenderer {
     this.context = getCanvasContext(this.canvas);
   }
 
-  renderText = (text: string, fontName: FontName, color: Color): ImageData => {
-    const font = checkNotNull(this.fonts[fontName]);
+  renderText = async (text: string, fontName: FontName, color: Color): Promise<Image> => {
+    const font = this.fonts.getFont(fontName);
     const key = _getCacheKey(text, font, color);
     if (this.imageCache[key]) {
       return this.imageCache[key];
@@ -50,9 +50,10 @@ export class TextRenderer {
       .addMapping(Colors.BLACK, color)
       .build();
     const swapped = replaceColors(imageData, paletteSwaps);
+    const image = await Image.create({ imageData: swapped });
 
-    this.imageCache[key] = swapped;
-    return swapped;
+    this.imageCache[key] = image;
+    return image;
   };
 }
 
