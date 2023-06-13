@@ -1,7 +1,7 @@
 import Music from '../sounds/Music';
-import { GameScreen } from '../types/types';
 import { updateRevealedTiles } from './updateRevealedTiles';
 import GameState from '../core/GameState';
+import { GameScreen } from '../core/GameScreen';
 
 type Context = Readonly<{
   state: GameState

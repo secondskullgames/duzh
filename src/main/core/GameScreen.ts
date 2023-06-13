@@ -1,0 +1,10 @@
+export enum GameScreen {
+  GAME = 'GAME',
+  INVENTORY =  'INVENTORY',
+  CHARACTER = 'CHARACTER',
+  TITLE = 'TITLE',
+  VICTORY = 'VICTORY',
+  GAME_OVER = 'GAME_OVER',
+  MAP = 'MAP',
+  HELP = 'HELP'
+}

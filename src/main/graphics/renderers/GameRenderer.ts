@@ -10,12 +10,12 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MapScreenRenderer from './MapScreenRenderer';
-import { GameScreen } from '../../types/types';
 import { Renderer } from './Renderer';
 import { createCanvas } from '../../utils/dom';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import { GameScreen } from '../../core/GameScreen';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';

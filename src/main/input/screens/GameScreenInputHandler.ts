@@ -8,7 +8,6 @@ import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
-import { GameScreen } from '../../types/types';
 import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
@@ -17,6 +16,7 @@ import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHand
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
+import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,

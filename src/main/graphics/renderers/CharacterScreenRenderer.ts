@@ -37,8 +37,9 @@ export default class CharacterScreenRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async () => {
-    const image = await this.imageFactory.getImage({ filename: BACKGROUND_FILENAME });
-    this.graphics.drawScaledImage(image, {
+    const { graphics, imageFactory } = this;
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
       width: SCREEN_WIDTH,

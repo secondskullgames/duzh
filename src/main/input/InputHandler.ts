@@ -2,7 +2,6 @@ import GameState from '../core/GameState';
 import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { GameScreen } from '../types/types';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
@@ -14,6 +13,7 @@ import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
+import { GameScreen } from '../core/GameScreen';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.GAME]:      GameScreenInputHandler,

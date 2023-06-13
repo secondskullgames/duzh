@@ -1,10 +1,10 @@
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
-import { GameScreen } from '../../types/types';
+import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
 import MapFactory from '../../maps/MapFactory';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { type KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
+import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
