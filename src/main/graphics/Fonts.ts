@@ -22,7 +22,7 @@ export enum FontName {
 }
 
 export type FontBundle = Readonly<{
-  [fontName in FontName]: FontInstance
+  getFont(fontName: FontName): FontInstance
 }>;
 
 const fontDefinitions: Record<FontName, FontDefinition> = {
@@ -70,7 +70,10 @@ export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<Font
     const font: FontInstance = await _loadFont(fontDefinition, { imageFactory });
     fonts[fontName as FontName] = font;
   }
-  return fonts as FontBundle;
+
+  return {
+    getFont: (fontName) => fonts[fontName]!
+  }
 };
 
 const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadFontContext): Promise<FontInstance> => {

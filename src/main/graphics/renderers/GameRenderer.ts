@@ -78,7 +78,7 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
         break;
       case GameScreen.GAME:
         await this._renderGameScreen();
@@ -105,10 +105,8 @@ export default class GameRenderer implements Renderer {
         // unreachable
         throw new Error(`Invalid screen ${screen}`);
     }
-    console.time('GameRenderer#copyBuffer');
     const bitmap = await this.bufferGraphics.getImageBitmap();
     this._graphics.drawImageBitmap(bitmap, { x: 0, y: 0 });
-    console.timeEnd('GameRenderer#copyBuffer');
     console.timeEnd('GameRenderer#render');
   };
 
@@ -143,19 +141,19 @@ export default class GameRenderer implements Renderer {
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
       graphics.fillRect({ left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT }, Colors.BLACK);
-      this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
-    this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
-  private _drawText = (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageData = this.textRenderer.renderText(text, font, color);
-    drawAligned(imageData, this.bufferGraphics, coordinates, textAlign);
+  private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
+    const image = await this.textRenderer.renderText(text, font, color);
+    drawAligned(image, this.bufferGraphics, coordinates, textAlign);
   };
 
   private _renderHelp = async () => {
@@ -184,15 +182,15 @@ export default class GameRenderer implements Renderer {
 
     for (let i = 0; i < intro.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + (LINE_HEIGHT * (i + intro.length + 2));
       this.bufferGraphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
       const [key, description] = keys[i];
-      this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
-      this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 

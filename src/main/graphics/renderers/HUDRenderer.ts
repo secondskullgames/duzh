@@ -84,7 +84,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
@@ -99,8 +99,8 @@ export default class HUDRenderer implements Renderer {
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
       if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top });
-        this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
-        this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
+        await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
+        await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
         keyNumber++;
       }
     }
@@ -129,7 +129,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
@@ -158,8 +158,8 @@ export default class HUDRenderer implements Renderer {
     this.graphics.drawImage(image, topLeft);
   };
 
-  private _drawText = (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
-    const imageData = this.textRenderer.renderText(text, font, color);
-    drawAligned(imageData, this.graphics, pixel, textAlign);
+  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+    const image = await this.textRenderer.renderText(text, font, color);
+    drawAligned(image, this.graphics, pixel, textAlign);
   };
 }

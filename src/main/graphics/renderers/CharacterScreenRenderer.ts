@@ -45,14 +45,14 @@ export default class CharacterScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    this._renderStatistics();
+    await this._renderStatistics();
   }
 
-  private _renderStatistics = () => {
+  private _renderStatistics = async () => {
     const { graphics, state } = this;
     const playerUnit = state.getPlayerUnit();
     let top = 20;
-    this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);
     top += 20;
     const lines = [
       `Kills: ${playerUnit.getLifetimeKills()}`,
@@ -62,13 +62,13 @@ export default class CharacterScreenRenderer implements Renderer {
       `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
     ];
     for (const line of lines) {
-      this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
       top += LINE_HEIGHT;
     }
   }
 
-  private _drawText = (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
-    const imageData = this.textRenderer.renderText(text, font, color);
-    drawAligned(imageData, this.graphics, pixel, textAlign);
+  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+    const image = await this.textRenderer.renderText(text, font, color);
+    drawAligned(image, this.graphics, pixel, textAlign);
   };
 }

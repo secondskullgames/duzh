@@ -60,8 +60,8 @@ export default class InventoryRenderer implements Renderer {
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
     const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
 
-    this._drawText('EQUIPMENT', FontName.APPLE_II, { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
-    this._drawText('INVENTORY', FontName.APPLE_II, { x: INVENTORY_WIDTH * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('EQUIPMENT', FontName.APPLE_II, { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText('INVENTORY', FontName.APPLE_II, { x: INVENTORY_WIDTH * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
 
     // draw equipment items
     // for now, just display them all in one list
@@ -69,7 +69,7 @@ export default class InventoryRenderer implements Renderer {
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
-      this._drawText(text, FontName.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(text, FontName.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, Alignment.LEFT);
       y += LINE_HEIGHT;
     }
 
@@ -81,7 +81,7 @@ export default class InventoryRenderer implements Renderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
       const top = INVENTORY_TOP + 40;
-      this._drawText(inventoryCategories[i], FontName.APPLE_II, { x, y: top }, Colors.WHITE, Alignment.CENTER);
+      await this._drawText(inventoryCategories[i], FontName.APPLE_II, { x, y: top }, Colors.WHITE, Alignment.CENTER);
       if (inventoryCategories[i] === inventory.selectedCategory) {
         // TODO can we make a `drawLine`?
         const rect = {
@@ -106,14 +106,14 @@ export default class InventoryRenderer implements Renderer {
         } else {
           color = Colors.WHITE;
         }
-        this._drawText(items[i].name, FontName.APPLE_II, { x, y }, color, Alignment.LEFT);
+        await this._drawText(items[i].name, FontName.APPLE_II, { x, y }, color, Alignment.LEFT);
       }
     }
   };
 
-  private _drawText = (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
-    const imageData = this.textRenderer.renderText(text, font, color);
-    drawAligned(imageData, this.graphics, pixel, textAlign);
+  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+    const image = await this.textRenderer.renderText(text, font, color);
+    drawAligned(image, this.graphics, pixel, textAlign);
   };
 }
 
