@@ -1,6 +1,6 @@
 import ImageFactory from './images/ImageFactory';
 import Colors from './Colors';
-import { getOffscreenCanvasContext } from '../utils/dom';
+import { createCanvas, getCanvasContext } from '../utils/dom';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
@@ -80,11 +80,11 @@ const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadF
     transparentColor: Colors.WHITE
   });
 
-  const canvas = new OffscreenCanvas(
+  const canvas = createCanvas({
     width,
-    fontDefinition.letterHeight
-  );
-  const context = getOffscreenCanvasContext(canvas);
+    height: fontDefinition.letterHeight
+  });
+  const context = getCanvasContext(canvas);
   context.drawImage(image.bitmap, 0, 0);
   const imageDataMap: Record<string, ImageData> = {};
 
@@ -104,7 +104,7 @@ const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadF
 
 const _getCharacterData = (
   definition: FontDefinition,
-  context: OffscreenCanvasRenderingContext2D,
+  context: CanvasRenderingContext2D,
   char: number
 ) => {
   const offset = _getCharOffset(char);

@@ -3,7 +3,7 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { getOffscreenCanvasContext } from '../utils/dom';
+import { createCanvas, getCanvasContext } from '../utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { checkNotNull } from '../utils/preconditions';
@@ -16,25 +16,24 @@ type Props = Readonly<{
 export class TextRenderer {
   private readonly imageFactory: ImageFactory;
   private readonly fonts: FontBundle;
-  private readonly canvas: OffscreenCanvas;
-  private readonly context: OffscreenCanvasRenderingContext2D;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly context: CanvasRenderingContext2D;
 
-  private readonly _imageMemos: Record<string, ImageData> = {};
+  private readonly imageCache: Record<string, ImageData> = {};
 
   constructor({ imageFactory, fonts }: Props) {
     this.imageFactory = imageFactory;
     this.fonts = fonts;
-    this.canvas = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
-    this.context = getOffscreenCanvasContext(this.canvas);
+    this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.context = getCanvasContext(this.canvas);
   }
 
-  renderText = async (text: string, fontName: FontName, color: Color): Promise<ImageData> => {
+  renderText = (text: string, fontName: FontName, color: Color): ImageData => {
     const font = checkNotNull(this.fonts[fontName]);
-    const key = this._getMemoKey(text, font, color);
-    if (this._imageMemos[key]) {
-      return this._imageMemos[key];
+    const key = _getCacheKey(text, font, color);
+    if (this.imageCache[key]) {
+      return this.imageCache[key];
     }
-    console.time(`renderText ${text}`);
 
     const width = text.length * font.letterWidth;
     const height = font.letterHeight;
@@ -51,13 +50,12 @@ export class TextRenderer {
       .addMapping(Colors.BLACK, color)
       .build();
     const swapped = replaceColors(imageData, paletteSwaps);
-    console.timeEnd(`renderText ${text}`);
 
-    this._imageMemos[key] = swapped;
+    this.imageCache[key] = swapped;
     return swapped;
   };
-
-  private _getMemoKey = (text: string, font: FontInstance, color: Color): string => {
-    return `${font.name}_${color.hex}_${text}`;
-  };
 }
+
+const _getCacheKey = (text: string, font: FontInstance, color: Color): string => {
+  return `${font.name}_${color.hex}_${text}`;
+};

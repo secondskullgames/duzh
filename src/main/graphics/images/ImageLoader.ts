@@ -1,8 +1,8 @@
-import { createImage, getOffscreenCanvasContext } from '../../utils/dom';
+import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
 
 export default class ImageLoader {
-  private readonly canvas: OffscreenCanvas;
-  private readonly context: OffscreenCanvasRenderingContext2D;
+  private readonly canvas: HTMLCanvasElement;
+  private readonly context: CanvasRenderingContext2D;
 
   private img: HTMLImageElement;
 
@@ -11,11 +11,11 @@ export default class ImageLoader {
 
   constructor() {
     // this is way bigger than the screen because of fonts
-    this.canvas = new OffscreenCanvas(
-      2000,
-      2000
-    );
-    this.context = getOffscreenCanvasContext(this.canvas);
+    this.canvas = createCanvas({
+      width: 2000,
+      height: 2000
+    });
+    this.context = getCanvasContext(this.canvas);
     this.img = createImage();
     this.img.style.display = 'none';
 
