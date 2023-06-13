@@ -16,6 +16,8 @@ import CharacterScreenRenderer from './CharacterScreenRenderer';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
+import LevelUpScreenRenderer from './LevelUpScreenRenderer';
+import HelpScreenRenderer from './HelpScreenRenderer';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -38,6 +40,8 @@ export default class GameRenderer implements Renderer {
   private readonly inventoryRenderer: InventoryRenderer;
   private readonly mapScreenRenderer: MapScreenRenderer;
   private readonly characterScreenRenderer: CharacterScreenRenderer;
+  private readonly helpScreenRenderer: HelpScreenRenderer;
+  private readonly levelUpScreenRenderer: LevelUpScreenRenderer;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
@@ -62,6 +66,8 @@ export default class GameRenderer implements Renderer {
     this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
     this.mapScreenRenderer = new MapScreenRenderer({ state, graphics: bufferGraphics });
     this.characterScreenRenderer = new CharacterScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
+    this.helpScreenRenderer = new HelpScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
+    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -74,6 +80,7 @@ export default class GameRenderer implements Renderer {
   render = async () => {
     console.time('GameRenderer#render');
     const screen = this.state.getScreen();
+    console.log(`screen is ${screen}`);
 
     switch (screen) {
       case GameScreen.TITLE:
@@ -99,7 +106,10 @@ export default class GameRenderer implements Renderer {
         await this._renderMapScreen();
         break;
       case GameScreen.HELP:
-        await this._renderHelp();
+        await this._renderHelpScreen();
+        break;
+      case GameScreen.LEVEL_UP:
+        await this._renderLevelUpScreen();
         break;
       default:
         // unreachable
@@ -151,47 +161,17 @@ export default class GameRenderer implements Renderer {
     await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
+  private _renderHelpScreen = async () => {
+    await this.helpScreenRenderer.render();
+  };
+
+  private _renderLevelUpScreen = async () => {
+    await this.levelUpScreenRenderer.render();
+  };
+
   private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.bufferGraphics, coordinates, textAlign);
-  };
-
-  private _renderHelp = async () => {
-    this.bufferGraphics.fill(Colors.BLACK);
-
-    const left = 4;
-    const top = 4;
-
-    const intro = [
-      'Welcome to the Dungeon of Duzh! To escape, you must brave untold',
-      'terrors on seven floors. Make use of every weapon available, hone',
-      'your skills through combat, and beware the Horned Wizard.'
-    ];
-
-    const keys: [string, string][] = [
-      ['WASD / Arrow keys',   'Move around, melee attack'],
-      ['Tab',                 'Open inventory screen'],
-      ['Enter',               'Pick up item, enter portal, go down stairs'],
-      ['Number keys (1-9)',   'Special moves (press arrow to execute)'],
-      ['Shift + (direction)', 'Use bow and arrows'],
-      ['Alt + (direction)',   'Strafe'],
-      ['M',                   'View map screen'],
-      ['C',                   'View character screen'],
-      ['F1',                  'View this screen']
-    ];
-
-    for (let i = 0; i < intro.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      await this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
-    }
-
-    for (let i = 0; i < keys.length; i++) {
-      const y = top + (LINE_HEIGHT * (i + intro.length + 2));
-      this.bufferGraphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
-      const [key, description] = keys[i];
-      await this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
-      await this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
-    }
   };
 
   getCanvas = (): HTMLCanvasElement => this.canvas;

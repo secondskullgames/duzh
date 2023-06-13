@@ -33,6 +33,9 @@ const handleKeyCommand = async (
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
     await renderer.render();
+  } else if (key === 'L') {
+    state.setScreen(GameScreen.LEVEL_UP);
+    await renderer.render();
   } else if (key === 'M') {
     state.setScreen(GameScreen.MAP);
     await renderer.render();

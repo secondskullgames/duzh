@@ -1,10 +1,11 @@
 export enum GameScreen {
-  GAME = 'GAME',
-  INVENTORY =  'INVENTORY',
   CHARACTER = 'CHARACTER',
-  TITLE = 'TITLE',
-  VICTORY = 'VICTORY',
+  GAME = 'GAME',
   GAME_OVER = 'GAME_OVER',
+  HELP = 'HELP',
+  INVENTORY = 'INVENTORY',
+  LEVEL_UP = 'LEVEL_UP',
   MAP = 'MAP',
-  HELP = 'HELP'
+  TITLE = 'TITLE',
+  VICTORY = 'VICTORY'
 }

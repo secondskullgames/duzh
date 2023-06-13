@@ -44,6 +44,8 @@ export default class GameState {
     if (this.prevScreen) {
       this.screen = this.prevScreen;
       this.prevScreen = null;
+    } else {
+      this.screen = GameScreen.GAME;
     }
   };
 
