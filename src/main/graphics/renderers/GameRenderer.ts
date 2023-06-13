@@ -29,7 +29,7 @@ type Props = Readonly<{
 }>;
 
 export default class GameRenderer implements Renderer {
-  private readonly buffer: OffscreenCanvas;
+  private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
   private readonly canvas: HTMLCanvasElement;
   private readonly _graphics: Graphics;
@@ -40,7 +40,7 @@ export default class GameRenderer implements Renderer {
   private readonly characterScreenRenderer: CharacterScreenRenderer;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly fontRenderer: TextRenderer;
+  private readonly textRenderer: TextRenderer;
 
   constructor({
     parent,
@@ -48,15 +48,15 @@ export default class GameRenderer implements Renderer {
     imageFactory,
     textRenderer
   }: Props) {
-    this.buffer = new OffscreenCanvas(SCREEN_WIDTH, SCREEN_HEIGHT);
-    this.bufferGraphics = Graphics.forOffscreenCanvas(this.buffer);
+    this.buffer = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.bufferGraphics = Graphics.forCanvas(this.buffer);
     this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
     this._graphics = Graphics.forCanvas(this.canvas);
     const { canvas, bufferGraphics } = this;
 
     this.state = state;
     this.imageFactory = imageFactory;
-    this.fontRenderer = textRenderer;
+    this.textRenderer = textRenderer;
     this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
     this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
@@ -78,7 +78,7 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+        this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
         break;
       case GameScreen.GAME:
         await this._renderGameScreen();
@@ -143,19 +143,19 @@ export default class GameRenderer implements Renderer {
     for (let i = 0; i < messages.length; i++) {
       const y = top + (LINE_HEIGHT * i);
       graphics.fillRect({ left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT }, Colors.BLACK);
-      await this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
+      this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
-    await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
+    this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
-  private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
-    const imageBitmap = await this.fontRenderer.renderText(text, font, color);
-    drawAligned(imageBitmap, this.bufferGraphics, coordinates, textAlign);
+  private _drawText = (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
+    const imageData = this.textRenderer.renderText(text, font, color);
+    drawAligned(imageData, this.bufferGraphics, coordinates, textAlign);
   };
 
   private _renderHelp = async () => {
@@ -184,15 +184,15 @@ export default class GameRenderer implements Renderer {
 
     for (let i = 0; i < intro.length; i++) {
       const y = top + (LINE_HEIGHT * i);
-      await this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      this._drawText(intro[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
     }
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + (LINE_HEIGHT * (i + intro.length + 2));
       this.bufferGraphics.fillRect({ left, top: y, width: this.canvas.width, height: LINE_HEIGHT }, Colors.BLACK);
       const [key, description] = keys[i];
-      await this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
-      await this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
+      this._drawText(key, FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      this._drawText(description, FontName.APPLE_II, { x: left + 200, y }, Colors.WHITE, Alignment.LEFT);
     }
   };
 
