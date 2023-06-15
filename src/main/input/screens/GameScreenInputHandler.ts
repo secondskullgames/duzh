@@ -47,6 +47,7 @@ const handleKeyCommand = async (
     }
   } else if (key === 'F1') {
     state.setScreen(GameScreen.HELP);
+    await renderer.render();
   }
 }
 

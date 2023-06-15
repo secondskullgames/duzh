@@ -5,6 +5,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, renderer, imageFac
   switch (command.key) {
     case 'F1':
       state.showPrevScreen();
+      await renderer.render();
   }
 };
 
