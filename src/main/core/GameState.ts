@@ -6,6 +6,7 @@ import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import { GameScreen } from './GameScreen';
+import { AbilityName } from '../entities/units/abilities/AbilityName';
 
 /**
  * Global mutable state
@@ -21,6 +22,10 @@ export default class GameState {
   private readonly messages: Messages;
   private turn: number;
   private queuedAbility: UnitAbility | null;
+  /**
+   * TODO this should really be somewhere more specialized
+   */
+  private selectedLevelUpScreenAbility: AbilityName | null;
 
   constructor() {
     this.screen = GameScreen.TITLE;
@@ -33,6 +38,7 @@ export default class GameState {
     this.messages = new Messages();
     this.turn = 1;
     this.queuedAbility = null;
+    this.selectedLevelUpScreenAbility = null;
   }
 
   getScreen = (): GameScreen => this.screen;
@@ -40,6 +46,9 @@ export default class GameState {
     this.prevScreen = this.screen;
     this.screen = screen;
   };
+  /**
+   * TODO: make this a stack
+   */
   showPrevScreen = () => {
     if (this.prevScreen) {
       this.screen = this.prevScreen;
@@ -86,6 +95,10 @@ export default class GameState {
 
   getMessages = (): Messages => {
     return this.messages;
+  }
+
+  getSelectedLevelUpScreenAbility = (): AbilityName | null => {
+    return this.selectedLevelUpScreenAbility;
   }
 
   reset = () => {

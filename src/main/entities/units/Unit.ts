@@ -334,6 +334,9 @@ export default class Unit implements Entity, Animatable {
   awardAbilityPoint = () => {
     this.abilityPoints++;
   };
+  getAbilityPoints = (): number => {
+    return this.abilityPoints;
+  };
 
   private _upkeep = () => {
     // life regeneration

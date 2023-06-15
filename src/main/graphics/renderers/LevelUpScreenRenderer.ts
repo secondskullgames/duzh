@@ -32,18 +32,18 @@ export default class LevelUpScreenRenderer implements Renderer {
   private readonly state: GameState;
   private readonly textRenderer: TextRenderer;
 
-  private chosenAbility: AbilityName | null;
-
   constructor({ graphics, imageFactory, state, textRenderer }: Props) {
     this.graphics = graphics;
     this.imageFactory = imageFactory;
     this.state = state;
     this.textRenderer = textRenderer;
-    this.chosenAbility = null;
   }
 
   render = async () => {
-    const { graphics, imageFactory } = this;
+    const { graphics, imageFactory, state } = this;
+    const playerUnit = state.getPlayerUnit();
+    const selectedAbility = state.getSelectedLevelUpScreenAbility();
+
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -52,18 +52,17 @@ export default class LevelUpScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    await this._renderAbilities();
-  }
-
-  private _renderAbilities = async () => {
-    const playerUnit = this.state.getPlayerUnit();
-
     const availableAbilities = LEARNABLE_ABILITIES.filter(ability => !playerUnit.hasAbility(ability));
     let top = 10;
     for (const abilityName of availableAbilities) {
-      await this._drawText(abilityName, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+      const color: Color = (abilityName === selectedAbility)
+        ? Colors.WHITE
+        : Colors.LIGHT_GRAY;
+      await this._drawText(abilityName, FontName.APPLE_II, { x: 20, y: top }, color, Alignment.LEFT);
       top += 10;
     }
+    top += 10;
+    await this._drawText(`Ability points remaining: ${playerUnit.getAbilityPoints()}`, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
   };
 
   private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
