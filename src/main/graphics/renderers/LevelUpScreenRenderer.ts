@@ -12,12 +12,6 @@ import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 
 const BACKGROUND_FILENAME = 'inventory_background';
-const LEARNABLE_ABILITIES = [
-  AbilityName.HEAVY_ATTACK,
-  AbilityName.KNOCKBACK_ATTACK,
-  AbilityName.STUN_ATTACK,
-  AbilityName.DASH
-];
 
 type Props = Readonly<{
   graphics: Graphics,
@@ -52,7 +46,7 @@ export default class LevelUpScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    const availableAbilities = LEARNABLE_ABILITIES.filter(ability => !playerUnit.hasAbility(ability));
+    const availableAbilities = playerUnit.getLearnableAbilities();
     let top = 10;
     for (const abilityName of availableAbilities) {
       const color: Color = (abilityName === selectedAbility)

@@ -327,15 +327,30 @@ export default class Unit implements Entity, Animatable {
     this.damage += amount;
   };
 
-  addAbility = (ability: UnitAbility) => {
+  learnAbility = (ability: UnitAbility) => {
     this.abilities.push(ability);
+    this.abilityPoints--;
   };
 
   awardAbilityPoint = () => {
     this.abilityPoints++;
   };
+
   getAbilityPoints = (): number => {
     return this.abilityPoints;
+  };
+
+  /**
+   * TODO this should probably be somewhere player-specific, not in the base Unit class
+   */
+  getLearnableAbilities = (): AbilityName[] => {
+    const LEARNABLE_ABILITIES = [
+      AbilityName.HEAVY_ATTACK,
+      AbilityName.KNOCKBACK_ATTACK,
+      AbilityName.STUN_ATTACK,
+      AbilityName.DASH
+    ];
+    return LEARNABLE_ABILITIES.filter(ability => !this.hasAbility(ability));
   };
 
   private _upkeep = () => {

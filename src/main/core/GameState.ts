@@ -98,7 +98,28 @@ export default class GameState {
   }
 
   getSelectedLevelUpScreenAbility = (): AbilityName | null => {
+    if (!this.selectedLevelUpScreenAbility) {
+      const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+      this.selectedLevelUpScreenAbility = learnableAbilities[0] ?? null;
+    }
     return this.selectedLevelUpScreenAbility;
+  }
+
+  selectNextLevelUpScreenAbility = () => {
+    const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+    const index = this.selectedLevelUpScreenAbility
+      ? learnableAbilities.indexOf(this.selectedLevelUpScreenAbility)
+      : -1;
+    this.selectedLevelUpScreenAbility = learnableAbilities[(index + 1) % learnableAbilities.length] ?? null;
+  }
+
+  selectPreviousLevelUpScreenAbility = () => {
+    const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+    const index = this.selectedLevelUpScreenAbility
+      ? learnableAbilities.indexOf(this.selectedLevelUpScreenAbility)
+      : -1;
+    const length = learnableAbilities.length;
+    this.selectedLevelUpScreenAbility = learnableAbilities[(index + length - 1) % length] ?? null;
   }
 
   reset = () => {
