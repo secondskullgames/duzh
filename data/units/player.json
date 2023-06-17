@@ -20,6 +20,6 @@
   },
   "damage": 6,
   "life": 100,
-  "mana": 10,
+  "mana": 20,
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }

@@ -52,7 +52,11 @@ export default class GameRenderer implements Renderer {
     imageFactory,
     textRenderer
   }: Props) {
-    this.buffer = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.buffer = createCanvas({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+      offscreen: true
+    });
     this.bufferGraphics = Graphics.forCanvas(this.buffer);
     this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
     this._graphics = Graphics.forCanvas(this.canvas);
@@ -115,8 +119,11 @@ export default class GameRenderer implements Renderer {
         // unreachable
         throw new Error(`Invalid screen ${screen}`);
     }
-    const bitmap = await this.bufferGraphics.getImageBitmap();
-    this._graphics.drawImageBitmap(bitmap, { x: 0, y: 0 });
+
+    requestAnimationFrame(() => {
+      const imageData = this.bufferGraphics.getImageData();
+      this._graphics.putImageData(imageData, { x: 0, y: 0 });
+    });
     console.timeEnd('GameRenderer#render');
   };
 

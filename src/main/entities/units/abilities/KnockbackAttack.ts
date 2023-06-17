@@ -8,7 +8,7 @@ import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 8;
+const manaCost = 15;
 const damageCoefficient = 0.5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {

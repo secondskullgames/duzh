@@ -6,6 +6,8 @@ import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
+const MANA_RETURNED = 3;
+
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
   icon: null,
@@ -35,6 +37,7 @@ export const NormalAttack: UnitAbility = {
         },
         { state, renderer, imageFactory }
       );
+      unit.gainMana(MANA_RETURNED);
     }
   }
 };

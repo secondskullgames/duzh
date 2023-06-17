@@ -15,7 +15,7 @@
     "PLAYER_FEET": "DARK_BROWN"
   },
   "damage": 2,
-  "life": 50,
+  "life": 40,
   "mana": 6,
   "equipment": [
     "bronze_sword",

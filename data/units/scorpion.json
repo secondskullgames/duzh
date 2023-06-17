@@ -6,7 +6,7 @@
   "paletteSwaps": {},
   "life": 60,
   "mana": 15,
-  "damage": 12,
+  "damage": 8,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 12,

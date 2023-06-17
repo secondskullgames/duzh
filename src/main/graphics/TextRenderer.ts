@@ -24,7 +24,11 @@ export class TextRenderer {
   constructor({ imageFactory, fonts }: Props) {
     this.imageFactory = imageFactory;
     this.fonts = fonts;
-    this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.canvas = createCanvas({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+      offscreen: true
+    });
     this.context = getCanvasContext(this.canvas);
   }
 

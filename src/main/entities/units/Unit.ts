@@ -315,11 +315,11 @@ export default class Unit implements Entity, Animatable {
     this.level++;
   };
 
-  incrementMaxLife = (amount: number) => {
+  increaseMaxLife = (amount: number) => {
     this.maxLife += amount;
   };
 
-  incrementMaxMana = (amount: number) => {
+  increaseMaxMana = (amount: number) => {
     this.maxMana += amount;
   };
 

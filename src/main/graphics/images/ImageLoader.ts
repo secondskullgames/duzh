@@ -13,7 +13,8 @@ export default class ImageLoader {
     // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
       width: 2000,
-      height: 2000
+      height: 2000,
+      offscreen: true
     });
     this.context = getCanvasContext(this.canvas);
     this.img = createImage();
