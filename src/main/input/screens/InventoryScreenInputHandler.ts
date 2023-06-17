@@ -40,6 +40,9 @@ const handleKeyCommand = async (
     case 'F1':
       state.setScreen(GameScreen.HELP);
       break;
+    case 'ESCAPE':
+      state.setScreen(GameScreen.GAME);
+      await renderer.render();
   }
   await renderer.render();
 };
@@ -54,8 +57,6 @@ const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerCont
   }
 };
 
-const InventoryScreenInputHandler: ScreenInputHandler = {
+export default {
   handleKeyCommand
-};
-
-export default InventoryScreenInputHandler;
+} as ScreenInputHandler;

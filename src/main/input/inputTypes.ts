@@ -11,6 +11,7 @@ export type Key =
   | 'TAB'
   | 'ENTER'
   | 'SPACEBAR'
+  | 'ESCAPE'
   | 'C'
   | 'M'
   | 'OTHER';

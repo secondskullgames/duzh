@@ -20,8 +20,11 @@ const main = async () => {
   });
   const inputHandler = new InputHandler();
   inputHandler.addEventListener(renderer.getCanvas(), { state, renderer, imageFactory });
-  const debug = new Debug({ state, renderer, imageFactory });
-  debug.attachToWindow();
+  if (!_isProduction()) {
+    const debug = new Debug({ state, renderer, imageFactory });
+    debug.attachToWindow();
+    document.getElementById('debug')?.classList.remove('production');
+  }
   await showSplashScreen({ state, renderer, imageFactory });
 };
 
@@ -29,3 +32,7 @@ main().catch(e => {
   console.error(e);
   alert(e)
 });
+
+const _isProduction = (): boolean => {
+  return document.location.href === 'https://duzh.netlify.app';
+};

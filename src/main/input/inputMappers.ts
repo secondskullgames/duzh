@@ -26,6 +26,8 @@ export const mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
       return { key: 'ENTER', modifiers };
     case 'Space':
       return { key: 'SPACEBAR', modifiers };
+    case 'Escape':
+      return { key: 'ESCAPE', modifiers };
     case 'KeyC':
       return { key: 'C', modifiers };
     case 'KeyM':

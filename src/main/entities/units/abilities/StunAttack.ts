@@ -27,14 +27,12 @@ export const StunAttack: UnitAbility = {
       throw new Error('StunAttack requires a target!');
     }
 
-    const { x, y } = coordinates;
-
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
       await attackUnit(
