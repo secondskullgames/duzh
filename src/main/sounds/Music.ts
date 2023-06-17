@@ -7,7 +7,7 @@ let PLAYER: SoundPlayer | null = null;
 
 let ACTIVE_MUSIC: Suite | Figure[] | null = null;
 
-const _getMusicPlayer = () => new SoundPlayer(4, 0.12);
+const _getMusicPlayer = () => new SoundPlayer({ polyphony: 4, gain: 0.06 });
 
 const playSuite = (suite: Suite) => {
   ACTIVE_MUSIC = suite;

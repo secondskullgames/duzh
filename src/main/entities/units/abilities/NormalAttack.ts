@@ -6,7 +6,8 @@ import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
-const MANA_RETURNED = 3;
+// Note that you gain 1 passively, so this is really 3 mana per hit
+const MANA_RETURNED = 2;
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
