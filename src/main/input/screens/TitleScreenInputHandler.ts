@@ -4,6 +4,7 @@ import MapFactory from '../../maps/MapFactory';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { type KeyCommand } from '../inputTypes';
+import { toggleFullScreen } from '../../utils/dom';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -12,28 +13,33 @@ const handleKeyCommand = async (
   const { key, modifiers } = command;
   switch (key) {
     case 'ENTER':
-      state.setScreen(GameScreen.GAME);
-      if (modifiers.includes('SHIFT')) {
-        const mapInstance = await MapFactory.loadMap(
-          { type: 'predefined', id: 'test' },
-          { state, imageFactory }
-        );
-        await startGameDebug(mapInstance, {
-          state,
-          renderer
-        });
+      if (modifiers.includes('ALT')) {
+        await toggleFullScreen();
       } else {
-        await startGame({
-          state,
-          renderer
-        });
+        state.setScreen(GameScreen.GAME);
+        if (modifiers.includes('SHIFT')) {
+          const mapInstance = await MapFactory.loadMap(
+            { type: 'predefined', id: 'test' },
+            { state, imageFactory }
+          );
+          await startGameDebug(mapInstance, {
+            state,
+            renderer
+          });
+        } else {
+          await startGame({
+            state,
+            renderer
+          });
+        }
       }
       break;
+    case 'ESCAPE':
+      state.setScreen(GameScreen.GAME);
+      await renderer.render();
   }
 };
 
-const TitleScreenInputHandler: ScreenInputHandler = {
+export default {
   handleKeyCommand
-};
-
-export default TitleScreenInputHandler;
+} as ScreenInputHandler;

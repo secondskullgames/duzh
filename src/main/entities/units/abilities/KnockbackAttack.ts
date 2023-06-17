@@ -13,7 +13,7 @@ const damageCoefficient = 0.5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
-}
+};
 
 export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,

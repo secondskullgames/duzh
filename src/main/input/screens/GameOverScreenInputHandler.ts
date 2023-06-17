@@ -1,18 +1,29 @@
 import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
+import { toggleFullScreen } from '../../utils/dom';
+import { GameScreen } from '../../types/types';
 
 const handleKeyCommand = async (
   command: KeyCommand,
   { state, renderer, imageFactory }: ScreenHandlerContext
 ) => {
-  switch (command.key) {
+  const { key, modifiers } = command;
+  switch (key) {
     case 'ENTER':
-      await showSplashScreen({
-        state,
-        renderer,
-        imageFactory
-      });
+      if (modifiers.includes('ALT')) {
+        await toggleFullScreen();
+      } else {
+        await showSplashScreen({
+          state,
+          renderer,
+          imageFactory
+        });
+      }
+      break;
+    case 'ESCAPE':
+      state.setScreen(GameScreen.GAME);
+      await renderer.render();
   }
 };
 

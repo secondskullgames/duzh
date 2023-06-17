@@ -23,14 +23,6 @@ body {
   outline: none;
 }
 
-#editor {
-  display: none;
-}
-
-#editor canvas {
-  background-color: #808080;
-}
-
 /*
  * Render the canvas at 2x (4x) size if the browser window is big enough,
  * Leave some room for margins, etc. (most browsers have 8px margins)
@@ -61,13 +53,14 @@ body.fullscreen #container canvas {
   cursor: none;
 }
 
+#debug.production {
+  display: none;
+}
+
 body.fullscreen #debug {
   display: none;
 }
 
 body.electron #debug {
   display: none;
-}
-
-#fps {
 }
