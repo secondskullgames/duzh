@@ -1,5 +1,6 @@
 export enum AbilityName {
   ATTACK = 'ATTACK',
+  BLINK = 'BLINK',
   BOLT = 'BOLT',
   DASH = 'DASH',
   HEAVY_ATTACK = 'HEAVY_ATTACK',
@@ -17,6 +18,7 @@ export enum AbilityName {
 export namespace AbilityName {
   export const values = (): AbilityName[] => [
     AbilityName.ATTACK,
+    AbilityName.BLINK,
     AbilityName.BOLT,
     AbilityName.DASH,
     AbilityName.HEAVY_ATTACK,

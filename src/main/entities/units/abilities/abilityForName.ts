@@ -14,9 +14,11 @@ import { Teleport } from './Teleport';
 import { AbilityName } from './AbilityName';
 import { MinorStunAttack } from './MinorStunAttack';
 import { ShootFireball } from './ShootFireball';
+import { Blink } from './Blink';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,
+  [AbilityName.BLINK]: Blink,
   [AbilityName.BOLT]: ShootBolt,
   [AbilityName.DASH]: Dash,
   [AbilityName.HEAVY_ATTACK]: HeavyAttack,

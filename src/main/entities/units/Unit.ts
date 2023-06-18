@@ -347,6 +347,7 @@ export default class Unit implements Entity, Animatable {
    */
   getLearnableAbilities = (): AbilityName[] => {
     const LEARNABLE_ABILITIES = [
+      AbilityName.BLINK,
       AbilityName.DASH,
       AbilityName.HEAVY_ATTACK,
       AbilityName.KNOCKBACK_ATTACK,
