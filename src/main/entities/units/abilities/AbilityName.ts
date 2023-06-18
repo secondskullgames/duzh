@@ -7,6 +7,7 @@ export enum AbilityName {
   MINOR_STUN_ATTACK = 'MINOR_STUN_ATTACK',
   PIERCE = 'PIERCE',
   SHOOT_ARROW = 'SHOOT_ARROW',
+  SHOOT_FIREBALL = 'SHOOT_FIREBALL',
   STRAFE = 'STRAFE',
   STUN_ATTACK = 'STUN_ATTACK',
   SUMMON = 'SUMMON',
@@ -23,9 +24,15 @@ export namespace AbilityName {
     AbilityName.MINOR_STUN_ATTACK,
     AbilityName.PIERCE,
     AbilityName.SHOOT_ARROW,
+    AbilityName.SHOOT_FIREBALL,
     AbilityName.STRAFE,
     AbilityName.STUN_ATTACK,
     AbilityName.SUMMON,
     AbilityName.TELEPORT
+  ];
+
+  export const getInnateAbilities = (): AbilityName[] => [
+    AbilityName.ATTACK,
+    AbilityName.SHOOT_ARROW
   ];
 }

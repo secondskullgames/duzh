@@ -345,10 +345,11 @@ export default class Unit implements Entity, Animatable {
    */
   getLearnableAbilities = (): AbilityName[] => {
     const LEARNABLE_ABILITIES = [
+      AbilityName.DASH,
       AbilityName.HEAVY_ATTACK,
       AbilityName.KNOCKBACK_ATTACK,
-      AbilityName.STUN_ATTACK,
-      AbilityName.DASH
+      AbilityName.SHOOT_FIREBALL,
+      AbilityName.STUN_ATTACK
     ];
     return LEARNABLE_ABILITIES.filter(ability => !this.hasAbility(ability));
   };

@@ -11,6 +11,8 @@ import { Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import { AbilityName } from '../../entities/units/abilities/AbilityName';
+import getInnateAbilities = AbilityName.getInnateAbilities;
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -97,11 +99,11 @@ export default class HUDRenderer implements Renderer {
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
-      if (ability.icon) {
+
+      if (!getInnateAbilities().includes(ability.name)) {
         await this._renderAbility(ability, { x: left, y: top });
         await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
         await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
-        keyNumber++;
       }
     }
   };
@@ -151,11 +153,13 @@ export default class HUDRenderer implements Renderer {
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
-    const image = await this.imageFactory.getImage({
-      filename: `abilities/${ability.icon}`,
-      paletteSwaps
-    });
-    this.graphics.drawImage(image, topLeft);
+    if (ability.icon) {
+      const icon = await this.imageFactory.getImage({
+        filename: `abilities/${ability.icon}`,
+        paletteSwaps
+      });
+      this.graphics.drawImage(icon, topLeft);
+    }
   };
 
   private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {

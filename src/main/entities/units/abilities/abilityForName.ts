@@ -13,6 +13,7 @@ import { Summon } from './Summon';
 import { Teleport } from './Teleport';
 import { AbilityName } from './AbilityName';
 import { MinorStunAttack } from './MinorStunAttack';
+import { ShootFireball } from './ShootFireball';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,
@@ -23,6 +24,7 @@ const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
   [AbilityName.PIERCE]: PiercingAttack,
   [AbilityName.SHOOT_ARROW]: ShootArrow,
+  [AbilityName.SHOOT_FIREBALL]: ShootFireball,
   [AbilityName.STRAFE]: Strafe,
   [AbilityName.STUN_ATTACK]: StunAttack,
   [AbilityName.SUMMON]: Summon,

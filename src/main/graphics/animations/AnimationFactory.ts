@@ -153,6 +153,78 @@ export default {
     };
   },
 
+
+  getFireballAnimation: async (
+    source: Unit,
+    direction: Direction,
+    coordinatesList: Coordinates[],
+    target: Unit | null,
+    { state, imageFactory }: Props
+  ): Promise<Animation> => {
+    const frames: AnimationFrame[] = [];
+    // first frame
+    {
+      const frame: AnimationFrame = {
+        units: [{ unit: source, activity: Activity.SHOOTING }],
+        postDelay: SHORT_SLEEP
+      };
+      if (target) {
+        frame.units.push({ unit: target, activity: Activity.STANDING });
+      }
+      frames.push(frame);
+    }
+
+    const visibleCoordinatesList = coordinatesList.filter(coordinates => state.getMap().isTileRevealed(coordinates));
+
+    // arrow movement frames
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await ProjectileFactory.createArrow(
+        coordinates,
+        direction,
+        { imageFactory }
+      );
+      const frame: AnimationFrame = {
+        units: [{ unit: source, activity: Activity.SHOOTING }],
+        projectiles: [projectile],
+        postDelay: SHORT_SLEEP
+      };
+      if (target) {
+        frame.units.push({ unit: target, activity: Activity.STANDING });
+      }
+
+      frames.push(frame);
+    }
+
+    // last frames
+    {
+      const frame: AnimationFrame = {
+        units: [
+          { unit: source, activity: Activity.STANDING }
+        ],
+        postDelay: SHORT_SLEEP
+      };
+      if (target) {
+        frame.units.push({ unit: target, activity: Activity.DAMAGED });
+      }
+
+      frames.push(frame);
+    }
+    {
+      const frame: AnimationFrame = {
+        units: [{ unit: source, activity: Activity.STANDING }]
+      };
+      if (target) {
+        frame.units.push({ unit: target, activity: Activity.STANDING });
+      }
+
+      frames.push(frame);
+    }
+
+    return {
+      frames
+    };
+  },
+
   getFloorFireAnimation: async (
     source: Unit,
     targets: Unit[],

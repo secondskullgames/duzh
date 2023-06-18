@@ -17,6 +17,7 @@ import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '../../core/GameScreen';
+import { AbilityName } from '../../entities/units/abilities/AbilityName';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -104,10 +105,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
 const _handleAbility = async (key: NumberKey, { state, renderer, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
 
-  // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(key.toString());
+  const innateAbilities = AbilityName.getInnateAbilities();
   const ability = playerUnit.getAbilities()
-    .filter(ability => ability.icon !== null)
+    .filter(ability => !innateAbilities.includes(ability.name))
     [index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
