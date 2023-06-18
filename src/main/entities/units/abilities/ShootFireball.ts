@@ -70,7 +70,7 @@ export const ShootFireball: UnitAbility = {
       logMessage(message, { state });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state });
+        await die(targetUnit, { state, imageFactory });
       }
     } else {
       const fireballAnimation = await AnimationFactory.getFireballAnimation(

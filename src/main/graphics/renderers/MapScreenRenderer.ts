@@ -4,6 +4,7 @@ import Color from '../Color';
 import Colors from '../Colors';
 import { Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
+import { getItem } from '../../maps/MapUtils';
 
 const backgroundColor = Color.fromHex('#404040');
 
@@ -70,7 +71,7 @@ export default class MapScreenRenderer implements Renderer {
           const unit = map.getUnit({ x, y });
           if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
             return Colors.RED;
-          } else if (map.getItem({ x, y })) {
+          } else if (getItem(map, { x, y })) {
             return Colors.YELLOW;
           }
           return Colors.LIGHT_GRAY;

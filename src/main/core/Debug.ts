@@ -38,7 +38,10 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    await die(playerUnit, { state: this.state });
+    await die(playerUnit, {
+      state: this.state,
+      imageFactory: this.imageFactory
+    });
     await this.renderer.render();
   };
 

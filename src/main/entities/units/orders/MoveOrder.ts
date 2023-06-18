@@ -7,6 +7,7 @@ import { openDoor } from '../../../actions/openDoor';
 import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { pushBlock } from '../../../actions/pushBlock';
+import { getDoor } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   coordinates: Coordinates
@@ -38,7 +39,7 @@ export class MoveOrder implements UnitOrder {
       await walk(unit, direction, { state, renderer, imageFactory });
       return;
     } else {
-      const door = map.getDoor(coordinates);
+      const door = getDoor(map, coordinates);
       if (door) {
         await openDoor(unit, door);
         return;

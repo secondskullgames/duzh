@@ -31,5 +31,6 @@ export const walk = async (
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);
     }
+    unit.recordStepTaken();
   }
 };

@@ -18,6 +18,7 @@ import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '../../core/GameScreen';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
+import { getItem } from '../../maps/MapUtils';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -120,7 +121,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerCont
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
-  const item = map.getItem(coordinates);
+  const item = getItem(map, coordinates);
   if (item) {
     pickupItem(playerUnit, item, { state });
     map.removeObject(item);

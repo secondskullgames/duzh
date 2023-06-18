@@ -4,6 +4,7 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
 import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { getBonus } from '../maps/MapUtils';
 
 type Context = Readonly<{
   state: GameState,
@@ -21,7 +22,6 @@ export const moveUnit = async (
 
   unit.setCoordinates(coordinates);
   map.addUnit(unit);
-  unit.recordStepTaken();
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
@@ -32,5 +32,10 @@ export const moveUnit = async (
         { state, renderer, imageFactory }
       );
     }
+  }
+
+  const bonus = getBonus(map, coordinates);
+  if (bonus) {
+    await bonus.onUse(unit, { state });
   }
 };

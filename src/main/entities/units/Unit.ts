@@ -399,4 +399,7 @@ export default class Unit implements Entity, Animatable {
     }
     return Math.max(adjustedDamage, 0);
   };
+
+  getStrength = (): number => this.strength;
+  getDexterity = (): number => this.dexterity;
 }

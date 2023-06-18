@@ -38,6 +38,9 @@ const createTileSprite = async (
   return new StaticSprite(image, offsets);
 };
 
+/**
+ * TODO palette swaps should be part of the JSON, not a parameter here
+ */
 const createStaticSprite = async (
   spriteName: string,
   paletteSwaps: PaletteSwaps,
