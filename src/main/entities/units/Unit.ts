@@ -70,7 +70,8 @@ export default class Unit implements Entity, Animatable {
   private maxMana: number;
   private lifeRemainder: number;
   private manaRemainder: number;
-  private damage: number;
+  private strength: number;
+  private dexterity: number;
   private readonly controller: UnitController;
   private activity: Activity;
   private direction: Direction;
@@ -115,7 +116,8 @@ export default class Unit implements Entity, Animatable {
     this.maxMana = model.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.damage = model.damage;
+    this.strength = model.strength;
+    this.dexterity = model.dexterity;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
@@ -190,8 +192,8 @@ export default class Unit implements Entity, Animatable {
   /** @override */
   isBlocking = (): boolean => true;
 
-  getDamage = (): number => {
-    let damage = this.damage;
+  getMeleeDamage = (): number => {
+    let damage = this.strength;
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.slot !== 'RANGED_WEAPON') {
@@ -219,7 +221,7 @@ export default class Unit implements Entity, Animatable {
   };
 
   getRangedDamage = (): number => {
-    let damage = this.damage;
+    let damage = this.dexterity;
 
     for (const equipment of this.equipment.getAll()) {
       switch (equipment.slot) {
@@ -324,7 +326,7 @@ export default class Unit implements Entity, Animatable {
   };
 
   incrementDamage = (amount: number) => {
-    this.damage += amount;
+    this.strength += amount;
   };
 
   learnAbility = (ability: UnitAbility) => {

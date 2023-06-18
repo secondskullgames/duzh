@@ -39,7 +39,7 @@ export const StunAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => Math.round(unit.getDamage() * damageCoefficient),
+          getDamage: unit => Math.round(unit.getMeleeDamage() * damageCoefficient),
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },

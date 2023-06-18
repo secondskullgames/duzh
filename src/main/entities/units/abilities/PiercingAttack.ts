@@ -36,7 +36,7 @@ export const PiercingAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
@@ -52,7 +52,7 @@ export const PiercingAttack: UnitAbility = {
         {
           attacker: unit,
           defender: nextUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },

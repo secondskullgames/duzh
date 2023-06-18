@@ -29,7 +29,8 @@ type UnitModel = {
     visionRange: number
   },
   equipment?: string[],
-  damage: number,
+  strength: number,
+  dexterity: number,
   /**
    * undefined if this should not be randomly placed as an enemy
    */

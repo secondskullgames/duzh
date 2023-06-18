@@ -10,7 +10,8 @@
   },
   "life": 200,
   "mana": 0,
-  "damage": 10,
+  "strength": 10,
+  "dexterity": 2,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",

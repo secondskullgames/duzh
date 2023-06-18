@@ -37,7 +37,7 @@ export const HeavyAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage() * 2,
+          getDamage: unit => unit.getMeleeDamage() * 2,
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
