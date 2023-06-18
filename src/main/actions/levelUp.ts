@@ -1,5 +1,4 @@
 import Unit from '../entities/units/Unit';
-import PlayerUnitController from '../entities/units/controllers/PlayerUnitController';
 import { Faction } from '../types/types';
 
 const lifePerLevel = 0;
