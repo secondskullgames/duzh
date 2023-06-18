@@ -8,7 +8,7 @@ import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 8;
+const manaCost = 15;
 const damageCoefficient = 0.5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
@@ -40,7 +40,7 @@ export const KnockbackAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => Math.round(unit.getDamage() * damageCoefficient),
+          getDamage: unit => Math.round(unit.getMeleeDamage() * damageCoefficient),
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },

@@ -16,14 +16,15 @@
   },
   "life": 50,
   "mana": 8,
-  "damage": 2,
+  "strength": 2,
+  "dexterity": 2,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
     "iron_sword"
   ],
   "aiParameters": {
-    "speed": 0.95,
+    "speed": 0.99,
     "visionRange": 10,
     "aggressiveness": 0.7,
     "fleeThreshold": 0.1
@@ -33,7 +34,5 @@
     "maxLevel": 99,
     "points": 20
   },
-  "abilities": {
-    "1": ["ATTACK", "HEAVY_ATTACK"]
-  }
+  "abilities": ["ATTACK", "HEAVY_ATTACK"]
 }

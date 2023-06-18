@@ -42,7 +42,7 @@ export const MinorStunAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },

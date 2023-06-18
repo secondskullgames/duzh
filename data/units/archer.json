@@ -14,8 +14,9 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "damage": 2,
-  "life": 50,
+  "strength": 2,
+  "dexterity": 2,
+  "life": 40,
   "mana": 6,
   "equipment": [
     "bronze_sword",
@@ -35,7 +36,5 @@
     "maxLevel": 99,
     "points": 25
   },
-  "abilities": {
-    "1": ["ATTACK"]
-  }
+  "abilities": ["ATTACK", "SHOOT_ARROW"]
 }

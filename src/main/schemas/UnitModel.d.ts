@@ -9,13 +9,7 @@ type UnitModel = {
    * Human-readable name for this unit type
    */
   name: string,
-  /**
-   * TODO: This includes ATTACK at position 0, followed by special abilities.
-   * It doesn't include SHOOT_ARROW.
-   */
-  abilities: {
-    [key: string]: string[]
-  },
+  abilities: string[],
   aiParameters?: {
     /**
      * currently unused
@@ -35,7 +29,8 @@ type UnitModel = {
     visionRange: number
   },
   equipment?: string[],
-  damage: number,
+  strength: number,
+  dexterity: number,
   /**
    * undefined if this should not be randomly placed as an enemy
    */

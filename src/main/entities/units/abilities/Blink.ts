@@ -1,17 +1,16 @@
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 
-const manaCost = 10;
+const manaCost = 15;
 
-export const Dash: UnitAbility = {
-  name: AbilityName.DASH,
+export const Blink: UnitAbility = {
+  name: AbilityName.BLINK,
   manaCost,
   icon: 'icon5',
   use: async (
@@ -20,7 +19,7 @@ export const Dash: UnitAbility = {
     { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
-      throw new Error('Dash requires a target!');
+      throw new Error('Blink requires a target!');
     }
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
@@ -35,18 +34,15 @@ export const Dash: UnitAbility = {
     for (let i = 0; i < distance; i++) {
       x += dx;
       y += dy;
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(
-          unit,
-          { x, y },
-          { state, renderer, imageFactory }
-        );
-        moved = true;
-        await renderer.render();
-        await sleep(50);
-      } else {
-        break;
-      }
+    }
+    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      await moveUnit(
+        unit,
+        { x, y },
+        { state, renderer, imageFactory }
+      );
+      moved = true;
+      await renderer.render();
     }
 
     if (moved) {

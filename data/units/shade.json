@@ -6,14 +6,13 @@
   "paletteSwaps": {},
   "life": 1,
   "mana": 0,
-  "damage": 10,
+  "strength": 10,
+  "dexterity": 2,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 8,
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
-  "abilities": {
-    "1": ["ATTACK"]
-  }
+  "abilities": ["ATTACK"]
 }

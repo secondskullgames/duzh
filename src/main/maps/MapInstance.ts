@@ -81,24 +81,6 @@ export default class MapInstance {
 
   getAllObjects = (): GameObject[] => this.objects.getAll();
 
-  getSpawner = (coordinates: Coordinates): Spawner | null => {
-    return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === ObjectType.SPAWNER)
-      .map(object => object as Spawner)[0] ?? null;
-  };
-
-  getItem = (coordinates: Coordinates): MapItem | null => {
-    return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === ObjectType.ITEM)
-      .map(object => object as MapItem)[0] ?? null;
-  };
-
-  getDoor = (coordinates: Coordinates): Door | null => {
-    return this.getObjects(coordinates)
-      .filter(object => object.getObjectType() === ObjectType.DOOR)
-      .map(object => object as Door)[0] ?? null;
-  };
-
   getProjectile = (coordinates: Coordinates): (Projectile | null) =>
     [...this.projectiles].find(projectile => Coordinates.equals(projectile.getCoordinates(), coordinates)) ?? null;
 

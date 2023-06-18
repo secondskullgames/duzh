@@ -10,7 +10,8 @@
   },
   "life": 200,
   "mana": 0,
-  "damage": 10,
+  "strength": 10,
+  "dexterity": 2,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",
@@ -22,7 +23,5 @@
     "aggressiveness": 1,
     "fleeThreshold": 0
   },
-  "abilities": {
-    "1": ["ATTACK"]
-  }
+  "abilities": ["ATTACK", "HEAVY_ATTACK"]
 }

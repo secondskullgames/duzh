@@ -3,7 +3,7 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { createCanvas, createImage, getCanvasContext } from '../utils/dom';
+import { createCanvas, getCanvasContext } from '../utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';
@@ -24,7 +24,11 @@ export class TextRenderer {
   constructor({ imageFactory, fonts }: Props) {
     this.imageFactory = imageFactory;
     this.fonts = fonts;
-    this.canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+    this.canvas = createCanvas({
+      width: SCREEN_WIDTH,
+      height: SCREEN_HEIGHT,
+      offscreen: true
+    });
     this.context = getCanvasContext(this.canvas);
   }
 

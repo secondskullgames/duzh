@@ -12,7 +12,7 @@ import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 
-const manaCost = 6;
+const manaCost = 5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
@@ -73,7 +73,7 @@ export const ShootArrow: UnitAbility = {
       logMessage(message, { state });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state });
+        await die(targetUnit, { state, imageFactory });
       }
     } else {
       const arrowAnimation = await AnimationFactory.getArrowAnimation(

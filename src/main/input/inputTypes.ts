@@ -13,6 +13,7 @@ export type Key =
   | 'SPACEBAR'
   | 'ESCAPE'
   | 'C'
+  | 'L'
   | 'M'
   | 'OTHER';
 

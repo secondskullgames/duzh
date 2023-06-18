@@ -6,17 +6,6 @@ import Rect from '../geometry/Rect';
  * an existing package.  In general, you should put types in their own file in an appropriate package.
  */
 
-export enum GameScreen {
-  GAME = 'GAME',
-  INVENTORY =  'INVENTORY',
-  CHARACTER = 'CHARACTER',
-  TITLE = 'TITLE',
-  VICTORY = 'VICTORY',
-  GAME_OVER = 'GAME_OVER',
-  MAP = 'MAP',
-  HELP = 'HELP'
-}
-
 export type Room = Rect & {
   exits: Coordinates[]
 }

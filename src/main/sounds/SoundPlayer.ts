@@ -1,12 +1,17 @@
 import CustomOscillator from './CustomOscillator';
 import { Sample } from './types';
 
+type Props = {
+  polyphony: number,
+  gain: number
+};
+
 export default class SoundPlayer {
   private readonly context: AudioContext;
   private readonly gainNode: GainNode;
   private oscillators: CustomOscillator[];
 
-  constructor (maxPolyphony: number, gain: number) {
+  constructor ({ polyphony, gain }: Props) {
     this.context = new AudioContext();
     this.gainNode = this.context.createGain();
     this.gainNode.gain.value = gain * 0.2; // sounds can be VERY loud

@@ -6,7 +6,7 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 10;
+const manaCost = 20;
 const damageCoefficient = 0.5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
@@ -39,7 +39,7 @@ export const StunAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => Math.round(unit.getDamage() * damageCoefficient),
+          getDamage: unit => Math.round(unit.getMeleeDamage() * damageCoefficient),
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },

@@ -10,7 +10,8 @@
   },
   "life": 15,
   "mana": 0,
-  "damage": 7,
+  "strength": 7,
+  "dexterity": 2,
   "aiParameters": {
     "speed": 0.98,
     "visionRange": 12,
@@ -22,7 +23,5 @@
     "maxLevel": 3,
     "points": 6
   },
-  "abilities": {
-    "1": ["ATTACK"]
-  }
+  "abilities": ["ATTACK"]
 }

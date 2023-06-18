@@ -6,6 +6,9 @@ import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
+// Note that you gain 1 passively, so this is really 3 mana per hit
+const MANA_RETURNED = 2;
+
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
   icon: null,
@@ -29,12 +32,13 @@ export const NormalAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           getDamageLogMessage,
           sound: Sounds.PLAYER_HITS_ENEMY
         },
         { state, renderer, imageFactory }
       );
+      unit.gainMana(MANA_RETURNED);
     }
   }
 };

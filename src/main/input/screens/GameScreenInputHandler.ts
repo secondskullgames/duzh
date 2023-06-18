@@ -8,7 +8,6 @@ import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
-import { GameScreen } from '../../types/types';
 import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
@@ -17,6 +16,9 @@ import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHand
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
+import { GameScreen } from '../../core/GameScreen';
+import { AbilityName } from '../../entities/units/abilities/AbilityName';
+import { getItem } from '../../maps/MapUtils';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -32,6 +34,9 @@ const handleKeyCommand = async (
     await playTurn({ state, renderer, imageFactory });
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
+    await renderer.render();
+  } else if (key === 'L') {
+    state.setScreen(GameScreen.LEVEL_UP);
     await renderer.render();
   } else if (key === 'M') {
     state.setScreen(GameScreen.MAP);
@@ -101,10 +106,10 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
 const _handleAbility = async (key: NumberKey, { state, renderer, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
 
-  // sketchy - player abilities are indexed as (0 => attack, others => specials)
   const index = parseInt(key.toString());
+  const innateAbilities = AbilityName.getInnateAbilities();
   const ability = playerUnit.getAbilities()
-    .filter(ability => ability.icon !== null)
+    .filter(ability => !innateAbilities.includes(ability.name))
     [index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
@@ -116,7 +121,7 @@ const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerCont
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
-  const item = map.getItem(coordinates);
+  const item = getItem(map, coordinates);
   if (item) {
     pickupItem(playerUnit, item, { state });
     map.removeObject(item);

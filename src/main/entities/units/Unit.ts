@@ -63,13 +63,15 @@ export default class Unit implements Entity, Animatable {
   private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
+  private abilityPoints: number;
   private life: number;
   private maxLife: number;
   private mana: number;
   private maxMana: number;
   private lifeRemainder: number;
   private manaRemainder: number;
-  private damage: number;
+  private strength: number;
+  private dexterity: number;
   private readonly controller: UnitController;
   private activity: Activity;
   private direction: Direction;
@@ -83,7 +85,6 @@ export default class Unit implements Entity, Animatable {
    * Used by AI to make certain decisions
    */
   private turnsSinceCombatAction: number | null;
-  private readonly abilitiesPerLevel: Record<string, string[]>;
   private readonly summonedUnitClass: string | null;
 
   private lifetimeDamageDealt: number;
@@ -101,6 +102,7 @@ export default class Unit implements Entity, Animatable {
     this.coordinates = props.coordinates;
     this.name = props.name;
     this.level = 1;
+    this.abilityPoints = 0;
     this.lifetimeDamageDealt = 0;
     this.lifetimeDamageTaken = 0;
     this.lifetimeKills = 0;
@@ -114,20 +116,20 @@ export default class Unit implements Entity, Animatable {
     this.maxMana = model.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.damage = model.damage;
+    this.strength = model.strength;
+    this.dexterity = model.dexterity;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
     this.frameNumber = 1;
     // TODO make this type safe
-    this.abilities = (model.abilities[1] ?? [])
+    this.abilities = model.abilities //
       .map(str => str as AbilityName)
       .map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
     this.aiParameters = model.aiParameters ?? null;
-    this.abilitiesPerLevel = model.abilities;
     this.summonedUnitClass = model.summonedUnitClass ?? null;
 
     this.equipment = new EquipmentMap();
@@ -190,8 +192,8 @@ export default class Unit implements Entity, Animatable {
   /** @override */
   isBlocking = (): boolean => true;
 
-  getDamage = (): number => {
-    let damage = this.damage;
+  getMeleeDamage = (): number => {
+    let damage = this.strength;
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.slot !== 'RANGED_WEAPON') {
@@ -219,7 +221,7 @@ export default class Unit implements Entity, Animatable {
   };
 
   getRangedDamage = (): number => {
-    let damage = this.damage;
+    let damage = this.dexterity;
 
     for (const equipment of this.equipment.getAll()) {
       switch (equipment.slot) {
@@ -315,24 +317,45 @@ export default class Unit implements Entity, Animatable {
     this.level++;
   };
 
-  incrementMaxLife = (amount: number) => {
+  increaseMaxLife = (amount: number) => {
     this.maxLife += amount;
   };
 
-  incrementMaxMana = (amount: number) => {
+  increaseMaxMana = (amount: number) => {
     this.maxMana += amount;
   };
 
   incrementDamage = (amount: number) => {
-    this.damage += amount;
+    this.strength += amount;
   };
 
-  addAbility = (ability: UnitAbility) => {
+  learnAbility = (ability: UnitAbility) => {
     this.abilities.push(ability);
+    this.abilityPoints--;
   };
 
-  getNewAbilities = (level: number): string[] => {
-    return this.abilitiesPerLevel[level] ?? [];
+  awardAbilityPoint = () => {
+    this.abilityPoints++;
+  };
+
+  getAbilityPoints = (): number => {
+    return this.abilityPoints;
+  };
+
+  /**
+   * TODO this should probably be somewhere player-specific,
+   * not in the base Unit class
+   */
+  getLearnableAbilities = (): AbilityName[] => {
+    const LEARNABLE_ABILITIES = [
+      AbilityName.BLINK,
+      AbilityName.DASH,
+      AbilityName.HEAVY_ATTACK,
+      AbilityName.KNOCKBACK_ATTACK,
+      AbilityName.SHOOT_FIREBALL,
+      AbilityName.STUN_ATTACK
+    ];
+    return LEARNABLE_ABILITIES.filter(ability => !this.hasAbility(ability));
   };
 
   private _upkeep = () => {
@@ -378,4 +401,7 @@ export default class Unit implements Entity, Animatable {
     }
     return Math.max(adjustedDamage, 0);
   };
+
+  getStrength = (): number => this.strength;
+  getDexterity = (): number => this.dexterity;
 }

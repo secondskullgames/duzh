@@ -8,16 +8,23 @@ import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
+import Bonus, { OnUseContext } from './Bonus';
+import Unit from '../units/Unit';
+import Colors from '../../graphics/Colors';
+import { getBonus } from '../../maps/MapUtils';
+import { logMessage } from '../../actions/logMessage';
+import { playSound } from '../../sounds/playSound';
+import Sounds from '../../sounds/Sounds';
 
 export type SpawnerClass = 'mirror';
 
-type Props = Readonly<{
+type CreateObjectContext = Readonly<{
   imageFactory: ImageFactory
 }>;
 
 const createMirror = async (
   coordinates: Coordinates,
-  { imageFactory }: Props
+  { imageFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
   const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
@@ -45,7 +52,7 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { imageFactory }: Props
+  { imageFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
@@ -57,7 +64,7 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
-  { imageFactory }: Props
+  { imageFactory }: CreateObjectContext
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
     'block',
@@ -72,8 +79,46 @@ const createMovableBlock = async (
   });
 };
 
+const createHealthGlobe = async (
+  coordinates: Coordinates,
+  { imageFactory }: CreateObjectContext
+): Promise<GameObject> => {
+  const sprite = await SpriteFactory.createStaticSprite(
+    'map_potion',
+    PaletteSwaps.builder()
+      .addMapping(Colors.DARK_RED, Colors.RED)
+      .build(),
+    { imageFactory }
+  );
+
+  const lifeGained = 20;
+
+  const onUse = async (unit: Unit, { state }: OnUseContext) => {
+    if (unit === state.getPlayerUnit()) {
+      if (unit.getLife() < unit.getMaxLife()) {
+        unit.gainLife(lifeGained);
+        playSound(Sounds.USE_POTION);
+        logMessage(
+          `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
+          { state }
+        );
+        const map = state.getMap();
+        const _this = getBonus(map, unit.getCoordinates())!;
+        map.removeObject(_this);
+      }
+    }
+  };
+
+  return new Bonus({
+    coordinates,
+    sprite,
+    onUse
+  });
+};
+
 export default {
   createMirror,
+  createHealthGlobe,
   createMovableBlock,
   createSpawner
 };

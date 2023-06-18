@@ -5,10 +5,9 @@ import { UnitAbility} from '../abilities/UnitAbility';
 import { pointAt } from '../../../utils/geometry';
 import { walk } from '../../../actions/walk';
 import { openDoor } from '../../../actions/openDoor';
-import { ObjectType } from '../../objects/GameObject';
-import Block from '../../objects/Block';
 import { pushBlock } from '../../../actions/pushBlock';
 import { attackObject } from '../../../actions/attackObject';
+import { getDoor, getMovableBlock, getSpawner } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -49,22 +48,18 @@ export class AttackMoveOrder implements UnitOrder {
           await ability.use(unit, coordinates, { state, renderer, imageFactory });
           return;
         }
-        const door = map.getDoor(coordinates);
+        const door = getDoor(map, coordinates);
         if (door) {
           await openDoor(unit, door);
           return;
         }
 
-        const spawner = map.getSpawner(coordinates);
+        const spawner = getSpawner(map, coordinates);
         if (spawner && spawner.isBlocking()) {
           await attackObject(unit, spawner);
         }
 
-        const block = map.getObjects(coordinates)
-          .filter(object => object.getObjectType() === ObjectType.BLOCK)
-          .map(object => object as Block)
-          .find(block => block.isMovable());
-
+        const block = getMovableBlock(map, coordinates);
         if (block) {
           await pushBlock(unit, block, { state, renderer, imageFactory });
           return;

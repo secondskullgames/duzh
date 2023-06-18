@@ -10,13 +10,17 @@ export const toggleFullScreen = async () => {
 
 type CanvasProps = Readonly<{
   width: number,
-  height: number
+  height: number,
+  offscreen?: boolean
 }>;
 
-export const createCanvas = ({ width, height }: CanvasProps): HTMLCanvasElement => {
+export const createCanvas = ({ width, height, offscreen }: CanvasProps): HTMLCanvasElement => {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
+  if (offscreen) {
+    canvas.style.display = 'none';
+  }
   return canvas;
 };
 

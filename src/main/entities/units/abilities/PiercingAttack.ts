@@ -6,6 +6,7 @@ import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import { attackObject } from '../../../actions/attackObject';
+import { getSpawner } from '../../../maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
@@ -36,7 +37,7 @@ export const PiercingAttack: UnitAbility = {
         {
           attacker: unit,
           defender: targetUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
@@ -52,7 +53,7 @@ export const PiercingAttack: UnitAbility = {
         {
           attacker: unit,
           defender: nextUnit,
-          getDamage: unit => unit.getDamage(),
+          getDamage: unit => unit.getMeleeDamage(),
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
@@ -60,12 +61,12 @@ export const PiercingAttack: UnitAbility = {
       );
     }
 
-    const spawner = map.getSpawner(coordinates);
+    const spawner = getSpawner(map, coordinates);
     if (spawner && spawner.isBlocking()) {
       await attackObject(unit, spawner);
     }
 
-    const nextSpawner = map.getSpawner(nextCoordinates);
+    const nextSpawner = getSpawner(map, nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
       await attackObject(unit, nextSpawner);
     }

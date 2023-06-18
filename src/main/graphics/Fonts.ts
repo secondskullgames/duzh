@@ -85,7 +85,8 @@ const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadF
 
   const canvas = createCanvas({
     width,
-    height: fontDefinition.letterHeight
+    height: fontDefinition.letterHeight,
+    offscreen: true
   });
   const context = getCanvasContext(canvas);
   context.drawImage(image.bitmap, 0, 0);

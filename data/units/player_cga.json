@@ -18,13 +18,9 @@
     "DARK_RED": "DARK_RED_CGA",
     "DARK_TEAL": "DARK_BLUE_CGA"
   },
-  "damage": 6,
+  "strength": 6,
+  "dexterity": 2,
   "life": 100,
   "mana": 6,
-  "abilities": {
-    "1": ["DASH"],
-    "2": ["HEAVY_ATTACK"],
-    "3": ["KNOCKBACK_ATTACK"],
-    "4": ["STUN_ATTACK"]
-  }
+  "abilities": ["ATTACK"]
 }

@@ -7,7 +7,8 @@ export enum ObjectType {
   SPAWNER = 'spawner',
   DOOR = 'door',
   ITEM = 'item',
-  BLOCK = 'block'
+  BLOCK = 'block',
+  BONUS = 'bonus'
 }
 
 type Props = Readonly<{

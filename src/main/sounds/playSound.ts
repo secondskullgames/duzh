@@ -3,7 +3,7 @@ import { SoundEffect } from './types';
 
 let PLAYER: SoundPlayer | null = null;
 
-const _getSoundPlayer = () => new SoundPlayer(1, 0.20);
+const _getSoundPlayer = () => new SoundPlayer({ polyphony: 1, gain: 0.15 });
 
 const playSound = (soundEffect: SoundEffect) => {
   if (!PLAYER) {

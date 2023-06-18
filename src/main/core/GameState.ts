@@ -1,11 +1,12 @@
 import MapInstance from '../maps/MapInstance';
-import { GameScreen } from '../types/types';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
 import { checkNotNull, checkState } from '../utils/preconditions';
 import Messages from './Messages';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
+import { GameScreen } from './GameScreen';
+import { AbilityName } from '../entities/units/abilities/AbilityName';
 
 /**
  * Global mutable state
@@ -21,6 +22,10 @@ export default class GameState {
   private readonly messages: Messages;
   private turn: number;
   private queuedAbility: UnitAbility | null;
+  /**
+   * TODO this should really be somewhere more specialized
+   */
+  private selectedLevelUpScreenAbility: AbilityName | null;
 
   constructor() {
     this.screen = GameScreen.TITLE;
@@ -33,6 +38,7 @@ export default class GameState {
     this.messages = new Messages();
     this.turn = 1;
     this.queuedAbility = null;
+    this.selectedLevelUpScreenAbility = null;
   }
 
   getScreen = (): GameScreen => this.screen;
@@ -40,10 +46,15 @@ export default class GameState {
     this.prevScreen = this.screen;
     this.screen = screen;
   };
+  /**
+   * TODO: make this a stack
+   */
   showPrevScreen = () => {
     if (this.prevScreen) {
       this.screen = this.prevScreen;
       this.prevScreen = null;
+    } else {
+      this.screen = GameScreen.GAME;
     }
   };
 
@@ -84,6 +95,31 @@ export default class GameState {
 
   getMessages = (): Messages => {
     return this.messages;
+  }
+
+  getSelectedLevelUpScreenAbility = (): AbilityName | null => {
+    if (!this.selectedLevelUpScreenAbility) {
+      const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+      this.selectedLevelUpScreenAbility = learnableAbilities[0] ?? null;
+    }
+    return this.selectedLevelUpScreenAbility;
+  }
+
+  selectNextLevelUpScreenAbility = () => {
+    const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+    const index = this.selectedLevelUpScreenAbility
+      ? learnableAbilities.indexOf(this.selectedLevelUpScreenAbility)
+      : -1;
+    this.selectedLevelUpScreenAbility = learnableAbilities[(index + 1) % learnableAbilities.length] ?? null;
+  }
+
+  selectPreviousLevelUpScreenAbility = () => {
+    const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
+    const index = this.selectedLevelUpScreenAbility
+      ? learnableAbilities.indexOf(this.selectedLevelUpScreenAbility)
+      : -1;
+    const length = learnableAbilities.length;
+    this.selectedLevelUpScreenAbility = learnableAbilities[(index + length - 1) % length] ?? null;
   }
 
   reset = () => {

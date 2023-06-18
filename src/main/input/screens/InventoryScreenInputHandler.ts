@@ -1,8 +1,8 @@
 import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
-import { GameScreen } from '../../types/types';
 import { useItem } from '../../actions/useItem';
+import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,

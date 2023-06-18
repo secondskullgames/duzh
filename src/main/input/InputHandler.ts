@@ -2,7 +2,6 @@ import GameState from '../core/GameState';
 import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
 import GameRenderer from '../graphics/renderers/GameRenderer';
-import { GameScreen } from '../types/types';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
@@ -14,13 +13,16 @@ import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
+import { GameScreen } from '../core/GameScreen';
+import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
+  [GameScreen.CHARACTER]: CharacterScreenInputHandler,
   [GameScreen.GAME]:      GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
   [GameScreen.HELP]:      HelpScreenInputHandler,
   [GameScreen.INVENTORY]: InventoryScreenInputHandler,
-  [GameScreen.CHARACTER]: CharacterScreenInputHandler,
+  [GameScreen.LEVEL_UP]:  LevelUpScreenInputHandler,
   [GameScreen.MAP]:       MapScreenInputHandler,
   [GameScreen.TITLE]:     TitleScreenInputHandler,
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
@@ -63,7 +65,6 @@ export default class InputHandler {
     e: KeyboardEvent,
     { state, renderer, imageFactory }: Context
   ) => {
-    console.time('keyHandler');
     if (e.repeat) {
       return;
     }
@@ -78,11 +79,9 @@ export default class InputHandler {
 
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, renderer, imageFactory });
-    console.timeEnd('keyHandler');
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {
-    console.log('WTF');
     boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
     target.addEventListener('keydown', boundHandler);
     this.eventTarget = target;

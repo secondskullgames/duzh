@@ -12,29 +12,32 @@ import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 
+const MANA_COST = 25;
+const DAMAGE = 20;
+
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
+  return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootBolt: UnitAbility = {
-  name: AbilityName.BOLT,
-  icon: null,
-  manaCost: 0,
+export const ShootFireball: UnitAbility = {
+  name: AbilityName.SHOOT_FIREBALL,
+  icon: 'icon6',
+  manaCost: MANA_COST,
 
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory}: UnitAbilityContext
+    { state, renderer, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
-      throw new Error('Bolt requires a target!');
+      throw new Error('ShootFireball requires a target!');
     }
 
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
     await renderer.render();
-    // unit.spendMana(0); // TODO
+    unit.spendMana(MANA_COST);
 
     const map = state.getMap();
     const coordinatesList = [];
@@ -48,37 +51,36 @@ export const ShootBolt: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const damage = unit.getMeleeDamage();
-      const adjustedDamage = await dealDamage(damage, {
-        sourceUnit: unit,
-        targetUnit
-      });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
+      const fireballAnimation = await AnimationFactory.getFireballAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         targetUnit,
         { state, imageFactory }
       );
-      await playAnimation(boltAnimation, {
+      await playAnimation(fireballAnimation, {
         state,
         renderer
       });
+      const adjustedDamage = await dealDamage(DAMAGE, {
+        sourceUnit: unit,
+        targetUnit
+      });
+      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       logMessage(message, { state });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, { state, imageFactory });
       }
     } else {
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
+      const fireballAnimation = await AnimationFactory.getFireballAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         null,
         { state, imageFactory }
       );
-      await playAnimation(boltAnimation, {
+      await playAnimation(fireballAnimation, {
         state,
         renderer
       });

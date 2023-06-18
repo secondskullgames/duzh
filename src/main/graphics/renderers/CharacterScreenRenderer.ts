@@ -11,7 +11,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 
 const BACKGROUND_FILENAME = 'inventory_background';
-const LINE_HEIGHT = 10;
+const LINE_HEIGHT = 15;
 
 type Props = Readonly<{
   state: GameState,
@@ -37,8 +37,9 @@ export default class CharacterScreenRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async () => {
-    const image = await this.imageFactory.getImage({ filename: BACKGROUND_FILENAME });
-    this.graphics.drawScaledImage(image, {
+    const { graphics, imageFactory } = this;
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
       width: SCREEN_WIDTH,
@@ -53,17 +54,34 @@ export default class CharacterScreenRenderer implements Renderer {
     const playerUnit = state.getPlayerUnit();
     let top = 20;
     await this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);
+
     top += 20;
-    const lines = [
-      `Kills: ${playerUnit.getLifetimeKills()}`,
-      `Damage Dealt: ${playerUnit.getLifetimeDamageDealt()}`,
-      `Damage Taken: ${playerUnit.getLifetimeDamageTaken()}`,
-      `Mana Spent: ${playerUnit.getLifetimeManaSpent()}`,
-      `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
-    ];
-    for (const line of lines) {
-      await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
-      top += LINE_HEIGHT;
+
+    {
+      const lines = [
+        `Strength: ${playerUnit.getStrength()}`,
+        `Dexterity: ${playerUnit.getDexterity()}`
+      ];
+      for (const line of lines) {
+        await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+        top += LINE_HEIGHT;
+      }
+    }
+
+    top += 20;
+
+    {
+      const lines = [
+        `Kills: ${playerUnit.getLifetimeKills()}`,
+        `Damage Dealt: ${playerUnit.getLifetimeDamageDealt()}`,
+        `Damage Taken: ${playerUnit.getLifetimeDamageTaken()}`,
+        `Mana Spent: ${playerUnit.getLifetimeManaSpent()}`,
+        `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
+      ];
+      for (const line of lines) {
+        await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+        top += LINE_HEIGHT;
+      }
     }
   }
 
