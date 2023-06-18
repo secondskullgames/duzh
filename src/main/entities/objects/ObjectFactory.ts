@@ -84,10 +84,8 @@ const createHealthGlobe = async (
   { imageFactory }: CreateObjectContext
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
-    'map_potion',
-    PaletteSwaps.builder()
-      .addMapping(Colors.DARK_RED, Colors.RED)
-      .build(),
+    'map_health_globe',
+    PaletteSwaps.empty(),
     { imageFactory }
   );
 

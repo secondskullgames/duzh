@@ -13,6 +13,9 @@ type Context = Readonly<{
   imageFactory: ImageFactory
 }>;
 
+// TODO this should be enemy-specific? add loot tables
+const HEALTH_GLOBE_DROP_CHANCE = 0.25;
+
 export const die = async (unit: Unit, { state, imageFactory }: Context) => {
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
@@ -27,7 +30,7 @@ export const die = async (unit: Unit, { state, imageFactory }: Context) => {
     logMessage(`${unit.getName()} dies!`, { state });
     console.log(`${unit.getName()} dies!`);
 
-    if (randChance(0.25)) {
+    if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
       const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { imageFactory })
       map.addObject(healthGlobe);
     }
