@@ -1,16 +1,12 @@
 {
-  "path": "dungeon",
+  "path": "dungeon_cga",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],
-    "FLOOR_HALL": ["tile_floor_hall", "tile_floor_hall_2"],
-    "WALL_TOP": [null],
-    "WALL_HALL": ["tile_wall_hall"],
+    "FLOOR_HALL": ["tile_floor", "tile_floor_2"],
+    "WALL_TOP": ["tile_wall_top"],
+    "WALL_HALL": ["tile_wall"],
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
-    "NONE": [null]
-  },
-  "paletteSwaps": {
-    "LIGHT_GRAY": "LIGHT_CYAN_CGA",
-    "DARK_GRAY": "LIGHT_MAGENTA_CGA"
+    "NONE": ["tile_wall_top"]
   }
 }
