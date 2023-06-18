@@ -1,12 +1,12 @@
 {
   "path": "zzt_v2",
   "tiles": {
-    "FLOOR": ["floor"],
-    "FLOOR_HALL": ["floor"],
-    "WALL_TOP": ["wall_top"],
-    "WALL_HALL": ["wall2"],
-    "WALL": ["wall2"],
+    "FLOOR": ["tile_floor"],
+    "FLOOR_HALL": ["tile_floor"],
+    "WALL_TOP": ["tile_wall_top"],
+    "WALL_HALL": ["tile_wall"],
+    "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
-    "NONE": ["wall_top"]
+    "NONE": ["tile_wall_top"]
   }
 }
