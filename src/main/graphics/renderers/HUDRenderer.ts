@@ -104,6 +104,7 @@ export default class HUDRenderer implements Renderer {
         await this._renderAbility(ability, { x: left, y: top });
         await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
         await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
+        keyNumber++;
       }
     }
   };
