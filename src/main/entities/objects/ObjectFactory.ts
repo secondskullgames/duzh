@@ -95,7 +95,7 @@ const createHealthGlobe = async (
     if (unit === state.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
-        playSound(Sounds.USE_POTION);
+        playSound(Sounds.HEALTH_GLOBE);
         logMessage(
           `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
           { state }
