@@ -47,7 +47,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
-    _levelUp(playerUnit);
+    _levelUp(playerUnit, { state: this.state });
     await this.renderer.render();
   };
 

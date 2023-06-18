@@ -138,9 +138,9 @@ export default class Unit implements Entity, Animatable {
       eq.attach(this);
     }
 
-    while (this.level < props.level) {
-      levelUp(this);
-    }
+    /*while (this.level < props.level) {
+      levelUp(this, { state });
+    }*/
   }
 
   getAiParameters = (): AIParameters | null => this.aiParameters;
