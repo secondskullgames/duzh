@@ -343,7 +343,8 @@ export default class Unit implements Entity, Animatable {
   };
 
   /**
-   * TODO this should probably be somewhere player-specific, not in the base Unit class
+   * TODO this should probably be somewhere player-specific,
+   * not in the base Unit class
    */
   getLearnableAbilities = (): AbilityName[] => {
     const LEARNABLE_ABILITIES = [
