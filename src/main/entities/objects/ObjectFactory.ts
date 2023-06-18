@@ -95,15 +95,17 @@ const createHealthGlobe = async (
 
   const onUse = async (unit: Unit, { state }: OnUseContext) => {
     if (unit === state.getPlayerUnit()) {
-      unit.gainLife(lifeGained);
-      playSound(Sounds.USE_POTION);
-      logMessage(
-        `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
-        { state }
-      );
-      const map = state.getMap();
-      const _this = getBonus(map, unit.getCoordinates())!;
-      map.removeObject(_this);
+      if (unit.getLife() < unit.getMaxLife()) {
+        unit.gainLife(lifeGained);
+        playSound(Sounds.USE_POTION);
+        logMessage(
+          `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
+          { state }
+        );
+        const map = state.getMap();
+        const _this = getBonus(map, unit.getCoordinates())!;
+        map.removeObject(_this);
+      }
     }
   };
 
