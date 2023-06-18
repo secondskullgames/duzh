@@ -12,7 +12,7 @@ const manaCost = 15;
 export const Blink: UnitAbility = {
   name: AbilityName.BLINK,
   manaCost,
-  icon: 'icon5',
+  icon: 'blink_icon',
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

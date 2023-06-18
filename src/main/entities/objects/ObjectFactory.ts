@@ -10,7 +10,6 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
-import Colors from '../../graphics/Colors';
 import { getBonus } from '../../maps/MapUtils';
 import { logMessage } from '../../actions/logMessage';
 import { playSound } from '../../sounds/playSound';
