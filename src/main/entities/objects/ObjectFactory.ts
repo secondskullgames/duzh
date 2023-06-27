@@ -10,7 +10,6 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
-import Colors from '../../graphics/Colors';
 import { getBonus } from '../../maps/MapUtils';
 import { logMessage } from '../../actions/logMessage';
 import { playSound } from '../../sounds/playSound';
@@ -84,10 +83,8 @@ const createHealthGlobe = async (
   { imageFactory }: CreateObjectContext
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
-    'map_potion',
-    PaletteSwaps.builder()
-      .addMapping(Colors.DARK_RED, Colors.RED)
-      .build(),
+    'map_health_globe',
+    PaletteSwaps.empty(),
     { imageFactory }
   );
 
@@ -97,7 +94,7 @@ const createHealthGlobe = async (
     if (unit === state.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
-        playSound(Sounds.USE_POTION);
+        playSound(Sounds.HEALTH_GLOBE);
         logMessage(
           `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
           { state }

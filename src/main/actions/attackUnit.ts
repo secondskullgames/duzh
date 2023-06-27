@@ -56,7 +56,7 @@ export const attackUnit = async (
 
   if (defender.getLife() <= 0) {
     await die(defender, { state, imageFactory });
-    recordKill(attacker);
+    recordKill(attacker, { state });
   }
 
   await sleep(MEDIUM_SLEEP);

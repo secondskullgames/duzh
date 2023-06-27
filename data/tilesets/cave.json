@@ -1,12 +1,12 @@
 {
-  "path": "cave",
+  "path": "cave_v2",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],
     "FLOOR_HALL": ["tile_floor", "tile_floor_2"],
-    "WALL_TOP": [null],
+    "WALL_TOP": ["tile_wall_top"],
     "WALL_HALL": ["tile_wall"],
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
-    "NONE": [null]
+    "NONE": ["tile_wall_top"]
   }
 }

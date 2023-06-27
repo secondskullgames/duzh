@@ -5,6 +5,7 @@ import ENEMY_DIES from '../../../data/sounds/enemy_dies.json';
 import ENEMY_HITS_PLAYER from '../../../data/sounds/enemy_hits_player.json';
 import FOOTSTEP from '../../../data/sounds/footstep.json';
 import GAME_OVER from '../../../data/sounds/game_over.json';
+import HEALTH_GLOBE from '../../../data/sounds/health_globe.json';
 import LEVEL_UP from '../../../data/sounds/level_up.json';
 import OPEN_DOOR from '../../../data/sounds/open_door.json';
 import PICK_UP_ITEM from '../../../data/sounds/pick_up_item.json';
@@ -16,6 +17,9 @@ import WIZARD_APPEAR from '../../../data/sounds/wizard_appear.json';
 import WIZARD_VANISH from '../../../data/sounds/wizard_vanish.json';
 import { SoundEffect } from './types';
 
+/**
+ * TODO I hate this
+ */
 const Sounds: Record<string, SoundEffect> = {
   BLOCKED,
   DEFLECTED_HIT,
@@ -24,6 +28,7 @@ const Sounds: Record<string, SoundEffect> = {
   ENEMY_DIES,
   FOOTSTEP,
   GAME_OVER,
+  HEALTH_GLOBE,
   LEVEL_UP,
   PICK_UP_ITEM,
   PLAYER_DIES,
