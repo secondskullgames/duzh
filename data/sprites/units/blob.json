@@ -2,7 +2,7 @@
   "name": "blob",
   "offsets": {
     "dx": -4,
-    "dy": -16
+    "dy": -12
   },
   "pattern": "${sprite}_${direction}_${number}",
   "animations": {
