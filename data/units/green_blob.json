@@ -1,8 +1,8 @@
 {
-  "id": "green_snake",
-  "name": "Green Snake",
-  "type": "ANIMAL",
-  "sprite": "snake",
+  "id": "green_blob",
+  "name": "Green Blob",
+  "type": "ELEMENTAL",
+  "sprite": "blob",
   "paletteSwaps": {},
   "life": 20,
   "mana": 0,

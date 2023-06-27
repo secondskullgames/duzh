@@ -8,7 +8,7 @@
     "DARK_GREEN": "DARK_RED",
     "YELLOW": "DARK_RED"
   },
-  "life": 15,
+  "life": 12,
   "mana": 0,
   "strength": 6,
   "dexterity": 2,
