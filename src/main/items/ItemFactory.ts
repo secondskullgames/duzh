@@ -17,6 +17,8 @@ import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
 import type { ItemProc, ItemProcContext } from './ItemProc';
+import { die } from '../actions/die';
+import { recordKill } from '../actions/recordKill';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
@@ -100,6 +102,11 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
         sourceUnit: unit,
         targetUnit: adjacentUnit
       });
+
+      if (adjacentUnit.getLife() <= 0) {
+        await die(adjacentUnit, { state, imageFactory });
+        recordKill(unit, { state });
+      }
     }
   };
 

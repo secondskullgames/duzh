@@ -9,10 +9,10 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "robed_wizard"
+    "BLUE": "red_snake"
   },
   "itemColors": {
-    "MAGENTA": "life_potion"
+    "MAGENTA": "floor_fire_scroll"
   },
   "equipmentColors": {
     "YELLOW": "fire_sword",
