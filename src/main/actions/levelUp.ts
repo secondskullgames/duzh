@@ -4,7 +4,7 @@ import GameState from '../core/GameState';
 import { logMessage } from './logMessage';
 
 const lifePerLevel = 0;
-const manaPerLevel = 5;
+const manaPerLevel = 3;
 const damagePerLevel = 0;
 
 type Context = Readonly<{

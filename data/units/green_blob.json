@@ -4,9 +4,9 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 20,
+  "life": 50,
   "mana": 0,
-  "strength": 3,
+  "strength": 6,
   "dexterity": 2,
   "aiParameters": {
     "speed": 0.95,
@@ -15,9 +15,9 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 1,
-    "maxLevel": 3,
-    "points": 6
+    "minLevel": 3,
+    "maxLevel": 99,
+    "points": 20
   },
   "abilities": ["ATTACK"]
 }
