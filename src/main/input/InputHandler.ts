@@ -1,7 +1,6 @@
 import GameState from '../core/GameState';
 import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';

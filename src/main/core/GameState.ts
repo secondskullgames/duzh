@@ -2,7 +2,6 @@ import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
 import { checkNotNull, checkState } from '../utils/preconditions';
-import Ticker from './Ticker';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import { GameScreen } from './GameScreen';

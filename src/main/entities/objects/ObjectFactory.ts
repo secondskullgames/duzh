@@ -13,7 +13,6 @@ import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
-import Ticker from '../../core/Ticker';
 
 export type SpawnerClass = 'mirror';
 

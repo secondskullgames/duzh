@@ -37,5 +37,5 @@ const main = async () => {
 
 main().catch(e => {
   console.error(e);
-  alert(e)
+  alert(e);
 });

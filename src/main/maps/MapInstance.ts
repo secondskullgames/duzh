@@ -1,14 +1,11 @@
 import type Rect from '../geometry/Rect';
-import Door from '../entities/objects/Door';
-import MapItem from '../entities/objects/MapItem';
 import Coordinates from '../geometry/Coordinates';
-import Spawner from '../entities/objects/Spawner';
 import type { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
 import Projectile from '../entities/Projectile';
-import GameObject, { ObjectType } from '../entities/objects/GameObject';
+import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
 
