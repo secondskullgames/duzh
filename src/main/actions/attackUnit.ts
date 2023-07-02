@@ -1,13 +1,12 @@
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import { logMessage } from './logMessage';
 import { die } from './die';
 import { recordKill } from './recordKill';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
-import { SHORT_SLEEP, sleep } from '../utils/promises';
+import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
 

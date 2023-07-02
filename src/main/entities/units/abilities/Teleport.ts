@@ -8,7 +8,7 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 import Activity from '../Activity';
-import { SHORT_SLEEP, sleep } from '../../../utils/promises';
+import { sleep } from '../../../utils/promises';
 
 export const range = 3;
 const manaCost = 10;
@@ -40,25 +40,25 @@ export const Teleport: UnitAbility = {
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
-        await sleep(SHORT_SLEEP);
+        await sleep(100);
       }
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-      await sleep(SHORT_SLEEP);
+      await sleep(100);
 
       await moveUnit(
         unit,
         coordinates,
         { state, imageFactory }
       );
-      await sleep(SHORT_SLEEP);
+      await sleep(100);
 
       for (let i = 1; i <= 4; i++) {
         if (i === 1) {
           playSound(Sounds.WIZARD_APPEAR);
         }
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
-        await sleep(SHORT_SLEEP);
+        await sleep(100);
       }
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());

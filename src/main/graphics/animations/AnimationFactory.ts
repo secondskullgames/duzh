@@ -6,7 +6,6 @@ import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
-import { LONG_SLEEP, SHORT_SLEEP } from '../../utils/promises';
 
 type Props = Readonly<{
   state: GameState,
@@ -26,7 +25,7 @@ export default {
     {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -46,7 +45,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -61,7 +60,7 @@ export default {
         units: [
           { unit: source, activity: Activity.STANDING }
         ],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.DAMAGED });
@@ -97,7 +96,7 @@ export default {
     {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -115,7 +114,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
         projectiles: [projectile],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -166,7 +165,7 @@ export default {
     {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -186,7 +185,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -201,7 +200,7 @@ export default {
         units: [
           { unit: source, activity: Activity.STANDING }
         ],
-        postDelay: SHORT_SLEEP
+        postDelay: 100
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.DAMAGED });
@@ -242,7 +241,7 @@ export default {
 
       const frame = {
         units: unitFrames,
-        postDelay: LONG_SLEEP
+        postDelay: 300
       };
       frames.push(frame);
     }
