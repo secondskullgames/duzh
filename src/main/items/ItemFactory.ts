@@ -170,7 +170,7 @@ const createEquipment = async (equipmentClass: string, { imageFactory }: CreateE
   // TODO wtf is this
   const inventoryItem = await createInventoryEquipment(equipmentClass);
   const equipment = new Equipment({ model, sprite, inventoryItem });
-  sprite.target = equipment;
+  sprite.bind(equipment);
   return equipment;
 };
 

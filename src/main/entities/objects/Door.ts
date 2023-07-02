@@ -33,7 +33,7 @@ export default class Door extends GameObject implements Animatable {
       objectType: ObjectType.DOOR,
       sprite
     });
-    sprite.target = this;
+    sprite.bind(this);
     this._direction = direction;
     this._state = state;
   }

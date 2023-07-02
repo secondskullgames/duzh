@@ -44,7 +44,7 @@ const createMirror = async (
     coordinates: coordinates,
     isBlocking: true
   });
-  sprite.target = spawner;
+  sprite.bind(spawner);
   return spawner;
 };
 

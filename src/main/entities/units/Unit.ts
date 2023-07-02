@@ -95,7 +95,7 @@ export default class Unit implements Entity, Animatable {
   constructor(props: Props) {
     this.faction = props.faction;
     this.sprite = props.sprite;
-    this.sprite.target = this;
+    this.sprite.bind(this);
     this.inventory = new InventoryMap();
 
     this.coordinates = props.coordinates;

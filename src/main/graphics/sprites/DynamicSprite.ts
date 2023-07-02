@@ -12,7 +12,7 @@ type Props = Readonly<{
 }>;
 
 export default class DynamicSprite<T extends Animatable> implements Sprite {
-  target: T | null;
+  private target: T | null;
   private readonly paletteSwaps: PaletteSwaps;
   private readonly imageMap: Record<string, Image>;
   private readonly offsets: Offsets;
@@ -37,4 +37,8 @@ export default class DynamicSprite<T extends Animatable> implements Sprite {
    * @override {@link Sprite#getOffsets}
    */
   getOffsets = () => this.offsets;
+
+  bind = (target: T) => {
+    this.target = target;
+  }
 }
