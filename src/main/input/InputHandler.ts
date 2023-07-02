@@ -15,6 +15,7 @@ import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
 import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
+import Ticker from '../core/Ticker';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.CHARACTER]: CharacterScreenInputHandler,
@@ -30,7 +31,8 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 let boundHandler: ((e: KeyboardEvent) => Promise<void>) | null = null;
@@ -44,14 +46,11 @@ export default class InputHandler {
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (
-    event: KeyboardEvent,
-    { state, imageFactory }: Context
-  ) => {
+  keyHandlerWrapper = async (event: KeyboardEvent, context: Context) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, { state, imageFactory })
+        await this.keyHandler(event, context)
       } catch (e) {
         console.error(e);
         alert(e);
@@ -62,7 +61,7 @@ export default class InputHandler {
 
   keyHandler = async (
     e: KeyboardEvent,
-    { state, imageFactory }: Context
+    { state, imageFactory, ticker }: Context
   ) => {
     if (e.repeat) {
       return;
@@ -77,7 +76,7 @@ export default class InputHandler {
     e.preventDefault();
 
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory });
+    await handler.handleKeyCommand(command, { state, imageFactory, ticker });
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {

@@ -36,7 +36,7 @@ export default class DynamicSprite<T extends Animatable> implements Sprite {
   /**
    * @override {@link Sprite#getOffsets}
    */
-  getOffsets = () => this.offsets;
+  getOffsets = (): Offsets => this.offsets;
 
   bind = (target: T) => {
     this.target = target;

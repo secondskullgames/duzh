@@ -3,10 +3,12 @@ import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import ImageFactory from '../../../graphics/images/ImageFactory';
 import { AbilityName } from './AbilityName';
+import Ticker from '../../../core/Ticker';
 
 export type UnitAbilityContext = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 export type UnitAbility = Readonly<{
@@ -17,6 +19,6 @@ export type UnitAbility = Readonly<{
   use: (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state }: UnitAbilityContext
+    context: UnitAbilityContext
   ) => Promise<void>;
 }>;

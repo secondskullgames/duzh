@@ -2,12 +2,13 @@ import Coordinates from '../geometry/Coordinates';
 import Sprite from '../graphics/sprites/Sprite';
 import { EntityType } from './EntityType';
 import GameState from '../core/GameState';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
+import Ticker from '../core/Ticker';
 
 export type UpdateContext = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 /**

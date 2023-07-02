@@ -8,10 +8,14 @@ type Message = Readonly<{
   turn: number
 }>;
 
-export default class Messages {
+type Context = Readonly<{
+  turn: number
+}>;
+
+export default class Ticker {
   private readonly _messages: Message[] = [];
 
-  log = (message: string, turn: number) => {
+  log = (message: string, { turn }: Context) => {
     this._messages.push({ message, turn });
   };
 

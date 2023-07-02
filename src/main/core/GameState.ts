@@ -2,7 +2,7 @@ import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
 import { checkNotNull, checkState } from '../utils/preconditions';
-import Messages from './Messages';
+import Ticker from './Ticker';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import { GameScreen } from './GameScreen';
@@ -19,7 +19,6 @@ export default class GameState {
   private readonly maps: MapInstance[];
   private mapIndex: number;
   private map: MapInstance | null;
-  private readonly messages: Messages;
   private turn: number;
   private queuedAbility: UnitAbility | null;
   /**
@@ -35,7 +34,6 @@ export default class GameState {
     this.maps = [];
     this.mapIndex = -1;
     this.map = null;
-    this.messages = new Messages();
     this.turn = 1;
     this.queuedAbility = null;
     this.selectedLevelUpScreenAbility = null;
@@ -93,10 +91,6 @@ export default class GameState {
     this.queuedAbility = ability;
   };
 
-  getMessages = (): Messages => {
-    return this.messages;
-  }
-
   getSelectedLevelUpScreenAbility = (): AbilityName | null => {
     if (!this.selectedLevelUpScreenAbility) {
       const learnableAbilities = this.getPlayerUnit().getLearnableAbilities();
@@ -130,7 +124,6 @@ export default class GameState {
     clear(this.maps);
     this.mapIndex = -1;
     this.map = null;
-    this.messages.clear();
     this.turn = 1;
     this.queuedAbility = null;
   };

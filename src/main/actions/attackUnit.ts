@@ -1,6 +1,5 @@
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import { logMessage } from './logMessage';
 import { die } from './die';
 import { recordKill } from './recordKill';
 import GameState from '../core/GameState';
@@ -9,6 +8,7 @@ import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
+import Ticker from '../core/Ticker';
 
 type Props = Readonly<{
   attacker: Unit,
@@ -20,19 +20,20 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, imageFactory }: Context
+  { state, imageFactory, ticker }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, imageFactory }
+        { state, imageFactory, ticker }
       );
     }
   }
@@ -50,14 +51,14 @@ export const attackUnit = async (
   attacker.recordDamageDealt(adjustedDamage);
   playSound(sound);
   const message = getDamageLogMessage(attacker, defender, adjustedDamage);
-  logMessage(message, { state });
+  ticker.log(message, { turn: state.getTurn() });
 
   attacker.refreshCombat();
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, imageFactory });
-    recordKill(attacker, { state });
+    await die(defender, { state, imageFactory, ticker });
+    recordKill(attacker, { state, ticker });
   }
 
   await sleep(150);

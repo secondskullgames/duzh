@@ -1,20 +1,21 @@
 import Unit from '../entities/units/Unit';
 import { Faction } from '../types/types';
 import GameState from '../core/GameState';
-import { logMessage } from './logMessage';
 import { Feature } from '../utils/features';
 import { abilityForName } from '../entities/units/abilities/abilityForName';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
+import Ticker from '../core/Ticker';
 
 const lifePerLevel = 0;
 const manaPerLevel = 3;
 const damagePerLevel = 0;
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState,
+  ticker: Ticker
 }>;
 
-export const levelUp = (unit: Unit, { state }: Context) => {
+export const levelUp = (unit: Unit, { state, ticker }: Context) => {
   unit.incrementLevel();
   // TODO - maybe these should go in player.json (again?)
   if (unit.getFaction() === Faction.PLAYER) {
@@ -23,10 +24,10 @@ export const levelUp = (unit: Unit, { state }: Context) => {
     unit.incrementDamage(damagePerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      logMessage(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, { state });
+      ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, { turn: state.getTurn() });
       unit.awardAbilityPoint();
     } else {
-      logMessage(`Welcome to level ${unit.getLevel()}!`, { state });
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
       switch (unit.getLevel()) {
         case 2:
           unit.learnAbility(abilityForName(AbilityName.HEAVY_ATTACK));

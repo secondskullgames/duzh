@@ -11,9 +11,9 @@ import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
-import { logMessage } from '../../actions/logMessage';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import Ticker from '../../core/Ticker';
 
 export type SpawnerClass = 'mirror';
 
@@ -90,14 +90,14 @@ const createHealthGlobe = async (
 
   const lifeGained = 20;
 
-  const onUse = async (unit: Unit, { state }: OnUseContext) => {
+  const onUse = async (unit: Unit, { state, ticker }: OnUseContext) => {
     if (unit === state.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
         playSound(Sounds.HEALTH_GLOBE);
-        logMessage(
+        ticker.log(
           `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
-          { state }
+          { turn: state.getTurn() }
         );
         const map = state.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;
