@@ -39,8 +39,13 @@ export const attackUnit = async (
     }
   }
 
-  // damaged frame
+  // attacking frame
   attacker.setActivity(Activity.ATTACKING, 1, attacker.getDirection());
+  await renderer.render();
+
+  await sleep(SHORT_SLEEP);
+
+  // damaged frame
   defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
   await renderer.render();
 
@@ -59,7 +64,7 @@ export const attackUnit = async (
     recordKill(attacker, { state });
   }
 
-  await sleep(MEDIUM_SLEEP);
+  await sleep(SHORT_SLEEP);
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
