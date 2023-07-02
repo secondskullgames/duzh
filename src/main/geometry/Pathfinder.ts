@@ -79,7 +79,6 @@ export default class Pathfinder {
    * @return a path from {@code start} to {@code goal}, or an empty list if none was found
    */
   findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
-    console.time('pathfinder');
     const tileSet = new CoordinateSet(tiles);
     const open: Node[] = [
       { x: start.x, y: start.y, cost: 0, parent: null }
@@ -88,7 +87,6 @@ export default class Pathfinder {
 
     while (true) {
       if (open.length === 0) {
-        console.timeEnd('pathfinder');
         return [];
       }
 
@@ -99,7 +97,6 @@ export default class Pathfinder {
       if (Coordinates.equals(bestNode, goal)) {
         // Done!
         const path = traverseParents(bestNode);
-        console.timeEnd('pathfinder');
         return path;
       } else {
         const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);

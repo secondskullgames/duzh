@@ -56,7 +56,6 @@ const ajv = new Ajv();
 let loadedSchemas = false;
 
 const _loadSchemas = async () => {
-  console.time('_loadSchemas');
   for (const schemaName of schemaNames) {
     const schema = (await import(
       /* webpackMode: "lazy-once" */
@@ -65,7 +64,6 @@ const _loadSchemas = async () => {
     )).default;
     ajv.addSchema(schema);
   }
-  console.timeEnd('_loadSchemas');
 };
 
 const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {

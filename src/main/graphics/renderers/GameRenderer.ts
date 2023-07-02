@@ -82,9 +82,7 @@ export default class GameRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async () => {
-    console.time('GameRenderer#render');
     const screen = this.state.getScreen();
-    console.log(`screen is ${screen}`);
 
     switch (screen) {
       case GameScreen.TITLE:
@@ -124,7 +122,6 @@ export default class GameRenderer implements Renderer {
       const imageData = this.bufferGraphics.getImageData();
       this._graphics.putImageData(imageData, { x: 0, y: 0 });
     });
-    console.timeEnd('GameRenderer#render');
   };
 
   private _renderGameScreen = async () => {

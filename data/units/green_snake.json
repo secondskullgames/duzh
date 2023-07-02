@@ -9,7 +9,7 @@
   "strength": 3,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.95,
+    "speed": 0.99,
     "visionRange": 12,
     "aggressiveness": 0.5,
     "fleeThreshold": 0

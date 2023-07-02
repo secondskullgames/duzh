@@ -16,11 +16,8 @@ export const playTurn = async ({ state, renderer, imageFactory }: Context) => {
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
-    // TODO: what's the best time to check for aliveness?
     if (unit.getLife() > 0) {
       await unit.update({ state, renderer, imageFactory });
-    } else {
-      console.error(`Tried to update dead unit ${unit.getName()}`);
     }
   }
 

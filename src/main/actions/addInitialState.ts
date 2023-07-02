@@ -11,7 +11,6 @@ type Context = Readonly<{
 }>;
 
 export const addInitialState = async ({ state, imageFactory }: Context) => {
-  console.time('addInitialState');
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });
@@ -27,5 +26,4 @@ export const addInitialState = async ({ state, imageFactory }: Context) => {
     });
   });
   state.addMaps(maps);
-  console.timeEnd('addInitialState');
 };

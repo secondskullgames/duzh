@@ -11,11 +11,9 @@ type Context = Readonly<{
 }>;
 
 export const showSplashScreen = async ({ state, renderer, imageFactory }: Context) => {
-  console.time('showSplashScreen');
   state.reset();
   await addInitialState({ state, imageFactory })
   await renderer.render();
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  console.timeEnd('showSplashScreen');
 };
