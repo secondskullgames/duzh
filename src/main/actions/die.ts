@@ -28,7 +28,6 @@ export const die = async (unit: Unit, { state, imageFactory }: Context) => {
   } else {
     playSound(Sounds.ENEMY_DIES);
     logMessage(`${unit.getName()} dies!`, { state });
-    console.log(`${unit.getName()} dies!`);
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
       const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { imageFactory })

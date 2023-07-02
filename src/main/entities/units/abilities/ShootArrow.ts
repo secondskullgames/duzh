@@ -26,7 +26,7 @@ export const ShootArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
@@ -38,7 +38,6 @@ export const ShootArrow: UnitAbility = {
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await renderer.render();
     unit.spendMana(manaCost);
 
     const map = state.getMap();
@@ -61,10 +60,7 @@ export const ShootArrow: UnitAbility = {
         targetUnit,
         { state, imageFactory }
       );
-      await playAnimation(arrowAnimation, {
-        state,
-        renderer
-      });
+      await playAnimation(arrowAnimation, { state });
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
@@ -83,10 +79,7 @@ export const ShootArrow: UnitAbility = {
         null,
         { state, imageFactory }
       );
-      await playAnimation(arrowAnimation, {
-        state,
-        renderer
-      });
+      await playAnimation(arrowAnimation, { state });
     }
   }
 }

@@ -2,7 +2,6 @@ import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 
@@ -10,7 +9,6 @@ export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
@@ -24,7 +22,7 @@ export type EquipmentScript = Readonly<{
   onMove?: (
     equipment: Equipment,
     target: Coordinates,
-    { state, renderer, imageFactory }: Context
+    { state, imageFactory }: Context
   ) => Promise<void>;
 }>;
 
@@ -32,7 +30,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, renderer, imageFactory }: Context
+    { state, imageFactory }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -47,11 +45,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        {
-          state,
-          renderer,
-          imageFactory
-        }
+        { state, imageFactory }
       );
     }
   }

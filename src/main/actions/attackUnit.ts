@@ -1,13 +1,12 @@
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import { logMessage } from './logMessage';
 import { die } from './die';
 import { recordKill } from './recordKill';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
-import { MEDIUM_SLEEP, SHORT_SLEEP, sleep } from '../utils/promises';
+import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
 
@@ -21,28 +20,30 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, renderer, imageFactory }: Context
+  { state, imageFactory }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
     }
   }
 
-  // damaged frame
+  // attacking frame
   attacker.setActivity(Activity.ATTACKING, 1, attacker.getDirection());
+
+  await sleep(50);
+
+  // damaged frame
   defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
-  await renderer.render();
 
   const damage = getDamage(attacker);
   const adjustedDamage = defender.takeDamage(damage, attacker);
@@ -59,9 +60,10 @@ export const attackUnit = async (
     recordKill(attacker, { state });
   }
 
-  await sleep(MEDIUM_SLEEP);
+  await sleep(150);
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
-  await sleep(SHORT_SLEEP);
+
+  await sleep(50);
 };

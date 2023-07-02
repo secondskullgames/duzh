@@ -1,16 +1,14 @@
 import type { Animation } from './Animation';
-import GameRenderer from '../renderers/GameRenderer';
 import { sleep } from '../../utils/promises';
 import GameState from '../../core/GameState';
 
-type Props = Readonly<{
-  state: GameState,
-  renderer: GameRenderer
+type Context = Readonly<{
+  state: GameState
 }>;
 
 export const playAnimation = async (
   animation: Animation,
-  { state, renderer }: Props
+  { state }: Context
 ) => {
   const map = state.getMap();
 
@@ -23,8 +21,6 @@ export const playAnimation = async (
       const { unit, activity, frameNumber, direction } = frame.units[j];
       unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
     }
-
-    await renderer.render();
 
     if (!!frame.postDelay) {
       await sleep(frame.postDelay);

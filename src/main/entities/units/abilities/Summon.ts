@@ -18,7 +18,7 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');

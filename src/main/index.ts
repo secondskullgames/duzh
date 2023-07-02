@@ -6,6 +6,7 @@ import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { loadFonts } from './graphics/Fonts';
+import { Feature } from './utils/features';
 
 const main = async () => {
   const state = new GameState();
@@ -19,20 +20,19 @@ const main = async () => {
     textRenderer
   });
   const inputHandler = new InputHandler();
-  inputHandler.addEventListener(renderer.getCanvas(), { state, renderer, imageFactory });
-  if (!_isProduction()) {
-    const debug = new Debug({ state, renderer, imageFactory });
+  inputHandler.addEventListener(renderer.getCanvas(), { state, imageFactory });
+  if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
+    const debug = new Debug({ state, imageFactory });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen({ state, renderer, imageFactory });
+  await showSplashScreen({ state, imageFactory });
+  setInterval(async () => {
+    await renderer.render()
+  }, 20);
 };
 
 main().catch(e => {
   console.error(e);
   alert(e)
 });
-
-const _isProduction = (): boolean => {
-  return document.location.href === 'https://duzh.netlify.app';
-};

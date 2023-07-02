@@ -1,23 +1,23 @@
 {
-  "id": "green_snake",
-  "name": "Green Snake",
-  "type": "ANIMAL",
-  "sprite": "snake",
+  "id": "green_blob",
+  "name": "Green Blob",
+  "type": "ELEMENTAL",
+  "sprite": "blob",
   "paletteSwaps": {},
-  "life": 20,
+  "life": 50,
   "mana": 0,
-  "strength": 3,
+  "strength": 6,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.99,
+    "speed": 0.95,
     "visionRange": 12,
     "aggressiveness": 0.5,
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 1,
-    "maxLevel": 3,
-    "points": 6
+    "minLevel": 3,
+    "maxLevel": 99,
+    "points": 20
   },
   "abilities": ["ATTACK"]
 }

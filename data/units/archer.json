@@ -15,7 +15,7 @@
     "PLAYER_FEET": "DARK_BROWN"
   },
   "strength": 2,
-  "dexterity": 2,
+  "dexterity": 1,
   "life": 40,
   "mana": 6,
   "equipment": [

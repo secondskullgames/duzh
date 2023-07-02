@@ -17,7 +17,7 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
@@ -39,10 +39,9 @@ export const Dash: UnitAbility = {
         await moveUnit(
           unit,
           { x, y },
-          { state, renderer, imageFactory }
+          { state, imageFactory }
         );
         moved = true;
-        await renderer.render();
         await sleep(50);
       } else {
         break;

@@ -10,6 +10,9 @@ import Unit from './Unit';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import { Feature } from '../../utils/features';
+import { abilityForName } from './abilities/abilityForName';
+import { AbilityName } from './abilities/AbilityName';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -31,17 +34,12 @@ const createUnit = async (
   { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
   { imageFactory }: Context
 ): Promise<Unit> => {
-  console.time(`createUnit [${unitClass}]`);
-  console.time(`createUnit [${unitClass}] (model)`);
   const model: UnitModel = await loadUnitModel(unitClass);
-  console.timeEnd(`createUnit [${unitClass}] (model)`);
-  console.time(`createUnit [${unitClass}] (sprite)`);
   const sprite = await SpriteFactory.createUnitSprite(
     model.sprite,
     PaletteSwaps.create(model.paletteSwaps),
     { imageFactory }
   );
-  console.timeEnd(`createUnit [${unitClass}] (sprite)`);
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of (model.equipment ?? [])) {
     const equipment = await ItemFactory.createEquipment(
@@ -61,20 +59,25 @@ const createUnit = async (
     equipment: equipmentList,
     sprite
   });
-  console.timeEnd(`createUnit [${unitClass}]`);
   return unit;
 };
 
-const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => createUnit(
-  {
-    unitClass: 'player',
-    faction: Faction.PLAYER,
-    controller: new PlayerUnitController(),
-    level: 1,
-    coordinates: { x: 0, y: 0 }
-  },
-  { imageFactory }
-);
+const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
+  const unit = await createUnit(
+    {
+      unitClass: 'player',
+      faction: Faction.PLAYER,
+      controller: new PlayerUnitController(),
+      level: 1,
+      coordinates: { x: 0, y: 0 }
+    },
+    { imageFactory }
+  );
+  if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+    unit.learnAbility(abilityForName(AbilityName.DASH));
+  }
+  return unit;
+};
 
 const loadAllModels = async (): Promise<UnitModel[]> => {
   const requireContext = require.context(

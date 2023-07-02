@@ -6,7 +6,7 @@ import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, renderer, imageFactory }: ScreenHandlerContext
+  { state, imageFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -16,14 +16,12 @@ const handleKeyCommand = async (
       } else {
         await showSplashScreen({
           state,
-          renderer,
           imageFactory
         });
       }
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);
-      await renderer.render();
   }
 };
 

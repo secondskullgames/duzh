@@ -11,19 +11,16 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
 type Props = Readonly<{
-  renderer: GameRenderer,
   state: GameState,
   imageFactory: ImageFactory
 }>;
 
 export class Debug {
-  private readonly renderer: GameRenderer;
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private _isMapRevealed: boolean;
 
-  constructor({ renderer, state, imageFactory }: Props) {
-    this.renderer = renderer;
+  constructor({ state, imageFactory }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this._isMapRevealed = false;
@@ -31,7 +28,6 @@ export class Debug {
 
   toggleRevealMap = async () => {
     this._isMapRevealed = !this._isMapRevealed;
-    await this.renderer.render();
   };
 
   isMapRevealed = () => this._isMapRevealed;
@@ -42,13 +38,11 @@ export class Debug {
       state: this.state,
       imageFactory: this.imageFactory
     });
-    await this.renderer.render();
   };
 
   levelUp = async () => {
     const playerUnit = this.state.getPlayerUnit();
     _levelUp(playerUnit, { state: this.state });
-    await this.renderer.render();
   };
 
   awardEquipment = async () => {
@@ -58,7 +52,6 @@ export class Debug {
     playerUnit.getInventory().add(item);
     logMessage(`Picked up a ${item.name}.`, { state: this.state });
     playSound(Sounds.PICK_UP_ITEM);
-    await this.renderer.render();
   };
 
   attachToWindow = () => {
@@ -68,14 +61,12 @@ export class Debug {
     window.jwb.debug = {
       ...this,
       killEnemies: () => killEnemies({
-        state: this.state,
-        renderer: this.renderer
+        state: this.state
       }),
       nextLevel: async () => {
         await loadNextMap({
           state: this.state
         });
-        await this.renderer.render();
       }
     };
   };

@@ -27,7 +27,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -36,7 +36,6 @@ export const ShootFireball: UnitAbility = {
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    await renderer.render();
     unit.spendMana(MANA_COST);
 
     const map = state.getMap();
@@ -59,8 +58,7 @@ export const ShootFireball: UnitAbility = {
         { state, imageFactory }
       );
       await playAnimation(fireballAnimation, {
-        state,
-        renderer
+        state
       });
       const adjustedDamage = await dealDamage(DAMAGE, {
         sourceUnit: unit,
@@ -81,8 +79,7 @@ export const ShootFireball: UnitAbility = {
         { state, imageFactory }
       );
       await playAnimation(fireballAnimation, {
-        state,
-        renderer
+        state
       });
     }
   }

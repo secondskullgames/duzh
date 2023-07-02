@@ -1,4 +1,3 @@
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import Music from '../sounds/Music';
 import GameState from '../core/GameState';
 import { addInitialState } from './addInitialState';
@@ -6,16 +5,12 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
-export const showSplashScreen = async ({ state, renderer, imageFactory }: Context) => {
-  console.time('showSplashScreen');
+export const showSplashScreen = async ({ state, imageFactory }: Context) => {
   state.reset();
   await addInitialState({ state, imageFactory })
-  await renderer.render();
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
-  console.timeEnd('showSplashScreen');
 };

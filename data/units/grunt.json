@@ -16,7 +16,7 @@
   },
   "strength": 2,
   "dexterity": 2,
-  "life": 35,
+  "life": 30,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
@@ -24,7 +24,7 @@
     "bronze_sword"
   ],
   "aiParameters": {
-    "speed": 0.98,
+    "speed": 0.99,
     "visionRange": 8,
     "aggressiveness": 0.9,
     "fleeThreshold": 0

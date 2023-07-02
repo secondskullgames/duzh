@@ -19,7 +19,7 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
@@ -41,7 +41,7 @@ export const HeavyAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
     }
   }

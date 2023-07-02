@@ -15,7 +15,6 @@ import { UnitController } from './controllers/UnitController';
 import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
-import { levelUp } from '../../actions/levelUp';
 import { EntityType } from '../EntityType';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
@@ -180,11 +179,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, renderer, imageFactory }: UpdateContext) => {
+  update = async ({ state, imageFactory }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });
-      await order.execute(this, { state, renderer, imageFactory });
+      await order.execute(this, { state, imageFactory });
     }
     this._endOfTurn();
   };

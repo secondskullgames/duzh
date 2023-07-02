@@ -7,29 +7,24 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
-export const playTurn = async ({ state, renderer, imageFactory }: Context) => {
+export const playTurn = async ({ state, imageFactory }: Context) => {
   const map = state.getMap();
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
-    // TODO: what's the best time to check for aliveness?
     if (unit.getLife() > 0) {
-      await unit.update({ state, renderer, imageFactory });
-    } else {
-      console.error(`Tried to update dead unit ${unit.getName()}`);
+      await unit.update({ state, imageFactory });
     }
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state, renderer, imageFactory });
+    await object.update({ state, imageFactory });
   }
 
   updateRevealedTiles({ state });
-  await renderer.render();
   state.nextTurn();
 };
 

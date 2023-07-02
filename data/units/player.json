@@ -18,9 +18,9 @@
     "PLAYER_SHOULDERS": "DARK_GREEN",
     "PLAYER_THIGHS": "DARK_BROWN"
   },
-  "strength": 6,
+  "strength": 4,
   "dexterity": 2,
-  "life": 100,
+  "life": 80,
   "mana": 20,
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }
