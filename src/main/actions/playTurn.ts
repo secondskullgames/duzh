@@ -7,26 +7,24 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
-export const playTurn = async ({ state, renderer, imageFactory }: Context) => {
+export const playTurn = async ({ state, imageFactory }: Context) => {
   const map = state.getMap();
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
     if (unit.getLife() > 0) {
-      await unit.update({ state, renderer, imageFactory });
+      await unit.update({ state, imageFactory });
     }
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state, renderer, imageFactory });
+    await object.update({ state, imageFactory });
   }
 
   updateRevealedTiles({ state });
-  await renderer.render();
   state.nextTurn();
 };
 

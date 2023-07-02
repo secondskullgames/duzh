@@ -9,14 +9,13 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
 export const pushBlock = async (
   unit: Unit,
   block: Block,
-  { state, renderer, imageFactory }: Context
+  { state, imageFactory }: Context
 ) => {
   const map = state.getMap();
   const coordinates = block.getCoordinates();
@@ -25,6 +24,6 @@ export const pushBlock = async (
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
     await moveObject(block, nextCoordinates, { state });
-    await moveUnit(unit, coordinates, { state, renderer, imageFactory });
+    await moveUnit(unit, coordinates, { state, imageFactory });
   }
 };

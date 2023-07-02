@@ -1,6 +1,6 @@
-export const SHORT_SLEEP = 75;
+export const SHORT_SLEEP = 100;
 export const MEDIUM_SLEEP = 150;
-export const LONG_SLEEP = 225;
+export const LONG_SLEEP = 200;
 
 export const sleep = async (milliseconds: number): Promise<void> => new Promise<void>(resolve => {
   const start = performance.now();

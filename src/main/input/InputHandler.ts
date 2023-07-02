@@ -30,7 +30,6 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
@@ -47,12 +46,12 @@ export default class InputHandler {
 
   keyHandlerWrapper = async (
     event: KeyboardEvent,
-    { state, renderer, imageFactory }: Context
+    { state, imageFactory }: Context
   ) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, { state, renderer, imageFactory })
+        await this.keyHandler(event, { state, imageFactory })
       } catch (e) {
         console.error(e);
         alert(e);
@@ -63,7 +62,7 @@ export default class InputHandler {
 
   keyHandler = async (
     e: KeyboardEvent,
-    { state, renderer, imageFactory }: Context
+    { state, imageFactory }: Context
   ) => {
     if (e.repeat) {
       return;
@@ -78,7 +77,7 @@ export default class InputHandler {
     e.preventDefault();
 
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, renderer, imageFactory });
+    await handler.handleKeyCommand(command, { state, imageFactory });
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {

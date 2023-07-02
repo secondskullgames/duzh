@@ -8,7 +8,7 @@ import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, renderer, imageFactory }: ScreenHandlerContext
+  { state, imageFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -22,21 +22,14 @@ const handleKeyCommand = async (
             { type: 'predefined', id: 'test' },
             { state, imageFactory }
           );
-          await startGameDebug(mapInstance, {
-            state,
-            renderer
-          });
+          await startGameDebug(mapInstance, { state });
         } else {
-          await startGame({
-            state,
-            renderer
-          });
+          await startGame({ state });
         }
       }
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);
-      await renderer.render();
   }
 };
 

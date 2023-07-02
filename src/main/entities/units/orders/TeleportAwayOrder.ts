@@ -19,7 +19,7 @@ export default class TeleportAwayOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, renderer, imageFactory }: OrderContext
+    { state, imageFactory }: OrderContext
   ) => {
     const { targetUnit } = this;
     const map = state.getMap();
@@ -44,7 +44,7 @@ export default class TeleportAwayOrder implements UnitOrder {
       await Teleport.use(
         unit,
         coordinates,
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
     }
   };

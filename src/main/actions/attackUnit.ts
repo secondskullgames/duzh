@@ -21,33 +21,30 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, renderer, imageFactory }: Context
+  { state, imageFactory }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
     }
   }
 
   // attacking frame
   attacker.setActivity(Activity.ATTACKING, 1, attacker.getDirection());
-  await renderer.render();
 
   await sleep(SHORT_SLEEP);
 
   // damaged frame
   defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
-  await renderer.render();
 
   const damage = getDamage(attacker);
   const adjustedDamage = defender.takeDamage(damage, attacker);
@@ -68,5 +65,4 @@ export const attackUnit = async (
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
-  await sleep(SHORT_SLEEP);
 };

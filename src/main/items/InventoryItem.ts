@@ -21,8 +21,8 @@ export default class InventoryItem {
 
   use = async (
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcContext
+    context: ItemProcContext
   ) => {
-    await this.onUse(this, unit, { state, renderer, imageFactory });
+    await this.onUse(this, unit, context);
   };
 }

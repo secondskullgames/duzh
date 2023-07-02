@@ -7,7 +7,6 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 export type UpdateContext = Readonly<{
   state: GameState,
-  renderer: GameRenderer,
   imageFactory: ImageFactory
 }>;
 
@@ -19,7 +18,7 @@ export default interface Entity {
   getCoordinates: () => Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
   getSprite: () => Sprite | null;
-  update: ({ state }: UpdateContext) => Promise<void>;
+  update: (context: UpdateContext) => Promise<void>;
   /**
    * Only one blocking entity can occupy a particular tile
    */

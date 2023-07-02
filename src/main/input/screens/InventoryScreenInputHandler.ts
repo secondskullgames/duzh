@@ -6,7 +6,7 @@ import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, renderer, imageFactory }: ScreenHandlerContext
+  { state, imageFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   const inventory = state.getPlayerUnit().getInventory();
@@ -28,7 +28,7 @@ const handleKeyCommand = async (
       if (modifiers.includes('ALT')) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ state, renderer, imageFactory });
+        await _handleEnter({ state, imageFactory });
       }
       break;
     case 'TAB':
@@ -42,18 +42,16 @@ const handleKeyCommand = async (
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);
-      await renderer.render();
   }
-  await renderer.render();
 };
 
-const _handleEnter = async ({ state, renderer, imageFactory }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const { selectedItem } = playerUnit.getInventory();
 
   if (selectedItem) {
     state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { state, renderer, imageFactory });
+    await useItem(playerUnit, selectedItem, { state, imageFactory });
   }
 };
 

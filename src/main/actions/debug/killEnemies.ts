@@ -1,12 +1,10 @@
 import GameState from '../../core/GameState';
-import GameRenderer from '../../graphics/renderers/GameRenderer';
 
-type Props = Readonly<{
-  state: GameState,
-  renderer: GameRenderer
+type Context = Readonly<{
+  state: GameState
 }>;
 
-export const killEnemies = async ({ state, renderer }: Props) => {
+export const killEnemies = async ({ state }: Context) => {
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
   for (const unit of map.getAllUnits()) {
@@ -14,5 +12,4 @@ export const killEnemies = async ({ state, renderer }: Props) => {
       map.removeUnit(unit);
     }
   }
-  await renderer.render();
 };

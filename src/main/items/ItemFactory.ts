@@ -76,7 +76,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, renderer, imageFactory }: ItemProcContext
+    { state, imageFactory }: ItemProcContext
   ) => {
     const map = state.getMap();
 
@@ -95,7 +95,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       adjacentUnits,
       { state, imageFactory }
     );
-    await playAnimation(animation, { state, renderer });
+    await playAnimation(animation, { state });
 
     for (const adjacentUnit of adjacentUnits) {
       await dealDamage(damage, {

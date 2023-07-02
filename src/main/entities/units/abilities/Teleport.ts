@@ -21,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -40,7 +40,6 @@ export const Teleport: UnitAbility = {
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
-        await renderer.render();
         await sleep(SHORT_SLEEP);
       }
 
@@ -50,7 +49,7 @@ export const Teleport: UnitAbility = {
       await moveUnit(
         unit,
         coordinates,
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
       await sleep(SHORT_SLEEP);
 
@@ -59,12 +58,10 @@ export const Teleport: UnitAbility = {
           playSound(Sounds.WIZARD_APPEAR);
         }
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
-        await renderer.render();
         await sleep(SHORT_SLEEP);
       }
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-      await renderer.render();
     } else {
       playSound(Sounds.BLOCKED);
     }

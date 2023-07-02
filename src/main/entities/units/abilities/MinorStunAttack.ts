@@ -22,7 +22,7 @@ export const MinorStunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('MinorStunAttack requires a target!');
@@ -46,7 +46,7 @@ export const MinorStunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, renderer, imageFactory }
+        { state, imageFactory }
       );
       targetUnit.setStunned(1);
     }

@@ -12,7 +12,7 @@ export const Strafe: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, renderer, imageFactory }: UnitAbilityContext
+    { state, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Strafe requires a target!');
@@ -20,7 +20,7 @@ export const Strafe: UnitAbility = {
     const map = state.getMap();
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state, renderer, imageFactory });
+      await moveUnit(unit, coordinates, { state, imageFactory });
     }
   }
 }

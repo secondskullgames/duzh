@@ -35,7 +35,7 @@ export const levelUp = (unit: Unit, { state }: Context) => {
           unit.learnAbility(abilityForName(AbilityName.KNOCKBACK_ATTACK));
           break;
         case 4:
-          unit.learnAbility(abilityForName(AbilityName.HEAVY_ATTACK));
+          unit.learnAbility(abilityForName(AbilityName.STUN_ATTACK));
           break;
         case 5:
           unit.learnAbility(abilityForName(AbilityName.BLINK));
