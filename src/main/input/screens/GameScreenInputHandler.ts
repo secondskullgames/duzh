@@ -19,6 +19,7 @@ import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '../../core/GameScreen';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { getItem } from '../../maps/MapUtils';
+import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -35,7 +36,7 @@ const handleKeyCommand = async (
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
     await renderer.render();
-  } else if (key === 'L') {
+  } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     state.setScreen(GameScreen.LEVEL_UP);
     await renderer.render();
   } else if (key === 'M') {

@@ -98,7 +98,7 @@ export default class HUDRenderer implements Renderer {
     const abilities = playerUnit.getAbilities();
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
-      const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
+      const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
       if (!getInnateAbilities().includes(ability.name)) {
         await this._renderAbility(ability, { x: left, y: top });
