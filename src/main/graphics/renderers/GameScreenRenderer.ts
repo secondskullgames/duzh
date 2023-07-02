@@ -56,7 +56,8 @@ export default class GameScreenRenderer implements Renderer {
   private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
-      this.graphics.drawImage(image, { x: pixel.x + sprite.dx, y: pixel.y + sprite.dy });
+      const { dx, dy } = sprite.getOffsets();
+      this.graphics.drawImage(image, { x: pixel.x + dx, y: pixel.y + dy });
     }
   };
 
