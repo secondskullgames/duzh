@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "DARK_GREEN": "soldier",
+    "DARK_GREEN": "goblin_soldier",
     "DARK_BLUE": "golem"
   },
   "itemColors": {
