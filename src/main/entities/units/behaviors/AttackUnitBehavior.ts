@@ -9,7 +9,8 @@ import { randChoice } from '../../../utils/random';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
-import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
+import { UnitBehavior } from './UnitBehavior';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -25,9 +26,10 @@ export default class AttackUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitBehaviorContext
+    context: GlobalContext
   ): UnitOrder => {
     const { targetUnit } = this;
+    const { state } = context;
     const map = state.getMap();
     const mapRect = map.getRect();
     const unblockedTiles: Coordinates[] = [];

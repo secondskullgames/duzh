@@ -1,30 +1,23 @@
-import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
-import ImageFactory from '../graphics/images/ImageFactory';
-import Ticker from '../core/Ticker';
+import { GlobalContext } from '../core/GlobalContext';
 
 export type EquipmentScriptName = 'bolt_sword';
 
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
 
 export type EquipmentScript = Readonly<{
   onAttack?: (
     equipment: Equipment,
     target: Coordinates,
-    context: Context
+    context: GlobalContext
   ) => Promise<void>;
 
   onMove?: (
     equipment: Equipment,
     target: Coordinates,
-    context: Context
+    context: GlobalContext
   ) => Promise<void>;
 }>;
 
@@ -32,7 +25,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, imageFactory, ticker }: Context
+    { state, imageFactory, ticker }: GlobalContext
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 

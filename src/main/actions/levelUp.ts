@@ -1,21 +1,15 @@
 import Unit from '../entities/units/Unit';
 import { Faction } from '../types/types';
-import GameState from '../core/GameState';
 import { Feature } from '../utils/features';
 import { abilityForName } from '../entities/units/abilities/abilityForName';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
-import Ticker from '../core/Ticker';
+import { GlobalContext } from '../core/GlobalContext';
 
 const lifePerLevel = 0;
 const manaPerLevel = 3;
 const damagePerLevel = 0;
 
-type Context = Readonly<{
-  state: GameState,
-  ticker: Ticker
-}>;
-
-export const levelUp = (unit: Unit, { state, ticker }: Context) => {
+export const levelUp = (unit: Unit, { state, ticker }: GlobalContext) => {
   unit.incrementLevel();
   // TODO - maybe these should go in player.json (again?)
   if (unit.getFaction() === Faction.PLAYER) {

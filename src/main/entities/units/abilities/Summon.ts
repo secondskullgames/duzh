@@ -4,9 +4,10 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { AbilityName } from './AbilityName';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const manaCost = 25;
 
@@ -18,13 +19,13 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
     }
 
-    const map = state.getMap();
+    const map = context.state.getMap();
 
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
@@ -39,9 +40,7 @@ export const Summon: UnitAbility = {
         level: 1, // whatever
         coordinates
       },
-      {
-        imageFactory
-      }
+      context
     );
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);

@@ -1,4 +1,5 @@
 import { clear, tail } from '../utils/arrays';
+import { GlobalContext } from './GlobalContext';
 
 const maxTurnsAgo = 8;
 const maxMessages = 4;
@@ -8,15 +9,11 @@ type Message = Readonly<{
   turn: number
 }>;
 
-type Context = Readonly<{
-  turn: number
-}>;
-
 export default class Ticker {
   private readonly _messages: Message[] = [];
 
-  log = (message: string, { turn }: Context) => {
-    this._messages.push({ message, turn });
+  log = (message: string, context: GlobalContext) => {
+    this._messages.push({ message, turn: context.state.getTurn() });
   };
 
   getAllMessages = () => this._messages.map(m => m.message);

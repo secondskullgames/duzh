@@ -1,6 +1,6 @@
-import ImageFactory from './images/ImageFactory';
 import Colors from './Colors';
 import { createCanvas, getCanvasContext } from '../utils/dom';
+import { GlobalContext } from '../core/GlobalContext';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
@@ -60,14 +60,10 @@ export type FontInstance = Readonly<{
   renderCharacter: (char: string) => ImageData
 }>;
 
-type LoadFontContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
-export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<FontBundle> => {
+export const loadFonts = async (context: GlobalContext): Promise<FontBundle> => {
   const fonts: Partial<Record<FontName, FontInstance>> = {};
   for (const [fontName, fontDefinition] of Object.entries(fontDefinitions)) {
-    const font: FontInstance = await _loadFont(fontDefinition, { imageFactory });
+    const font: FontInstance = await _loadFont(fontDefinition, context);
     fonts[fontName as FontName] = font;
   }
 
@@ -76,7 +72,7 @@ export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<Font
   }
 };
 
-const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadFontContext): Promise<FontInstance> => {
+const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: GlobalContext): Promise<FontInstance> => {
   const width = NUM_CHARACTERS * fontDefinition.letterWidth;
   const image = await imageFactory.getImage({
     filename: `fonts/${fontDefinition.src}`,

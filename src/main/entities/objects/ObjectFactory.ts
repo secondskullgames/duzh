@@ -6,25 +6,21 @@ import GameObject from './GameObject';
 import Block from './Block';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
-import Bonus, { OnUseContext } from './Bonus';
+import Bonus from './Bonus';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import { GlobalContext } from '../../core/GlobalContext';
 
 export type SpawnerClass = 'mirror';
 
-type CreateObjectContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
 const createMirror = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  context: GlobalContext
 ): Promise<Spawner> => {
-  const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
+  const sprite = await SpriteFactory.createMirrorSprite(context);
   const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
     {
       unitClass: 'shade',
@@ -33,7 +29,7 @@ const createMirror = async (
       controller: new BasicEnemyController(),
       faction: Faction.ENEMY,
     },
-    { imageFactory }
+    context
   );
   const spawner = new Spawner({
     spawnFunction,
@@ -50,11 +46,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { imageFactory }: CreateObjectContext
+  context: GlobalContext
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { imageFactory });
+      return createMirror(coordinates, context);
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
@@ -62,12 +58,12 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  context: GlobalContext
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
     'block',
     PaletteSwaps.empty(),
-    { imageFactory }
+    context
   );
 
   return new Block({
@@ -79,24 +75,25 @@ const createMovableBlock = async (
 
 const createHealthGlobe = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  context: GlobalContext
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
     'map_health_globe',
     PaletteSwaps.empty(),
-    { imageFactory }
+    context
   );
 
   const lifeGained = 20;
 
-  const onUse = async (unit: Unit, { state, ticker }: OnUseContext) => {
+  const onUse = async (unit: Unit, context: GlobalContext) => {
+    const { state, ticker } = context;
     if (unit === state.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
         playSound(Sounds.HEALTH_GLOBE);
         ticker.log(
           `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
-          { turn: state.getTurn() }
+          context
         );
         const map = state.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;

@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
@@ -9,6 +9,7 @@ import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export default class BasicEnemyController implements UnitController {
   /**
@@ -16,8 +17,9 @@ export default class BasicEnemyController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    context: GlobalContext
   ): UnitOrder => {
+    const { state } = context;
     const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HumanRedesignController requires aiParams!');
@@ -25,7 +27,7 @@ export default class BasicEnemyController implements UnitController {
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, context)) {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit })

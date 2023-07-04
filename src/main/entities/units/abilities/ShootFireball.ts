@@ -3,13 +3,14 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const MANA_COST = 25;
 const DAMAGE = 20;
@@ -26,7 +27,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -37,6 +38,7 @@ export const ShootFireball: UnitAbility = {
 
     unit.spendMana(MANA_COST);
 
+    const { state } = context;
     const map = state.getMap();
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
@@ -54,20 +56,18 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state, imageFactory }
+        context
       );
-      await playAnimation(fireballAnimation, {
-        state
-      });
+      await playAnimation(fireballAnimation, context);
       const adjustedDamage = await dealDamage(DAMAGE, {
         sourceUnit: unit,
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      ticker.log(message, { turn: state.getTurn() });
+      context.ticker.log(message, context);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, imageFactory, ticker });
+        await die(targetUnit, context);
       }
     } else {
       const fireballAnimation = await AnimationFactory.getFireballAnimation(
@@ -75,11 +75,9 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state, imageFactory }
+        context
       );
-      await playAnimation(fireballAnimation, {
-        state
-      });
+      await playAnimation(fireballAnimation, context);
     }
   }
 }

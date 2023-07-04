@@ -1,18 +1,14 @@
 import { loadNextMap } from './loadNextMap';
 import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
-import GameState from '../core/GameState';
+import { GlobalContext } from '../core/GlobalContext';
 
-type Context = Readonly<{
-  state: GameState,
-}>;
-
-export const startGame = async ({ state }: Context) => {
+export const startGame = async (context: GlobalContext) => {
   const t1 = new Date().getTime();
-  await loadNextMap({ state });
+  await loadNextMap(context);
   Music.stop();
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  updateRevealedTiles({ state });
+  updateRevealedTiles(context);
   const t2 = new Date().getTime();
   console.debug(`Loaded level in ${t2 - t1} ms`);
 };

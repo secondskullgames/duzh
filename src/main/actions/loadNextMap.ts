@@ -1,13 +1,10 @@
 import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
-import GameState from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
+import { GlobalContext } from '../core/GlobalContext';
 
-type Context = Readonly<{
-  state: GameState
-}>;
-
-export const loadNextMap = async ({ state }: Context) => {
+export const loadNextMap = async (context: GlobalContext) => {
+  const { state } = context;
   if (!state.hasNextMap()) {
     Music.stop();
     state.setScreen(GameScreen.VICTORY);
@@ -15,7 +12,7 @@ export const loadNextMap = async ({ state }: Context) => {
     const t1 = new Date().getTime();
     const nextMap = await state.loadNextMap();
     state.setMap(nextMap);
-    updateRevealedTiles({ state })
+    updateRevealedTiles(context);
     if (nextMap.music) {
       await Music.playMusic(nextMap.music);
     }

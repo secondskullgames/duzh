@@ -2,11 +2,12 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import { attackObject } from '../../../actions/attackObject';
 import { getSpawner } from '../../../maps/MapUtils';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
@@ -20,12 +21,13 @@ export const PiercingAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
     }
 
+    const { state } = context;
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
@@ -41,7 +43,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { state, imageFactory, ticker }
+        context
       );
     }
 
@@ -57,7 +59,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { state, imageFactory, ticker }
+        context
       );
     }
 

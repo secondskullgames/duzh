@@ -2,24 +2,16 @@ import Unit from '../entities/units/Unit';
 import { gameOver } from './gameOver';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import GameState from '../core/GameState';
 import { randChance } from '../utils/random';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
-import Ticker from '../core/Ticker';
-
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (
   unit: Unit,
-  { state, imageFactory, ticker }: Context
+  { state, imageFactory, ticker }: GlobalContext
 ) => {
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();

@@ -1,4 +1,4 @@
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility} from '../abilities/UnitAbility';
@@ -8,6 +8,7 @@ import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
 import { attackObject } from '../../../actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner } from '../../../maps/MapUtils';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 type Props = Readonly<{
   coordinates: Coordinates,
@@ -28,9 +29,10 @@ export class AttackMoveOrder implements UnitOrder {
    */
   execute = async (
     unit: Unit,
-    { state, imageFactory, ticker }: OrderContext
+    context: GlobalContext
   ): Promise<void> => {
     const { coordinates, ability } = this;
+    const { state } = context;
     const map = state.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -40,12 +42,12 @@ export class AttackMoveOrder implements UnitOrder {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state, imageFactory, ticker });
+        await walk(unit, direction, context);
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, { state, imageFactory, ticker });
+          await ability.use(unit, coordinates, context);
           return;
         }
         const door = getDoor(map, coordinates);
@@ -61,7 +63,7 @@ export class AttackMoveOrder implements UnitOrder {
 
         const block = getMovableBlock(map, coordinates);
         if (block) {
-          await pushBlock(unit, block, { state, imageFactory, ticker });
+          await pushBlock(unit, block, context);
           return;
         }
       }

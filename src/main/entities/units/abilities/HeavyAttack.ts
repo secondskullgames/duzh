@@ -2,9 +2,10 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
+import type { UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
@@ -19,12 +20,13 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
     }
 
+    const { state } = context;
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
@@ -41,7 +43,7 @@ export const HeavyAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        context
       );
     }
   }

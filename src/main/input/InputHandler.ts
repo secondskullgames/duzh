@@ -1,7 +1,5 @@
-import GameState from '../core/GameState';
 import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
@@ -14,7 +12,7 @@ import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
 import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
-import Ticker from '../core/Ticker';
+import { GlobalContext } from '../core/GlobalContext';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.CHARACTER]: CharacterScreenInputHandler,
@@ -28,12 +26,6 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
 };
 
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
-
 export default class InputHandler {
   private busy: boolean;
   private eventTarget: HTMLElement | null;
@@ -45,7 +37,7 @@ export default class InputHandler {
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (event: KeyboardEvent, context: Context) => {
+  keyHandlerWrapper = async (event: KeyboardEvent, context: GlobalContext) => {
     if (!this.busy) {
       this.busy = true;
       try {
@@ -60,7 +52,7 @@ export default class InputHandler {
 
   keyHandler = async (
     event: KeyboardEvent,
-    { state, imageFactory, ticker }: Context
+    { state, imageFactory, ticker }: GlobalContext
   ) => {
     if (event.repeat) {
       return;
@@ -79,13 +71,13 @@ export default class InputHandler {
 
   private _handleKeyCommand = async (
     command: KeyCommand,
-    { state, imageFactory, ticker }: Context
+    { state, imageFactory, ticker }: GlobalContext
   ) => {
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, imageFactory, ticker });
   };
 
-  addEventListener = (target: HTMLElement, context: Context) => {
+  addEventListener = (target: HTMLElement, context: GlobalContext) => {
     this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
     this._onKeyUp = async (e: KeyboardEvent) => {
       const command: (KeyCommand | null) = mapToCommand(e);

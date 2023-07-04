@@ -1,12 +1,13 @@
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
+import { GlobalContext } from '../../core/GlobalContext';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory }: ScreenHandlerContext
+  context: GlobalContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -14,14 +15,11 @@ const handleKeyCommand = async (
       if (modifiers.includes('ALT')) {
         await toggleFullScreen();
       } else {
-        await showSplashScreen({
-          state,
-          imageFactory
-        });
+        await showSplashScreen(context);
       }
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      context.state.setScreen(GameScreen.GAME);
   }
 };
 

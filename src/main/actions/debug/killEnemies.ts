@@ -1,10 +1,6 @@
-import GameState from '../../core/GameState';
+import { GlobalContext } from '../../core/GlobalContext';
 
-type Context = Readonly<{
-  state: GameState
-}>;
-
-export const killEnemies = async ({ state }: Context) => {
+export const killEnemies = async ({ state }: GlobalContext) => {
   const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
   for (const unit of map.getAllUnits()) {

@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
@@ -13,6 +13,7 @@ import { Summon } from '../abilities/Summon';
 import { AbilityName } from '../abilities/AbilityName';
 import UnitOrder from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export default class WizardController implements UnitController {
   /**
@@ -20,8 +21,9 @@ export default class WizardController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    context: GlobalContext
   ): UnitOrder => {
+    const { state } = context;
     const playerUnit = state.getPlayerUnit();
     const map = state.getMap();
 

@@ -1,17 +1,9 @@
 import Unit from '../entities/units/Unit';
 import InventoryItem from './InventoryItem';
-import ImageFactory from '../graphics/images/ImageFactory';
-import GameState from '../core/GameState';
-import Ticker from '../core/Ticker';
-
-export type ItemProcContext = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 export type ItemProc = (
   item: InventoryItem,
   unit: Unit,
-  context: ItemProcContext
+  context: GlobalContext
 ) => Promise<void>;

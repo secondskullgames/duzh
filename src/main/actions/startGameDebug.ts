@@ -1,15 +1,11 @@
 import MapInstance from '../maps/MapInstance';
 import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
-import GameState from '../core/GameState';
-
-type Context = Readonly<{
-  state: GameState
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 export const startGameDebug = async (
   mapInstance: MapInstance,
-  { state }: Context
+  { state }: GlobalContext
 ) => {
   console.log('debug mode');
   state.setMap(mapInstance);

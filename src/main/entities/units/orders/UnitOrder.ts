@@ -1,17 +1,10 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
-import ImageFactory from '../../../graphics/images/ImageFactory';
-import Ticker from '../../../core/Ticker';
+import { GlobalContext } from '../../../core/GlobalContext';
 
-export type OrderContext = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
 
 export default interface UnitOrder {
   execute: (
     unit: Unit,
-    context: OrderContext
+    context: GlobalContext
   ) => Promise<void>
 };

@@ -1,16 +1,12 @@
 import type { Animation } from './Animation';
 import { sleep } from '../../utils/promises';
-import GameState from '../../core/GameState';
-
-type Context = Readonly<{
-  state: GameState
-}>;
+import { GlobalContext } from '../../core/GlobalContext';
 
 export const playAnimation = async (
   animation: Animation,
-  { state }: Context
+  context: GlobalContext
 ) => {
-  const map = state.getMap();
+  const map = context.state.getMap();
 
   for (let i = 0; i < animation.frames.length; i++) {
     const frame = animation.frames[i];

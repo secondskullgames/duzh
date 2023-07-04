@@ -4,9 +4,10 @@ import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const manaCost = 10;
 
@@ -17,7 +18,7 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
@@ -25,7 +26,7 @@ export const Dash: UnitAbility = {
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
-    const map = state.getMap();
+    const map = context.state.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
@@ -39,7 +40,7 @@ export const Dash: UnitAbility = {
         await moveUnit(
           unit,
           { x, y },
-          { state, imageFactory, ticker }
+          context
         );
         moved = true;
         await sleep(50);

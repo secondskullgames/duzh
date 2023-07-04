@@ -4,11 +4,12 @@ import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export const range = 3;
 const manaCost = 10;
@@ -21,11 +22,13 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
     }
+
+    const { state } = context;
 
     if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
       throw new Error(`Can't teleport more than ${range} units`);
@@ -49,7 +52,7 @@ export const Teleport: UnitAbility = {
       await moveUnit(
         unit,
         coordinates,
-        { state, imageFactory, ticker }
+        context
       );
       await sleep(100);
 

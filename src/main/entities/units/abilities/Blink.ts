@@ -3,9 +3,10 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const manaCost = 15;
 
@@ -16,7 +17,7 @@ export const Blink: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
@@ -24,6 +25,7 @@ export const Blink: UnitAbility = {
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
+    const { state } = context;
     const map = state.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
@@ -39,7 +41,7 @@ export const Blink: UnitAbility = {
       await moveUnit(
         unit,
         { x, y },
-        { state, imageFactory, ticker }
+        context
       );
       moved = true;
     }

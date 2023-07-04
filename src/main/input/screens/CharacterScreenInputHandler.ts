@@ -1,10 +1,12 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
+import { GlobalContext } from '../../core/GlobalContext';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, context: GlobalContext) => {
   const { key, modifiers } = command;
+  const { state } = context;
   switch (key) {
     case 'C':
       state.setScreen(GameScreen.GAME);

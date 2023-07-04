@@ -1,16 +1,10 @@
 import Music from '../sounds/Music';
-import GameState from '../core/GameState';
 import { addInitialState } from './addInitialState';
-import ImageFactory from '../graphics/images/ImageFactory';
+import { GlobalContext } from '../core/GlobalContext';
 
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory
-}>;
-
-export const showSplashScreen = async ({ state, imageFactory }: Context) => {
-  state.reset();
-  await addInitialState({ state, imageFactory })
+export const showSplashScreen = async (context: GlobalContext) => {
+  context.state.reset();
+  await addInitialState(context)
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
 };

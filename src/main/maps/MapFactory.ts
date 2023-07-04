@@ -9,35 +9,30 @@ import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
-import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { buildPredefinedMap } from './predefined/buildPredefinedMap';
+import { GlobalContext } from '../core/GlobalContext';
 
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory
-}>;
 
-const loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Context): Promise<MapInstance> => {
+const loadMap = async (mapSpec: MapSpec, context: GlobalContext): Promise<MapInstance> => {
   switch (mapSpec.type) {
     case 'generated': {
       const mapClass = await loadGeneratedMapModel(mapSpec.id);
-      const mapBuilder = await loadGeneratedMap(mapClass, { state, imageFactory });
-      return mapBuilder.build({ state, imageFactory });
+      const mapBuilder = await loadGeneratedMap(mapClass, context);
+      return mapBuilder.build(context);
     }
     case 'predefined': {
-      return loadPredefinedMap(mapSpec.id, { state, imageFactory });
+      return loadPredefinedMap(mapSpec.id, context);
     }
   }
 };
 
-const loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
+const loadGeneratedMap = async (mapClass: GeneratedMapModel, context: GlobalContext): Promise<GeneratedMapBuilder> => {
   const dungeonGenerator = getDungeonGenerator(mapClass.layout);
-  return dungeonGenerator.generateMap(mapClass, { imageFactory });
+  return dungeonGenerator.generateMap(mapClass, context);
 };
 
-const loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
-  return buildPredefinedMap(mapId, { state, imageFactory });
+const loadPredefinedMap = async (mapId: string, context: GlobalContext): Promise<MapInstance> => {
+  return buildPredefinedMap(mapId, context);
 };
 
 const getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {

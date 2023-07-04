@@ -1,14 +1,10 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
 import UnitOrder from '../orders/UnitOrder';
-
-export type UnitControllerContext = Readonly<{
-  state: GameState
-}>;
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export interface UnitController {
   issueOrder: (
     unit: Unit,
-    { state }: UnitControllerContext
+    context: GlobalContext
   ) => UnitOrder;
 }

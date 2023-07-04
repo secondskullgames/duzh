@@ -3,10 +3,11 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const manaCost = 15;
 const damageCoefficient = 0.5;
@@ -22,7 +23,7 @@ export const KnockbackAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
@@ -30,6 +31,7 @@ export const KnockbackAttack: UnitAbility = {
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
+    const { state } = context;
     const map = state.getMap();
     unit.setDirection(direction);
 
@@ -44,19 +46,19 @@ export const KnockbackAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        context
       );
 
       targetUnit.setStunned(1);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
-          await moveUnit(targetUnit, first, { state, imageFactory, ticker });
+          await moveUnit(targetUnit, first, context);
           await sleep(50);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, { state, imageFactory, ticker });
+              await moveUnit(targetUnit, second, context);
             }
           }
         }

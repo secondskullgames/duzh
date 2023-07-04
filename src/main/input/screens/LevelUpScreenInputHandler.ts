@@ -1,9 +1,11 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
 import { abilityForName } from '../../entities/units/abilities/abilityForName';
+import { GlobalContext } from '../../core/GlobalContext';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, context: GlobalContext) => {
+  const { state } = context;
   const playerUnit = state.getPlayerUnit();
 
   switch (command.key) {
@@ -29,8 +31,6 @@ const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: Sc
   }
 };
 
-const HelpScreenInputHandler: ScreenInputHandler = {
+export default {
   handleKeyCommand
-};
-
-export default HelpScreenInputHandler;
+} as ScreenInputHandler;

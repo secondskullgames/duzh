@@ -15,21 +15,22 @@ import { playAnimation } from '../graphics/animations/playAnimation';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
-import type { ItemProc, ItemProcContext } from './ItemProc';
+import type { ItemProc } from './ItemProc';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
+import { GlobalContext } from '../core/GlobalContext';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    context: GlobalContext
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
-    ticker.log(
+    context.ticker.log(
       `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
-      { turn: state.getTurn() }
+      context
     );
   };
 
@@ -44,13 +45,13 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    context: GlobalContext
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
-    ticker.log(
+    context.ticker.log(
       `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
-      { turn: state.getTurn() }
+      context
     );
   };
 
@@ -75,8 +76,9 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    context: GlobalContext
   ) => {
+    const { state } = context;
     const map = state.getMap();
 
     // TODO - optimization opportunity
@@ -92,9 +94,9 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const animation = await AnimationFactory.getFloorFireAnimation(
       unit,
       adjacentUnits,
-      { state, imageFactory }
+      context
     );
-    await playAnimation(animation, { state });
+    await playAnimation(animation, context);
 
     for (const adjacentUnit of adjacentUnits) {
       await dealDamage(damage, {
@@ -103,8 +105,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, imageFactory, ticker });
-        recordKill(unit, { state, ticker });
+        await die(adjacentUnit, context);
+        recordKill(unit, context);
       }
     }
   };
@@ -120,10 +122,10 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    context: GlobalContext
   ) => {
-    const equipment = await createEquipment(equipmentClass, { imageFactory });
-    return equipItem(item, equipment, unit, { state, ticker });
+    const equipment = await createEquipment(equipmentClass, context);
+    return equipItem(item, equipment, unit, context);
   };
 
   const model = await loadEquipmentModel(equipmentClass);
@@ -134,36 +136,28 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
   });
 };
 
-type CreateMapEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
 const createMapEquipment = async (
   equipmentClass: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapEquipmentContext
+  context: GlobalContext
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
   const sprite = await SpriteFactory.createStaticSprite(
     model.mapIcon,
     PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    context
   );
   const inventoryItem: InventoryItem = await createInventoryEquipment(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
-type CreateEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
-const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentContext): Promise<Equipment> => {
+const createEquipment = async (equipmentClass: string, context: GlobalContext): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(
     spriteName,
     PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    context
   );
 
   // TODO wtf is this
@@ -203,21 +197,17 @@ const createInventoryItem = async (
   }
 };
 
-type CreateMapItemContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapItemContext
+  context: GlobalContext
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
   const inventoryItem = await createInventoryItem(model);
   const sprite = await SpriteFactory.createStaticSprite(
     model.mapSprite,
     PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    context
   );
   return new MapItem({ coordinates, sprite, inventoryItem });
 };

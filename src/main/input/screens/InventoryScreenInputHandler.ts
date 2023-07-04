@@ -1,14 +1,16 @@
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
+import { GlobalContext } from '../../core/GlobalContext';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  context: GlobalContext
 ) => {
   const { key, modifiers } = command;
+  const { state } = context;
   const inventory = state.getPlayerUnit().getInventory();
 
   switch (key) {
@@ -28,7 +30,7 @@ const handleKeyCommand = async (
       if (modifiers.includes('ALT')) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ state, imageFactory, ticker });
+        await _handleEnter(context);
       }
       break;
     case 'TAB':
@@ -45,13 +47,14 @@ const handleKeyCommand = async (
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async (context: GlobalContext) => {
+  const { state } = context;
   const playerUnit = state.getPlayerUnit();
   const { selectedItem } = playerUnit.getInventory();
 
   if (selectedItem) {
     state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { state, imageFactory, ticker });
+    await useItem(playerUnit, selectedItem, context);
   }
 };
 

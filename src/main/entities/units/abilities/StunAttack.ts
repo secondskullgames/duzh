@@ -2,9 +2,10 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const manaCost = 20;
 const damageCoefficient = 0.5;
@@ -21,12 +22,13 @@ export const StunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
     }
 
+    const { state } = context;
     const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
@@ -43,7 +45,7 @@ export const StunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        context
       );
       targetUnit.setStunned(2);
     }

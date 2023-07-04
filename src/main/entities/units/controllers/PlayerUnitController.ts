@@ -1,7 +1,8 @@
 import Unit from '../Unit';
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import StayOrder from '../orders/StayOrder';
 import UnitOrder from '../orders/UnitOrder';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export default class PlayerUnitController implements UnitController {
   private queuedOrder: UnitOrder | null;
@@ -17,7 +18,7 @@ export default class PlayerUnitController implements UnitController {
   /**
    * @override UnitController#issueOrder
    */
-  issueOrder = (unit: Unit, {}: UnitControllerContext): UnitOrder => {
+  issueOrder = (unit: Unit, context: GlobalContext): UnitOrder => {
     if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;

@@ -1,10 +1,6 @@
 import Coordinates from '../geometry/Coordinates';
-import GameState from '../core/GameState';
 import GameObject from '../entities/objects/GameObject';
-
-type Context = Readonly<{
-  state: GameState
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 /**
  * TODO - should this be merged with {@link moveUnit}?
@@ -12,7 +8,7 @@ type Context = Readonly<{
 export const moveObject = async (
   object: GameObject,
   coordinates: Coordinates,
-  { state }: Context
+  { state }: GlobalContext
 ) => {
   const map = state.getMap();
   map.removeObject(object);

@@ -1,6 +1,7 @@
 import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
-import { ItemProc, ItemProcContext } from './ItemProc';
+import { ItemProc } from './ItemProc';
+import { GlobalContext } from '../core/GlobalContext';
 
 type Props = Readonly<{
   name: string,
@@ -11,18 +12,15 @@ type Props = Readonly<{
 export default class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
-  private readonly onUse: ItemProc;
+  private readonly _onUse: ItemProc;
 
   constructor({ name, category, onUse }: Props) {
     this.name = name;
     this.category = category;
-    this.onUse = onUse;
+    this._onUse = onUse;
   }
 
-  use = async (
-    unit: Unit,
-    context: ItemProcContext
-  ) => {
-    await this.onUse(this, unit, context);
+  use = async (unit: Unit, context: GlobalContext) => {
+    await this._onUse(this, unit, context);
   };
 }

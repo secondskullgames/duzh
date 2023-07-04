@@ -1,22 +1,15 @@
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import { EquipmentScript } from '../equipment/EquipmentScript';
-import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { getBonus } from '../maps/MapUtils';
-import Ticker from '../core/Ticker';
-
-type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 export const moveUnit = async (
   unit: Unit,
   coordinates: Coordinates,
-  { state, imageFactory, ticker }: Context
+  context: GlobalContext
 ) => {
+  const { state } = context;
   const map = state.getMap();
   map.removeUnit(unit);
 
@@ -29,13 +22,13 @@ export const moveUnit = async (
       await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
         nextCoordinates,
-        { state, imageFactory, ticker }
+        context
       );
     }
   }
 
   const bonus = getBonus(map, coordinates);
   if (bonus) {
-    await bonus.onUse(unit, { state, ticker });
+    await bonus.onUse(unit, context);
   }
 };

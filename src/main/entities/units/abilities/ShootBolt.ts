@@ -3,13 +3,14 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -23,8 +24,9 @@ export const ShootBolt: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    context: GlobalContext
   ) => {
+    const { state } = context;
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
     }
@@ -57,15 +59,13 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state, imageFactory }
+        context
       );
-      await playAnimation(boltAnimation, {
-        state
-      });
-      ticker.log(message, { turn: state.getTurn() });
+      await playAnimation(boltAnimation, context);
+      context.ticker.log(message, context);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, imageFactory, ticker });
+        await die(targetUnit, context);
       }
     } else {
       const boltAnimation = await AnimationFactory.getBoltAnimation(
@@ -73,11 +73,9 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state, imageFactory }
+        context
       );
-      await playAnimation(boltAnimation, {
-        state
-      });
+      await playAnimation(boltAnimation, context);
     }
   }
 }

@@ -1,5 +1,5 @@
 import Unit from '../Unit';
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { canMove } from './ControllerUtils';
@@ -9,6 +9,7 @@ import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
+import { GlobalContext } from '../../../core/GlobalContext';
 
 export default class ArcherController implements UnitController {
   /**
@@ -16,16 +17,14 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    context: GlobalContext
   ): UnitOrder => {
-    const behavior = this._getBehavior(unit, { state });
-    return behavior.issueOrder(unit, { state });
+    const behavior = this._getBehavior(unit, context);
+    return behavior.issueOrder(unit, context);
   }
 
-  private _getBehavior = (
-    unit: Unit,
-    { state }: UnitControllerContext
-  ): UnitController => {
+  private _getBehavior = (unit: Unit, context: GlobalContext): UnitController => {
+    const { state } = context;
     const playerUnit = state.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'ArcherController requires aiParams!');
@@ -33,7 +32,7 @@ export default class ArcherController implements UnitController {
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, context)) {
       return new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });

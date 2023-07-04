@@ -1,13 +1,9 @@
-import GameState from '../core/GameState';
-
-type Context = Readonly<{
-  state: GameState
-}>;
+import { GlobalContext } from '../core/GlobalContext';
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-export const updateRevealedTiles = ({ state }: Context) => {
+export const updateRevealedTiles = ({ state }: GlobalContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
 

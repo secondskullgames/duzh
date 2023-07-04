@@ -8,29 +8,25 @@ import Tile from './Tile';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
-import ImageFactory from '../graphics/images/ImageFactory';
+import { GlobalContext } from '../core/GlobalContext';
 
-type CreateTileContext = Readonly<{
+type CreateTileProps = Readonly<{
   tileType: TileType,
   tileSet: TileSet,
   coordinates: Coordinates
 }>;
 
 const createTile = (
-  { tileType, tileSet, coordinates }: CreateTileContext
+  { tileType, tileSet, coordinates }: CreateTileProps
 ): Tile => {
   const tilesOfType = checkNotNull(tileSet[tileType]);
   const sprite = randChoice(tilesOfType);
   return new Tile({tileType, sprite, coordinates});
 };
 
-type GetTileSetContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
 const getTileSet = async (
   id: string,
-  { imageFactory }: GetTileSetContext
+  context: GlobalContext
 ): Promise<TileSet> => {
   const model = await loadTileSetModel(id);
   const tileSet: {
@@ -46,7 +42,7 @@ const getTileSet = async (
         const tileSprite = await SpriteFactory.createTileSprite(
           `${model.path}/${filename}`,
           paletteSwaps,
-          {imageFactory}
+          context
         );
         tileSprites.push(tileSprite);
       }
