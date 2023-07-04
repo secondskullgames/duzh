@@ -4,8 +4,8 @@
   "type": "WIZARD",
   "sprite": "robed_wizard",
   "paletteSwaps": {},
-  "life": 300,
-  "mana": 25,
+  "life": 120,
+  "mana": 30,
   "strength": 8,
   "dexterity": 2,
   "aiParameters": {
