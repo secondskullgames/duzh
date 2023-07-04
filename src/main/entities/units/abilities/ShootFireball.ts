@@ -5,7 +5,6 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
-import { logMessage } from '../../../actions/logMessage';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
@@ -27,7 +26,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory }: UnitAbilityContext
+    { state, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -65,10 +64,10 @@ export const ShootFireball: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      logMessage(message, { state });
+      ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, imageFactory });
+        await die(targetUnit, { state, imageFactory, ticker });
       }
     } else {
       const fireballAnimation = await AnimationFactory.getFireballAnimation(

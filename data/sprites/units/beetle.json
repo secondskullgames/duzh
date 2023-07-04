@@ -1,0 +1,40 @@
+{
+  "name": "beetle",
+  "offsets": {
+    "dx": 0,
+    "dy": 0
+  },
+  "pattern": "${sprite}_${direction}_${number}",
+  "animations": {
+    "standing": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "walking": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "attacking": {
+      "frames": [{
+        "activity": "standing",
+        "number": "2"
+      }]
+    },
+    "damaged": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "burned": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    }
+  }
+}

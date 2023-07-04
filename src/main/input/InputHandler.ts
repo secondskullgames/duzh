@@ -1,7 +1,6 @@
 import GameState from '../core/GameState';
 import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
@@ -15,6 +14,7 @@ import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
 import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
+import Ticker from '../core/Ticker';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.CHARACTER]: CharacterScreenInputHandler,
@@ -28,30 +28,35 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
 };
 
-type Context = Readonly<{
+type Props = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
-let boundHandler: ((e: KeyboardEvent) => Promise<void>) | null = null;
-
 export default class InputHandler {
+  private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
+  private readonly ticker: Ticker;
+
   private busy: boolean;
   private eventTarget: HTMLElement | null;
+  private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
+  private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor() {
+  constructor({ state, imageFactory, ticker }: Props) {
+    this.state = state;
+    this.imageFactory = imageFactory;
+    this.ticker = ticker;
     this.busy = false;
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (
-    event: KeyboardEvent,
-    { state, imageFactory }: Context
-  ) => {
+  keyHandlerWrapper = async (event: KeyboardEvent) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, { state, imageFactory })
+        await this.keyHandler(event);
       } catch (e) {
         console.error(e);
         alert(e);
@@ -60,35 +65,41 @@ export default class InputHandler {
     }
   };
 
-  keyHandler = async (
-    e: KeyboardEvent,
-    { state, imageFactory }: Context
-  ) => {
-    if (e.repeat) {
-      return;
-    }
-
-    const command : (KeyCommand | null) = mapToCommand(e);
+  keyHandler = async (event: KeyboardEvent) => {
+    const command: (KeyCommand | null) = mapToCommand(event);
 
     if (!command) {
       return;
     }
 
-    e.preventDefault();
+    event.preventDefault();
 
-    const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory });
+    await this._handleKeyCommand(command);
   };
 
-  addEventListener = (target: HTMLElement, context: Context) => {
-    boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
-    target.addEventListener('keydown', boundHandler);
+  private _handleKeyCommand = async (command: KeyCommand) => {
+    const { state, imageFactory, ticker } = this;
+    const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
+    await handler.handleKeyCommand(command, { state, imageFactory, ticker });
+  };
+
+  addEventListener = (target: HTMLElement) => {
+    this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e);
+    this._onKeyUp = async (e: KeyboardEvent) => {
+      const command: (KeyCommand | null) = mapToCommand(e);
+    }
+
+    target.addEventListener('keydown', this._onKeyDown);
+    target.addEventListener('keyup', this._onKeyUp);
     this.eventTarget = target;
   };
 
   removeEventListener = () => {
-    if (boundHandler) {
-      this.eventTarget?.removeEventListener('keydown', boundHandler);
+    if (this._onKeyDown) {
+      this.eventTarget?.removeEventListener('keydown', this._onKeyDown);
+    }
+    if (this._onKeyUp) {
+      this.eventTarget?.removeEventListener('keyup', this._onKeyUp);
     }
   };
 }

@@ -4,18 +4,19 @@ import Coordinates from '../geometry/Coordinates';
 import { moveUnit } from './moveUnit';
 import GameState from '../core/GameState';
 import { moveObject } from './moveObject';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import ImageFactory from '../graphics/images/ImageFactory';
+import Ticker from '../core/Ticker';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 export const pushBlock = async (
   unit: Unit,
   block: Block,
-  { state, imageFactory }: Context
+  { state, imageFactory, ticker }: Context
 ) => {
   const map = state.getMap();
   const coordinates = block.getCoordinates();
@@ -24,6 +25,6 @@ export const pushBlock = async (
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
     await moveObject(block, nextCoordinates, { state });
-    await moveUnit(unit, coordinates, { state, imageFactory });
+    await moveUnit(unit, coordinates, { state, imageFactory, ticker });
   }
 };

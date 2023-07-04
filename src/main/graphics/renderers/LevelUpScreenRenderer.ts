@@ -1,7 +1,6 @@
 import { Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import ImageFactory from '../images/ImageFactory';
 import GameState from '../../core/GameState';
 import { FontName } from '../Fonts';

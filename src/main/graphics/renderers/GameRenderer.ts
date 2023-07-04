@@ -18,6 +18,7 @@ import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
+import Ticker from '../../core/Ticker';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -27,7 +28,8 @@ type Props = Readonly<{
   parent: Element,
   state: GameState,
   imageFactory: ImageFactory,
-  textRenderer: TextRenderer
+  textRenderer: TextRenderer,
+  ticker: Ticker
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -45,12 +47,14 @@ export default class GameRenderer implements Renderer {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
+  private readonly ticker: Ticker;
 
   constructor({
     parent,
     state,
     imageFactory,
-    textRenderer
+    textRenderer,
+    ticker
   }: Props) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
@@ -65,6 +69,7 @@ export default class GameRenderer implements Renderer {
     this.state = state;
     this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
+    this.ticker = ticker;
     this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
     this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
@@ -130,7 +135,7 @@ export default class GameRenderer implements Renderer {
 
     await this.gameScreenRenderer.render();
     await this.hudRenderer.render();
-    await this._renderMessages();
+    await this._renderTicker();
   };
 
   private _renderInventoryScreen = async () => {
@@ -145,9 +150,13 @@ export default class GameRenderer implements Renderer {
     await this.characterScreenRenderer.render();
   };
 
-  private _renderMessages = async () => {
-    const { bufferGraphics: graphics, state } = this;
-    const messages = state.getMessages().getRecentMessages(state.getTurn());
+  private _renderTicker = async () => {
+    const {
+      bufferGraphics: graphics,
+      state,
+      ticker
+    } = this;
+    const messages = ticker.getRecentMessages(state.getTurn());
 
     const left = 0;
     const top = 0;

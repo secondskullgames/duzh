@@ -4,25 +4,27 @@ import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
+import Ticker from '../core/Ticker';
 
 export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
 export type EquipmentScript = Readonly<{
   onAttack?: (
     equipment: Equipment,
     target: Coordinates,
-    { state }: Context
+    context: Context
   ) => Promise<void>;
 
   onMove?: (
     equipment: Equipment,
     target: Coordinates,
-    { state, imageFactory }: Context
+    context: Context
   ) => Promise<void>;
 }>;
 
@@ -30,7 +32,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, imageFactory }: Context
+    { state, imageFactory, ticker }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -45,7 +47,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        { state, imageFactory }
+        { state, imageFactory, ticker }
       );
     }
   }

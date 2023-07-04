@@ -95,7 +95,7 @@ export default class Unit implements Entity, Animatable {
   constructor(props: Props) {
     this.faction = props.faction;
     this.sprite = props.sprite;
-    this.sprite.target = this;
+    this.sprite.bind(this);
     this.inventory = new InventoryMap();
 
     this.coordinates = props.coordinates;
@@ -179,11 +179,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, imageFactory }: UpdateContext) => {
+  update = async ({ state, imageFactory, ticker }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });
-      await order.execute(this, { state, imageFactory });
+      await order.execute(this, { state, imageFactory, ticker });
     }
     this._endOfTurn();
   };

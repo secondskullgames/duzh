@@ -1,27 +1,28 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
-import GameRenderer from '../graphics/renderers/GameRenderer';
 import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
+import Ticker from '../core/Ticker';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  ticker: Ticker
 }>;
 
-export const playTurn = async ({ state, imageFactory }: Context) => {
+export const playTurn = async ({ state, imageFactory, ticker }: Context) => {
   const map = state.getMap();
 
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
     if (unit.getLife() > 0) {
-      await unit.update({ state, imageFactory });
+      await unit.update({ state, imageFactory, ticker });
     }
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state, imageFactory });
+    await object.update({ state, imageFactory, ticker });
   }
 
   updateRevealedTiles({ state });

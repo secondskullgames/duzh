@@ -1,6 +1,5 @@
 import { Pixel } from './Pixel';
 import { Graphics } from './Graphics';
-import Colors from './Colors';
 import { Image } from './images/Image';
 
 export enum Alignment {

@@ -23,16 +23,16 @@ import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory }: ScreenHandlerContext
+  { state, imageFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   if (_isArrowKey(key)) {
-    await _handleArrowKey(key as ArrowKey, modifiers, { state, imageFactory });
+    await _handleArrowKey(key as ArrowKey, modifiers, { state, imageFactory, ticker });
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, { state, imageFactory });
+    await _handleAbility(key as NumberKey, { state, imageFactory, ticker });
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn({ state, imageFactory });
+    await playTurn({ state, imageFactory, ticker });
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
@@ -45,7 +45,7 @@ const handleKeyCommand = async (
     if (modifiers.includes('ALT')) {
       await toggleFullScreen();
     } else {
-      await _handleEnter({ state, imageFactory });
+      await _handleEnter({ state, imageFactory, ticker });
     }
   } else if (key === 'F1') {
     state.setScreen(GameScreen.HELP);
@@ -60,7 +60,11 @@ const _isNumberKey = (key: Key) => {
   return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(key);
 };
 
-const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state, imageFactory }: ScreenHandlerContext) => {
+const _handleArrowKey = async (
+  key: ArrowKey,
+  modifiers: ModifierKey[],
+  { state, imageFactory, ticker }: ScreenHandlerContext
+) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
@@ -74,11 +78,11 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (unit, { state, imageFactory }) => {
+        execute: async (unit, { state, imageFactory, ticker }) => {
           await Strafe.use(
             playerUnit,
             coordinates,
-            { state, imageFactory }
+            { state, imageFactory, ticker }
           );
         }
       };
@@ -95,7 +99,7 @@ const _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[], { state,
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn({ state, imageFactory });
+    await playTurn({ state, imageFactory, ticker });
   }
 };
 
@@ -112,19 +116,19 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
   }
 };
 
-const _handleEnter = async ({ state, imageFactory }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {
-    pickupItem(playerUnit, item, { state });
+    pickupItem(playerUnit, item, { state, ticker });
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
     await loadNextMap({ state });
   }
-  await playTurn({ state, imageFactory });
+  await playTurn({ state, imageFactory, ticker });
 };
 
 export default {
