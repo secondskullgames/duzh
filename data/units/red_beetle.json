@@ -1,0 +1,23 @@
+{
+  "id": "red_beetle",
+  "name": "Red Beetle",
+  "type": "ANIMAL",
+  "sprite": "beetle",
+  "paletteSwaps": {},
+  "life": 50,
+  "mana": 0,
+  "strength": 6,
+  "dexterity": 2,
+  "aiParameters": {
+    "speed": 0.95,
+    "visionRange": 12,
+    "aggressiveness": 0.5,
+    "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 1,
+    "maxLevel": 99,
+    "points": 20
+  },
+  "abilities": ["ATTACK"]
+}
