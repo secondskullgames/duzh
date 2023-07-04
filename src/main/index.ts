@@ -8,13 +8,15 @@ import { showSplashScreen } from './actions/showSplashScreen';
 import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
+import { GlobalContext } from './core/GlobalContext';
 
 const main = async () => {
   const state = new GameState();
   const imageFactory = new ImageFactory();
+  const ticker = new Ticker();
+  const context: GlobalContext = { state, imageFactory, ticker };
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
-  const ticker = new Ticker();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state,
@@ -22,8 +24,8 @@ const main = async () => {
     textRenderer,
     ticker
   });
-  const inputHandler = new InputHandler();
-  inputHandler.addEventListener(renderer.getCanvas(), { state, imageFactory, ticker });
+  const inputHandler = new InputHandler({ context });
+  inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, imageFactory, ticker });
     debug.attachToWindow();
