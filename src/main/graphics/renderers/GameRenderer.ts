@@ -19,6 +19,7 @@ import { GameScreen } from '../../core/GameScreen';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
 import Ticker from '../../core/Ticker';
+import { Feature } from '../../utils/features';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title';
@@ -92,7 +93,9 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
-        await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+        if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
+          await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+        }
         break;
       case GameScreen.GAME:
         await this._renderGameScreen();

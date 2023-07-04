@@ -24,6 +24,7 @@ export default class GameState {
    * TODO this should really be somewhere more specialized
    */
   private selectedLevelUpScreenAbility: AbilityName | null;
+  private generatedEquipmentIds: string[];
 
   constructor() {
     this.screen = GameScreen.TITLE;
@@ -36,6 +37,7 @@ export default class GameState {
     this.turn = 1;
     this.queuedAbility = null;
     this.selectedLevelUpScreenAbility = null;
+    this.generatedEquipmentIds = [];
   }
 
   getScreen = (): GameScreen => this.screen;
@@ -113,7 +115,13 @@ export default class GameState {
       : -1;
     const length = learnableAbilities.length;
     this.selectedLevelUpScreenAbility = learnableAbilities[(index + length - 1) % length] ?? null;
-  }
+  };
+
+  getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;
+
+  recordEquipmentGenerated = (equipmentId: string) => {
+    this.generatedEquipmentIds.push(equipmentId);
+  };
 
   reset = () => {
     this.screen = GameScreen.TITLE;
@@ -125,5 +133,6 @@ export default class GameState {
     this.map = null;
     this.turn = 1;
     this.queuedAbility = null;
+    clear(this.generatedEquipmentIds);
   };
 }

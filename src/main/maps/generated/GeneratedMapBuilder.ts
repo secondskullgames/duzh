@@ -17,6 +17,7 @@ import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import { Feature } from '../../utils/features';
 
 type Props = Readonly<{
   level: number,
@@ -127,7 +128,7 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async ({ imageFactory }: Context): Promise<GameObject[]> => {
+  private _generateObjects = async ({ state, imageFactory }: Context): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
@@ -135,6 +136,12 @@ export default class GeneratedMapBuilder {
     let points = this.pointAllocation.equipment;
     while (points > 0) {
       const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
+        .filter(equipmentClass => {
+          if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
+            return !state.getGeneratedEquipmentIds().includes(equipmentClass.id);
+          }
+          return true;
+        })
         .filter(equipmentClass => equipmentClass.level !== null && equipmentClass.level <= this.level)
         .filter(equipmentClass => equipmentClass.points !== null && equipmentClass.points <= points);
 
@@ -143,6 +150,7 @@ export default class GeneratedMapBuilder {
       }
 
       const equipmentClass = randChoice(possibleEquipmentClasses);
+      console.log(`Adding equipment: ${equipmentClass.id}`);
       sortByReversed(
         candidateLocations,
         loc => Math.min(...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
@@ -156,6 +164,7 @@ export default class GeneratedMapBuilder {
       objects.push(item);
       points -= equipmentClass.points!;
       this.entityLocations.add(coordinates);
+      state.recordEquipmentGenerated(equipmentClass.id);
     }
 
     points = this.pointAllocation.items;

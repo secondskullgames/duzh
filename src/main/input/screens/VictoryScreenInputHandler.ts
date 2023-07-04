@@ -4,7 +4,10 @@ import { showSplashScreen } from '../../actions/showSplashScreen';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (
+  command: KeyCommand,
+  { state, imageFactory, ticker }: ScreenHandlerContext
+) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'ENTER':
@@ -13,7 +16,8 @@ const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: Sc
       } else {
         await showSplashScreen({
           state,
-          imageFactory
+          imageFactory,
+          ticker
         });
       }
       break;

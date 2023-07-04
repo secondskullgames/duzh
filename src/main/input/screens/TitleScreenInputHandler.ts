@@ -5,6 +5,7 @@ import { startGame } from '../../actions/startGame';
 import { type KeyCommand } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
+import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -16,8 +17,7 @@ const handleKeyCommand = async (
       if (modifiers.includes('ALT')) {
         await toggleFullScreen();
       } else {
-        state.setScreen(GameScreen.GAME);
-        if (modifiers.includes('SHIFT')) {
+        if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes('SHIFT')) {
           const mapInstance = await MapFactory.loadMap(
             { type: 'predefined', id: 'test' },
             { state, imageFactory }
@@ -27,6 +27,7 @@ const handleKeyCommand = async (
           await startGame({ state });
         }
       }
+      state.setScreen(GameScreen.GAME);
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);

@@ -6,7 +6,15 @@
     "BLACK": "FLOOR",
     "DARK_GRAY": "WALL",
     "LIGHT_GRAY": "WALL_TOP",
-    "GREEN": "STAIRS_DOWN"
+    "GREEN": "STAIRS_DOWN",
+    "DARK_GREEN": "FLOOR",
+    "DARK_BLUE": "FLOOR",
+    "DARK_RED": "FLOOR",
+    "DARK_YELLOW": "FLOOR",
+    "YELLOW": "FLOOR",
+    "DARK_BROWN": "FLOOR",
+    "CYAN": "FLOOR",
+    "BLUE": "FLOOR"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
