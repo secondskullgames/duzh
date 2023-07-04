@@ -23,7 +23,9 @@ export const Dash: UnitAbility = {
       throw new Error('Dash requires a target!');
     }
 
-    const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
+    let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
+    dx = Math.sign(dx);
+    dy = Math.sign(dy);
 
     const map = state.getMap();
 
@@ -42,7 +44,7 @@ export const Dash: UnitAbility = {
           { state, imageFactory, ticker }
         );
         moved = true;
-        await sleep(50);
+        await sleep(75);
       } else {
         break;
       }

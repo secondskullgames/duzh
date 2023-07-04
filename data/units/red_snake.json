@@ -9,7 +9,7 @@
     "YELLOW": "DARK_RED"
   },
   "life": 12,
-  "mana": 0,
+  "mana": 10,
   "strength": 6,
   "dexterity": 2,
   "aiParameters": {
@@ -23,5 +23,5 @@
     "maxLevel": 3,
     "points": 6
   },
-  "abilities": ["ATTACK"]
+  "abilities": ["ATTACK", "DASH"]
 }

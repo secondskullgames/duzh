@@ -24,6 +24,7 @@ export const addInitialState = async ({ state, imageFactory, ticker }: Context) 
       const equipment = await ItemFactory.createEquipment(equipmentId, { imageFactory });
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
+      ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
     }
   }
   state.setPlayerUnit(playerUnit);
