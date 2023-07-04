@@ -10,6 +10,8 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
+import { abilityForName } from '../abilities/abilityForName';
+import { Dash } from '../abilities/Dash';
 
 type Props = Readonly<{
   targetUnit: Unit
@@ -49,6 +51,13 @@ export default class AttackUnitBehavior implements UnitBehavior {
 
     if (path.length > 1) {
       const coordinates = path[1]; // first tile is the unit's own tile
+      const second = path[2]
+      if (this._canDash(unit, second, { state })) {
+        return new AbilityOrder({
+          ability: abilityForName(AbilityName.DASH),
+          coordinates: second
+        });
+      }
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null) {
         return new MoveOrder({ coordinates });
@@ -77,5 +86,29 @@ export default class AttackUnitBehavior implements UnitBehavior {
       return randChoice(possibleAbilities);
     }
     return NormalAttack;
+  }
+
+  private _canDash(
+    unit: Unit,
+    coordinates: Coordinates | undefined,
+    { state }: Pick<UnitBehaviorContext, 'state'>
+  ) {
+    if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
+      return false;
+    }
+
+    if (coordinates) {
+      const plusOne = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
+      const plusTwo = Coordinates.plus(plusOne, unit.getDirection());
+      const map = state.getMap();
+      return (
+        map.contains(plusOne)
+        && map.contains(plusTwo)
+        && !map.isBlocked(plusOne)
+        && !map.isBlocked(plusTwo)
+        && Coordinates.equals(coordinates, plusTwo)
+      );
+    }
+    return false;
   }
 }

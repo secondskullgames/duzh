@@ -9,7 +9,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "red_snake"
+    "BLUE": "red_beetle"
   },
   "itemColors": {
     "MAGENTA": "floor_fire_scroll"
