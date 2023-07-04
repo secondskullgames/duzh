@@ -3,7 +3,9 @@ export enum Feature {
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
-  DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT'
+  DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
+  DEBUG_LOGGING = 'DEBUG_LOGGING',
+  GOD_MODE = 'GOD_MODE'
 }
 
 export namespace Feature {
@@ -25,6 +27,10 @@ export namespace Feature {
         return false;
       case Feature.DEDUPLICATE_EQUIPMENT:
         return true;
+      case Feature.DEBUG_LOGGING:
+        return false;
+      case Feature.GOD_MODE:
+        return false;
     }
   };
 }

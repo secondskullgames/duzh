@@ -29,7 +29,7 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen({ state, imageFactory });
+  await showSplashScreen({ state, imageFactory, ticker });
   setInterval(async () => {
     await renderer.render()
   }, 20);
