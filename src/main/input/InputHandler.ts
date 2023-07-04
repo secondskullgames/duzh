@@ -66,10 +66,6 @@ export default class InputHandler {
   };
 
   keyHandler = async (event: KeyboardEvent) => {
-    if (event.repeat) {
-      return;
-    }
-
     const command: (KeyCommand | null) = mapToCommand(event);
 
     if (!command) {
