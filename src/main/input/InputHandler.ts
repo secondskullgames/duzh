@@ -34,11 +34,11 @@ type Context = Readonly<{
   ticker: Ticker
 }>;
 
-let boundHandler: ((e: KeyboardEvent) => Promise<void>) | null = null;
-
 export default class InputHandler {
   private busy: boolean;
   private eventTarget: HTMLElement | null;
+  private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
+  private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
   constructor() {
     this.busy = false;
@@ -49,7 +49,7 @@ export default class InputHandler {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, context)
+        await this.keyHandler(event, context);
       } catch (e) {
         console.error(e);
         alert(e);
@@ -59,34 +59,49 @@ export default class InputHandler {
   };
 
   keyHandler = async (
-    e: KeyboardEvent,
+    event: KeyboardEvent,
     { state, imageFactory, ticker }: Context
   ) => {
-    if (e.repeat) {
+    if (event.repeat) {
       return;
     }
 
-    const command : (KeyCommand | null) = mapToCommand(e);
+    const command: (KeyCommand | null) = mapToCommand(event);
 
     if (!command) {
       return;
     }
 
-    e.preventDefault();
+    event.preventDefault();
 
+    await this._handleKeyCommand(command, { state, imageFactory, ticker });
+  };
+
+  private _handleKeyCommand = async (
+    command: KeyCommand,
+    { state, imageFactory, ticker }: Context
+  ) => {
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, imageFactory, ticker });
   };
 
   addEventListener = (target: HTMLElement, context: Context) => {
-    boundHandler = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
-    target.addEventListener('keydown', boundHandler);
+    this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
+    this._onKeyUp = async (e: KeyboardEvent) => {
+      const command: (KeyCommand | null) = mapToCommand(e);
+    }
+
+    target.addEventListener('keydown', this._onKeyDown);
+    target.addEventListener('keyup', this._onKeyUp);
     this.eventTarget = target;
   };
 
   removeEventListener = () => {
-    if (boundHandler) {
-      this.eventTarget?.removeEventListener('keydown', boundHandler);
+    if (this._onKeyDown) {
+      this.eventTarget?.removeEventListener('keydown', this._onKeyDown);
+    }
+    if (this._onKeyUp) {
+      this.eventTarget?.removeEventListener('keyup', this._onKeyUp);
     }
   };
 }

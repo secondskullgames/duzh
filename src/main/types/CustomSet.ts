@@ -28,5 +28,10 @@ export class CustomSet<T> {
 
   includes = (t: T): boolean => this.set.has(this.serializer.serialize(t));
 
+  delete = (t: T) => {
+    const serialized = this.serializer.serialize(t);
+    this.set.delete(serialized);
+  };
+
   values = (): T[] => [...this.set.values()].map(this.serializer.deserialize);
 }
