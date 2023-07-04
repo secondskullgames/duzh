@@ -132,7 +132,7 @@ export default class MapInstance {
 
   isTileRevealed = (coordinates: Coordinates): boolean =>
     // @ts-ignore
-    window.jwb.debug.isMapRevealed()
+    window.jwb?.debug?.isMapRevealed()
       || !!this.revealedTiles.get(coordinates);
 
   revealTile = (coordinates: Coordinates) => {

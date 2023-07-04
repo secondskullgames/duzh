@@ -145,7 +145,7 @@ export default class GameScreenRenderer implements Renderer {
   private _isTileRevealed = (coordinates: Coordinates): boolean => {
     const map = this.state.getMap();
     // @ts-ignore
-    return window.jwb.debug.isMapRevealed() || map.isTileRevealed(coordinates);
+    return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates) => {
