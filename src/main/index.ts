@@ -22,8 +22,8 @@ const main = async () => {
     textRenderer,
     ticker
   });
-  const inputHandler = new InputHandler();
-  inputHandler.addEventListener(renderer.getCanvas(), { state, imageFactory, ticker });
+  const inputHandler = new InputHandler({ state, imageFactory, ticker });
+  inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, imageFactory, ticker });
     debug.attachToWindow();

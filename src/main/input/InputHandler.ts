@@ -28,28 +28,35 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.VICTORY]:   VictoryScreenInputHandler
 };
 
-type Context = Readonly<{
+type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
 export default class InputHandler {
+  private readonly state: GameState;
+  private readonly imageFactory: ImageFactory;
+  private readonly ticker: Ticker;
+
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor() {
+  constructor({ state, imageFactory, ticker }: Props) {
+    this.state = state;
+    this.imageFactory = imageFactory;
+    this.ticker = ticker;
     this.busy = false;
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (event: KeyboardEvent, context: Context) => {
+  keyHandlerWrapper = async (event: KeyboardEvent) => {
     if (!this.busy) {
       this.busy = true;
       try {
-        await this.keyHandler(event, context);
+        await this.keyHandler(event);
       } catch (e) {
         console.error(e);
         alert(e);
@@ -58,10 +65,7 @@ export default class InputHandler {
     }
   };
 
-  keyHandler = async (
-    event: KeyboardEvent,
-    { state, imageFactory, ticker }: Context
-  ) => {
+  keyHandler = async (event: KeyboardEvent) => {
     if (event.repeat) {
       return;
     }
@@ -74,19 +78,17 @@ export default class InputHandler {
 
     event.preventDefault();
 
-    await this._handleKeyCommand(command, { state, imageFactory, ticker });
+    await this._handleKeyCommand(command);
   };
 
-  private _handleKeyCommand = async (
-    command: KeyCommand,
-    { state, imageFactory, ticker }: Context
-  ) => {
+  private _handleKeyCommand = async (command: KeyCommand) => {
+    const { state, imageFactory, ticker } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
     await handler.handleKeyCommand(command, { state, imageFactory, ticker });
   };
 
-  addEventListener = (target: HTMLElement, context: Context) => {
-    this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e, context);
+  addEventListener = (target: HTMLElement) => {
+    this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e);
     this._onKeyUp = async (e: KeyboardEvent) => {
       const command: (KeyCommand | null) = mapToCommand(e);
     }
