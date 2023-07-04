@@ -16,7 +16,6 @@ const handleKeyCommand = async (
       if (modifiers.includes('ALT')) {
         await toggleFullScreen();
       } else {
-        state.setScreen(GameScreen.GAME);
         if (modifiers.includes('SHIFT')) {
           const mapInstance = await MapFactory.loadMap(
             { type: 'predefined', id: 'test' },
@@ -27,6 +26,7 @@ const handleKeyCommand = async (
           await startGame({ state });
         }
       }
+      state.setScreen(GameScreen.GAME);
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);

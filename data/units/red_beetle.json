@@ -11,13 +11,13 @@
   "aiParameters": {
     "speed": 0.97,
     "visionRange": 12,
-    "aggressiveness": 0.5,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 1,
+    "minLevel": 2,
     "maxLevel": 99,
-    "points": 20
+    "points": 25
   },
   "abilities": ["ATTACK"]
 }

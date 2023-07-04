@@ -1,6 +1,7 @@
 export enum Feature {
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
+  DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT'
 }
 
 export namespace Feature {
@@ -10,6 +11,8 @@ export namespace Feature {
         return !_isProduction();
       case Feature.LEVEL_UP_SCREEN:
         return false;
+      case Feature.DEDUPLICATE_EQUIPMENT:
+        return true;
     }
   };
 }
