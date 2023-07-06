@@ -15,7 +15,7 @@
     "PLAYER_FEET": "BLACK"
   },
   "life": 50,
-  "mana": 8,
+  "mana": 15,
   "strength": 2,
   "dexterity": 2,
   "equipment": [
@@ -24,7 +24,7 @@
     "iron_sword"
   ],
   "aiParameters": {
-    "speed": 0.99,
+    "speed": 0.98,
     "visionRange": 10,
     "aggressiveness": 0.7,
     "fleeThreshold": 0.1
@@ -34,5 +34,5 @@
     "maxLevel": 99,
     "points": 20
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK"]
+  "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"]
 }

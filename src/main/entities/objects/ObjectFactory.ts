@@ -87,7 +87,7 @@ const createHealthGlobe = async (
     { imageFactory }
   );
 
-  const lifeGained = 20;
+  const lifeGained = 10;
 
   const onUse = async (unit: Unit, { state, ticker }: OnUseContext) => {
     if (unit === state.getPlayerUnit()) {

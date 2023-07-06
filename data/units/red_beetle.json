@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "beetle",
   "paletteSwaps": {},
-  "life": 40,
+  "life": 30,
   "mana": 20,
   "strength": 5,
   "dexterity": 2,
