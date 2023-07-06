@@ -39,26 +39,26 @@ export default class MapFactory {
     switch (mapSpec.type) {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
-        const mapBuilder = await this.loadGeneratedMap(mapClass, { state, imageFactory });
+        const mapBuilder = await this._loadGeneratedMap(mapClass, { state, imageFactory });
         return mapBuilder.build({ state, imageFactory });
       }
       case 'predefined': {
-        return this.loadPredefinedMap(mapSpec.id, { state, imageFactory });
+        return this._loadPredefinedMap(mapSpec.id, { state, imageFactory });
       }
     }
   };
 
-  loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
+  private _loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
-    const dungeonGenerator = this.getDungeonGenerator(style.layout);
+    const dungeonGenerator = this._getDungeonGenerator(style.layout);
     return dungeonGenerator.generateMap(mapClass, style.tileSet, { imageFactory });
   };
 
-  loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
+  private _loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
     return buildPredefinedMap(mapId, { state, imageFactory });
   };
 
-  getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
+  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
