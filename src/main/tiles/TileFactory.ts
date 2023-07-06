@@ -57,7 +57,22 @@ const getTileSet = async (
   return tileSet as TileSet;
 };
 
+/**
+ * TODO hardcoding these
+ */
+const getTileSetNames = (): string[] => {
+  return [
+    'catacomb',
+    'catacomb_red',
+    'cave',
+    'dungeon_new',
+    'kroz',
+    'zzt'
+  ];
+};
+
 export default {
   getTileSet,
-  createTile
+  createTile,
+  getTileSetNames
 }

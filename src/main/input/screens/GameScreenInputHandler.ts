@@ -23,16 +23,18 @@ import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  context: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
+  const { state } = context;
+
   if (_isArrowKey(key)) {
-    await _handleArrowKey(key as ArrowKey, modifiers, { state, imageFactory, ticker });
+    await _handleArrowKey(key as ArrowKey, modifiers, context);
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, { state, imageFactory, ticker });
+    await _handleAbility(key as NumberKey, context);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn({ state, imageFactory, ticker });
+    await playTurn(context);
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
@@ -45,7 +47,7 @@ const handleKeyCommand = async (
     if (modifiers.includes('ALT')) {
       await toggleFullScreen();
     } else {
-      await _handleEnter({ state, imageFactory, ticker });
+      await _handleEnter(context);
     }
   } else if (key === 'F1') {
     state.setScreen(GameScreen.HELP);

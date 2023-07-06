@@ -14,15 +14,16 @@ abstract class AbstractMapGenerator {
   protected constructor() {}
 
   generateMap = async (
-    mapClass: GeneratedMapModel,
+    mapModel: GeneratedMapModel,
+    tileSetId: string,
     { imageFactory }: Context
   ): Promise<GeneratedMapBuilder> => {
-    const { width, height, levelNumber } = mapClass;
+    const { width, height, levelNumber } = mapModel;
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
     const tileSet = await TileFactory.getTileSet(
-      mapClass.tileSet,
+      tileSetId,
       { imageFactory }
     );
 
@@ -48,11 +49,11 @@ abstract class AbstractMapGenerator {
     }
 
     return new GeneratedMapBuilder({
-      level: mapClass.levelNumber,
-      width: mapClass.width,
-      height: mapClass.height,
+      level: mapModel.levelNumber,
+      width: mapModel.width,
+      height: mapModel.height,
       tiles,
-      pointAllocation: mapClass.pointAllocation
+      pointAllocation: mapModel.pointAllocation
     });
   };
 

@@ -9,7 +9,7 @@ import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory }: ScreenHandlerContext
+  { state, imageFactory, mapFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -18,7 +18,7 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes('SHIFT')) {
-          const mapInstance = await MapFactory.loadMap(
+          const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
             { state, imageFactory }
           );

@@ -11,10 +11,11 @@ import Ticker from '../core/Ticker';
 type Context = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
+  mapFactory: MapFactory,
   ticker: Ticker
 }>;
 
-export const addInitialState = async ({ state, imageFactory, ticker }: Context) => {
+export const addInitialState = async ({ state, imageFactory, mapFactory, ticker }: Context) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });
@@ -33,7 +34,7 @@ export const addInitialState = async ({ state, imageFactory, ticker }: Context) 
     `../../../data/maps.json`
     )).default as MapSpec[];
   const maps: MapSupplier[] = mapSpecs.map(spec => {
-    return () => MapFactory.loadMap(spec, {
+    return () => mapFactory.loadMap(spec, {
       state,
       imageFactory
     });

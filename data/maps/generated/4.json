@@ -1,6 +1,4 @@
 {
-  "layout": "PATH",
-  "tileSet": "dungeon_cga",
   "levelNumber": 4,
   "width": 34,
   "height": 26,
