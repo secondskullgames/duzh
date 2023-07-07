@@ -8,8 +8,8 @@ import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 15;
-const damageCoefficient = 0.5;
+const manaCost = 10;
+const damageCoefficient = 0.75;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;

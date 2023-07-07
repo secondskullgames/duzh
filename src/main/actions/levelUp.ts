@@ -7,7 +7,7 @@ import { AbilityName } from '../entities/units/abilities/AbilityName';
 import Ticker from '../core/Ticker';
 
 const lifePerLevel = 0;
-const manaPerLevel = 3;
+const manaPerLevel = 2;
 const damagePerLevel = 0;
 
 type Context = Readonly<{

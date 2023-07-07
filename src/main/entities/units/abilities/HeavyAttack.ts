@@ -10,7 +10,7 @@ const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
 }
 
-const manaCost = 15;
+const manaCost = 10;
 
 export const HeavyAttack: UnitAbility = {
   name: AbilityName.HEAVY_ATTACK,

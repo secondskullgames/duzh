@@ -21,6 +21,6 @@
   "strength": 4,
   "dexterity": 2,
   "life": 80,
-  "mana": 20,
+  "mana": 10,
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }
