@@ -1,5 +1,5 @@
 {
-  "path": "dungeon_new",
+  "path": "kroz",
   "tiles": {
     "FLOOR": ["floor"],
     "FLOOR_HALL": ["floor"],
@@ -9,5 +9,7 @@
     "STAIRS_DOWN": ["stairs_down2"],
     "NONE": ["wall_top"]
   },
-  "paletteSwaps": {}
+  "paletteSwaps": {
+    "DARK_BROWN": "DARK_GREEN"
+  }
 }

@@ -61,12 +61,17 @@ const getTileSet = async (
  * TODO hardcoding these
  */
 const getTileSetNames = (): string[] => {
+  if (true) return ['dungeon_cga_alt'];
   return [
     'catacomb',
     'catacomb_red',
     'cave',
-    'dungeon_new',
+    'dungeon',
+    'dungeon_cga',
+    'dungeon_cga_alt',
     'kroz',
+    'kroz_blue',
+    'kroz_green',
     'zzt'
   ];
 };

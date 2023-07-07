@@ -1,5 +1,5 @@
 {
-  "path": "cave",
+  "path": "dungeon_cga",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],
     "FLOOR_HALL": ["tile_floor", "tile_floor_2"],
@@ -8,5 +8,9 @@
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
     "NONE": ["tile_wall_top"]
+  },
+  "paletteSwaps": {
+    "CYAN": "TEAL",
+    "MAGENTA": "DARK_PURPLE"
   }
 }
