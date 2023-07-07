@@ -1,9 +1,9 @@
 {
   "levelNumber": 5,
   "width": 30,
-  "height": 22,
+  "height": 24,
   "pointAllocation": {
-    "enemies": 220,
+    "enemies": 200,
     "equipment": 150,
     "items": 70
   }
