@@ -65,13 +65,18 @@ const getTileSetNames = (): string[] => {
     'catacomb',
     'catacomb_red',
     'cave',
+    'cave_blue',
     'dungeon',
+    'dungeon_brown',
     'dungeon_cga',
     'dungeon_cga_alt',
+    'dungeon_green',
     'kroz',
-    'kroz_blue',
+    'kroz_teal',
     'kroz_green',
-    'zzt'
+    'kroz_yellow',
+    'zzt',
+    'zzt_alt'
   ];
 };
 
