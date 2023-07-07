@@ -14,6 +14,7 @@ type Context = Readonly<{
 
 export const showSplashScreen = async ({ state, mapFactory, imageFactory, ticker }: Context) => {
   state.reset();
+  ticker.clear();
   await addInitialState({ state, imageFactory, mapFactory, ticker })
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
