@@ -27,16 +27,14 @@ export default class WizardController implements UnitController {
 
     const distanceToPlayerUnit = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    const canTeleport = unit.getAbilities().find(ability => ability.name === AbilityName.TELEPORT)
-      && unit.getMana() >= Teleport.manaCost;
-    const canSummon = unit.getAbilities().find(ability => ability.name === AbilityName.TELEPORT)
-      && unit.getMana() >= Summon.manaCost;
+    const canTeleport = unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+    const canSummon = unit.hasAbility(AbilityName.SUMMON) && unit.getMana() >= Summon.manaCost;
 
-    if (canTeleport && distanceToPlayerUnit <= 3) {
+    if (canTeleport && distanceToPlayerUnit <= 2) {
       return new TeleportAwayOrder({ targetUnit: playerUnit });
     }
 
-    if (canSummon && distanceToPlayerUnit >= 3) {
+    if (canSummon) {
       const coordinates = Direction.values()
         .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
         .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
@@ -50,7 +48,6 @@ export default class WizardController implements UnitController {
 
     const behavior = randChoice([
       () => new AvoidUnitBehavior({ targetUnit: playerUnit }),
-      () => new AttackUnitBehavior({ targetUnit: playerUnit }),
       () => new WanderBehavior()
     ])();
     return behavior.issueOrder(unit, { state });
