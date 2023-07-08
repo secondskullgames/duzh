@@ -27,10 +27,9 @@ export default class AttackUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitBehaviorContext
+    { state, map }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
-    const map = state.getMap();
     const mapRect = map.getRect();
     const unblockedTiles: Coordinates[] = [];
 

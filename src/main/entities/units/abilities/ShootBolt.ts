@@ -23,7 +23,7 @@ export const ShootBolt: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
@@ -34,7 +34,6 @@ export const ShootBolt: UnitAbility = {
 
     // unit.spendMana(0); // TODO
 
-    const map = state.getMap();
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {

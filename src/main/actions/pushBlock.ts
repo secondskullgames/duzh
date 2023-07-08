@@ -25,7 +25,7 @@ export const pushBlock = async (
   const nextCoordinates = Coordinates.plus(coordinates, { dx, dy });
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
-    await moveObject(block, nextCoordinates, { state });
+    await moveObject(block, nextCoordinates, { map });
     await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
   }
 };

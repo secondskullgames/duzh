@@ -37,6 +37,6 @@ export const moveUnit = async (
 
   const bonus = getBonus(map, coordinates);
   if (bonus) {
-    await bonus.onUse(unit, { state, ticker });
+    await bonus.onUse(unit, { state, map, ticker });
   }
 };

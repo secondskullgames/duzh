@@ -23,7 +23,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitBehaviorContext
+    { state, map }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
 
@@ -39,7 +39,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       });
     }
 
-    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, { state });
+    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, { state, map });
   };
 
   private _canShoot = (
