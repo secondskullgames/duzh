@@ -18,6 +18,7 @@ import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
+import UnitType from '../../schemas/UnitType';
 
 /**
  * Regenerate this fraction of the unit's health each turn
@@ -42,6 +43,8 @@ const cumulativeKillsToNextLevel = [
   108 // 20
 ];
 
+let nextId: number = 0;
+
 type Props = Readonly<{
   name: string,
   faction: Faction,
@@ -54,6 +57,8 @@ type Props = Readonly<{
 }>;
 
 export default class Unit implements Entity, Animatable {
+  /** integer, starts at 0 */
+  private readonly id: number;
   private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
@@ -71,6 +76,8 @@ export default class Unit implements Entity, Animatable {
   private manaRemainder: number;
   private strength: number;
   private dexterity: number;
+  private readonly unitClass: string;
+  private readonly unitType: UnitType;
   private readonly controller: UnitController;
   private activity: Activity;
   private direction: Direction;
@@ -93,6 +100,7 @@ export default class Unit implements Entity, Animatable {
   private lifetimeStepsTaken: number;
 
   constructor(props: Props) {
+    this.id = nextId++;
     this.faction = props.faction;
     this.sprite = props.sprite;
     this.sprite.bind(this);
@@ -117,6 +125,8 @@ export default class Unit implements Entity, Animatable {
     this.manaRemainder = 0;
     this.strength = model.strength;
     this.dexterity = model.dexterity;
+    this.unitClass = model.id;
+    this.unitType = model.type;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
@@ -142,6 +152,7 @@ export default class Unit implements Entity, Animatable {
     }*/
   }
 
+  getId = (): number => this.id;
   getAiParameters = (): AIParameters | null => this.aiParameters;
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
@@ -311,6 +322,9 @@ export default class Unit implements Entity, Animatable {
    * @override {@link Entity#getType}
    */
   getType = (): EntityType => EntityType.UNIT;
+
+  getUnitClass = (): string => this.unitClass;
+  getUnitType = (): UnitType => this.unitType;
 
   incrementLevel = () => {
     this.level++;

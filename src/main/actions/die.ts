@@ -8,6 +8,7 @@ import ObjectFactory from '../entities/objects/ObjectFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
+import ItemFactory from '../items/ItemFactory';
 
 type Context = Readonly<{
   state: GameState,
@@ -37,6 +38,12 @@ export const die = async (
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
       const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { imageFactory })
       map.addObject(healthGlobe);
+    }
+
+    // TODO make this more systematic
+    if (unit.getUnitType() === 'WIZARD') {
+      const key = await ItemFactory.createMapItem('key', coordinates, { imageFactory });
+      map.addObject(key);
     }
   }
 };

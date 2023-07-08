@@ -11,7 +11,7 @@ import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
 
 export const range = 3;
-const manaCost = 10;
+const manaCost = 20;
 
 export const Teleport: UnitAbility = {
   name: AbilityName.TELEPORT,

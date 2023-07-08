@@ -8,7 +8,7 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { AbilityName } from './AbilityName';
 
-const manaCost = 15;
+const manaCost = 25;
 
 export const Summon: UnitAbility = {
   name: AbilityName.SUMMON,
