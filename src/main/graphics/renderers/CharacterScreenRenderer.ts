@@ -4,7 +4,7 @@ import Colors from '../Colors';
 import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -14,21 +14,15 @@ const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
 type Props = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
   textRenderer: TextRenderer,
   graphics: Graphics
 }>;
 
 export default class CharacterScreenRenderer implements Renderer {
-  private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
 
-  constructor({ state, imageFactory, textRenderer, graphics }: Props) {
-    this.state = state;
-    this.imageFactory = imageFactory;
+  constructor({ textRenderer, graphics }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
   }
@@ -36,8 +30,9 @@ export default class CharacterScreenRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async () => {
-    const { graphics, imageFactory } = this;
+  render = async (context: RenderContext) => {
+    const { graphics } = this;
+    const { imageFactory } = context;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -46,11 +41,12 @@ export default class CharacterScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    await this._renderStatistics();
+    await this._renderStatistics(context);
   }
 
-  private _renderStatistics = async () => {
-    const { graphics, state } = this;
+  private _renderStatistics = async (context: RenderContext) => {
+    const { graphics } = this;
+    const { state } = context;
     const playerUnit = state.getPlayerUnit();
     let top = 20;
     await this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);

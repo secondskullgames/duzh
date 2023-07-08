@@ -73,11 +73,11 @@ export default class GameRenderer implements Renderer {
     this.ticker = ticker;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
-    this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
-    this.mapScreenRenderer = new MapScreenRenderer({ state, graphics: bufferGraphics });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
-    this.helpScreenRenderer = new HelpScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
-    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
+    this.inventoryRenderer = new InventoryRenderer({ textRenderer, graphics: bufferGraphics });
+    this.mapScreenRenderer = new MapScreenRenderer({ graphics: bufferGraphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ textRenderer, graphics: bufferGraphics });
+    this.helpScreenRenderer = new HelpScreenRenderer({ textRenderer, graphics: bufferGraphics });
+    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ textRenderer, graphics: bufferGraphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -101,10 +101,10 @@ export default class GameRenderer implements Renderer {
         await this._renderGameScreen(context);
         break;
       case GameScreen.INVENTORY:
-        await this._renderInventoryScreen();
+        await this._renderInventoryScreen(context);
         break;
       case GameScreen.CHARACTER:
-        await this._renderCharacterScreen();
+        await this._renderCharacterScreen(context);
         break;
       case GameScreen.VICTORY:
         await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
@@ -113,13 +113,13 @@ export default class GameRenderer implements Renderer {
         await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
         break;
       case GameScreen.MAP:
-        await this._renderMapScreen();
+        await this._renderMapScreen(context);
         break;
       case GameScreen.HELP:
-        await this._renderHelpScreen();
+        await this._renderHelpScreen(context);
         break;
       case GameScreen.LEVEL_UP:
-        await this._renderLevelUpScreen();
+        await this._renderLevelUpScreen(context);
         break;
       default:
         // unreachable
@@ -141,16 +141,16 @@ export default class GameRenderer implements Renderer {
     await this._renderTicker();
   };
 
-  private _renderInventoryScreen = async () => {
-    await this.inventoryRenderer.render();
+  private _renderInventoryScreen = async (context: RenderContext) => {
+    await this.inventoryRenderer.render(context);
   };
 
-  private _renderMapScreen = async () => {
-    await this.mapScreenRenderer.render();
+  private _renderMapScreen = async (context: RenderContext) => {
+    await this.mapScreenRenderer.render(context);
   };
 
-  private _renderCharacterScreen = async () => {
-    await this.characterScreenRenderer.render();
+  private _renderCharacterScreen = async (context: RenderContext) => {
+    await this.characterScreenRenderer.render(context);
   };
 
   private _renderTicker = async () => {
@@ -177,12 +177,12 @@ export default class GameRenderer implements Renderer {
     await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };
 
-  private _renderHelpScreen = async () => {
-    await this.helpScreenRenderer.render();
+  private _renderHelpScreen = async (context: RenderContext) => {
+    await this.helpScreenRenderer.render(context);
   };
 
-  private _renderLevelUpScreen = async () => {
-    await this.levelUpScreenRenderer.render();
+  private _renderLevelUpScreen = async (context: RenderContext) => {
+    await this.levelUpScreenRenderer.render(context);
   };
 
   private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {

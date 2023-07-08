@@ -1,8 +1,6 @@
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import ImageFactory from '../images/ImageFactory';
-import GameState from '../../core/GameState';
 import { FontName } from '../Fonts';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
@@ -14,26 +12,20 @@ const BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
   graphics: Graphics,
-  imageFactory: ImageFactory,
-  state: GameState,
   textRenderer: TextRenderer
 }>;
 
 export default class LevelUpScreenRenderer implements Renderer {
   private readonly graphics: Graphics;
-  private readonly imageFactory: ImageFactory;
-  private readonly state: GameState;
   private readonly textRenderer: TextRenderer;
 
-  constructor({ graphics, imageFactory, state, textRenderer }: Props) {
+  constructor({ graphics, textRenderer }: Props) {
     this.graphics = graphics;
-    this.imageFactory = imageFactory;
-    this.state = state;
     this.textRenderer = textRenderer;
   }
 
-  render = async () => {
-    const { graphics, imageFactory, state } = this;
+  render = async ({ state, imageFactory }: RenderContext) => {
+    const { graphics } = this;
     const playerUnit = state.getPlayerUnit();
     const selectedAbility = state.getSelectedLevelUpScreenAbility();
 
