@@ -73,6 +73,7 @@ export default class GameState {
       const mapSupplier = this.mapSuppliers[this.mapIndex];
       const map = await mapSupplier();
       this.maps[mapIndex] = map;
+      this.map = map;
     }
     return this.maps[mapIndex];
   };
