@@ -11,7 +11,7 @@ import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 
-const manaCost = 3;
+const manaCost = 5;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
