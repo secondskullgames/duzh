@@ -1,9 +1,9 @@
 import Coordinates from '../geometry/Coordinates';
-import GameState from '../core/GameState';
 import GameObject from '../entities/objects/GameObject';
+import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState
+  map: MapInstance
 }>;
 
 /**
@@ -12,9 +12,8 @@ type Context = Readonly<{
 export const moveObject = async (
   object: GameObject,
   coordinates: Coordinates,
-  { state }: Context
+  { map }: Context
 ) => {
-  const map = state.getMap();
   map.removeObject(object);
 
   object.setCoordinates(coordinates);

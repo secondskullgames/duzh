@@ -26,10 +26,9 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitBehaviorContext
+    { map }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
-    const map = state.getMap();
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {

@@ -1,7 +1,7 @@
 import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
-import { checkNotNull, checkState } from '../utils/preconditions';
+import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import { GameScreen } from './GameScreen';
@@ -15,7 +15,7 @@ export default class GameState {
   private prevScreen: GameScreen | null;
   private playerUnit: Unit | null;
   private readonly mapSuppliers: MapSupplier[];
-  private readonly maps: MapInstance[];
+  private readonly maps: Record<number, MapInstance>;
   private mapIndex: number;
   private map: MapInstance | null;
   private turn: number;
@@ -24,7 +24,7 @@ export default class GameState {
    * TODO this should really be somewhere more specialized
    */
   private selectedLevelUpScreenAbility: AbilityName | null;
-  private generatedEquipmentIds: string[];
+  private readonly generatedEquipmentIds: string[];
 
   constructor() {
     this.screen = GameScreen.TITLE;
@@ -65,13 +65,16 @@ export default class GameState {
 
   hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
   getMapIndex = () => this.mapIndex;
-  loadNextMap = async (): Promise<MapInstance> => {
-    this.mapIndex++;
-    checkState(this.mapIndex < this.mapSuppliers.length);
-    const mapSupplier = this.mapSuppliers[this.mapIndex];
-    const map = await mapSupplier();
-    this.maps.push(map);
-    return map;
+
+  setMapIndex = async (mapIndex: number): Promise<MapInstance> => {
+    checkArgument(mapIndex >= 0 && mapIndex < this.mapSuppliers.length);
+    this.mapIndex = mapIndex;
+    if (!this.maps[mapIndex]) {
+      const mapSupplier = this.mapSuppliers[this.mapIndex];
+      const map = await mapSupplier();
+      this.maps[mapIndex] = map;
+    }
+    return this.maps[mapIndex];
   };
 
   addMaps = (suppliers: MapSupplier[]) => {
@@ -128,7 +131,9 @@ export default class GameState {
     this.prevScreen = null;
     this.playerUnit = null;
     clear(this.mapSuppliers);
-    clear(this.maps);
+    Object.keys(this.maps).forEach(key => {
+      delete this.maps[parseInt(key)];
+    });
     this.mapIndex = -1;
     this.map = null;
     this.turn = 1;

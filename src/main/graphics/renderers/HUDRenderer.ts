@@ -7,7 +7,7 @@ import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
@@ -28,37 +28,31 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
-  state: GameState,
   textRenderer: TextRenderer,
-  imageFactory: ImageFactory,
   graphics: Graphics
 }>;
 
 export default class HUDRenderer implements Renderer {
-  private readonly state: GameState;
   private readonly textRenderer: TextRenderer;
-  private readonly imageFactory: ImageFactory;
   private readonly graphics: Graphics;
 
-  constructor({ state, textRenderer, imageFactory, graphics }: Props) {
-    this.state = state;
+  constructor({ textRenderer, graphics }: Props) {
     this.textRenderer = textRenderer;
-    this.imageFactory = imageFactory;
     this.graphics = graphics;
   }
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async () => {
-    await this._renderFrame();
-    await this._renderLeftPanel();
-    await this._renderMiddlePanel();
-    await this._renderRightPanel();
+  render = async (context: RenderContext) => {
+    await this._renderFrame(context);
+    await this._renderLeftPanel(context);
+    await this._renderMiddlePanel(context);
+    await this._renderRightPanel(context);
   };
 
-  private _renderFrame = async () => {
-    const image = await this.imageFactory.getImage({
+  private _renderFrame = async ({ imageFactory }: RenderContext) => {
+    const image = await imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -68,8 +62,8 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+  private _renderLeftPanel = async ({ state }: RenderContext) => {
+    const playerUnit = state.getPlayerUnit();
 
     const lines = [
       playerUnit.getName(),
@@ -90,9 +84,10 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderMiddlePanel = async () => {
+  private _renderMiddlePanel = async (context: RenderContext) => {
+    const { state } = context;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
 
     let keyNumber = 1;
     const abilities = playerUnit.getAbilities();
@@ -101,7 +96,7 @@ export default class HUDRenderer implements Renderer {
       const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
       if (!getInnateAbilities().includes(ability.name)) {
-        await this._renderAbility(ability, { x: left, y: top });
+        await this._renderAbility(ability, { x: left, y: top }, context);
         await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
         await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
         keyNumber++;
@@ -109,8 +104,7 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async () => {
-    const { state } = this;
+  private _renderRightPanel = async ({ state }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
     const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
@@ -136,8 +130,11 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderAbility = async (ability: UnitAbility, topLeft: Pixel) => {
-    const { state } = this;
+  private _renderAbility = async (
+    ability: UnitAbility,
+    topLeft: Pixel,
+    { state, imageFactory }: RenderContext
+  ) => {
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
 
@@ -155,7 +152,7 @@ export default class HUDRenderer implements Renderer {
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
-      const icon = await this.imageFactory.getImage({
+      const icon = await imageFactory.getImage({
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });

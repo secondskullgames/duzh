@@ -33,7 +33,7 @@ const main = async () => {
   }
   await showSplashScreen({ state, mapFactory, imageFactory, ticker });
   setInterval(async () => {
-    await renderer.render()
+    await renderer.render({ state, imageFactory });
   }, 20);
 };
 

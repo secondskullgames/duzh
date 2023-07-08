@@ -2,34 +2,33 @@ import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
+import { checkNotNull } from '../../utils/preconditions';
 
 const backgroundColor = Color.fromHex('#404040');
 
 type Props = Readonly<{
-  state: GameState,
   graphics: Graphics
 }>;
 
 export default class MapScreenRenderer implements Renderer {
-  private readonly state: GameState;
   private readonly graphics: Graphics;
 
-  constructor({ state, graphics }: Props) {
-    this.state = state;
+  constructor({ graphics }: Props) {
     this.graphics = graphics;
   }
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async () => {
+  render = async (context: RenderContext) => {
     const { graphics } = this;
-    graphics.fill(backgroundColor);
+    const { state } = context;
+    const map = checkNotNull(state.getMap());
 
-    const map = this.state.getMap();
+    graphics.fill(backgroundColor);
     const cellDimension = Math.floor(Math.min(
       graphics.getWidth() / map.width,
       graphics.getHeight() / map.height
@@ -40,7 +39,7 @@ export default class MapScreenRenderer implements Renderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const color = this._getColor({ x, y })!;
+        const color = this._getColor({ x, y }, context);
         const rect = {
           left: x * cellDimension + left,
           top: y * cellDimension + top,
@@ -52,26 +51,26 @@ export default class MapScreenRenderer implements Renderer {
     }
   };
 
-  private _getColor = ({ x, y }: Coordinates): Color => {
-    const { state } = this;
+  private _getColor = (coordinates: Coordinates, context: RenderContext): Color => {
+    const { state } = context;
+    const map = checkNotNull(state.getMap());
     const playerUnit = state.getPlayerUnit();
-    const map = state.getMap();
 
-    if (Coordinates.equals(playerUnit.getCoordinates(), { x, y })) {
+    if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {
       return Colors.GREEN;
     }
 
-    if (map.isTileRevealed({ x, y })) {
-      const tileType = map.getTile({ x, y }).getTileType();
+    if (map.isTileRevealed(coordinates)) {
+      const tileType = map.getTile(coordinates).getTileType();
       switch (tileType) {
         case 'STAIRS_DOWN':
           return Colors.BLUE;
         case 'FLOOR':
         case 'FLOOR_HALL':
-          const unit = map.getUnit({ x, y });
+          const unit = map.getUnit(coordinates);
           if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
             return Colors.RED;
-          } else if (getItem(map, { x, y })) {
+          } else if (getItem(map, coordinates)) {
             return Colors.YELLOW;
           }
           return Colors.LIGHT_GRAY;

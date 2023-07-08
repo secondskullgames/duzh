@@ -193,7 +193,7 @@ export default class Unit implements Entity, Animatable {
   update = async ({ state, map, imageFactory, ticker }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
-      const order = this.controller.issueOrder(this, { state });
+      const order = this.controller.issueOrder(this, { state, map });
       await order.execute(this, { state, map, imageFactory, ticker });
     }
     this._endOfTurn();

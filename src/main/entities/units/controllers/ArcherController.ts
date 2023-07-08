@@ -16,15 +16,15 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state, map }: UnitControllerContext
   ): UnitOrder => {
-    const behavior = this._getBehavior(unit, { state });
-    return behavior.issueOrder(unit, { state });
+    const behavior = this._getBehavior(unit, { state, map });
+    return behavior.issueOrder(unit, { state, map });
   }
 
   private _getBehavior = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state, map }: UnitControllerContext
   ): UnitController => {
     const playerUnit = state.getPlayerUnit();
 
