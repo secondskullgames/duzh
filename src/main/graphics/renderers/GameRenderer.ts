@@ -10,7 +10,7 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MapScreenRenderer from './MapScreenRenderer';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { createCanvas } from '../../utils/dom';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import { Graphics } from '../Graphics';
@@ -71,8 +71,8 @@ export default class GameRenderer implements Renderer {
     this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
     this.ticker = ticker;
-    this.gameScreenRenderer = new GameScreenRenderer({ state, imageFactory, graphics: bufferGraphics });
-    this.hudRenderer = new HUDRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
+    this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
+    this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
     this.inventoryRenderer = new InventoryRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
     this.mapScreenRenderer = new MapScreenRenderer({ state, graphics: bufferGraphics });
     this.characterScreenRenderer = new CharacterScreenRenderer({ state, textRenderer, imageFactory, graphics: bufferGraphics });
@@ -87,7 +87,7 @@ export default class GameRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async () => {
+  render = async (context: RenderContext) => {
     const screen = this.state.getScreen();
 
     switch (screen) {
@@ -98,7 +98,7 @@ export default class GameRenderer implements Renderer {
         }
         break;
       case GameScreen.GAME:
-        await this._renderGameScreen();
+        await this._renderGameScreen(context);
         break;
       case GameScreen.INVENTORY:
         await this._renderInventoryScreen();
@@ -132,12 +132,12 @@ export default class GameRenderer implements Renderer {
     });
   };
 
-  private _renderGameScreen = async () => {
+  private _renderGameScreen = async (context: RenderContext) => {
     const { bufferGraphics: graphics, canvas } = this;
     graphics.fillRect({ left: 0, top: 0, width: canvas.width, height: canvas.height }, Colors.BLACK);
 
-    await this.gameScreenRenderer.render();
-    await this.hudRenderer.render();
+    await this.gameScreenRenderer.render(context);
+    await this.hudRenderer.render(context);
     await this._renderTicker();
   };
 
