@@ -17,7 +17,11 @@ export type Key =
   | 'M'
   | 'OTHER';
 
-export type ModifierKey = 'ALT' | 'CTRL' | 'SHIFT';
+export enum ModifierKey {
+  ALT = 'ALT',
+  CTRL = 'CTRL',
+  SHIFT ='SHIFT'
+}
 
 export type KeyCommand = Readonly<{
   key: Key,

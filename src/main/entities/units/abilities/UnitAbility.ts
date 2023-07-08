@@ -4,9 +4,11 @@ import GameState from '../../../core/GameState';
 import ImageFactory from '../../../graphics/images/ImageFactory';
 import { AbilityName } from './AbilityName';
 import Ticker from '../../../core/Ticker';
+import MapInstance from '../../../maps/MapInstance';
 
 export type UnitAbilityContext = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;

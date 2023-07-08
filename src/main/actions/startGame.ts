@@ -12,7 +12,7 @@ export const startGame = async ({ state }: Context) => {
   await loadNextMap({ state });
   Music.stop();
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  updateRevealedTiles({ state });
+  updateRevealedTiles({ state, map: state.getMap() });
   const t2 = new Date().getTime();
   console.debug(`Loaded level in ${t2 - t1} ms`);
 };

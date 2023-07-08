@@ -19,10 +19,9 @@ export default class TeleportAwayOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state, imageFactory, ticker }: OrderContext
+    { state, map, imageFactory, ticker }: OrderContext
   ) => {
     const { targetUnit } = this;
-    const map = state.getMap();
     const tiles: Coordinates[] = [];
 
     for (let y = 0; y < map.height; y++) {
@@ -44,7 +43,7 @@ export default class TeleportAwayOrder implements UnitOrder {
       await Teleport.use(
         unit,
         coordinates,
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
     }
   };

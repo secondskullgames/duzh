@@ -179,11 +179,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, imageFactory, ticker }: UpdateContext) => {
+  update = async ({ state, map, imageFactory, ticker }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state });
-      await order.execute(this, { state, imageFactory, ticker });
+      await order.execute(this, { state, map, imageFactory, ticker });
     }
     this._endOfTurn();
   };

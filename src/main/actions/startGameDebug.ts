@@ -16,5 +16,5 @@ export const startGameDebug = async (
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  updateRevealedTiles({ state });
+  updateRevealedTiles({ state, map: mapInstance });
 };
