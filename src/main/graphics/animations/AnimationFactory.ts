@@ -45,7 +45,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
-        postDelay: 100
+        postDelay: 50
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });
@@ -114,7 +114,7 @@ export default {
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
         projectiles: [projectile],
-        postDelay: 100
+        postDelay: 50
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.STANDING });

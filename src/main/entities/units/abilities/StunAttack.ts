@@ -7,7 +7,7 @@ import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
 
 const manaCost = 10;
-const damageCoefficient = 0.75;
+const damageCoefficient = 1;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`;
