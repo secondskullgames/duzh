@@ -1,8 +1,6 @@
 {
-  "layout": "ROOMS_AND_CORRIDORS",
-  "tileSet": "dungeon",
   "levelNumber": 1,
-  "width": 30,
+  "width": 24,
   "height": 20,
   "pointAllocation": {
     "enemies": 40,

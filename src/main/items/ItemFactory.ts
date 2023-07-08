@@ -75,10 +75,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    { state, map, imageFactory, ticker }: ItemProcContext
   ) => {
-    const map = state.getMap();
-
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits()
       .filter(u => {
@@ -92,9 +90,9 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const animation = await AnimationFactory.getFloorFireAnimation(
       unit,
       adjacentUnits,
-      { state, imageFactory }
+      { map, imageFactory }
     );
-    await playAnimation(animation, { state });
+    await playAnimation(animation, { map });
 
     for (const adjacentUnit of adjacentUnits) {
       await dealDamage(damage, {
@@ -103,7 +101,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, imageFactory, ticker });
+        await die(adjacentUnit, { state, map, imageFactory, ticker });
         recordKill(unit, { state, ticker });
       }
     }

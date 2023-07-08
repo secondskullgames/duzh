@@ -6,7 +6,7 @@ import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
@@ -20,21 +20,15 @@ const INVENTORY_MARGIN = 10;
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
   textRenderer: TextRenderer,
   graphics: Graphics
 }>;
 
 export default class InventoryRenderer implements Renderer {
-  private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
 
-  constructor({ state, imageFactory, textRenderer, graphics }: Props) {
-    this.state = state;
-    this.imageFactory = imageFactory;
+  constructor({ textRenderer, graphics }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
   }
@@ -42,12 +36,12 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+  render = async ({ state, imageFactory }: RenderContext) => {
+    const playerUnit = state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
     const { graphics } = this;
 
-    const image = await this.imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    const image = await imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     // TODO: need a 640x360 version of this image
     graphics.drawScaledImage(image, {
       left: INVENTORY_LEFT,

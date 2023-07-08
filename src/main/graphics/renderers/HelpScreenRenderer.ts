@@ -2,35 +2,27 @@ import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import GameState from '../../core/GameState';
-import ImageFactory from '../images/ImageFactory';
 import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
 
 type Props = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
   textRenderer: TextRenderer,
   graphics: Graphics
 }>;
 
 export default class HelpScreenRenderer implements Renderer {
-  private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
 
-  constructor({ state, imageFactory, textRenderer, graphics }: Props) {
-    this.state = state;
-    this.imageFactory = imageFactory;
+  constructor({ textRenderer, graphics }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
   }
 
-  render = async () => {
+  render = async ({ state, imageFactory }: RenderContext) => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;

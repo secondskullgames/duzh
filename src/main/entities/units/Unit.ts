@@ -18,15 +18,12 @@ import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
+import UnitType from '../../schemas/UnitType';
 
 /**
- * Regenerate this fraction of the unit's health each turn
+ * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 2;
-/**
- * Only regenerate life if the unit's life is less than this (ratio of their total health)
- */
-const LIFE_REGEN_THRESHOLD = 1;
+const LIFE_PER_TURN = 1 / 2;
 const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
@@ -42,6 +39,8 @@ const cumulativeKillsToNextLevel = [
   108 // 20
 ];
 
+let nextId: number = 0;
+
 type Props = Readonly<{
   name: string,
   faction: Faction,
@@ -54,6 +53,8 @@ type Props = Readonly<{
 }>;
 
 export default class Unit implements Entity, Animatable {
+  /** integer, starts at 0 */
+  private readonly id: number;
   private readonly faction: Faction;
   private readonly sprite: DynamicSprite<Unit>;
   private readonly inventory: InventoryMap;
@@ -71,6 +72,8 @@ export default class Unit implements Entity, Animatable {
   private manaRemainder: number;
   private strength: number;
   private dexterity: number;
+  private readonly unitClass: string;
+  private readonly unitType: UnitType;
   private readonly controller: UnitController;
   private activity: Activity;
   private direction: Direction;
@@ -93,6 +96,7 @@ export default class Unit implements Entity, Animatable {
   private lifetimeStepsTaken: number;
 
   constructor(props: Props) {
+    this.id = nextId++;
     this.faction = props.faction;
     this.sprite = props.sprite;
     this.sprite.bind(this);
@@ -117,6 +121,8 @@ export default class Unit implements Entity, Animatable {
     this.manaRemainder = 0;
     this.strength = model.strength;
     this.dexterity = model.dexterity;
+    this.unitClass = model.id;
+    this.unitType = model.type;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.S;
@@ -142,6 +148,7 @@ export default class Unit implements Entity, Animatable {
     }*/
   }
 
+  getId = (): number => this.id;
   getAiParameters = (): AIParameters | null => this.aiParameters;
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
@@ -179,11 +186,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, imageFactory, ticker }: UpdateContext) => {
+  update = async ({ state, map, imageFactory, ticker }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
-      const order = this.controller.issueOrder(this, { state });
-      await order.execute(this, { state, imageFactory, ticker });
+      const order = this.controller.issueOrder(this, { state, map });
+      await order.execute(this, { state, map, imageFactory, ticker });
     }
     this._endOfTurn();
   };
@@ -312,6 +319,9 @@ export default class Unit implements Entity, Animatable {
    */
   getType = (): EntityType => EntityType.UNIT;
 
+  getUnitClass = (): string => this.unitClass;
+  getUnitType = (): UnitType => this.unitType;
+
   incrementLevel = () => {
     this.level++;
   };
@@ -324,7 +334,7 @@ export default class Unit implements Entity, Animatable {
     this.maxMana += amount;
   };
 
-  incrementDamage = (amount: number) => {
+  increaseStrength = (amount: number) => {
     this.strength += amount;
   };
 
@@ -359,13 +369,10 @@ export default class Unit implements Entity, Animatable {
 
   private _upkeep = () => {
     // life regeneration
-    if (this.life < this.maxLife * LIFE_REGEN_THRESHOLD) {
-      const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
-      this.lifeRemainder += lifePerTurn;
-      const deltaLife = Math.floor(this.lifeRemainder);
-      this.lifeRemainder -= deltaLife;
-      this.life = Math.min(this.life + deltaLife, this.maxLife);
-    }
+    this.lifeRemainder += LIFE_PER_TURN;
+    const deltaLife = Math.floor(this.lifeRemainder);
+    this.lifeRemainder -= deltaLife;
+    this.life = Math.min(this.life + deltaLife, this.maxLife);
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {

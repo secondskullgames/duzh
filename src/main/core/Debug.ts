@@ -38,6 +38,7 @@ export class Debug {
     const playerUnit = this.state.getPlayerUnit();
     await die(playerUnit, {
       state: this.state,
+      map: this.state.getMap(),
       imageFactory: this.imageFactory,
       ticker: this.ticker
     });
@@ -67,7 +68,8 @@ export class Debug {
     window.jwb.debug = {
       ...this,
       killEnemies: () => killEnemies({
-        state: this.state
+        state: this.state,
+        map: this.state.getMap()
       }),
       nextLevel: async () => {
         await loadNextMap({

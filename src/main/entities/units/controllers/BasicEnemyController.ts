@@ -16,7 +16,7 @@ export default class BasicEnemyController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { state, map }: UnitControllerContext
   ): UnitOrder => {
     const playerUnit = state.getPlayerUnit();
 
@@ -29,24 +29,24 @@ export default class BasicEnemyController implements UnitController {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit })
-        .issueOrder(unit, { state });
+        .issueOrder(unit, { state, map });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { state });
+          .issueOrder(unit, { state, map });
       } else if (randChance(aggressiveness)) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { state });
+          .issueOrder(unit, { state, map });
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { state });
+          .issueOrder(unit, { state, map });
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { state });
+          .issueOrder(unit, { state, map });
       }
     }
   }

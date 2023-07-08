@@ -11,7 +11,7 @@ import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
 
 export const range = 3;
-const manaCost = 10;
+const manaCost = 20;
 
 export const Teleport: UnitAbility = {
   name: AbilityName.TELEPORT,
@@ -21,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -31,7 +31,6 @@ export const Teleport: UnitAbility = {
       throw new Error(`Can't teleport more than ${range} units`);
     }
 
-    const map = state.getMap();
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
@@ -49,7 +48,7 @@ export const Teleport: UnitAbility = {
       await moveUnit(
         unit,
         coordinates,
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       await sleep(100);
 

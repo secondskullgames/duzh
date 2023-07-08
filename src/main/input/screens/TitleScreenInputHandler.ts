@@ -1,24 +1,23 @@
 import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
-import MapFactory from '../../maps/MapFactory';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
-import { type KeyCommand } from '../inputTypes';
+import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory }: ScreenHandlerContext
+  { state, imageFactory, mapFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'ENTER':
-      if (modifiers.includes('ALT')) {
+      if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes('SHIFT')) {
-          const mapInstance = await MapFactory.loadMap(
+        if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
+          const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
             { state, imageFactory }
           );

@@ -1,11 +1,9 @@
 {
-  "layout": "PATH",
-  "tileSet": "dungeon_cga",
   "levelNumber": 4,
-  "width": 34,
-  "height": 26,
+  "width": 28,
+  "height": 24,
   "pointAllocation": {
-    "enemies": 210,
+    "enemies": 160,
     "equipment": 110,
     "items": 60
   }

@@ -83,14 +83,7 @@ const _loadTiles = async (
           coordinates: { x, y }
         });
       } else {
-        console.log(`unrecognized color ${color.hex}`);
-        if (model.defaultTile) {
-          tiles[y][x] = TileFactory.createTile({
-            tileType: model.defaultTile,
-            tileSet,
-            coordinates: { x, y }
-          });
-        }
+        throw new Error(`unrecognized color ${color.hex} at ${JSON.stringify({ x, y })}`);
       }
     }
   }
@@ -104,8 +97,6 @@ const _loadUnits = async (
   { state, imageFactory }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
-  let id = 1;
-
   const enemyColors = _toHexColors(model.enemyColors);
   let addedStartingPoint = false;
 
@@ -133,7 +124,7 @@ const _loadUnits = async (
             const controller = _getEnemyController(enemyUnitModel);
             const unit = await UnitFactory.createUnit(
               {
-                name: `${enemyUnitModel.name}_${id++}`,
+                name: enemyUnitModel.name,
                 unitClass: enemyUnitClass,
                 faction: Faction.ENEMY,
                 controller,
@@ -155,7 +146,7 @@ const _loadUnits = async (
 const _loadObjects = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, imageFactory }: Context
+  { imageFactory }: Context
 ): Promise<GameObject[]> => {
   const objects: GameObject[] = [];
 

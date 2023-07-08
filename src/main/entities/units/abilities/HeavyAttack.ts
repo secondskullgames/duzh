@@ -10,7 +10,7 @@ const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
 }
 
-const manaCost = 15;
+const manaCost = 10;
 
 export const HeavyAttack: UnitAbility = {
   name: AbilityName.HEAVY_ATTACK,
@@ -19,13 +19,11 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
     }
-
-    const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -41,7 +39,7 @@ export const HeavyAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
     }
   }

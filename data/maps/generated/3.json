@@ -1,11 +1,9 @@
 {
-  "layout": "BLOB",
-  "tileSet": "cave",
   "levelNumber": 3,
-  "width": 32,
-  "height": 24,
+  "width": 26,
+  "height": 22,
   "pointAllocation": {
-    "enemies": 140,
+    "enemies": 120,
     "equipment": 75,
     "items": 50
   }

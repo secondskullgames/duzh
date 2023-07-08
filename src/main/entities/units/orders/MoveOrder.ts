@@ -25,10 +25,9 @@ export class MoveOrder implements UnitOrder {
    */
   execute = async (
     unit: Unit,
-    { state, imageFactory, ticker }: OrderContext
+    { state, map, imageFactory, ticker }: OrderContext
   ): Promise<void> => {
     const { coordinates } = this;
-    const map = state.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -36,7 +35,7 @@ export class MoveOrder implements UnitOrder {
       // do nothing
       return;
     } else if (!map.isBlocked(coordinates)) {
-      await walk(unit, direction, { state, imageFactory, ticker });
+      await walk(unit, direction, { state, map, imageFactory, ticker });
       return;
     } else {
       const door = getDoor(map, coordinates);
@@ -51,7 +50,7 @@ export class MoveOrder implements UnitOrder {
         .find(block => block.isMovable());
 
       if (block) {
-        await pushBlock(unit, block, { state, imageFactory, ticker });
+        await pushBlock(unit, block, { state, map, imageFactory, ticker });
         return;
       }
     }

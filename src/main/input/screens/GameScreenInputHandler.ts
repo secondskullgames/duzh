@@ -12,7 +12,7 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
+import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
@@ -20,19 +20,23 @@ import { GameScreen } from '../../core/GameScreen';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
+import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  context: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
+  const { state } = context;
+  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+
   if (_isArrowKey(key)) {
-    await _handleArrowKey(key as ArrowKey, modifiers, { state, imageFactory, ticker });
+    await _handleArrowKey(key as ArrowKey, modifiers, context);
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, { state, imageFactory, ticker });
+    await _handleAbility(key as NumberKey, context);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn({ state, imageFactory, ticker });
+    await playTurn({ ...context, map });
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
@@ -42,10 +46,10 @@ const handleKeyCommand = async (
   } else if (key === 'C') {
     state.setScreen(GameScreen.CHARACTER);
   } else if (key === 'ENTER') {
-    if (modifiers.includes('ALT')) {
+    if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
     } else {
-      await _handleEnter({ state, imageFactory, ticker });
+      await _handleEnter(context);
     }
   } else if (key === 'F1') {
     state.setScreen(GameScreen.HELP);
@@ -67,26 +71,25 @@ const _handleArrowKey = async (
 ) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
+  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
-  if (modifiers.includes('SHIFT')) {
+  if (modifiers.includes(ModifierKey.SHIFT)) {
     if (playerUnit.getEquipment().getBySlot('RANGED_WEAPON') && playerUnit.canSpendMana(ShootArrow.manaCost)) {
       order = new AbilityOrder({ coordinates, ability: ShootArrow });
     }
-  } else if (modifiers.includes('ALT')) {
+  } else if (modifiers.includes(ModifierKey.ALT)) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (unit, { state, imageFactory, ticker }) => {
-          await Strafe.use(
-            playerUnit,
-            coordinates,
-            { state, imageFactory, ticker }
-          );
+        execute: async (unit, context) => {
+          await Strafe.use(playerUnit, coordinates, context);
         }
       };
     }
+  } else if (modifiers.includes(ModifierKey.CTRL) && Feature.isEnabled(Feature.FAST_MOVE)) {
+    order = new FastMoveOrder({ direction });
   } else {
     const ability = state.getQueuedAbility();
     state.setQueuedAbility(null);
@@ -99,7 +102,7 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn({ state, imageFactory, ticker });
+    await playTurn({ state, map, imageFactory, ticker });
   }
 };
 
@@ -128,7 +131,7 @@ const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContex
     playSound(Sounds.DESCEND_STAIRS);
     await loadNextMap({ state });
   }
-  await playTurn({ state, imageFactory, ticker });
+  await playTurn({ state, map, imageFactory, ticker });
 };
 
 export default {

@@ -1,12 +1,12 @@
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
-import { type KeyCommand } from '../inputTypes';
+import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  { state, imageFactory, mapFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   const inventory = state.getPlayerUnit().getInventory();
@@ -25,10 +25,10 @@ const handleKeyCommand = async (
       inventory.nextCategory();
       break;
     case 'ENTER':
-      if (modifiers.includes('ALT')) {
+      if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ state, imageFactory, ticker });
+        await _handleEnter({ state, imageFactory, mapFactory, ticker });
       }
       break;
     case 'TAB':
@@ -47,11 +47,12 @@ const handleKeyCommand = async (
 
 const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
+  const map = state.getMap();
   const { selectedItem } = playerUnit.getInventory();
 
   if (selectedItem) {
     state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { state, imageFactory, ticker });
+    await useItem(playerUnit, selectedItem, { state, map, imageFactory, ticker });
   }
 };
 

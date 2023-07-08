@@ -6,8 +6,8 @@ import { attackUnit } from '../../../actions/attackUnit';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
-// Note that you gain 1 passively, so this is really 3 mana per hit
-const MANA_RETURNED = 2;
+// Note that you gain 1 passively, so this is really 2 mana per hit
+const MANA_RETURNED = 1;
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
@@ -16,14 +16,13 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map,  imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
     }
     // TODO: verify coordinates are adjacent
 
-    const map = state.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
@@ -36,7 +35,7 @@ export const NormalAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.PLAYER_HITS_ENEMY
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       unit.gainMana(MANA_RETURNED);
     }

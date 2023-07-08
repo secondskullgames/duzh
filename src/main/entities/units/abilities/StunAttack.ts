@@ -6,8 +6,8 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 20;
-const damageCoefficient = 0.5;
+const manaCost = 10;
+const damageCoefficient = 1;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} is stunned!`;
@@ -21,13 +21,11 @@ export const StunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
     }
-
-    const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -43,7 +41,7 @@ export const StunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       targetUnit.setStunned(2);
     }

@@ -5,11 +5,13 @@ import Equipment from './Equipment';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
+import MapInstance from '../maps/MapInstance';
 
 export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
@@ -32,11 +34,10 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, imageFactory, ticker }: Context
+    { state, map, imageFactory, ticker }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
-    const map = state.getMap();
     const direction = unit.getDirection();
     let coordinates = Coordinates.plus(unit.getCoordinates(), direction);
     while (map.contains(coordinates) && !map.isBlocked(coordinates)) {
@@ -47,7 +48,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
     }
   }

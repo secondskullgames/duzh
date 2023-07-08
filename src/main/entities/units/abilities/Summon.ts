@@ -18,13 +18,11 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory }: UnitAbilityContext
+    { map, imageFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
     }
-
-    const map = state.getMap();
 
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 

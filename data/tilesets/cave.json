@@ -1,5 +1,5 @@
 {
-  "path": "cave_v2",
+  "path": "cave",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],
     "FLOOR_HALL": ["tile_floor", "tile_floor_2"],

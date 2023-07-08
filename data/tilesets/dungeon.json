@@ -1,5 +1,5 @@
 {
-  "path": "new_dungeon",
+  "path": "dungeon",
   "tiles": {
     "FLOOR": ["floor", "floor_2"],
     "FLOOR_HALL": ["floor", "floor_2"],

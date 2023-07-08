@@ -87,9 +87,9 @@ const createHealthGlobe = async (
     { imageFactory }
   );
 
-  const lifeGained = 20;
+  const lifeGained = 10;
 
-  const onUse = async (unit: Unit, { state, ticker }: OnUseContext) => {
+  const onUse = async (unit: Unit, { state, map, ticker }: OnUseContext) => {
     if (unit === state.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
@@ -98,7 +98,6 @@ const createHealthGlobe = async (
           `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
           { turn: state.getTurn() }
         );
-        const map = state.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }

@@ -12,14 +12,12 @@ export const loadNextMap = async ({ state }: Context) => {
     Music.stop();
     state.setScreen(GameScreen.VICTORY);
   } else {
-    const t1 = new Date().getTime();
-    const nextMap = await state.loadNextMap();
-    state.setMap(nextMap);
-    updateRevealedTiles({ state })
-    if (nextMap.music) {
-      await Music.playMusic(nextMap.music);
+    const nextMapIndex = state.getMapIndex() + 1;
+    await state.setMapIndex(nextMapIndex);
+    const map = state.getMap();
+    updateRevealedTiles({ state, map: map })
+    if (map.music) {
+      await Music.playMusic(map.music);
     }
-    const t2 = new Date().getTime();
-    console.debug(`Loaded level in ${t2 - t1} ms`);
   }
 };

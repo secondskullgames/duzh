@@ -1,5 +1,5 @@
 {
-  "path": "zzt_v2",
+  "path": "zzt",
   "tiles": {
     "FLOOR": ["tile_floor"],
     "FLOOR_HALL": ["tile_floor"],

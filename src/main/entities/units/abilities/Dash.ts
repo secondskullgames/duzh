@@ -8,7 +8,7 @@ import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
 
-const manaCost = 10;
+const manaCost = 5;
 
 export const Dash: UnitAbility = {
   name: AbilityName.DASH,
@@ -17,7 +17,7 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
@@ -26,8 +26,6 @@ export const Dash: UnitAbility = {
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);
     dy = Math.sign(dy);
-
-    const map = state.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
@@ -41,7 +39,7 @@ export const Dash: UnitAbility = {
         await moveUnit(
           unit,
           { x, y },
-          { state, imageFactory, ticker }
+          { state, map, imageFactory, ticker }
         );
         moved = true;
         await sleep(75);

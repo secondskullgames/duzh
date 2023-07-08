@@ -4,9 +4,11 @@ import Sprite from '../../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import GameState from '../../core/GameState';
 import Ticker from '../../core/Ticker';
+import MapInstance from '../../maps/MapInstance';
 
 export type OnUseContext = Readonly<{
   state: GameState,
+  map: MapInstance,
   ticker: Ticker
 }>;
 

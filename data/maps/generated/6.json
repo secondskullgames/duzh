@@ -1,11 +1,9 @@
 {
-  "layout": "PATH",
-  "tileSet": "zzt",
   "levelNumber": 6,
-  "width": 38,
-  "height": 28,
+  "width": 32,
+  "height": 24,
   "pointAllocation": {
-    "enemies": 320,
+    "enemies": 240,
     "equipment": 200,
     "items": 80
   }

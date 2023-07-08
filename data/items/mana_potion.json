@@ -1,8 +1,12 @@
 {
-  "id": "life_potion",
+  "id": "mana_potion",
   "level": 3,
   "points": 20,
   "mapSprite": "map_potion",
+  "paletteSwaps": {
+    "DARK_RED": "DARK_BLUE",
+    "RED": "BLUE"
+  },
   "type": "mana_potion",
   "params": {
     "amount": "10"

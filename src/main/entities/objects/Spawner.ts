@@ -54,14 +54,13 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ state }: UpdateContext) => {
+  update = async ({ state, map }: UpdateContext) => {
     if (this._state === 'DEAD') {
       return;
     }
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 
-    const map = state.getMap();
     for (const spawnedUnit of [...this.spawnedUnits]) {
       if (!map.unitExists(spawnedUnit)) {
         this.spawnedUnits.delete(spawnedUnit);

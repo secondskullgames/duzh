@@ -1,6 +1,4 @@
 type GeneratedMapModel = {
-  layout: string,
-  tileSet: string,
   levelNumber: number,
   width: number,
   height: number,

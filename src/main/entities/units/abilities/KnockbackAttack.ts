@@ -8,8 +8,8 @@ import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 15;
-const damageCoefficient = 0.5;
+const manaCost = 10;
+const damageCoefficient = 1;
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!  ${target.getName()} recoils!`;
@@ -22,7 +22,7 @@ export const KnockbackAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
@@ -30,7 +30,6 @@ export const KnockbackAttack: UnitAbility = {
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
-    const map = state.getMap();
     unit.setDirection(direction);
 
     const targetUnit = map.getUnit(coordinates);
@@ -44,19 +43,19 @@ export const KnockbackAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
 
       targetUnit.setStunned(1);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
-          await moveUnit(targetUnit, first, { state, imageFactory, ticker });
+          await moveUnit(targetUnit, first, { state, map, imageFactory, ticker });
           await sleep(50);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, { state, imageFactory, ticker });
+              await moveUnit(targetUnit, second, { state, map, imageFactory, ticker });
             }
           }
         }
