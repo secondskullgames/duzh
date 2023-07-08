@@ -1,5 +1,4 @@
 import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
-import MapFactory from '../../maps/MapFactory';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { type KeyCommand, ModifierKey } from '../inputTypes';

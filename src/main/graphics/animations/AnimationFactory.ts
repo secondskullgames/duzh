@@ -1,4 +1,3 @@
-import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';

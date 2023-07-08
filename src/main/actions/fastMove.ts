@@ -7,7 +7,6 @@ import Direction from '../geometry/Direction';
 import MapInstance from '../maps/MapInstance';
 import { moveUnit } from './moveUnit';
 import { sleep } from '../utils/promises';
-import { updateRevealedTiles } from './updateRevealedTiles';
 import { playTurn } from './playTurn';
 
 type Context = Readonly<{
