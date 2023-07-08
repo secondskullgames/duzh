@@ -7,9 +7,11 @@ import { randChance } from '../utils/random';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
+import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
@@ -19,9 +21,8 @@ const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (
   unit: Unit,
-  { state, imageFactory, ticker }: Context
+  { state, map, imageFactory, ticker }: Context
 ) => {
-  const map = state.getMap();
   const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
 

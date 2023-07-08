@@ -65,7 +65,7 @@ export const ShootBolt: UnitAbility = {
       ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, imageFactory, ticker });
+        await die(targetUnit, { state, map, imageFactory, ticker });
       }
     } else {
       const boltAnimation = await AnimationFactory.getBoltAnimation(

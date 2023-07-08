@@ -103,7 +103,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, imageFactory, ticker });
+        await die(adjacentUnit, { state, map, imageFactory, ticker });
         recordKill(unit, { state, ticker });
       }
     }

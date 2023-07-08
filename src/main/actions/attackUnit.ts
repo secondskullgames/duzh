@@ -59,7 +59,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, imageFactory, ticker });
+    await die(defender, { state, map, imageFactory, ticker });
     recordKill(attacker, { state, ticker });
   }
 

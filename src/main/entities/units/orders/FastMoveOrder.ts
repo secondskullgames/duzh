@@ -1,13 +1,6 @@
 import UnitOrder, { type OrderContext } from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
-import { walk } from '../../../actions/walk';
-import { openDoor } from '../../../actions/openDoor';
-import { ObjectType } from '../../objects/GameObject';
-import Block from '../../objects/Block';
-import { pushBlock } from '../../../actions/pushBlock';
-import { getDoor } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import { fastMove } from '../../../actions/fastMove';
 

@@ -21,7 +21,6 @@ import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
 import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
-import Direction from '../../geometry/Direction';
 
 const handleKeyCommand = async (
   command: KeyCommand,
