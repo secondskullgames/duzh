@@ -6,9 +6,11 @@ import GameState from '../core/GameState';
 import { moveObject } from './moveObject';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
+import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
@@ -16,15 +18,14 @@ type Context = Readonly<{
 export const pushBlock = async (
   unit: Unit,
   block: Block,
-  { state, imageFactory, ticker }: Context
+  { state, map, imageFactory, ticker }: Context
 ) => {
-  const map = state.getMap();
   const coordinates = block.getCoordinates();
   const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
   const nextCoordinates = Coordinates.plus(coordinates, { dx, dy });
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
     await moveObject(block, nextCoordinates, { state });
-    await moveUnit(unit, coordinates, { state, imageFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
   }
 };

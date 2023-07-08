@@ -1,15 +1,16 @@
 import GameState from '../core/GameState';
+import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState,
+  map: MapInstance
 }>;
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-export const updateRevealedTiles = ({ state }: Context) => {
+export const updateRevealedTiles = ({ state, map }: Context) => {
   const playerUnit = state.getPlayerUnit();
-  const map = state.getMap();
 
   const radius = 3;
 

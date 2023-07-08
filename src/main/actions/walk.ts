@@ -7,9 +7,11 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Ticker from '../core/Ticker';
+import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
@@ -17,16 +19,14 @@ type Context = Readonly<{
 export const walk = async (
   unit: Unit,
   direction: Direction,
-  { state, imageFactory, ticker }: Context
+  { state, map, imageFactory, ticker }: Context
 ) => {
-  const map = state.getMap();
-
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, { state, imageFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
     const playerUnit = state.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);

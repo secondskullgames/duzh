@@ -1,5 +1,5 @@
 import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand } from '../inputTypes';
+import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 
@@ -13,7 +13,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: Sc
       state.setScreen(GameScreen.HELP);
       break;
     case 'ENTER':
-      if (modifiers.includes('ALT')) {
+      if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       }
       break;

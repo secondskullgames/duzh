@@ -15,7 +15,7 @@ export const loadNextMap = async ({ state }: Context) => {
     const t1 = new Date().getTime();
     const nextMap = await state.loadNextMap();
     state.setMap(nextMap);
-    updateRevealedTiles({ state })
+    updateRevealedTiles({ state, map: nextMap })
     if (nextMap.music) {
       await Music.playMusic(nextMap.music);
     }

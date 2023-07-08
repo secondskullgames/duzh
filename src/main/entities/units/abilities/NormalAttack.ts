@@ -16,14 +16,13 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map,  imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
     }
     // TODO: verify coordinates are adjacent
 
-    const map = state.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
@@ -36,7 +35,7 @@ export const NormalAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.PLAYER_HITS_ENEMY
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       unit.gainMana(MANA_RETURNED);
     }

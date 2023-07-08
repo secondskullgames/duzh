@@ -9,6 +9,7 @@ import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
 import Ticker from '../core/Ticker';
+import MapInstance from '../maps/MapInstance';
 
 type Props = Readonly<{
   attacker: Unit,
@@ -20,20 +21,21 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState,
+  map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, imageFactory, ticker }: Context
+  { state, map, imageFactory, ticker }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
     }
   }

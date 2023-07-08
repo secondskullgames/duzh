@@ -1,5 +1,5 @@
-import { ScreenInputHandler, type ScreenHandlerContext } from './ScreenInputHandler';
-import { type KeyCommand } from '../inputTypes';
+import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
@@ -25,7 +25,7 @@ const handleKeyCommand = async (
       inventory.nextCategory();
       break;
     case 'ENTER':
-      if (modifiers.includes('ALT')) {
+      if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
         await _handleEnter({ state, imageFactory, mapFactory, ticker });

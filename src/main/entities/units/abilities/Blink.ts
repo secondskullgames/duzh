@@ -16,15 +16,13 @@ export const Blink: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
     }
 
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
-
-    const map = state.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
@@ -39,7 +37,7 @@ export const Blink: UnitAbility = {
       await moveUnit(
         unit,
         { x, y },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       moved = true;
     }

@@ -21,13 +21,11 @@ export const StunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
     }
-
-    const map = state.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -43,7 +41,7 @@ export const StunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, imageFactory, ticker }
+        { state, map, imageFactory, ticker }
       );
       targetUnit.setStunned(2);
     }
