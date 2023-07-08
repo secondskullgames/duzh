@@ -21,13 +21,9 @@ import { AbilityName } from './abilities/AbilityName';
 import UnitType from '../../schemas/UnitType';
 
 /**
- * Regenerate this fraction of the unit's health each turn
+ * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN_MULTIPLIER = 0.01 / 2;
-/**
- * Only regenerate life if the unit's life is less than this (ratio of their total health)
- */
-const LIFE_REGEN_THRESHOLD = 1;
+const LIFE_PER_TURN = 1 / 2;
 const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
@@ -338,7 +334,7 @@ export default class Unit implements Entity, Animatable {
     this.maxMana += amount;
   };
 
-  incrementDamage = (amount: number) => {
+  increaseStrength = (amount: number) => {
     this.strength += amount;
   };
 
@@ -373,13 +369,10 @@ export default class Unit implements Entity, Animatable {
 
   private _upkeep = () => {
     // life regeneration
-    if (this.life < this.maxLife * LIFE_REGEN_THRESHOLD) {
-      const lifePerTurn = this.maxLife * LIFE_PER_TURN_MULTIPLIER;
-      this.lifeRemainder += lifePerTurn;
-      const deltaLife = Math.floor(this.lifeRemainder);
-      this.lifeRemainder -= deltaLife;
-      this.life = Math.min(this.life + deltaLife, this.maxLife);
-    }
+    this.lifeRemainder += LIFE_PER_TURN;
+    const deltaLife = Math.floor(this.lifeRemainder);
+    this.lifeRemainder -= deltaLife;
+    this.life = Math.min(this.life + deltaLife, this.maxLife);
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {

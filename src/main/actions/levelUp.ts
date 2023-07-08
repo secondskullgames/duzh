@@ -8,7 +8,7 @@ import Ticker from '../core/Ticker';
 
 const lifePerLevel = 0;
 const manaPerLevel = 2;
-const damagePerLevel = 0;
+const strengthPerLevel = 1;
 
 type Context = Readonly<{
   state: GameState,
@@ -21,7 +21,7 @@ export const levelUp = (unit: Unit, { state, ticker }: Context) => {
   if (unit.getFaction() === Faction.PLAYER) {
     unit.increaseMaxLife(lifePerLevel);
     unit.increaseMaxMana(manaPerLevel);
-    unit.incrementDamage(damagePerLevel);
+    unit.increaseStrength(strengthPerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
       ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, { turn: state.getTurn() });
