@@ -27,7 +27,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state, map }: UnitBehaviorContext
+    { map }: UnitBehaviorContext
   ): UnitOrder => {
     const { targetUnit } = this;
     const mapRect = map.getRect();
@@ -51,7 +51,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
     if (path.length > 1) {
       const coordinates = path[1]; // first tile is the unit's own tile
       const second = path[2]
-      if (this._canDash(unit, second, { state })) {
+      if (this._canDash(unit, second, { map })) {
         return new AbilityOrder({
           ability: abilityForName(AbilityName.DASH),
           coordinates: second
@@ -90,7 +90,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   private _canDash(
     unit: Unit,
     coordinates: Coordinates | undefined,
-    { state }: Pick<UnitBehaviorContext, 'state'>
+    { map }: Pick<UnitBehaviorContext, 'map'>
   ) {
     if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
       return false;
@@ -99,7 +99,6 @@ export default class AttackUnitBehavior implements UnitBehavior {
     if (coordinates) {
       const plusOne = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
       const plusTwo = Coordinates.plus(plusOne, unit.getDirection());
-      const map = state.getMap();
       return (
         map.contains(plusOne)
         && map.contains(plusTwo)

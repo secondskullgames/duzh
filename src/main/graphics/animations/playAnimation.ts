@@ -1,17 +1,15 @@
 import type { Animation } from './Animation';
 import { sleep } from '../../utils/promises';
-import GameState from '../../core/GameState';
+import MapInstance from '../../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState
+  map: MapInstance
 }>;
 
 export const playAnimation = async (
   animation: Animation,
-  { state }: Context
+  { map }: Context
 ) => {
-  const map = state.getMap();
-
   for (let i = 0; i < animation.frames.length; i++) {
     const frame = animation.frames[i];
     for (const projectile of (frame.projectiles ?? [])) {

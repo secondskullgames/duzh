@@ -84,7 +84,8 @@ export default class InputHandler {
   private _handleKeyCommand = async (command: KeyCommand) => {
     const { state, imageFactory, mapFactory, ticker } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory, mapFactory, ticker });
+    const map = checkNotNull(state.getMap());
+    await handler.handleKeyCommand(command, { state, map, imageFactory, mapFactory, ticker });
   };
 
   addEventListener = (target: HTMLElement) => {

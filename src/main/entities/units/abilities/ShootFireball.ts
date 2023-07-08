@@ -53,11 +53,9 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state, imageFactory }
+        { map, imageFactory }
       );
-      await playAnimation(fireballAnimation, {
-        state
-      });
+      await playAnimation(fireballAnimation, { map });
       const adjustedDamage = await dealDamage(DAMAGE, {
         sourceUnit: unit,
         targetUnit
@@ -74,11 +72,9 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state, imageFactory }
+        { map, imageFactory }
       );
-      await playAnimation(fireballAnimation, {
-        state
-      });
+      await playAnimation(fireballAnimation, { map });
     }
   }
 }

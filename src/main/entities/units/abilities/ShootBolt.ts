@@ -56,11 +56,9 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { state, imageFactory }
+        { map, imageFactory }
       );
-      await playAnimation(boltAnimation, {
-        state
-      });
+      await playAnimation(boltAnimation, { map });
       ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
@@ -72,11 +70,9 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { state, imageFactory }
+        { map, imageFactory }
       );
-      await playAnimation(boltAnimation, {
-        state
-      });
+      await playAnimation(boltAnimation, { map });
     }
   }
 }

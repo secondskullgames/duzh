@@ -2,6 +2,7 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { checkState } from './preconditions';
 import GameState from '../core/GameState';
+import MapInstance from '../maps/MapInstance';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));
@@ -14,12 +15,15 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   }
 };
 
+type StraightLineContext = Readonly<{
+  map: MapInstance
+}>;
+
 export const hasUnblockedStraightLineBetween = (
   startCoordinates: Coordinates,
   targetCoordinates: Coordinates,
-  { state }: { state: GameState }
+  { map }: StraightLineContext
 ): boolean => {
-  const map = state.getMap();
   let { x, y } = startCoordinates;
   const { x: targetX, y: targetY } = targetCoordinates;
   const dx = Math.sign(targetX - x);

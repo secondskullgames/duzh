@@ -6,9 +6,10 @@ import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
+import MapInstance from '../../maps/MapInstance';
 
-type Props = Readonly<{
-  state: GameState,
+type Context = Readonly<{
+  map: MapInstance,
   imageFactory: ImageFactory
 }>;
 
@@ -18,7 +19,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { state, imageFactory }: Props
+    { map, imageFactory }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -33,7 +34,7 @@ export default {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(coordinates => state.getMap().isTileRevealed(coordinates));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates => map.isTileRevealed(coordinates));
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
@@ -89,7 +90,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { state, imageFactory }: Props
+    { map, imageFactory }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -104,7 +105,7 @@ export default {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(state.getMap().isTileRevealed);
+    const visibleCoordinatesList = coordinatesList.filter(map.isTileRevealed);
 
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
@@ -158,7 +159,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { state, imageFactory }: Props
+    { map, imageFactory }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -173,7 +174,7 @@ export default {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(coordinates => state.getMap().isTileRevealed(coordinates));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates => map.isTileRevealed(coordinates));
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
@@ -227,7 +228,7 @@ export default {
   getFloorFireAnimation: async (
     source: Unit,
     targets: Unit[],
-    { state }: Props
+    context: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     for (let i = 0; i < targets.length; i++) {
