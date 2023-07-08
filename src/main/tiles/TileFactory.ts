@@ -63,6 +63,7 @@ const getTileSet = async (
 const getTileSetNames = (): string[] => {
   return [
     'catacomb',
+    'catacomb_gold',
     'catacomb_red',
     'cave',
     'cave_blue',

@@ -11,8 +11,10 @@
   },
   "paletteSwaps": {
     "DARK_PURPLE": "BLACK",
-    "MAGENTA": "LIGHT_GRAY",
-    "GREEN": "LIGHT_GRAY",
-    "DARK_GREEN": "DARK_GRAY"
+    "MAGENTA": "YELLOW",
+    "GREEN": "YELLOW",
+    "DARK_GREEN": "DARK_YELLOW",
+    "LIGHT_GRAY": "DARK_YELLOW",
+    "DARK_GRAY": "DARK_YELLOW"
   }
 }
