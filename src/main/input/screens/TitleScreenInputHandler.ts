@@ -17,11 +17,7 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
-          const mapInstance = await mapFactory.loadMap(
-            { type: 'predefined', id: 'test' },
-            { state, imageFactory }
-          );
-          await startGameDebug(mapInstance, { state });
+          await startGameDebug({ state, imageFactory, mapFactory });
         } else {
           await startGame({ state });
         }

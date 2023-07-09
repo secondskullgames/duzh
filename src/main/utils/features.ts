@@ -1,4 +1,5 @@
 export enum Feature {
+  DASH_KNOCKBACK = 'DASH_KNOCKBACK',
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
@@ -22,6 +23,8 @@ export namespace Feature {
     switch (feature) {
       case Feature.PRODUCTION:
         return _isProduction();
+      case Feature.DASH_KNOCKBACK:
+        return true;
       case Feature.DEBUG_BUTTONS:
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);

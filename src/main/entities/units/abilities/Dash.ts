@@ -7,6 +7,7 @@ import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
 import { AbilityName } from './AbilityName';
+import { Feature } from '../../../utils/features';
 
 const manaCost = 5;
 
@@ -42,7 +43,21 @@ export const Dash: UnitAbility = {
           { state, map, imageFactory, ticker }
         );
         moved = true;
-        await sleep(75);
+        await sleep(100);
+      } else if (
+        Feature.isEnabled(Feature.DASH_KNOCKBACK)
+        && map.contains({ x, y })
+        && !map.getTile({ x, y }).isBlocking()
+      ) {
+        const unitToKnockBack = map.getUnit({ x, y });
+        if (unitToKnockBack) {
+          const next = Coordinates.plus({ x, y }, { dx, dy });
+          if (map.contains(next) && !map.isBlocked(next)) {
+            await moveUnit(unitToKnockBack, next, { state, map, imageFactory, ticker });
+            await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
+            await sleep(100);
+          }
+        }
       } else {
         break;
       }

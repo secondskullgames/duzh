@@ -29,17 +29,18 @@ export const Blink: UnitAbility = {
     const distance = 2;
     let { x, y } = unit.getCoordinates();
     let moved = false;
-    for (let i = 0; i < distance; i++) {
-      x += dx;
-      y += dy;
-    }
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveUnit(
-        unit,
-        { x, y },
-        { state, map, imageFactory, ticker }
-      );
-      moved = true;
+    const first = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+    const second = Coordinates.plus(first, { dx, dy });
+
+    if (map.contains(first) && !map.getTile(first)?.isBlocking()) {
+      if (map.contains(second) && !map.isBlocked(second)) {
+        await moveUnit(
+          unit,
+          second,
+          { state, map, imageFactory, ticker }
+        );
+        moved = true;
+      }
     }
 
     if (moved) {

@@ -104,7 +104,7 @@ export default class GeneratedMapBuilder {
       const coordinates = candidateLocations.shift()!;
       let controller: UnitController;
       // TODO super hack!
-      if (model.name === 'Goblin Archer') {
+      if (model.id === 'archer') {
         controller = new ArcherController();
       } else {
         controller = new BasicEnemyController();
