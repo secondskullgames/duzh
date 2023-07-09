@@ -36,25 +36,26 @@ export const Dash: UnitAbility = {
     for (let i = 0; i < distance; i++) {
       x += dx;
       y += dy;
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      const coordinates = { x, y };
+      if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
         await moveUnit(
           unit,
-          { x, y },
+          coordinates,
           { state, map, imageFactory, ticker }
         );
         moved = true;
         await sleep(100);
       } else if (
         Feature.isEnabled(Feature.DASH_KNOCKBACK)
-        && map.contains({ x, y })
-        && !map.getTile({ x, y }).isBlocking()
+        && map.contains(coordinates)
+        && !map.getTile(coordinates).isBlocking()
       ) {
-        const unitToKnockBack = map.getUnit({ x, y });
+        const unitToKnockBack = map.getUnit(coordinates);
         if (unitToKnockBack) {
-          const next = Coordinates.plus({ x, y }, { dx, dy });
+          const next = Coordinates.plus(coordinates, { dx, dy });
           if (map.contains(next) && !map.isBlocked(next)) {
             await moveUnit(unitToKnockBack, next, { state, map, imageFactory, ticker });
-            await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
+            await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
             await sleep(100);
           }
         }

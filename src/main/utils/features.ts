@@ -13,7 +13,7 @@ export enum Feature {
 
 export namespace Feature {
   export const isEnabled = (feature: Feature): boolean => {
-    const queryParam = getQueryParam(feature);
+    const queryParam = _getQueryParam(feature);
     if (queryParam === 'true') {
       return true;
     }
@@ -44,7 +44,7 @@ export namespace Feature {
   };
 }
 
-const getQueryParam = (param: string): string | null => {
+const _getQueryParam = (param: string): string | null => {
   const { href } = document.location;
   const query = href?.split('?')?.[1];
   if (query) {

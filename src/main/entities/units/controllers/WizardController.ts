@@ -15,8 +15,9 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import MapInstance from '../../../maps/MapInstance';
 
 const maxSummonedUnits = 3;
+const teleportChance = 0.25;
 const summonChance = 0.25;
-const avoidChance = 0.75;
+const avoidChance = 0.5;
 
 const _countUnits = (map: MapInstance, summonedUnitClass: string): number => {
   return map.getAllUnits()
@@ -41,7 +42,7 @@ export default class WizardController implements UnitController {
       && unit.getMana() >= Summon.manaCost
       && _countUnits(map, unit.getSummonedUnitClass()!) <= maxSummonedUnits;
 
-    if (canTeleport && distanceToPlayerUnit <= 2) {
+    if (canTeleport && distanceToPlayerUnit <= 3 && randChance(teleportChance)) {
       return new TeleportAwayOrder({ targetUnit: playerUnit });
     }
 
