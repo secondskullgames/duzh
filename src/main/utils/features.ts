@@ -5,8 +5,9 @@ export enum Feature {
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
+  LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
   PRODUCTION = 'PRODUCTION',
-  LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN'
+  STRENGTH_PER_LEVEL = 'STRENGTH_PER_LEVEL'
 }
 
 export namespace Feature {
@@ -34,6 +35,8 @@ export namespace Feature {
         return false;
       case Feature.FAST_MOVE:
         return false;
+      case Feature.STRENGTH_PER_LEVEL:
+        return true;
     }
   };
 }
