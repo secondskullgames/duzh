@@ -3,6 +3,7 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
+import { addInitialState } from '../../actions/addInitialState';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -14,7 +15,9 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await showSplashScreen({
+        await showSplashScreen({ state });
+        await state.reset();
+        await addInitialState({
           state,
           imageFactory,
           mapFactory,
