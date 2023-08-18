@@ -9,6 +9,7 @@ import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
+import { addInitialState } from './actions/addInitialState';
 
 const main = async () => {
   const state = new GameState();
@@ -31,7 +32,8 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen({ state, mapFactory, imageFactory, ticker });
+  await addInitialState({ state, imageFactory, mapFactory, ticker });
+  await showSplashScreen({ state });
   setInterval(async () => {
     await renderer.render({ state, imageFactory });
   }, 20);

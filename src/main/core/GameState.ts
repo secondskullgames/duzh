@@ -27,7 +27,7 @@ export default class GameState {
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
-    this.screen = GameScreen.TITLE;
+    this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.playerUnit = null;
     this.mapSuppliers = [];

@@ -1,4 +1,5 @@
 export enum GameScreen {
+  NONE = 'NONE',
   CHARACTER = 'CHARACTER',
   GAME = 'GAME',
   GAME_OVER = 'GAME_OVER',
