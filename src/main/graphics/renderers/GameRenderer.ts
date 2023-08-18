@@ -22,7 +22,7 @@ import Ticker from '../../core/Ticker';
 import { Feature } from '../../utils/features';
 
 const GAME_OVER_FILENAME = 'gameover';
-const TITLE_FILENAME = 'title';
+const TITLE_FILENAME = 'title2';
 const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
