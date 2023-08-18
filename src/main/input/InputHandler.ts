@@ -18,6 +18,7 @@ import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
+  [GameScreen.NONE]:      { handleKeyCommand: async () => {} },
   [GameScreen.CHARACTER]: CharacterScreenInputHandler,
   [GameScreen.GAME]:      GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,

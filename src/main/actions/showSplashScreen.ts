@@ -1,21 +1,13 @@
 import Music from '../sounds/Music';
 import GameState from '../core/GameState';
-import { addInitialState } from './addInitialState';
-import ImageFactory from '../graphics/images/ImageFactory';
-import Ticker from '../core/Ticker';
-import MapFactory from '../maps/MapFactory';
+import { GameScreen } from '../core/GameScreen';
 
 type Context = Readonly<{
-  state: GameState,
-  mapFactory: MapFactory,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState
 }>;
 
-export const showSplashScreen = async ({ state, mapFactory, imageFactory, ticker }: Context) => {
-  state.reset();
-  ticker.clear();
-  await addInitialState({ state, imageFactory, mapFactory, ticker })
+export const showSplashScreen = async ({ state }: Context) => {
+  state.setScreen(GameScreen.TITLE);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
 };
