@@ -6,7 +6,6 @@ import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';

@@ -1,7 +1,6 @@
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';

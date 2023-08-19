@@ -2,7 +2,6 @@ import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { getBonus } from '../maps/MapUtils';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';

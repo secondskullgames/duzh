@@ -1,5 +1,4 @@
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
