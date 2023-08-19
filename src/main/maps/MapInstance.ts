@@ -10,6 +10,7 @@ import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
 
 type Props = Readonly<{
+  id: string,
   width: number,
   height: number,
   tiles: Tile[][],
@@ -19,6 +20,7 @@ type Props = Readonly<{
 }>;
 
 export default class MapInstance {
+  readonly id: string;
   readonly width: number;
   readonly height: number;
   private readonly tiles: Grid<Tile>;
@@ -29,6 +31,7 @@ export default class MapInstance {
   readonly music: Figure[] | null;
 
   constructor({
+    id,
     width,
     height,
     tiles,
@@ -36,6 +39,7 @@ export default class MapInstance {
     objects,
     music
   }: Props) {
+    this.id = id;
     this.width = width;
     this.height = height;
     this.units = new Grid({ width, height });

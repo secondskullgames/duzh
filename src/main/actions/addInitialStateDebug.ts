@@ -13,7 +13,7 @@ type Context = Readonly<{
   ticker: Ticker
 }>;
 
-export const addInitialState = async ({ state, imageFactory, ticker }: Context) => {
+export const addInitialStateDebug = async ({ state, imageFactory, ticker }: Context) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });
@@ -28,14 +28,7 @@ export const addInitialState = async ({ state, imageFactory, ticker }: Context) 
   }
   state.setPlayerUnit(playerUnit);
   const mapSpecs: MapSpec[] = [
-    { type: 'generated', id: '1' },
-    { type: 'generated', id: '2' },
-    { type: 'generated', id: '3' },
-    { type: 'generated', id: '4' },
-    { type: 'generated', id: '5' },
-    { type: 'generated', id: '6' },
-    { type: 'predefined', id: '7' },
-    { type: 'predefined', id: '8' }
+    { type: 'predefined', id: 'test' }
   ];
   const dungeon = new Dungeon({ mapSpecs });
   state.loadDungeon(dungeon);

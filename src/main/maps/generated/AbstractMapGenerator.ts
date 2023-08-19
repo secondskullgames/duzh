@@ -14,6 +14,7 @@ abstract class AbstractMapGenerator {
   protected constructor() {}
 
   generateMap = async (
+    id: string,
     mapModel: GeneratedMapModel,
     tileSetId: string,
     { imageFactory }: Context
@@ -49,6 +50,7 @@ abstract class AbstractMapGenerator {
     }
 
     return new GeneratedMapBuilder({
+      id,
       level: mapModel.levelNumber,
       width: mapModel.width,
       height: mapModel.height,

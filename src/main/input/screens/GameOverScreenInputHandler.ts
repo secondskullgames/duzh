@@ -7,7 +7,7 @@ import { addInitialState } from '../../actions/addInitialState';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, mapFactory, ticker }: ScreenHandlerContext
+  { state, imageFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -20,7 +20,6 @@ const handleKeyCommand = async (
         await addInitialState({
           state,
           imageFactory,
-          mapFactory,
           ticker
         });
       }

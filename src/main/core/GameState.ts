@@ -15,7 +15,6 @@ export default class GameState {
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private playerUnit: Unit | null;
-  private mapIndex: number;
   private map: MapInstance | null;
   private turn: number;
   private queuedAbility: UnitAbility | null;
@@ -30,7 +29,6 @@ export default class GameState {
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.playerUnit = null;
-    this.mapIndex = -1;
     this.map = null;
     this.turn = 1;
     this.queuedAbility = null;
@@ -67,17 +65,14 @@ export default class GameState {
 
   hasNextMap = (): boolean => {
     const dungeon = checkNotNull(this.dungeon);
-    return dungeon.hasMap(`${this.mapIndex + 1}`);
+    return !!dungeon.getNextMapId(this.map?.id);
   };
-  getMapIndex = () => this.mapIndex;
 
-  setMapIndex = (mapIndex: number) => {
-    this.mapIndex = mapIndex;
-  };
-  
-  loadMap = async ({ state, mapFactory, imageFactory }: GetMapContext): Promise<void> => {
+  loadNextMap = async ({ state, mapFactory, imageFactory }: GetMapContext) => {
     const dungeon = checkNotNull(this.dungeon);
-    this.map = await dungeon.getMap(`${this.mapIndex}`, { state, mapFactory, imageFactory });
+    
+    const nextMapId = dungeon.getNextMapId(this.map?.id);
+    this.map = await dungeon.getMap(`${nextMapId}`, { state, mapFactory, imageFactory });
   };
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
@@ -130,7 +125,6 @@ export default class GameState {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
     this.playerUnit = null;
-    this.mapIndex = -1;
     this.map = null;
     this.turn = 1;
     this.queuedAbility = null;

@@ -1,14 +1,15 @@
 import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
-import { startGameDebug } from '../../actions/startGameDebug';
-import { startGame } from '../../actions/startGame';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
+import { addInitialStateDebug } from '../../actions/addInitialStateDebug';
+import { addInitialState } from '../../actions/addInitialState';
+import { startGame } from '../../actions/startGame';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, mapFactory }: ScreenHandlerContext
+  { state, imageFactory, mapFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -17,14 +18,11 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
-          const mapInstance = await mapFactory.loadMap(
-            { type: 'predefined', id: 'test' },
-            { state, imageFactory }
-          );
-          await startGameDebug(mapInstance, { state });
+          await addInitialStateDebug({ state, imageFactory, ticker });
         } else {
-          await startGame({ state, imageFactory, mapFactory });
+          await addInitialState({ state, imageFactory, ticker });
         }
+        await startGame({ state, imageFactory, mapFactory });
         state.setScreen(GameScreen.GAME);
       }
       break;

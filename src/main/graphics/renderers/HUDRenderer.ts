@@ -107,14 +107,14 @@ export default class HUDRenderer implements Renderer {
   private _renderRightPanel = async ({ state }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
     const turn = state.getTurn();
-    const mapIndex = state.getMapIndex();
+    const mapId = state.getMap()!.id;
 
     const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
 
     const lines = [
       `Turn: ${turn}`,
-      `Floor: ${mapIndex + 1}`,
+      `Floor: ${mapId}`,
     ];
 
     const killsToNextLevel = playerUnit.getKillsToNextLevel();

@@ -16,9 +16,7 @@ export const loadNextMap = async ({ state, mapFactory, imageFactory }: Context) 
     Music.stop();
     state.setScreen(GameScreen.VICTORY);
   } else {
-    state.setMapIndex(state.getMapIndex() + 1);
-    await state.loadMap({ state, mapFactory, imageFactory });
-    
+    await state.loadNextMap({ state, mapFactory, imageFactory });
     const map = state.getMap();
     updateRevealedTiles({ state, map: map })
     if (map.music) {

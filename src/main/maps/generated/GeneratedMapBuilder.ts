@@ -20,6 +20,7 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 
 type Props = Readonly<{
+  id: string,
   level: number,
   width: number,
   height: number,
@@ -33,6 +34,7 @@ type Context = Readonly<{
 }>;
 
 export default class GeneratedMapBuilder {
+  private readonly id: string;
   private readonly level: number;
   private readonly width: number;
   private readonly height: number;
@@ -41,12 +43,14 @@ export default class GeneratedMapBuilder {
   private readonly entityLocations: CustomSet<Coordinates>;
 
   constructor({
+    id,
     level,
     width,
     height,
     tiles,
     pointAllocation
   }: Props) {
+    this.id = id;
     this.level = level;
     this.width = width;
     this.height = height;
@@ -65,6 +69,7 @@ export default class GeneratedMapBuilder {
     const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
 
     return new MapInstance({
+      id: this.id,
       width: this.width,
       height: this.height,
       tiles: this.tiles,

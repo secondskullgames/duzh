@@ -1,7 +1,7 @@
 import MapSpec from '../schemas/MapSpec';
 import MapInstance from '../maps/MapInstance';
 import MapFactory from '../maps/MapFactory';
-import { checkNotNull } from '../utils/preconditions';
+import { checkNotNull, checkState } from '../utils/preconditions';
 import GameState from './GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
@@ -39,14 +39,12 @@ export default class Dungeon {
     return mapFactory.loadMap(mapSpec, { state, imageFactory });
   };
   
-  addMap = (map: MapSpec) => {
-    this.mapSpecs.push(map);
+  getNextMapId = (id?: string | null): string | null => {
+    const index = this.mapSpecs.findIndex(mapSpec => mapSpec.id === id);
+    return this.mapSpecs[index + 1]?.id ?? null;
   };
   
-  clear = () => {
-    this.mapSpecs.splice(0, this.mapSpecs.length);
-    for (const key of Object.keys(this.maps)) {
-      delete this.maps[key];
-    }
+  private _getMapById = (id: string): MapSpec | null => {
+    return this.mapSpecs.find(mapSpec => mapSpec.id === id) ?? null;
   };
 }

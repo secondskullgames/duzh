@@ -49,6 +49,7 @@ export const buildPredefinedMap = async (
   });
 
   return new MapInstance({
+    id: mapId,
     width: image.bitmap.width,
     height: image.bitmap.height,
     tiles: await _loadTiles(model, image, { state, imageFactory }),

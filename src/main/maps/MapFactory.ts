@@ -36,22 +36,23 @@ export default class MapFactory {
   private readonly usedMapStyles: MapStyle[] = [];
 
   loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Context): Promise<MapInstance> => {
+    const mapId = mapSpec.id;
     switch (mapSpec.type) {
       case 'generated': {
-        const mapClass = await loadGeneratedMapModel(mapSpec.id);
-        const mapBuilder = await this._loadGeneratedMap(mapClass, { state, imageFactory });
+        const mapClass = await loadGeneratedMapModel(mapId);
+        const mapBuilder = await this._loadGeneratedMap(mapId, mapClass, { state, imageFactory });
         return mapBuilder.build({ state, imageFactory });
       }
       case 'predefined': {
-        return this._loadPredefinedMap(mapSpec.id, { state, imageFactory });
+        return this._loadPredefinedMap(mapId, { state, imageFactory });
       }
     }
   };
 
-  private _loadGeneratedMap = async (mapClass: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
+  private _loadGeneratedMap = async (mapId: string, model: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    return dungeonGenerator.generateMap(mapClass, style.tileSet, { imageFactory });
+    return dungeonGenerator.generateMap(mapId, model, style.tileSet, { imageFactory });
   };
 
   private _loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
