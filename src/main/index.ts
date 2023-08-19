@@ -10,6 +10,7 @@ import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
+import AnimationFactory from './graphics/animations/AnimationFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -23,7 +24,8 @@ const main = async () => {
     textRenderer
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, ticker });
+  const animationFactory = new AnimationFactory({ spriteFactory });
+  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, animationFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, ticker });

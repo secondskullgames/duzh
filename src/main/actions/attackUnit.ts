@@ -11,6 +11,7 @@ import { SoundEffect } from '../sounds/types';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type Props = Readonly<{
   attacker: Unit,
@@ -24,19 +25,20 @@ type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
+  animationFactory: AnimationFactory,
   ticker: Ticker
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, map, spriteFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, ticker }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, spriteFactory, ticker }
+        { state, map, spriteFactory, animationFactory, ticker }
       );
     }
   }

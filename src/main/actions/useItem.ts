@@ -5,19 +5,21 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
+  animationFactory: AnimationFactory,
   ticker: Ticker
 }>;
 
 export const useItem = async (
   unit: Unit,
   item: InventoryItem,
-  { state, map, spriteFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, ticker }: Context
 ) => {
-  await item.use(unit, { state, map, spriteFactory, ticker });
+  await item.use(unit, { state, map, spriteFactory, animationFactory, ticker });
   unit.getInventory().remove(item);
 };

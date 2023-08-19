@@ -6,11 +6,13 @@ import { AbilityName } from './AbilityName';
 import Ticker from '../../../core/Ticker';
 import MapInstance from '../../../maps/MapInstance';
 import SpriteFactory from '../../../graphics/sprites/SpriteFactory';
+import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 
 export type UnitAbilityContext = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
+  animationFactory: AnimationFactory,
   ticker: Ticker
 }>;
 

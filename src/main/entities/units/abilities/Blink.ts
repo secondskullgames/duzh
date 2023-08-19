@@ -16,7 +16,7 @@ export const Blink: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
@@ -37,7 +37,7 @@ export const Blink: UnitAbility = {
       await moveUnit(
         unit,
         { x, y },
-        { state, map, spriteFactory, ticker }
+        { state, map, spriteFactory, animationFactory, ticker }
       );
       moved = true;
     }

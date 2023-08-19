@@ -6,24 +6,26 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
+  animationFactory: AnimationFactory,
   ticker: Ticker
 }>;
 
-export const playTurn = async ({ state, map, spriteFactory, ticker }: Context) => {
+export const playTurn = async ({ state, map, spriteFactory, animationFactory, ticker }: Context) => {
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
     if (unit.getLife() > 0) {
-      await unit.update({ state, map, spriteFactory, ticker });
+      await unit.update({ state, map, spriteFactory, animationFactory, ticker });
     }
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state, map, spriteFactory, ticker });
+    await object.update({ state, map, spriteFactory, animationFactory, ticker });
   }
 
   updateRevealedTiles({ state, map });

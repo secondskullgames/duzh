@@ -10,11 +10,9 @@ import InventoryItem from './InventoryItem';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
-import ImageFactory from '../graphics/images/ImageFactory';
 import type { ItemProc, ItemProcContext } from './ItemProc';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
@@ -75,7 +73,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, map, spriteFactory, ticker }: ItemProcContext
+    { state, map, spriteFactory, animationFactory, ticker }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits()
@@ -87,10 +85,10 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
     playSound(Sounds.PLAYER_HITS_ENEMY);
-    const animation = await AnimationFactory.getFloorFireAnimation(
+    const animation = await animationFactory.getFloorFireAnimation(
       unit,
       adjacentUnits,
-      { map, spriteFactory }
+      { map }
     );
     await playAnimation(animation, { map });
 

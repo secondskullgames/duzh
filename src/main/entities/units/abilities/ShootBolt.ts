@@ -23,7 +23,7 @@ export const ShootBolt: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
@@ -51,12 +51,12 @@ export const ShootBolt: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
+      const boltAnimation = await animationFactory.getBoltAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(boltAnimation, { map });
       ticker.log(message, { turn: state.getTurn() });
@@ -65,12 +65,12 @@ export const ShootBolt: UnitAbility = {
         await die(targetUnit, { state, map, spriteFactory, ticker });
       }
     } else {
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
+      const boltAnimation = await animationFactory.getBoltAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         null,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(boltAnimation, { map });
     }

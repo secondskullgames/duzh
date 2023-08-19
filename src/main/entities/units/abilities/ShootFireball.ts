@@ -26,7 +26,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -48,12 +48,12 @@ export const ShootFireball: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const fireballAnimation = await AnimationFactory.getFireballAnimation(
+      const fireballAnimation = await animationFactory.getFireballAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(fireballAnimation, { map });
       const adjustedDamage = await dealDamage(DAMAGE, {
@@ -67,12 +67,12 @@ export const ShootFireball: UnitAbility = {
         await die(targetUnit, { state, map, spriteFactory, ticker });
       }
     } else {
-      const fireballAnimation = await AnimationFactory.getFireballAnimation(
+      const fireballAnimation = await animationFactory.getFireballAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         null,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(fireballAnimation, { map });
     }

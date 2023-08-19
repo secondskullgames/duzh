@@ -6,7 +6,6 @@ import Sounds from '../../../sounds/Sounds';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
@@ -25,7 +24,7 @@ export const ShootArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
@@ -51,12 +50,12 @@ export const ShootArrow: UnitAbility = {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
+      const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
@@ -70,12 +69,12 @@ export const ShootArrow: UnitAbility = {
         await die(targetUnit, { state, map, spriteFactory, ticker });
       }
     } else {
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
+      const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         null,
-        { map, spriteFactory }
+        { map }
       );
       await playAnimation(arrowAnimation, { map });
     }

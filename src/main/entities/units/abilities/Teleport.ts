@@ -21,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -48,7 +48,7 @@ export const Teleport: UnitAbility = {
       await moveUnit(
         unit,
         coordinates,
-        { state, map, spriteFactory, ticker }
+        { state, map, spriteFactory, animationFactory, ticker }
       );
       await sleep(100);
 
