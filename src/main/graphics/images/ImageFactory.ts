@@ -14,11 +14,15 @@ type Props = Readonly<{
   effects?: ImageEffect[]
 }>;
 
-const CACHE: ImageCache = ImageCache.create();
-const rawCache: Record<string, ImageData | null> = {};
-
 namespace ImageFactory {
+  // includes palette swaps, etc.
+  const cache: ImageCache = ImageCache.create();
+
+  // just the raw images
+  const rawCache: Record<string, ImageData | null> = {};
+
   const imageLoader = new ImageLoader();
+
   export const getImage = async (props: Props): Promise<Image> => {
     let filenames: string[];
     if (props.filenames) {
@@ -32,7 +36,7 @@ namespace ImageFactory {
 
     for (const filename of filenames) {
       const cacheKey = { filename, paletteSwaps, transparentColor, effects };
-      const cached: Image | null | undefined = CACHE.get(cacheKey);
+      const cached: Image | null | undefined = cache.get(cacheKey);
       if (cached) {
         return cached;
       }
@@ -55,7 +59,7 @@ namespace ImageFactory {
           imageData = effect.apply(imageData);
         }
         const image = await Image.create({ imageData, filename });
-        CACHE.put(cacheKey, image);
+        cache.put(cacheKey, image);
         return image;
       }
     }
