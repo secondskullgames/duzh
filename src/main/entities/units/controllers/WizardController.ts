@@ -3,7 +3,7 @@ import Unit from '../Unit';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
-import { randChance, randChoice } from '../../../utils/random';
+import { randChance } from '../../../utils/random';
 import TeleportAwayOrder from '../orders/TeleportAwayOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';

@@ -1,7 +1,7 @@
 import MapSpec from '../schemas/MapSpec';
 import MapInstance from '../maps/MapInstance';
 import MapFactory from '../maps/MapFactory';
-import { checkNotNull, checkState } from '../utils/preconditions';
+import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 
@@ -23,10 +23,6 @@ export default class Dungeon {
     this.mapSpecs = mapSpecs;
     this.maps = {};
   }
-  
-  hasMap = (id: string): boolean =>{
-    return this.mapSpecs.some(mapSpec => mapSpec.id === id);
-  };
 
   getMap = async (
     id: string,
@@ -42,9 +38,5 @@ export default class Dungeon {
   getNextMapId = (id?: string | null): string | null => {
     const index = this.mapSpecs.findIndex(mapSpec => mapSpec.id === id);
     return this.mapSpecs[index + 1]?.id ?? null;
-  };
-  
-  private _getMapById = (id: string): MapSpec | null => {
-    return this.mapSpecs.find(mapSpec => mapSpec.id === id) ?? null;
   };
 }

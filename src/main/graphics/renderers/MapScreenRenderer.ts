@@ -1,4 +1,3 @@
-import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
