@@ -41,5 +41,6 @@ export const addInitialState = async ({ state, imageFactory, mapFactory, ticker 
   ];
   const dungeon = new Dungeon({ mapSpecs });
   state.loadDungeon(dungeon);
-  state.setMapIndex(1);
+  // these maps are 1-indexed; set to 0 so the first increment will load map #1
+  state.setMapIndex(0);
 };
