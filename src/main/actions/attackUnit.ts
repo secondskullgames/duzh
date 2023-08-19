@@ -10,6 +10,7 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type Props = Readonly<{
   attacker: Unit,
@@ -22,20 +23,20 @@ type Props = Readonly<{
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory,
   ticker: Ticker
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, map, imageFactory, ticker }: Context
+  { state, map, spriteFactory, ticker }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, imageFactory, ticker }
+        { state, map, spriteFactory, ticker }
       );
     }
   }
@@ -59,7 +60,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, map, imageFactory, ticker });
+    await die(defender, { state, map, spriteFactory, ticker });
     recordKill(attacker, { state, ticker });
   }
 

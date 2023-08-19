@@ -6,21 +6,22 @@ import { Feature } from '../utils/features';
 import ItemFactory from '../items/ItemFactory';
 import Ticker from '../core/Ticker';
 import Dungeon from '../core/Dungeon';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory,
   ticker: Ticker
 }>;
 
-export const addInitialState = async ({ state, imageFactory, ticker }: Context) => {
+export const addInitialState = async ({ state, spriteFactory, ticker }: Context) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
-    imageFactory
+    spriteFactory
   });
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: state.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
-      const equipment = await ItemFactory.createEquipment(equipmentId, { imageFactory });
+      const equipment = await ItemFactory.createEquipment(equipmentId, { spriteFactory });
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
       ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });

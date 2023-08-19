@@ -4,10 +4,10 @@ import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
-import ImageFactory from '../../graphics/images/ImageFactory';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 type Context = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
 abstract class AbstractMapGenerator {
@@ -17,7 +17,7 @@ abstract class AbstractMapGenerator {
     id: string,
     mapModel: GeneratedMapModel,
     tileSetId: string,
-    { imageFactory }: Context
+    { spriteFactory }: Context
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapModel;
 
@@ -25,7 +25,7 @@ abstract class AbstractMapGenerator {
     const tileTypes = map.tiles;
     const tileSet = await TileFactory.getTileSet(
       tileSetId,
-      { imageFactory }
+      { spriteFactory }
     );
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);

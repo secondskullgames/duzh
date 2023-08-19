@@ -3,6 +3,7 @@ import MapInstance from '../maps/MapInstance';
 import MapFactory from '../maps/MapFactory';
 import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 
 type Props = Readonly<{
@@ -12,7 +13,8 @@ type Props = Readonly<{
 export type GetMapContext = Readonly<{
   state: GameState,
   mapFactory: MapFactory,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory
 }>;
 
 export default class Dungeon {
@@ -26,13 +28,13 @@ export default class Dungeon {
 
   getMap = async (
     id: string,
-    { state, mapFactory, imageFactory }: GetMapContext
+    { state, mapFactory, imageFactory, spriteFactory }: GetMapContext
   ): Promise<MapInstance> => {
     if (this.maps[id]) {
       return this.maps[id];
     }
     const mapSpec = checkNotNull(this.mapSpecs.find(mapSpec => mapSpec.id === id));
-    return mapFactory.loadMap(mapSpec, { state, imageFactory });
+    return mapFactory.loadMap(mapSpec, { state, imageFactory, spriteFactory });
   };
   
   getNextMapId = (id?: string | null): string | null => {

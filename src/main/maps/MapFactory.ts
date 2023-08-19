@@ -10,14 +10,16 @@ import MapInstance from './MapInstance';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { buildPredefinedMap } from './predefined/buildPredefinedMap';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
+import ImageFactory from '../graphics/images/ImageFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory
 }>;
 
 type MapStyle = Readonly<{
@@ -35,28 +37,29 @@ namespace MapStyle {
 export default class MapFactory {
   private readonly usedMapStyles: MapStyle[] = [];
 
-  loadMap = async (mapSpec: MapSpec, { state, imageFactory }: Context): Promise<MapInstance> => {
+  loadMap = async (mapSpec: MapSpec, context: Context): Promise<MapInstance> => {
+    const { state, spriteFactory } = context;
     const mapId = mapSpec.id;
     switch (mapSpec.type) {
       case 'generated': {
-        const mapClass = await loadGeneratedMapModel(mapId);
-        const mapBuilder = await this._loadGeneratedMap(mapId, mapClass, { state, imageFactory });
-        return mapBuilder.build({ state, imageFactory });
+        const mapModel = await loadGeneratedMapModel(mapId);
+        const mapBuilder = await this._loadGeneratedMap(mapId, mapModel, context);
+        return mapBuilder.build({ state, spriteFactory });
       }
       case 'predefined': {
-        return this._loadPredefinedMap(mapId, { state, imageFactory });
+        return this._loadPredefinedMap(mapId, context);
       }
     }
   };
 
-  private _loadGeneratedMap = async (mapId: string, model: GeneratedMapModel, { imageFactory }: Context): Promise<GeneratedMapBuilder> => {
+  private _loadGeneratedMap = async (mapId: string, model: GeneratedMapModel, { spriteFactory }: Context): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    return dungeonGenerator.generateMap(mapId, model, style.tileSet, { imageFactory });
+    return dungeonGenerator.generateMap(mapId, model, style.tileSet, { spriteFactory });
   };
 
-  private _loadPredefinedMap = async (mapId: string, { state, imageFactory }: Context): Promise<MapInstance> => {
-    return buildPredefinedMap(mapId, { state, imageFactory });
+  private _loadPredefinedMap = async (mapId: string, { state, imageFactory, spriteFactory }: Context): Promise<MapInstance> => {
+    return buildPredefinedMap(mapId, { state, imageFactory, spriteFactory });
   };
 
   private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {

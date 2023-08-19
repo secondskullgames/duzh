@@ -9,10 +9,12 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Ticker from './Ticker';
 import MapFactory from '../maps/MapFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory,
   mapFactory: MapFactory,
   ticker: Ticker
 }>;
@@ -20,13 +22,15 @@ type Props = Readonly<{
 export class Debug {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
+  private readonly spriteFactory: SpriteFactory;
   private readonly mapFactory: MapFactory;
   private readonly ticker: Ticker;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
+  constructor({ state, imageFactory, spriteFactory, mapFactory, ticker }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
+    this.spriteFactory = spriteFactory;
     this.mapFactory = mapFactory;
     this.ticker = ticker;
     this._isMapRevealed = false;
@@ -43,7 +47,7 @@ export class Debug {
     await die(playerUnit, {
       state: this.state,
       map: this.state.getMap(),
-      imageFactory: this.imageFactory,
+      spriteFactory: this.spriteFactory,
       ticker: this.ticker
     });
   };
@@ -79,7 +83,8 @@ export class Debug {
         await loadNextMap({
           state: this.state,
           mapFactory: this.mapFactory,
-          imageFactory: this.imageFactory
+          imageFactory: this.imageFactory,
+          spriteFactory: this.spriteFactory
         });
       }
     };

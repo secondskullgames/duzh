@@ -17,14 +17,14 @@ import Sounds from '../../sounds/Sounds';
 export type SpawnerClass = 'mirror';
 
 type CreateObjectContext = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
 const createMirror = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  { spriteFactory }: CreateObjectContext
 ): Promise<Spawner> => {
-  const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
+  const sprite = await spriteFactory.createMirrorSprite();
   const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
     {
       unitClass: 'shade',
@@ -33,7 +33,7 @@ const createMirror = async (
       controller: new BasicEnemyController(),
       faction: Faction.ENEMY,
     },
-    { imageFactory }
+    { spriteFactory }
   );
   const spawner = new Spawner({
     spawnFunction,
@@ -50,11 +50,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { imageFactory }: CreateObjectContext
+  { spriteFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { imageFactory });
+      return createMirror(coordinates, { spriteFactory });
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
@@ -62,12 +62,11 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  { spriteFactory }: CreateObjectContext
 ): Promise<GameObject> => {
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     'block',
-    PaletteSwaps.empty(),
-    { imageFactory }
+    PaletteSwaps.empty()
   );
 
   return new Block({
@@ -79,12 +78,11 @@ const createMovableBlock = async (
 
 const createHealthGlobe = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  { spriteFactory }: CreateObjectContext
 ): Promise<GameObject> => {
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     'map_health_globe',
-    PaletteSwaps.empty(),
-    { imageFactory }
+    PaletteSwaps.empty()
   );
 
   const lifeGained = 10;

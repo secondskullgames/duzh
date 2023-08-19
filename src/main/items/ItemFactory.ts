@@ -75,7 +75,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, map, imageFactory, ticker }: ItemProcContext
+    { state, map, spriteFactory, ticker }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits()
@@ -90,7 +90,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     const animation = await AnimationFactory.getFloorFireAnimation(
       unit,
       adjacentUnits,
-      { map, imageFactory }
+      { map, spriteFactory }
     );
     await playAnimation(animation, { map });
 
@@ -101,7 +101,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, map, imageFactory, ticker });
+        await die(adjacentUnit, { state, map, spriteFactory, ticker });
         recordKill(unit, { state, ticker });
       }
     }
@@ -118,9 +118,9 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    { state, spriteFactory, ticker }: ItemProcContext
   ) => {
-    const equipment = await createEquipment(equipmentClass, { imageFactory });
+    const equipment = await createEquipment(equipmentClass, { spriteFactory });
     return equipItem(item, equipment, unit, { state, ticker });
   };
 
@@ -133,35 +133,33 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
 };
 
 type CreateMapEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
 const createMapEquipment = async (
   equipmentClass: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapEquipmentContext
+  { spriteFactory }: CreateMapEquipmentContext
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     model.mapIcon,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
   const inventoryItem: InventoryItem = await createInventoryEquipment(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
 type CreateEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
-const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentContext): Promise<Equipment> => {
+const createEquipment = async (equipmentClass: string, { spriteFactory }: CreateEquipmentContext): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(
+  const sprite = await spriteFactory.createEquipmentSprite(
     spriteName,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
 
   // TODO wtf is this
@@ -202,20 +200,19 @@ const createInventoryItem = async (
 };
 
 type CreateMapItemContext = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapItemContext
+  { spriteFactory }: CreateMapItemContext
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
   const inventoryItem = await createInventoryItem(model);
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     model.mapSprite,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
   return new MapItem({ coordinates, sprite, inventoryItem });
 };

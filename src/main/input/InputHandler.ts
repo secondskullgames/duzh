@@ -16,6 +16,7 @@ import { GameScreen } from '../core/GameScreen';
 import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
 import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.NONE]:      { handleKeyCommand: async () => {} },
@@ -33,6 +34,7 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 type Props = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
+  spriteFactory: SpriteFactory,
   mapFactory: MapFactory,
   ticker: Ticker
 }>;
@@ -40,6 +42,7 @@ type Props = Readonly<{
 export default class InputHandler {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
+  private readonly spriteFactory: SpriteFactory;
   private readonly mapFactory: MapFactory;
   private readonly ticker: Ticker;
 
@@ -48,9 +51,10 @@ export default class InputHandler {
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
+  constructor({ state, imageFactory, spriteFactory, mapFactory, ticker }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
+    this.spriteFactory = spriteFactory;
     this.mapFactory = mapFactory;
     this.ticker = ticker;
     this.busy = false;
@@ -83,9 +87,9 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, imageFactory, mapFactory, ticker } = this;
+    const { state, imageFactory, spriteFactory, mapFactory, ticker } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory, mapFactory, ticker });
+    await handler.handleKeyCommand(command, { state, imageFactory, spriteFactory, mapFactory, ticker });
   };
 
   addEventListener = (target: HTMLElement) => {

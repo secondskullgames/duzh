@@ -9,10 +9,12 @@ import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
+import SpriteFactory from './graphics/sprites/SpriteFactory';
 
 const main = async () => {
   const state = new GameState();
   const imageFactory = new ImageFactory();
+  const spriteFactory = new SpriteFactory({ imageFactory });
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
   const ticker = new Ticker();
@@ -21,10 +23,10 @@ const main = async () => {
     textRenderer
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
+  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, mapFactory, ticker });
+    const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }

@@ -9,7 +9,6 @@ import { UnitController } from './controllers/UnitController';
 import Unit from './Unit';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
@@ -27,24 +26,23 @@ type CreateUnitProps = Readonly<{
 }>;
 
 type Context = Readonly<{
-  imageFactory: ImageFactory
+  spriteFactory: SpriteFactory
 }>;
 
 const createUnit = async (
   { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
-  { imageFactory }: Context
+  { spriteFactory }: Context
 ): Promise<Unit> => {
   const model: UnitModel = await loadUnitModel(unitClass);
-  const sprite = await SpriteFactory.createUnitSprite(
+  const sprite = await spriteFactory.createUnitSprite(
     model.sprite,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of (model.equipment ?? [])) {
     const equipment = await ItemFactory.createEquipment(
       equipmentClass,
-      { imageFactory }
+      { spriteFactory }
     );
     equipmentList.push(equipment);
   }
@@ -62,7 +60,7 @@ const createUnit = async (
   return unit;
 };
 
-const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
+const createPlayerUnit = async ({ spriteFactory }: Context): Promise<Unit> => {
   const unit = await createUnit(
     {
       unitClass: 'player',
@@ -71,7 +69,7 @@ const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
       level: 1,
       coordinates: { x: 0, y: 0 }
     },
-    { imageFactory }
+    { spriteFactory }
   );
   if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     unit.learnAbility(abilityForName(AbilityName.DASH));
