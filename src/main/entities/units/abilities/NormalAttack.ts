@@ -16,7 +16,7 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
@@ -35,7 +35,7 @@ export const NormalAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.PLAYER_HITS_ENEMY
         },
-        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }
       );
       unit.gainMana(MANA_RETURNED);
     }

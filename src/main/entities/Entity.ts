@@ -8,6 +8,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from './units/UnitFactory';
+import ObjectFactory from './objects/ObjectFactory';
 
 export type UpdateContext = Readonly<{
   state: GameState,
@@ -16,6 +17,7 @@ export type UpdateContext = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 

@@ -8,15 +8,12 @@ import ObjectFactory from '../entities/objects/ObjectFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import ItemFactory from '../items/ItemFactory';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import UnitFactory from '../entities/units/UnitFactory';
 
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  spriteFactory: SpriteFactory,
   itemFactory: ItemFactory,
-  unitFactory: UnitFactory,
+  objectFactory: ObjectFactory
   ticker: Ticker
 }>;
 
@@ -25,7 +22,7 @@ const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (
   unit: Unit,
-  { state, map, spriteFactory, itemFactory, unitFactory, ticker }: Context
+  { state, map, itemFactory, objectFactory, ticker }: Context
 ) => {
   const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
@@ -39,7 +36,7 @@ export const die = async (
     ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { spriteFactory, itemFactory, unitFactory })
+      const healthGlobe = await objectFactory.createHealthGlobe(coordinates)
       map.addObject(healthGlobe);
     }
 

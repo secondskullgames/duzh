@@ -13,6 +13,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Props = Readonly<{
   attacker: Unit,
@@ -29,19 +30,20 @@ type Context = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }
       );
     }
   }
@@ -65,7 +67,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, map, spriteFactory, itemFactory, unitFactory, ticker });
+    await die(defender, { state, map, itemFactory, objectFactory, ticker });
     recordKill(attacker, { state, ticker });
   }
 

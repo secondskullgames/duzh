@@ -17,12 +17,15 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,
   unitFactory: UnitFactory,
   itemFactory: ItemFactory,
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  tileFactory: TileFactory,
+  objectFactory: ObjectFactory
 }>;
 
 type Context = Readonly<{
@@ -46,13 +49,17 @@ export default class MapFactory {
   private readonly imageFactory: ImageFactory;
   private readonly itemFactory: ItemFactory;
   private readonly spriteFactory: SpriteFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly objectFactory: ObjectFactory;
   private readonly usedMapStyles: MapStyle[] = [];
-  
-  constructor({ imageFactory, unitFactory, itemFactory, spriteFactory }: Props) {
+
+  constructor({ imageFactory, unitFactory, itemFactory, spriteFactory, tileFactory, objectFactory }: Props) {
     this.imageFactory = imageFactory;
     this.unitFactory = unitFactory;
     this.itemFactory = itemFactory;
     this.spriteFactory = spriteFactory;
+    this.tileFactory = tileFactory;
+    this.objectFactory = objectFactory;
   }
 
   loadMap = async (mapSpec: MapSpec, { state }: Context): Promise<MapInstance> => {
@@ -76,7 +83,10 @@ export default class MapFactory {
   private _loadGeneratedMap = async (mapId: string, model: GeneratedMapModel): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    return dungeonGenerator.generateMap(mapId, model, style.tileSet, { spriteFactory: this.spriteFactory });
+    return dungeonGenerator.generateMap(mapId, model, style.tileSet, {
+      spriteFactory: this.spriteFactory,
+      tileFactory: this.tileFactory
+    });
   };
 
   private _loadPredefinedMap = async (mapId: string, { state }: Context): Promise<MapInstance> => {
@@ -85,7 +95,9 @@ export default class MapFactory {
       imageFactory: this.imageFactory,
       spriteFactory: this.spriteFactory,
       itemFactory: this.itemFactory,
-      unitFactory: this.unitFactory
+      unitFactory: this.unitFactory,
+      tileFactory: this.tileFactory,
+      objectFactory: this.objectFactory
     });
   };
 
@@ -123,7 +135,7 @@ export default class MapFactory {
         'PATH',
         'BLOB',
       ])
-      const tileSet = randChoice(TileFactory.getTileSetNames());
+      const tileSet = randChoice(this.tileFactory.getTileSetNames());
       const chosenStyle = { layout, tileSet };
       if (!this.usedMapStyles.some(style => MapStyle.equals(style, chosenStyle))) {
         this.usedMapStyles.push(chosenStyle);

@@ -11,6 +11,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 /** TODO a lot of this stuff does not make sense here */
 type Context = Readonly<{
@@ -20,20 +21,30 @@ type Context = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 
 export const fastMove = async (
   unit: Unit,
   direction: Direction,
-  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: Context
 ) => {
   let coordinates: Coordinates;
   while (true) {
     coordinates = Coordinates.plus(unit.getCoordinates(), direction);
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
-      await playTurn({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+      await moveUnit(unit, coordinates, {
+        state,
+        map,
+        spriteFactory,
+        animationFactory,
+        itemFactory,
+        unitFactory,
+        objectFactory,
+        ticker
+      });
+      await playTurn({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker });
       await sleep(100);
     } else {
       break;

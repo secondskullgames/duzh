@@ -29,6 +29,8 @@ type Context = Readonly<{
   spriteFactory: SpriteFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  tileFactory: TileFactory,
+  objectFactory: ObjectFactory,
   state: GameState
 }>;
 
@@ -66,13 +68,10 @@ export const buildPredefinedMap = async (
 const _loadTiles = async (
   model: PredefinedMapModel,
   image: Image,
-  { spriteFactory }: Context
+  { tileFactory }: Context
 ): Promise<Tile[][]> => {
   const tileColors = _toHexColors(model.tileColors);
-  const tileSet = await TileFactory.getTileSet(
-    model.tileset,
-    { spriteFactory }
-  );
+  const tileSet = await tileFactory.getTileSet(model.tileset);
   const tiles: Tile[][] = [];
   for (let y = 0; y < image.height; y++) {
     tiles.push([]);
@@ -82,7 +81,7 @@ const _loadTiles = async (
 
       const tileType = tileColors[color.hex] ?? null;
       if (tileType !== null) {
-        tiles[y][x] = TileFactory.createTile({
+        tiles[y][x] = tileFactory.createTile({
           tileType: tileType as TileType,
           tileSet,
           coordinates: { x, y }
@@ -148,7 +147,7 @@ const _loadUnits = async (
 const _loadObjects = async (
   model: PredefinedMapModel,
   image: Image,
-  { spriteFactory, itemFactory, unitFactory }: Context
+  { spriteFactory, itemFactory, objectFactory }: Context
 ): Promise<GameObject[]> => {
   const objects: GameObject[] = [];
 
@@ -163,6 +162,7 @@ const _loadObjects = async (
 
       const objectName = objectColors?.[color.hex] ?? null;
       if (objectName?.startsWith('door_')) {
+        // TODO why this is not in ObjectFactory?
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
           : 'vertical';
@@ -177,16 +177,10 @@ const _loadObjects = async (
         objects.push(door);
       } else {
         if (objectName === 'mirror') {
-          const spawner = await ObjectFactory.createMirror(
-            { x, y },
-            { spriteFactory, itemFactory, unitFactory }
-          );
+          const spawner = await objectFactory.createMirror({ x, y });
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
-          const block = await ObjectFactory.createMovableBlock(
-            { x, y },
-            { spriteFactory, itemFactory, unitFactory }
-          );
+          const block = await objectFactory.createMovableBlock({ x, y });
           objects.push(block);
         } else if (objectName) {
           throw new Error(`Unrecognized object name: ${objectName}`);

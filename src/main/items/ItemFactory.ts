@@ -16,16 +16,20 @@ import { equipItem } from '../actions/equipItem';
 import type { ItemProc, ItemProcContext } from './ItemProc';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory;
+  spriteFactory: SpriteFactory,
+  getObjectFactory: () => ObjectFactory
 }>;
 
 export default class ItemFactory {
   private readonly spriteFactory: SpriteFactory;
+  private readonly getObjectFactory: () => ObjectFactory;
   
-  constructor({ spriteFactory }: Props) {
+  constructor({ spriteFactory, getObjectFactory }: Props) {
     this.spriteFactory = spriteFactory;
+    this.getObjectFactory = getObjectFactory;
   }
   
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -110,7 +114,8 @@ export default class ItemFactory {
         });
   
         if (adjacentUnit.getLife() <= 0) {
-          await die(adjacentUnit, { state, map, spriteFactory, itemFactory: this, unitFactory, ticker });
+          const objectFactory = this.getObjectFactory();
+          await die(adjacentUnit, { state, map, itemFactory: this, objectFactory, ticker });
           recordKill(unit, { state, ticker });
         }
       }

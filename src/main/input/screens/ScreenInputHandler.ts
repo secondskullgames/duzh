@@ -7,6 +7,7 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../../graphics/animations/AnimationFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
+import ObjectFactory from '../../entities/objects/ObjectFactory';
 
 export type ScreenHandlerContext = Readonly<{
   state: GameState,
@@ -16,6 +17,7 @@ export type ScreenHandlerContext = Readonly<{
   mapFactory: MapFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 

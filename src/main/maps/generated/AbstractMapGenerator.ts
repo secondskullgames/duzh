@@ -7,7 +7,8 @@ import TileFactory from '../../tiles/TileFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 type Context = Readonly<{
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  tileFactory: TileFactory
 }>;
 
 abstract class AbstractMapGenerator {
@@ -17,16 +18,13 @@ abstract class AbstractMapGenerator {
     id: string,
     mapModel: GeneratedMapModel,
     tileSetId: string,
-    { spriteFactory }: Context
+    { tileFactory }: Context
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapModel;
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
-    const tileSet = await TileFactory.getTileSet(
-      tileSetId,
-      { spriteFactory }
-    );
+    const tileSet = await tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -38,7 +36,7 @@ abstract class AbstractMapGenerator {
       for (let x = 0; x < tileTypes[y].length; x++) {
         const coordinates = { x, y };
         const tileType = tileTypes[y][x];
-        const tile = TileFactory.createTile({
+        const tile = tileFactory.createTile({
           tileType,
           tileSet,
           coordinates

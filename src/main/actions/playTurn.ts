@@ -8,6 +8,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Context = Readonly<{
   state: GameState,
@@ -16,19 +17,20 @@ type Context = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 
-export const playTurn = async ({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: Context) => {
+export const playTurn = async ({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: Context) => {
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
     if (unit.getLife() > 0) {
-      await unit.update({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+      await unit.update({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker });
     }
   }
 
   for (const object of map.getAllObjects()) {
-    await object.update({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+    await object.update({ state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker });
   }
 
   updateRevealedTiles({ state, map });

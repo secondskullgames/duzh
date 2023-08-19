@@ -10,7 +10,7 @@ import Sounds from '../sounds/Sounds';
 import Ticker from './Ticker';
 import MapFactory from '../maps/MapFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Props = Readonly<{
   state: GameState,
@@ -18,7 +18,7 @@ type Props = Readonly<{
   spriteFactory: SpriteFactory,
   mapFactory: MapFactory,
   itemFactory: ItemFactory,
-  unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 
@@ -28,17 +28,17 @@ export class Debug {
   private readonly spriteFactory: SpriteFactory;
   private readonly mapFactory: MapFactory;
   private readonly itemFactory: ItemFactory;
-  private readonly unitFactory: UnitFactory;
+  private readonly objectFactory: ObjectFactory;
   private readonly ticker: Ticker;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, spriteFactory, mapFactory, itemFactory, unitFactory, ticker }: Props) {
+  constructor({ state, imageFactory, spriteFactory, mapFactory, itemFactory, objectFactory, ticker }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this.spriteFactory = spriteFactory;
     this.mapFactory = mapFactory;
     this.itemFactory = itemFactory;
-    this.unitFactory = unitFactory;
+    this.objectFactory = objectFactory;
     this.ticker = ticker;
     this._isMapRevealed = false;
   }
@@ -54,9 +54,8 @@ export class Debug {
     await die(playerUnit, {
       state: this.state,
       map: this.state.getMap(),
-      spriteFactory: this.spriteFactory,
       itemFactory: this.itemFactory,
-      unitFactory: this.unitFactory,
+      objectFactory: this.objectFactory,
       ticker: this.ticker
     });
   };

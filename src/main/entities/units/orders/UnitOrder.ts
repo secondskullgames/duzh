@@ -6,6 +6,7 @@ import SpriteFactory from '../../../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import ItemFactory from '../../../items/ItemFactory';
 import UnitFactory from '../UnitFactory';
+import ObjectFactory from '../../objects/ObjectFactory';
 
 export type OrderContext = Readonly<{
   state: GameState,
@@ -14,6 +15,7 @@ export type OrderContext = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 

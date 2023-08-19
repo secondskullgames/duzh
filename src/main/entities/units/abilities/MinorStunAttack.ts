@@ -22,7 +22,7 @@ export const MinorStunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('MinorStunAttack requires a target!');
@@ -33,7 +33,7 @@ export const MinorStunAttack: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
       await attackUnit(
@@ -44,7 +44,7 @@ export const MinorStunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }
       );
       targetUnit.setStunned(1);
     }

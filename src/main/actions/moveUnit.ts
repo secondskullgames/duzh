@@ -9,6 +9,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 type Context = Readonly<{
   state: GameState,
@@ -17,13 +18,14 @@ type Context = Readonly<{
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
   unitFactory: UnitFactory,
+  objectFactory: ObjectFactory,
   ticker: Ticker
 }>;
 
 export const moveUnit = async (
   unit: Unit,
   coordinates: Coordinates,
-  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: Context
 ) => {
   map.removeUnit(unit);
 
@@ -36,7 +38,7 @@ export const moveUnit = async (
       await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
         nextCoordinates,
-        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }
       );
     }
   }

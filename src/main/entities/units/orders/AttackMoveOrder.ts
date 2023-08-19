@@ -28,7 +28,7 @@ export class AttackMoveOrder implements UnitOrder {
    */
   execute = async (
     unit: Unit,
-    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: OrderContext
+    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: OrderContext
   ): Promise<void> => {
     const { coordinates, ability } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
@@ -39,12 +39,12 @@ export class AttackMoveOrder implements UnitOrder {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+        await walk(unit, direction, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker });
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+          await ability.use(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker });
           return;
         }
         const door = getDoor(map, coordinates);
@@ -60,7 +60,16 @@ export class AttackMoveOrder implements UnitOrder {
 
         const block = getMovableBlock(map, coordinates);
         if (block) {
-          await pushBlock(unit, block, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+          await pushBlock(unit, block, {
+            state,
+            map,
+            spriteFactory,
+            animationFactory,
+            itemFactory,
+            unitFactory,
+            objectFactory,
+            ticker
+          });
           return;
         }
       }

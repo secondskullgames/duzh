@@ -20,7 +20,7 @@ export class FastMoveOrder implements UnitOrder {
    */
   execute = async (
     unit: Unit,
-    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: OrderContext
+    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, objectFactory, ticker }: OrderContext
   ): Promise<void> => {
     const { direction } = this;
     unit.setDirection(direction);
@@ -31,6 +31,15 @@ export class FastMoveOrder implements UnitOrder {
       return;
     }
 
-    return fastMove(unit, direction, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
+    return fastMove(unit, direction, {
+      state,
+      map,
+      spriteFactory,
+      animationFactory,
+      itemFactory,
+      unitFactory,
+      objectFactory,
+      ticker
+    });
   }
 }
