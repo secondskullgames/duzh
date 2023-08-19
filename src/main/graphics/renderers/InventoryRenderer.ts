@@ -8,6 +8,7 @@ import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import ImageFactory from '../images/ImageFactory';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -34,12 +35,12 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async ({ state }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
     const { graphics } = this;
 
-    const image = await imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    const image = await ImageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     // TODO: need a 640x360 version of this image
     graphics.drawScaledImage(image, {
       left: INVENTORY_LEFT,

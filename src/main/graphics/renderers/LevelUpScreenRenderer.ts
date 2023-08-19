@@ -7,6 +7,7 @@ import Color from '../Color';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
+import ImageFactory from '../images/ImageFactory';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 
@@ -24,12 +25,12 @@ export default class LevelUpScreenRenderer implements Renderer {
     this.textRenderer = textRenderer;
   }
 
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async ({ state }: RenderContext) => {
     const { graphics } = this;
     const playerUnit = state.getPlayerUnit();
     const selectedAbility = state.getSelectedLevelUpScreenAbility();
 
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const image = await ImageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

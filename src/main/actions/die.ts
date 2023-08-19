@@ -5,7 +5,6 @@ import Sounds from '../sounds/Sounds';
 import GameState from '../core/GameState';
 import { randChance } from '../utils/random';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import ItemFactory from '../items/ItemFactory';
@@ -13,7 +12,6 @@ import ItemFactory from '../items/ItemFactory';
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
@@ -22,7 +20,7 @@ const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (
   unit: Unit,
-  { state, map, imageFactory, ticker }: Context
+  { state, map, ticker }: Context
 ) => {
   const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
@@ -36,13 +34,13 @@ export const die = async (
     ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { imageFactory })
+      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates);
       map.addObject(healthGlobe);
     }
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {
-      const key = await ItemFactory.createMapItem('key', coordinates, { imageFactory });
+      const key = await ItemFactory.createMapItem('key', coordinates);
       map.addObject(key);
     }
   }

@@ -12,28 +12,26 @@ import MapFactory from './maps/MapFactory';
 
 const main = async () => {
   const state = new GameState();
-  const imageFactory = new ImageFactory();
-  const fonts = await loadFonts({ imageFactory });
-  const textRenderer = new TextRenderer({ imageFactory, fonts });
+  const fonts = await loadFonts();
+  const textRenderer = new TextRenderer({ fonts });
   const ticker = new Ticker();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state,
-    imageFactory,
     textRenderer,
     ticker
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
+  const inputHandler = new InputHandler({ state, mapFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, mapFactory, ticker });
+    const debug = new Debug({ state, mapFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
   await showSplashScreen({ state });
   setInterval(async () => {
-    await renderer.render({ state, imageFactory });
+    await renderer.render({ state, });
   }, 20);
 };
 

@@ -12,21 +12,20 @@ import MapInstance from '../maps/MapInstance';
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
 export const walk = async (
   unit: Unit,
   direction: Direction,
-  { state, map, imageFactory, ticker }: Context
+  { state, map, ticker }: Context
 ) => {
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, ticker });
     const playerUnit = state.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);

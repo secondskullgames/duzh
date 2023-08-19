@@ -68,11 +68,11 @@ export default class GameState {
     return !!dungeon.getNextMapId(this.map?.id);
   };
 
-  loadNextMap = async ({ state, mapFactory, imageFactory }: GetMapContext) => {
+  loadNextMap = async ({ state, mapFactory }: GetMapContext) => {
     const dungeon = checkNotNull(this.dungeon);
     
     const nextMapId = dungeon.getNextMapId(this.map?.id);
-    this.map = await dungeon.getMap(`${nextMapId}`, { state, mapFactory, imageFactory });
+    this.map = await dungeon.getMap(`${nextMapId}`, { state, mapFactory });
   };
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');

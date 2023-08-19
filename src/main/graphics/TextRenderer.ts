@@ -9,20 +9,17 @@ import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';
 
 type Props = Readonly<{
-  imageFactory: ImageFactory,
   fonts: FontBundle
 }>;
 
 export class TextRenderer {
-  private readonly imageFactory: ImageFactory;
   private readonly fonts: FontBundle;
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
 
   private readonly imageCache: Record<string, Image> = {};
 
-  constructor({ imageFactory, fonts }: Props) {
-    this.imageFactory = imageFactory;
+  constructor({ fonts }: Props) {
     this.fonts = fonts;
     this.canvas = createCanvas({
       width: SCREEN_WIDTH,

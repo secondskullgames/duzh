@@ -7,16 +7,15 @@ import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   state: GameState,
-  mapFactory: MapFactory,
-  imageFactory: ImageFactory
+  mapFactory: MapFactory
 }>;
 
-export const loadNextMap = async ({ state, mapFactory, imageFactory }: Context) => {
+export const loadNextMap = async ({ state, mapFactory }: Context) => {
   if (!state.hasNextMap()) {
     Music.stop();
     state.setScreen(GameScreen.VICTORY);
   } else {
-    await state.loadNextMap({ state, mapFactory, imageFactory });
+    await state.loadNextMap({ state, mapFactory });
     const map = state.getMap();
     updateRevealedTiles({ state, map: map })
     if (map.music) {

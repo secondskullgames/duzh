@@ -4,11 +4,6 @@ import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
-import ImageFactory from '../../graphics/images/ImageFactory';
-
-type Context = Readonly<{
-  imageFactory: ImageFactory
-}>;
 
 abstract class AbstractMapGenerator {
   protected constructor() {}
@@ -16,17 +11,13 @@ abstract class AbstractMapGenerator {
   generateMap = async (
     id: string,
     mapModel: GeneratedMapModel,
-    tileSetId: string,
-    { imageFactory }: Context
+    tileSetId: string
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapModel;
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
-    const tileSet = await TileFactory.getTileSet(
-      tileSetId,
-      { imageFactory }
-    );
+    const tileSet = await TileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;

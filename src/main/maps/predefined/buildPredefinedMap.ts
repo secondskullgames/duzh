@@ -25,7 +25,6 @@ import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 
 type Context = Readonly<{
-  imageFactory: ImageFactory,
   state: GameState
 }>;
 
@@ -41,10 +40,10 @@ const _getEnemyController = (enemyUnitModel: UnitModel) => {
 
 export const buildPredefinedMap = async (
   mapId: string,
-  { state, imageFactory }: Context
+  { state }: Context
 ): Promise<MapInstance> => {
   const model = await loadPredefinedMapModel(mapId);
-  const image = await imageFactory.getImage({
+  const image = await ImageFactory.getImage({
     filename: `maps/${model.imageFilename}`
   });
 
@@ -52,22 +51,17 @@ export const buildPredefinedMap = async (
     id: mapId,
     width: image.bitmap.width,
     height: image.bitmap.height,
-    tiles: await _loadTiles(model, image, { state, imageFactory }),
-    units: await _loadUnits(model, image, { state, imageFactory }),
-    objects: await _loadObjects(model, image, { state, imageFactory }),
+    tiles: await _loadTiles(model, image),
+    units: await _loadUnits(model, image, { state }),
+    objects: await _loadObjects(model, image),
     music: (model.music) ? await Music.loadMusic(model.music as string) : null
   });
 };
 
-const _loadTiles = async (
-  model: PredefinedMapModel,
-  image: Image,
-  { imageFactory }: Context
-): Promise<Tile[][]> => {
+const _loadTiles = async (model: PredefinedMapModel, image: Image): Promise<Tile[][]> => {
   const tileColors = _toHexColors(model.tileColors);
   const tileSet = await TileFactory.getTileSet(
-    model.tileset,
-    { imageFactory }
+    model.tileset
   );
   const tiles: Tile[][] = [];
   for (let y = 0; y < image.height; y++) {
@@ -95,7 +89,7 @@ const _loadTiles = async (
 const _loadUnits = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, imageFactory }: Context
+  { state }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
   const enemyColors = _toHexColors(model.enemyColors);
@@ -123,17 +117,14 @@ const _loadUnits = async (
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller = _getEnemyController(enemyUnitModel);
-            const unit = await UnitFactory.createUnit(
-              {
-                name: enemyUnitModel.name,
-                unitClass: enemyUnitClass,
-                faction: Faction.ENEMY,
-                controller,
-                level: model.levelNumber,
-                coordinates: { x, y }
-              },
-              { imageFactory }
-            );
+            const unit = await UnitFactory.createUnit({
+              name: enemyUnitModel.name,
+              unitClass: enemyUnitClass,
+              faction: Faction.ENEMY,
+              controller,
+              level: model.levelNumber,
+              coordinates: { x, y }
+            });
             units.push(unit);
           }
         }
@@ -144,11 +135,7 @@ const _loadUnits = async (
   return units;
 };
 
-const _loadObjects = async (
-  model: PredefinedMapModel,
-  image: Image,
-  { imageFactory }: Context
-): Promise<GameObject[]> => {
+const _loadObjects = async (model: PredefinedMapModel, image: Image): Promise<GameObject[]> => {
   const objects: GameObject[] = [];
 
   const objectColors = _toHexColors(model.objectColors);
@@ -165,7 +152,7 @@ const _loadObjects = async (
         const doorDirection = (objectName === 'door_horizontal')
           ? 'horizontal'
           : 'vertical';
-        const sprite = await SpriteFactory.createDoorSprite({ imageFactory });
+        const sprite = await SpriteFactory.createDoorSprite();
 
         const door = new Door({
           direction: doorDirection,
@@ -176,16 +163,10 @@ const _loadObjects = async (
         objects.push(door);
       } else {
         if (objectName === 'mirror') {
-          const spawner = await ObjectFactory.createMirror(
-            { x, y },
-            { imageFactory }
-          );
+          const spawner = await ObjectFactory.createMirror({ x, y });
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
-          const block = await ObjectFactory.createMovableBlock(
-            { x, y },
-            { imageFactory }
-          );
+          const block = await ObjectFactory.createMovableBlock({ x, y });
           objects.push(block);
         } else if (objectName) {
           throw new Error(`Unrecognized object name: ${objectName}`);
@@ -194,21 +175,13 @@ const _loadObjects = async (
 
       const itemId = (itemColors?.[color.hex] ?? null);
       if (itemId) {
-        const item = await ItemFactory.createMapItem(
-          itemId,
-          { x, y },
-          { imageFactory }
-        );
+        const item = await ItemFactory.createMapItem(itemId, { x, y });
         objects.push(item);
       }
 
       const equipmentId = (equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
-        const equipment = await ItemFactory.createMapEquipment(
-          equipmentId,
-          { x, y },
-          { imageFactory }
-        );
+        const equipment = await ItemFactory.createMapEquipment(equipmentId, { x, y });
         objects.push(equipment);
       }
     }

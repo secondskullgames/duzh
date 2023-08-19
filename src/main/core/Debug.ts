@@ -4,7 +4,6 @@ import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 import ItemFactory from '../items/ItemFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Ticker from './Ticker';
@@ -12,21 +11,18 @@ import MapFactory from '../maps/MapFactory';
 
 type Props = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory,
   mapFactory: MapFactory,
   ticker: Ticker
 }>;
 
 export class Debug {
   private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly mapFactory: MapFactory;
   private readonly ticker: Ticker;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
+  constructor({ state, mapFactory, ticker }: Props) {
     this.state = state;
-    this.imageFactory = imageFactory;
     this.mapFactory = mapFactory;
     this.ticker = ticker;
     this._isMapRevealed = false;
@@ -43,7 +39,6 @@ export class Debug {
     await die(playerUnit, {
       state: this.state,
       map: this.state.getMap(),
-      imageFactory: this.imageFactory,
       ticker: this.ticker
     });
   };
@@ -78,8 +73,7 @@ export class Debug {
       nextLevel: async () => {
         await loadNextMap({
           state: this.state,
-          mapFactory: this.mapFactory,
-          imageFactory: this.imageFactory
+          mapFactory: this.mapFactory
         });
       }
     };

@@ -3,7 +3,7 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, { state }: ScreenHandlerContext) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'C':

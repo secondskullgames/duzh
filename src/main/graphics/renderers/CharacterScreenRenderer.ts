@@ -7,6 +7,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
+import ImageFactory from '../images/ImageFactory';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
@@ -30,8 +31,7 @@ export default class CharacterScreenRenderer implements Renderer {
    */
   render = async (context: RenderContext) => {
     const { graphics } = this;
-    const { imageFactory } = context;
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const image = await ImageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

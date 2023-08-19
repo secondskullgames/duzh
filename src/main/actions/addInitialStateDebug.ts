@@ -9,18 +9,15 @@ import Dungeon from '../core/Dungeon';
 
 type Context = Readonly<{
   state: GameState,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
-export const addInitialStateDebug = async ({ state, imageFactory, ticker }: Context) => {
-  const playerUnit = await UnitFactory.createPlayerUnit({
-    imageFactory
-  });
+export const addInitialStateDebug = async ({ state, ticker }: Context) => {
+  const playerUnit = await UnitFactory.createPlayerUnit();
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: state.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
-      const equipment = await ItemFactory.createEquipment(equipmentId, { imageFactory });
+      const equipment = await ItemFactory.createEquipment(equipmentId);
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
       ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });

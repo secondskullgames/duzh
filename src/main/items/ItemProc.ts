@@ -8,7 +8,6 @@ import MapInstance from '../maps/MapInstance';
 export type ItemProcContext = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 

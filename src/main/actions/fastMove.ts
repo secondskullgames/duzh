@@ -12,21 +12,20 @@ import { playTurn } from './playTurn';
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
 export const fastMove = async (
   unit: Unit,
   direction: Direction,
-  { state, map, imageFactory, ticker }: Context
+  { state, map, ticker }: Context
 ) => {
   let coordinates: Coordinates;
   while (true) {
     coordinates = Coordinates.plus(unit.getCoordinates(), direction);
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
-      await playTurn({ state, map, imageFactory, ticker });
+      await moveUnit(unit, coordinates, { state, map, ticker });
+      await playTurn({ state, map, ticker });
       await sleep(100);
     } else {
       break;

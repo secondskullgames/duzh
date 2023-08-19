@@ -17,10 +17,9 @@ type Props = Readonly<{
 const CACHE: ImageCache = ImageCache.create();
 const rawCache: Record<string, ImageData | null> = {};
 
-export default class ImageFactory {
-  private readonly imageLoader = new ImageLoader();
-
-  getImage = async (props: Props): Promise<Image> => {
+namespace ImageFactory {
+  const imageLoader = new ImageLoader();
+  export const getImage = async (props: Props): Promise<Image> => {
     let filenames: string[];
     if (props.filenames) {
       filenames = props.filenames;
@@ -42,7 +41,7 @@ export default class ImageFactory {
       if (rawCache[filename]) {
         imageData = rawCache[filename];
       } else {
-        imageData = await this.imageLoader.loadImage(filename);
+        imageData = await imageLoader.loadImage(filename);
         rawCache[filename] = imageData;
       }
       if (imageData) {
@@ -64,3 +63,5 @@ export default class ImageFactory {
     throw new Error(`Failed to load images: ${JSON.stringify(filenames)}`);
   };
 }
+
+export default ImageFactory;

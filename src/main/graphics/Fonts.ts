@@ -60,14 +60,10 @@ export type FontInstance = Readonly<{
   renderCharacter: (char: string) => ImageData
 }>;
 
-type LoadFontContext = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
-export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<FontBundle> => {
+export const loadFonts = async (): Promise<FontBundle> => {
   const fonts: Partial<Record<FontName, FontInstance>> = {};
   for (const [fontName, fontDefinition] of Object.entries(fontDefinitions)) {
-    const font: FontInstance = await _loadFont(fontDefinition, { imageFactory });
+    const font: FontInstance = await _loadFont(fontDefinition);
     fonts[fontName as FontName] = font;
   }
 
@@ -76,9 +72,9 @@ export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<Font
   }
 };
 
-const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadFontContext): Promise<FontInstance> => {
+const _loadFont = async (fontDefinition: FontDefinition): Promise<FontInstance> => {
   const width = NUM_CHARACTERS * fontDefinition.letterWidth;
-  const image = await imageFactory.getImage({
+  const image = await ImageFactory.getImage({
     filename: `fonts/${fontDefinition.src}`,
     transparentColor: Colors.WHITE
   });

@@ -1,4 +1,3 @@
-import GameState from '../../core/GameState';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -45,14 +44,14 @@ export default class HUDRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    await this._renderFrame(context);
+    await this._renderFrame();
     await this._renderLeftPanel(context);
     await this._renderMiddlePanel(context);
     await this._renderRightPanel(context);
   };
 
-  private _renderFrame = async ({ imageFactory }: RenderContext) => {
-    const image = await imageFactory.getImage({
+  private _renderFrame = async () => {
+    const image = await ImageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -133,7 +132,7 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    { state, imageFactory }: RenderContext
+    { state }: RenderContext
   ) => {
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
@@ -152,7 +151,7 @@ export default class HUDRenderer implements Renderer {
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
-      const icon = await imageFactory.getImage({
+      const icon = await ImageFactory.getImage({
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });

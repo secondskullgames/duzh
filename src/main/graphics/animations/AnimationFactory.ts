@@ -3,13 +3,11 @@ import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
-import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
 
 type Context = Readonly<{
-  map: MapInstance,
-  imageFactory: ImageFactory
+  map: MapInstance
 }>;
 
 export default {
@@ -18,7 +16,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    { map, }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -37,11 +35,7 @@ export default {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
-        coordinates,
-        direction,
-        { imageFactory }
-      );
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
@@ -89,7 +83,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    { map, }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -108,9 +102,7 @@ export default {
 
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
-        imageFactory
-      });
+      const projectile = await ProjectileFactory.createBolt(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
         projectiles: [projectile],
@@ -158,7 +150,7 @@ export default {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    { map, }: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -177,11 +169,7 @@ export default {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
-        coordinates,
-        direction,
-        { imageFactory }
-      );
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],

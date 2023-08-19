@@ -28,7 +28,6 @@ const VICTORY_FILENAME = 'victory';
 type Props = Readonly<{
   parent: Element,
   state: GameState,
-  imageFactory: ImageFactory,
   textRenderer: TextRenderer,
   ticker: Ticker
 }>;
@@ -46,14 +45,12 @@ export default class GameRenderer implements Renderer {
   private readonly helpScreenRenderer: HelpScreenRenderer;
   private readonly levelUpScreenRenderer: LevelUpScreenRenderer;
   private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
   private readonly ticker: Ticker;
 
   constructor({
     parent,
     state,
-    imageFactory,
     textRenderer,
     ticker
   }: Props) {
@@ -68,7 +65,6 @@ export default class GameRenderer implements Renderer {
     const { canvas, bufferGraphics } = this;
 
     this.state = state;
-    this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
     this.ticker = ticker;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
@@ -172,7 +168,7 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
-    const image = await this.imageFactory.getImage({ filename });
+    const image = await ImageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
     await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };

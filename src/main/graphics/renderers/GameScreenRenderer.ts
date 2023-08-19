@@ -10,6 +10,7 @@ import { Pixel } from '../Pixel';
 import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
+import ImageFactory from '../images/ImageFactory';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -41,12 +42,12 @@ export default class GameScreenRenderer implements Renderer {
     if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
-        this._drawSprite(sprite, pixel, context);
+        this._drawSprite(sprite, pixel);
       }
     }
   };
 
-  private _drawSprite = (sprite: Sprite, pixel: Pixel, context: RenderContext) => {
+  private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
       const { dx, dy } = sprite.getOffsets();
@@ -166,12 +167,11 @@ export default class GameScreenRenderer implements Renderer {
   }
 
   private _drawEllipse = async (coordinates: Coordinates, color: Color, context: RenderContext) => {
-    const { imageFactory } = context;
     const pixel = this._gridToPixel(coordinates, context);
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)
       .build();
-    const image = await imageFactory.getImage({
+    const image = await ImageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps

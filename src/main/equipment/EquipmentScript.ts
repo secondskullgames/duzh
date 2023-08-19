@@ -12,7 +12,6 @@ export type EquipmentScriptName = 'bolt_sword';
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
-  imageFactory: ImageFactory,
   ticker: Ticker
 }>;
 
@@ -34,7 +33,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, map, imageFactory, ticker }: Context
+    { state, map, ticker }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -48,7 +47,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        { state, map, imageFactory, ticker }
+        { state, map, ticker }
       );
     }
   }

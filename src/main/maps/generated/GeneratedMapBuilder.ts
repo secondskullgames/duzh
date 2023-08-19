@@ -16,7 +16,6 @@ import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapMod
 import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 
 type Props = Readonly<{
@@ -29,8 +28,7 @@ type Props = Readonly<{
 }>;
 
 type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory
+  state: GameState
 }>;
 
 export default class GeneratedMapBuilder {
@@ -59,14 +57,14 @@ export default class GeneratedMapBuilder {
     this.entityLocations = new CustomSet();
   }
 
-  build = async ({ state, imageFactory }: Context): Promise<MapInstance> => {
+  build = async ({ state }: Context): Promise<MapInstance> => {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     const playerUnit = state.getPlayerUnit();
     const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.entityLocations.add(playerUnitCoordinates);
-    const units = [playerUnit, ...await this._generateUnits({ state, imageFactory })];
-    const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
+    const units = [playerUnit, ...await this._generateUnits({ state })];
+    const objects: GameObject[] = await this._generateObjects({ state });
 
     return new MapInstance({
       id: this.id,
@@ -79,7 +77,7 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  _generateUnits = async ({ imageFactory }: Context): Promise<Unit[]> => {
+  _generateUnits = async (context: Context): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
@@ -114,18 +112,13 @@ export default class GeneratedMapBuilder {
       } else {
         controller = new BasicEnemyController();
       }
-      const unit = await UnitFactory.createUnit(
-        {
-          unitClass: model.id,
-          controller,
-          faction: Faction.ENEMY,
-          coordinates,
-          level: this.level
-        },
-        {
-          imageFactory
-        }
-      );
+      const unit = await UnitFactory.createUnit({
+        unitClass: model.id,
+        controller,
+        faction: Faction.ENEMY,
+        coordinates,
+        level: this.level
+      });
       units.push(unit);
       points -= model.levelParameters!.points;
       this.entityLocations.add(coordinates);
@@ -133,7 +126,7 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async ({ state, imageFactory }: Context): Promise<GameObject[]> => {
+  private _generateObjects = async ({ state }: Context): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
@@ -161,11 +154,7 @@ export default class GeneratedMapBuilder {
         loc => Math.min(...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const coordinates = checkNotNull(candidateLocations.shift());
-      const item = await ItemFactory.createMapEquipment(
-        equipmentClass.id,
-        coordinates,
-        { imageFactory }
-      );
+      const item = await ItemFactory.createMapEquipment(equipmentClass.id, coordinates);
       objects.push(item);
       points -= equipmentClass.points!;
       this.entityLocations.add(coordinates);
@@ -188,11 +177,7 @@ export default class GeneratedMapBuilder {
         loc => Math.min(...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))
       );
       const coordinates = checkNotNull(candidateLocations.shift());
-      const item = await ItemFactory.createMapItem(
-        itemClass.id,
-        coordinates,
-        { imageFactory }
-      );
+      const item = await ItemFactory.createMapItem(itemClass.id, coordinates);
       objects.push(item);
       points -= itemClass.points!;
       this.entityLocations.add(coordinates);

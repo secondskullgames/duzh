@@ -16,21 +16,16 @@ import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
-type Context = Readonly<{
-  imageFactory: ImageFactory
-}>;
-
 /**
  * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
  */
 const createTileSprite = async (
   filename: string,
-  paletteSwaps: PaletteSwaps,
-  { imageFactory }: Context
+  paletteSwaps: PaletteSwaps
 ): Promise<Sprite> => {
   const offsets = { dx: 0, dy: 0 };
   const transparentColor = Colors.WHITE;
-  const image = await imageFactory.getImage({
+  const image = await ImageFactory.getImage({
     filename: `tiles/${filename}`,
     paletteSwaps,
     transparentColor
@@ -43,12 +38,11 @@ const createTileSprite = async (
  */
 const createStaticSprite = async (
   spriteName: string,
-  paletteSwaps: PaletteSwaps,
-  { imageFactory }: Context
+  paletteSwaps: PaletteSwaps
 ): Promise<Sprite> => {
   const model = await loadStaticSpriteModel(spriteName);
   const { filename, offsets, transparentColor } = model;
-  const image = await imageFactory.getImage({
+  const image = await ImageFactory.getImage({
     filename,
     paletteSwaps,
     transparentColor: (transparentColor) ? Colors[transparentColor] : null
@@ -58,11 +52,10 @@ const createStaticSprite = async (
 
 const createUnitSprite = async (
   spriteName: string,
-  paletteSwaps: PaletteSwaps,
-  { imageFactory }: Context
+  paletteSwaps: PaletteSwaps
 ): Promise<DynamicSprite<Unit>> => {
   const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.UNITS);
-  const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps, { imageFactory });
+  const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps);
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
@@ -71,9 +64,9 @@ const createUnitSprite = async (
   });
 };
 
-const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Context) => {
+const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps) => {
   const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.EQUIPMENT);
-  const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps, { imageFactory });
+  const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps);
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
@@ -85,7 +78,7 @@ const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSw
 /**
  * TODO - these aren't in JSON but hardcoded here
  */
-const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps, { imageFactory }: Context) => {
+const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps) => {
   const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
   const offsets = (() => {
     switch (spriteName) {
@@ -96,7 +89,7 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
         return { dx: 0, dy: -0 };
     }
   })();
-  const image = await imageFactory.getImage({
+  const image = await ImageFactory.getImage({
     filename,
     paletteSwaps,
     transparentColor: Colors.WHITE
@@ -107,7 +100,7 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
 /**
  * TODO - hardcoded
  */
-const createDoorSprite = async ({ imageFactory }: Context): Promise<DynamicSprite<Door>> => {
+const createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
   const offsets = { dx: 0, dy: -24 };
   // TODO hardcoded
   const paletteSwaps = PaletteSwaps.builder()
@@ -120,7 +113,7 @@ const createDoorSprite = async ({ imageFactory }: Context): Promise<DynamicSprit
     for (const state of DoorState.values()) {
       const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
       const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
-      const image = await imageFactory.getImage({
+      const image = await ImageFactory.getImage({
         filename,
         paletteSwaps,
         transparentColor: Colors.WHITE
@@ -135,7 +128,7 @@ const createDoorSprite = async ({ imageFactory }: Context): Promise<DynamicSprit
   });
 };
 
-const createMirrorSprite = async ({ imageFactory }: Context): Promise<DynamicSprite<Spawner>> => {
+const createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
   const imageMap: Record<string, Image> = {};
   for (const state of SpawnerState.values()) {
     const key = `${state.toLowerCase()}`;
@@ -147,7 +140,7 @@ const createMirrorSprite = async ({ imageFactory }: Context): Promise<DynamicSpr
       }
     })();
 
-    const image = await imageFactory.getImage({
+    const image = await ImageFactory.getImage({
       filename,
       transparentColor: Colors.WHITE
     });
@@ -164,8 +157,7 @@ const createMirrorSprite = async ({ imageFactory }: Context): Promise<DynamicSpr
 const _loadAnimations = async (
   spriteCategory: SpriteCategory,
   spriteModel: DynamicSpriteModel,
-  paletteSwaps: PaletteSwaps,
-  { imageFactory }: Context
+  paletteSwaps: PaletteSwaps
 ): Promise<Record<string, Image>> => {
   const imageMap: Record<string, Image> = {};
 
@@ -200,7 +192,7 @@ const _loadAnimations = async (
         }
 
         const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
-        const image = await imageFactory.getImage({
+        const image = await ImageFactory.getImage({
           filenames,
           transparentColor: Colors.WHITE,
           paletteSwaps,

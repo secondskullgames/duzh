@@ -3,7 +3,7 @@ import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
 import { abilityForName } from '../../entities/units/abilities/abilityForName';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, { state }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
 
   switch (command.key) {
