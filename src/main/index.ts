@@ -28,7 +28,7 @@ const main = async () => {
   const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, ticker });
+    const debug = new Debug({ state, imageFactory, mapFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }

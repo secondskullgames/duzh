@@ -2,11 +2,11 @@ import GameState from '../core/GameState';
 import UnitFactory from '../entities/units/UnitFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import MapSpec from '../schemas/MapSpec';
-import { MapSupplier } from '../maps/MapSupplier';
 import MapFactory from '../maps/MapFactory';
 import { Feature } from '../utils/features';
 import ItemFactory from '../items/ItemFactory';
 import Ticker from '../core/Ticker';
+import Dungeon from '../core/Dungeon';
 
 type Context = Readonly<{
   state: GameState,
@@ -29,15 +29,17 @@ export const addInitialState = async ({ state, imageFactory, mapFactory, ticker 
     }
   }
   state.setPlayerUnit(playerUnit);
-  const mapSpecs = (await import(
-    /* webpackChunkName: "models" */
-    `../../../data/maps.json`
-    )).default as MapSpec[];
-  const maps: MapSupplier[] = mapSpecs.map(spec => {
-    return () => mapFactory.loadMap(spec, {
-      state,
-      imageFactory
-    });
-  });
-  state.addMaps(maps);
+  const mapSpecs: MapSpec[] = [
+    { type: 'generated', id: '1' },
+    { type: 'generated', id: '2' },
+    { type: 'generated', id: '3' },
+    { type: 'generated', id: '4' },
+    { type: 'generated', id: '5' },
+    { type: 'generated', id: '6' },
+    { type: 'predefined', id: '7' },
+    { type: 'predefined', id: '8' }
+  ];
+  const dungeon = new Dungeon({ mapSpecs });
+  state.loadDungeon(dungeon);
+  state.setMapIndex(1);
 };

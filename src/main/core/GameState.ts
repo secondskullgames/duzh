@@ -1,21 +1,20 @@
 import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
-import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
-import { MapSupplier } from '../maps/MapSupplier';
+import { checkNotNull, checkState } from '../utils/preconditions';
 import { clear } from '../utils/arrays';
 import { GameScreen } from './GameScreen';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
+import Dungeon, { GetMapContext } from './Dungeon';
 
 /**
  * Global mutable state
  */
 export default class GameState {
+  private dungeon: Dungeon | null;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private playerUnit: Unit | null;
-  private readonly mapSuppliers: MapSupplier[];
-  private readonly maps: Record<number, MapInstance>;
   private mapIndex: number;
   private map: MapInstance | null;
   private turn: number;
@@ -27,11 +26,10 @@ export default class GameState {
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
+    this.dungeon = null;
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.playerUnit = null;
-    this.mapSuppliers = [];
-    this.maps = [];
     this.mapIndex = -1;
     this.map = null;
     this.turn = 1;
@@ -62,24 +60,24 @@ export default class GameState {
     checkState(this.playerUnit === null);
     this.playerUnit = unit;
   };
-
-  hasNextMap = () => this.mapIndex < (this.mapSuppliers.length - 1);
-  getMapIndex = () => this.mapIndex;
-
-  setMapIndex = async (mapIndex: number): Promise<MapInstance> => {
-    checkArgument(mapIndex >= 0 && mapIndex < this.mapSuppliers.length);
-    this.mapIndex = mapIndex;
-    if (!this.maps[mapIndex]) {
-      const mapSupplier = this.mapSuppliers[this.mapIndex];
-      const map = await mapSupplier();
-      this.maps[mapIndex] = map;
-      this.map = map;
-    }
-    return this.maps[mapIndex];
+  
+  loadDungeon = (dungeon: Dungeon) => {
+    this.dungeon = dungeon;
   };
 
-  addMaps = (suppliers: MapSupplier[]) => {
-    this.mapSuppliers.push(...suppliers);
+  hasNextMap = (): boolean => {
+    const dungeon = checkNotNull(this.dungeon);
+    return dungeon.hasMap(`${this.mapIndex + 1}`);
+  };
+  getMapIndex = () => this.mapIndex;
+
+  setMapIndex = (mapIndex: number) => {
+    this.mapIndex = mapIndex;
+  };
+  
+  loadMap = async ({ state, mapFactory, imageFactory }: GetMapContext): Promise<void> => {
+    const dungeon = checkNotNull(this.dungeon);
+    this.map = await dungeon.getMap(`${this.mapIndex}`, { state, mapFactory, imageFactory });
   };
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
@@ -128,13 +126,10 @@ export default class GameState {
   };
 
   reset = () => {
+    this.dungeon = null;
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
     this.playerUnit = null;
-    clear(this.mapSuppliers);
-    Object.keys(this.maps).forEach(key => {
-      delete this.maps[parseInt(key)];
-    });
     this.mapIndex = -1;
     this.map = null;
     this.turn = 1;

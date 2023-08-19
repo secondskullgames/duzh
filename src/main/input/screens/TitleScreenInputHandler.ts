@@ -23,7 +23,7 @@ const handleKeyCommand = async (
           );
           await startGameDebug(mapInstance, { state });
         } else {
-          await startGame({ state });
+          await startGame({ state, imageFactory, mapFactory });
         }
       }
       state.setScreen(GameScreen.GAME);
