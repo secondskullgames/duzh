@@ -27,11 +27,12 @@ type CreateUnitProps = Readonly<{
 
 type Context = Readonly<{
   spriteFactory: SpriteFactory
+  itemFactory: ItemFactory
 }>;
 
 const createUnit = async (
   { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
-  { spriteFactory }: Context
+  { spriteFactory, itemFactory }: Context
 ): Promise<Unit> => {
   const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await spriteFactory.createUnitSprite(
@@ -40,10 +41,7 @@ const createUnit = async (
   );
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of (model.equipment ?? [])) {
-    const equipment = await ItemFactory.createEquipment(
-      equipmentClass,
-      { spriteFactory }
-    );
+    const equipment = await itemFactory.createEquipment(equipmentClass);
     equipmentList.push(equipment);
   }
 
@@ -60,7 +58,7 @@ const createUnit = async (
   return unit;
 };
 
-const createPlayerUnit = async ({ spriteFactory }: Context): Promise<Unit> => {
+const createPlayerUnit = async ({ spriteFactory, itemFactory }: Context): Promise<Unit> => {
   const unit = await createUnit(
     {
       unitClass: 'player',
@@ -69,7 +67,7 @@ const createPlayerUnit = async ({ spriteFactory }: Context): Promise<Unit> => {
       level: 1,
       coordinates: { x: 0, y: 0 }
     },
-    { spriteFactory }
+    { spriteFactory, itemFactory }
   );
   if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     unit.learnAbility(abilityForName(AbilityName.DASH));

@@ -5,22 +5,25 @@ import { GameScreen } from '../core/GameScreen';
 import MapFactory from '../maps/MapFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import ItemFactory from '../items/ItemFactory';
 
 type Context = Readonly<{
   state: GameState,
   mapFactory: MapFactory,
   imageFactory: ImageFactory,
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  itemFactory: ItemFactory
 }>;
 
-export const loadNextMap = async ({ state, mapFactory, imageFactory, spriteFactory }: Context) => {
+export const loadNextMap = async (context: Context) => {
+  const { state, mapFactory, imageFactory, itemFactory, spriteFactory } = context;
   if (!state.hasNextMap()) {
     Music.stop();
     state.setScreen(GameScreen.VICTORY);
   } else {
-    await state.loadNextMap({ state, mapFactory, imageFactory, spriteFactory });
+    await state.loadNextMap({ state, mapFactory, imageFactory, itemFactory, spriteFactory });
     const map = state.getMap();
-    updateRevealedTiles({ state, map: map })
+    updateRevealedTiles({ state, map });
     if (map.music) {
       await Music.playMusic(map.music);
     }

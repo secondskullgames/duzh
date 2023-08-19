@@ -22,7 +22,7 @@ export const KnockbackAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, itemFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
@@ -43,19 +43,19 @@ export const KnockbackAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, map, spriteFactory, animationFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, ticker }
       );
 
       targetUnit.setStunned(1);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
-          await moveUnit(targetUnit, first, { state, map, spriteFactory, animationFactory, ticker });
+          await moveUnit(targetUnit, first, { state, map, spriteFactory, animationFactory, itemFactory, ticker });
           await sleep(50);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, { state, map, spriteFactory, animationFactory, ticker });
+              await moveUnit(targetUnit, second, { state, map, spriteFactory, animationFactory, itemFactory, ticker });
             }
           }
         }

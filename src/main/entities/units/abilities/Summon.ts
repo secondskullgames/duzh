@@ -18,7 +18,7 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { map, spriteFactory }: UnitAbilityContext
+    { map, spriteFactory, itemFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
@@ -38,7 +38,8 @@ export const Summon: UnitAbility = {
         coordinates
       },
       {
-        spriteFactory
+        spriteFactory,
+        itemFactory
       }
     );
     map.addUnit(summonedUnit);

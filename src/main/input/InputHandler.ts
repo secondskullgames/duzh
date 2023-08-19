@@ -18,6 +18,7 @@ import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import ItemFactory from '../items/ItemFactory';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.NONE]:      { handleKeyCommand: async () => {} },
@@ -38,6 +39,7 @@ type Props = Readonly<{
   spriteFactory: SpriteFactory,
   mapFactory: MapFactory,
   animationFactory: AnimationFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
@@ -47,6 +49,7 @@ export default class InputHandler {
   private readonly spriteFactory: SpriteFactory;
   private readonly mapFactory: MapFactory;
   private readonly animationFactory: AnimationFactory;
+  private readonly itemFactory: ItemFactory;
   private readonly ticker: Ticker;
 
   private busy: boolean;
@@ -54,12 +57,13 @@ export default class InputHandler {
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, imageFactory, spriteFactory, mapFactory, animationFactory, ticker }: Props) {
+  constructor({ state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, ticker }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this.spriteFactory = spriteFactory;
     this.mapFactory = mapFactory;
     this.animationFactory = animationFactory;
+    this.itemFactory = itemFactory;
     this.ticker = ticker;
     this.busy = false;
     this.eventTarget = null;
@@ -91,9 +95,12 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, imageFactory, spriteFactory, mapFactory, animationFactory, ticker } = this;
+    const { state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, ticker } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory, spriteFactory, mapFactory, animationFactory, ticker });
+    await handler.handleKeyCommand(
+      command,
+      { state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, ticker }
+    );
   };
 
   addEventListener = (target: HTMLElement) => {

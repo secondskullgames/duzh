@@ -9,7 +9,7 @@ import { startGame } from '../../actions/startGame';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, spriteFactory, mapFactory, ticker }: ScreenHandlerContext
+  { state, imageFactory, spriteFactory, mapFactory, itemFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -18,11 +18,11 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
-          await addInitialStateDebug({ state, spriteFactory, ticker });
+          await addInitialStateDebug({ state, spriteFactory, itemFactory, ticker });
         } else {
-          await addInitialState({ state, spriteFactory, ticker });
+          await addInitialState({ state, spriteFactory, itemFactory, ticker });
         }
-        await startGame({ state, imageFactory, spriteFactory, mapFactory });
+        await startGame({ state, imageFactory, spriteFactory, mapFactory, itemFactory });
         state.setScreen(GameScreen.GAME);
       }
       break;

@@ -27,6 +27,7 @@ import ArcherController from '../../entities/units/controllers/ArcherController'
 type Context = Readonly<{
   imageFactory: ImageFactory,
   spriteFactory: SpriteFactory,
+  itemFactory: ItemFactory,
   state: GameState
 }>;
 
@@ -97,7 +98,7 @@ const _loadTiles = async (
 const _loadUnits = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, spriteFactory }: Context
+  { state, spriteFactory, itemFactory }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
   const enemyColors = _toHexColors(model.enemyColors);
@@ -134,7 +135,7 @@ const _loadUnits = async (
                 level: model.levelNumber,
                 coordinates: { x, y }
               },
-              { spriteFactory }
+              { spriteFactory, itemFactory }
             );
             units.push(unit);
           }
@@ -149,7 +150,7 @@ const _loadUnits = async (
 const _loadObjects = async (
   model: PredefinedMapModel,
   image: Image,
-  { imageFactory, spriteFactory }: Context
+  { spriteFactory, itemFactory }: Context
 ): Promise<GameObject[]> => {
   const objects: GameObject[] = [];
 
@@ -180,13 +181,13 @@ const _loadObjects = async (
         if (objectName === 'mirror') {
           const spawner = await ObjectFactory.createMirror(
             { x, y },
-            { spriteFactory }
+            { spriteFactory, itemFactory }
           );
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
           const block = await ObjectFactory.createMovableBlock(
             { x, y },
-            { spriteFactory }
+            { spriteFactory, itemFactory }
           );
           objects.push(block);
         } else if (objectName) {
@@ -196,21 +197,13 @@ const _loadObjects = async (
 
       const itemId = (itemColors?.[color.hex] ?? null);
       if (itemId) {
-        const item = await ItemFactory.createMapItem(
-          itemId,
-          { x, y },
-          { spriteFactory }
-        );
+        const item = await itemFactory.createMapItem(itemId, { x, y });
         objects.push(item);
       }
 
       const equipmentId = (equipmentColors?.[color.hex] ?? null);
       if (equipmentId) {
-        const equipment = await ItemFactory.createMapEquipment(
-          equipmentId,
-          { x, y },
-          { spriteFactory }
-        );
+        const equipment = await itemFactory.createMapEquipment(equipmentId, { x, y });
         objects.push(equipment);
       }
     }

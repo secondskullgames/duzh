@@ -9,26 +9,28 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import ItemFactory from '../items/ItemFactory';
 
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
 export const walk = async (
   unit: Unit,
   direction: Direction,
-  { state, map, spriteFactory, animationFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, ticker }: Context
 ) => {
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, ticker });
     const playerUnit = state.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);

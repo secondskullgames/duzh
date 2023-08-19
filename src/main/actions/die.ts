@@ -14,6 +14,7 @@ type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
@@ -22,7 +23,7 @@ const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (
   unit: Unit,
-  { state, map, spriteFactory, ticker }: Context
+  { state, map, spriteFactory, itemFactory, ticker }: Context
 ) => {
   const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
@@ -36,13 +37,13 @@ export const die = async (
     ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { spriteFactory })
+      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, { spriteFactory, itemFactory })
       map.addObject(healthGlobe);
     }
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {
-      const key = await ItemFactory.createMapItem('key', coordinates, { spriteFactory });
+      const key = await itemFactory.createMapItem('key', coordinates);
       map.addObject(key);
     }
   }

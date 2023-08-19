@@ -4,12 +4,14 @@ import Ticker from '../../../core/Ticker';
 import MapInstance from '../../../maps/MapInstance';
 import SpriteFactory from '../../../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
+import ItemFactory from '../../../items/ItemFactory';
 
 export type OrderContext = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 

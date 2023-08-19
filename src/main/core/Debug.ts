@@ -16,6 +16,7 @@ type Props = Readonly<{
   imageFactory: ImageFactory,
   spriteFactory: SpriteFactory,
   mapFactory: MapFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
@@ -24,14 +25,16 @@ export class Debug {
   private readonly imageFactory: ImageFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly mapFactory: MapFactory;
+  private readonly itemFactory: ItemFactory;
   private readonly ticker: Ticker;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, spriteFactory, mapFactory, ticker }: Props) {
+  constructor({ state, imageFactory, spriteFactory, mapFactory, itemFactory, ticker }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
     this.spriteFactory = spriteFactory;
     this.mapFactory = mapFactory;
+    this.itemFactory = itemFactory;
     this.ticker = ticker;
     this._isMapRevealed = false;
   }
@@ -48,6 +51,7 @@ export class Debug {
       state: this.state,
       map: this.state.getMap(),
       spriteFactory: this.spriteFactory,
+      itemFactory: this.itemFactory,
       ticker: this.ticker
     });
   };
@@ -62,7 +66,7 @@ export class Debug {
 
   awardEquipment = async () => {
     const id = prompt('Enter a valid equipment_id')!;
-    const item = await ItemFactory.createInventoryEquipment(id);
+    const item = await this.itemFactory.createInventoryEquipment(id);
     const playerUnit = this.state.getPlayerUnit();
     playerUnit.getInventory().add(item);
     this.ticker.log(`Picked up a ${item.name}.`, { turn: this.state.getTurn() });
@@ -84,7 +88,8 @@ export class Debug {
           state: this.state,
           mapFactory: this.mapFactory,
           imageFactory: this.imageFactory,
-          spriteFactory: this.spriteFactory
+          spriteFactory: this.spriteFactory,
+          itemFactory: this.itemFactory
         });
       }
     };

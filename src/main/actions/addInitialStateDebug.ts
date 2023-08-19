@@ -1,6 +1,5 @@
 import GameState from '../core/GameState';
 import UnitFactory from '../entities/units/UnitFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapSpec from '../schemas/MapSpec';
 import { Feature } from '../utils/features';
 import ItemFactory from '../items/ItemFactory';
@@ -10,18 +9,17 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type Context = Readonly<{
   state: GameState,
+  itemFactory: ItemFactory,
   spriteFactory: SpriteFactory,
   ticker: Ticker
 }>;
 
-export const addInitialStateDebug = async ({ state, spriteFactory, ticker }: Context) => {
-  const playerUnit = await UnitFactory.createPlayerUnit({
-    spriteFactory
-  });
+export const addInitialStateDebug = async ({ state, spriteFactory, itemFactory, ticker }: Context) => {
+  const playerUnit = await UnitFactory.createPlayerUnit({ spriteFactory, itemFactory });
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: state.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
-      const equipment = await ItemFactory.createEquipment(equipmentId, { spriteFactory });
+      const equipment = await itemFactory.createEquipment(equipmentId);
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
       ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });

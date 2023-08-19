@@ -6,23 +6,24 @@ import GameObject from './GameObject';
 import Block from './Block';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import ItemFactory from '../../items/ItemFactory';
 
 export type SpawnerClass = 'mirror';
 
 type CreateObjectContext = Readonly<{
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  itemFactory: ItemFactory
 }>;
 
 const createMirror = async (
   coordinates: Coordinates,
-  { spriteFactory }: CreateObjectContext
+  { spriteFactory, itemFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   const sprite = await spriteFactory.createMirrorSprite();
   const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
@@ -33,7 +34,7 @@ const createMirror = async (
       controller: new BasicEnemyController(),
       faction: Faction.ENEMY,
     },
-    { spriteFactory }
+    { spriteFactory, itemFactory }
   );
   const spawner = new Spawner({
     spawnFunction,
@@ -50,11 +51,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { spriteFactory }: CreateObjectContext
+  { spriteFactory, itemFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { spriteFactory });
+      return createMirror(coordinates, { spriteFactory, itemFactory });
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }

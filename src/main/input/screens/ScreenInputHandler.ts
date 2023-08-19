@@ -5,13 +5,15 @@ import Ticker from '../../core/Ticker';
 import MapFactory from '../../maps/MapFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../../graphics/animations/AnimationFactory';
+import ItemFactory from '../../items/ItemFactory';
 
 export type ScreenHandlerContext = Readonly<{
   state: GameState,
   imageFactory: ImageFactory,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
-  mapFactory: MapFactory
+  mapFactory: MapFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 

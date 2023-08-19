@@ -7,6 +7,7 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import ItemFactory from '../items/ItemFactory';
 
 export type EquipmentScriptName = 'bolt_sword';
 
@@ -15,6 +16,7 @@ type Context = Readonly<{
   map: MapInstance,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
@@ -36,7 +38,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, map, spriteFactory, animationFactory, ticker }: Context
+    { state, map, spriteFactory, animationFactory, itemFactory, ticker }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -50,7 +52,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        { state, map, spriteFactory, animationFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, ticker }
       );
     }
   }

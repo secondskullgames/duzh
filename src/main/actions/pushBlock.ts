@@ -8,19 +8,21 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import ItemFactory from '../items/ItemFactory';
 
 type Context = Readonly<{
   state: GameState,
   map: MapInstance,
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
+  itemFactory: ItemFactory,
   ticker: Ticker
 }>;
 
 export const pushBlock = async (
   unit: Unit,
   block: Block,
-  { state, map, spriteFactory, animationFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, ticker }: Context
 ) => {
   const coordinates = block.getCoordinates();
   const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
@@ -28,6 +30,6 @@ export const pushBlock = async (
 
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
     await moveObject(block, nextCoordinates, { map });
-    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, ticker });
   }
 };

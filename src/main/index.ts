@@ -11,6 +11,7 @@ import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import AnimationFactory from './graphics/animations/AnimationFactory';
+import ItemFactory from './items/ItemFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -25,10 +26,11 @@ const main = async () => {
   });
   const mapFactory = new MapFactory();
   const animationFactory = new AnimationFactory({ spriteFactory });
-  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, animationFactory, ticker });
+  const itemFactory = new ItemFactory({ spriteFactory });
+  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, ticker });
+    const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, itemFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }

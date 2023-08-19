@@ -5,6 +5,7 @@ import { checkNotNull } from '../utils/preconditions';
 import GameState from './GameState';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
+import ItemFactory from '../items/ItemFactory';
 
 type Props = Readonly<{
   mapSpecs: MapSpec[]
@@ -14,7 +15,8 @@ export type GetMapContext = Readonly<{
   state: GameState,
   mapFactory: MapFactory,
   imageFactory: ImageFactory,
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  itemFactory: ItemFactory
 }>;
 
 export default class Dungeon {
@@ -28,13 +30,13 @@ export default class Dungeon {
 
   getMap = async (
     id: string,
-    { state, mapFactory, imageFactory, spriteFactory }: GetMapContext
+    { state, mapFactory, imageFactory, spriteFactory, itemFactory }: GetMapContext
   ): Promise<MapInstance> => {
     if (this.maps[id]) {
       return this.maps[id];
     }
     const mapSpec = checkNotNull(this.mapSpecs.find(mapSpec => mapSpec.id === id));
-    return mapFactory.loadMap(mapSpec, { state, imageFactory, spriteFactory });
+    return mapFactory.loadMap(mapSpec, { state, imageFactory, spriteFactory, itemFactory });
   };
   
   getNextMapId = (id?: string | null): string | null => {

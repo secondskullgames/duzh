@@ -21,7 +21,7 @@ export const StunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, animationFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, itemFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
@@ -41,7 +41,7 @@ export const StunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { state, map, spriteFactory, animationFactory, ticker }
+        { state, map, spriteFactory, animationFactory, itemFactory, ticker }
       );
       targetUnit.setStunned(2);
     }
