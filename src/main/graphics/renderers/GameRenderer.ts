@@ -1,10 +1,8 @@
-import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';
-import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
@@ -18,7 +16,6 @@ import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
-import Ticker from '../../core/Ticker';
 import { Feature } from '../../utils/features';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -27,10 +24,7 @@ const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
   parent: Element,
-  state: GameState,
-  imageFactory: ImageFactory,
-  textRenderer: TextRenderer,
-  ticker: Ticker
+  textRenderer: TextRenderer
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -45,17 +39,11 @@ export default class GameRenderer implements Renderer {
   private readonly characterScreenRenderer: CharacterScreenRenderer;
   private readonly helpScreenRenderer: HelpScreenRenderer;
   private readonly levelUpScreenRenderer: LevelUpScreenRenderer;
-  private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
-  private readonly ticker: Ticker;
 
   constructor({
     parent,
-    state,
-    imageFactory,
-    textRenderer,
-    ticker
+    textRenderer
   }: Props) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
@@ -67,10 +55,7 @@ export default class GameRenderer implements Renderer {
     this._graphics = Graphics.forCanvas(this.canvas);
     const { canvas, bufferGraphics } = this;
 
-    this.state = state;
-    this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
-    this.ticker = ticker;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
     this.inventoryRenderer = new InventoryRenderer({ textRenderer, graphics: bufferGraphics });
@@ -88,11 +73,11 @@ export default class GameRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    const screen = this.state.getScreen();
+    const screen = context.state.getScreen();
 
     switch (screen) {
       case GameScreen.TITLE:
-        await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+        await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN', context);
         if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
           await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
         }
@@ -107,10 +92,10 @@ export default class GameRenderer implements Renderer {
         await this._renderCharacterScreen(context);
         break;
       case GameScreen.VICTORY:
-        await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+        await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN', context);
         break;
       case GameScreen.GAME_OVER:
-        await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+        await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN', context);
         break;
       case GameScreen.MAP:
         await this._renderMapScreen(context);
@@ -138,7 +123,7 @@ export default class GameRenderer implements Renderer {
 
     await this.gameScreenRenderer.render(context);
     await this.hudRenderer.render(context);
-    await this._renderTicker();
+    await this._renderTicker(context);
   };
 
   private _renderInventoryScreen = async (context: RenderContext) => {
@@ -153,11 +138,9 @@ export default class GameRenderer implements Renderer {
     await this.characterScreenRenderer.render(context);
   };
 
-  private _renderTicker = async () => {
+  private _renderTicker = async ({ state, ticker }: RenderContext) => {
     const {
-      bufferGraphics: graphics,
-      state,
-      ticker
+      bufferGraphics: graphics
     } = this;
     const messages = ticker.getRecentMessages(state.getTurn());
 
@@ -171,8 +154,8 @@ export default class GameRenderer implements Renderer {
     }
   };
 
-  private _renderSplashScreen = async (filename: string, text: string) => {
-    const image = await this.imageFactory.getImage({ filename });
+  private _renderSplashScreen = async (filename: string, text: string, { imageFactory }: RenderContext) => {
+    const image = await imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
     await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
   };

@@ -18,10 +18,7 @@ const main = async () => {
   const ticker = new Ticker();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
-    state,
-    imageFactory,
-    textRenderer,
-    ticker
+    textRenderer
   });
   const mapFactory = new MapFactory();
   const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
@@ -33,7 +30,7 @@ const main = async () => {
   }
   await showSplashScreen({ state });
   setInterval(async () => {
-    await renderer.render({ state, imageFactory });
+    await renderer.render({ state, imageFactory, ticker });
   }, 20);
 };
 
