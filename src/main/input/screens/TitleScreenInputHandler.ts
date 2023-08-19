@@ -25,8 +25,8 @@ const handleKeyCommand = async (
         } else {
           await startGame({ state, imageFactory, mapFactory });
         }
+        state.setScreen(GameScreen.GAME);
       }
-      state.setScreen(GameScreen.GAME);
       break;
     case 'ESCAPE':
       state.setScreen(GameScreen.GAME);
