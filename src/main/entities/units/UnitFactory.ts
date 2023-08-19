@@ -25,73 +25,74 @@ type CreateUnitProps = Readonly<{
   coordinates: Coordinates
 }>;
 
-type Context = Readonly<{
+type Props = Readonly<{
   spriteFactory: SpriteFactory
   itemFactory: ItemFactory
 }>;
 
-const createUnit = async (
-  { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
-  { spriteFactory, itemFactory }: Context
-): Promise<Unit> => {
-  const model: UnitModel = await loadUnitModel(unitClass);
-  const sprite = await spriteFactory.createUnitSprite(
-    model.sprite,
-    PaletteSwaps.create(model.paletteSwaps)
-  );
-  const equipmentList: Equipment[] = [];
-  for (const equipmentClass of (model.equipment ?? [])) {
-    const equipment = await itemFactory.createEquipment(equipmentClass);
-    equipmentList.push(equipment);
+export default class UnitFactory {
+  private readonly spriteFactory: SpriteFactory;
+  private readonly itemFactory: ItemFactory;
+  
+  constructor({ spriteFactory, itemFactory }: Props) {
+    this.spriteFactory = spriteFactory;
+    this.itemFactory = itemFactory;
   }
 
-  const unit = new Unit({
-    name: name ?? model.name,
-    model,
-    faction,
-    controller,
-    level,
-    coordinates,
-    equipment: equipmentList,
-    sprite
-  });
-  return unit;
-};
-
-const createPlayerUnit = async ({ spriteFactory, itemFactory }: Context): Promise<Unit> => {
-  const unit = await createUnit(
-    {
+  createUnit = async (
+    { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps
+  ): Promise<Unit> => {
+    const { spriteFactory, itemFactory } = this;
+    const model: UnitModel = await loadUnitModel(unitClass);
+    const sprite = await spriteFactory.createUnitSprite(
+      model.sprite,
+      PaletteSwaps.create(model.paletteSwaps)
+    );
+    const equipmentList: Equipment[] = [];
+    for (const equipmentClass of (model.equipment ?? [])) {
+      const equipment = await itemFactory.createEquipment(equipmentClass);
+      equipmentList.push(equipment);
+    }
+  
+    const unit = new Unit({
+      name: name ?? model.name,
+      model,
+      faction,
+      controller,
+      level,
+      coordinates,
+      equipment: equipmentList,
+      sprite
+    });
+    return unit;
+  };
+  
+  createPlayerUnit = async (): Promise<Unit> => {
+    const unit = await this.createUnit({
       unitClass: 'player',
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
       level: 1,
       coordinates: { x: 0, y: 0 }
-    },
-    { spriteFactory, itemFactory }
-  );
-  if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-    unit.learnAbility(abilityForName(AbilityName.DASH));
-  }
-  return unit;
-};
-
-const loadAllModels = async (): Promise<UnitModel[]> => {
-  const requireContext = require.context(
-    '../../../../data/units',
-    false,
-    /\.json$/i
-  );
-
-  const models: UnitModel[] = [];
-  for (const filename of requireContext.keys()) {
-    const model = await requireContext(filename) as UnitModel;
-    models.push(model);
-  }
-  return models;
-};
-
-export default {
-  createUnit,
-  createPlayerUnit,
-  loadAllModels
+    });
+    if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+      unit.learnAbility(abilityForName(AbilityName.DASH));
+    }
+    return unit;
+  };
+  
+  loadAllModels = async (): Promise<UnitModel[]> => {
+    const requireContext = require.context(
+      '../../../../data/units',
+      false,
+      /\.json$/i
+    );
+  
+    const models: UnitModel[] = [];
+    for (const filename of requireContext.keys()) {
+      const model = await requireContext(filename) as UnitModel;
+      models.push(model);
+    }
+    return models;
+  };
 };

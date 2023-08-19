@@ -10,6 +10,7 @@ import MapInstance from '../maps/MapInstance';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
+import UnitFactory from '../entities/units/UnitFactory';
 
 type Context = Readonly<{
   state: GameState,
@@ -17,20 +18,21 @@ type Context = Readonly<{
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
+  unitFactory: UnitFactory,
   ticker: Ticker
 }>;
 
 export const walk = async (
   unit: Unit,
   direction: Direction,
-  { state, map, spriteFactory, animationFactory, itemFactory, ticker }: Context
+  { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: Context
 ) => {
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, ticker });
+    await moveUnit(unit, coordinates, { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker });
     const playerUnit = state.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);

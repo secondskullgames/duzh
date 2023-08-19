@@ -84,7 +84,7 @@ export default class ItemFactory {
     const onUse: ItemProc = async (
       item: InventoryItem,
       unit: Unit,
-      { state, map, spriteFactory, animationFactory, ticker }: ItemProcContext
+      { state, map, spriteFactory, animationFactory, unitFactory, ticker }: ItemProcContext
     ) => {
       // TODO - optimization opportunity
       const adjacentUnits: Unit[] = map.getAllUnits()
@@ -110,7 +110,7 @@ export default class ItemFactory {
         });
   
         if (adjacentUnit.getLife() <= 0) {
-          await die(adjacentUnit, { state, map, spriteFactory, itemFactory: this, ticker });
+          await die(adjacentUnit, { state, map, spriteFactory, itemFactory: this, unitFactory, ticker });
           recordKill(unit, { state, ticker });
         }
       }

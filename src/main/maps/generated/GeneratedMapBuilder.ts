@@ -17,7 +17,6 @@ import { checkNotNull } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
 import { Feature } from '../../utils/features';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 type Props = Readonly<{
   id: string,
@@ -30,8 +29,8 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState,
-  spriteFactory: SpriteFactory,
-  itemFactory: ItemFactory
+  itemFactory: ItemFactory,
+  unitFactory: UnitFactory
 }>;
 
 export default class GeneratedMapBuilder {
@@ -81,14 +80,14 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  _generateUnits = async ({ spriteFactory, itemFactory }: Context): Promise<Unit[]> => {
+  _generateUnits = async ({ unitFactory }: Context): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
     let points = this.pointAllocation.enemies;
 
     while (points > 0) {
-      const possibleUnitModels = (await UnitFactory.loadAllModels())
+      const possibleUnitModels = (await unitFactory.loadAllModels())
         .filter(model => {
           const { levelParameters } = model;
           if (levelParameters) {
@@ -116,17 +115,13 @@ export default class GeneratedMapBuilder {
       } else {
         controller = new BasicEnemyController();
       }
-      const unit = await UnitFactory.createUnit(
+      const unit = await unitFactory.createUnit(
         {
           unitClass: model.id,
           controller,
           faction: Faction.ENEMY,
           coordinates,
           level: this.level
-        },
-        {
-          spriteFactory,
-          itemFactory
         }
       );
       units.push(unit);
@@ -136,7 +131,7 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async ({ state, spriteFactory, itemFactory }: Context): Promise<GameObject[]> => {
+  private _generateObjects = async ({ state, itemFactory }: Context): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));

@@ -28,6 +28,7 @@ type Context = Readonly<{
   imageFactory: ImageFactory,
   spriteFactory: SpriteFactory,
   itemFactory: ItemFactory,
+  unitFactory: UnitFactory,
   state: GameState
 }>;
 
@@ -98,7 +99,7 @@ const _loadTiles = async (
 const _loadUnits = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, spriteFactory, itemFactory }: Context
+  { state, unitFactory }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
   const enemyColors = _toHexColors(model.enemyColors);
@@ -126,17 +127,14 @@ const _loadUnits = async (
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller = _getEnemyController(enemyUnitModel);
-            const unit = await UnitFactory.createUnit(
-              {
-                name: enemyUnitModel.name,
-                unitClass: enemyUnitClass,
-                faction: Faction.ENEMY,
-                controller,
-                level: model.levelNumber,
-                coordinates: { x, y }
-              },
-              { spriteFactory, itemFactory }
-            );
+            const unit = await unitFactory.createUnit({
+              name: enemyUnitModel.name,
+              unitClass: enemyUnitClass,
+              faction: Faction.ENEMY,
+              controller,
+              level: model.levelNumber,
+              coordinates: { x, y }
+            });
             units.push(unit);
           }
         }
@@ -150,7 +148,7 @@ const _loadUnits = async (
 const _loadObjects = async (
   model: PredefinedMapModel,
   image: Image,
-  { spriteFactory, itemFactory }: Context
+  { spriteFactory, itemFactory, unitFactory }: Context
 ): Promise<GameObject[]> => {
   const objects: GameObject[] = [];
 
@@ -181,13 +179,13 @@ const _loadObjects = async (
         if (objectName === 'mirror') {
           const spawner = await ObjectFactory.createMirror(
             { x, y },
-            { spriteFactory, itemFactory }
+            { spriteFactory, itemFactory, unitFactory }
           );
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
           const block = await ObjectFactory.createMovableBlock(
             { x, y },
-            { spriteFactory, itemFactory }
+            { spriteFactory, itemFactory, unitFactory }
           );
           objects.push(block);
         } else if (objectName) {

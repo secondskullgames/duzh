@@ -12,6 +12,7 @@ import MapFactory from './maps/MapFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import AnimationFactory from './graphics/animations/AnimationFactory';
 import ItemFactory from './items/ItemFactory';
+import UnitFactory from './entities/units/UnitFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -24,13 +25,14 @@ const main = async () => {
     parent: document.getElementById('container')!,
     textRenderer
   });
-  const mapFactory = new MapFactory();
-  const animationFactory = new AnimationFactory({ spriteFactory });
   const itemFactory = new ItemFactory({ spriteFactory });
-  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, ticker });
+  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
+  const mapFactory = new MapFactory({ imageFactory, unitFactory, itemFactory, spriteFactory });
+  const animationFactory = new AnimationFactory({ spriteFactory });
+  const inputHandler = new InputHandler({ state, imageFactory, spriteFactory, mapFactory, animationFactory, itemFactory, unitFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, itemFactory, ticker });
+    const debug = new Debug({ state, imageFactory, spriteFactory, mapFactory, itemFactory, unitFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }

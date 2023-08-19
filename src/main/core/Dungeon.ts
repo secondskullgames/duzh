@@ -36,7 +36,7 @@ export default class Dungeon {
       return this.maps[id];
     }
     const mapSpec = checkNotNull(this.mapSpecs.find(mapSpec => mapSpec.id === id));
-    return mapFactory.loadMap(mapSpec, { state, imageFactory, spriteFactory, itemFactory });
+    return mapFactory.loadMap(mapSpec, { state });
   };
   
   getNextMapId = (id?: string | null): string | null => {

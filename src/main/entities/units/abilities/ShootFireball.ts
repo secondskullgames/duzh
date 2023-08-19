@@ -25,7 +25,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, spriteFactory, animationFactory, itemFactory, ticker }: UnitAbilityContext
+    { state, map, spriteFactory, animationFactory, itemFactory, unitFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -63,7 +63,7 @@ export const ShootFireball: UnitAbility = {
       ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, map, spriteFactory, itemFactory, ticker });
+        await die(targetUnit, { state, map, spriteFactory, itemFactory, unitFactory, ticker });
       }
     } else {
       const fireballAnimation = await animationFactory.getFireballAnimation(

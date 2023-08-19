@@ -46,14 +46,14 @@ const handleKeyCommand = async (
   }
 };
 
-const _handleEnter = async ({ state, spriteFactory, animationFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, spriteFactory, animationFactory, unitFactory, ticker }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const { selectedItem } = playerUnit.getInventory();
 
   if (selectedItem) {
     state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { state, map, spriteFactory, animationFactory, ticker });
+    await useItem(playerUnit, selectedItem, { state, map, spriteFactory, animationFactory, unitFactory, ticker });
   }
 };
 

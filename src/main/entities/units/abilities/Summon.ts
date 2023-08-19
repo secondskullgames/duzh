@@ -18,7 +18,7 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { map, spriteFactory, itemFactory }: UnitAbilityContext
+    { map, unitFactory }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
@@ -29,19 +29,13 @@ export const Summon: UnitAbility = {
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
-    const summonedUnit = await UnitFactory.createUnit(
-      {
-        unitClass,
-        faction: unit.getFaction(),
-        controller: new BasicEnemyController(),
-        level: 1, // whatever
-        coordinates
-      },
-      {
-        spriteFactory,
-        itemFactory
-      }
-    );
+    const summonedUnit = await unitFactory.createUnit({
+      unitClass,
+      faction: unit.getFaction(),
+      controller: new BasicEnemyController(),
+      level: 1, // whatever
+      coordinates
+    });
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);
   }

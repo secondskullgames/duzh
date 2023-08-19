@@ -7,6 +7,7 @@ import MapInstance from '../../../maps/MapInstance';
 import SpriteFactory from '../../../graphics/sprites/SpriteFactory';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import ItemFactory from '../../../items/ItemFactory';
+import UnitFactory from '../UnitFactory';
 
 export type UnitAbilityContext = Readonly<{
   state: GameState,
@@ -14,6 +15,7 @@ export type UnitAbilityContext = Readonly<{
   spriteFactory: SpriteFactory,
   animationFactory: AnimationFactory,
   itemFactory: ItemFactory,
+  unitFactory: UnitFactory,
   ticker: Ticker
 }>;
 

@@ -18,24 +18,22 @@ export type SpawnerClass = 'mirror';
 
 type CreateObjectContext = Readonly<{
   spriteFactory: SpriteFactory,
-  itemFactory: ItemFactory
+  itemFactory: ItemFactory,
+  unitFactory: UnitFactory
 }>;
 
 const createMirror = async (
   coordinates: Coordinates,
-  { spriteFactory, itemFactory }: CreateObjectContext
+  { spriteFactory, itemFactory, unitFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   const sprite = await spriteFactory.createMirrorSprite();
-  const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
-    {
-      unitClass: 'shade',
-      coordinates: coordinates,
-      level: 1,
-      controller: new BasicEnemyController(),
-      faction: Faction.ENEMY,
-    },
-    { spriteFactory, itemFactory }
-  );
+  const spawnFunction = (coordinates: Coordinates) => unitFactory.createUnit({
+    unitClass: 'shade',
+    coordinates: coordinates,
+    level: 1,
+    controller: new BasicEnemyController(),
+    faction: Faction.ENEMY,
+  });
   const spawner = new Spawner({
     spawnFunction,
     sprite,
@@ -51,11 +49,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { spriteFactory, itemFactory }: CreateObjectContext
+  context: CreateObjectContext
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { spriteFactory, itemFactory });
+      return createMirror(coordinates, context);
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
