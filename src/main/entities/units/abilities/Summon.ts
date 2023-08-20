@@ -3,7 +3,6 @@ import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import UnitFactory from '../UnitFactory';
 import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { AbilityName } from './AbilityName';

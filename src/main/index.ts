@@ -16,6 +16,7 @@ import UnitFactory from './entities/units/UnitFactory';
 import TileFactory from './tiles/TileFactory';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import { checkNotNull } from './utils/preconditions';
+import ProjectileFactory from './entities/objects/ProjectileFactory';
 
 const main = async () => {
   const state = new GameState();
@@ -46,7 +47,8 @@ const main = async () => {
     tileFactory,
     objectFactory
   });
-  const animationFactory = new AnimationFactory({ spriteFactory });
+  const projectileFactory = new ProjectileFactory({ spriteFactory });
+  const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
   const inputHandler = new InputHandler({
     state,
     imageFactory,

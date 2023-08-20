@@ -4,45 +4,39 @@ import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
 
-type Context = Readonly<{
+type Props = Readonly<{
   spriteFactory: SpriteFactory
 }>;
 
-const createArrow = async (
-  coordinates: Coordinates,
-  direction: Direction,
-  { spriteFactory }: Context
-): Promise<Projectile> => {
-  const sprite = await spriteFactory.createProjectileSprite(
-    'arrow',
-    direction,
-    PaletteSwaps.empty()
-  );
-  return new Projectile({
-    coordinates,
-    direction,
-    sprite
-  });
+export default class ProjectileFactory {
+  private readonly spriteFactory: SpriteFactory;
+  constructor({ spriteFactory }: Props) {
+    this.spriteFactory = spriteFactory;
+  }
+
+  createArrow = async (coordinates: Coordinates, direction: Direction): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createProjectileSprite(
+      'arrow',
+      direction,
+      PaletteSwaps.empty()
+    );
+    return new Projectile({
+      coordinates,
+      direction,
+      sprite
+    });
+  };
+
+  createBolt = async (coordinates: Coordinates, direction: Direction): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createProjectileSprite(
+      'bolt',
+      direction,
+      PaletteSwaps.empty()
+    );
+    return new Projectile({
+      coordinates,
+      direction,
+      sprite
+    });
+  }
 };
-
-const createBolt = async (
-  coordinates: Coordinates,
-  direction: Direction,
-  { spriteFactory }: Context
-): Promise<Projectile> => {
-  const sprite = await spriteFactory.createProjectileSprite(
-    'bolt',
-    direction,
-    PaletteSwaps.empty()
-  );
-  return new Projectile({
-    coordinates,
-    direction,
-    sprite
-  });
-}
-
-export default {
-  createArrow,
-  createBolt
-}

@@ -8,7 +8,8 @@ import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../sprites/SpriteFactory';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory
+  spriteFactory: SpriteFactory,
+  projectileFactory: ProjectileFactory
 }>;
 
 type Context = Readonly<{
@@ -17,9 +18,11 @@ type Context = Readonly<{
 
 export default class AnimationFactory {
   private readonly spriteFactory: SpriteFactory;
+  private readonly projectileFactory: ProjectileFactory;
   
-  constructor({ spriteFactory }: Props) {
+  constructor({ spriteFactory, projectileFactory }: Props) {
     this.spriteFactory = spriteFactory;
+    this.projectileFactory = projectileFactory;
   }
   
   getArrowAnimation = async (
@@ -46,11 +49,7 @@ export default class AnimationFactory {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
-        coordinates,
-        direction,
-        { spriteFactory: this.spriteFactory }
-      );
+      const projectile = await this.projectileFactory.createArrow(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
@@ -117,9 +116,7 @@ export default class AnimationFactory {
 
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
-        spriteFactory: this.spriteFactory
-      });
+      const projectile = await this.projectileFactory.createBolt(coordinates, direction);
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
         projectiles: [projectile],
@@ -183,10 +180,9 @@ export default class AnimationFactory {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
+      const projectile = await this.projectileFactory.createArrow(
         coordinates,
-        direction,
-        { spriteFactory: this.spriteFactory }
+        direction
       );
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
@@ -228,11 +224,7 @@ export default class AnimationFactory {
     return { frames };
   };
 
-  getFloorFireAnimation = async (
-    source: Unit,
-    targets: Unit[],
-    context: Context
-  ): Promise<Animation> => {
+  getFloorFireAnimation = async (source: Unit, targets: Unit[], context: Context): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     for (let i = 0; i < targets.length; i++) {
       const unitFrames: UnitAnimationFrame[] = [];
