@@ -10,6 +10,7 @@ import { Pixel } from '../Pixel';
 import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
+import ImageFactory from '../images/ImageFactory';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -18,14 +19,17 @@ type Element = Readonly<{
 }>;
 
 type Props = Readonly<{
-  graphics: Graphics
+  graphics: Graphics,
+  imageFactory: ImageFactory
 }>;
 
 export default class GameScreenRenderer implements Renderer {
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ graphics }: Props) {
+  constructor({ graphics, imageFactory }: Props) {
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   render = async (context: RenderContext) => {
@@ -166,7 +170,7 @@ export default class GameScreenRenderer implements Renderer {
   }
 
   private _drawEllipse = async (coordinates: Coordinates, color: Color, context: RenderContext) => {
-    const { imageFactory } = context;
+    const { imageFactory } = this;
     const pixel = this._gridToPixel(coordinates, context);
     const paletteSwaps = PaletteSwaps.builder()
       .addMapping(Colors.BLACK, color)

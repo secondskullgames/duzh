@@ -22,7 +22,7 @@ export default class HelpScreenRenderer implements Renderer {
     this.graphics = graphics;
   }
 
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async ({ state }: RenderContext) => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;

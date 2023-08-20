@@ -17,6 +17,7 @@ import { GameScreen } from '../../core/GameScreen';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
 import { Feature } from '../../utils/features';
+import ImageFactory from '../images/ImageFactory';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title2';
@@ -24,6 +25,7 @@ const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
   parent: Element,
+  imageFactory: ImageFactory,
   textRenderer: TextRenderer
 }>;
 
@@ -40,9 +42,11 @@ export default class GameRenderer implements Renderer {
   private readonly helpScreenRenderer: HelpScreenRenderer;
   private readonly levelUpScreenRenderer: LevelUpScreenRenderer;
   private readonly textRenderer: TextRenderer;
+  private readonly imageFactory: ImageFactory;
 
   constructor({
     parent,
+    imageFactory,
     textRenderer
   }: Props) {
     this.buffer = createCanvas({
@@ -55,14 +59,15 @@ export default class GameRenderer implements Renderer {
     this._graphics = Graphics.forCanvas(this.canvas);
     const { canvas, bufferGraphics } = this;
 
+    this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
-    this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
-    this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
-    this.inventoryRenderer = new InventoryRenderer({ textRenderer, graphics: bufferGraphics });
+    this.gameScreenRenderer = new GameScreenRenderer({ imageFactory, graphics: bufferGraphics });
+    this.hudRenderer = new HUDRenderer({ textRenderer, imageFactory, graphics: bufferGraphics });
+    this.inventoryRenderer = new InventoryRenderer({ textRenderer, imageFactory, graphics: bufferGraphics });
     this.mapScreenRenderer = new MapScreenRenderer({ graphics: bufferGraphics });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ textRenderer, graphics: bufferGraphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({ textRenderer, imageFactory, graphics: bufferGraphics });
     this.helpScreenRenderer = new HelpScreenRenderer({ textRenderer, graphics: bufferGraphics });
-    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ textRenderer, graphics: bufferGraphics });
+    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ textRenderer, imageFactory, graphics: bufferGraphics });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -154,7 +159,8 @@ export default class GameRenderer implements Renderer {
     }
   };
 
-  private _renderSplashScreen = async (filename: string, text: string, { imageFactory }: RenderContext) => {
+  private _renderSplashScreen = async (filename: string, text: string, context: RenderContext) => {
+    const { imageFactory } = this;
     const image = await imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
     await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);

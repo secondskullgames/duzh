@@ -11,6 +11,7 @@ import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import getInnateAbilities = AbilityName.getInnateAbilities;
+import ImageFactory from '../images/ImageFactory';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -27,15 +28,18 @@ const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
   textRenderer: TextRenderer,
+  imageFactory: ImageFactory,
   graphics: Graphics
 }>;
 
 export default class HUDRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
+  private readonly imageFactory: ImageFactory;
   private readonly graphics: Graphics;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, imageFactory, graphics }: Props) {
     this.textRenderer = textRenderer;
+    this.imageFactory = imageFactory;
     this.graphics = graphics;
   }
 
@@ -49,8 +53,8 @@ export default class HUDRenderer implements Renderer {
     await this._renderRightPanel(context);
   };
 
-  private _renderFrame = async ({ imageFactory }: RenderContext) => {
-    const image = await imageFactory.getImage({
+  private _renderFrame = async (context: RenderContext) => {
+    const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -131,7 +135,7 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    { state, imageFactory }: RenderContext
+    { state }: RenderContext
   ) => {
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
@@ -150,7 +154,7 @@ export default class HUDRenderer implements Renderer {
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
-      const icon = await imageFactory.getImage({
+      const icon = await this.imageFactory.getImage({
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });

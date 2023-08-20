@@ -8,6 +8,7 @@ import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import ImageFactory from '../images/ImageFactory';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -19,25 +20,28 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
   textRenderer: TextRenderer,
+  imageFactory: ImageFactory,
   graphics: Graphics
 }>;
 
 export default class InventoryRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
+  private readonly imageFactory: ImageFactory;
   private readonly graphics: Graphics;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, imageFactory, graphics }: Props) {
     this.textRenderer = textRenderer;
+    this.imageFactory = imageFactory;
     this.graphics = graphics;
   }
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async ({ state }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
     const inventory = playerUnit.getInventory();
-    const { graphics } = this;
+    const { graphics, imageFactory } = this;
 
     const image = await imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
     // TODO: need a 640x360 version of this image

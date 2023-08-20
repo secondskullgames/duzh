@@ -7,21 +7,25 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
+import ImageFactory from '../images/ImageFactory';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
 type Props = Readonly<{
   textRenderer: TextRenderer,
+  imageFactory: ImageFactory,
   graphics: Graphics
 }>;
 
 export default class CharacterScreenRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
+  private readonly imageFactory: ImageFactory;
   private readonly graphics: Graphics;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, imageFactory, graphics }: Props) {
     this.textRenderer = textRenderer;
+    this.imageFactory = imageFactory;
     this.graphics = graphics;
   }
 
@@ -29,8 +33,7 @@ export default class CharacterScreenRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    const { graphics } = this;
-    const { imageFactory } = context;
+    const { graphics, imageFactory } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,

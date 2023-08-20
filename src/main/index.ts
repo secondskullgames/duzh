@@ -27,7 +27,8 @@ const main = async () => {
   const ticker = new Ticker();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
-    textRenderer
+    textRenderer,
+    imageFactory
   });
   
   // avoiding cyclic dependencies...
@@ -76,7 +77,7 @@ const main = async () => {
   }
   await showSplashScreen({ state });
   setInterval(async () => {
-    await renderer.render({ state, imageFactory, ticker });
+    await renderer.render({ state, ticker });
   }, 20);
 };
 
