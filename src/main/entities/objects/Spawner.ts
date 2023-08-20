@@ -54,7 +54,7 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ state, map }: UpdateContext) => {
+  update = async ({ game, map }: UpdateContext) => {
     if (this._state === 'DEAD') {
       return;
     }

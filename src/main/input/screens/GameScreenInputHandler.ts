@@ -27,8 +27,8 @@ const handleKeyCommand = async (
   context: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
-  const { state } = context;
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+  const { game } = context;
+  const map = checkNotNull(game.getMap(), 'Map is not loaded!');
 
   if (_isArrowKey(key)) {
     await _handleArrowKey(key as ArrowKey, modifiers, context);
@@ -38,13 +38,13 @@ const handleKeyCommand = async (
     playSound(Sounds.FOOTSTEP);
     await playTurn({ ...context, map });
   } else if (key === 'TAB') {
-    state.setScreen(GameScreen.INVENTORY);
+    game.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-    state.setScreen(GameScreen.LEVEL_UP);
+    game.setScreen(GameScreen.LEVEL_UP);
   } else if (key === 'M') {
-    state.setScreen(GameScreen.MAP);
+    game.setScreen(GameScreen.MAP);
   } else if (key === 'C') {
-    state.setScreen(GameScreen.CHARACTER);
+    game.setScreen(GameScreen.CHARACTER);
   } else if (key === 'ENTER') {
     if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
@@ -52,7 +52,7 @@ const handleKeyCommand = async (
       await _handleEnter(context);
     }
   } else if (key === 'F1') {
-    state.setScreen(GameScreen.HELP);
+    game.setScreen(GameScreen.HELP);
   }
 }
 
@@ -67,11 +67,11 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  { game, imageFactory, ticker }: ScreenHandlerContext
 ) => {
   const direction = getDirection(key);
-  const playerUnit = state.getPlayerUnit();
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+  const playerUnit = game.getPlayerUnit();
+  const map = checkNotNull(game.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
@@ -91,8 +91,8 @@ const _handleArrowKey = async (
   } else if (modifiers.includes(ModifierKey.CTRL) && Feature.isEnabled(Feature.FAST_MOVE)) {
     order = new FastMoveOrder({ direction });
   } else {
-    const ability = state.getQueuedAbility();
-    state.setQueuedAbility(null);
+    const ability = game.getQueuedAbility();
+    game.setQueuedAbility(null);
     if (ability) {
       order = new AbilityOrder({ ability, coordinates });
     } else {
@@ -102,12 +102,12 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn({ state, map, imageFactory, ticker });
+    await playTurn({ game, map, imageFactory, ticker });
   }
 };
 
-const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) => {
-  const playerUnit = state.getPlayerUnit();
+const _handleAbility = async (key: NumberKey, { game }: ScreenHandlerContext) => {
+  const playerUnit = game.getPlayerUnit();
 
   const index = parseInt(key.toString());
   const innateAbilities = AbilityName.getInnateAbilities();
@@ -115,23 +115,23 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
     .filter(ability => !innateAbilities.includes(ability.name))
     [index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
-    state.setQueuedAbility(ability);
+    game.setQueuedAbility(ability);
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, mapFactory, ticker }: ScreenHandlerContext) => {
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
-  const playerUnit = state.getPlayerUnit();
+const _handleEnter = async ({ game, imageFactory, mapFactory, ticker }: ScreenHandlerContext) => {
+  const map = checkNotNull(game.getMap(), 'Map is not loaded!');
+  const playerUnit = game.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {
-    pickupItem(playerUnit, item, { state, ticker });
+    pickupItem(playerUnit, item, { game, ticker });
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state, imageFactory, mapFactory });
+    await loadNextMap({ game, imageFactory, mapFactory });
   }
-  await playTurn({ state, map, imageFactory, ticker });
+  await playTurn({ game, map, imageFactory, ticker });
 };
 
 export default {

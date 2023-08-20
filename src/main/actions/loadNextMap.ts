@@ -1,24 +1,24 @@
 import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
-import GameState from '../core/GameState';
+import Game from '../core/Game';
 import { GameScreen } from '../core/GameScreen';
 import MapFactory from '../maps/MapFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 
 type Context = Readonly<{
-  state: GameState,
+  game: Game,
   mapFactory: MapFactory,
   imageFactory: ImageFactory
 }>;
 
-export const loadNextMap = async ({ state, mapFactory, imageFactory }: Context) => {
-  if (!state.hasNextMap()) {
+export const loadNextMap = async ({ game, mapFactory, imageFactory }: Context) => {
+  if (!game.hasNextMap()) {
     Music.stop();
-    state.setScreen(GameScreen.VICTORY);
+    game.setScreen(GameScreen.VICTORY);
   } else {
-    await state.loadNextMap({ state, mapFactory, imageFactory });
-    const map = state.getMap();
-    updateRevealedTiles({ state, map: map })
+    await game.loadNextMap({ game, mapFactory, imageFactory });
+    const map = game.getMap();
+    updateRevealedTiles({ game, map: map })
     if (map.music) {
       await Music.playMusic(map.music);
     }

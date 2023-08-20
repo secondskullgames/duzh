@@ -1,12 +1,12 @@
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import GameState from '../core/GameState';
+import Game from '../core/Game';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState,
+  game: Game,
   map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
@@ -15,8 +15,8 @@ type Context = Readonly<{
 export const useItem = async (
   unit: Unit,
   item: InventoryItem,
-  { state, map, imageFactory, ticker }: Context
+  { game, map, imageFactory, ticker }: Context
 ) => {
-  await item.use(unit, { state, map, imageFactory, ticker });
+  await item.use(unit, { game, map, imageFactory, ticker });
   unit.getInventory().remove(item);
 };

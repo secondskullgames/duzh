@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import Game from '../../core/Game';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -62,8 +62,8 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async ({ state }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
+  private _renderLeftPanel = async ({ game }: RenderContext) => {
+    const playerUnit = game.getPlayerUnit();
 
     const lines = [
       playerUnit.getName(),
@@ -85,9 +85,9 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (context: RenderContext) => {
-    const { state } = context;
+    const { game } = context;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = game.getPlayerUnit();
 
     let keyNumber = 1;
     const abilities = playerUnit.getAbilities();
@@ -104,10 +104,10 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async ({ state }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
-    const turn = state.getTurn();
-    const mapId = state.getMap()!.id;
+  private _renderRightPanel = async ({ game }: RenderContext) => {
+    const playerUnit = game.getPlayerUnit();
+    const turn = game.getTurn();
+    const mapId = game.getMap()!.id;
 
     const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
@@ -133,10 +133,10 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    { state, imageFactory }: RenderContext
+    { game, imageFactory }: RenderContext
   ) => {
-    const playerUnit = state.getPlayerUnit();
-    const queuedAbility = state.getQueuedAbility();
+    const playerUnit = game.getPlayerUnit();
+    const queuedAbility = game.getQueuedAbility();
 
     let borderColor: Color;
 

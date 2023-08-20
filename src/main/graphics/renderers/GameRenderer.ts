@@ -73,7 +73,8 @@ export default class GameRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    const screen = context.state.getScreen();
+    const { game } = context;
+    const screen = game.getScreen();
 
     switch (screen) {
       case GameScreen.TITLE:
@@ -138,11 +139,11 @@ export default class GameRenderer implements Renderer {
     await this.characterScreenRenderer.render(context);
   };
 
-  private _renderTicker = async ({ state, ticker }: RenderContext) => {
+  private _renderTicker = async ({ game, ticker }: RenderContext) => {
     const {
       bufferGraphics: graphics
     } = this;
-    const messages = ticker.getRecentMessages(state.getTurn());
+    const messages = ticker.getRecentMessages(game.getTurn());
 
     const left = 0;
     const top = 0;

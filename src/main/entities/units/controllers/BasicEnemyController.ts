@@ -16,37 +16,37 @@ export default class BasicEnemyController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { game, map }: UnitControllerContext
   ): UnitOrder => {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = game.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'HumanRedesignController requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, { game: game })) {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit })
-        .issueOrder(unit, { state, map });
+        .issueOrder(unit, { game: game, map });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { state, map });
+          .issueOrder(unit, { game: game, map });
       } else if (randChance(aggressiveness)) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { state, map });
+          .issueOrder(unit, { game: game, map });
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { state, map });
+          .issueOrder(unit, { game: game, map });
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { state, map });
+          .issueOrder(unit, { game: game, map });
       }
     }
   }

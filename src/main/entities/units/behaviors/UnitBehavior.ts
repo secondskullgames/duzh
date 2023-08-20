@@ -1,10 +1,10 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
+import Game from '../../../core/Game';
 import UnitOrder from '../orders/UnitOrder';
 import MapInstance from '../../../maps/MapInstance';
 
 export type UnitBehaviorContext = Readonly<{
-  state: GameState,
+  game: Game,
   map: MapInstance
 }>;
 
@@ -14,6 +14,6 @@ export type UnitBehaviorContext = Readonly<{
 export interface UnitBehavior {
   issueOrder: (
     unit: Unit,
-    { state, map }: UnitBehaviorContext
+    { game, map }: UnitBehaviorContext
   ) => UnitOrder;
 }

@@ -1,5 +1,5 @@
 import { Debug } from './core/Debug';
-import GameState from './core/GameState';
+import Game from './core/Game';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import ImageFactory from './graphics/images/ImageFactory';
 import { TextRenderer } from './graphics/TextRenderer';
@@ -11,7 +11,7 @@ import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
 
 const main = async () => {
-  const state = new GameState();
+  const game = new Game();
   const imageFactory = new ImageFactory();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
@@ -21,16 +21,16 @@ const main = async () => {
     textRenderer
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
+  const inputHandler = new InputHandler({ getGame: () => game, imageFactory, mapFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, imageFactory, mapFactory, ticker });
+    const debug = new Debug({ game, imageFactory, mapFactory, ticker });
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen({ state });
+  await showSplashScreen({ game });
   setInterval(async () => {
-    await renderer.render({ state, imageFactory, ticker });
+    await renderer.render({ game, imageFactory, ticker });
   }, 20);
 };
 

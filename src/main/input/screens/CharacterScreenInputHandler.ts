@@ -3,14 +3,14 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, { game, imageFactory }: ScreenHandlerContext) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'C':
-      state.setScreen(GameScreen.GAME);
+      game.setScreen(GameScreen.GAME);
       break;
     case 'F1':
-      state.setScreen(GameScreen.HELP);
+      game.setScreen(GameScreen.HELP);
       break;
     case 'ENTER':
       if (modifiers.includes(ModifierKey.ALT)) {
@@ -18,7 +18,7 @@ const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: Sc
       }
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      game.setScreen(GameScreen.GAME);
   }
 };
 

@@ -1,4 +1,4 @@
-import GameState from '../core/GameState';
+import Game from '../core/Game';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import Equipment from './Equipment';
@@ -10,7 +10,7 @@ import MapInstance from '../maps/MapInstance';
 export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
-  state: GameState,
+  game: Game,
   map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker
@@ -34,7 +34,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, map, imageFactory, ticker }: Context
+    { game, map, imageFactory, ticker }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -48,7 +48,7 @@ const BoltSwordScript: EquipmentScript = {
       await ShootBolt.use(
         unit,
         target,
-        { state, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
     }
   }

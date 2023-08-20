@@ -10,7 +10,7 @@ import Dungeon, { GetMapContext } from './Dungeon';
 /**
  * Global mutable state
  */
-export default class GameState {
+export default class Game {
   private dungeon: Dungeon | null;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
@@ -68,11 +68,11 @@ export default class GameState {
     return !!dungeon.getNextMapId(this.map?.id);
   };
 
-  loadNextMap = async ({ state, mapFactory, imageFactory }: GetMapContext) => {
+  loadNextMap = async ({ game, mapFactory, imageFactory }: GetMapContext) => {
     const dungeon = checkNotNull(this.dungeon);
     
     const nextMapId = dungeon.getNextMapId(this.map?.id);
-    this.map = await dungeon.getMap(`${nextMapId}`, { state, mapFactory, imageFactory });
+    this.map = await dungeon.getMap(`${nextMapId}`, { game, mapFactory, imageFactory });
   };
 
   getMap = (): MapInstance => checkNotNull(this.map, 'Tried to retrieve map before map was loaded');

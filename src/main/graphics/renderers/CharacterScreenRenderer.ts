@@ -44,8 +44,8 @@ export default class CharacterScreenRenderer implements Renderer {
 
   private _renderStatistics = async (context: RenderContext) => {
     const { graphics } = this;
-    const { state } = context;
-    const playerUnit = state.getPlayerUnit();
+    const { game } = context;
+    const playerUnit = game.getPlayerUnit();
     let top = 20;
     await this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);
 

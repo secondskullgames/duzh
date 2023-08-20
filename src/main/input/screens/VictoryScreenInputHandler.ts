@@ -7,7 +7,7 @@ import { addInitialState } from '../../actions/addInitialState';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  { game, imageFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -15,17 +15,17 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await showSplashScreen({ state });
-        await state.reset();
+        await showSplashScreen({ game: game });
+        await game.reset();
         await addInitialState({
-          state,
+          game: game,
           imageFactory,
           ticker
         });
       }
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      game.setScreen(GameScreen.GAME);
   }
 };
 

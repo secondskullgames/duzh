@@ -57,8 +57,8 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates, { state }: RenderContext): Pixel => {
-    const playerUnit = state.getPlayerUnit();
+  private _gridToPixel = ({ x, y }: Coordinates, { game }: RenderContext): Pixel => {
+    const playerUnit = game.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: ((x - playerX) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
@@ -67,8 +67,8 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _renderTiles = (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { game } = context;
+    const map = checkNotNull(game.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -87,8 +87,8 @@ export default class GameScreenRenderer implements Renderer {
    * Render all entities, one row at a time.
    */
   private _renderEntities = async (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { game } = context;
+    const map = checkNotNull(game.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -138,20 +138,20 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _isTileRevealed = (coordinates: Coordinates, context: RenderContext): boolean => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { game } = context;
+    const map = checkNotNull(game.getMap());
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { game } = context;
+    const map = checkNotNull(game.getMap());
     const unit = map.getUnit(coordinates);
     const objects = map.getObjects(coordinates);
 
     if (unit) {
-      if (unit === state.getPlayerUnit()) {
+      if (unit === game.getPlayerUnit()) {
         return this._drawEllipse(coordinates, Colors.GREEN, context);
       } else {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);

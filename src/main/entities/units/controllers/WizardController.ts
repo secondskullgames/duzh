@@ -30,9 +30,9 @@ export default class WizardController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { game, map }: UnitControllerContext
   ): UnitOrder => {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = game.getPlayerUnit();
 
     const distanceToPlayerUnit = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
@@ -60,6 +60,6 @@ export default class WizardController implements UnitController {
     const behavior = (randChance(avoidChance))
       ? new AvoidUnitBehavior({ targetUnit: playerUnit })
       : new WanderBehavior();
-    return behavior.issueOrder(unit, { state, map });
+    return behavior.issueOrder(unit, { game: game, map });
   }
 };

@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import Game from '../../core/Game';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
@@ -26,7 +26,7 @@ import ArcherController from '../../entities/units/controllers/ArcherController'
 
 type Context = Readonly<{
   imageFactory: ImageFactory,
-  state: GameState
+  game: Game
 }>;
 
 const _getEnemyController = (enemyUnitModel: UnitModel) => {
@@ -41,7 +41,7 @@ const _getEnemyController = (enemyUnitModel: UnitModel) => {
 
 export const buildPredefinedMap = async (
   mapId: string,
-  { state, imageFactory }: Context
+  { game, imageFactory }: Context
 ): Promise<MapInstance> => {
   const model = await loadPredefinedMapModel(mapId);
   const image = await imageFactory.getImage({
@@ -52,9 +52,9 @@ export const buildPredefinedMap = async (
     id: mapId,
     width: image.bitmap.width,
     height: image.bitmap.height,
-    tiles: await _loadTiles(model, image, { state, imageFactory }),
-    units: await _loadUnits(model, image, { state, imageFactory }),
-    objects: await _loadObjects(model, image, { state, imageFactory }),
+    tiles: await _loadTiles(model, image, { game, imageFactory }),
+    units: await _loadUnits(model, image, { game, imageFactory }),
+    objects: await _loadObjects(model, image, { game, imageFactory }),
     music: (model.music) ? await Music.loadMusic(model.music as string) : null
   });
 };
@@ -95,7 +95,7 @@ const _loadTiles = async (
 const _loadUnits = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, imageFactory }: Context
+  { game, imageFactory }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
   const enemyColors = _toHexColors(model.enemyColors);
@@ -114,7 +114,7 @@ const _loadUnits = async (
         const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
           console.log(`starting point = (${x}, ${y})`);
-          const playerUnit = state.getPlayerUnit();
+          const playerUnit = game.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);
           addedStartingPoint = true;

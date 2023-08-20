@@ -3,26 +3,26 @@ import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
 import { abilityForName } from '../../entities/units/abilities/abilityForName';
 
-const handleKeyCommand = async (command: KeyCommand, { state, imageFactory }: ScreenHandlerContext) => {
-  const playerUnit = state.getPlayerUnit();
+const handleKeyCommand = async (command: KeyCommand, { game, imageFactory }: ScreenHandlerContext) => {
+  const playerUnit = game.getPlayerUnit();
 
   switch (command.key) {
     case 'L':
-      state.showPrevScreen();
+      game.showPrevScreen();
       break;
     case 'F1':
-      state.setScreen(GameScreen.HELP);
+      game.setScreen(GameScreen.HELP);
       break;
     case 'UP':
-      state.selectPreviousLevelUpScreenAbility();
+      game.selectPreviousLevelUpScreenAbility();
       break;
     case 'DOWN':
-      state.selectNextLevelUpScreenAbility();
+      game.selectNextLevelUpScreenAbility();
       break;
     case 'ENTER': {
-      const selectedAbility = state.getSelectedLevelUpScreenAbility();
+      const selectedAbility = game.getSelectedLevelUpScreenAbility();
       if (playerUnit.getAbilityPoints() > 0 && selectedAbility) {
-        state.selectNextLevelUpScreenAbility();
+        game.selectNextLevelUpScreenAbility();
         playerUnit.learnAbility(abilityForName(selectedAbility));
       }
     }

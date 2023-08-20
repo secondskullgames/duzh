@@ -5,6 +5,6 @@ export default class StayOrder implements UnitOrder {
   /** @override {@link UnitOrder#execute} */
   execute = async (
     unit: Unit,
-    { state }: OrderContext
+    { game }: OrderContext
   ) => {};
 }

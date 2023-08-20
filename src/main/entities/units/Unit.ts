@@ -144,7 +144,7 @@ export default class Unit implements Entity, Animatable {
     }
 
     /*while (this.level < props.level) {
-      levelUp(this, { state });
+      levelUp(this, { game });
     }*/
   }
 
@@ -186,11 +186,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, map, imageFactory, ticker }: UpdateContext) => {
+  update = async ({ game, map, imageFactory, ticker }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
-      const order = this.controller.issueOrder(this, { state, map });
-      await order.execute(this, { state, map, imageFactory, ticker });
+      const order = this.controller.issueOrder(this, { game, map });
+      await order.execute(this, { game: game, map, imageFactory, ticker });
     }
     this._endOfTurn();
   };

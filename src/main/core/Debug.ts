@@ -1,4 +1,4 @@
-import GameState from './GameState';
+import Game from './Game';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
@@ -11,21 +11,21 @@ import Ticker from './Ticker';
 import MapFactory from '../maps/MapFactory';
 
 type Props = Readonly<{
-  state: GameState,
+  game: Game,
   imageFactory: ImageFactory,
   mapFactory: MapFactory,
   ticker: Ticker
 }>;
 
 export class Debug {
-  private readonly state: GameState;
+  private readonly game: Game;
   private readonly imageFactory: ImageFactory;
   private readonly mapFactory: MapFactory;
   private readonly ticker: Ticker;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
-    this.state = state;
+  constructor({ game, imageFactory, mapFactory, ticker }: Props) {
+    this.game = game;
     this.imageFactory = imageFactory;
     this.mapFactory = mapFactory;
     this.ticker = ticker;
@@ -39,19 +39,19 @@ export class Debug {
   isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.game.getPlayerUnit();
     await die(playerUnit, {
-      state: this.state,
-      map: this.state.getMap(),
+      game: this.game,
+      map: this.game.getMap(),
       imageFactory: this.imageFactory,
       ticker: this.ticker
     });
   };
 
   levelUp = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.game.getPlayerUnit();
     _levelUp(playerUnit, {
-      state: this.state,
+      game: this.game,
       ticker: this.ticker
     });
   };
@@ -59,9 +59,9 @@ export class Debug {
   awardEquipment = async () => {
     const id = prompt('Enter a valid equipment_id')!;
     const item = await ItemFactory.createInventoryEquipment(id);
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.game.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    this.ticker.log(`Picked up a ${item.name}.`, { turn: this.state.getTurn() });
+    this.ticker.log(`Picked up a ${item.name}.`, { turn: this.game.getTurn() });
     playSound(Sounds.PICK_UP_ITEM);
   };
 
@@ -72,12 +72,12 @@ export class Debug {
     window.jwb.debug = {
       ...this,
       killEnemies: () => killEnemies({
-        state: this.state,
-        map: this.state.getMap()
+        game: this.game,
+        map: this.game.getMap()
       }),
       nextLevel: async () => {
         await loadNextMap({
-          state: this.state,
+          game: this.game,
           mapFactory: this.mapFactory,
           imageFactory: this.imageFactory
         });

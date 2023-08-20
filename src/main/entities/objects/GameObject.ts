@@ -43,7 +43,7 @@ export default abstract class GameObject implements Entity {
   getType = (): EntityType => EntityType.OBJECT;
 
   /** @override */
-  abstract update: ({ state }: UpdateContext) => Promise<void>;
+  abstract update: ({ game }: UpdateContext) => Promise<void>;
   /** @override */
   abstract isBlocking: () => boolean;
 

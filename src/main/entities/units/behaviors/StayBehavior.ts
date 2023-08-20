@@ -7,7 +7,7 @@ export default class StayBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (
     unit: Unit,
-    { state }: UnitBehaviorContext
+    { game }: UnitBehaviorContext
   ): UnitOrder => {
     return new StayOrder();
   };

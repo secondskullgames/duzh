@@ -1,11 +1,11 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
+import Game from '../../../core/Game';
 import ImageFactory from '../../../graphics/images/ImageFactory';
 import Ticker from '../../../core/Ticker';
 import MapInstance from '../../../maps/MapInstance';
 
 export type OrderContext = Readonly<{
-  state: GameState,
+  game: Game,
   map: MapInstance,
   imageFactory: ImageFactory,
   ticker: Ticker

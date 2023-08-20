@@ -16,24 +16,24 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { game, map }: UnitControllerContext
   ): UnitOrder => {
-    const behavior = this._getBehavior(unit, { state, map });
-    return behavior.issueOrder(unit, { state, map });
+    const behavior = this._getBehavior(unit, { game: game, map });
+    return behavior.issueOrder(unit, { game: game, map });
   }
 
   private _getBehavior = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { game, map }: UnitControllerContext
   ): UnitController => {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = game.getPlayerUnit();
 
     const aiParameters = checkNotNull(unit.getAiParameters(), 'ArcherController requires aiParams!');
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, { game: game })) {
       return new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });

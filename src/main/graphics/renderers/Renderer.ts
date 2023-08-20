@@ -1,9 +1,9 @@
-import GameState from '../../core/GameState';
+import Game from '../../core/Game';
 import ImageFactory from '../images/ImageFactory';
 import Ticker from '../../core/Ticker';
 
 export type RenderContext = Readonly<{
-  state: GameState,
+  game: Game,
   imageFactory: ImageFactory,
   ticker: Ticker
 }>;

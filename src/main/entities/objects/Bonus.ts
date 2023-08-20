@@ -2,12 +2,12 @@ import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
-import GameState from '../../core/GameState';
+import Game from '../../core/Game';
 import Ticker from '../../core/Ticker';
 import MapInstance from '../../maps/MapInstance';
 
 export type OnUseContext = Readonly<{
-  state: GameState,
+  game: Game,
   map: MapInstance,
   ticker: Ticker
 }>;
@@ -19,7 +19,7 @@ type Props = Readonly<{
 }>;
 
 export default class Bonus extends GameObject {
-  private readonly _onUse: (unit: Unit, { state }: OnUseContext) => Promise<void>;
+  private readonly _onUse: (unit: Unit, { game }: OnUseContext) => Promise<void>;
 
   constructor({ coordinates, sprite, onUse }: Props) {
     super({

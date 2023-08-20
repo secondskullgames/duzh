@@ -23,13 +23,13 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    { game, ticker }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
     ticker.log(
       `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
-      { turn: state.getTurn() }
+      { turn: game.getTurn() }
     );
   };
 
@@ -44,13 +44,13 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    { game, ticker }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
     ticker.log(
       `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
-      { turn: state.getTurn() }
+      { turn: game.getTurn() }
     );
   };
 
@@ -75,7 +75,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, map, imageFactory, ticker }: ItemProcContext
+    { game, map, imageFactory, ticker }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits()
@@ -101,8 +101,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, map, imageFactory, ticker });
-        recordKill(unit, { state, ticker });
+        await die(adjacentUnit, { game, map, imageFactory, ticker });
+        recordKill(unit, { game, ticker });
       }
     }
   };
@@ -118,10 +118,10 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    { game, imageFactory, ticker }: ItemProcContext
   ) => {
     const equipment = await createEquipment(equipmentClass, { imageFactory });
-    return equipItem(item, equipment, unit, { state, ticker });
+    return equipItem(item, equipment, unit, { game: game, ticker });
   };
 
   const model = await loadEquipmentModel(equipmentClass);

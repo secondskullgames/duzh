@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import Game from '../../core/Game';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
 import ItemFactory from '../../items/ItemFactory';
@@ -29,7 +29,7 @@ type Props = Readonly<{
 }>;
 
 type Context = Readonly<{
-  state: GameState,
+  game: Game,
   imageFactory: ImageFactory
 }>;
 
@@ -59,14 +59,14 @@ export default class GeneratedMapBuilder {
     this.entityLocations = new CustomSet();
   }
 
-  build = async ({ state, imageFactory }: Context): Promise<MapInstance> => {
+  build = async ({ game, imageFactory }: Context): Promise<MapInstance> => {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = game.getPlayerUnit();
     const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.entityLocations.add(playerUnitCoordinates);
-    const units = [playerUnit, ...await this._generateUnits({ state, imageFactory })];
-    const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
+    const units = [playerUnit, ...await this._generateUnits({ game, imageFactory })];
+    const objects: GameObject[] = await this._generateObjects({ game, imageFactory });
 
     return new MapInstance({
       id: this.id,
@@ -133,7 +133,7 @@ export default class GeneratedMapBuilder {
     return units;
   };
 
-  private _generateObjects = async ({ state, imageFactory }: Context): Promise<GameObject[]> => {
+  private _generateObjects = async ({ game, imageFactory }: Context): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], [])
       .filter(coordinates => !this.entityLocations.includes(coordinates));
@@ -143,7 +143,7 @@ export default class GeneratedMapBuilder {
       const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
         .filter(equipmentClass => {
           if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-            return !state.getGeneratedEquipmentIds().includes(equipmentClass.id);
+            return !game.getGeneratedEquipmentIds().includes(equipmentClass.id);
           }
           return true;
         })
@@ -169,7 +169,7 @@ export default class GeneratedMapBuilder {
       objects.push(item);
       points -= equipmentClass.points!;
       this.entityLocations.add(coordinates);
-      state.recordEquipmentGenerated(equipmentClass.id);
+      game.recordEquipmentGenerated(equipmentClass.id);
     }
 
     points = this.pointAllocation.items;
