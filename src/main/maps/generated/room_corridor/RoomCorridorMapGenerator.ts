@@ -8,8 +8,10 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import TileType from '../../../schemas/TileType';
+import TileFactory from '../../../tiles/TileFactory';
 
 type Props = Readonly<{
+  tileFactory: TileFactory,
   minRoomDimension: number,
   maxRoomDimension: number
 }>;
@@ -27,8 +29,8 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
    */
   private readonly maxRoomDimension: number;
 
-  constructor({ minRoomDimension, maxRoomDimension }: Props) {
-    super();
+  constructor({ tileFactory, minRoomDimension, maxRoomDimension }: Props) {
+    super({ tileFactory });
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
   }

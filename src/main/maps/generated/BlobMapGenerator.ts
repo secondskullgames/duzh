@@ -3,12 +3,12 @@ import EmptyMap from './EmptyMap';
 import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
-import AbstractMapGenerator from './AbstractMapGenerator';
+import AbstractMapGenerator, { AbstractMapGeneratorProps } from './AbstractMapGenerator';
 import TileType from '../../schemas/TileType';
 
 class BlobMapGenerator extends AbstractMapGenerator {
-  constructor() {
-    super();
+  constructor(props: AbstractMapGeneratorProps) {
+    super(props);
   }
 
   /**

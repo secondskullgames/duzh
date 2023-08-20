@@ -2,13 +2,13 @@ import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import Rect from '../../geometry/Rect';
 import { randInt, shuffle } from '../../utils/random';
-import AbstractMapGenerator from './AbstractMapGenerator';
+import AbstractMapGenerator, { AbstractMapGeneratorProps } from './AbstractMapGenerator';
 import EmptyMap from './EmptyMap';
 import TileType from '../../schemas/TileType';
 
 class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
-  constructor() {
-    super();
+  constructor(props: AbstractMapGeneratorProps) {
+    super(props);
   }
 
   /**

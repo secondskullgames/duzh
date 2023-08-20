@@ -1,5 +1,5 @@
 import Rect from '../../../geometry/Rect';
-import AbstractMapGenerator from '../AbstractMapGenerator';
+import AbstractMapGenerator, { AbstractMapGeneratorProps } from '../AbstractMapGenerator';
 import EmptyMap from '../EmptyMap';
 import Section from './Section';
 import SectionConnector from './SectionConnector';
@@ -40,8 +40,8 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor() {
-    super();
+  constructor(props: AbstractMapGeneratorProps) {
+    super(props);
   }
 
   /**

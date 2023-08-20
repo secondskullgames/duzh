@@ -4,23 +4,25 @@ import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
-type Context = Readonly<{
-  spriteFactory: SpriteFactory,
+export type AbstractMapGeneratorProps = Readonly<{
   tileFactory: TileFactory
 }>;
 
 abstract class AbstractMapGenerator {
-  protected constructor() {}
+  private readonly tileFactory: TileFactory;
+
+  protected constructor({ tileFactory }: AbstractMapGeneratorProps) {
+    this.tileFactory = tileFactory;
+  }
 
   generateMap = async (
     id: string,
     mapModel: GeneratedMapModel,
-    tileSetId: string,
-    { tileFactory }: Context
+    tileSetId: string
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapModel;
+    const { tileFactory } = this;
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
