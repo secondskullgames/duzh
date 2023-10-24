@@ -121,7 +121,7 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
     { game, imageFactory, ticker }: ItemProcContext
   ) => {
     const equipment = await createEquipment(equipmentClass, { imageFactory });
-    return equipItem(item, equipment, unit, { game: game, ticker });
+    return equipItem(item, equipment, unit, { game, ticker });
   };
 
   const model = await loadEquipmentModel(equipmentClass);

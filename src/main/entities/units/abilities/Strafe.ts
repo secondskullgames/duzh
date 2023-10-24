@@ -19,7 +19,7 @@ export const Strafe: UnitAbility = {
     }
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { game: game, map, imageFactory, ticker });
+      await moveUnit(unit, coordinates, { game, map, imageFactory, ticker });
     }
   }
 }

@@ -9,9 +9,10 @@ import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
+import Session from './core/Session';
 
 const main = async () => {
-  const game = new Game();
+  const session = new Session();
   const imageFactory = new ImageFactory();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
@@ -21,7 +22,9 @@ const main = async () => {
     textRenderer
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ getGame: () => game, imageFactory, mapFactory, ticker });
+  const game = new Game();
+  session.setGame(game);
+  const inputHandler = new InputHandler({ session, imageFactory, mapFactory, ticker });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ game, imageFactory, mapFactory, ticker });

@@ -1,13 +1,13 @@
 import Music from '../sounds/Music';
-import Game from '../core/Game';
 import { GameScreen } from '../core/GameScreen';
+import Session from '../core/Session';
 
 type Context = Readonly<{
-  game: Game
+  session: Session
 }>;
 
-export const showSplashScreen = async ({ game }: Context) => {
-  game.setScreen(GameScreen.TITLE);
+export const showSplashScreen = async ({ session }: Context) => {
+  session.setScreen(GameScreen.TITLE);
   const evilTheme = await Music.loadMusic('evil');
   Music.playMusic(evilTheme);
 };

@@ -190,7 +190,7 @@ export default class Unit implements Entity, Animatable {
     this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { game, map });
-      await order.execute(this, { game: game, map, imageFactory, ticker });
+      await order.execute(this, { game, map, imageFactory, ticker });
     }
     this._endOfTurn();
   };

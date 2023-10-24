@@ -43,7 +43,7 @@ export default class TeleportAwayOrder implements UnitOrder {
       await Teleport.use(
         unit,
         coordinates,
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
     }
   };

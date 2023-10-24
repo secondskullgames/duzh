@@ -3,13 +3,12 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
-import { addInitialStateDebug } from '../../actions/addInitialStateDebug';
-import { addInitialState } from '../../actions/addInitialState';
+import { addInitialStateDebug } from '../../client/addInitialStateDebug';
 import { startGame } from '../../actions/startGame';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { game, imageFactory, mapFactory, ticker }: ScreenHandlerContext
+  { game, session, imageFactory, mapFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -18,16 +17,16 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
-          await addInitialStateDebug({ game: game, imageFactory, ticker });
+          await addInitialStateDebug({ game, imageFactory, ticker });
         } else {
-          await addInitialState({ game: game, imageFactory, ticker });
+          const game = session.getGameDefinition().newGame({ imageFactory, ticker });
         }
-        await startGame({ game: game, imageFactory, mapFactory });
-        game.setScreen(GameScreen.GAME);
+        await startGame({ game, imageFactory, mapFactory });
+        session.setScreen(GameScreen.GAME);
       }
       break;
     case 'ESCAPE':
-      game.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 

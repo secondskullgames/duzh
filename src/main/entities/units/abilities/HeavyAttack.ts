@@ -39,7 +39,7 @@ export const HeavyAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
     }
   }

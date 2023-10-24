@@ -26,7 +26,7 @@ export const walk = async (
   if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, { game: game, map, imageFactory, ticker });
+    await moveUnit(unit, coordinates, { game, map, imageFactory, ticker });
     const playerUnit = game.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);

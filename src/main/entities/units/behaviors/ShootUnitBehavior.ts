@@ -38,7 +38,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       });
     }
 
-    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, { game: game, map });
+    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, { game, map });
   };
 
   private _canShoot = (

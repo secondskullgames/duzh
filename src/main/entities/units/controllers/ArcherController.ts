@@ -18,8 +18,8 @@ export default class ArcherController implements UnitController {
     unit: Unit,
     { game, map }: UnitControllerContext
   ): UnitOrder => {
-    const behavior = this._getBehavior(unit, { game: game, map });
-    return behavior.issueOrder(unit, { game: game, map });
+    const behavior = this._getBehavior(unit, { game, map });
+    return behavior.issueOrder(unit, { game, map });
   }
 
   private _getBehavior = (
@@ -33,7 +33,7 @@ export default class ArcherController implements UnitController {
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { game: game })) {
+    if (!canMove(speed, { game })) {
       return new StayBehavior();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });

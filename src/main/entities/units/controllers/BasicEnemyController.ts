@@ -25,28 +25,28 @@ export default class BasicEnemyController implements UnitController {
 
     const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
 
-    if (!canMove(speed, { game: game })) {
+    if (!canMove(speed, { game })) {
       return new StayOrder();
     } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit })
-        .issueOrder(unit, { game: game, map });
+        .issueOrder(unit, { game, map });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { game: game, map });
+          .issueOrder(unit, { game, map });
       } else if (randChance(aggressiveness)) {
         return new AttackUnitBehavior({ targetUnit: playerUnit })
-          .issueOrder(unit, { game: game, map });
+          .issueOrder(unit, { game, map });
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { game: game, map });
+          .issueOrder(unit, { game, map });
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
         return new WanderBehavior()
-          .issueOrder(unit, { game: game, map });
+          .issueOrder(unit, { game, map });
       }
     }
   }

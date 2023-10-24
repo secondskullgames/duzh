@@ -48,7 +48,7 @@ export const Teleport: UnitAbility = {
       await moveUnit(
         unit,
         coordinates,
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
       await sleep(100);
 

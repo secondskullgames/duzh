@@ -39,7 +39,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
     }
 
@@ -55,7 +55,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
     }
 

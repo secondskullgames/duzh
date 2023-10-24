@@ -39,12 +39,12 @@ export class AttackMoveOrder implements UnitOrder {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { game: game, map, imageFactory, ticker });
+        await walk(unit, direction, { game, map, imageFactory, ticker });
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, { game: game, map, imageFactory, ticker });
+          await ability.use(unit, coordinates, { game, map, imageFactory, ticker });
           return;
         }
         const door = getDoor(map, coordinates);
@@ -60,7 +60,7 @@ export class AttackMoveOrder implements UnitOrder {
 
         const block = getMovableBlock(map, coordinates);
         if (block) {
-          await pushBlock(unit, block, { game: game, map, imageFactory, ticker });
+          await pushBlock(unit, block, { game, map, imageFactory, ticker });
           return;
         }
       }

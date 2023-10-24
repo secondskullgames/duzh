@@ -35,7 +35,7 @@ export const NormalAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.PLAYER_HITS_ENEMY
         },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
       unit.gainMana(MANA_RETURNED);
     }

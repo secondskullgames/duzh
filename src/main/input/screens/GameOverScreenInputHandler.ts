@@ -3,11 +3,11 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
-import { addInitialState } from '../../actions/addInitialState';
+import DungeonOfDuzh from '../../client/DungeonOfDuzh';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { game, imageFactory, ticker }: ScreenHandlerContext
+  { session, imageFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -15,17 +15,14 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await showSplashScreen({ game: game });
-        await game.reset();
-        await addInitialState({
-          game: game,
-          imageFactory,
-          ticker
-        });
+        await showSplashScreen({ session });
+        await session.reset();
+        const newGame = await new DungeonOfDuzh().newGame({ imageFactory, ticker });
+        session.setGame(newGame);
       }
       break;
     case 'ESCAPE':
-      game.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 

@@ -18,7 +18,7 @@ export const recordKill = (unit: Unit, { game, ticker }: Context) => {
   const killsToNextLevel = unit.getKillsToNextLevel();
   if (killsToNextLevel !== null) {
     if (unit.getLifetimeKills() >= killsToNextLevel) {
-      levelUp(unit, { ticker, game: game });
+      levelUp(unit, { ticker, game });
       playSound(Sounds.LEVEL_UP);
     }
   }

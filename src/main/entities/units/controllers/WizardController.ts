@@ -60,6 +60,6 @@ export default class WizardController implements UnitController {
     const behavior = (randChance(avoidChance))
       ? new AvoidUnitBehavior({ targetUnit: playerUnit })
       : new WanderBehavior();
-    return behavior.issueOrder(unit, { game: game, map });
+    return behavior.issueOrder(unit, { game, map });
   }
 };

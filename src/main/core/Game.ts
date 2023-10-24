@@ -12,8 +12,6 @@ import Dungeon, { GetMapContext } from './Dungeon';
  */
 export default class Game {
   private dungeon: Dungeon | null;
-  private screen: GameScreen;
-  private prevScreen: GameScreen | null;
   private playerUnit: Unit | null;
   private map: MapInstance | null;
   private turn: number;
@@ -26,8 +24,6 @@ export default class Game {
 
   constructor() {
     this.dungeon = null;
-    this.screen = GameScreen.NONE;
-    this.prevScreen = null;
     this.playerUnit = null;
     this.map = null;
     this.turn = 1;
@@ -35,23 +31,6 @@ export default class Game {
     this.selectedLevelUpScreenAbility = null;
     this.generatedEquipmentIds = [];
   }
-
-  getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => {
-    this.prevScreen = this.screen;
-    this.screen = screen;
-  };
-  /**
-   * TODO: make this a stack
-   */
-  showPrevScreen = () => {
-    if (this.prevScreen) {
-      this.screen = this.prevScreen;
-      this.prevScreen = null;
-    } else {
-      this.screen = GameScreen.GAME;
-    }
-  };
 
   getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
   setPlayerUnit = (unit: Unit): void => {
@@ -114,16 +93,5 @@ export default class Game {
 
   recordEquipmentGenerated = (equipmentId: string) => {
     this.generatedEquipmentIds.push(equipmentId);
-  };
-
-  reset = () => {
-    this.dungeon = null;
-    this.screen = GameScreen.TITLE;
-    this.prevScreen = null;
-    this.playerUnit = null;
-    this.map = null;
-    this.turn = 1;
-    this.queuedAbility = null;
-    clear(this.generatedEquipmentIds);
   };
 }

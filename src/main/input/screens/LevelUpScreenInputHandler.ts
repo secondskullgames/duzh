@@ -3,15 +3,15 @@ import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
 import { abilityForName } from '../../entities/units/abilities/abilityForName';
 
-const handleKeyCommand = async (command: KeyCommand, { game, imageFactory }: ScreenHandlerContext) => {
+const handleKeyCommand = async (command: KeyCommand, { game, session, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = game.getPlayerUnit();
 
   switch (command.key) {
     case 'L':
-      game.showPrevScreen();
+      session.showPrevScreen();
       break;
     case 'F1':
-      game.setScreen(GameScreen.HELP);
+      session.setScreen(GameScreen.HELP);
       break;
     case 'UP':
       game.selectPreviousLevelUpScreenAbility();

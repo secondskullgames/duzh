@@ -37,7 +37,7 @@ export const Blink: UnitAbility = {
       await moveUnit(
         unit,
         { x, y },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
       moved = true;
     }

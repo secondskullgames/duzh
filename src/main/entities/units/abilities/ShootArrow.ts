@@ -67,7 +67,7 @@ export const ShootArrow: UnitAbility = {
       ticker.log(message, { turn: game.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { game: game, map, imageFactory, ticker });
+        await die(targetUnit, { game, map, imageFactory, ticker });
       }
     } else {
       const arrowAnimation = await AnimationFactory.getArrowAnimation(

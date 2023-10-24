@@ -6,7 +6,7 @@ import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { game, imageFactory, mapFactory, ticker }: ScreenHandlerContext
+  { game, session, imageFactory, mapFactory, ticker }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   const inventory = game.getPlayerUnit().getInventory();
@@ -28,31 +28,31 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ game, imageFactory, mapFactory, ticker });
+        await _handleEnter({ game, session, imageFactory, mapFactory, ticker });
       }
       break;
     case 'TAB':
-      game.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
       break;
     case 'M':
-      game.setScreen(GameScreen.MAP);
+      session.setScreen(GameScreen.MAP);
       break;
     case 'F1':
-      game.setScreen(GameScreen.HELP);
+      session.setScreen(GameScreen.HELP);
       break;
     case 'ESCAPE':
-      game.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 
-const _handleEnter = async ({ game, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({ session, game, imageFactory, ticker }: ScreenHandlerContext) => {
   const playerUnit = game.getPlayerUnit();
   const map = game.getMap();
   const { selectedItem } = playerUnit.getInventory();
 
   if (selectedItem) {
-    game.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { game: game, map, imageFactory, ticker });
+    session.setScreen(GameScreen.GAME);
+    await useItem(playerUnit, selectedItem, { game, map, imageFactory, ticker });
   }
 };
 

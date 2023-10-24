@@ -41,7 +41,7 @@ export const StunAttack: UnitAbility = {
           getDamageLogMessage,
           sound: Sounds.SPECIAL_ATTACK
         },
-        { game: game, map, imageFactory, ticker }
+        { game, map, imageFactory, ticker }
       );
       targetUnit.setStunned(2);
     }

@@ -31,6 +31,6 @@ export class FastMoveOrder implements UnitOrder {
       return;
     }
 
-    return fastMove(unit, direction, { game: game, map, imageFactory, ticker });
+    return fastMove(unit, direction, { game, map, imageFactory, ticker });
   }
 }

@@ -35,7 +35,7 @@ export class MoveOrder implements UnitOrder {
       // do nothing
       return;
     } else if (!map.isBlocked(coordinates)) {
-      await walk(unit, direction, { game: game, map, imageFactory, ticker });
+      await walk(unit, direction, { game, map, imageFactory, ticker });
       return;
     } else {
       const door = getDoor(map, coordinates);
@@ -50,7 +50,7 @@ export class MoveOrder implements UnitOrder {
         .find(block => block.isMovable());
 
       if (block) {
-        await pushBlock(unit, block, { game: game, map, imageFactory, ticker });
+        await pushBlock(unit, block, { game, map, imageFactory, ticker });
         return;
       }
     }
