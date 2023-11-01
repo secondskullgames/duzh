@@ -1,5 +1,5 @@
 import { SoundEffect } from './types';
-import { SoundPlayer, Waveform } from '../../../../space-dagger-engine/src/audio';
+import { SoundPlayer, Waveform } from '@jwbutler/space-dagger-engine/audio';
 
 let PLAYER: SoundPlayer | null = null;
 
