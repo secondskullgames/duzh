@@ -2,6 +2,26 @@
   "name": "duzh",
   "version": "0.1.0",
   "description": "A graphical Roguelike in the browser, written in Typescript",
+  "author": "jwbutler",
+  "license": "ISC",
+  "type": "module",
+  "scripts": {
+    "gen-schema": "tsx scripts/gen-schema.ts",
+    "build": "npm run gen-schema && npx webpack",
+    "serve": "npm run build && npx webpack serve",
+    "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
+    "test": "npm run build && jest",
+    "coverage": "npm run build && jest --coverage",
+    "electron": "npm run build && cd electron && npm i && npm run make && npx electron .",
+    "lint": "npx eslint src/**/*.ts && npx prettier --check src/**/*.ts",
+    "prettier": "npx prettier --write src/**/*.ts"
+  },
+  "//dependencies": {
+    "@jwbutler/space-dagger-engine": "^0.6.5"
+  },
+  "dependencies": {
+    "@jwbutler/space-dagger-engine": "../space-dagger-engine/src"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.6",
     "@types/node": "^20.8.8",
@@ -33,16 +53,6 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },
-  "scripts": {
-    "gen-schema": "tsx scripts/gen-schema.ts",
-    "build": "npm run gen-schema && npx webpack",
-    "serve": "npm run build && npx webpack serve",
-    "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
-    "test": "npm run build && jest",
-    "coverage": "npm run build && jest --coverage",
-    "electron": "npm run build && cd electron && npm i && npm run make && npx electron .",
-    "lint": "npx eslint src/**/*.ts && npx prettier --check src/**/*.ts"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/secondskullgames/duzh.git"
@@ -50,8 +60,5 @@
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=16.0.0 <19.0.0"
-  },
-  "author": "jwbutler",
-  "license": "ISC",
-  "type": "module"
+  }
 }

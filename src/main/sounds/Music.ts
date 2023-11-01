@@ -1,13 +1,13 @@
 import { transpose8vb } from './AudioUtils';
-import SoundPlayer from './SoundPlayer';
 import { Figure, Suite } from './types';
 import { randChoice } from '../utils/random';
+import { SoundPlayer, Waveform } from '@jwbutler/space-dagger-engine/audio';
 
 let PLAYER: SoundPlayer | null = null;
 
 let ACTIVE_MUSIC: Suite | Figure[] | null = null;
 
-const _getMusicPlayer = () => new SoundPlayer({ polyphony: 4, gain: 0.06 });
+const _getMusicPlayer = () => SoundPlayer.create();
 
 const playSuite = (suite: Suite) => {
   ACTIVE_MUSIC = suite;
@@ -70,12 +70,18 @@ const playFigure = (figure: Figure) => {
   if (!PLAYER) {
     PLAYER = _getMusicPlayer();
   }
-  PLAYER.playSound(figure, false);
+  PLAYER.playToneSequence(
+    {
+      tones: figure.map(([frequency, duration]) => ({ frequency, duration })),
+      waveform: Waveform.SQUARE
+    },
+    { volume: 0.2 }
+  );
 };
 
 const stopMusic = () => {
   if (PLAYER) {
-    PLAYER.stop();
+    PLAYER.stopAllSounds();
   }
 };
 
