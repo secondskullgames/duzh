@@ -1,31 +1,29 @@
+import TileSet from './TileSet';
+import Tile from './Tile';
 import TileType from '../schemas/TileType';
 import Sprite from '../graphics/sprites/Sprite';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import TileSet from './TileSet';
 import Coordinates from '../geometry/Coordinates';
-import Tile from './Tile';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
 import ImageFactory from '../graphics/images/ImageFactory';
 
 type CreateTileContext = Readonly<{
-  tileType: TileType,
-  tileSet: TileSet,
-  coordinates: Coordinates
+  tileType: TileType;
+  tileSet: TileSet;
+  coordinates: Coordinates;
 }>;
 
-const createTile = (
-  { tileType, tileSet, coordinates }: CreateTileContext
-): Tile => {
+const createTile = ({ tileType, tileSet, coordinates }: CreateTileContext): Tile => {
   const tilesOfType = checkNotNull(tileSet[tileType]);
   const sprite = randChoice(tilesOfType);
-  return new Tile({tileType, sprite, coordinates});
+  return new Tile({ tileType, sprite, coordinates });
 };
 
 type GetTileSetContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const getTileSet = async (
@@ -34,7 +32,7 @@ const getTileSet = async (
 ): Promise<TileSet> => {
   const model = await loadTileSetModel(id);
   const tileSet: {
-    [key in TileType]?: (Sprite | null)[]
+    [key in TileType]?: (Sprite | null)[];
   } = {};
 
   for (const [tileType, filenames] of Object.entries(model.tiles)) {
@@ -46,7 +44,7 @@ const getTileSet = async (
         const tileSprite = await SpriteFactory.createTileSprite(
           `${model.path}/${filename}`,
           paletteSwaps,
-          {imageFactory}
+          { imageFactory }
         );
         tileSprites.push(tileSprite);
       }
@@ -85,4 +83,4 @@ export default {
   getTileSet,
   createTile,
   getTileSetNames
-}
+};

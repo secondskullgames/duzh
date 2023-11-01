@@ -5,7 +5,7 @@ import { createCanvas, getCanvasContext } from '../utils/dom';
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
 // (note the space before '!')
-const MIN_CHARACTER_CODE = 32;  // ' '
+const MIN_CHARACTER_CODE = 32; // ' '
 const MAX_CHARACTER_CODE = 126; // '~'
 const NUM_CHARACTERS = MAX_CHARACTER_CODE - MIN_CHARACTER_CODE + 1;
 const DEFAULT_CHAR = ' ';
@@ -22,7 +22,7 @@ export enum FontName {
 }
 
 export type FontBundle = Readonly<{
-  getFont(fontName: FontName): FontInstance
+  getFont(fontName: FontName): FontInstance;
 }>;
 
 const fontDefinitions: Record<FontName, FontDefinition> = {
@@ -54,17 +54,19 @@ export type FontDefinition = Readonly<{
 }>;
 
 export type FontInstance = Readonly<{
-  name: string,
-  letterWidth: number,
-  letterHeight: number,
-  renderCharacter: (char: string) => ImageData
+  name: string;
+  letterWidth: number;
+  letterHeight: number;
+  renderCharacter: (char: string) => ImageData;
 }>;
 
 type LoadFontContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
-export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<FontBundle> => {
+export const loadFonts = async ({
+  imageFactory
+}: LoadFontContext): Promise<FontBundle> => {
   const fonts: Partial<Record<FontName, FontInstance>> = {};
   for (const [fontName, fontDefinition] of Object.entries(fontDefinitions)) {
     const font: FontInstance = await _loadFont(fontDefinition, { imageFactory });
@@ -72,11 +74,14 @@ export const loadFonts = async ({ imageFactory }: LoadFontContext): Promise<Font
   }
 
   return {
-    getFont: (fontName) => fonts[fontName]!
-  }
+    getFont: fontName => fonts[fontName]!
+  };
 };
 
-const _loadFont = async (fontDefinition: FontDefinition, { imageFactory }: LoadFontContext): Promise<FontInstance> => {
+const _loadFont = async (
+  fontDefinition: FontDefinition,
+  { imageFactory }: LoadFontContext
+): Promise<FontInstance> => {
   const width = NUM_CHARACTERS * fontDefinition.letterWidth;
   const image = await imageFactory.getImage({
     filename: `fonts/${fontDefinition.src}`,
@@ -112,7 +117,12 @@ const _getCharacterData = (
   char: number
 ) => {
   const offset = _getCharOffset(char);
-  return context.getImageData(offset * definition.letterWidth, 0, definition.letterWidth, definition.letterHeight);
+  return context.getImageData(
+    offset * definition.letterWidth,
+    0,
+    definition.letterWidth,
+    definition.letterHeight
+  );
 };
 
 const _getCharOffset = (char: number) => {

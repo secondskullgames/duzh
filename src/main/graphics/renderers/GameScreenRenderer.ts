@@ -1,3 +1,4 @@
+import { RenderContext, Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
@@ -7,7 +8,6 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
-import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
 
@@ -18,7 +18,7 @@ type Element = Readonly<{
 }>;
 
 type Props = Readonly<{
-  graphics: Graphics
+  graphics: Graphics;
 }>;
 
 export default class GameScreenRenderer implements Renderer {
@@ -35,18 +35,22 @@ export default class GameScreenRenderer implements Renderer {
     await this._renderEntities(context);
   };
 
-  private _renderElement = (element: Element, coordinates: Coordinates, context: RenderContext) => {
+  private _renderElement = (
+    element: Element,
+    coordinates: Coordinates,
+    context: RenderContext
+  ) => {
     const pixel = this._gridToPixel(coordinates, context);
 
     if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
-        this._drawSprite(sprite, pixel, context);
+        this._drawSprite(sprite, pixel);
       }
     }
   };
 
-  private _drawSprite = (sprite: Sprite, pixel: Pixel, context: RenderContext) => {
+  private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
       const { dx, dy } = sprite.getOffsets();
@@ -61,8 +65,8 @@ export default class GameScreenRenderer implements Renderer {
     const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: ((x - playerX) * TILE_WIDTH) + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: ((y - playerY) * TILE_HEIGHT) + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+      x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
+      y: (y - playerY) * TILE_HEIGHT + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
     };
   };
 
@@ -116,7 +120,11 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * Render the unit, all of its equipment, and the ceorresponding overlay.
    */
-  private _renderUnit = (unit: Unit, coordinates: Coordinates, context: RenderContext) => {
+  private _renderUnit = (
+    unit: Unit,
+    coordinates: Coordinates,
+    context: RenderContext
+  ) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
@@ -137,9 +145,13 @@ export default class GameScreenRenderer implements Renderer {
     }
   };
 
-  private _isTileRevealed = (coordinates: Coordinates, context: RenderContext): boolean => {
+  private _isTileRevealed = (
+    coordinates: Coordinates,
+    context: RenderContext
+  ): boolean => {
     const { state } = context;
     const map = checkNotNull(state.getMap());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
@@ -157,20 +169,23 @@ export default class GameScreenRenderer implements Renderer {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);
       }
     }
-    if (objects.find(object =>
-      object.getObjectType() === 'item'
-      || object.getObjectType() === 'block'
-    )) {
+    if (
+      objects.find(
+        object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
+      )
+    ) {
       return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);
     }
-  }
+  };
 
-  private _drawEllipse = async (coordinates: Coordinates, color: Color, context: RenderContext) => {
+  private _drawEllipse = async (
+    coordinates: Coordinates,
+    color: Color,
+    context: RenderContext
+  ) => {
     const { imageFactory } = context;
     const pixel = this._gridToPixel(coordinates, context);
-    const paletteSwaps = PaletteSwaps.builder()
-      .addMapping(Colors.BLACK, color)
-      .build();
+    const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await imageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
@@ -184,7 +199,7 @@ export default class GameScreenRenderer implements Renderer {
  * Allow for a one-tile buffer in each direction
  */
 const _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
-  (x >= -TILE_WIDTH) &&
-  (x <= SCREEN_WIDTH + TILE_WIDTH) &&
-  (y >= -TILE_HEIGHT) &&
-  (y <= SCREEN_HEIGHT + TILE_HEIGHT);
+  x >= -TILE_WIDTH &&
+  x <= SCREEN_WIDTH + TILE_WIDTH &&
+  y >= -TILE_HEIGHT &&
+  y <= SCREEN_HEIGHT + TILE_HEIGHT;

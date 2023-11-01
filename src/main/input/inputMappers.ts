@@ -1,8 +1,12 @@
-import Direction from '../geometry/Direction';
 import { ArrowKey, KeyCommand, ModifierKey } from './inputTypes';
+import Direction from '../geometry/Direction';
 
-export const mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
-  const modifiers = [e.altKey && 'ALT', e.shiftKey && 'SHIFT', (e.ctrlKey || e.metaKey) && 'CTRL']
+export const mapToCommand = (e: KeyboardEvent): KeyCommand | null => {
+  const modifiers = [
+    e.altKey && 'ALT',
+    e.shiftKey && 'SHIFT',
+    (e.ctrlKey || e.metaKey) && 'CTRL'
+  ]
     .filter(x => x)
     .map(x => x as ModifierKey);
 
@@ -70,9 +74,13 @@ export const mapToCommand = (e: KeyboardEvent): (KeyCommand | null) => {
 
 export const getDirection = (key: ArrowKey): Direction => {
   switch (key) {
-    case 'UP':    return Direction.N;
-    case 'DOWN':  return Direction.S;
-    case 'LEFT':  return Direction.W;
-    case 'RIGHT': return Direction.E;
+    case 'UP':
+      return Direction.N;
+    case 'DOWN':
+      return Direction.S;
+    case 'LEFT':
+      return Direction.W;
+    case 'RIGHT':
+      return Direction.E;
   }
 };

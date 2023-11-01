@@ -25,13 +25,13 @@ import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 
 type Context = Readonly<{
-  imageFactory: ImageFactory,
-  state: GameState
+  imageFactory: ImageFactory;
+  state: GameState;
 }>;
 
 const _getEnemyController = (enemyUnitModel: UnitModel) => {
   if (enemyUnitModel.type === 'WIZARD') {
-    return new WizardController()
+    return new WizardController();
   } else if (enemyUnitModel.id === 'archer') {
     return new ArcherController();
   } else {
@@ -54,7 +54,7 @@ export const buildPredefinedMap = async (
     tiles: await _loadTiles(model, image, { state, imageFactory }),
     units: await _loadUnits(model, image, { state, imageFactory }),
     objects: await _loadObjects(model, image, { state, imageFactory }),
-    music: (model.music) ? await Music.loadMusic(model.music as string) : null
+    music: model.music ? await Music.loadMusic(model.music as string) : null
   });
 };
 
@@ -64,15 +64,12 @@ const _loadTiles = async (
   { imageFactory }: Context
 ): Promise<Tile[][]> => {
   const tileColors = _toHexColors(model.tileColors);
-  const tileSet = await TileFactory.getTileSet(
-    model.tileset,
-    { imageFactory }
-  );
+  const tileSet = await TileFactory.getTileSet(model.tileset, { imageFactory });
   const tiles: Tile[][] = [];
   for (let y = 0; y < image.height; y++) {
     tiles.push([]);
     for (let x = 0; x < image.width; x++) {
-      const  { r, g, b } = image.getRGB({ x, y });
+      const { r, g, b } = image.getRGB({ x, y });
       const color = Color.fromRGB({ r, g, b });
 
       const tileType = tileColors[color.hex] ?? null;
@@ -112,7 +109,6 @@ const _loadUnits = async (
         }
         const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
-          console.log(`starting point = (${x}, ${y})`);
           const playerUnit = state.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);
@@ -139,7 +135,7 @@ const _loadUnits = async (
       }
     }
   }
-  checkState(addedStartingPoint, "No starting point");
+  checkState(addedStartingPoint, 'No starting point');
   return units;
 };
 
@@ -161,9 +157,8 @@ const _loadObjects = async (
 
       const objectName = objectColors?.[color.hex] ?? null;
       if (objectName?.startsWith('door_')) {
-        const doorDirection = (objectName === 'door_horizontal')
-          ? 'horizontal'
-          : 'vertical';
+        const doorDirection =
+          objectName === 'door_horizontal' ? 'horizontal' : 'vertical';
         const sprite = await SpriteFactory.createDoorSprite({ imageFactory });
 
         const door = new Door({
@@ -175,10 +170,7 @@ const _loadObjects = async (
         objects.push(door);
       } else {
         if (objectName === 'mirror') {
-          const spawner = await ObjectFactory.createMirror(
-            { x, y },
-            { imageFactory }
-          );
+          const spawner = await ObjectFactory.createMirror({ x, y }, { imageFactory });
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
           const block = await ObjectFactory.createMovableBlock(
@@ -191,17 +183,13 @@ const _loadObjects = async (
         }
       }
 
-      const itemId = (itemColors?.[color.hex] ?? null);
+      const itemId = itemColors?.[color.hex] ?? null;
       if (itemId) {
-        const item = await ItemFactory.createMapItem(
-          itemId,
-          { x, y },
-          { imageFactory }
-        );
+        const item = await ItemFactory.createMapItem(itemId, { x, y }, { imageFactory });
         objects.push(item);
       }
 
-      const equipmentId = (equipmentColors?.[color.hex] ?? null);
+      const equipmentId = equipmentColors?.[color.hex] ?? null;
       if (equipmentId) {
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,
@@ -216,11 +204,11 @@ const _loadObjects = async (
   return objects;
 };
 
-const _toHexColors = (
-  source?: { [colorName: string]: string }
-): { [hexColor: string]: string } => {
+const _toHexColors = (source?: {
+  [colorName: string]: string;
+}): { [hexColor: string]: string } => {
   const hexColors: {
-    [hexColor: string]: string
+    [hexColor: string]: string;
   } = {};
 
   for (const [colorName, unitClass] of Object.entries(source ?? {})) {

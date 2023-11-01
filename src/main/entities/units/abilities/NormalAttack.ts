@@ -1,9 +1,9 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { attackUnit } from '../../../actions/attackUnit';
-import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
 // Note that you gain 1 passively, so this is really 2 mana per hit
@@ -16,7 +16,7 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map,  imageFactory, ticker }: UnitAbilityContext
+    { state, map, imageFactory, ticker }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
@@ -44,4 +44,4 @@ export const NormalAttack: UnitAbility = {
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
-}
+};

@@ -4,8 +4,8 @@ import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  ability: UnitAbility
+  coordinates: Coordinates;
+  ability: UnitAbility;
 }>;
 
 export class AbilityOrder implements UnitOrder {
@@ -22,5 +22,5 @@ export class AbilityOrder implements UnitOrder {
    */
   execute = async (unit: Unit, context: OrderContext): Promise<void> => {
     await this.ability.use(unit, this.coordinates, context);
-  }
+  };
 }

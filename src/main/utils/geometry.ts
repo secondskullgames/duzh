@@ -1,6 +1,6 @@
+import { checkState } from './preconditions';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import { checkState } from './preconditions';
 import MapInstance from '../maps/MapInstance';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
@@ -15,7 +15,7 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
 };
 
 type StraightLineContext = Readonly<{
-  map: MapInstance
+  map: MapInstance;
 }>;
 
 export const hasUnblockedStraightLineBetween = (

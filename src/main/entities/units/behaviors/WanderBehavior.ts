@@ -1,3 +1,4 @@
+import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
@@ -5,15 +6,11 @@ import { randChoice } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
-import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 import StayOrder from '../orders/StayOrder';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (
-    unit: Unit,
-    { map }: UnitBehaviorContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {

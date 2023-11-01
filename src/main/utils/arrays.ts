@@ -19,11 +19,15 @@ export const sortByReversed = <T>(list: T[], keyFunction: KeyFunction<T>): T[] =
 
 type Comparator<T> = (a: T, b: T) => number;
 
-export const comparing = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
-  (a: T, b: T) => keyFunction(a) - keyFunction(b);
+export const comparing =
+  <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
+  (a: T, b: T) =>
+    keyFunction(a) - keyFunction(b);
 
-export const comparingReversed = <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
-  (a: T, b: T) => keyFunction(b) - keyFunction(a);
+export const comparingReversed =
+  <T>(keyFunction: KeyFunction<T>): Comparator<T> =>
+  (a: T, b: T) =>
+    keyFunction(b) - keyFunction(a);
 
 export const average = (list: number[]) => {
   const sum = list.reduce((a, b) => a + b);
@@ -33,12 +37,12 @@ export const average = (list: number[]) => {
 export const min = (list: number[]): number => Math.min(...list);
 export const max = (list: number[]): number => Math.max(...list);
 
-export const minBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+export const minBy = <T>(list: T[], keyFunction: (t: T) => number): T => {
   checkState(list.length > 0);
   return sortBy(list, keyFunction)[0];
 };
 
-export const maxBy = <T> (list: T[], keyFunction: (t: T) => number): T => {
+export const maxBy = <T>(list: T[], keyFunction: (t: T) => number): T => {
   checkState(list.length > 0);
   return sortBy(list, keyFunction)[list.length - 1];
 };
@@ -53,18 +57,17 @@ export const subtract = <T>(array: T[], toRemove: T[]): void => {
   replace(array, updated);
 };
 
-export const clear = (array: any[]): void => {
+export const clear = <T>(array: T[]): void => {
   array.splice(0, array.length);
 };
 
 /**
  * @param max inclusive
  */
-export const range = (min: number, max: number) => new Array(max - min + 1)
-  .fill(null)
-  .map((_, i) => i + min);
+export const range = (min: number, max: number) =>
+  new Array(max - min + 1).fill(null).map((_, i) => i + min);
 
-export const head = <T> (array: T[], count: number): T[] => array.slice(0, count);
-export const tail = <T> (array: T[], count: number): T[] => array.slice(-count);
+export const head = <T>(array: T[], count: number): T[] => array.slice(0, count);
+export const tail = <T>(array: T[], count: number): T[] => array.slice(-count);
 
 export const sum = (array: number[]) => array.reduce((a, b) => a + b);

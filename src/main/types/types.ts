@@ -7,8 +7,8 @@ import Rect from '../geometry/Rect';
  */
 
 export type Room = Rect & {
-  exits: Coordinates[]
-}
+  exits: Coordinates[];
+};
 
 export enum Faction {
   PLAYER = 'PLAYER',

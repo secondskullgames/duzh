@@ -10,7 +10,7 @@ import { pushBlock } from '../../../actions/pushBlock';
 import { getDoor } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
-  coordinates: Coordinates
+  coordinates: Coordinates;
 }>;
 
 export class MoveOrder implements UnitOrder {
@@ -44,7 +44,8 @@ export class MoveOrder implements UnitOrder {
         return;
       }
 
-      const block = map.getObjects(coordinates)
+      const block = map
+        .getObjects(coordinates)
         .filter(object => object.getObjectType() === ObjectType.BLOCK)
         .map(object => object as Block)
         .find(block => block.isMovable());
@@ -54,5 +55,5 @@ export class MoveOrder implements UnitOrder {
         return;
       }
     }
-  }
+  };
 }

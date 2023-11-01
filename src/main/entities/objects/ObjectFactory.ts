@@ -1,23 +1,23 @@
-import type Coordinates from '../../geometry/Coordinates';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
-import UnitFactory from '../units/UnitFactory';
 import GameObject from './GameObject';
 import Block from './Block';
+import Bonus, { OnUseContext } from './Bonus';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
-import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
 type CreateObjectContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createMirror = async (
@@ -25,16 +25,17 @@ const createMirror = async (
   { imageFactory }: CreateObjectContext
 ): Promise<Spawner> => {
   const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
-  const spawnFunction = (coordinates: Coordinates) => UnitFactory.createUnit(
-    {
-      unitClass: 'shade',
-      coordinates: coordinates,
-      level: 1,
-      controller: new BasicEnemyController(),
-      faction: Faction.ENEMY,
-    },
-    { imageFactory }
-  );
+  const spawnFunction = (coordinates: Coordinates) =>
+    UnitFactory.createUnit(
+      {
+        unitClass: 'shade',
+        coordinates: coordinates,
+        level: 1,
+        controller: new BasicEnemyController(),
+        faction: Faction.ENEMY
+      },
+      { imageFactory }
+    );
   const spawner = new Spawner({
     spawnFunction,
     sprite,
@@ -64,11 +65,9 @@ const createMovableBlock = async (
   coordinates: Coordinates,
   { imageFactory }: CreateObjectContext
 ): Promise<GameObject> => {
-  const sprite = await SpriteFactory.createStaticSprite(
-    'block',
-    PaletteSwaps.empty(),
-    { imageFactory }
-  );
+  const sprite = await SpriteFactory.createStaticSprite('block', PaletteSwaps.empty(), {
+    imageFactory
+  });
 
   return new Block({
     coordinates,

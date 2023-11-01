@@ -1,14 +1,14 @@
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
-import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
+import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
-}
+};
 
 const manaCost = 10;
 

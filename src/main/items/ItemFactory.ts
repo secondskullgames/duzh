@@ -1,3 +1,4 @@
+import InventoryItem from './InventoryItem';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/playSound';
@@ -6,7 +7,6 @@ import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel, loadItemModel } from '../utils/models';
-import InventoryItem from './InventoryItem';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
@@ -15,9 +15,9 @@ import { playAnimation } from '../graphics/animations/playAnimation';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
-import type { ItemProc, ItemProcContext } from './ItemProc';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
+import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
@@ -27,10 +27,9 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
-    ticker.log(
-      `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
-      { turn: state.getTurn() }
-    );
+    ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
+      turn: state.getTurn()
+    });
   };
 
   return new InventoryItem({
@@ -48,10 +47,9 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
-    ticker.log(
-      `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
-      { turn: state.getTurn() }
-    );
+    ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
+      turn: state.getTurn()
+    });
   };
 
   return new InventoryItem({
@@ -78,20 +76,21 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     { state, map, imageFactory, ticker }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
-    const adjacentUnits: Unit[] = map.getAllUnits()
-      .filter(u => {
-        const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
-        return ([-1,0,1].includes(dx))
-          && ([-1,0,1].includes(dy))
-          && !(dx === 0 && dy === 0);
-      });
+    const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
+      const { dx, dy } = Coordinates.difference(
+        unit.getCoordinates(),
+        u.getCoordinates()
+      );
+      return (
+        [-1, 0, 1].includes(dx) && [-1, 0, 1].includes(dy) && !(dx === 0 && dy === 0)
+      );
+    });
 
     playSound(Sounds.PLAYER_HITS_ENEMY);
-    const animation = await AnimationFactory.getFloorFireAnimation(
-      unit,
-      adjacentUnits,
-      { map, imageFactory }
-    );
+    const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
+      map,
+      imageFactory
+    });
     await playAnimation(animation, { map });
 
     for (const adjacentUnit of adjacentUnits) {
@@ -114,7 +113,9 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   });
 };
 
-const createInventoryEquipment = async (equipmentClass: string): Promise<InventoryItem> => {
+const createInventoryEquipment = async (
+  equipmentClass: string
+): Promise<InventoryItem> => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
@@ -133,7 +134,7 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
 };
 
 type CreateMapEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createMapEquipment = async (
@@ -152,10 +153,13 @@ const createMapEquipment = async (
 };
 
 type CreateEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
-const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentContext): Promise<Equipment> => {
+const createEquipment = async (
+  equipmentClass: string,
+  { imageFactory }: CreateEquipmentContext
+): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(
@@ -189,9 +193,10 @@ const createInventoryItem = async (
     case 'scroll': {
       const spell = model.params?.spell;
       switch (spell) {
-        case 'floor_fire':
+        case 'floor_fire': {
           const damage = parseInt(model.params?.damage ?? '0');
           return createScrollOfFloorFire(damage);
+        }
         default:
           throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);
       }
@@ -202,7 +207,7 @@ const createInventoryItem = async (
 };
 
 type CreateMapItemContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createMapItem = async (
@@ -221,30 +226,22 @@ const createMapItem = async (
 };
 
 const loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
-  const requireContext = require.context(
-    '../../../data/items',
-    false,
-    /\.json$/i
-  );
+  const requireContext = require.context('../../../data/items', false, /\.json$/i);
 
   const models: ConsumableItemModel[] = [];
   for (const filename of requireContext.keys()) {
-    const model = await requireContext(filename) as ConsumableItemModel;
+    const model = (await requireContext(filename)) as ConsumableItemModel;
     models.push(model);
   }
   return models;
 };
 
 const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
-  const requireContext = require.context(
-    '../../../data/equipment',
-    false,
-    /\.json$/i
-  );
+  const requireContext = require.context('../../../data/equipment', false, /\.json$/i);
 
   const models: EquipmentModel[] = [];
   for (const filename of requireContext.keys()) {
-    const model = await requireContext(filename) as EquipmentModel;
+    const model = (await requireContext(filename)) as EquipmentModel;
     models.push(model);
   }
   return models;

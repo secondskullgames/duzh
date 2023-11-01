@@ -2,7 +2,10 @@ import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
 import RGB from '../RGB';
 
-const applyTransparentColor = (imageData: ImageData, transparentColor: Color): ImageData => {
+const applyTransparentColor = (
+  imageData: ImageData,
+  transparentColor: Color
+): ImageData => {
   const array = new Uint8ClampedArray(imageData.data.length);
 
   for (let i = 0; i < imageData.data.length; i += 4) {
@@ -84,8 +87,4 @@ const replaceAll = (imageData: ImageData, color: Color): ImageData => {
   return new ImageData(array, imageData.width, imageData.height);
 };
 
-export {
-  applyTransparentColor,
-  replaceAll,
-  replaceColors
-};
+export { applyTransparentColor, replaceAll, replaceColors };

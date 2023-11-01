@@ -9,12 +9,16 @@ export const toggleFullScreen = async () => {
 };
 
 type CanvasProps = Readonly<{
-  width: number,
-  height: number,
-  offscreen?: boolean
+  width: number;
+  height: number;
+  offscreen?: boolean;
 }>;
 
-export const createCanvas = ({ width, height, offscreen }: CanvasProps): HTMLCanvasElement => {
+export const createCanvas = ({
+  width,
+  height,
+  offscreen
+}: CanvasProps): HTMLCanvasElement => {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -26,7 +30,7 @@ export const createCanvas = ({ width, height, offscreen }: CanvasProps): HTMLCan
 
 export const createImage = (): HTMLImageElement => {
   return document.createElement('img');
-}
+};
 
 /**
  * https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently
@@ -39,7 +43,9 @@ export const getCanvasContext = (canvas: HTMLCanvasElement): CanvasRenderingCont
   return context;
 };
 
-export const getOffscreenCanvasContext = (canvas: OffscreenCanvas): OffscreenCanvasRenderingContext2D => {
+export const getOffscreenCanvasContext = (
+  canvas: OffscreenCanvas
+): OffscreenCanvasRenderingContext2D => {
   return canvas.getContext('2d', {
     willReadFrequently: true
   }) as OffscreenCanvasRenderingContext2D;

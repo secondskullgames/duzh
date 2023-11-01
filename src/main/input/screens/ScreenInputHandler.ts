@@ -5,10 +5,10 @@ import Ticker from '../../core/Ticker';
 import MapFactory from '../../maps/MapFactory';
 
 export type ScreenHandlerContext = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  mapFactory: MapFactory
-  ticker: Ticker
+  state: GameState;
+  imageFactory: ImageFactory;
+  mapFactory: MapFactory;
+  ticker: Ticker;
 }>;
 
 export interface ScreenInputHandler {

@@ -51,7 +51,10 @@ export default class InventoryMap {
 
   previousCategory = () => {
     const index = displayCategories.indexOf(this.selectedCategory);
-    this.selectedCategory = displayCategories[(index - 1 + displayCategories.length) % displayCategories.length];
+    this.selectedCategory =
+      displayCategories[
+        (index - 1 + displayCategories.length) % displayCategories.length
+      ];
     this.selectedItem = this._map[this.selectedCategory][0] ?? null;
   };
 

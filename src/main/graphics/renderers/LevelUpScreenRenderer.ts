@@ -11,8 +11,8 @@ import Colors from '../Colors';
 const BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
-  graphics: Graphics,
-  textRenderer: TextRenderer
+  graphics: Graphics;
+  textRenderer: TextRenderer;
 }>;
 
 export default class LevelUpScreenRenderer implements Renderer {
@@ -40,17 +40,34 @@ export default class LevelUpScreenRenderer implements Renderer {
     const availableAbilities = playerUnit.getLearnableAbilities();
     let top = 10;
     for (const abilityName of availableAbilities) {
-      const color: Color = (abilityName === selectedAbility)
-        ? Colors.WHITE
-        : Colors.LIGHT_GRAY;
-      await this._drawText(abilityName, FontName.APPLE_II, { x: 20, y: top }, color, Alignment.LEFT);
+      const color: Color =
+        abilityName === selectedAbility ? Colors.WHITE : Colors.LIGHT_GRAY;
+      await this._drawText(
+        abilityName,
+        FontName.APPLE_II,
+        { x: 20, y: top },
+        color,
+        Alignment.LEFT
+      );
       top += 10;
     }
     top += 10;
-    await this._drawText(`Ability points remaining: ${playerUnit.getAbilityPoints()}`, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+    await this._drawText(
+      `Ability points remaining: ${playerUnit.getAbilityPoints()}`,
+      FontName.APPLE_II,
+      { x: 20, y: top },
+      Colors.WHITE,
+      Alignment.LEFT
+    );
   };
 
-  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment
+  ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.graphics, pixel, textAlign);
   };

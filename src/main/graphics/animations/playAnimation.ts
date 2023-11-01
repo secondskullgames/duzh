@@ -1,18 +1,15 @@
-import type { Animation } from './Animation';
 import { sleep } from '../../utils/promises';
 import MapInstance from '../../maps/MapInstance';
+import type { Animation } from './Animation';
 
 type Context = Readonly<{
-  map: MapInstance
+  map: MapInstance;
 }>;
 
-export const playAnimation = async (
-  animation: Animation,
-  { map }: Context
-) => {
+export const playAnimation = async (animation: Animation, { map }: Context) => {
   for (let i = 0; i < animation.frames.length; i++) {
     const frame = animation.frames[i];
-    for (const projectile of (frame.projectiles ?? [])) {
+    for (const projectile of frame.projectiles ?? []) {
       map.projectiles.add(projectile);
     }
     for (let j = 0; j < frame.units.length; j++) {
@@ -20,11 +17,11 @@ export const playAnimation = async (
       unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
     }
 
-    if (!!frame.postDelay) {
+    if (frame.postDelay) {
       await sleep(frame.postDelay);
     }
 
-    for (const projectile of (frame.projectiles ?? [])) {
+    for (const projectile of frame.projectiles ?? []) {
       map.removeProjectile(projectile);
     }
   }

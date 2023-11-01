@@ -1,10 +1,10 @@
-import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
+import Music from '../sounds/Music';
 import GameState from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState;
 }>;
 
 export const loadNextMap = async ({ state }: Context) => {
@@ -15,7 +15,7 @@ export const loadNextMap = async ({ state }: Context) => {
     const nextMapIndex = state.getMapIndex() + 1;
     await state.setMapIndex(nextMapIndex);
     const map = state.getMap();
-    updateRevealedTiles({ state, map: map })
+    updateRevealedTiles({ state, map: map });
     if (map.music) {
       await Music.playMusic(map.music);
     }

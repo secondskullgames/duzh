@@ -1,6 +1,6 @@
+import Sprite from './Sprite';
 import Offsets from '../../geometry/Offsets';
 import { Image } from '../images/Image';
-import Sprite from './Sprite';
 
 class StaticSprite implements Sprite {
   private readonly image: Image;

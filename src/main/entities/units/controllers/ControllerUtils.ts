@@ -1,7 +1,7 @@
 import GameState from '../../../core/GameState';
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState;
 }>;
 
 export const canMove = (speed: number, { state }: Context): boolean => {

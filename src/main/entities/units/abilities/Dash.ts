@@ -1,12 +1,12 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
-import { AbilityName } from './AbilityName';
 
 const manaCost = 5;
 
@@ -36,11 +36,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(
-          unit,
-          { x, y },
-          { state, map, imageFactory, ticker }
-        );
+        await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
         moved = true;
         await sleep(75);
       } else {
@@ -54,4 +50,4 @@ export const Dash: UnitAbility = {
       playSound(Sounds.BLOCKED);
     }
   }
-}
+};

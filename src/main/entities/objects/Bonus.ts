@@ -7,14 +7,14 @@ import Ticker from '../../core/Ticker';
 import MapInstance from '../../maps/MapInstance';
 
 export type OnUseContext = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  ticker: Ticker;
 }>;
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  sprite: Sprite,
+  coordinates: Coordinates;
+  sprite: Sprite;
   onUse: (unit: Unit, context: OnUseContext) => Promise<void>;
 }>;
 

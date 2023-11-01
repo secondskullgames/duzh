@@ -3,7 +3,7 @@ import GameObject from '../entities/objects/GameObject';
 import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  map: MapInstance
+  map: MapInstance;
 }>;
 
 /**

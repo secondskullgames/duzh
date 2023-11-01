@@ -1,12 +1,12 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
-import { AbilityName } from './AbilityName';
 import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
 
@@ -45,11 +45,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await sleep(100);
 
-      await moveUnit(
-        unit,
-        coordinates,
-        { state, map, imageFactory, ticker }
-      );
+      await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
       await sleep(100);
 
       for (let i = 1; i <= 4; i++) {
@@ -65,4 +61,4 @@ export const Teleport: UnitAbility = {
       playSound(Sounds.BLOCKED);
     }
   }
-}
+};

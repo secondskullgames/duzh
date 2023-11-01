@@ -1,19 +1,24 @@
-import { randChoice, randInt } from '../../../utils/random';
 import Section from './Section';
 import SplitDirection from './SplitDirection';
+import { randChoice, randInt } from '../../../utils/random';
 
 type Props = Readonly<{
-  minRoomWidth: number,
-  minRoomHeight: number,
-  horizontalSectionPadding: number,
-  verticalSectionPadding: number
+  minRoomWidth: number;
+  minRoomHeight: number;
+  horizontalSectionPadding: number;
+  verticalSectionPadding: number;
 }>;
 
 interface SectionSplitter {
   splitRecursively: (section: Section) => Section;
 }
 
-const createSectionSplitter = ({ minRoomWidth, minRoomHeight, horizontalSectionPadding, verticalSectionPadding }: Props): SectionSplitter => {
+const createSectionSplitter = ({
+  minRoomWidth,
+  minRoomHeight,
+  horizontalSectionPadding,
+  verticalSectionPadding
+}: Props): SectionSplitter => {
   const minSectionWidth = minRoomWidth + horizontalSectionPadding * 2 + 1;
   const minSectionHeight = minRoomHeight + verticalSectionPadding * 2 + 1;
 
@@ -33,7 +38,10 @@ const createSectionSplitter = ({ minRoomWidth, minRoomHeight, horizontalSectionP
     }
   };
 
-  const _pickSplitDirection = (canSplitHorizontally: boolean, canSplitVertically: boolean): SplitDirection => {
+  const _pickSplitDirection = (
+    canSplitHorizontally: boolean,
+    canSplitVertically: boolean
+  ): SplitDirection => {
     if (canSplitHorizontally && canSplitVertically) {
       return randChoice(['HORIZONTAL', 'VERTICAL']);
     } else if (canSplitHorizontally) {
@@ -52,7 +60,11 @@ const createSectionSplitter = ({ minRoomWidth, minRoomHeight, horizontalSectionP
     });
 
     const right = new Section({
-      rect: { ...section.rect, left: section.rect.left + leftWidth, width: section.rect.width - leftWidth }
+      rect: {
+        ...section.rect,
+        left: section.rect.left + leftWidth,
+        width: section.rect.width - leftWidth
+      }
     });
 
     return section.withSubsections(
@@ -69,7 +81,11 @@ const createSectionSplitter = ({ minRoomWidth, minRoomHeight, horizontalSectionP
     });
 
     const bottom = new Section({
-      rect: { ...section.rect, top: section.rect.top + topHeight, height: section.rect.height - topHeight }
+      rect: {
+        ...section.rect,
+        top: section.rect.top + topHeight,
+        height: section.rect.height - topHeight
+      }
     });
 
     return section.withSubsections(

@@ -3,7 +3,8 @@ import { head } from './arrays';
 /**
  * @param max inclusive
  */
-export const randInt = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+export const randInt = (min: number, max: number): number =>
+  Math.floor(Math.random() * (max - min + 1) + min);
 export const randBoolean = () => randInt(0, 1) === 1;
 export const random = () => Math.random();
 export const randChance = (chance: number) => Math.random() <= chance;
@@ -53,7 +54,7 @@ export const weightedRandom = <T>(
  * TODO: not Fisher-Yates, whatever
  * TODO: undefined behavior if length < count
  */
-export const sample = <T> (list: T[], count?: number): T[] => {
+export const sample = <T>(list: T[], count?: number): T[] => {
   const shuffled = [...list];
   shuffle(shuffled);
   if (count === undefined) {

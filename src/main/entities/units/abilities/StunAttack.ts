@@ -1,9 +1,9 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
-import { AbilityName } from './AbilityName';
 import { attackUnit } from '../../../actions/attackUnit';
 
 const manaCost = 10;
@@ -46,4 +46,4 @@ export const StunAttack: UnitAbility = {
       targetUnit.setStunned(2);
     }
   }
-}
+};

@@ -1,10 +1,10 @@
+import { EquipmentScriptName } from './EquipmentScript';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import { EquipmentScriptName } from './EquipmentScript';
 import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
@@ -12,9 +12,9 @@ import EquipmentSlot from '../schemas/EquipmentSlot';
 const DRAW_BEHIND_PREFIX = '_B';
 
 type Props = Readonly<{
-  model: EquipmentModel,
-  sprite: Sprite,
-  inventoryItem?: InventoryItem | null
+  model: EquipmentModel;
+  sprite: Sprite;
+  inventoryItem?: InventoryItem | null;
 }>;
 
 export default class Equipment implements Animatable {
@@ -36,13 +36,15 @@ export default class Equipment implements Animatable {
     this.absorbAmount = model.stats.absorbAmount ?? 0;
     this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
-    this.script = (model.script) ? model.script as EquipmentScriptName : null;
+    this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this._unit = null;
   }
 
   getName = () => this.name;
 
-  attach = (unit: Unit) => { this._unit = unit; };
+  attach = (unit: Unit) => {
+    this._unit = unit;
+  };
 
   getUnit = () => this._unit;
 
@@ -51,13 +53,15 @@ export default class Equipment implements Animatable {
    */
   getAnimationKey = () => {
     const unit = checkNotNull(this._unit);
-    return `${Activity.toString(unit.getActivity())}_${Direction.toString(unit.getDirection())}_${unit.getFrameNumber()}`;
+    return `${Activity.toString(unit.getActivity())}_${Direction.toString(
+      unit.getDirection()
+    )}_${unit.getFrameNumber()}`;
   };
 
   getSprite = (): Sprite => this.sprite;
 
   drawBehind = (): boolean => {
     const image = this.sprite.getImage();
-    return (image?.filename?.endsWith(DRAW_BEHIND_PREFIX)) ?? false;
+    return image?.filename?.endsWith(DRAW_BEHIND_PREFIX) ?? false;
   };
 }

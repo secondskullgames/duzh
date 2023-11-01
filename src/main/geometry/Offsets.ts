@@ -1,6 +1,6 @@
 type Offsets = {
-  dx: number,
-  dy: number
+  dx: number;
+  dy: number;
 };
 
 export default Offsets;

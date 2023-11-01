@@ -12,9 +12,9 @@ export enum ObjectType {
 }
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  objectType: ObjectType,
-  sprite: Sprite
+  coordinates: Coordinates;
+  objectType: ObjectType;
+  sprite: Sprite;
 }>;
 
 export default abstract class GameObject implements Entity {
@@ -29,7 +29,7 @@ export default abstract class GameObject implements Entity {
   }
 
   /** @override */
-  getCoordinates = (): Coordinates  => this.coordinates;
+  getCoordinates = (): Coordinates => this.coordinates;
 
   /** @override */
   setCoordinates = (coordinates: Coordinates) => {

@@ -5,10 +5,10 @@ test('adds and removes a unit', () => {
   const map = _emptyMap();
   const coordinates = { x: 3, y: 3 };
   expect(map.getAllUnits()).toStrictEqual([]);
-  const unit = ({
+  const unit = {
     getCoordinates: () => coordinates,
     getType: () => 'unit'
-  } as any) as Unit;
+  } as unknown as Unit;
   map.addUnit(unit);
   expect(map.getAllUnits()).toStrictEqual([unit]);
   expect(map.getUnit(coordinates)).toBe(unit);
@@ -19,11 +19,12 @@ test('adds and removes a unit', () => {
   expect(map.unitExists(unit)).toBe(false);
 });
 
-const _emptyMap = (): MapInstance => new MapInstance({
-  width: 10,
-  height: 10,
-  tiles: [],
-  units: [],
-  objects: [],
-  music: null
-})
+const _emptyMap = (): MapInstance =>
+  new MapInstance({
+    width: 10,
+    height: 10,
+    tiles: [],
+    units: [],
+    objects: [],
+    music: null
+  });

@@ -1,30 +1,36 @@
+import { Image } from './Image';
+import { ImageEffect } from './ImageEffect';
 import { comparing } from '../../utils/arrays';
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import { Image } from './Image';
-import { ImageEffect } from './ImageEffect';
 
 type CacheKey = Readonly<{
-  filename: string,
-  transparentColor?: Color | null,
-  paletteSwaps?: PaletteSwaps,
-  effects?: ImageEffect[]
+  filename: string;
+  transparentColor?: Color | null;
+  paletteSwaps?: PaletteSwaps;
+  effects?: ImageEffect[];
 }>;
 
 interface ImageCache {
-  get: (key: CacheKey) => Image | null | undefined,
-  put: (key: CacheKey, image: Image | null) => void
+  get: (key: CacheKey) => Image | null | undefined;
+  put: (key: CacheKey, image: Image | null) => void;
 }
 
 const _stringify = (key: CacheKey): string => {
   const { filename, transparentColor, paletteSwaps, effects } = key;
-  const stringifiedPaletteSwaps = paletteSwaps?.entries()
-    .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
-    .map(([src, dest]) => `${src.hex}:${dest.hex}`)
-    .join(',')
-    ?? 'null';
+  const stringifiedPaletteSwaps =
+    paletteSwaps
+      ?.entries()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .sort(
+        comparing(([src, dest]) => src.rgb.r * 256 * 256 + src.rgb.g * 256 + src.rgb.b)
+      )
+      .map(([src, dest]) => `${src.hex}:${dest.hex}`)
+      .join(',') ?? 'null';
   const effectNames = effects?.map(effect => effect.name).join(',') ?? 'null';
-  return `${filename}_${transparentColor?.hex ?? 'null'}_${stringifiedPaletteSwaps}_${effectNames}`;
+  return `${filename}_${
+    transparentColor?.hex ?? 'null'
+  }_${stringifiedPaletteSwaps}_${effectNames}`;
 };
 
 class Impl implements ImageCache {

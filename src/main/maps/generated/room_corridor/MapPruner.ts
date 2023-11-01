@@ -1,13 +1,13 @@
 import { Connection } from './Connection';
 import EmptyRegionConnection from './EmptyRegionConnection';
+import RoomRegion from './RoomRegion';
 import { replace, subtract } from '../../../utils/arrays';
 import { checkState } from '../../../utils/preconditions';
 import { randInt, shuffle } from '../../../utils/random';
-import RoomRegion from './RoomRegion';
 
 type Props = Readonly<{
-  minRoomFraction: number,
-  maxRoomFraction: number
+  minRoomFraction: number;
+  maxRoomFraction: number;
 }>;
 
 /**
@@ -17,10 +17,7 @@ export default class MapPruner {
   private readonly minRoomFraction: number;
   private readonly maxRoomFraction: number;
 
-  constructor({
-    minRoomFraction,
-    maxRoomFraction
-  }: Props) {
+  constructor({ minRoomFraction, maxRoomFraction }: Props) {
     this.minRoomFraction = minRoomFraction;
     this.maxRoomFraction = maxRoomFraction;
   }
@@ -31,7 +28,11 @@ export default class MapPruner {
    *
    * @return a copy of `externalConnections` with the desired elements removed
    */
-  stripOrphanedConnections = (externalConnections: Connection[], emptyRegionConnections: EmptyRegionConnection[]) => {
+  stripOrphanedConnections = (
+    externalConnections: Connection[],
+    emptyRegionConnections: EmptyRegionConnection[]
+  ) => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const orphanedConnections = externalConnections.filter(connection => {
         return this._isOrphanedConnection(connection, emptyRegionConnections);
@@ -44,11 +45,16 @@ export default class MapPruner {
       }
 
       const orphanedEmptyRegionConnections = emptyRegionConnections.filter(connection =>
-        this._isOrphanedEmptyRegionConnection(connection, emptyRegionConnections));
+        this._isOrphanedEmptyRegionConnection(connection, emptyRegionConnections)
+      );
       subtract(emptyRegionConnections, orphanedEmptyRegionConnections);
 
-      const removedAnyConnections = (orphanedConnections.length > 0 || orphanedEmptyRegionConnections.length > 0);
-      console.debug(`stripping: ${orphanedConnections.length}, ${orphanedEmptyRegionConnections.length}`);
+      const removedAnyConnections =
+        orphanedConnections.length > 0 || orphanedEmptyRegionConnections.length > 0;
+      // eslint-disable-next-line no-console
+      console.debug(
+        `stripping: ${orphanedConnections.length}, ${orphanedEmptyRegionConnections.length}`
+      );
       if (!removedAnyConnections) {
         return;
       }
@@ -69,7 +75,10 @@ export default class MapPruner {
     }
   };
 
-  private _isOrphanedConnection = (connection: Connection, emptyRegionConnections: EmptyRegionConnection[]) => {
+  private _isOrphanedConnection = (
+    connection: Connection,
+    emptyRegionConnections: EmptyRegionConnection[]
+  ) => {
     const { start, end } = connection;
     let startHasEmptyRegionConnection = false;
     let endHasEmptyRegionConnection = false;
@@ -85,12 +94,15 @@ export default class MapPruner {
     }
 
     return !(
-      (!!start.roomRect || startHasEmptyRegionConnection)
-      && (!!end.roomRect || endHasEmptyRegionConnection)
+      (!!start.roomRect || startHasEmptyRegionConnection) &&
+      (!!end.roomRect || endHasEmptyRegionConnection)
     );
   };
 
-  private _pruneEmptyRegionConnection = (emptyRegionConnection: EmptyRegionConnection, orphanedConnections: Connection[]) => {
+  private _pruneEmptyRegionConnection = (
+    emptyRegionConnection: EmptyRegionConnection,
+    orphanedConnections: Connection[]
+  ) => {
     for (const connection of orphanedConnections) {
       const { roomRegion, neighbors } = emptyRegionConnection;
       const { start, end } = connection;
@@ -111,12 +123,16 @@ export default class MapPruner {
    * An internal connection is orphaned if at most one of its neighbors has either a room or another
    * internal connection
    */
-  private _isOrphanedEmptyRegionConnection = (emptyRegionConnection: EmptyRegionConnection, emptyRegionConnections: EmptyRegionConnection[]) => {
+  private _isOrphanedEmptyRegionConnection = (
+    emptyRegionConnection: EmptyRegionConnection,
+    emptyRegionConnections: EmptyRegionConnection[]
+  ) => {
     let connectedNeighbors = 0;
     const { roomRegion, neighbors } = emptyRegionConnection;
     for (const neighbor of neighbors) {
-      const neighborHasEmptyRegionConnection = emptyRegionConnections.find(other =>
-        other.roomRegion === neighbor && other.neighbors.includes(roomRegion));
+      const neighborHasEmptyRegionConnection = emptyRegionConnections.find(
+        other => other.roomRegion === neighbor && other.neighbors.includes(roomRegion)
+      );
 
       if (!!neighbor.roomRect || neighborHasEmptyRegionConnection) {
         connectedNeighbors++;

@@ -1,6 +1,6 @@
+import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
-import GameObject, { ObjectType } from './GameObject';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
 import { UpdateContext } from '../Entity';
@@ -11,21 +11,18 @@ export enum SpawnerState {
 }
 
 export namespace SpawnerState {
-  export const values = (): SpawnerState[] => [
-    SpawnerState.ALIVE,
-    SpawnerState.DEAD
-  ];
+  export const values = (): SpawnerState[] => [SpawnerState.ALIVE, SpawnerState.DEAD];
 }
 
 type SpawnFunction = (coordinates: Coordinates) => Promise<Unit>;
 
 type Props = Readonly<{
-  spawnFunction: SpawnFunction,
-  sprite: Sprite,
-  coordinates: Coordinates,
-  cooldown: number,
-  maxUnits: number,
-  isBlocking: boolean
+  spawnFunction: SpawnFunction;
+  sprite: Sprite;
+  coordinates: Coordinates;
+  cooldown: number;
+  maxUnits: number;
+  isBlocking: boolean;
 }>;
 
 export default class Spawner extends GameObject implements Animatable {
@@ -37,7 +34,14 @@ export default class Spawner extends GameObject implements Animatable {
   private readonly spawnedUnits: Set<Unit>;
   private readonly _isBlocking: boolean;
 
-  constructor({ spawnFunction, coordinates, sprite, cooldown, maxUnits, isBlocking }: Props) {
+  constructor({
+    spawnFunction,
+    coordinates,
+    sprite,
+    cooldown,
+    maxUnits,
+    isBlocking
+  }: Props) {
     super({
       coordinates,
       objectType: ObjectType.SPAWNER,
@@ -54,7 +58,7 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ state, map }: UpdateContext) => {
+  update = async ({ map }: UpdateContext) => {
     if (this._state === 'DEAD') {
       return;
     }
@@ -79,7 +83,9 @@ export default class Spawner extends GameObject implements Animatable {
     }
   };
 
-  setState = (state: SpawnerState) => { this._state = state; };
+  setState = (state: SpawnerState) => {
+    this._state = state;
+  };
 
   isBlocking = () => this._isBlocking && this._state === SpawnerState.ALIVE;
 }

@@ -1,7 +1,7 @@
+import Equipment from './Equipment';
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
-import Equipment from './Equipment';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
@@ -10,10 +10,10 @@ import MapInstance from '../maps/MapInstance';
 export type EquipmentScriptName = 'bolt_sword';
 
 type Context = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export type EquipmentScript = Readonly<{
@@ -23,11 +23,7 @@ export type EquipmentScript = Readonly<{
     context: Context
   ) => Promise<void>;
 
-  onMove?: (
-    equipment: Equipment,
-    target: Coordinates,
-    context: Context
-  ) => Promise<void>;
+  onMove?: (equipment: Equipment, target: Coordinates, context: Context) => Promise<void>;
 }>;
 
 const BoltSwordScript: EquipmentScript = {
@@ -44,12 +40,12 @@ const BoltSwordScript: EquipmentScript = {
       coordinates = Coordinates.plus(coordinates, direction);
     }
 
-    if (map.contains(coordinates) && map.isTileRevealed(coordinates) && map.getUnit(coordinates)) {
-      await ShootBolt.use(
-        unit,
-        target,
-        { state, map, imageFactory, ticker }
-      );
+    if (
+      map.contains(coordinates) &&
+      map.isTileRevealed(coordinates) &&
+      map.getUnit(coordinates)
+    ) {
+      await ShootBolt.use(unit, target, { state, map, imageFactory, ticker });
     }
   }
 };
@@ -57,8 +53,10 @@ const BoltSwordScript: EquipmentScript = {
 export namespace EquipmentScript {
   export const forName = (name: EquipmentScriptName): EquipmentScript => {
     switch (name) {
-      case 'bolt_sword': return BoltSwordScript;
-      default:           throw new Error(`Unknown equipment script ${name}`);
+      case 'bolt_sword':
+        return BoltSwordScript;
+      default:
+        throw new Error(`Unknown equipment script ${name}`);
     }
-  }
+  };
 }

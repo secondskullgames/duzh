@@ -1,8 +1,8 @@
-import Unit from '../Unit';
 import { UnitController, type UnitControllerContext } from './UnitController';
+import { canMove } from './ControllerUtils';
+import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
@@ -14,28 +14,31 @@ export default class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (
-    unit: Unit,
-    { state, map }: UnitControllerContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { state, map }: UnitControllerContext): UnitOrder => {
     const behavior = this._getBehavior(unit, { state, map });
     return behavior.issueOrder(unit, { state, map });
-  }
+  };
 
   private _getBehavior = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { state }: UnitControllerContext
   ): UnitController => {
     const playerUnit = state.getPlayerUnit();
 
-    const aiParameters = checkNotNull(unit.getAiParameters(), 'ArcherController requires aiParams!');
+    const aiParameters = checkNotNull(
+      unit.getAiParameters(),
+      'ArcherController requires aiParams!'
+    );
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
-    const distanceToPlayer = manhattanDistance(unit.getCoordinates(), playerUnit.getCoordinates());
+    const distanceToPlayer = manhattanDistance(
+      unit.getCoordinates(),
+      playerUnit.getCoordinates()
+    );
 
     if (!canMove(speed, { state })) {
       return new StayBehavior();
-    } else if ((unit.getLife() / unit.getMaxLife()) < fleeThreshold) {
+    } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
@@ -52,5 +55,5 @@ export default class ArcherController implements UnitController {
         return new WanderBehavior();
       }
     }
-  }
-};
+  };
+}

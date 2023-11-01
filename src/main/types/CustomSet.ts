@@ -3,13 +3,13 @@ type Serializer<T> = {
   deserialize: (s: string) => T;
 };
 
-const JsonSerializer: Serializer<any> = {
+const JsonSerializer: Serializer<unknown> = {
   serialize: JSON.stringify,
   deserialize: JSON.parse
 };
 
 type Props<T> = Readonly<{
-  serializer: Serializer<T>
+  serializer: Serializer<T>;
 }>;
 
 export class CustomSet<T> {
@@ -17,7 +17,7 @@ export class CustomSet<T> {
   private readonly set: Set<string>;
 
   constructor(props?: Props<T>) {
-    this.serializer = props?.serializer ?? JsonSerializer;
+    this.serializer = props?.serializer ?? (JsonSerializer as Serializer<T>);
     this.set = new Set();
   }
 

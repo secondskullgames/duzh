@@ -4,12 +4,12 @@ const maxTurnsAgo = 8;
 const maxMessages = 4;
 
 type Message = Readonly<{
-  message: string,
-  turn: number
+  message: string;
+  turn: number;
 }>;
 
 type Context = Readonly<{
-  turn: number
+  turn: number;
 }>;
 
 export default class Ticker {
@@ -29,5 +29,5 @@ export default class Ticker {
 
   clear = () => {
     clear(this._messages);
-  }
+  };
 }

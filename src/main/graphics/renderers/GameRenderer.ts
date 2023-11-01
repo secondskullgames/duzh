@@ -1,3 +1,11 @@
+import GameScreenRenderer from './GameScreenRenderer';
+import HUDRenderer from './HUDRenderer';
+import InventoryRenderer from './InventoryRenderer';
+import MapScreenRenderer from './MapScreenRenderer';
+import { RenderContext, Renderer } from './Renderer';
+import CharacterScreenRenderer from './CharacterScreenRenderer';
+import LevelUpScreenRenderer from './LevelUpScreenRenderer';
+import HelpScreenRenderer from './HelpScreenRenderer';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
@@ -6,18 +14,10 @@ import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import GameScreenRenderer from './GameScreenRenderer';
-import HUDRenderer from './HUDRenderer';
-import InventoryRenderer from './InventoryRenderer';
-import MapScreenRenderer from './MapScreenRenderer';
-import { RenderContext, Renderer } from './Renderer';
 import { createCanvas } from '../../utils/dom';
-import CharacterScreenRenderer from './CharacterScreenRenderer';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
-import LevelUpScreenRenderer from './LevelUpScreenRenderer';
-import HelpScreenRenderer from './HelpScreenRenderer';
 import Ticker from '../../core/Ticker';
 import { Feature } from '../../utils/features';
 
@@ -26,11 +26,11 @@ const TITLE_FILENAME = 'title2';
 const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
-  parent: Element,
-  state: GameState,
-  imageFactory: ImageFactory,
-  textRenderer: TextRenderer,
-  ticker: Ticker
+  parent: Element;
+  state: GameState;
+  imageFactory: ImageFactory;
+  textRenderer: TextRenderer;
+  ticker: Ticker;
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -50,13 +50,7 @@ export default class GameRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
   private readonly ticker: Ticker;
 
-  constructor({
-    parent,
-    state,
-    imageFactory,
-    textRenderer,
-    ticker
-  }: Props) {
+  constructor({ parent, state, imageFactory, textRenderer, ticker }: Props) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,
@@ -73,11 +67,23 @@ export default class GameRenderer implements Renderer {
     this.ticker = ticker;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
-    this.inventoryRenderer = new InventoryRenderer({ textRenderer, graphics: bufferGraphics });
+    this.inventoryRenderer = new InventoryRenderer({
+      textRenderer,
+      graphics: bufferGraphics
+    });
     this.mapScreenRenderer = new MapScreenRenderer({ graphics: bufferGraphics });
-    this.characterScreenRenderer = new CharacterScreenRenderer({ textRenderer, graphics: bufferGraphics });
-    this.helpScreenRenderer = new HelpScreenRenderer({ textRenderer, graphics: bufferGraphics });
-    this.levelUpScreenRenderer = new LevelUpScreenRenderer({ textRenderer, graphics: bufferGraphics });
+    this.characterScreenRenderer = new CharacterScreenRenderer({
+      textRenderer,
+      graphics: bufferGraphics
+    });
+    this.helpScreenRenderer = new HelpScreenRenderer({
+      textRenderer,
+      graphics: bufferGraphics
+    });
+    this.levelUpScreenRenderer = new LevelUpScreenRenderer({
+      textRenderer,
+      graphics: bufferGraphics
+    });
 
     parent.appendChild(canvas);
     canvas.tabIndex = 0;
@@ -94,7 +100,13 @@ export default class GameRenderer implements Renderer {
       case GameScreen.TITLE:
         await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
         if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-          await this._drawText('PRESS SHIFT-ENTER FOR DEBUG MODE', FontName.APPLE_II, { x: 320, y: 320 }, Colors.LIGHT_MAGENTA_CGA, Alignment.CENTER);
+          await this._drawText(
+            'PRESS SHIFT-ENTER FOR DEBUG MODE',
+            FontName.APPLE_II,
+            { x: 320, y: 320 },
+            Colors.LIGHT_MAGENTA_CGA,
+            Alignment.CENTER
+          );
         }
         break;
       case GameScreen.GAME:
@@ -134,7 +146,10 @@ export default class GameRenderer implements Renderer {
 
   private _renderGameScreen = async (context: RenderContext) => {
     const { bufferGraphics: graphics, canvas } = this;
-    graphics.fillRect({ left: 0, top: 0, width: canvas.width, height: canvas.height }, Colors.BLACK);
+    graphics.fillRect(
+      { left: 0, top: 0, width: canvas.width, height: canvas.height },
+      Colors.BLACK
+    );
 
     await this.gameScreenRenderer.render(context);
     await this.hudRenderer.render(context);
@@ -154,27 +169,43 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderTicker = async () => {
-    const {
-      bufferGraphics: graphics,
-      state,
-      ticker
-    } = this;
+    const { bufferGraphics: graphics, state, ticker } = this;
     const messages = ticker.getRecentMessages(state.getTurn());
 
     const left = 0;
     const top = 0;
 
     for (let i = 0; i < messages.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      graphics.fillRect({ left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT }, Colors.BLACK);
-      await this._drawText(messages[i], FontName.APPLE_II, { x: left, y: y + 2 }, Colors.WHITE, Alignment.LEFT);
+      const y = top + LINE_HEIGHT * i;
+      graphics.fillRect(
+        { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
+        Colors.BLACK
+      );
+      await this._drawText(
+        messages[i],
+        FontName.APPLE_II,
+        { x: left, y: y + 2 },
+        Colors.WHITE,
+        Alignment.LEFT
+      );
     }
   };
 
   private _renderSplashScreen = async (filename: string, text: string) => {
     const image = await this.imageFactory.getImage({ filename });
-    this.bufferGraphics.drawScaledImage(image, { left: 0, top: 0, width: this.canvas.width, height: this.canvas.height });
-    await this._drawText(text, FontName.APPLE_II, { x: 320, y: 300 }, Colors.WHITE, Alignment.CENTER);
+    this.bufferGraphics.drawScaledImage(image, {
+      left: 0,
+      top: 0,
+      width: this.canvas.width,
+      height: this.canvas.height
+    });
+    await this._drawText(
+      text,
+      FontName.APPLE_II,
+      { x: 320, y: 300 },
+      Colors.WHITE,
+      Alignment.CENTER
+    );
   };
 
   private _renderHelpScreen = async (context: RenderContext) => {
@@ -185,7 +216,13 @@ export default class GameRenderer implements Renderer {
     await this.levelUpScreenRenderer.render(context);
   };
 
-  private _drawText = async (text: string, font: FontName, coordinates: Coordinates, color: Color, textAlign: Alignment) => {
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    coordinates: Coordinates,
+    color: Color,
+    textAlign: Alignment
+  ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.bufferGraphics, coordinates, textAlign);
   };

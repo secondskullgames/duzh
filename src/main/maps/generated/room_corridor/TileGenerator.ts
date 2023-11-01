@@ -1,10 +1,10 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
-import Coordinates from '../../../geometry/Coordinates';
-import Offsets from '../../../geometry/Offsets';
-import { shuffle } from '../../../utils/random';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
+import Coordinates from '../../../geometry/Coordinates';
+import Offsets from '../../../geometry/Offsets';
+import { shuffle } from '../../../utils/random';
 import TileType from '../../../schemas/TileType';
 
 const generateTiles = (
@@ -66,30 +66,46 @@ const _addWallTiles = (tiles: TileType[][]) => {
       const tile = tiles[y][x];
       const oneDown = tiles[y + 1][x];
       const twoDown = tiles[y + 2][x];
-      if (tile === 'NONE' && oneDown === 'NONE' && (twoDown === 'FLOOR_HALL' || twoDown === 'FLOOR')) {
+      if (
+        tile === 'NONE' &&
+        oneDown === 'NONE' &&
+        (twoDown === 'FLOOR_HALL' || twoDown === 'FLOOR')
+      ) {
         tiles[y][x] = 'WALL_TOP';
-        tiles[y + 1][x] = (twoDown === 'FLOOR') ? 'WALL' : 'WALL_HALL';
+        tiles[y + 1][x] = twoDown === 'FLOOR' ? 'WALL' : 'WALL_HALL';
       }
     }
   }
 };
 
-const _addTilesForEmptyRegionConnections = (tiles: TileType[][], emptyRegionConnections: EmptyRegionConnection[], connections: Connection[]) => {
+const _addTilesForEmptyRegionConnections = (
+  tiles: TileType[][],
+  emptyRegionConnections: EmptyRegionConnection[],
+  connections: Connection[]
+) => {
   for (const connection of emptyRegionConnections) {
     const neighbors = [...connection.neighbors];
     shuffle(neighbors);
     for (let i = 0; i < neighbors.length - 1; i++) {
       const firstNeighbor = connection.neighbors[i];
       const secondNeighbor = connection.neighbors[i + 1];
-      const firstConnection = connections.find(c => Connection.matches(c, connection.roomRegion, firstNeighbor)) || null;
-      const secondConnection = connections.find(c => Connection.matches(c, connection.roomRegion, secondNeighbor)) || null;
+      const firstConnection =
+        connections.find(c =>
+          Connection.matches(c, connection.roomRegion, firstNeighbor)
+        ) || null;
+      const secondConnection =
+        connections.find(c =>
+          Connection.matches(c, connection.roomRegion, secondNeighbor)
+        ) || null;
 
       if (firstConnection === null || secondConnection === null) {
+        /* eslint-disable no-console */
         console.error('Failed to find connection');
         console.log(connections.map(Connection.toString).join(', '));
         console.log(neighbors.join(' '));
         console.log(firstNeighbor.rect);
         console.log(secondNeighbor.rect);
+        /* eslint-enable no-console */
         return;
       }
 
@@ -106,12 +122,16 @@ const _addTilesForEmptyRegionConnections = (tiles: TileType[][], emptyRegionConn
   }
 };
 
-const _joinPerpendicularly = (tiles: TileType[][], firstConnection: Connection, secondConnection: Connection) => {
+const _joinPerpendicularly = (
+  tiles: TileType[][],
+  firstConnection: Connection,
+  secondConnection: Connection
+) => {
   const start = firstConnection.middleCoordinates;
   const end = secondConnection.middleCoordinates;
   const middle = {
-    x: ((firstConnection.direction === 'VERTICAL') ? start : end).x,
-    y: ((firstConnection.direction === 'HORIZONTAL') ? start : end).y
+    x: (firstConnection.direction === 'VERTICAL' ? start : end).x,
+    y: (firstConnection.direction === 'HORIZONTAL' ? start : end).y
   };
 
   let offsets = _pointAt(start, middle);
@@ -131,7 +151,12 @@ const _joinPerpendicularly = (tiles: TileType[][], firstConnection: Connection, 
   }
 };
 
-const _joinParallelConnections = (tiles: TileType[][], emptyRegionConnection: EmptyRegionConnection, firstConnection: Connection, secondConnection: Connection) => {
+const _joinParallelConnections = (
+  tiles: TileType[][],
+  emptyRegionConnection: EmptyRegionConnection,
+  firstConnection: Connection,
+  secondConnection: Connection
+) => {
   const start = firstConnection.middleCoordinates;
   const end = secondConnection.middleCoordinates;
   const middle = {
@@ -143,7 +168,8 @@ const _joinParallelConnections = (tiles: TileType[][], emptyRegionConnection: Em
   const xDistance = end.x - start.x;
   const yDistance = end.y - start.y;
 
-  const majorDirection: SplitDirection = (Math.abs(xDistance) >= Math.abs(yDistance)) ? 'HORIZONTAL' : 'VERTICAL';
+  const majorDirection: SplitDirection =
+    Math.abs(xDistance) >= Math.abs(yDistance) ? 'HORIZONTAL' : 'VERTICAL';
   let { x, y } = start;
 
   switch (majorDirection) {

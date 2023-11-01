@@ -1,13 +1,13 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
-import { AbilityName } from './AbilityName';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 
@@ -75,4 +75,4 @@ export const ShootBolt: UnitAbility = {
       await playAnimation(boltAnimation, { map });
     }
   }
-}
+};

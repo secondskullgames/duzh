@@ -1,7 +1,7 @@
+import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
-import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 
 export enum DoorState {
@@ -10,17 +10,14 @@ export enum DoorState {
 }
 
 export namespace DoorState {
-  export const values = (): DoorState[] => [
-    DoorState.OPEN,
-    DoorState.CLOSED
-  ];
+  export const values = (): DoorState[] => [DoorState.OPEN, DoorState.CLOSED];
 }
 
 type Props = Readonly<{
-  direction: DoorDirection,
-  state: DoorState,
-  coordinates: Coordinates,
-  sprite: DynamicSprite<Door>
+  direction: DoorDirection;
+  state: DoorState;
+  coordinates: Coordinates;
+  sprite: DynamicSprite<Door>;
 }>;
 
 export default class Door extends GameObject implements Animatable {

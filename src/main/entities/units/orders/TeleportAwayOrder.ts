@@ -1,12 +1,12 @@
+import UnitOrder, { OrderContext } from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
-import UnitOrder, { OrderContext } from './UnitOrder';
 
 type Props = Readonly<{
-  targetUnit: Unit
+  targetUnit: Unit;
 }>;
 
 export default class TeleportAwayOrder implements UnitOrder {
@@ -17,10 +17,7 @@ export default class TeleportAwayOrder implements UnitOrder {
   }
 
   /** @override {@link UnitOrder#execute} */
-  execute = async (
-    unit: Unit,
-    { state, map, imageFactory, ticker }: OrderContext
-  ) => {
+  execute = async (unit: Unit, { state, map, imageFactory, ticker }: OrderContext) => {
     const { targetUnit } = this;
     const tiles: Coordinates[] = [];
 
@@ -37,14 +34,14 @@ export default class TeleportAwayOrder implements UnitOrder {
     }
 
     if (tiles.length > 0) {
-      const orderedTiles = tiles.sort(comparingReversed(coordinates => manhattanDistance(coordinates, targetUnit.getCoordinates())));
+      const orderedTiles = tiles.sort(
+        comparingReversed(coordinates =>
+          manhattanDistance(coordinates, targetUnit.getCoordinates())
+        )
+      );
 
       const coordinates = orderedTiles[0];
-      await Teleport.use(
-        unit,
-        coordinates,
-        { state, map, imageFactory, ticker }
-      );
+      await Teleport.use(unit, coordinates, { state, map, imageFactory, ticker });
     }
   };
 }

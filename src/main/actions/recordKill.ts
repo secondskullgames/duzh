@@ -1,13 +1,13 @@
-import Unit from '../entities/units/Unit';
 import { levelUp } from './levelUp';
+import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import GameState from '../core/GameState';
 import Ticker from '../core/Ticker';
 
 type Context = Readonly<{
-  state: GameState,
-  ticker: Ticker
+  state: GameState;
+  ticker: Ticker;
 }>;
 
 /**

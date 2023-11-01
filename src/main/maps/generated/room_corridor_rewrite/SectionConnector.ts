@@ -1,11 +1,11 @@
+import Connection from './Connection';
+import Section from './Section';
 import Coordinates from '../../../geometry/Coordinates';
 import Rect from '../../../geometry/Rect';
 import { Room } from '../../../types/types';
 import { max, min } from '../../../utils/arrays';
 import { checkNotNull } from '../../../utils/preconditions';
 import { randInt } from '../../../utils/random';
-import Connection from './Connection';
-import Section from './Section';
 
 interface SectionConnector {
   connectRecursively: (section: Section) => Section;
@@ -14,7 +14,11 @@ interface SectionConnector {
 const createSectionConnector = (): SectionConnector => {
   const connectRecursively = (section: Section): Section => {
     // base case (checks here are a bit redundant)
-    if (section.firstSubsection === null || section.secondSubsection === null || section.splitDirection === null) {
+    if (
+      section.firstSubsection === null ||
+      section.secondSubsection === null ||
+      section.splitDirection === null
+    ) {
       return section;
     }
 
@@ -82,7 +86,7 @@ const createSectionConnector = (): SectionConnector => {
       const rightRoomCenterY = rightRoom.top + rightRoom.height / 2;
       const distance = Math.abs(leftRoomCenterY - rightRoomCenterY);
       distances.set(connection, distance);
-      minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
+      minDistance = minDistance === null ? distance : Math.min(distance, minDistance);
     }
 
     const connections = possibleConnections.filter(connection => {
@@ -96,13 +100,20 @@ const createSectionConnector = (): SectionConnector => {
       const leftExitY = randInt(leftRoom.top + 1, leftRoom.top + leftRoom.height - 2);
       roomToExit.set(leftRoom, { x: leftRoom.left + leftRoom.width - 1, y: leftExitY });
 
-      const bottomExitY = randInt(rightRoom.top + 1, rightRoom.top + rightRoom.height - 2);
+      const bottomExitY = randInt(
+        rightRoom.top + 1,
+        rightRoom.top + rightRoom.height - 2
+      );
       roomToExit.set(rightRoom, { x: rightRoom.left, y: bottomExitY });
     }
 
     const allRoomsToConnect = connections.flatMap(([left, right]) => [left, right]);
-    const minY = min(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y)));
-    const maxY = max(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y)));
+    const minY = min(
+      allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y))
+    );
+    const maxY = max(
+      allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.y))
+    );
     const midY = randInt(minY, maxY);
 
     const connectedCoordinates: Coordinates[] = [];
@@ -189,7 +200,7 @@ const createSectionConnector = (): SectionConnector => {
       const bottomRoomCenterX = bottomRoom.left + bottomRoom.width / 2;
       const distance = Math.abs(topRoomCenterX - bottomRoomCenterX);
       distances.set(connection, distance);
-      minDistance = (minDistance === null) ? distance : Math.min(distance, minDistance);
+      minDistance = minDistance === null ? distance : Math.min(distance, minDistance);
     }
 
     const connections = possibleConnections.filter(connection => {
@@ -203,14 +214,21 @@ const createSectionConnector = (): SectionConnector => {
       const topExitX = randInt(topRoom.left + 1, topRoom.left + topRoom.width - 2);
       roomToExit.set(topRoom, { x: topExitX, y: topRoom.top + topRoom.height - 1 });
 
-      const bottomExitX = randInt(bottomRoom.left + 1, bottomRoom.left + bottomRoom.width - 2);
+      const bottomExitX = randInt(
+        bottomRoom.left + 1,
+        bottomRoom.left + bottomRoom.width - 2
+      );
       roomToExit.set(bottomRoom, { x: bottomExitX, y: bottomRoom.top });
     }
 
     const allRoomsToConnect = connections.flatMap(([top, bottom]) => [top, bottom]);
 
-    const minX = min(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x)));
-    const maxX = max(allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x)));
+    const minX = min(
+      allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x))
+    );
+    const maxX = max(
+      allRoomsToConnect.map(room => checkNotNull(roomToExit.get(room)?.x))
+    );
     const midX = randInt(minX, maxX);
 
     const connectedCoordinates: Coordinates[] = [];

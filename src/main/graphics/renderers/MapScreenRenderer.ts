@@ -1,8 +1,7 @@
-import GameState from '../../core/GameState';
+import { RenderContext, Renderer } from './Renderer';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
-import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
@@ -10,7 +9,7 @@ import { checkNotNull } from '../../utils/preconditions';
 const backgroundColor = Color.fromHex('#404040');
 
 type Props = Readonly<{
-  graphics: Graphics
+  graphics: Graphics;
 }>;
 
 export default class MapScreenRenderer implements Renderer {
@@ -29,13 +28,12 @@ export default class MapScreenRenderer implements Renderer {
     const map = checkNotNull(state.getMap());
 
     graphics.fill(backgroundColor);
-    const cellDimension = Math.floor(Math.min(
-      graphics.getWidth() / map.width,
-      graphics.getHeight() / map.height
-    ));
+    const cellDimension = Math.floor(
+      Math.min(graphics.getWidth() / map.width, graphics.getHeight() / map.height)
+    );
 
-    const left = (graphics.getWidth() - (map.width * cellDimension)) / 2;
-    const top = (graphics.getHeight() - (map.height * cellDimension)) / 2;
+    const left = (graphics.getWidth() - map.width * cellDimension) / 2;
+    const top = (graphics.getHeight() - map.height * cellDimension) / 2;
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -66,7 +64,7 @@ export default class MapScreenRenderer implements Renderer {
         case 'STAIRS_DOWN':
           return Colors.BLUE;
         case 'FLOOR':
-        case 'FLOOR_HALL':
+        case 'FLOOR_HALL': {
           const unit = map.getUnit(coordinates);
           if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
             return Colors.RED;
@@ -74,6 +72,7 @@ export default class MapScreenRenderer implements Renderer {
             return Colors.YELLOW;
           }
           return Colors.LIGHT_GRAY;
+        }
         case 'WALL':
         case 'WALL_HALL':
           return Colors.DARK_GRAY;

@@ -1,5 +1,4 @@
-import Unit from '../Unit';
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import StayOrder from '../orders/StayOrder';
 import UnitOrder from '../orders/UnitOrder';
 
@@ -12,12 +11,12 @@ export default class PlayerUnitController implements UnitController {
 
   queueOrder = (order: UnitOrder) => {
     this.queuedOrder = order;
-  }
+  };
 
   /**
    * @override UnitController#issueOrder
    */
-  issueOrder = (unit: Unit, {}: UnitControllerContext): UnitOrder => {
+  issueOrder = (): UnitOrder => {
     if (this.queuedOrder) {
       const queuedOrder = this.queuedOrder;
       this.queuedOrder = null;

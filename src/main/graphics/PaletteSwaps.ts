@@ -1,11 +1,11 @@
-import { checkNotNull } from '../utils/preconditions';
 import Color from './Color';
 import Colors from './Colors';
+import { checkNotNull } from '../utils/preconditions';
 
 export interface PaletteSwaps {
-  entries: () => [Color, Color][],
-  get: (color: Color) => Color | null,
-  toString: () => string
+  entries: () => [Color, Color][];
+  get: (color: Color) => Color | null;
+  toString: () => string;
 }
 
 class Impl implements PaletteSwaps {
@@ -14,12 +14,13 @@ class Impl implements PaletteSwaps {
 
   constructor(map: Record<string, Color>) {
     this._map = map;
-    this._entries = Object.entries(map)
-      .map(([srcHex, dest]) => ([Color.fromHex(srcHex), dest]) as [Color, Color]);
+    this._entries = Object.entries(map).map(
+      ([srcHex, dest]) => [Color.fromHex(srcHex), dest] as [Color, Color]
+    );
   }
 
   entries = () => this._entries;
-  get = (srcColor: Color): (Color | null) => this._map[srcColor.hex] ?? null;
+  get = (srcColor: Color): Color | null => this._map[srcColor.hex] ?? null;
 
   toString = () => {
     const map: Record<string, string> = {};
@@ -60,8 +61,14 @@ export namespace PaletteSwaps {
     const builder = new Builder();
     if (paletteSwaps) {
       for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-        const srcColor: Color = checkNotNull(Colors[srcName], `Color '${srcName}' not found`);
-        const destColor: Color = checkNotNull(Colors[destName], `Color '${destName}' not found`);
+        const srcColor: Color = checkNotNull(
+          Colors[srcName],
+          `Color '${srcName}' not found`
+        );
+        const destColor: Color = checkNotNull(
+          Colors[destName],
+          `Color '${destName}' not found`
+        );
         builder.addMapping(srcColor, destColor);
       }
     }

@@ -11,8 +11,8 @@ const manaPerLevel = 2;
 const strengthPerLevel = 1;
 
 type Context = Readonly<{
-  state: GameState,
-  ticker: Ticker
+  state: GameState;
+  ticker: Ticker;
 }>;
 
 export const levelUp = (unit: Unit, { state, ticker }: Context) => {
@@ -24,7 +24,9 @@ export const levelUp = (unit: Unit, { state, ticker }: Context) => {
     unit.increaseStrength(strengthPerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, { turn: state.getTurn() });
+      ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {
+        turn: state.getTurn()
+      });
       unit.awardAbilityPoint();
     } else {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });

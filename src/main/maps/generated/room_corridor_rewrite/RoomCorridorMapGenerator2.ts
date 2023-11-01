@@ -1,10 +1,10 @@
-import Rect from '../../../geometry/Rect';
-import AbstractMapGenerator from '../AbstractMapGenerator';
-import EmptyMap from '../EmptyMap';
 import Section from './Section';
 import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
+import EmptyMap from '../EmptyMap';
+import AbstractMapGenerator from '../AbstractMapGenerator';
+import Rect from '../../../geometry/Rect';
 import TileType from '../../../schemas/TileType';
 
 const MIN_ROOM_WIDTH = 4;
