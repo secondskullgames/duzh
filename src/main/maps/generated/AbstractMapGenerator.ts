@@ -63,7 +63,6 @@ abstract class AbstractMapGenerator {
   ): EmptyMap => {
     const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
-      const t1 = new Date().getTime();
       let map;
       try {
         map = this.generateEmptyMap(width, height);
@@ -71,9 +70,6 @@ abstract class AbstractMapGenerator {
         continue;
       }
       const isValid = this._validateTiles(map);
-      const t2 = new Date().getTime();
-      // eslint-disable-next-line no-console
-      console.debug(`Generated map tiles for level ${level} in ${t2 - t1} ms`);
       if (isValid) {
         return map;
       } else {

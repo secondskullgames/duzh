@@ -1,4 +1,4 @@
-import { Renderer } from './Renderer';
+import { RenderContext, Renderer } from './Renderer';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
@@ -22,7 +22,8 @@ export default class HelpScreenRenderer implements Renderer {
     this.graphics = graphics;
   }
 
-  render = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  render = async (context: RenderContext) => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;
