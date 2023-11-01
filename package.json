@@ -41,8 +41,7 @@
     "test": "npm run build && jest",
     "coverage": "npm run build && jest --coverage",
     "electron": "npm run build && cd electron && npm i && npm run make && npx electron .",
-    "lint": "npx eslint src/**/*.ts && npx prettier --check src/**/*.ts",
-    "prettier": "npx prettier --write src/**/*.ts"
+    "lint": "npx eslint src/**/*.ts && npx prettier --check src/**/*.ts"
   },
   "repository": {
     "type": "git",
