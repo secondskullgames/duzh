@@ -1,4 +1,5 @@
 import GameState from './GameState';
+import Ticker from './Ticker';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
@@ -7,7 +8,6 @@ import ItemFactory from '../items/ItemFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import Ticker from './Ticker';
 
 type Props = Readonly<{
   state: GameState,
@@ -53,6 +53,7 @@ export class Debug {
   };
 
   awardEquipment = async () => {
+    // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await ItemFactory.createInventoryEquipment(id);
     const playerUnit = this.state.getPlayerUnit();
@@ -62,8 +63,10 @@ export class Debug {
   };
 
   attachToWindow = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb = window.jwb ?? {};
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb.debug = {
       ...this,

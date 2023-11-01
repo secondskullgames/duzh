@@ -1,10 +1,10 @@
+import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { attackUnit } from '../../../actions/attackUnit';
-import { AbilityName } from './AbilityName';
 import { attackObject } from '../../../actions/attackObject';
 import { getSpawner } from '../../../maps/MapUtils';
 

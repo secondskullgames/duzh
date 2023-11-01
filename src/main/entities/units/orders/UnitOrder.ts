@@ -16,4 +16,4 @@ export default interface UnitOrder {
     unit: Unit,
     context: OrderContext
   ) => Promise<void>
-};
+}

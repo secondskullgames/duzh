@@ -1,6 +1,6 @@
+import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
-import GameObject, { ObjectType } from './GameObject';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
 import { UpdateContext } from '../Entity';
@@ -54,7 +54,7 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ state, map }: UpdateContext) => {
+  update = async ({ map }: UpdateContext) => {
     if (this._state === 'DEAD') {
       return;
     }

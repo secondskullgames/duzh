@@ -1,8 +1,8 @@
-import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
 import Color from './Color';
-import Rect from '../geometry/Rect';
 import { Image } from './images/Image';
 import { Pixel } from './Pixel';
+import Rect from '../geometry/Rect';
+import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
 
 export interface Graphics {
   fillRect: (rect: Rect, color: Color) => void;

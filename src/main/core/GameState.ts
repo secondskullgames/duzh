@@ -1,10 +1,10 @@
+import { GameScreen } from './GameScreen';
 import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
 import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
-import { GameScreen } from './GameScreen';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
 
 /**

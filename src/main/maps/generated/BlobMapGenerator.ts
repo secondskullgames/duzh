@@ -1,9 +1,9 @@
-import Coordinates from '../../geometry/Coordinates';
 import EmptyMap from './EmptyMap';
+import AbstractMapGenerator from './AbstractMapGenerator';
+import Coordinates from '../../geometry/Coordinates';
 import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
-import AbstractMapGenerator from './AbstractMapGenerator';
 import TileType from '../../schemas/TileType';
 
 class BlobMapGenerator extends AbstractMapGenerator {
@@ -19,7 +19,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
    * where snakiness is defined as the number of tiles within N units
    * (more adjacent tiles - less snaky).
    */
-  protected generateEmptyMap(width: number, height: number): EmptyMap {
+  protected generateEmptyMap = (width: number, height: number): EmptyMap => {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
@@ -35,9 +35,9 @@ class BlobMapGenerator extends AbstractMapGenerator {
       width,
       height
     };
-  }
+  };
 
-  private _initTiles(width: number, height: number): TileType[][] {
+  private _initTiles = (width: number, height: number): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -47,7 +47,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
       tiles.push(row);
     }
     return tiles;
-  }
+  };
 
   private _placeInitialTile = (width: number, height: number, tiles: TileType[][]) => {
     const x = randInt(width * 3 / 8, width * 5 / 8);
@@ -119,7 +119,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
       .filter(({ x, y }) => floorTiles.some(floorTile => isAdjacent({ x, y }, floorTile)));
   };
 
-  private _isLegalWallCoordinates({ x, y }: Coordinates, tiles: TileType[][]) {
+  private _isLegalWallCoordinates = ({ x, y }: Coordinates, tiles: TileType[][]) => {
     // To facilitate wall generation, disallow some specific cases:
     // 1. can't add a floor tile if there's a wall right above it, AND a floor tile right above that
     const height = tiles.length;
@@ -148,7 +148,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
       }
     }
     return true;
-  }
+  };
 
   private _hasKittyCornerFloorTile = ({ x, y }: Coordinates, tiles: TileType[][]) => {
     const height = tiles.length;
@@ -169,10 +169,12 @@ class BlobMapGenerator extends AbstractMapGenerator {
     // XX        cd
     //  F        ef
     for (const [dx, dy] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const a = { x, y };
       const b = { x: x + dx, y };
       const c = { x, y: y + (dy / 2) };
       const d = { x: x + dx, y: y + (dy / 2) };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const e = { x, y: y + dy };
       const f = { x: x + dx, y: y + dy };
       if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {

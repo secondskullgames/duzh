@@ -1,9 +1,9 @@
+import UnitOrder, { OrderContext } from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
-import UnitOrder, { OrderContext } from './UnitOrder';
 
 type Props = Readonly<{
   targetUnit: Unit

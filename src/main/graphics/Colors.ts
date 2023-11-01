@@ -1,5 +1,5 @@
-import jsonColors from '../../../data/colors.json';
 import Color from './Color';
+import jsonColors from '../../../data/colors.json';
 
 const Colors: Record<string, Color> = {};
 for (const [name, value] of Object.entries(jsonColors)) {

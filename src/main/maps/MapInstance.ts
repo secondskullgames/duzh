@@ -1,6 +1,4 @@
-import type Rect from '../geometry/Rect';
 import Coordinates from '../geometry/Coordinates';
-import type { Figure } from '../sounds/types';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import { checkArgument } from '../utils/preconditions';
@@ -8,6 +6,8 @@ import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
+import type { Figure } from '../sounds/types';
+import type Rect from '../geometry/Rect';
 
 type Props = Readonly<{
   width: number,
@@ -131,6 +131,7 @@ export default class MapInstance {
   });
 
   isTileRevealed = (coordinates: Coordinates): boolean =>
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb?.debug?.isMapRevealed()
       || !!this.revealedTiles.get(coordinates);

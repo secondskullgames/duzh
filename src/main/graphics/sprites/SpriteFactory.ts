@@ -1,3 +1,7 @@
+import DynamicSprite from './DynamicSprite';
+import Sprite from './Sprite';
+import { SpriteCategory } from './SpriteCategory';
+import StaticSprite from './StaticSprite';
 import Equipment from '../../equipment/Equipment';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
@@ -10,10 +14,6 @@ import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
-import DynamicSprite from './DynamicSprite';
-import Sprite from './Sprite';
-import { SpriteCategory } from './SpriteCategory';
-import StaticSprite from './StaticSprite';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 type Context = Readonly<{

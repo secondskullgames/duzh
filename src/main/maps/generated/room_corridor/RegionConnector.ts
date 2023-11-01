@@ -1,9 +1,9 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
+import { Connection } from './Connection';
+import RoomRegion from './RoomRegion';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice, randInt, shuffle } from '../../../utils/random';
 import { areAdjacent } from '../../MapUtils';
-import { Connection } from './Connection';
-import RoomRegion from './RoomRegion';
 
 const MIN_BORDER_LENGTH = 5;
 
@@ -100,11 +100,13 @@ const generateMinimalSpanningTree = (regions: RoomRegion[]): Connection[] => {
     }
 
     if (!connectedAny) {
+      /* eslint-disable no-console */
       console.log('connected:');
       connectedRegions.forEach(x => console.log(x));
       console.log('unconnected:');
       unconnectedRegions.forEach(x => console.log(x));
       throw new Error('Failed to generate minimal spanning tree');
+      /* eslint-enable no-console */
     }
   }
 

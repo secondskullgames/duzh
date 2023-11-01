@@ -1,3 +1,4 @@
+import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
 import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
@@ -12,7 +13,6 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
@@ -112,8 +112,7 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
   const index = parseInt(key.toString());
   const innateAbilities = AbilityName.getInnateAbilities();
   const ability = playerUnit.getAbilities()
-    .filter(ability => !innateAbilities.includes(ability.name))
-    [index - 1];
+    .filter(ability => !innateAbilities.includes(ability.name))[index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
     state.setQueuedAbility(ability);
   }

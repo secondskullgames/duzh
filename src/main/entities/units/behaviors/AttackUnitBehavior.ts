@@ -1,3 +1,4 @@
+import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
@@ -9,7 +10,6 @@ import { randChoice } from '../../../utils/random';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
-import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
 import { abilityForName } from '../abilities/abilityForName';
 import { Dash } from '../abilities/Dash';
 
@@ -87,11 +87,11 @@ export default class AttackUnitBehavior implements UnitBehavior {
     return NormalAttack;
   }
 
-  private _canDash(
+  private _canDash = (
     unit: Unit,
     coordinates: Coordinates | undefined,
     { map }: Pick<UnitBehaviorContext, 'map'>
-  ) {
+  ) => {
     if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
       return false;
     }
@@ -108,5 +108,5 @@ export default class AttackUnitBehavior implements UnitBehavior {
       );
     }
     return false;
-  }
+  };
 }

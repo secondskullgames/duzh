@@ -1,8 +1,8 @@
+import RoomRegion from './RoomRegion';
+import SplitDirection from './SplitDirection';
 import Rect from '../../../geometry/Rect';
 import { randInt } from '../../../utils/random';
 
-import RoomRegion from './RoomRegion';
-import SplitDirection from './SplitDirection';
 
 const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 
@@ -28,21 +28,23 @@ export default class RegionSplitter {
   generateRegions = (left: number, top: number, width: number, height: number): RoomRegion[] => {
     const splitDirection = this._getSplitDirection(width, height);
     switch (splitDirection) {
-      case 'HORIZONTAL':
+      case 'HORIZONTAL': {
         const splitX = this._getSplitPoint(left, width, splitDirection);
         const leftWidth = splitX - left;
         const leftRegions = this.generateRegions(left, top, leftWidth, height);
         const rightWidth = width - leftWidth;
         const rightRegions = this.generateRegions(splitX, top, rightWidth, height);
         return [...leftRegions, ...rightRegions];
-      case 'VERTICAL':
+      }
+      case 'VERTICAL': {
         const splitY = this._getSplitPoint(top, height, splitDirection);
         const topHeight = splitY - top;
         const bottomHeight = height - topHeight;
         const topRegions = this.generateRegions(left, top, width, topHeight);
         const bottomRegions = this.generateRegions(left, splitY, width, bottomHeight);
         return [...topRegions, ...bottomRegions];
-      default:
+      }
+      default: {
         // base case: generate single region
         const rect: Rect = {
           left,
@@ -63,6 +65,7 @@ export default class RegionSplitter {
         };
 
         return [{ rect, roomRect }];
+      }
     }
   };
 

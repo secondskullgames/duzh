@@ -51,4 +51,4 @@ export default class MultiGrid<T> {
   private _contains = ({ x, y }: Coordinates): boolean => {
     return (x >= 0 && x < this.width) && (y >= 0 && y < this.height);
   };
-};
+}

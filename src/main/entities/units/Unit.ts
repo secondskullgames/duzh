@@ -1,3 +1,9 @@
+import Activity from './Activity';
+import AIParameters from './controllers/AIParameters';
+import { UnitController } from './controllers/UnitController';
+import { type UnitAbility } from './abilities/UnitAbility';
+import { abilityForName } from './abilities/abilityForName';
+import { AbilityName } from './abilities/AbilityName';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import Coordinates from '../../geometry/Coordinates';
@@ -6,18 +12,12 @@ import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import Activity from './Activity';
 import Entity, { UpdateContext } from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
-import AIParameters from './controllers/AIParameters';
-import { UnitController } from './controllers/UnitController';
-import { type UnitAbility } from './abilities/UnitAbility';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
-import { abilityForName } from './abilities/abilityForName';
-import { AbilityName } from './abilities/AbilityName';
 import UnitType from '../../schemas/UnitType';
 
 /**

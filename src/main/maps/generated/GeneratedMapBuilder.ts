@@ -150,7 +150,6 @@ export default class GeneratedMapBuilder {
       }
 
       const equipmentClass = randChoice(possibleEquipmentClasses);
-      console.log(`Adding equipment: ${equipmentClass.id}`);
       sortByReversed(
         candidateLocations,
         loc => Math.min(...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y })))

@@ -1,7 +1,7 @@
+import Equipment from './Equipment';
 import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
-import Equipment from './Equipment';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';

@@ -1,7 +1,7 @@
-import { manhattanDistance } from '../maps/MapUtils';
 import Coordinates from './Coordinates';
-import { randChoice } from '../utils/random';
 import Direction from './Direction';
+import { manhattanDistance } from '../maps/MapUtils';
+import { randChoice } from '../utils/random';
 
 interface Node extends Coordinates {
   parent: Node | null,
@@ -32,6 +32,7 @@ type NodeWithCost = Readonly<{
 /**
  * @return the exact cost of the path from `start` to `coordinates`
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const g = (node: Node, start: Coordinates): number => node.cost;
 
 /**
@@ -50,7 +51,7 @@ const f = (node: Node, start: Coordinates, goal: Coordinates): number =>
 
 const traverseParents = (node: Node): Coordinates[] => {
   const path: Coordinates[] = [];
-  for (let currentNode: (Node | null) = node; !!currentNode; currentNode = currentNode.parent) {
+  for (let currentNode: (Node | null) = node; currentNode; currentNode = currentNode.parent) {
     const coordinates = { x: currentNode.x, y: currentNode.y };
     path.splice(0, 0, coordinates); // add it at the beginning of the list
   }
@@ -85,6 +86,7 @@ export default class Pathfinder {
     ];
     const closed = new CoordinateSet([]);
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       if (open.length === 0) {
         return [];
@@ -99,7 +101,7 @@ export default class Pathfinder {
         const path = traverseParents(bestNode);
         return path;
       } else {
-        const bestNodes: NodeWithCost[] = nodeCosts.filter(({ node, cost }) => cost === nodeCosts[0].cost);
+        const bestNodes: NodeWithCost[] = nodeCosts.filter(({ cost }) => cost === nodeCosts[0].cost);
         const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
         closed.add(chosenNode);

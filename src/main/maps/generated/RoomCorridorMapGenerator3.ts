@@ -1,9 +1,9 @@
+import AbstractMapGenerator from './AbstractMapGenerator';
+import EmptyMap from './EmptyMap';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import Rect from '../../geometry/Rect';
 import { randInt, shuffle } from '../../utils/random';
-import AbstractMapGenerator from './AbstractMapGenerator';
-import EmptyMap from './EmptyMap';
 import TileType from '../../schemas/TileType';
 
 class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
@@ -158,7 +158,6 @@ const _addWalls = (tiles: TileType[][]) => {
   const width = tiles[0].length;
   const height = tiles.length;
   const bottom = height - 1;
-  const right = width - 1;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {

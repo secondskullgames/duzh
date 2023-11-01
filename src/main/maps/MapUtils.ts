@@ -1,3 +1,4 @@
+import MapInstance from './MapInstance';
 import Coordinates from '../geometry/Coordinates';
 import Rect from '../geometry/Rect';
 import Tile from '../tiles/Tile';
@@ -7,7 +8,6 @@ import Spawner from '../entities/objects/Spawner';
 import { ObjectType } from '../entities/objects/GameObject';
 import MapItem from '../entities/objects/MapItem';
 import Door from '../entities/objects/Door';
-import MapInstance from './MapInstance';
 import Block from '../entities/objects/Block';
 import Bonus from '../entities/objects/Bonus';
 
@@ -20,7 +20,8 @@ export const getUnoccupiedLocations = (
 
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[y].length; x++) {
-      const tileType = tiles[y][x].hasOwnProperty('getTileType')
+      
+      const tileType = (typeof tiles[y][x] === 'object')
         ? (tiles[y][x] as Tile).getTileType()
         : tiles[y][x] as TileType;
 

@@ -1,3 +1,4 @@
+import { RenderContext, Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
@@ -7,7 +8,6 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
-import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
 
@@ -41,12 +41,12 @@ export default class GameScreenRenderer implements Renderer {
     if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
-        this._drawSprite(sprite, pixel, context);
+        this._drawSprite(sprite, pixel);
       }
     }
   };
 
-  private _drawSprite = (sprite: Sprite, pixel: Pixel, context: RenderContext) => {
+  private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
     const image = sprite.getImage();
     if (image) {
       const { dx, dy } = sprite.getOffsets();
@@ -140,6 +140,7 @@ export default class GameScreenRenderer implements Renderer {
   private _isTileRevealed = (coordinates: Coordinates, context: RenderContext): boolean => {
     const { state } = context;
     const map = checkNotNull(state.getMap());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };

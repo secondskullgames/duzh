@@ -1,6 +1,6 @@
+import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import InventoryItem from '../../items/InventoryItem';
-import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 
 type Props = Readonly<{

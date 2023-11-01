@@ -11,7 +11,7 @@ export default class SoundPlayer {
   private readonly gainNode: GainNode;
   private oscillators: CustomOscillator[];
 
-  constructor ({ polyphony, gain }: Props) {
+  constructor ({ gain }: Props) {
     this.context = new AudioContext();
     this.gainNode = this.context.createGain();
     this.gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
@@ -26,6 +26,7 @@ export default class SoundPlayer {
         oscillator.stop();
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
     }
   };

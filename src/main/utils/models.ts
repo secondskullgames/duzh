@@ -1,5 +1,5 @@
-import Ajv from 'ajv';
 import { SpriteCategory } from '../graphics/sprites/SpriteCategory';
+import Ajv from 'ajv';
 import type UnitModel from '../schemas/UnitModel';
 import type EquipmentModel from '../schemas/EquipmentModel';
 import type GeneratedMapModel from '../schemas/GeneratedMapModel';
@@ -77,7 +77,6 @@ const loadModel = async <T> (path: string, schema: SchemaType): Promise<T> => {
     throw new Error(`Failed to load schema ${schema}`);
   }
 
-  console.debug(`Validating ${path}`);
   const data = (await import(
     /* webpackMode: "lazy-once" */
     /* webpackChunkName: "models" */

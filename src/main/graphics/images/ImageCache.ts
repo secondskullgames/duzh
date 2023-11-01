@@ -1,8 +1,8 @@
+import { Image } from './Image';
+import { ImageEffect } from './ImageEffect';
 import { comparing } from '../../utils/arrays';
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import { Image } from './Image';
-import { ImageEffect } from './ImageEffect';
 
 type CacheKey = Readonly<{
   filename: string,
@@ -19,6 +19,7 @@ interface ImageCache {
 const _stringify = (key: CacheKey): string => {
   const { filename, transparentColor, paletteSwaps, effects } = key;
   const stringifiedPaletteSwaps = paletteSwaps?.entries()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .sort(comparing(([src, dest]) => src.rgb.r*256*256 + src.rgb.g*256 + src.rgb.b))
     .map(([src, dest]) => `${src.hex}:${dest.hex}`)
     .join(',')

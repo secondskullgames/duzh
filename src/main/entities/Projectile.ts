@@ -1,8 +1,8 @@
 import Entity from './Entity';
+import { EntityType } from './EntityType';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
-import { EntityType } from './EntityType';
 
 type Props = Readonly<{
   coordinates: Coordinates
@@ -19,7 +19,7 @@ export default class Projectile implements Entity {
     this.coordinates = coordinates;
     this.direction = direction;
     this.sprite = sprite;
-  };
+  }
 
   /** @override {@link Entity#getCoordinates} */
   getCoordinates = (): Coordinates => this.coordinates;

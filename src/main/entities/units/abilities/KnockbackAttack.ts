@@ -1,10 +1,10 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
-import { AbilityName } from './AbilityName';
 import { moveUnit } from '../../../actions/moveUnit';
 import { attackUnit } from '../../../actions/attackUnit';
 

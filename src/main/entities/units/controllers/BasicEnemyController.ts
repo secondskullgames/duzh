@@ -1,8 +1,8 @@
 import { UnitController, type UnitControllerContext } from './UnitController';
+import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import StayOrder from '../orders/StayOrder';
 import UnitOrder from '../orders/UnitOrder';
@@ -50,4 +50,4 @@ export default class BasicEnemyController implements UnitController {
       }
     }
   }
-};
+}

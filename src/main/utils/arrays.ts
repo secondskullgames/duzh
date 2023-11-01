@@ -53,7 +53,7 @@ export const subtract = <T>(array: T[], toRemove: T[]): void => {
   replace(array, updated);
 };
 
-export const clear = (array: any[]): void => {
+export const clear = <T> (array: T[]): void => {
   array.splice(0, array.length);
 };
 

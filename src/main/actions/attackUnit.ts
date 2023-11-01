@@ -1,7 +1,7 @@
-import Unit from '../entities/units/Unit';
-import { playSound } from '../sounds/playSound';
 import { die } from './die';
 import { recordKill } from './recordKill';
+import Unit from '../entities/units/Unit';
+import { playSound } from '../sounds/playSound';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';

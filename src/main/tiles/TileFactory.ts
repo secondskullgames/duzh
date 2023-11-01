@@ -1,10 +1,10 @@
+import TileSet from './TileSet';
+import Tile from './Tile';
 import TileType from '../schemas/TileType';
 import Sprite from '../graphics/sprites/Sprite';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import TileSet from './TileSet';
 import Coordinates from '../geometry/Coordinates';
-import Tile from './Tile';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';

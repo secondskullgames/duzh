@@ -1,7 +1,7 @@
+import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
-import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 
 export enum DoorState {

@@ -3,10 +3,10 @@ import Colors from './Colors';
 import ImageFactory from './images/ImageFactory';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { createCanvas, getCanvasContext } from '../utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';
+import { createCanvas, getCanvasContext } from '../utils/dom';
 
 type Props = Readonly<{
   imageFactory: ImageFactory,

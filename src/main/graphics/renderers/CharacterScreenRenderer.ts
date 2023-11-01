@@ -1,10 +1,8 @@
-import GameState from '../../core/GameState';
+import { RenderContext, Renderer } from './Renderer';
 import Color from '../Color';
 import Colors from '../Colors';
 import { TextRenderer } from '../TextRenderer';
-import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';

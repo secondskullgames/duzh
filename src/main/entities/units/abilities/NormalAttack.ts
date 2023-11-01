@@ -1,9 +1,9 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { attackUnit } from '../../../actions/attackUnit';
-import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
 
 // Note that you gain 1 passively, so this is really 2 mana per hit

@@ -1,7 +1,4 @@
-import GameState from '../core/GameState';
-import type { KeyCommand } from './inputTypes';
 import { mapToCommand } from './inputMappers';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import GameScreenInputHandler from './screens/GameScreenInputHandler';
 import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
@@ -11,11 +8,14 @@ import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
 import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
+import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
-import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
+import ImageFactory from '../graphics/images/ImageFactory';
+import GameState from '../core/GameState';
 import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
+import type { KeyCommand } from './inputTypes';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.NONE]:      { handleKeyCommand: async () => {} },
@@ -63,7 +63,9 @@ export default class InputHandler {
       try {
         await this.keyHandler(event);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error(e);
+        // eslint-disable-next-line no-alert
         alert(e);
       }
       this.busy = false;
@@ -90,9 +92,8 @@ export default class InputHandler {
 
   addEventListener = (target: HTMLElement) => {
     this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e);
-    this._onKeyUp = async (e: KeyboardEvent) => {
-      const command: (KeyCommand | null) = mapToCommand(e);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    this._onKeyUp = async (e: KeyboardEvent) => {};
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);

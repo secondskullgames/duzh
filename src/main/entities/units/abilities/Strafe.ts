@@ -1,8 +1,8 @@
+import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
 import { moveUnit } from '../../../actions/moveUnit';
-import { AbilityName } from './AbilityName';
 
 export const Strafe: UnitAbility = {
   name: AbilityName.STRAFE,

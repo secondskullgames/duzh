@@ -1,9 +1,9 @@
+import { moveUnit } from './moveUnit';
+import { moveObject } from './moveObject';
 import Unit from '../entities/units/Unit';
 import Block from '../entities/objects/Block';
 import Coordinates from '../geometry/Coordinates';
-import { moveUnit } from './moveUnit';
 import GameState from '../core/GameState';
-import { moveObject } from './moveObject';
 import ImageFactory from '../graphics/images/ImageFactory';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';

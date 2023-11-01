@@ -1,6 +1,6 @@
-import type { Animation } from './Animation';
 import { sleep } from '../../utils/promises';
 import MapInstance from '../../maps/MapInstance';
+import type { Animation } from './Animation';
 
 type Context = Readonly<{
   map: MapInstance
@@ -20,7 +20,7 @@ export const playAnimation = async (
       unit.setActivity(activity, frameNumber ?? 1, direction ?? unit.getDirection());
     }
 
-    if (!!frame.postDelay) {
+    if (frame.postDelay) {
       await sleep(frame.postDelay);
     }
 

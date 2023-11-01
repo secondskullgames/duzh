@@ -1,8 +1,8 @@
-import Unit from '../Unit';
 import { UnitController, type UnitControllerContext } from './UnitController';
+import { canMove } from './ControllerUtils';
+import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { manhattanDistance } from '../../../maps/MapUtils';
-import { canMove } from './ControllerUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
@@ -24,7 +24,7 @@ export default class ArcherController implements UnitController {
 
   private _getBehavior = (
     unit: Unit,
-    { state, map }: UnitControllerContext
+    { state }: UnitControllerContext
   ): UnitController => {
     const playerUnit = state.getPlayerUnit();
 
@@ -53,4 +53,4 @@ export default class ArcherController implements UnitController {
       }
     }
   }
-};
+}

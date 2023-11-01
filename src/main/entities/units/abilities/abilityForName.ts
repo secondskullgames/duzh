@@ -1,4 +1,3 @@
-import { checkNotNull } from '../../../utils/preconditions';
 import { type UnitAbility } from './UnitAbility';
 import { ShootBolt } from './ShootBolt';
 import { Dash } from './Dash';
@@ -15,6 +14,7 @@ import { AbilityName } from './AbilityName';
 import { MinorStunAttack } from './MinorStunAttack';
 import { ShootFireball } from './ShootFireball';
 import { Blink } from './Blink';
+import { checkNotNull } from '../../../utils/preconditions';
 
 const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.ATTACK]: NormalAttack,

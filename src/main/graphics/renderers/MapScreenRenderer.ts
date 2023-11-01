@@ -1,8 +1,7 @@
-import GameState from '../../core/GameState';
+import { RenderContext, Renderer } from './Renderer';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
-import { RenderContext, Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
@@ -66,7 +65,7 @@ export default class MapScreenRenderer implements Renderer {
         case 'STAIRS_DOWN':
           return Colors.BLUE;
         case 'FLOOR':
-        case 'FLOOR_HALL':
+        case 'FLOOR_HALL': {
           const unit = map.getUnit(coordinates);
           if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
             return Colors.RED;
@@ -74,6 +73,7 @@ export default class MapScreenRenderer implements Renderer {
             return Colors.YELLOW;
           }
           return Colors.LIGHT_GRAY;
+        }
         case 'WALL':
         case 'WALL_HALL':
           return Colors.DARK_GRAY;

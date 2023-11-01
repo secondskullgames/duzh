@@ -1,3 +1,4 @@
+import InventoryItem from './InventoryItem';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import { playSound } from '../sounds/playSound';
@@ -6,7 +7,6 @@ import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import { loadEquipmentModel, loadItemModel } from '../utils/models';
-import InventoryItem from './InventoryItem';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
@@ -15,9 +15,9 @@ import { playAnimation } from '../graphics/animations/playAnimation';
 import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
-import type { ItemProc, ItemProcContext } from './ItemProc';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
+import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
@@ -189,9 +189,10 @@ const createInventoryItem = async (
     case 'scroll': {
       const spell = model.params?.spell;
       switch (spell) {
-        case 'floor_fire':
+        case 'floor_fire': {
           const damage = parseInt(model.params?.damage ?? '0');
           return createScrollOfFloorFire(damage);
+        }
         default:
           throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);
       }

@@ -1,10 +1,10 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
-import Coordinates from '../../../geometry/Coordinates';
-import Offsets from '../../../geometry/Offsets';
-import { shuffle } from '../../../utils/random';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
+import Coordinates from '../../../geometry/Coordinates';
+import Offsets from '../../../geometry/Offsets';
+import { shuffle } from '../../../utils/random';
 import TileType from '../../../schemas/TileType';
 
 const generateTiles = (
@@ -85,11 +85,13 @@ const _addTilesForEmptyRegionConnections = (tiles: TileType[][], emptyRegionConn
       const secondConnection = connections.find(c => Connection.matches(c, connection.roomRegion, secondNeighbor)) || null;
 
       if (firstConnection === null || secondConnection === null) {
+        /* eslint-disable no-console */
         console.error('Failed to find connection');
         console.log(connections.map(Connection.toString).join(', '));
         console.log(neighbors.join(' '));
         console.log(firstNeighbor.rect);
         console.log(secondNeighbor.rect);
+        /* eslint-enable no-console */
         return;
       }
 

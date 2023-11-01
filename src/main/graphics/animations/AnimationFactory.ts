@@ -1,8 +1,8 @@
+import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
-import { Animation, AnimationFrame, UnitAnimationFrame } from './Animation';
 import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
@@ -227,6 +227,7 @@ export default {
   getFloorFireAnimation: async (
     source: Unit,
     targets: Unit[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     context: Context
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];

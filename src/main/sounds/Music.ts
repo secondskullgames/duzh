@@ -1,7 +1,7 @@
-import { randChoice } from '../utils/random';
 import { transpose8vb } from './AudioUtils';
 import SoundPlayer from './SoundPlayer';
 import { Figure, Suite } from './types';
+import { randChoice } from '../utils/random';
 
 let PLAYER: SoundPlayer | null = null;
 

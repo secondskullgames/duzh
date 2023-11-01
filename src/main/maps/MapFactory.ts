@@ -1,4 +1,3 @@
-import { loadGeneratedMapModel } from '../utils/models';
 import BlobMapGenerator from './generated/BlobMapGenerator';
 import AbstractMapGenerator from './generated/AbstractMapGenerator';
 import RoomCorridorMapGenerator from './generated/room_corridor/RoomCorridorMapGenerator';
@@ -7,11 +6,12 @@ import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCor
 import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
+import { buildPredefinedMap } from './predefined/buildPredefinedMap';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
-import { buildPredefinedMap } from './predefined/buildPredefinedMap';
+import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 
@@ -85,6 +85,7 @@ export default class MapFactory {
   }
 
   private _chooseMapStyle = (): MapStyle => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const layout = randChoice([
         //'ROOMS_AND_CORRIDORS',
@@ -100,4 +101,4 @@ export default class MapFactory {
       }
     }
   }
-};
+}

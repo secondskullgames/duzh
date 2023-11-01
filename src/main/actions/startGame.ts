@@ -1,6 +1,6 @@
 import { loadNextMap } from './loadNextMap';
-import Music from '../sounds/Music';
 import { updateRevealedTiles } from './updateRevealedTiles';
+import Music from '../sounds/Music';
 import GameState from '../core/GameState';
 
 type Context = Readonly<{
@@ -14,5 +14,6 @@ export const startGame = async ({ state }: Context) => {
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
   updateRevealedTiles({ state, map: state.getMap() });
   const t2 = new Date().getTime();
+  // eslint-disable-next-line no-console
   console.debug(`Loaded level in ${t2 - t1} ms`);
 };

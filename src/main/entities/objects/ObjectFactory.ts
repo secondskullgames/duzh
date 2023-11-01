@@ -1,18 +1,18 @@
-import type Coordinates from '../../geometry/Coordinates';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Spawner from './Spawner';
-import UnitFactory from '../units/UnitFactory';
 import GameObject from './GameObject';
 import Block from './Block';
+import Bonus, { OnUseContext } from './Bonus';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
-import Bonus, { OnUseContext } from './Bonus';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 

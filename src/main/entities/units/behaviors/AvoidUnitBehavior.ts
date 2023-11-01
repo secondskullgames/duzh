@@ -1,3 +1,4 @@
+import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
@@ -7,7 +8,6 @@ import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import StayOrder from '../orders/StayOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
-import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 import { AbilityName } from '../abilities/AbilityName';
 import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';

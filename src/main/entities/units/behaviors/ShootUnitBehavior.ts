@@ -1,10 +1,10 @@
+import AttackUnitBehavior from './AttackUnitBehavior';
+import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
-import AttackUnitBehavior from './AttackUnitBehavior';
-import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
 

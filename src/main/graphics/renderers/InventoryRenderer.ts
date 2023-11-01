@@ -1,12 +1,10 @@
-import GameState from '../../core/GameState';
+import { RenderContext, Renderer } from './Renderer';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';
-import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
-import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';

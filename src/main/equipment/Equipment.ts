@@ -1,10 +1,10 @@
+import { EquipmentScriptName } from './EquipmentScript';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { checkNotNull } from '../utils/preconditions';
-import { EquipmentScriptName } from './EquipmentScript';
 import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';

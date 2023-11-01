@@ -1,7 +1,7 @@
-import Ajv from 'ajv';
-import fs from 'fs/promises';
-import { test } from '@jest/globals';
 import { schemaNames } from '../main/utils/models';
+import Ajv, { AnySchema } from 'ajv';
+import { test } from '@jest/globals';
+import fs from 'fs/promises';
 
 const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   const allFilenames: string[] = [];
@@ -19,7 +19,7 @@ const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   return allFilenames;
 };
 
-const loadFile = async (filename: string): Promise<any> => {
+const loadFile = async (filename: string): Promise<AnySchema> => {
   const buffer = await fs.readFile(filename);
   return JSON.parse(buffer.toString('utf-8'));
 };
@@ -32,6 +32,7 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
     throw new Error(`Failed to load schema ${schemaName}`);
   }
   for (const dataFilename of dataFilenames) {
+    // eslint-disable-next-line no-console
     console.log(`Validating ${dataFilename}`);
     const data = await loadFile(dataFilename);
     const isValid = validate(data);
@@ -44,6 +45,7 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
 test('test validity of JSON data', async () => {
   for (const schemaName of schemaNames) {
     const filename = `src/gen-schema/${schemaName}.schema.json`;
+    // eslint-disable-next-line no-console
     console.log(`Loading schema ${filename}`);
     const schema = await loadFile(filename);
     ajv.addSchema(schema);

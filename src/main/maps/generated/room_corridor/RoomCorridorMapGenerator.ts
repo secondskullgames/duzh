@@ -1,12 +1,12 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
-import AbstractMapGenerator from '../AbstractMapGenerator';
-import EmptyMap from '../EmptyMap';
 import MapPruner from './MapPruner';
 import RegionConnector from './RegionConnector';
 import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
+import EmptyMap from '../EmptyMap';
+import AbstractMapGenerator from '../AbstractMapGenerator';
 import TileType from '../../../schemas/TileType';
 
 type Props = Readonly<{
@@ -75,6 +75,7 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
       Internal: ${emptyRegionConnections.map(connection => `${RoomRegion.toString(connection.roomRegion)}, ${connection.neighbors.length}`).join('; ')}
     `;
 
+    // eslint-disable-next-line no-console
     console.debug(debugOutput);
 
     // Compute the actual tiles based on region/connection specifications.

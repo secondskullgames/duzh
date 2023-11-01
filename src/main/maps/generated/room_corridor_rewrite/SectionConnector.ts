@@ -1,11 +1,11 @@
+import Connection from './Connection';
+import Section from './Section';
 import Coordinates from '../../../geometry/Coordinates';
 import Rect from '../../../geometry/Rect';
 import { Room } from '../../../types/types';
 import { max, min } from '../../../utils/arrays';
 import { checkNotNull } from '../../../utils/preconditions';
 import { randInt } from '../../../utils/random';
-import Connection from './Connection';
-import Section from './Section';
 
 interface SectionConnector {
   connectRecursively: (section: Section) => Section;

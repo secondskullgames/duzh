@@ -1,10 +1,10 @@
+import { Renderer } from './Renderer';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
-import { RenderContext, Renderer } from './Renderer';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
 
@@ -22,7 +22,7 @@ export default class HelpScreenRenderer implements Renderer {
     this.graphics = graphics;
   }
 
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async () => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;

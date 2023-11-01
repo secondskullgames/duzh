@@ -112,7 +112,6 @@ const _loadUnits = async (
         }
         const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
-          console.log(`starting point = (${x}, ${y})`);
           const playerUnit = state.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);

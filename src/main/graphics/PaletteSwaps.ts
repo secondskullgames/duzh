@@ -1,6 +1,6 @@
-import { checkNotNull } from '../utils/preconditions';
 import Color from './Color';
 import Colors from './Colors';
+import { checkNotNull } from '../utils/preconditions';
 
 export interface PaletteSwaps {
   entries: () => [Color, Color][],
