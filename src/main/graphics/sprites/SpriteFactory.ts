@@ -17,7 +17,7 @@ import ImageFactory from '../images/ImageFactory';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 type Context = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 /**
@@ -51,7 +51,7 @@ const createStaticSprite = async (
   const image = await imageFactory.getImage({
     filename,
     paletteSwaps,
-    transparentColor: (transparentColor) ? Colors[transparentColor] : null
+    transparentColor: transparentColor ? Colors[transparentColor] : null
   });
   return new StaticSprite(image, offsets);
 };
@@ -62,7 +62,9 @@ const createUnitSprite = async (
   { imageFactory }: Context
 ): Promise<DynamicSprite<Unit>> => {
   const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.UNITS);
-  const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps, { imageFactory });
+  const imageMap = await _loadAnimations(SpriteCategory.UNITS, model, paletteSwaps, {
+    imageFactory
+  });
 
   return new DynamicSprite<Unit>({
     paletteSwaps,
@@ -71,9 +73,15 @@ const createUnitSprite = async (
   });
 };
 
-const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps, { imageFactory }: Context) => {
+const createEquipmentSprite = async (
+  spriteName: string,
+  paletteSwaps: PaletteSwaps,
+  { imageFactory }: Context
+) => {
   const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.EQUIPMENT);
-  const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps, { imageFactory });
+  const imageMap = await _loadAnimations(SpriteCategory.EQUIPMENT, model, paletteSwaps, {
+    imageFactory
+  });
 
   return new DynamicSprite<Equipment>({
     paletteSwaps,
@@ -85,7 +93,12 @@ const createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSw
 /**
  * TODO - these aren't in JSON but hardcoded here
  */
-const createProjectileSprite = async (spriteName: string, direction: Direction, paletteSwaps: PaletteSwaps, { imageFactory }: Context) => {
+const createProjectileSprite = async (
+  spriteName: string,
+  direction: Direction,
+  paletteSwaps: PaletteSwaps,
+  { imageFactory }: Context
+) => {
   const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
   const offsets = (() => {
     switch (spriteName) {
@@ -107,7 +120,9 @@ const createProjectileSprite = async (spriteName: string, direction: Direction, 
 /**
  * TODO - hardcoded
  */
-const createDoorSprite = async ({ imageFactory }: Context): Promise<DynamicSprite<Door>> => {
+const createDoorSprite = async ({
+  imageFactory
+}: Context): Promise<DynamicSprite<Door>> => {
   const offsets = { dx: 0, dy: -24 };
   // TODO hardcoded
   const paletteSwaps = PaletteSwaps.builder()
@@ -135,15 +150,20 @@ const createDoorSprite = async ({ imageFactory }: Context): Promise<DynamicSprit
   });
 };
 
-const createMirrorSprite = async ({ imageFactory }: Context): Promise<DynamicSprite<Spawner>> => {
+const createMirrorSprite = async ({
+  imageFactory
+}: Context): Promise<DynamicSprite<Spawner>> => {
   const imageMap: Record<string, Image> = {};
   for (const state of SpawnerState.values()) {
     const key = `${state.toLowerCase()}`;
     const filename: string = (() => {
       switch (state) {
-        case 'ALIVE': return 'mirror';
-        case 'DEAD':  return 'mirror_broken';
-        default:      throw new Error(`Unknown mirror state ${state}`);
+        case 'ALIVE':
+          return 'mirror';
+        case 'DEAD':
+          return 'mirror_broken';
+        default:
+          throw new Error(`Unknown mirror state ${state}`);
       }
     })();
 
@@ -171,7 +191,8 @@ const _loadAnimations = async (
 
   for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
     for (const direction of Direction.values()) {
-      for (let i = 1; i <= animation.frames.length; i++) { // 1-indexed
+      for (let i = 1; i <= animation.frames.length; i++) {
+        // 1-indexed
         const frame = animation.frames[i - 1];
         const variables = {
           sprite: spriteModel.name,
@@ -180,17 +201,21 @@ const _loadAnimations = async (
           number: frame.number
         };
 
-        const patterns = animation.pattern ? [animation.pattern]
-          : spriteModel.patterns ? spriteModel.patterns
-          : spriteModel.pattern ? [spriteModel.pattern]
+        const patterns = animation.pattern
+          ? [animation.pattern]
+          : spriteModel.patterns
+          ? spriteModel.patterns
+          : spriteModel.pattern
+          ? [spriteModel.pattern]
           : [];
 
-        const filenames = patterns.map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
+        const filenames = patterns
+          .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
           .map(pattern => fillTemplate(pattern, variables));
 
         // TODO - can we get this into the sprite model?
         const effects: ImageEffect[] = [];
-        switch(animationName) {
+        switch (animationName) {
           case 'damaged':
             effects.push(ImageEffect.DAMAGED);
             break;
@@ -221,5 +246,5 @@ export default {
   createEquipmentSprite,
   createProjectileSprite,
   createDoorSprite,
-  createMirrorSprite,
+  createMirrorSprite
 };

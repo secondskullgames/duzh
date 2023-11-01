@@ -4,8 +4,8 @@ import { manhattanDistance } from '../maps/MapUtils';
 import { randChoice } from '../utils/random';
 
 interface Node extends Coordinates {
-  parent: Node | null,
-  cost: number
+  parent: Node | null;
+  cost: number;
 }
 
 class CoordinateSet {
@@ -25,8 +25,8 @@ class CoordinateSet {
 }
 
 type NodeWithCost = Readonly<{
-  node: Node,
-  cost: number
+  node: Node;
+  cost: number;
 }>;
 
 /**
@@ -51,7 +51,11 @@ const f = (node: Node, start: Coordinates, goal: Coordinates): number =>
 
 const traverseParents = (node: Node): Coordinates[] => {
   const path: Coordinates[] = [];
-  for (let currentNode: (Node | null) = node; currentNode; currentNode = currentNode.parent) {
+  for (
+    let currentNode: Node | null = node;
+    currentNode;
+    currentNode = currentNode.parent
+  ) {
     const coordinates = { x: currentNode.x, y: currentNode.y };
     path.splice(0, 0, coordinates); // add it at the beginning of the list
   }
@@ -62,14 +66,15 @@ const traverseParents = (node: Node): Coordinates[] => {
  * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
  */
 export default class Pathfinder {
-  private readonly _tileCostCalculator: (first: Coordinates, second: Coordinates) => number;
+  private readonly _tileCostCalculator: (
+    first: Coordinates,
+    second: Coordinates
+  ) => number;
 
   /**
    * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
    */
-  constructor(
-    tileCostCalculator: (first: Coordinates, second: Coordinates) => number
-  ) {
+  constructor(tileCostCalculator: (first: Coordinates, second: Coordinates) => number) {
     this._tileCostCalculator = tileCostCalculator;
   }
 
@@ -79,11 +84,13 @@ export default class Pathfinder {
    * @param tiles All allowable unblocked tiles
    * @return a path from {@code start} to {@code goal}, or an empty list if none was found
    */
-  findPath = (start: Coordinates, goal: Coordinates, tiles: Coordinates[]): Coordinates[] => {
+  findPath = (
+    start: Coordinates,
+    goal: Coordinates,
+    tiles: Coordinates[]
+  ): Coordinates[] => {
     const tileSet = new CoordinateSet(tiles);
-    const open: Node[] = [
-      { x: start.x, y: start.y, cost: 0, parent: null }
-    ];
+    const open: Node[] = [{ x: start.x, y: start.y, cost: 0, parent: null }];
     const closed = new CoordinateSet([]);
 
     // eslint-disable-next-line no-constant-condition
@@ -92,7 +99,8 @@ export default class Pathfinder {
         return [];
       }
 
-      const nodeCosts: NodeWithCost[] = open.map(node => ({ node, cost: f(node, start, goal) }))
+      const nodeCosts: NodeWithCost[] = open
+        .map(node => ({ node, cost: f(node, start, goal) }))
         .sort((a, b) => a.cost - b.cost);
 
       const bestNode = nodeCosts[0].node;
@@ -101,8 +109,11 @@ export default class Pathfinder {
         const path = traverseParents(bestNode);
         return path;
       } else {
-        const bestNodes: NodeWithCost[] = nodeCosts.filter(({ cost }) => cost === nodeCosts[0].cost);
-        const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost = randChoice(bestNodes);
+        const bestNodes: NodeWithCost[] = nodeCosts.filter(
+          ({ cost }) => cost === nodeCosts[0].cost
+        );
+        const { node: chosenNode, cost: chosenNodeCost }: NodeWithCost =
+          randChoice(bestNodes);
         open.splice(open.indexOf(chosenNode), 1);
         closed.add(chosenNode);
 
@@ -110,7 +121,9 @@ export default class Pathfinder {
         for (const neighbor of neighbors) {
           if (closed.includes(neighbor)) {
             // already been seen, don't need to look at it*
-          } else if (open.some(coordinates => Coordinates.equals(coordinates, neighbor))) {
+          } else if (
+            open.some(coordinates => Coordinates.equals(coordinates, neighbor))
+          ) {
             // don't need to look at it now, will look later?
           } else {
             const movementCost = this._tileCostCalculator(chosenNode, neighbor);

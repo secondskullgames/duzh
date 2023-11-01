@@ -3,7 +3,7 @@ import EmptyMap from './EmptyMap';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import { range } from '../../utils/arrays';
-import { randInt} from '../../utils/random';
+import { randInt } from '../../utils/random';
 import TileType from '../../schemas/TileType';
 
 class PathMapGenerator extends AbstractMapGenerator {
@@ -35,11 +35,18 @@ class PathMapGenerator extends AbstractMapGenerator {
       while (true) {
         const nextPoint = _randomEmptyTile(tiles);
         const allCoordinates: Coordinates[] = range(2, height - 2).flatMap(y =>
-          range(1, width - 2).map(x => ({ x, y })));
-        const path: Coordinates[] = pathfinder.findPath(lastPoint, nextPoint, allCoordinates);
+          range(1, width - 2).map(x => ({ x, y }))
+        );
+        const path: Coordinates[] = pathfinder.findPath(
+          lastPoint,
+          nextPoint,
+          allCoordinates
+        );
         if (path.length === 0) {
           // eslint-disable-next-line no-console
-          console.error(`No path from ${JSON.stringify(lastPoint)} to ${JSON.stringify(nextPoint)}`);
+          console.error(
+            `No path from ${JSON.stringify(lastPoint)} to ${JSON.stringify(nextPoint)}`
+          );
           //throw new Error();
           continue;
         }
@@ -73,7 +80,7 @@ const _randomEmptyTile = (tiles: TileType[][]): Coordinates => {
     const y = randInt(2, bottom - 1);
 
     if (tiles[y][x] === 'NONE') {
-        return { x, y };
+      return { x, y };
     }
   }
 };
@@ -86,10 +93,10 @@ const _addWalls = (tiles: TileType[][]) => {
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const tile = tiles[y][x];
-      const oneDown = (y < bottom) ? tiles[y + 1][x] : null;
-      const oneUp = (y > 0) ? tiles[y - 1][x] : null;
+      const oneDown = y < bottom ? tiles[y + 1][x] : null;
+      const oneUp = y > 0 ? tiles[y - 1][x] : null;
       if (tile === 'NONE' && oneDown === 'FLOOR') {
-        tiles[y][x] = (oneUp === 'FLOOR') ? 'FLOOR' : 'WALL';
+        tiles[y][x] = oneUp === 'FLOOR' ? 'FLOOR' : 'WALL';
       }
     }
   }

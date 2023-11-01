@@ -11,7 +11,7 @@ export default class PlayerUnitController implements UnitController {
 
   queueOrder = (order: UnitOrder) => {
     this.queuedOrder = order;
-  }
+  };
 
   /**
    * @override UnitController#issueOrder

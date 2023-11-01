@@ -75,4 +75,4 @@ export const ShootBolt: UnitAbility = {
       await playAnimation(boltAnimation, { map });
     }
   }
-}
+};

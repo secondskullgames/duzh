@@ -49,4 +49,4 @@ export const MinorStunAttack: UnitAbility = {
       targetUnit.setStunned(1);
     }
   }
-}
+};

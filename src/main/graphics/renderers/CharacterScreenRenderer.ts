@@ -12,8 +12,8 @@ const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
 type Props = Readonly<{
-  textRenderer: TextRenderer,
-  graphics: Graphics
+  textRenderer: TextRenderer;
+  graphics: Graphics;
 }>;
 
 export default class CharacterScreenRenderer implements Renderer {
@@ -40,14 +40,20 @@ export default class CharacterScreenRenderer implements Renderer {
     });
 
     await this._renderStatistics(context);
-  }
+  };
 
   private _renderStatistics = async (context: RenderContext) => {
     const { graphics } = this;
     const { state } = context;
     const playerUnit = state.getPlayerUnit();
     let top = 20;
-    await this._drawText('Character Statistics', FontName.APPLE_II, { x: graphics.getWidth() / 2, y: top }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText(
+      'Character Statistics',
+      FontName.APPLE_II,
+      { x: graphics.getWidth() / 2, y: top },
+      Colors.WHITE,
+      Alignment.CENTER
+    );
 
     top += 20;
 
@@ -57,7 +63,13 @@ export default class CharacterScreenRenderer implements Renderer {
         `Dexterity: ${playerUnit.getDexterity()}`
       ];
       for (const line of lines) {
-        await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+        await this._drawText(
+          line,
+          FontName.APPLE_II,
+          { x: 20, y: top },
+          Colors.WHITE,
+          Alignment.LEFT
+        );
         top += LINE_HEIGHT;
       }
     }
@@ -73,13 +85,25 @@ export default class CharacterScreenRenderer implements Renderer {
         `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
       ];
       for (const line of lines) {
-        await this._drawText(line, FontName.APPLE_II, { x: 20, y: top }, Colors.WHITE, Alignment.LEFT);
+        await this._drawText(
+          line,
+          FontName.APPLE_II,
+          { x: 20, y: top },
+          Colors.WHITE,
+          Alignment.LEFT
+        );
         top += LINE_HEIGHT;
       }
     }
-  }
+  };
 
-  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment
+  ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.graphics, pixel, textAlign);
   };

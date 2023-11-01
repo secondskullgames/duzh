@@ -12,6 +12,4 @@ const playSound = (soundEffect: SoundEffect) => {
   PLAYER.playSound(soundEffect, false);
 };
 
-export {
-  playSound
-};
+export { playSound };

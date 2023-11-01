@@ -3,9 +3,9 @@ import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  sprite: Sprite,
-  movable: boolean
+  coordinates: Coordinates;
+  sprite: Sprite;
+  movable: boolean;
 }>;
 
 export default class Block extends GameObject {

@@ -9,7 +9,7 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
 
 type Props = Readonly<{
-  targetUnit: Unit
+  targetUnit: Unit;
 }>;
 
 export default class ShootUnitBehavior implements UnitBehavior {
@@ -20,15 +20,12 @@ export default class ShootUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (
-    unit: Unit,
-    { state, map }: UnitBehaviorContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { state, map }: UnitBehaviorContext): UnitOrder => {
     const { targetUnit } = this;
 
     if (
-      manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1
-      && this._canShoot(unit, targetUnit, { map })
+      manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1 &&
+      this._canShoot(unit, targetUnit, { map })
     ) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
@@ -46,13 +43,15 @@ export default class ShootUnitBehavior implements UnitBehavior {
     targetUnit: Unit,
     { map }: Pick<UnitBehaviorContext, 'map'>
   ): boolean => {
-    return unit.getEquipment().getBySlot('RANGED_WEAPON') !== null
-      && unit.getMana() >= ShootArrow.manaCost
-      && isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates())
-      && hasUnblockedStraightLineBetween(
+    return (
+      unit.getEquipment().getBySlot('RANGED_WEAPON') !== null &&
+      unit.getMana() >= ShootArrow.manaCost &&
+      isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
+      hasUnblockedStraightLineBetween(
         unit.getCoordinates(),
         targetUnit.getCoordinates(),
         { map }
-      );
-  }
+      )
+    );
+  };
 }

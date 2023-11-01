@@ -1,11 +1,11 @@
 type TileSetModel = {
-  path: string,
+  path: string;
   tiles: {
-    [key: string]: (string | null)[],
-  },
+    [key: string]: (string | null)[];
+  };
   paletteSwaps?: {
-    [key: string]: string
-  }
+    [key: string]: string;
+  };
 };
 
 export default TileSetModel;

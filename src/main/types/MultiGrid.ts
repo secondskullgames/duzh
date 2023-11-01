@@ -2,14 +2,14 @@ import Coordinates from '../geometry/Coordinates';
 import { checkArgument, checkState } from '../utils/preconditions';
 
 type Props = Readonly<{
-  width: number,
-  height: number
+  width: number;
+  height: number;
 }>;
 
 export default class MultiGrid<T> {
   private readonly width: number;
   private readonly height: number;
-  private readonly array: (T[])[][];
+  private readonly array: T[][][];
 
   constructor({ width, height }: Props) {
     this.width = width;
@@ -49,6 +49,6 @@ export default class MultiGrid<T> {
   };
 
   private _contains = ({ x, y }: Coordinates): boolean => {
-    return (x >= 0 && x < this.width) && (y >= 0 && y < this.height);
+    return x >= 0 && x < this.width && y >= 0 && y < this.height;
   };
 }

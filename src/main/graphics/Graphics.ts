@@ -30,13 +30,13 @@ class CanvasGraphics implements Graphics {
     const { context } = this;
     context.fillStyle = color.hex;
     context.fillRect(rect.left, rect.top, rect.width, rect.height);
-  }
+  };
 
   fill = (color: Color) => {
     const { canvas } = this;
     const rect = { left: 0, top: 0, width: canvas.width, height: canvas.height };
     this.fillRect(rect, color);
-  }
+  };
 
   drawImage = (image: Image, topLeft: Pixel) => {
     this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
@@ -56,7 +56,7 @@ class CanvasGraphics implements Graphics {
 
   putImageData = (imageData: ImageData, topLeft: Pixel) => {
     this.context.putImageData(imageData, topLeft.x, topLeft.y);
-  }
+  };
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;
@@ -79,13 +79,13 @@ class OffscreenCanvasGraphics implements Graphics {
     const { context } = this;
     context.fillStyle = color.hex;
     context.fillRect(rect.left, rect.top, rect.width, rect.height);
-  }
+  };
 
   fill = (color: Color) => {
     const { canvas } = this;
     const rect = { left: 0, top: 0, width: canvas.width, height: canvas.height };
     this.fillRect(rect, color);
-  }
+  };
 
   drawImage = (image: Image, topLeft: Pixel) => {
     this.context.drawImage(image.bitmap, topLeft.x, topLeft.y);
@@ -105,7 +105,7 @@ class OffscreenCanvasGraphics implements Graphics {
 
   putImageData = (imageData: ImageData, topLeft: Pixel) => {
     this.context.putImageData(imageData, topLeft.x, topLeft.y);
-  }
+  };
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;

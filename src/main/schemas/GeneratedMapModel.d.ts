@@ -1,14 +1,14 @@
 type GeneratedMapModel = {
-  levelNumber: number,
-  width: number,
-  height: number,
-  pointAllocation: GeneratedMapModel_PointAllocation
+  levelNumber: number;
+  width: number;
+  height: number;
+  pointAllocation: GeneratedMapModel_PointAllocation;
 };
 
 type GeneratedMapModel_PointAllocation = {
-  enemies: number,
-  equipment: number,
-  items: number
+  enemies: number;
+  equipment: number;
+  items: number;
 };
 
 export default GeneratedMapModel;

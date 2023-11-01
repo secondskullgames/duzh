@@ -1,6 +1,6 @@
 type Direction = Readonly<{
-  dx: -1 | 0 | 1,
-  dy: -1 | 0 | 1
+  dx: -1 | 0 | 1;
+  dy: -1 | 0 | 1;
 }>;
 
 type DirectionName = 'N' | 'E' | 'S' | 'W';
@@ -23,7 +23,8 @@ namespace Direction {
 
   export const values = (): Direction[] => [N, E, S, W];
 
-  export const equals = (first: Direction, second: Direction) => first.dx === second.dx && first.dy === second.dy;
+  export const equals = (first: Direction, second: Direction) =>
+    first.dx === second.dx && first.dy === second.dy;
 
   export const toString = (direction: Direction) => {
     if (equals(direction, Direction.N)) {
@@ -40,10 +41,10 @@ namespace Direction {
 
   export const toLegacyDirection = (direction: Direction): string => {
     const lookup: Record<DirectionName, string> = {
-      'N': 'NW',
-      'E': 'NE',
-      'S': 'SE',
-      'W': 'SW'
+      N: 'NW',
+      E: 'NE',
+      S: 'SE',
+      W: 'SW'
     };
     return lookup[_getName(direction)];
   };
@@ -52,11 +53,16 @@ namespace Direction {
     const directionName = _getName(direction);
     const rotated: DirectionName = (() => {
       switch (directionName) {
-        case 'N': return 'E';
-        case 'E': return 'S';
-        case 'S': return 'W';
-        case 'W': return 'N';
-        default:  throw new Error(`Unknown direction ${directionName}`);
+        case 'N':
+          return 'E';
+        case 'E':
+          return 'S';
+        case 'S':
+          return 'W';
+        case 'W':
+          return 'N';
+        default:
+          throw new Error(`Unknown direction ${directionName}`);
       }
     })();
     return _nameToDirection[rotated];
@@ -66,11 +72,16 @@ namespace Direction {
     const directionName = _getName(direction);
     const rotated: DirectionName = (() => {
       switch (directionName) {
-        case 'N': return 'W';
-        case 'E': return 'N';
-        case 'S': return 'E';
-        case 'W': return 'S';
-        default:  throw new Error(`Unknown direction ${directionName}`);
+        case 'N':
+          return 'W';
+        case 'E':
+          return 'N';
+        case 'S':
+          return 'E';
+        case 'W':
+          return 'S';
+        default:
+          throw new Error(`Unknown direction ${directionName}`);
       }
     })();
     return _nameToDirection[rotated];

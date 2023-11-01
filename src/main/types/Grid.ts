@@ -2,8 +2,8 @@ import Coordinates from '../geometry/Coordinates';
 import { checkArgument, checkState } from '../utils/preconditions';
 
 type Props = Readonly<{
-  width: number,
-  height: number
+  width: number;
+  height: number;
 }>;
 
 export default class Grid<T> {
@@ -42,11 +42,10 @@ export default class Grid<T> {
   };
 
   getAll = (): T[] => {
-    return Object.values(this.array)
-      .flatMap(row => row);
+    return Object.values(this.array).flatMap(row => row);
   };
 
   contains = ({ x, y }: Coordinates): boolean => {
-    return (x >= 0 && x < this.width) && (y >= 0 && y < this.height);
+    return x >= 0 && x < this.width && y >= 0 && y < this.height;
   };
 }

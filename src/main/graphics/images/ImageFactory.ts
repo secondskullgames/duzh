@@ -7,11 +7,11 @@ import PaletteSwaps from '../PaletteSwaps';
 import Color from '../Color';
 
 type Props = Readonly<{
-  filename?: string,
-  filenames?: string[]
-  transparentColor?: Color | null,
-  paletteSwaps?: PaletteSwaps,
-  effects?: ImageEffect[]
+  filename?: string;
+  filenames?: string[];
+  transparentColor?: Color | null;
+  paletteSwaps?: PaletteSwaps;
+  effects?: ImageEffect[];
 }>;
 
 const CACHE: ImageCache = ImageCache.create();
@@ -52,7 +52,7 @@ export default class ImageFactory {
         if (paletteSwaps) {
           imageData = replaceColors(imageData, paletteSwaps);
         }
-        for (const effect of (effects ?? [])) {
+        for (const effect of effects ?? []) {
           imageData = effect.apply(imageData);
         }
         const image = await Image.create({ imageData, filename });

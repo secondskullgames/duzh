@@ -5,7 +5,7 @@ import Direction from '../../../geometry/Direction';
 import { fastMove } from '../../../actions/fastMove';
 
 type Props = Readonly<{
-  direction: Direction
+  direction: Direction;
 }>;
 
 export class FastMoveOrder implements UnitOrder {
@@ -32,5 +32,5 @@ export class FastMoveOrder implements UnitOrder {
     }
 
     return fastMove(unit, direction, { state, map, imageFactory, ticker });
-  }
+  };
 }

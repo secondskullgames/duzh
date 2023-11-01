@@ -14,7 +14,7 @@ import { abilityForName } from '../abilities/abilityForName';
 import { Dash } from '../abilities/Dash';
 
 type Props = Readonly<{
-  targetUnit: Unit
+  targetUnit: Unit;
 }>;
 
 export default class AttackUnitBehavior implements UnitBehavior {
@@ -25,10 +25,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (
-    unit: Unit,
-    { map }: UnitBehaviorContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const { targetUnit } = this;
     const mapRect = map.getRect();
     const unblockedTiles: Coordinates[] = [];
@@ -46,11 +43,15 @@ export default class AttackUnitBehavior implements UnitBehavior {
       }
     }
 
-    const path: Coordinates[] = new Pathfinder(() => 1).findPath(unit.getCoordinates(), targetUnit.getCoordinates(), unblockedTiles);
+    const path: Coordinates[] = new Pathfinder(() => 1).findPath(
+      unit.getCoordinates(),
+      targetUnit.getCoordinates(),
+      unblockedTiles
+    );
 
     if (path.length > 1) {
       const coordinates = path[1]; // first tile is the unit's own tile
-      const second = path[2]
+      const second = path[2];
       if (this._canDash(unit, second, { map })) {
         return new AbilityOrder({
           ability: abilityForName(AbilityName.DASH),
@@ -77,7 +78,8 @@ export default class AttackUnitBehavior implements UnitBehavior {
       AbilityName.STUN_ATTACK
     ];
 
-    const possibleAbilities = unit.getAbilities()
+    const possibleAbilities = unit
+      .getAbilities()
       .filter(ability => allowedSpecialAbilityNames.includes(ability.name))
       .filter(ability => unit.getMana() >= ability.manaCost);
 
@@ -85,7 +87,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       return randChoice(possibleAbilities);
     }
     return NormalAttack;
-  }
+  };
 
   private _canDash = (
     unit: Unit,
@@ -100,11 +102,11 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const plusOne = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
       const plusTwo = Coordinates.plus(plusOne, unit.getDirection());
       return (
-        map.contains(plusOne)
-        && map.contains(plusTwo)
-        && !map.isBlocked(plusOne)
-        && !map.isBlocked(plusTwo)
-        && Coordinates.equals(coordinates, plusTwo)
+        map.contains(plusOne) &&
+        map.contains(plusTwo) &&
+        !map.isBlocked(plusOne) &&
+        !map.isBlocked(plusTwo) &&
+        Coordinates.equals(coordinates, plusTwo)
       );
     }
     return false;

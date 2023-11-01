@@ -19,11 +19,12 @@ test('adds and removes a unit', () => {
   expect(map.unitExists(unit)).toBe(false);
 });
 
-const _emptyMap = (): MapInstance => new MapInstance({
-  width: 10,
-  height: 10,
-  tiles: [],
-  units: [],
-  objects: [],
-  music: null
-})
+const _emptyMap = (): MapInstance =>
+  new MapInstance({
+    width: 10,
+    height: 10,
+    tiles: [],
+    units: [],
+    objects: [],
+    music: null
+  });

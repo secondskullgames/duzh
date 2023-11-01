@@ -6,8 +6,8 @@ import GameState from '../core/GameState';
 import Ticker from '../core/Ticker';
 
 type Context = Readonly<{
-  state: GameState,
-  ticker: Ticker
+  state: GameState;
+  ticker: Ticker;
 }>;
 
 export const pickupItem = (unit: Unit, mapItem: MapItem, { state, ticker }: Context) => {

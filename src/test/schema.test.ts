@@ -37,7 +37,9 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
     const data = await loadFile(dataFilename);
     const isValid = validate(data);
     if (!isValid) {
-      throw new Error(`Failed to validate ${dataFilename}:\n${JSON.stringify(validate.errors, null, 4)}`);
+      throw new Error(
+        `Failed to validate ${dataFilename}:\n${JSON.stringify(validate.errors, null, 4)}`
+      );
     }
   }
 };
@@ -52,11 +54,17 @@ test('test validity of JSON data', async () => {
   }
   await validate('UnitModel', await getFilenamesRecursive('data/units'));
   await validate('EquipmentModel', await getFilenamesRecursive('data/equipment'));
-  await validate('PredefinedMapModel', await getFilenamesRecursive('data/maps/predefined'));
+  await validate(
+    'PredefinedMapModel',
+    await getFilenamesRecursive('data/maps/predefined')
+  );
   await validate('GeneratedMapModel', await getFilenamesRecursive('data/maps/generated'));
   await validate('StaticSpriteModel', await getFilenamesRecursive('data/sprites/static'));
   await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/units'));
-  await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/equipment'));
+  await validate(
+    'DynamicSpriteModel',
+    await getFilenamesRecursive('data/sprites/equipment')
+  );
   await validate('TileSetModel', await getFilenamesRecursive('data/tilesets'));
   await validate('ConsumableItemModel', await getFilenamesRecursive('data/items'));
 });

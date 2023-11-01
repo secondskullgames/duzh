@@ -5,12 +5,13 @@ import Rect from '../../../geometry/Rect';
 
 type RoomRegion = {
   // these are in absolute coordinates
-  rect: Rect,
-  roomRect: Rect | null
+  rect: Rect;
+  roomRect: Rect | null;
 };
 
 namespace RoomRegion {
-  export const toString = ({ rect: { left, top, width, height } }: RoomRegion) => `(${left}, ${top}, ${width}, ${height})`;
+  export const toString = ({ rect: { left, top, width, height } }: RoomRegion) =>
+    `(${left}, ${top}, ${width}, ${height})`;
 }
 
 export default RoomRegion;

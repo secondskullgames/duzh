@@ -18,23 +18,23 @@ import MapFactory from '../maps/MapFactory';
 import type { KeyCommand } from './inputTypes';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
-  [GameScreen.NONE]:      { handleKeyCommand: async () => {} },
+  [GameScreen.NONE]: { handleKeyCommand: async () => {} },
   [GameScreen.CHARACTER]: CharacterScreenInputHandler,
-  [GameScreen.GAME]:      GameScreenInputHandler,
+  [GameScreen.GAME]: GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
-  [GameScreen.HELP]:      HelpScreenInputHandler,
+  [GameScreen.HELP]: HelpScreenInputHandler,
   [GameScreen.INVENTORY]: InventoryScreenInputHandler,
-  [GameScreen.LEVEL_UP]:  LevelUpScreenInputHandler,
-  [GameScreen.MAP]:       MapScreenInputHandler,
-  [GameScreen.TITLE]:     TitleScreenInputHandler,
-  [GameScreen.VICTORY]:   VictoryScreenInputHandler
+  [GameScreen.LEVEL_UP]: LevelUpScreenInputHandler,
+  [GameScreen.MAP]: MapScreenInputHandler,
+  [GameScreen.TITLE]: TitleScreenInputHandler,
+  [GameScreen.VICTORY]: VictoryScreenInputHandler
 };
 
 type Props = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  mapFactory: MapFactory,
-  ticker: Ticker
+  state: GameState;
+  imageFactory: ImageFactory;
+  mapFactory: MapFactory;
+  ticker: Ticker;
 }>;
 
 export default class InputHandler {
@@ -73,7 +73,7 @@ export default class InputHandler {
   };
 
   keyHandler = async (event: KeyboardEvent) => {
-    const command: (KeyCommand | null) = mapToCommand(event);
+    const command: KeyCommand | null = mapToCommand(event);
 
     if (!command) {
       return;

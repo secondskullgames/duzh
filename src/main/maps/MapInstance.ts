@@ -10,12 +10,12 @@ import type { Figure } from '../sounds/types';
 import type Rect from '../geometry/Rect';
 
 type Props = Readonly<{
-  width: number,
-  height: number,
-  tiles: Tile[][],
-  units: Unit[],
-  objects: GameObject[],
-  music: Figure[] | null
+  width: number;
+  height: number;
+  tiles: Tile[][];
+  units: Unit[];
+  objects: GameObject[];
+  music: Figure[] | null;
 }>;
 
 export default class MapInstance {
@@ -28,14 +28,7 @@ export default class MapInstance {
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
 
-  constructor({
-    width,
-    height,
-    tiles,
-    units,
-    objects,
-    music
-  }: Props) {
+  constructor({ width, height, tiles, units, objects, music }: Props) {
     this.width = width;
     this.height = height;
     this.units = new Grid({ width, height });
@@ -66,9 +59,9 @@ export default class MapInstance {
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
-  getUnit = (coordinates: Coordinates): (Unit | null) => {
+  getUnit = (coordinates: Coordinates): Unit | null => {
     return this.units.get(coordinates);
-  }
+  };
 
   getAllUnits = (): Unit[] => this.units.getAll();
 
@@ -78,12 +71,13 @@ export default class MapInstance {
 
   getAllObjects = (): GameObject[] => this.objects.getAll();
 
-  getProjectile = (coordinates: Coordinates): (Projectile | null) =>
-    [...this.projectiles].find(projectile => Coordinates.equals(projectile.getCoordinates(), coordinates)) ?? null;
+  getProjectile = (coordinates: Coordinates): Projectile | null =>
+    [...this.projectiles].find(projectile =>
+      Coordinates.equals(projectile.getCoordinates(), coordinates)
+    ) ?? null;
 
   contains = ({ x, y }: Coordinates): boolean =>
-    (x >= 0 && x < this.width)
-    && (y >= 0 && y < this.height);
+    x >= 0 && x < this.width && y >= 0 && y < this.height;
 
   isBlocked = (coordinates: Coordinates): boolean => {
     const { x, y } = coordinates;
@@ -133,12 +127,11 @@ export default class MapInstance {
   isTileRevealed = (coordinates: Coordinates): boolean =>
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    window.jwb?.debug?.isMapRevealed()
-      || !!this.revealedTiles.get(coordinates);
+    window.jwb?.debug?.isMapRevealed() || !!this.revealedTiles.get(coordinates);
 
   revealTile = (coordinates: Coordinates) => {
     this.revealedTiles.put(coordinates, true);
-  }
+  };
 
   unitExists = (unit: Unit): boolean => {
     const coordinates = unit.getCoordinates();

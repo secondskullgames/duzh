@@ -1,7 +1,7 @@
 import UnitOrder, { type OrderContext } from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { UnitAbility} from '../abilities/UnitAbility';
+import { UnitAbility } from '../abilities/UnitAbility';
 import { pointAt } from '../../../utils/geometry';
 import { walk } from '../../../actions/walk';
 import { openDoor } from '../../../actions/openDoor';
@@ -10,8 +10,8 @@ import { attackObject } from '../../../actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  ability: UnitAbility
+  coordinates: Coordinates;
+  ability: UnitAbility;
 }>;
 
 export class AttackMoveOrder implements UnitOrder {
@@ -65,5 +65,5 @@ export class AttackMoveOrder implements UnitOrder {
         }
       }
     }
-  }
+  };
 }

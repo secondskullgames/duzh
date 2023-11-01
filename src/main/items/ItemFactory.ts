@@ -27,10 +27,9 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
-    ticker.log(
-      `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
-      { turn: state.getTurn() }
-    );
+    ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
+      turn: state.getTurn()
+    });
   };
 
   return new InventoryItem({
@@ -48,10 +47,9 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
-    ticker.log(
-      `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
-      { turn: state.getTurn() }
-    );
+    ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
+      turn: state.getTurn()
+    });
   };
 
   return new InventoryItem({
@@ -78,20 +76,21 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     { state, map, imageFactory, ticker }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
-    const adjacentUnits: Unit[] = map.getAllUnits()
-      .filter(u => {
-        const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
-        return ([-1,0,1].includes(dx))
-          && ([-1,0,1].includes(dy))
-          && !(dx === 0 && dy === 0);
-      });
+    const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
+      const { dx, dy } = Coordinates.difference(
+        unit.getCoordinates(),
+        u.getCoordinates()
+      );
+      return (
+        [-1, 0, 1].includes(dx) && [-1, 0, 1].includes(dy) && !(dx === 0 && dy === 0)
+      );
+    });
 
     playSound(Sounds.PLAYER_HITS_ENEMY);
-    const animation = await AnimationFactory.getFloorFireAnimation(
-      unit,
-      adjacentUnits,
-      { map, imageFactory }
-    );
+    const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
+      map,
+      imageFactory
+    });
     await playAnimation(animation, { map });
 
     for (const adjacentUnit of adjacentUnits) {
@@ -114,7 +113,9 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   });
 };
 
-const createInventoryEquipment = async (equipmentClass: string): Promise<InventoryItem> => {
+const createInventoryEquipment = async (
+  equipmentClass: string
+): Promise<InventoryItem> => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
@@ -133,7 +134,7 @@ const createInventoryEquipment = async (equipmentClass: string): Promise<Invento
 };
 
 type CreateMapEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createMapEquipment = async (
@@ -152,10 +153,13 @@ const createMapEquipment = async (
 };
 
 type CreateEquipmentContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
-const createEquipment = async (equipmentClass: string, { imageFactory }: CreateEquipmentContext): Promise<Equipment> => {
+const createEquipment = async (
+  equipmentClass: string,
+  { imageFactory }: CreateEquipmentContext
+): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
   const sprite = await SpriteFactory.createEquipmentSprite(
@@ -203,7 +207,7 @@ const createInventoryItem = async (
 };
 
 type CreateMapItemContext = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createMapItem = async (
@@ -222,30 +226,22 @@ const createMapItem = async (
 };
 
 const loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
-  const requireContext = require.context(
-    '../../../data/items',
-    false,
-    /\.json$/i
-  );
+  const requireContext = require.context('../../../data/items', false, /\.json$/i);
 
   const models: ConsumableItemModel[] = [];
   for (const filename of requireContext.keys()) {
-    const model = await requireContext(filename) as ConsumableItemModel;
+    const model = (await requireContext(filename)) as ConsumableItemModel;
     models.push(model);
   }
   return models;
 };
 
 const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
-  const requireContext = require.context(
-    '../../../data/equipment',
-    false,
-    /\.json$/i
-  );
+  const requireContext = require.context('../../../data/equipment', false, /\.json$/i);
 
   const models: EquipmentModel[] = [];
   for (const filename of requireContext.keys()) {
-    const model = await requireContext(filename) as EquipmentModel;
+    const model = (await requireContext(filename)) as EquipmentModel;
     models.push(model);
   }
   return models;

@@ -6,10 +6,7 @@ import GameObject, { ObjectType } from '../entities/objects/GameObject';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 
-export const attackObject = async (
-  unit: Unit,
-  target: GameObject
-) => {
+export const attackObject = async (unit: Unit, target: GameObject) => {
   playSound(Sounds.SPECIAL_ATTACK);
   unit.setActivity(Activity.ATTACKING, 1, unit.getDirection());
   await sleep(300);
@@ -18,4 +15,4 @@ export const attackObject = async (
     spawner.setState(SpawnerState.DEAD);
   }
   unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-}
+};

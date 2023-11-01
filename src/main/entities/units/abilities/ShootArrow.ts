@@ -80,4 +80,4 @@ export const ShootArrow: UnitAbility = {
       await playAnimation(arrowAnimation, { map });
     }
   }
-}
+};

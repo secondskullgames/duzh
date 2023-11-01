@@ -7,7 +7,7 @@ import TileFactory from '../../tiles/TileFactory';
 import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Context = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 abstract class AbstractMapGenerator {
@@ -22,10 +22,7 @@ abstract class AbstractMapGenerator {
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
-    const tileSet = await TileFactory.getTileSet(
-      tileSetId,
-      { imageFactory }
-    );
+    const tileSet = await TileFactory.getTileSet(tileSetId, { imageFactory });
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -59,7 +56,11 @@ abstract class AbstractMapGenerator {
 
   protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
 
-  private _generateEmptyMap = (width: number, height: number, level: number): EmptyMap => {
+  private _generateEmptyMap = (
+    width: number,
+    height: number,
+    level: number
+  ): EmptyMap => {
     const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       const t1 = new Date().getTime();
@@ -77,7 +78,9 @@ abstract class AbstractMapGenerator {
         return map;
       } else {
         // eslint-disable-next-line no-console
-        console.error(`Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`);
+        console.error(
+          `Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`
+        );
         //console.error(`Generated invalid tiles for level ${level}, won't regenerate`);
         //return map;
       }
@@ -95,8 +98,7 @@ abstract class AbstractMapGenerator {
    * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
    * which we are no longer doing.
    */
-  private _validateTiles = (map: EmptyMap): boolean =>
-    this._validateWallPlacement(map);
+  private _validateTiles = (map: EmptyMap): boolean => this._validateWallPlacement(map);
 
   /**
    * Validate that walls are placed correctly:
@@ -112,7 +114,7 @@ abstract class AbstractMapGenerator {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
             // eslint-disable-next-line no-console
-            console.warn('Invalid map: can\'t place a wall at the top of the map');
+            console.warn("Invalid map: can't place a wall at the top of the map");
             return false;
           }
           const oneUp = map.tiles[y - 1][x];
@@ -123,7 +125,7 @@ abstract class AbstractMapGenerator {
           } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== 'WALL_TOP' && twoUp !== 'NONE') {
               // eslint-disable-next-line no-console
-              console.warn('Invalid map: can\'t show a wall without a tile for its top');
+              console.warn("Invalid map: can't show a wall without a tile for its top");
               return false;
             }
           }

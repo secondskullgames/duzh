@@ -5,7 +5,7 @@ import GameState from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState;
 }>;
 
 export const gameOver = async ({ state }: Context) => {

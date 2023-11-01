@@ -6,7 +6,7 @@ import Projectile from '../Projectile';
 import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Props = Readonly<{
-  imageFactory: ImageFactory
+  imageFactory: ImageFactory;
 }>;
 
 const createArrow = async (
@@ -43,9 +43,9 @@ const createBolt = async (
     direction,
     sprite
   });
-}
+};
 
 export default {
   createArrow,
   createBolt
-}
+};

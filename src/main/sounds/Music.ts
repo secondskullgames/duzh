@@ -16,7 +16,7 @@ const playSuite = (suite: Suite) => {
 
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i];
-    const bass = (section.bass) ? randChoice(section.bass) : null;
+    const bass = section.bass ? randChoice(section.bass) : null;
     let lead: Figure | null;
     if (section.lead) {
       do {
@@ -25,17 +25,20 @@ const playSuite = (suite: Suite) => {
     }
 
     for (let j = 0; j < numRepeats; j++) {
-      setTimeout(() => {
-        if (ACTIVE_MUSIC === suite) {
-          const figures = [
-            ...(bass ? [bass.map(transpose8vb)] : []),
-            ...(lead ? [lead] : [])
-          ];
-          for (const figure of figures) {
-            playFigure(figure);
+      setTimeout(
+        () => {
+          if (ACTIVE_MUSIC === suite) {
+            const figures = [
+              ...(bass ? [bass.map(transpose8vb)] : []),
+              ...(lead ? [lead] : [])
+            ];
+            for (const figure of figures) {
+              playFigure(figure);
+            }
           }
-        }
-      }, ((numRepeats * i) + j) * suite.length);
+        },
+        (numRepeats * i + j) * suite.length
+      );
     }
   }
 
@@ -82,11 +85,13 @@ const stop = () => {
 };
 
 const loadMusic = async (filename: string): Promise<Figure[]> =>
-  (await import(
-    /* webpackMode: "lazy-once" */
-    /* webpackChunkName: "models" */
-    `../../../data/music/${filename}.json`
-  )).default;
+  (
+    await import(
+      /* webpackMode: "lazy-once" */
+      /* webpackChunkName: "models" */
+      `../../../data/music/${filename}.json`
+    )
+  ).default;
 
 export default {
   loadMusic,

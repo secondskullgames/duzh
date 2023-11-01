@@ -9,13 +9,18 @@ import ItemFactory from '../items/ItemFactory';
 import Ticker from '../core/Ticker';
 
 type Context = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  mapFactory: MapFactory,
-  ticker: Ticker
+  state: GameState;
+  imageFactory: ImageFactory;
+  mapFactory: MapFactory;
+  ticker: Ticker;
 }>;
 
-export const addInitialState = async ({ state, imageFactory, mapFactory, ticker }: Context) => {
+export const addInitialState = async ({
+  state,
+  imageFactory,
+  mapFactory,
+  ticker
+}: Context) => {
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });
@@ -29,15 +34,18 @@ export const addInitialState = async ({ state, imageFactory, mapFactory, ticker 
     }
   }
   state.setPlayerUnit(playerUnit);
-  const mapSpecs = (await import(
-    /* webpackChunkName: "models" */
-    `../../../data/maps.json`
-    )).default as MapSpec[];
+  const mapSpecs = (
+    await import(
+      /* webpackChunkName: "models" */
+      `../../../data/maps.json`
+    )
+  ).default as MapSpec[];
   const maps: MapSupplier[] = mapSpecs.map(spec => {
-    return () => mapFactory.loadMap(spec, {
-      state,
-      imageFactory
-    });
+    return () =>
+      mapFactory.loadMap(spec, {
+        state,
+        imageFactory
+      });
   });
   state.addMaps(maps);
 };

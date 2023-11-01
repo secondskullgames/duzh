@@ -10,10 +10,7 @@ import StayOrder from '../orders/StayOrder';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (
-    unit: Unit,
-    { map }: UnitBehaviorContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {

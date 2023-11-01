@@ -7,10 +7,10 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export const playTurn = async ({ state, map, imageFactory, ticker }: Context) => {
@@ -33,7 +33,5 @@ export const playTurn = async ({ state, map, imageFactory, ticker }: Context) =>
  * Sort the list of units such that the player unit is first in the order,
  * and other units appear in unspecified order
  */
-const _sortUnits = (units: Unit[]): Unit[] => sortBy(
-  units,
-  unit => (unit.getFaction() === 'PLAYER') ? 0 : 1
-);
+const _sortUnits = (units: Unit[]): Unit[] =>
+  sortBy(units, unit => (unit.getFaction() === 'PLAYER' ? 0 : 1));

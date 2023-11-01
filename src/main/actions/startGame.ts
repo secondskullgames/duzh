@@ -4,7 +4,7 @@ import Music from '../sounds/Music';
 import GameState from '../core/GameState';
 
 type Context = Readonly<{
-  state: GameState,
+  state: GameState;
 }>;
 
 export const startGame = async ({ state }: Context) => {

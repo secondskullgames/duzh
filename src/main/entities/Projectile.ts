@@ -5,9 +5,9 @@ import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
 
 type Props = Readonly<{
-  coordinates: Coordinates
-  direction: Direction,
-  sprite: Sprite
+  coordinates: Coordinates;
+  direction: Direction;
+  sprite: Sprite;
 }>;
 
 export default class Projectile implements Entity {

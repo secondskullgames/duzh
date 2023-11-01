@@ -3,19 +3,19 @@ import EquipmentSlot from './EquipmentSlot';
 import EquipmentStats from './EquipmentStats';
 
 type EquipmentModel = {
-  id: string,
-  name: string,
-  itemCategory: ItemCategory,
-  level: number | null,
-  mapIcon: string,
+  id: string;
+  name: string;
+  itemCategory: ItemCategory;
+  level: number | null;
+  mapIcon: string;
   paletteSwaps: {
-    [key: string]: string
-  },
-  points: number | null,
-  script?: string,
-  slot: EquipmentSlot,
-  sprite: string,
-  stats: EquipmentStats
+    [key: string]: string;
+  };
+  points: number | null;
+  script?: string;
+  slot: EquipmentSlot;
+  sprite: string;
+  stats: EquipmentStats;
 };
 
 export default EquipmentModel;

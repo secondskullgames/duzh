@@ -16,7 +16,10 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        if (Feature.isEnabled(Feature.DEBUG_LEVEL) && modifiers.includes(ModifierKey.SHIFT)) {
+        if (
+          Feature.isEnabled(Feature.DEBUG_LEVEL) &&
+          modifiers.includes(ModifierKey.SHIFT)
+        ) {
           const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
             { state, imageFactory }

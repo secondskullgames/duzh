@@ -8,10 +8,10 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export const moveUnit = async (
@@ -26,7 +26,10 @@ export const moveUnit = async (
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
-      const nextCoordinates = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
+      const nextCoordinates = Coordinates.plus(
+        unit.getCoordinates(),
+        unit.getDirection()
+      );
       await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
         nextCoordinates,

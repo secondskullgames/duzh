@@ -3,12 +3,11 @@ import SplitDirection from './SplitDirection';
 import Rect from '../../../geometry/Rect';
 import { randInt } from '../../../utils/random';
 
-
 const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 
 type Props = Readonly<{
-  minRoomDimension: number,
-  maxRoomDimension: number
+  minRoomDimension: number;
+  maxRoomDimension: number;
 }>;
 
 export default class RegionSplitter {
@@ -25,7 +24,12 @@ export default class RegionSplitter {
    * by corridors.  To do so, split the area into two sub-regions and call this method recursively.  If this area is
    * not large enough to form two sub-regions, just return a single region.
    */
-  generateRegions = (left: number, top: number, width: number, height: number): RoomRegion[] => {
+  generateRegions = (
+    left: number,
+    top: number,
+    width: number,
+    height: number
+  ): RoomRegion[] => {
     const splitDirection = this._getSplitDirection(width, height);
     switch (splitDirection) {
       case 'HORIZONTAL': {
@@ -73,8 +77,8 @@ export default class RegionSplitter {
     // First, make sure the area is large enough to support two regions; if not, we're done
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
-    const canSplitHorizontally = (width >= (2 * minWidth));
-    const canSplitVertically = (height >= (2 * minHeight));
+    const canSplitHorizontally = width >= 2 * minWidth;
+    const canSplitVertically = height >= 2 * minHeight;
 
     if (canSplitHorizontally) {
       return 'HORIZONTAL';
@@ -90,10 +94,14 @@ export default class RegionSplitter {
    * @param dimension width or height
    * @returns the min X/Y coordinate of the *second* room
    */
-  _getSplitPoint = (start: number, dimension: number, direction: SplitDirection): number => {
+  _getSplitPoint = (
+    start: number,
+    dimension: number,
+    direction: SplitDirection
+  ): number => {
     const minWidth = this.minRoomDimension + ROOM_PADDING[0] + ROOM_PADDING[2];
     const minHeight = this.minRoomDimension + ROOM_PADDING[1] + ROOM_PADDING[3];
-    const minRegionDimension = (direction === 'HORIZONTAL' ? minWidth : minHeight);
+    const minRegionDimension = direction === 'HORIZONTAL' ? minWidth : minHeight;
     const minSplitPoint = start + minRegionDimension;
     const maxSplitPoint = start + dimension - minRegionDimension;
     return randInt(minSplitPoint, maxSplitPoint);

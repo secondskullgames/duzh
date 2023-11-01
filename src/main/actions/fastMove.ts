@@ -10,10 +10,10 @@ import MapInstance from '../maps/MapInstance';
 import { sleep } from '../utils/promises';
 
 type Context = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export const fastMove = async (

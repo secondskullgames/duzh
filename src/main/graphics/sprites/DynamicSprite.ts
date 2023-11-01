@@ -6,9 +6,9 @@ import PaletteSwaps from '../PaletteSwaps';
 import { checkNotNull } from '../../utils/preconditions';
 
 type Props = Readonly<{
-  offsets: Offsets,
-  paletteSwaps?: PaletteSwaps,
-  imageMap: Record<string, Image>
+  offsets: Offsets;
+  paletteSwaps?: PaletteSwaps;
+  imageMap: Record<string, Image>;
 }>;
 
 export default class DynamicSprite<T extends Animatable> implements Sprite {
@@ -40,5 +40,5 @@ export default class DynamicSprite<T extends Animatable> implements Sprite {
 
   bind = (target: T) => {
     this.target = target;
-  }
+  };
 }

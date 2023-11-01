@@ -6,7 +6,7 @@ import EquipmentSlot from '../schemas/EquipmentSlot';
  */
 export default class EquipmentMap {
   private readonly _map: {
-    [slot in EquipmentSlot]?: Equipment
+    [slot in EquipmentSlot]?: Equipment;
   };
 
   constructor() {

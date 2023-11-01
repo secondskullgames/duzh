@@ -22,4 +22,4 @@ export const Strafe: UnitAbility = {
       await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
     }
   }
-}
+};

@@ -1,8 +1,8 @@
 import Offsets from './Offsets';
 
 type Coordinates = Readonly<{
-  x: number,
-  y: number
+  x: number;
+  y: number;
 }>;
 
 namespace Coordinates {

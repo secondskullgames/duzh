@@ -15,7 +15,7 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
 };
 
 type StraightLineContext = Readonly<{
-  map: MapInstance
+  map: MapInstance;
 }>;
 
 export const hasUnblockedStraightLineBetween = (

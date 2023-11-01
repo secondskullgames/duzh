@@ -18,8 +18,8 @@ const INVENTORY_MARGIN = 10;
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
-  textRenderer: TextRenderer,
-  graphics: Graphics
+  textRenderer: TextRenderer;
+  graphics: Graphics;
 }>;
 
 export default class InventoryRenderer implements Renderer {
@@ -39,7 +39,9 @@ export default class InventoryRenderer implements Renderer {
     const inventory = playerUnit.getInventory();
     const { graphics } = this;
 
-    const image = await imageFactory.getImage({ filename: INVENTORY_BACKGROUND_FILENAME });
+    const image = await imageFactory.getImage({
+      filename: INVENTORY_BACKGROUND_FILENAME
+    });
     // TODO: need a 640x360 version of this image
     graphics.drawScaledImage(image, {
       left: INVENTORY_LEFT,
@@ -52,8 +54,20 @@ export default class InventoryRenderer implements Renderer {
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
     const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
 
-    await this._drawText('EQUIPMENT', FontName.APPLE_II, { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
-    await this._drawText('INVENTORY', FontName.APPLE_II, { x: INVENTORY_WIDTH * 3 / 4, y: INVENTORY_TOP + INVENTORY_MARGIN }, Colors.WHITE, Alignment.CENTER);
+    await this._drawText(
+      'EQUIPMENT',
+      FontName.APPLE_II,
+      { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      Colors.WHITE,
+      Alignment.CENTER
+    );
+    await this._drawText(
+      'INVENTORY',
+      FontName.APPLE_II,
+      { x: (INVENTORY_WIDTH * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      Colors.WHITE,
+      Alignment.CENTER
+    );
 
     // draw equipment items
     // for now, just display them all in one list
@@ -61,7 +75,13 @@ export default class InventoryRenderer implements Renderer {
     let y = INVENTORY_TOP + 64;
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
-      await this._drawText(text, FontName.APPLE_II, { x: equipmentLeft, y }, Colors.WHITE, Alignment.LEFT);
+      await this._drawText(
+        text,
+        FontName.APPLE_II,
+        { x: equipmentLeft, y },
+        Colors.WHITE,
+        Alignment.LEFT
+      );
       y += LINE_HEIGHT;
     }
 
@@ -71,13 +91,19 @@ export default class InventoryRenderer implements Renderer {
     const xOffset = 4;
 
     for (let i = 0; i < inventoryCategories.length; i++) {
-      const x = itemsLeft + i * categoryWidth + (categoryWidth / 2) + xOffset;
+      const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;
       const top = INVENTORY_TOP + 40;
-      await this._drawText(inventoryCategories[i], FontName.APPLE_II, { x, y: top }, Colors.WHITE, Alignment.CENTER);
+      await this._drawText(
+        inventoryCategories[i],
+        FontName.APPLE_II,
+        { x, y: top },
+        Colors.WHITE,
+        Alignment.CENTER
+      );
       if (inventoryCategories[i] === inventory.selectedCategory) {
         // TODO can we make a `drawLine`?
         const rect = {
-          left: x - (categoryWidth / 2) + 4,
+          left: x - categoryWidth / 2 + 4,
           top: INVENTORY_TOP + 54,
           width: categoryWidth - 8,
           height: 1
@@ -98,15 +124,28 @@ export default class InventoryRenderer implements Renderer {
         } else {
           color = Colors.WHITE;
         }
-        await this._drawText(items[i].name, FontName.APPLE_II, { x, y }, color, Alignment.LEFT);
+        await this._drawText(
+          items[i].name,
+          FontName.APPLE_II,
+          { x, y },
+          color,
+          Alignment.LEFT
+        );
       }
     }
   };
 
-  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment
+  ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.graphics, pixel, textAlign);
   };
 }
 
-const _equipmentSlotToString = (slot: EquipmentSlot) => slot.toUpperCase().replaceAll('_', ' ');
+const _equipmentSlotToString = (slot: EquipmentSlot) =>
+  slot.toUpperCase().replaceAll('_', ' ');

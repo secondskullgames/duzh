@@ -3,9 +3,9 @@ import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
 
 type Props = Readonly<{
-  name: string,
-  category: ItemCategory,
-  onUse: ItemProc
+  name: string;
+  category: ItemCategory;
+  onUse: ItemProc;
 }>;
 
 export default class InventoryItem {
@@ -19,10 +19,7 @@ export default class InventoryItem {
     this.onUse = onUse;
   }
 
-  use = async (
-    unit: Unit,
-    context: ItemProcContext
-  ) => {
+  use = async (unit: Unit, context: ItemProcContext) => {
     await this.onUse(this, unit, context);
   };
 }

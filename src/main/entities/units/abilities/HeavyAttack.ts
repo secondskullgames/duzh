@@ -8,7 +8,7 @@ import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number) => {
   return `${unit.getName()} hit ${target.getName()} with a heavy attack for ${damageTaken} damage!`;
-}
+};
 
 const manaCost = 10;
 

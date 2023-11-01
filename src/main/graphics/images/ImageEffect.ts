@@ -2,8 +2,8 @@ import { replaceAll } from './ImageUtils';
 import Colors from '../Colors';
 
 export type ImageEffect = {
-  name: string,
-  apply: (imageData: ImageData) => ImageData
+  name: string;
+  apply: (imageData: ImageData) => ImageData;
 };
 
 export namespace ImageEffect {

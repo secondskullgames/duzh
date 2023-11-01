@@ -8,8 +8,8 @@ import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
 
 type Context = Readonly<{
-  map: MapInstance,
-  imageFactory: ImageFactory
+  map: MapInstance;
+  imageFactory: ImageFactory;
 }>;
 
 export default {
@@ -33,15 +33,15 @@ export default {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(coordinates => map.isTileRevealed(coordinates));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+      map.isTileRevealed(coordinates)
+    );
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
-        coordinates,
-        direction,
-        { imageFactory }
-      );
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
+        imageFactory
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
@@ -57,9 +57,7 @@ export default {
     // last frames
     {
       const frame: AnimationFrame = {
-        units: [
-          { unit: source, activity: Activity.STANDING }
-        ],
+        units: [{ unit: source, activity: Activity.STANDING }],
         postDelay: 100
       };
       if (target) {
@@ -126,9 +124,7 @@ export default {
     // last frames
     {
       const frame: AnimationFrame = {
-        units: [
-          { unit: source, activity: Activity.STANDING }
-        ]
+        units: [{ unit: source, activity: Activity.STANDING }]
       };
       if (target) {
         frame.units.push({ unit: target, activity: Activity.DAMAGED });
@@ -152,7 +148,6 @@ export default {
     };
   },
 
-
   getFireballAnimation: async (
     source: Unit,
     direction: Direction,
@@ -173,15 +168,15 @@ export default {
       frames.push(frame);
     }
 
-    const visibleCoordinatesList = coordinatesList.filter(coordinates => map.isTileRevealed(coordinates));
+    const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+      map.isTileRevealed(coordinates)
+    );
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
-        coordinates,
-        direction,
-        { imageFactory }
-      );
+      const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
+        imageFactory
+      });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
         projectiles: [projectile],
@@ -197,9 +192,7 @@ export default {
     // last frames
     {
       const frame: AnimationFrame = {
-        units: [
-          { unit: source, activity: Activity.STANDING }
-        ],
+        units: [{ unit: source, activity: Activity.STANDING }],
         postDelay: 100
       };
       if (target) {
@@ -236,7 +229,7 @@ export default {
       unitFrames.push({ unit: source, activity: Activity.STANDING });
 
       for (let j = 0; j < targets.length; j++) {
-        const activity = (j === i) ? Activity.BURNED : Activity.STANDING;
+        const activity = j === i ? Activity.BURNED : Activity.STANDING;
         unitFrames.push({ unit: targets[j], activity });
       }
 

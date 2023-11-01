@@ -9,7 +9,7 @@ import { checkNotNull } from '../../utils/preconditions';
 const backgroundColor = Color.fromHex('#404040');
 
 type Props = Readonly<{
-  graphics: Graphics
+  graphics: Graphics;
 }>;
 
 export default class MapScreenRenderer implements Renderer {
@@ -28,13 +28,12 @@ export default class MapScreenRenderer implements Renderer {
     const map = checkNotNull(state.getMap());
 
     graphics.fill(backgroundColor);
-    const cellDimension = Math.floor(Math.min(
-      graphics.getWidth() / map.width,
-      graphics.getHeight() / map.height
-    ));
+    const cellDimension = Math.floor(
+      Math.min(graphics.getWidth() / map.width, graphics.getHeight() / map.height)
+    );
 
-    const left = (graphics.getWidth() - (map.width * cellDimension)) / 2;
-    const top = (graphics.getHeight() - (map.height * cellDimension)) / 2;
+    const left = (graphics.getWidth() - map.width * cellDimension) / 2;
+    const top = (graphics.getHeight() - map.height * cellDimension) / 2;
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {

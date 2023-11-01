@@ -7,8 +7,8 @@ export type Suite = {
   length: number;
   sections: {
     [sectionName: string]: {
-      bass?: Figure[],
-      lead?: Figure[],
-    }
-  }
-}
+      bass?: Figure[];
+      lead?: Figure[];
+    };
+  };
+};

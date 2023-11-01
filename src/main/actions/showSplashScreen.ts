@@ -3,7 +3,7 @@ import GameState from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
 
 type Context = Readonly<{
-  state: GameState
+  state: GameState;
 }>;
 
 export const showSplashScreen = async ({ state }: Context) => {

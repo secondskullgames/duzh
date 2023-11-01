@@ -4,9 +4,9 @@ import InventoryItem from '../../items/InventoryItem';
 import Coordinates from '../../geometry/Coordinates';
 
 type Props = Readonly<{
-  coordinates: Coordinates,
-  sprite: Sprite,
-  inventoryItem: InventoryItem
+  coordinates: Coordinates;
+  sprite: Sprite;
+  inventoryItem: InventoryItem;
 }>;
 
 export default class MapItem extends GameObject {

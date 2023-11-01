@@ -43,7 +43,6 @@ export const PiercingAttack: UnitAbility = {
       );
     }
 
-
     const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
     const nextUnit = map.getUnit(nextCoordinates);
     if (nextUnit) {
@@ -69,4 +68,4 @@ export const PiercingAttack: UnitAbility = {
       await attackObject(unit, nextSpawner);
     }
   }
-}
+};

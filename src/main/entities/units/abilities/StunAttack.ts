@@ -46,4 +46,4 @@ export const StunAttack: UnitAbility = {
       targetUnit.setStunned(2);
     }
   }
-}
+};

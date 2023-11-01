@@ -77,4 +77,4 @@ export const ShootFireball: UnitAbility = {
       await playAnimation(fireballAnimation, { map });
     }
   }
-}
+};

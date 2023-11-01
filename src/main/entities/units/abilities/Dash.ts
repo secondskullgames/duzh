@@ -36,11 +36,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(
-          unit,
-          { x, y },
-          { state, map, imageFactory, ticker }
-        );
+        await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
         moved = true;
         await sleep(75);
       } else {
@@ -54,4 +50,4 @@ export const Dash: UnitAbility = {
       playSound(Sounds.BLOCKED);
     }
   }
-}
+};

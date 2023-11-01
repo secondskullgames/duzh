@@ -4,12 +4,12 @@ import { checkArgument, checkState } from '../../../utils/preconditions';
 import SplitDirection from '../room_corridor_rewrite/SplitDirection';
 
 type Props = Readonly<{
-  rect: Rect,
-  firstSubsection?: Section | null,
-  secondSubsection?: Section | null,
-  splitDirection?: SplitDirection | null,
-  room?: Rect | null,
-  connection?: Connection | null
+  rect: Rect;
+  firstSubsection?: Section | null;
+  secondSubsection?: Section | null;
+  splitDirection?: SplitDirection | null;
+  room?: Rect | null;
+  connection?: Connection | null;
 }>;
 
 /**
@@ -33,11 +33,23 @@ export default class Section {
   }: Props) {
     checkArgument(
       // empty section - no subsections, no room, no connection
-      (firstSubsection == null && secondSubsection == null && (splitDirection == null || splitDirection === 'NONE') && room == null && connection == null) ||
-      // section with subsections - no room, with or without connection
-      (firstSubsection != null && secondSubsection != null && (splitDirection != null && splitDirection !== 'NONE') && room == null) ||
-      // section with room, no subsections
-      (firstSubsection == null && secondSubsection == null && (splitDirection == null || splitDirection === 'NONE') && room != null && connection == null)
+      (firstSubsection == null &&
+        secondSubsection == null &&
+        (splitDirection == null || splitDirection === 'NONE') &&
+        room == null &&
+        connection == null) ||
+        // section with subsections - no room, with or without connection
+        (firstSubsection != null &&
+          secondSubsection != null &&
+          splitDirection != null &&
+          splitDirection !== 'NONE' &&
+          room == null) ||
+        // section with room, no subsections
+        (firstSubsection == null &&
+          secondSubsection == null &&
+          (splitDirection == null || splitDirection === 'NONE') &&
+          room != null &&
+          connection == null)
     );
     this.rect = rect;
     this.firstSubsection = firstSubsection ?? null;
@@ -52,7 +64,11 @@ export default class Section {
   getWidth = () => this.rect.width;
   getHeight = () => this.rect.height;
 
-  withSubsections = (firstSubsection: Section, secondSubsection: Section, splitDirection: SplitDirection): Section => {
+  withSubsections = (
+    firstSubsection: Section,
+    secondSubsection: Section,
+    splitDirection: SplitDirection
+  ): Section => {
     checkState(this.room === null);
     return new Section({
       ...this,

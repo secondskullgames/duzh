@@ -27,8 +27,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
     const rooms: Rect[] = [];
     do {
       rooms.push(_addRandomRoom(tiles));
-    }
-    while (_countFloorTiles(tiles) <= width * height * 0.25);
+    } while (_countFloorTiles(tiles) <= width * height * 0.25);
 
     shuffle(rooms);
     const allTiles = _coordinatesInRect({
@@ -110,8 +109,9 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
       width: width + 2,
       height: height + 4
     };
-    const bigRectCoordinates: Coordinates[] = _coordinatesInRect(bigRect)
-      .filter(({ x, y }) => x >= 1 && x < tiles[0].length - 1 && y >= 2 && y < tiles.length - 1);
+    const bigRectCoordinates: Coordinates[] = _coordinatesInRect(bigRect).filter(
+      ({ x, y }) => x >= 1 && x < tiles[0].length - 1 && y >= 2 && y < tiles.length - 1
+    );
 
     if (bigRectCoordinates.some(({ x, y }) => tiles[y][x] === 'FLOOR')) {
       continue;
@@ -162,10 +162,10 @@ const _addWalls = (tiles: TileType[][]) => {
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const tile = tiles[y][x];
-      const oneDown = (y < bottom) ? tiles[y + 1][x] : null;
-      const oneUp = (y > 0) ? tiles[y - 1][x] : null;
+      const oneDown = y < bottom ? tiles[y + 1][x] : null;
+      const oneUp = y > 0 ? tiles[y - 1][x] : null;
       if (tile === 'NONE' && oneDown === 'FLOOR') {
-        tiles[y][x] = (oneUp === 'FLOOR') ? 'FLOOR' : 'WALL';
+        tiles[y][x] = oneUp === 'FLOOR' ? 'FLOOR' : 'WALL';
       }
     }
   }

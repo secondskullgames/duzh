@@ -34,11 +34,7 @@ export const Blink: UnitAbility = {
       y += dy;
     }
     if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveUnit(
-        unit,
-        { x, y },
-        { state, map, imageFactory, ticker }
-      );
+      await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
       moved = true;
     }
 
@@ -48,4 +44,4 @@ export const Blink: UnitAbility = {
       playSound(Sounds.BLOCKED);
     }
   }
-}
+};

@@ -5,9 +5,9 @@ import Coordinates from '../geometry/Coordinates';
 import { EntityType } from '../entities/EntityType';
 
 type Props = Readonly<{
-  tileType: TileType,
-  sprite: Sprite | null,
-  coordinates: Coordinates
+  tileType: TileType;
+  sprite: Sprite | null;
+  coordinates: Coordinates;
 }>;
 
 export default class Tile implements Entity {

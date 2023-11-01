@@ -10,9 +10,9 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
 type Props = Readonly<{
-  state: GameState,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export class Debug {
@@ -70,10 +70,11 @@ export class Debug {
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies: () => killEnemies({
-        state: this.state,
-        map: this.state.getMap()
-      }),
+      killEnemies: () =>
+        killEnemies({
+          state: this.state,
+          map: this.state.getMap()
+        }),
       nextLevel: async () => {
         await loadNextMap({
           state: this.state

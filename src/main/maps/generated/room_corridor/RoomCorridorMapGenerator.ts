@@ -10,8 +10,8 @@ import AbstractMapGenerator from '../AbstractMapGenerator';
 import TileType from '../../../schemas/TileType';
 
 type Props = Readonly<{
-  minRoomDimension: number,
-  maxRoomDimension: number
+  minRoomDimension: number;
+  maxRoomDimension: number;
 }>;
 
 const MIN_ROOM_FRACTION = 0.4;
@@ -55,14 +55,23 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
     mapPruner.removeRooms(regions);
 
     // 3. Construct a minimal spanning tree between regions (including those without rooms).
-    const minimalSpanningTree: Connection[] = RegionConnector.generateMinimalSpanningTree(regions);
+    const minimalSpanningTree: Connection[] =
+      RegionConnector.generateMinimalSpanningTree(regions);
     // 4.  Add all optional connections between regions.
-    const optionalConnections: Connection[] = RegionConnector.generateOptionalConnections(regions, minimalSpanningTree);
+    const optionalConnections: Connection[] = RegionConnector.generateOptionalConnections(
+      regions,
+      minimalSpanningTree
+    );
     // 5. Add "red-red" connections in empty regions.
     // 6. Add "red-green" connections in empty regions only if:
     //    - both edges connect to a region with a room
     //    - there is no "red-red" connection in the region
-    const emptyRegionConnections: EmptyRegionConnection[] = RegionConnector.generateEmptyRegionConnections(regions, minimalSpanningTree, optionalConnections);
+    const emptyRegionConnections: EmptyRegionConnection[] =
+      RegionConnector.generateEmptyRegionConnections(
+        regions,
+        minimalSpanningTree,
+        optionalConnections
+      );
 
     const externalConnections = [...minimalSpanningTree, ...optionalConnections];
     mapPruner.stripOrphanedConnections(externalConnections, emptyRegionConnections);
@@ -72,14 +81,27 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
       MST: ${minimalSpanningTree.map(Connection.toString).join('; ')}
       opt: ${optionalConnections.map(Connection.toString).join('; ')}
       external: ${externalConnections.map(Connection.toString).join('; ')}
-      Internal: ${emptyRegionConnections.map(connection => `${RoomRegion.toString(connection.roomRegion)}, ${connection.neighbors.length}`).join('; ')}
+      Internal: ${emptyRegionConnections
+        .map(
+          connection =>
+            `${RoomRegion.toString(connection.roomRegion)}, ${
+              connection.neighbors.length
+            }`
+        )
+        .join('; ')}
     `;
 
     // eslint-disable-next-line no-console
     console.debug(debugOutput);
 
     // Compute the actual tiles based on region/connection specifications.
-    const tiles: TileType[][] = TileGenerator.generateTiles(width, height, regions, externalConnections, emptyRegionConnections);
+    const tiles: TileType[][] = TileGenerator.generateTiles(
+      width,
+      height,
+      regions,
+      externalConnections,
+      emptyRegionConnections
+    );
 
     return {
       tiles,

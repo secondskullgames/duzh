@@ -45,11 +45,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await sleep(100);
 
-      await moveUnit(
-        unit,
-        coordinates,
-        { state, map, imageFactory, ticker }
-      );
+      await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
       await sleep(100);
 
       for (let i = 1; i <= 4; i++) {
@@ -65,4 +61,4 @@ export const Teleport: UnitAbility = {
       playSound(Sounds.BLOCKED);
     }
   }
-}
+};

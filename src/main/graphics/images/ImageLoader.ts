@@ -27,11 +27,13 @@ export default class ImageLoader {
   loadImage = async (filename: string): Promise<ImageData | null> => {
     let imageDataUrl: string;
     try {
-      imageDataUrl = (await import(
-        /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "images" */
-        `../../../../png/${filename}.png`
-      )).default;
+      imageDataUrl = (
+        await import(
+          /* webpackMode: "lazy-once" */
+          /* webpackChunkName: "images" */
+          `../../../../png/${filename}.png`
+        )
+      ).default;
     } catch {
       // this is expected for _B filenames
       return null;
@@ -61,5 +63,5 @@ export default class ImageLoader {
     const { context } = this;
     context.drawImage(img, 0, 0);
     return context.getImageData(0, 0, img.width, img.height);
-  }
+  };
 }

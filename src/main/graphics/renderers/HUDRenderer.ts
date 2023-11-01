@@ -26,8 +26,8 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 type Props = Readonly<{
-  textRenderer: TextRenderer,
-  graphics: Graphics
+  textRenderer: TextRenderer;
+  graphics: Graphics;
 }>;
 
 export default class HUDRenderer implements Renderer {
@@ -77,8 +77,14 @@ export default class HUDRenderer implements Renderer {
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
 
     for (let i = 0; i < lines.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      const y = top + LINE_HEIGHT * i;
+      await this._drawText(
+        lines[i],
+        FontName.APPLE_II,
+        { x: left, y },
+        Colors.WHITE,
+        Alignment.LEFT
+      );
     }
   };
 
@@ -91,12 +97,27 @@ export default class HUDRenderer implements Renderer {
     const abilities = playerUnit.getAbilities();
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
-      const left = LEFT_PANE_WIDTH + BORDER_PADDING + (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
+      const left =
+        LEFT_PANE_WIDTH +
+        BORDER_PADDING +
+        (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
       if (!getInnateAbilities().includes(ability.name)) {
         await this._renderAbility(ability, { x: left, y: top }, context);
-        await this._drawText(`${keyNumber}`, FontName.APPLE_II, { x: left + 10, y: top + 24 }, Colors.WHITE, Alignment.CENTER);
-        await this._drawText(`${ability.manaCost}`, FontName.APPLE_II, { x: left + 10, y: top + 24 + LINE_HEIGHT }, Colors.LIGHT_GRAY, Alignment.CENTER);
+        await this._drawText(
+          `${keyNumber}`,
+          FontName.APPLE_II,
+          { x: left + 10, y: top + 24 },
+          Colors.WHITE,
+          Alignment.CENTER
+        );
+        await this._drawText(
+          `${ability.manaCost}`,
+          FontName.APPLE_II,
+          { x: left + 10, y: top + 24 + LINE_HEIGHT },
+          Colors.LIGHT_GRAY,
+          Alignment.CENTER
+        );
         keyNumber++;
       }
     }
@@ -110,10 +131,7 @@ export default class HUDRenderer implements Renderer {
     const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
 
-    const lines = [
-      `Turn: ${turn}`,
-      `Floor: ${mapIndex + 1}`,
-    ];
+    const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
 
     const killsToNextLevel = playerUnit.getKillsToNextLevel();
     if (killsToNextLevel !== null) {
@@ -123,8 +141,14 @@ export default class HUDRenderer implements Renderer {
     }
 
     for (let i = 0; i < lines.length; i++) {
-      const y = top + (LINE_HEIGHT * i);
-      await this._drawText(lines[i], FontName.APPLE_II, { x: left, y }, Colors.WHITE, Alignment.LEFT);
+      const y = top + LINE_HEIGHT * i;
+      await this._drawText(
+        lines[i],
+        FontName.APPLE_II,
+        { x: left, y },
+        Colors.WHITE,
+        Alignment.LEFT
+      );
     }
   };
 
@@ -158,7 +182,13 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _drawText = async (text: string, font: FontName, pixel: Pixel, color: Color, textAlign: Alignment) => {
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment
+  ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.graphics, pixel, textAlign);
   };

@@ -28,7 +28,7 @@ const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
 const cumulativeKillsToNextLevel = [
-  4,  // 4,
+  4, // 4,
   10, // 6,
   18, // 8,
   28, // 10,
@@ -42,14 +42,14 @@ const cumulativeKillsToNextLevel = [
 let nextId: number = 0;
 
 type Props = Readonly<{
-  name: string,
-  faction: Faction,
-  model: UnitModel,
-  sprite: DynamicSprite<Unit>,
-  level: number,
-  coordinates: Coordinates,
-  controller: UnitController,
-  equipment: Equipment[]
+  name: string;
+  faction: Faction;
+  model: UnitModel;
+  sprite: DynamicSprite<Unit>;
+  level: number;
+  coordinates: Coordinates;
+  controller: UnitController;
+  equipment: Equipment[];
 }>;
 
 export default class Unit implements Entity, Animatable {
@@ -171,12 +171,14 @@ export default class Unit implements Entity, Animatable {
   getEquipment = (): EquipmentMap => this.equipment;
   getActivity = () => this.activity;
   getDirection = () => this.direction;
-  setDirection = (direction: Direction) => { this.direction = direction; };
+  setDirection = (direction: Direction) => {
+    this.direction = direction;
+  };
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
   hasAbility = (abilityName: AbilityName): boolean => {
     return !!this.abilities.find(ability => ability.name === abilityName);
-  }
+  };
 
   /**
    * @override
@@ -203,7 +205,7 @@ export default class Unit implements Entity, Animatable {
 
     for (const equipment of this.equipment.getAll()) {
       if (equipment.slot !== 'RANGED_WEAPON') {
-        damage += (equipment.damage ?? 0);
+        damage += equipment.damage ?? 0;
       }
     }
 
@@ -232,7 +234,7 @@ export default class Unit implements Entity, Animatable {
     for (const equipment of this.equipment.getAll()) {
       switch (equipment.slot) {
         case 'RANGED_WEAPON':
-          damage += (equipment.damage ?? 0);
+          damage += equipment.damage ?? 0;
           break;
         case 'MELEE_WEAPON':
           // do nothing
@@ -245,8 +247,8 @@ export default class Unit implements Entity, Animatable {
     return Math.round(damage);
   };
 
-  getKillsToNextLevel = (): (number | null) => {
-    if (this.faction === Faction.PLAYER && (this.level < MAX_PLAYER_LEVEL)) {
+  getKillsToNextLevel = (): number | null => {
+    if (this.faction === Faction.PLAYER && this.level < MAX_PLAYER_LEVEL) {
       return cumulativeKillsToNextLevel[this.level - 1];
     }
     return null;
@@ -290,7 +292,10 @@ export default class Unit implements Entity, Animatable {
   /**
    * @override {@link Animatable#getAnimationKey}
    */
-  getAnimationKey = () => `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${this.frameNumber}`;
+  getAnimationKey = () =>
+    `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${
+      this.frameNumber
+    }`;
 
   canSpendMana = (amount: number) => this.mana >= amount;
 
@@ -301,10 +306,17 @@ export default class Unit implements Entity, Animatable {
     this.lifetimeManaSpent += amount;
   };
 
-  isInCombat = () => this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
-  refreshCombat = () => { this.turnsSinceCombatAction = 0; };
+  isInCombat = () =>
+    this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
+  refreshCombat = () => {
+    this.turnsSinceCombatAction = 0;
+  };
 
-  setActivity = (activity: Activity, frameNumber: number, direction: Direction | null) => {
+  setActivity = (
+    activity: Activity,
+    frameNumber: number,
+    direction: Direction | null
+  ) => {
     this.activity = activity;
     this.frameNumber = frameNumber ?? 1;
     this.direction = direction ?? this.direction;
@@ -393,15 +405,23 @@ export default class Unit implements Entity, Animatable {
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
-  private _calculateIncomingDamage = (baseDamage: number, sourceUnit: Unit | null): number => {
+  private _calculateIncomingDamage = (
+    baseDamage: number,
+    sourceUnit: Unit | null
+  ): number => {
     let adjustedDamage = baseDamage;
     for (const equipment of this.equipment.getAll()) {
       if (equipment.absorbAmount !== null) {
         adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
       }
       if (equipment.blockAmount !== null) {
-        if (sourceUnit !== null && isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())) {
-          adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.blockAmount ?? 0)));
+        if (
+          sourceUnit !== null &&
+          isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())
+        ) {
+          adjustedDamage = Math.round(
+            adjustedDamage * (1 - (equipment.blockAmount ?? 0))
+          );
         }
       }
     }

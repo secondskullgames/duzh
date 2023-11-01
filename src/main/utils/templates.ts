@@ -1,8 +1,8 @@
 import memoize from './memoize';
 
 type TemplateParams = Readonly<{
-  template: string,
-  variables: string[]
+  template: string;
+  variables: string[];
 }>;
 
 type TemplateFunc = (...args: unknown[]) => string;
@@ -21,7 +21,10 @@ const _newFunction = ({ template, variables }: TemplateParams): TemplateFunc => 
  * Dynamically populate a template according to {@param template}. which specifies the template string,
  * and {@param variables}, which provides key-value substitutions for each variable in {@param template}.
  */
-export const fillTemplate = (template: string, variables: Record<string, unknown>): string => {
+export const fillTemplate = (
+  template: string,
+  variables: Record<string, unknown>
+): string => {
   const keys = Object.keys(variables);
   const values = Object.values(variables);
   const func = _newFunction({ template, variables: keys });

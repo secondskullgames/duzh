@@ -48,7 +48,7 @@ const createTileGenerator = (): TileGenerator => {
           case 'FLOOR_HALL':
             if (y >= 1) {
               if (tiles[y - 1][x] === 'NONE') {
-                tiles[y - 1][x] = (tileType === 'FLOOR_HALL') ? 'WALL_HALL' : 'WALL';
+                tiles[y - 1][x] = tileType === 'FLOOR_HALL' ? 'WALL_HALL' : 'WALL';
               }
               if (y >= 2) {
                 if (tiles[y - 2][x] === 'NONE') {

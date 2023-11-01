@@ -6,10 +6,10 @@ import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 
 type Context = Readonly<{
-  state: GameState,
-  map: MapInstance,
-  imageFactory: ImageFactory,
-  ticker: Ticker
+  state: GameState;
+  map: MapInstance;
+  imageFactory: ImageFactory;
+  ticker: Ticker;
 }>;
 
 export const useItem = async (
