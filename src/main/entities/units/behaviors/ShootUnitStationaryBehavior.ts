@@ -24,10 +24,7 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
   issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const { targetUnit } = this;
 
-    if (
-      manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1 &&
-      this._canShoot(unit, targetUnit, { map })
-    ) {
+    if (this._canShoot(unit, targetUnit, { map })) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       return new AbilityOrder({
