@@ -1,0 +1,18 @@
+{
+  "id": "dragon_shooter",
+  "name": "Dragon Shooter",
+  "type": "MECHANICAL",
+  "sprite": "dragon_shooter",
+  "paletteSwaps": {},
+  "strength": 4,
+  "dexterity": 50,
+  "life": 20,
+  "mana": 10,
+  "abilities": ["SHOOT_TURRET_ARROW"],
+  "aiParameters": {
+    "speed": 0.92,
+    "visionRange": 10,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
+  }
+}

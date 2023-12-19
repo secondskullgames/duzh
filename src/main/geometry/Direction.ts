@@ -86,6 +86,8 @@ namespace Direction {
     })();
     return _nameToDirection[rotated];
   };
+
+  export const getDefaultUnitDirection = (): Direction => Direction.S;
 }
 
 export default Direction;
