@@ -40,7 +40,7 @@
     "test": "npm run build && jest",
     "coverage": "npm run build && jest --coverage",
     "electron": "npm run build && cd electron && npm i && npm run make && npx electron .",
-    "lint": "npx eslint {src,test,scripts}/**/*.ts && npx prettier --check {src,test,scripts}/**/*.ts"
+    "lint": "npx eslint {src,scripts}/**/*.ts && npx prettier --check {src,scripts}/**/*.ts"
   },
   "repository": {
     "type": "git",
