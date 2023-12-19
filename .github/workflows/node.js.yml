@@ -15,7 +15,10 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        # TODO tsx/ts-node breakage
+        # pinning to 18.17.0
+        # https://github.com/TypeStrong/ts-node/issues/1997
+        node-version: [16.x, 18.17.0]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
