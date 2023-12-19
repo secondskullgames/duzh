@@ -38,7 +38,9 @@ export const Dash: UnitAbility = {
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
         await moveUnit(unit, { x, y }, { state, map, imageFactory, ticker });
         moved = true;
-        await sleep(75);
+        if (map.isTileRevealed({ x, y })) {
+          await sleep(75);
+        }
       } else {
         break;
       }
