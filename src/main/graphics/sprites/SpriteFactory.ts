@@ -204,10 +204,10 @@ const _loadAnimations = async (
         const patterns = animation.pattern
           ? [animation.pattern]
           : spriteModel.patterns
-          ? spriteModel.patterns
-          : spriteModel.pattern
-          ? [spriteModel.pattern]
-          : [];
+            ? spriteModel.patterns
+            : spriteModel.pattern
+              ? [spriteModel.pattern]
+              : [];
 
         const filenames = patterns
           .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
