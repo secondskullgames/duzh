@@ -235,7 +235,7 @@ export default {
 
       const frame = {
         units: unitFrames,
-        postDelay: 300
+        postDelay: 150
       };
       frames.push(frame);
     }
