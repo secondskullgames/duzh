@@ -1,7 +1,7 @@
 import { schemaNames } from '../main/utils/models';
 import Ajv, { AnySchema } from 'ajv';
 import { test } from '@jest/globals';
-import fs from 'fs/promises';
+import * as fs from 'fs/promises';
 
 const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   const allFilenames: string[] = [];
