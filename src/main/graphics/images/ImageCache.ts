@@ -21,8 +21,8 @@ const _stringify = (key: CacheKey): string => {
   const stringifiedPaletteSwaps =
     paletteSwaps
       ?.entries()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .sort(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         comparing(([src, dest]) => src.rgb.r * 256 * 256 + src.rgb.g * 256 + src.rgb.b)
       )
       .map(([src, dest]) => `${src.hex}:${dest.hex}`)
