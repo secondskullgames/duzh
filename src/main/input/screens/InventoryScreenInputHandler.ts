@@ -5,22 +5,23 @@ import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
-  const { state, session, imageFactory, mapFactory, ticker } = context;
+  const { state, session } = context;
   const { key, modifiers } = command;
-  const inventory = state.getPlayerUnit().getInventory();
+  const playerUnit = state.getPlayerUnit();
+  const inventory = session.getInventory();
 
   switch (key) {
     case 'UP':
-      inventory.previousItem();
+      inventory.previousItem(playerUnit);
       break;
     case 'DOWN':
-      inventory.nextItem();
+      inventory.nextItem(playerUnit);
       break;
     case 'LEFT':
-      inventory.previousCategory();
+      inventory.previousCategory(playerUnit);
       break;
     case 'RIGHT':
-      inventory.nextCategory();
+      inventory.nextCategory(playerUnit);
       break;
     case 'ENTER':
       if (modifiers.includes(ModifierKey.ALT)) {
@@ -43,14 +44,24 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({
+  state,
+  session,
+  imageFactory,
+  ticker
+}: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
-  const { selectedItem } = playerUnit.getInventory();
+  const inventory = session.getInventory();
+  const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
-    state.setScreen(GameScreen.GAME);
+    if (!['ARMOR', 'WEAPON'].includes(selectedItem.category)) {
+      state.setScreen(GameScreen.GAME);
+    }
+
     await useItem(playerUnit, selectedItem, { state, map, imageFactory, ticker });
+    session.prepareInventoryScreen(playerUnit);
   }
 };
 
