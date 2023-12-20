@@ -24,7 +24,7 @@ import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
-  const { state } = context;
+  const { state, session } = context;
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
 
   if (_isArrowKey(key)) {
@@ -37,6 +37,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
   } else if (key === 'TAB') {
     state.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+    session.initLevelUpScreen(state.getPlayerUnit());
     state.setScreen(GameScreen.LEVEL_UP);
   } else if (key === 'M') {
     state.setScreen(GameScreen.MAP);

@@ -15,6 +15,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import GameState from '../core/GameState';
 import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
+import { Session } from '../core/Session';
 import type { KeyCommand } from './inputTypes';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
@@ -32,6 +33,7 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 
 type Props = Readonly<{
   state: GameState;
+  session: Session;
   imageFactory: ImageFactory;
   mapFactory: MapFactory;
   ticker: Ticker;
@@ -39,6 +41,7 @@ type Props = Readonly<{
 
 export default class InputHandler {
   private readonly state: GameState;
+  private readonly session: Session;
   private readonly imageFactory: ImageFactory;
   private readonly mapFactory: MapFactory;
   private readonly ticker: Ticker;
@@ -48,8 +51,9 @@ export default class InputHandler {
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
+  constructor({ state, session, imageFactory, mapFactory, ticker }: Props) {
     this.state = state;
+    this.session = session;
     this.imageFactory = imageFactory;
     this.mapFactory = mapFactory;
     this.ticker = ticker;
@@ -85,9 +89,15 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, imageFactory, mapFactory, ticker } = this;
+    const { state, session, imageFactory, mapFactory, ticker } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory, mapFactory, ticker });
+    await handler.handleKeyCommand(command, {
+      state,
+      session,
+      imageFactory,
+      mapFactory,
+      ticker
+    });
   };
 
   addEventListener = (target: HTMLElement) => {

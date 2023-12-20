@@ -4,10 +4,8 @@ import { toggleFullScreen } from '../../utils/dom';
 import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 
-const handleKeyCommand = async (
-  command: KeyCommand,
-  { state, imageFactory, mapFactory, ticker }: ScreenHandlerContext
-) => {
+const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
+  const { state, session, imageFactory, mapFactory, ticker } = context;
   const { key, modifiers } = command;
   const inventory = state.getPlayerUnit().getInventory();
 
@@ -28,7 +26,7 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ state, imageFactory, mapFactory, ticker });
+        await _handleEnter(context);
       }
       break;
     case 'TAB':

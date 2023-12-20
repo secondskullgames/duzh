@@ -10,6 +10,7 @@ import { Feature } from './utils/features';
 import Ticker from './core/Ticker';
 import MapFactory from './maps/MapFactory';
 import { addInitialState } from './actions/addInitialState';
+import { Session } from './core/Session';
 
 const main = async () => {
   const state = new GameState();
@@ -17,6 +18,7 @@ const main = async () => {
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
   const ticker = new Ticker();
+  const session = new Session();
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     state,
@@ -25,7 +27,13 @@ const main = async () => {
     ticker
   });
   const mapFactory = new MapFactory();
-  const inputHandler = new InputHandler({ state, imageFactory, mapFactory, ticker });
+  const inputHandler = new InputHandler({
+    state,
+    session,
+    imageFactory,
+    mapFactory,
+    ticker
+  });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, imageFactory, ticker });
@@ -35,7 +43,7 @@ const main = async () => {
   await addInitialState({ state, imageFactory, mapFactory, ticker });
   await showSplashScreen({ state });
   setInterval(async () => {
-    await renderer.render({ state, imageFactory });
+    await renderer.render({ state, session, imageFactory });
   }, 20);
 };
 
