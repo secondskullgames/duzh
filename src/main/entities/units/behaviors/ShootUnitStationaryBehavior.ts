@@ -1,8 +1,7 @@
 import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import { ShootArrow } from '../abilities/ShootArrow';
-import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
+import { isInStraightLine } from '../../../maps/MapUtils';
 import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
@@ -42,7 +41,7 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
     { map }: Pick<UnitBehaviorContext, 'map'>
   ): boolean => {
     return (
-      unit.getMana() >= ShootArrow.manaCost &&
+      unit.getMana() >= ShootTurretArrow.manaCost &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
       hasUnblockedStraightLineBetween(
         unit.getCoordinates(),
