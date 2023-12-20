@@ -9,7 +9,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "red_beetle"
+    "BLUE": "dragon_shooter"
   },
   "itemColors": {
     "MAGENTA": "floor_fire_scroll"

@@ -1,4 +1,4 @@
-# roguelike-js
+# Dungeons of Duzh
 
 A graphical Roguelike in the browser written in Typescript.
 

@@ -125,12 +125,12 @@ export default class Unit implements Entity, Animatable {
     this.unitType = model.type;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
-    this.direction = Direction.S;
+    // TODO hack hack hack
+    this.direction =
+      model.id === 'dragon_shooter' ? Direction.getDefaultUnitDirection() : Direction.W;
     this.frameNumber = 1;
     // TODO make this type safe
-    this.abilities = model.abilities //
-      .map(str => str as AbilityName)
-      .map(abilityForName);
+    this.abilities = model.abilities.map(str => str as AbilityName).map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 

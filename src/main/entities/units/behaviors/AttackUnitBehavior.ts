@@ -17,6 +17,10 @@ type Props = Readonly<{
   targetUnit: Unit;
 }>;
 
+/**
+ * A behavior in which the unit attacks a target unit.  The unit will move
+ * towards the target unit and use abilities as appropriate.
+ */
 export default class AttackUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
@@ -24,7 +28,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
     this.targetUnit = targetUnit;
   }
 
-  /** @override {@link UnitBehavior#issueOrder} */
+  /** @override */
   issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const { targetUnit } = this;
     const mapRect = map.getRect();

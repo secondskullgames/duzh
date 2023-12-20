@@ -9,7 +9,7 @@ export type UnitBehaviorContext = Readonly<{
 }>;
 
 /**
- * I can't believe it's not UnitController
+ * A UnitBehavior is a unit's current "mood".  It determines what orders the unit will issue.
  */
 export interface UnitBehavior {
   issueOrder: (unit: Unit, { state, map }: UnitBehaviorContext) => UnitOrder;

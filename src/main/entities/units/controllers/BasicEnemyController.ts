@@ -19,7 +19,7 @@ export default class BasicEnemyController implements UnitController {
 
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
-      'HumanRedesignController requires aiParams!'
+      'BasicEnemyController requires aiParams!'
     );
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 

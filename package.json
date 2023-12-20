@@ -14,7 +14,7 @@
     "node": ">=16.0.0 <19.0.0"
   },
   "scripts": {
-    "gen-schema": "ts-node --esm --transpileOnly 'scripts/gen-schema.ts'",
+    "gen-schema": "node --loader 'ts-node/esm' 'scripts/gen-schema.ts'",
     "build": "npm run gen-schema && npx webpack",
     "dev": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",

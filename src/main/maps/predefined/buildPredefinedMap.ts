@@ -23,17 +23,21 @@ import TileFactory from '../../tiles/TileFactory';
 import { Faction } from '../../types/types';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
+import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
 
 type Context = Readonly<{
   imageFactory: ImageFactory;
   state: GameState;
 }>;
 
+/** TODO this should go somewhere else */
 const _getEnemyController = (enemyUnitModel: UnitModel) => {
   if (enemyUnitModel.type === 'WIZARD') {
     return new WizardController();
   } else if (enemyUnitModel.id === 'archer') {
     return new ArcherController();
+  } else if (enemyUnitModel.id === 'dragon_shooter') {
+    return new DragonShooterController();
   } else {
     return new BasicEnemyController();
   }
@@ -72,7 +76,7 @@ const _loadTiles = async (
       const { r, g, b } = image.getRGB({ x, y });
       const color = Color.fromRGB({ r, g, b });
 
-      const tileType = tileColors[color.hex] ?? null;
+      const tileType = tileColors[color.hex] ?? model.defaultTile ?? null;
       if (tileType !== null) {
         tiles[y][x] = TileFactory.createTile({
           tileType: tileType as TileType,
