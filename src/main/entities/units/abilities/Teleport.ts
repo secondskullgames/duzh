@@ -31,6 +31,12 @@ export const Teleport: UnitAbility = {
       throw new Error(`Can't teleport more than ${range} units`);
     }
 
+    const maybeSleep = async () => {
+      if (map.isTileRevealed(coordinates)) {
+        await sleep(100);
+      }
+    };
+
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
@@ -39,21 +45,21 @@ export const Teleport: UnitAbility = {
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
-        await sleep(100);
+        await maybeSleep();
       }
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-      await sleep(100);
+      await maybeSleep();
 
       await moveUnit(unit, coordinates, { state, map, imageFactory, ticker });
-      await sleep(100);
+      await maybeSleep();
 
       for (let i = 1; i <= 4; i++) {
         if (i === 1) {
           playSound(Sounds.WIZARD_APPEAR);
         }
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
-        await sleep(100);
+        await maybeSleep();
       }
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());

@@ -11,6 +11,9 @@ export type OrderContext = Readonly<{
   ticker: Ticker;
 }>;
 
+/**
+ * A UnitOrder is a single action that will consume the unit's turn.
+ */
 export default interface UnitOrder {
   execute: (unit: Unit, context: OrderContext) => Promise<void>;
 }

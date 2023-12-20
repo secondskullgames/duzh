@@ -4,12 +4,13 @@ import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { randChoice } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
-import { NormalAttack } from '../abilities/NormalAttack';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
+import { abilityForName } from '../abilities/abilityForName';
+import { AbilityName } from '../abilities/AbilityName';
 
 export default class WanderBehavior implements UnitBehavior {
-  /** @override {@link UnitBehavior#issueOrder} */
+  /** @override */
   issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
     const tiles: Coordinates[] = [];
 
@@ -24,7 +25,10 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (tiles.length > 0) {
       const coordinates = randChoice(tiles);
-      return new AttackMoveOrder({ coordinates, ability: NormalAttack });
+      return new AttackMoveOrder({
+        coordinates,
+        ability: abilityForName(AbilityName.ATTACK)
+      });
     }
     return new StayOrder();
   };
