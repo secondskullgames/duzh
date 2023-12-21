@@ -5,7 +5,6 @@ import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
 import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
-import { AbilityName } from '../entities/units/abilities/AbilityName';
 
 /**
  * Global mutable state

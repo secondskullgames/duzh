@@ -8,7 +8,6 @@ import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
-import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 

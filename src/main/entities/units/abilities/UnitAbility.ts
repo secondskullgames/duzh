@@ -3,7 +3,6 @@ import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
 import ImageFactory from '../../../graphics/images/ImageFactory';
-import Ticker from '../../../core/Ticker';
 import MapInstance from '../../../maps/MapInstance';
 import { Session } from '../../../core/Session';
 

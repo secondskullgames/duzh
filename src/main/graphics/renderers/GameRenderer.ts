@@ -18,7 +18,6 @@ import { createCanvas } from '../../utils/dom';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
-import Ticker from '../../core/Ticker';
 import { Feature } from '../../utils/features';
 import { Session } from '../../core/Session';
 

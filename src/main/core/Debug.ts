@@ -1,5 +1,4 @@
 import GameState from './GameState';
-import Ticker from './Ticker';
 import { Session } from './Session';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';

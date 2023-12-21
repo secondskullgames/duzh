@@ -4,7 +4,6 @@ import { EquipmentScript } from '../equipment/EquipmentScript';
 import GameState from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { getBonus } from '../maps/MapUtils';
-import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
