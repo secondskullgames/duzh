@@ -66,7 +66,7 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  { state, imageFactory, session }: ScreenHandlerContext
 ) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
@@ -107,7 +107,7 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn({ state, map, imageFactory, ticker });
+    await playTurn({ state, map, imageFactory, session });
   }
 };
 
@@ -124,19 +124,19 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, imageFactory, session }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {
-    pickupItem(playerUnit, item, { state, ticker });
+    pickupItem(playerUnit, item, { state, session });
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
     await loadNextMap({ state });
   }
-  await playTurn({ state, map, imageFactory, ticker });
+  await playTurn({ state, map, imageFactory, session });
 };
 
 export default {

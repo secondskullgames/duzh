@@ -23,13 +23,15 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    { state, session }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
-    ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-      turn: state.getTurn()
-    });
+    session
+      .getTicker()
+      .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
+        turn: state.getTurn()
+      });
   };
 
   return new InventoryItem({
@@ -43,13 +45,15 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, ticker }: ItemProcContext
+    { state, session }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
-    ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-      turn: state.getTurn()
-    });
+    session
+      .getTicker()
+      .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
+        turn: state.getTurn()
+      });
   };
 
   return new InventoryItem({
@@ -73,7 +77,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, map, imageFactory, ticker }: ItemProcContext
+    { state, map, imageFactory, session }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
@@ -100,8 +104,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, map, imageFactory, ticker });
-        recordKill(unit, { state, ticker });
+        await die(adjacentUnit, { state, map, imageFactory, session });
+        recordKill(unit, { state, session });
       }
     }
   };
@@ -119,10 +123,10 @@ const createInventoryEquipment = async (
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, ticker }: ItemProcContext
+    { state, imageFactory, session }: ItemProcContext
   ) => {
     const equipment = await createEquipment(equipmentClass, { imageFactory });
-    return equipItem(item, equipment, unit, { state, ticker });
+    return equipItem(item, equipment, unit, { state, session });
   };
 
   const model = await loadEquipmentModel(equipmentClass);

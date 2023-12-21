@@ -4,18 +4,18 @@ import Unit from '../entities/units/Unit';
 import GameState from '../core/GameState';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import Ticker from '../core/Ticker';
+import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 export const equipItem = async (
   item: InventoryItem,
   equipment: Equipment,
   unit: Unit,
-  { state, ticker }: Context
+  { state, session }: Context
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
@@ -26,6 +26,6 @@ export const equipItem = async (
   }
   unit.getEquipment().add(equipment);
   equipment.attach(unit);
-  ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
+  session.getTicker().log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
   playSound(Sounds.BLOCKED);
 };

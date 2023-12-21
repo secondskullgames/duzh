@@ -44,12 +44,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
   }
 };
 
-const _handleEnter = async ({
-  state,
-  session,
-  imageFactory,
-  ticker
-}: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const inventory = session.getInventory();
@@ -60,7 +55,7 @@ const _handleEnter = async ({
       state.setScreen(GameScreen.GAME);
     }
 
-    await useItem(playerUnit, selectedItem, { state, map, imageFactory, ticker });
+    await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });
     session.prepareInventoryScreen(playerUnit);
   }
 };

@@ -1,5 +1,6 @@
 import GameState from './GameState';
 import Ticker from './Ticker';
+import { Session } from './Session';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
@@ -12,19 +13,19 @@ import Sounds from '../sounds/Sounds';
 type Props = Readonly<{
   state: GameState;
   imageFactory: ImageFactory;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 export class Debug {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
-  private readonly ticker: Ticker;
+  private readonly session: Session;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, ticker }: Props) {
+  constructor({ state, imageFactory, session }: Props) {
     this.state = state;
     this.imageFactory = imageFactory;
-    this.ticker = ticker;
+    this.session = session;
     this._isMapRevealed = false;
   }
 
@@ -40,7 +41,7 @@ export class Debug {
       state: this.state,
       map: this.state.getMap(),
       imageFactory: this.imageFactory,
-      ticker: this.ticker
+      session: this.session
     });
   };
 
@@ -48,7 +49,7 @@ export class Debug {
     const playerUnit = this.state.getPlayerUnit();
     _levelUp(playerUnit, {
       state: this.state,
-      ticker: this.ticker
+      session: this.session
     });
   };
 
@@ -58,7 +59,9 @@ export class Debug {
     const item = await ItemFactory.createInventoryEquipment(id);
     const playerUnit = this.state.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    this.ticker.log(`Picked up a ${item.name}.`, { turn: this.state.getTurn() });
+    this.session
+      .getTicker()
+      .log(`Picked up a ${item.name}.`, { turn: this.state.getTurn() });
     playSound(Sounds.PICK_UP_ITEM);
   };
 

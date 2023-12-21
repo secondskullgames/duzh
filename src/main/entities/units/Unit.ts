@@ -125,11 +125,8 @@ export default class Unit implements Entity, Animatable {
     this.unitType = model.type;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
-    // TODO hack hack hack
-    this.direction =
-      model.id === 'dragon_shooter' ? Direction.getDefaultUnitDirection() : Direction.W;
+    this.direction = Direction.getDefaultUnitDirection();
     this.frameNumber = 1;
-    // TODO make this type safe
     this.abilities = model.abilities.map(str => str as AbilityName).map(abilityForName);
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
@@ -188,11 +185,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, map, imageFactory, ticker }: UpdateContext) => {
+  update = async ({ state, map, imageFactory, session }: UpdateContext) => {
     this._upkeep();
     if (this.stunDuration === 0) {
       const order = this.controller.issueOrder(this, { state, map });
-      await order.execute(this, { state, map, imageFactory, ticker });
+      await order.execute(this, { state, map, imageFactory, session });
     }
     this._endOfTurn();
   };

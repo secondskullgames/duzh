@@ -7,20 +7,22 @@ import MapFactory from '../maps/MapFactory';
 import { Feature } from '../utils/features';
 import ItemFactory from '../items/ItemFactory';
 import Ticker from '../core/Ticker';
+import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
   imageFactory: ImageFactory;
   mapFactory: MapFactory;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 export const addInitialState = async ({
   state,
   imageFactory,
   mapFactory,
-  ticker
+  session
 }: Context) => {
+  const ticker = session.getTicker();
   const playerUnit = await UnitFactory.createPlayerUnit({
     imageFactory
   });

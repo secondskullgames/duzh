@@ -6,18 +6,19 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { getBonus } from '../maps/MapUtils';
 import Ticker from '../core/Ticker';
 import MapInstance from '../maps/MapInstance';
+import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
   map: MapInstance;
   imageFactory: ImageFactory;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 export const moveUnit = async (
   unit: Unit,
   coordinates: Coordinates,
-  { state, map, imageFactory, ticker }: Context
+  { state, map, imageFactory, session }: Context
 ) => {
   map.removeUnit(unit);
 
@@ -33,13 +34,13 @@ export const moveUnit = async (
       await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
         nextCoordinates,
-        { state, map, imageFactory, ticker }
+        { state, map, imageFactory, session }
       );
     }
   }
 
   const bonus = getBonus(map, coordinates);
   if (bonus) {
-    await bonus.onUse(unit, { state, map, ticker });
+    await bonus.onUse(unit, { state, map, session });
   }
 };

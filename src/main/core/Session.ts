@@ -1,3 +1,4 @@
+import Ticker from './Ticker';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
 import Unit from '../entities/units/Unit';
 import { checkNotNull } from '../utils/preconditions';
@@ -96,10 +97,12 @@ export class InventoryState {
 export class Session {
   private levelUpScreen: LevelUpScreenState | null;
   private inventory: InventoryState | null;
+  private readonly ticker: Ticker;
 
   constructor() {
     this.levelUpScreen = null;
     this.inventory = null;
+    this.ticker = new Ticker();
   }
 
   initLevelUpScreen = (playerUnit: Unit): void => {
@@ -128,4 +131,5 @@ export class Session {
   };
 
   getInventory = (): InventoryState => checkNotNull(this.inventory);
+  getTicker = (): Ticker => this.ticker;
 }
