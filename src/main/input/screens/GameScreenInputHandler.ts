@@ -36,6 +36,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     await playTurn({ ...context, map });
   } else if (key === 'TAB') {
     session.prepareInventoryScreen(state.getPlayerUnit());
+    session.prepareInventoryV2(state.getPlayerUnit());
     session.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     session.initLevelUpScreen(state.getPlayerUnit());

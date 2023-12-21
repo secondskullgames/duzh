@@ -6,6 +6,7 @@ import { RenderContext, Renderer } from './Renderer';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
+import InventoryRendererV2 from './InventoryRendererV2';
 import GameState from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
@@ -67,10 +68,15 @@ export default class GameRenderer implements Renderer {
     this.session = session;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
-    this.inventoryRenderer = new InventoryRenderer({
-      textRenderer,
-      graphics: bufferGraphics
-    });
+    this.inventoryRenderer = Feature.isEnabled(Feature.INVENTORY_V2)
+      ? new InventoryRendererV2({
+          textRenderer,
+          graphics: bufferGraphics
+        })
+      : new InventoryRenderer({
+          textRenderer,
+          graphics: bufferGraphics
+        });
     this.mapScreenRenderer = new MapScreenRenderer({ graphics: bufferGraphics });
     this.characterScreenRenderer = new CharacterScreenRenderer({
       textRenderer,

@@ -9,12 +9,14 @@ import MapScreenInputHandler from './screens/MapScreenInputHandler';
 import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
 import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
 import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
+import InventoryV2InputHandler from './screens/InventoryV2InputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
 import ImageFactory from '../graphics/images/ImageFactory';
 import GameState from '../core/GameState';
 import MapFactory from '../maps/MapFactory';
 import { Session } from '../core/Session';
+import { Feature } from '../utils/features';
 import type { KeyCommand } from './inputTypes';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
@@ -23,7 +25,9 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
   [GameScreen.GAME]: GameScreenInputHandler,
   [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
   [GameScreen.HELP]: HelpScreenInputHandler,
-  [GameScreen.INVENTORY]: InventoryScreenInputHandler,
+  [GameScreen.INVENTORY]: Feature.isEnabled(Feature.INVENTORY_V2)
+    ? InventoryV2InputHandler
+    : InventoryScreenInputHandler,
   [GameScreen.LEVEL_UP]: LevelUpScreenInputHandler,
   [GameScreen.MAP]: MapScreenInputHandler,
   [GameScreen.TITLE]: TitleScreenInputHandler,
