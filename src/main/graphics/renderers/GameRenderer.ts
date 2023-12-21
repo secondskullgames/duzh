@@ -94,7 +94,7 @@ export default class GameRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    const screen = this.state.getScreen();
+    const screen = this.session.getScreen();
 
     switch (screen) {
       case GameScreen.TITLE:

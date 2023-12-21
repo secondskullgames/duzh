@@ -1,4 +1,3 @@
-import { GameScreen } from './GameScreen';
 import MapInstance from '../maps/MapInstance';
 import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
@@ -10,8 +9,6 @@ import { clear } from '../utils/arrays';
  * Global mutable state
  */
 export default class GameState {
-  private screen: GameScreen;
-  private prevScreen: GameScreen | null;
   private playerUnit: Unit | null;
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
@@ -22,8 +19,6 @@ export default class GameState {
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
-    this.screen = GameScreen.NONE;
-    this.prevScreen = null;
     this.playerUnit = null;
     this.mapSuppliers = [];
     this.maps = [];
@@ -33,23 +28,6 @@ export default class GameState {
     this.queuedAbility = null;
     this.generatedEquipmentIds = [];
   }
-
-  getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => {
-    this.prevScreen = this.screen;
-    this.screen = screen;
-  };
-  /**
-   * TODO: make this a stack
-   */
-  showPrevScreen = () => {
-    if (this.prevScreen) {
-      this.screen = this.prevScreen;
-      this.prevScreen = null;
-    } else {
-      this.screen = GameScreen.GAME;
-    }
-  };
 
   getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
   setPlayerUnit = (unit: Unit): void => {
@@ -100,8 +78,6 @@ export default class GameState {
   };
 
   reset = () => {
-    this.screen = GameScreen.TITLE;
-    this.prevScreen = null;
     this.playerUnit = null;
     clear(this.mapSuppliers);
     Object.keys(this.maps).forEach(key => {

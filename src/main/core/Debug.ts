@@ -79,7 +79,8 @@ export class Debug {
         }),
       nextLevel: async () => {
         await loadNextMap({
-          state: this.state
+          state: this.state,
+          session: this.session
         });
       }
     };

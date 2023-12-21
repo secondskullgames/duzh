@@ -16,7 +16,6 @@ export default class Ticker {
   private readonly _messages: Message[] = [];
 
   log = (message: string, { turn }: Context) => {
-    console.log(`logging ${message} (${turn})`);
     this._messages.push({ message, turn });
   };
 

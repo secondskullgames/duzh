@@ -36,14 +36,14 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     await playTurn({ ...context, map });
   } else if (key === 'TAB') {
     session.prepareInventoryScreen(state.getPlayerUnit());
-    state.setScreen(GameScreen.INVENTORY);
+    session.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     session.initLevelUpScreen(state.getPlayerUnit());
-    state.setScreen(GameScreen.LEVEL_UP);
+    session.setScreen(GameScreen.LEVEL_UP);
   } else if (key === 'M') {
-    state.setScreen(GameScreen.MAP);
+    session.setScreen(GameScreen.MAP);
   } else if (key === 'C') {
-    state.setScreen(GameScreen.CHARACTER);
+    session.setScreen(GameScreen.CHARACTER);
   } else if (key === 'ENTER') {
     if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
@@ -51,7 +51,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
       await _handleEnter(context);
     }
   } else if (key === 'F1') {
-    state.setScreen(GameScreen.HELP);
+    session.setScreen(GameScreen.HELP);
   }
 };
 
@@ -134,7 +134,7 @@ const _handleEnter = async ({ state, imageFactory, session }: ScreenHandlerConte
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state });
+    await loadNextMap({ state, session });
   }
   await playTurn({ state, map, imageFactory, session });
 };

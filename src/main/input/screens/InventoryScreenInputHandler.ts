@@ -31,16 +31,16 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
       }
       break;
     case 'TAB':
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
       break;
     case 'M':
-      state.setScreen(GameScreen.MAP);
+      session.setScreen(GameScreen.MAP);
       break;
     case 'F1':
-      state.setScreen(GameScreen.HELP);
+      session.setScreen(GameScreen.HELP);
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 
@@ -52,7 +52,7 @@ const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerConte
 
   if (selectedItem) {
     if (!['ARMOR', 'WEAPON'].includes(selectedItem.category)) {
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
     }
 
     await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });

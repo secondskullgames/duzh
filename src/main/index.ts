@@ -38,7 +38,7 @@ const main = async () => {
     document.getElementById('debug')?.classList.remove('production');
   }
   await addInitialState({ state, imageFactory, mapFactory, session });
-  await showSplashScreen({ state });
+  await showSplashScreen({ state, session });
   setInterval(async () => {
     await renderer.render({ state, session, imageFactory });
   }, 20);

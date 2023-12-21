@@ -12,10 +12,10 @@ const handleKeyCommand = async (
 
   switch (command.key) {
     case 'L':
-      state.showPrevScreen();
+      session.showPrevScreen();
       break;
     case 'F1':
-      state.setScreen(GameScreen.HELP);
+      session.setScreen(GameScreen.HELP);
       break;
     case 'UP':
       levelUpState.selectPreviousAbility(playerUnit);

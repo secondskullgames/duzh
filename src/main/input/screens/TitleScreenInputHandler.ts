@@ -8,7 +8,7 @@ import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, imageFactory, mapFactory }: ScreenHandlerContext
+  { state, session, imageFactory, mapFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -26,13 +26,13 @@ const handleKeyCommand = async (
           );
           await startGameDebug(mapInstance, { state });
         } else {
-          await startGame({ state });
+          await startGame({ state, session });
         }
       }
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 

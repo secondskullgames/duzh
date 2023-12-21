@@ -1,4 +1,5 @@
 import Ticker from './Ticker';
+import { GameScreen } from './GameScreen';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
 import Unit from '../entities/units/Unit';
 import { checkNotNull } from '../utils/preconditions';
@@ -95,15 +96,37 @@ export class InventoryState {
 }
 
 export class Session {
+  private screen: GameScreen;
+  private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
   private inventory: InventoryState | null;
   private readonly ticker: Ticker;
 
   constructor() {
+    this.screen = GameScreen.NONE;
+    this.prevScreen = null;
     this.levelUpScreen = null;
     this.inventory = null;
     this.ticker = new Ticker();
   }
+
+  getScreen = (): GameScreen => this.screen;
+  setScreen = (screen: GameScreen) => {
+    this.prevScreen = this.screen;
+    this.screen = screen;
+  };
+
+  /**
+   * TODO: make this a stack
+   */
+  showPrevScreen = () => {
+    if (this.prevScreen) {
+      this.screen = this.prevScreen;
+      this.prevScreen = null;
+    } else {
+      this.screen = GameScreen.GAME;
+    }
+  };
 
   initLevelUpScreen = (playerUnit: Unit): void => {
     this.levelUpScreen = new LevelUpScreenState();
@@ -132,4 +155,9 @@ export class Session {
 
   getInventory = (): InventoryState => checkNotNull(this.inventory);
   getTicker = (): Ticker => this.ticker;
+
+  reset = (): void => {
+    this.screen = GameScreen.TITLE;
+    this.prevScreen = null;
+  };
 }
