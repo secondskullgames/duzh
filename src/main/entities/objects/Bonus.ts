@@ -3,13 +3,13 @@ import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import GameState from '../../core/GameState';
-import Ticker from '../../core/Ticker';
 import MapInstance from '../../maps/MapInstance';
+import { Session } from '../../core/Session';
 
 export type OnUseContext = Readonly<{
   state: GameState;
   map: MapInstance;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 type Props = Readonly<{

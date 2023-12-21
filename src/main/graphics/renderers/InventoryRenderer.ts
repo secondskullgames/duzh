@@ -34,9 +34,9 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, imageFactory }: RenderContext) => {
+  render = async ({ state, session, imageFactory }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
-    const inventory = playerUnit.getInventory();
+    const inventory = session.getInventory();
     const { graphics } = this;
 
     const image = await imageFactory.getImage({
@@ -100,7 +100,7 @@ export default class InventoryRenderer implements Renderer {
         Colors.WHITE,
         Alignment.CENTER
       );
-      if (inventoryCategories[i] === inventory.selectedCategory) {
+      if (inventoryCategories[i] === inventory.getSelectedCategory()) {
         // TODO can we make a `drawLine`?
         const rect = {
           left: x - categoryWidth / 2 + 4,
@@ -113,13 +113,13 @@ export default class InventoryRenderer implements Renderer {
     }
 
     // draw inventory items
-    if (inventory.selectedCategory) {
-      const items = inventory.get(inventory.selectedCategory);
+    if (inventory.getSelectedCategory()) {
+      const items = inventory.getItems(playerUnit, inventory.getSelectedCategory());
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         let color;
-        if (items[i] === inventory.selectedItem) {
+        if (items[i] === inventory.getSelectedItem()) {
           color = Colors.YELLOW;
         } else {
           color = Colors.WHITE;

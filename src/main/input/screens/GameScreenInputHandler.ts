@@ -24,7 +24,7 @@ import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
-  const { state } = context;
+  const { state, session } = context;
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
 
   if (_isArrowKey(key)) {
@@ -35,13 +35,15 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     playSound(Sounds.FOOTSTEP);
     await playTurn({ ...context, map });
   } else if (key === 'TAB') {
-    state.setScreen(GameScreen.INVENTORY);
+    session.prepareInventoryScreen(state.getPlayerUnit());
+    session.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-    state.setScreen(GameScreen.LEVEL_UP);
+    session.initLevelUpScreen(state.getPlayerUnit());
+    session.setScreen(GameScreen.LEVEL_UP);
   } else if (key === 'M') {
-    state.setScreen(GameScreen.MAP);
+    session.setScreen(GameScreen.MAP);
   } else if (key === 'C') {
-    state.setScreen(GameScreen.CHARACTER);
+    session.setScreen(GameScreen.CHARACTER);
   } else if (key === 'ENTER') {
     if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
@@ -49,7 +51,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
       await _handleEnter(context);
     }
   } else if (key === 'F1') {
-    state.setScreen(GameScreen.HELP);
+    session.setScreen(GameScreen.HELP);
   }
 };
 
@@ -64,7 +66,7 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, imageFactory, ticker }: ScreenHandlerContext
+  { state, imageFactory, session }: ScreenHandlerContext
 ) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
@@ -105,7 +107,7 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn({ state, map, imageFactory, ticker });
+    await playTurn({ state, map, imageFactory, session });
   }
 };
 
@@ -122,19 +124,19 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, imageFactory, session }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {
-    pickupItem(playerUnit, item, { state, ticker });
+    pickupItem(playerUnit, item, { state, session });
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state });
+    await loadNextMap({ state, session });
   }
-  await playTurn({ state, map, imageFactory, ticker });
+  await playTurn({ state, map, imageFactory, session });
 };
 
 export default {

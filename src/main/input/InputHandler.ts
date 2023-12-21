@@ -13,8 +13,8 @@ import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
 import ImageFactory from '../graphics/images/ImageFactory';
 import GameState from '../core/GameState';
-import Ticker from '../core/Ticker';
 import MapFactory from '../maps/MapFactory';
+import { Session } from '../core/Session';
 import type { KeyCommand } from './inputTypes';
 
 const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
@@ -32,27 +32,27 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 
 type Props = Readonly<{
   state: GameState;
+  session: Session;
   imageFactory: ImageFactory;
   mapFactory: MapFactory;
-  ticker: Ticker;
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
+  private readonly session: Session;
   private readonly imageFactory: ImageFactory;
   private readonly mapFactory: MapFactory;
-  private readonly ticker: Ticker;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, imageFactory, mapFactory, ticker }: Props) {
+  constructor({ state, session, imageFactory, mapFactory }: Props) {
     this.state = state;
+    this.session = session;
     this.imageFactory = imageFactory;
     this.mapFactory = mapFactory;
-    this.ticker = ticker;
     this.busy = false;
     this.eventTarget = null;
   }
@@ -85,9 +85,14 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, imageFactory, mapFactory, ticker } = this;
-    const handler: ScreenInputHandler = checkNotNull(screenHandlers[state.getScreen()]);
-    await handler.handleKeyCommand(command, { state, imageFactory, mapFactory, ticker });
+    const { state, session, imageFactory, mapFactory } = this;
+    const handler: ScreenInputHandler = checkNotNull(screenHandlers[session.getScreen()]);
+    await handler.handleKeyCommand(command, {
+      state,
+      session,
+      imageFactory,
+      mapFactory
+    });
   };
 
   addEventListener = (target: HTMLElement) => {

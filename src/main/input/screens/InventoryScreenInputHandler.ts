@@ -4,55 +4,59 @@ import { toggleFullScreen } from '../../utils/dom';
 import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 
-const handleKeyCommand = async (
-  command: KeyCommand,
-  { state, imageFactory, mapFactory, ticker }: ScreenHandlerContext
-) => {
+const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
+  const { state, session } = context;
   const { key, modifiers } = command;
-  const inventory = state.getPlayerUnit().getInventory();
+  const playerUnit = state.getPlayerUnit();
+  const inventory = session.getInventory();
 
   switch (key) {
     case 'UP':
-      inventory.previousItem();
+      inventory.previousItem(playerUnit);
       break;
     case 'DOWN':
-      inventory.nextItem();
+      inventory.nextItem(playerUnit);
       break;
     case 'LEFT':
-      inventory.previousCategory();
+      inventory.previousCategory(playerUnit);
       break;
     case 'RIGHT':
-      inventory.nextCategory();
+      inventory.nextCategory(playerUnit);
       break;
     case 'ENTER':
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await _handleEnter({ state, imageFactory, mapFactory, ticker });
+        await _handleEnter(context);
       }
       break;
     case 'TAB':
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
       break;
     case 'M':
-      state.setScreen(GameScreen.MAP);
+      session.setScreen(GameScreen.MAP);
       break;
     case 'F1':
-      state.setScreen(GameScreen.HELP);
+      session.setScreen(GameScreen.HELP);
       break;
     case 'ESCAPE':
-      state.setScreen(GameScreen.GAME);
+      session.setScreen(GameScreen.GAME);
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, ticker }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
-  const { selectedItem } = playerUnit.getInventory();
+  const inventory = session.getInventory();
+  const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
-    state.setScreen(GameScreen.GAME);
-    await useItem(playerUnit, selectedItem, { state, map, imageFactory, ticker });
+    if (!['ARMOR', 'WEAPON'].includes(selectedItem.category)) {
+      session.setScreen(GameScreen.GAME);
+    }
+
+    await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });
+    session.prepareInventoryScreen(playerUnit);
   }
 };
 

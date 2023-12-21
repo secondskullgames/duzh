@@ -18,8 +18,8 @@ import { createCanvas } from '../../utils/dom';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
-import Ticker from '../../core/Ticker';
 import { Feature } from '../../utils/features';
+import { Session } from '../../core/Session';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title2';
@@ -30,7 +30,7 @@ type Props = Readonly<{
   state: GameState;
   imageFactory: ImageFactory;
   textRenderer: TextRenderer;
-  ticker: Ticker;
+  session: Session;
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -48,9 +48,9 @@ export default class GameRenderer implements Renderer {
   private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
-  private readonly ticker: Ticker;
+  private readonly session: Session;
 
-  constructor({ parent, state, imageFactory, textRenderer, ticker }: Props) {
+  constructor({ parent, state, session, imageFactory, textRenderer }: Props) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,
@@ -64,7 +64,7 @@ export default class GameRenderer implements Renderer {
     this.state = state;
     this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
-    this.ticker = ticker;
+    this.session = session;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
     this.inventoryRenderer = new InventoryRenderer({
@@ -94,7 +94,7 @@ export default class GameRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (context: RenderContext) => {
-    const screen = this.state.getScreen();
+    const screen = this.session.getScreen();
 
     switch (screen) {
       case GameScreen.TITLE:
@@ -169,8 +169,8 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderTicker = async () => {
-    const { bufferGraphics: graphics, state, ticker } = this;
-    const messages = ticker.getRecentMessages(state.getTurn());
+    const { bufferGraphics: graphics, state, session } = this;
+    const messages = session.getTicker().getRecentMessages(state.getTurn());
 
     const left = 0;
     const top = 0;
