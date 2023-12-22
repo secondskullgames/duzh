@@ -21,6 +21,7 @@ import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
 import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
+import { Dash } from '../../entities/units/abilities/Dash';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
@@ -82,12 +83,24 @@ const _handleArrowKey = async (
     ) {
       order = new AbilityOrder({ coordinates, ability: ShootArrow });
     }
-  } else if (modifiers.includes(ModifierKey.ALT)) {
+  } else if (
+    modifiers.includes(ModifierKey.ALT) &&
+    Feature.isEnabled(Feature.ALT_STRAFE)
+  ) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (unit, context) => {
+        execute: async (_unit, context) => {
           await Strafe.use(playerUnit, coordinates, context);
+        }
+      };
+    }
+  } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_DASH)) {
+    if (playerUnit.canSpendMana(Dash.manaCost)) {
+      // TODO make this into an Order
+      order = {
+        execute: async (_unit, context) => {
+          await Dash.use(playerUnit, coordinates, context);
         }
       };
     }

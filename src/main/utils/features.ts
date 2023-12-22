@@ -1,4 +1,6 @@
 export enum Feature {
+  ALT_DASH = 'ALT_DASH',
+  ALT_STRAFE = 'ALT_STRAFE',
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
@@ -22,6 +24,10 @@ export namespace Feature {
     switch (feature) {
       case Feature.PRODUCTION:
         return _isProduction();
+      case Feature.ALT_DASH:
+        return true;
+      case Feature.ALT_STRAFE:
+        return false;
       case Feature.DEBUG_BUTTONS:
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);
