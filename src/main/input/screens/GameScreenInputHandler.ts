@@ -139,9 +139,6 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    if (!willCompleteTurn) {
-      console.log('Will not complete turn');
-    }
     await playTurn(willCompleteTurn, { state, map, imageFactory, session });
   }
 };
