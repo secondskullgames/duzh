@@ -151,6 +151,7 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderGameScreen = async (context: RenderContext) => {
+    // TODO Ideally this would logic would be part of GameScreenRenderer
     const { bufferGraphics: graphics, canvas } = this;
     graphics.fillRect(
       { left: 0, top: 0, width: canvas.width, height: canvas.height },
@@ -160,6 +161,10 @@ export default class GameRenderer implements Renderer {
     await this.gameScreenRenderer.render(context);
     await this.hudRenderer.render(context);
     await this._renderTicker();
+
+    if (context.session.isTurnInProgress()) {
+      this._drawTurnProgressIndicator(context);
+    }
   };
 
   private _renderInventoryScreen = async (context: RenderContext) => {
@@ -194,6 +199,19 @@ export default class GameRenderer implements Renderer {
         Colors.WHITE,
         Alignment.LEFT
       );
+    }
+  };
+
+  private _drawTurnProgressIndicator = (context: RenderContext) => {
+    const { session } = context;
+    const graphics = this.bufferGraphics;
+    if (session.isTurnInProgress()) {
+      const width = 20;
+      const height = 20;
+      const left = graphics.getWidth() - width;
+      const top = 0;
+      const rect = { left, top, width, height };
+      graphics.fillRect(rect, Colors.DARK_GRAY);
     }
   };
 

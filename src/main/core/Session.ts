@@ -272,6 +272,7 @@ export class Session {
   private inventory: InventoryState | null;
   private inventoryV2: InventoryV2State | null;
   private readonly ticker: Ticker;
+  private _isTurnInProgress: boolean;
 
   constructor() {
     this.screen = GameScreen.NONE;
@@ -280,6 +281,7 @@ export class Session {
     this.inventory = null;
     this.inventoryV2 = null;
     this.ticker = new Ticker();
+    this._isTurnInProgress = false;
   }
 
   getScreen = (): GameScreen => this.screen;
@@ -358,4 +360,13 @@ export class Session {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
   };
+
+  setTurnInProgress = (val: boolean) => {
+    this._isTurnInProgress = val;
+  };
+
+  /**
+   * Used for showing the "busy" indicator in the UI
+   */
+  isTurnInProgress = (): boolean => this._isTurnInProgress;
 }

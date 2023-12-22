@@ -14,6 +14,7 @@ type Context = Readonly<{
 }>;
 
 export const playTurn = async ({ state, map, imageFactory, session }: Context) => {
+  session.setTurnInProgress(true);
   const sortedUnits = _sortUnits(map.getAllUnits());
   for (const unit of sortedUnits) {
     if (unit.getLife() > 0) {
@@ -27,6 +28,7 @@ export const playTurn = async ({ state, map, imageFactory, session }: Context) =
 
   updateRevealedTiles({ state, map });
   state.nextTurn();
+  session.setTurnInProgress(false);
 };
 
 /**

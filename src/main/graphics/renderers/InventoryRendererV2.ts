@@ -145,6 +145,7 @@ export default class InventoryRendererV2 implements Renderer {
 
   private _drawBackground = async ({ imageFactory }: RenderContext) => {
     const { graphics } = this;
+    graphics.clear();
 
     const image = await imageFactory.getImage({
       filename: INVENTORY_BACKGROUND_FILENAME

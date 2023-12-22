@@ -5,6 +5,7 @@ import Rect from '../geometry/Rect';
 import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
 
 export interface Graphics {
+  clear: () => void;
   fillRect: (rect: Rect, color: Color) => void;
   fill: (color: Color) => void;
   drawImage: (image: Image, topLeft: Pixel) => void;
@@ -25,6 +26,11 @@ class CanvasGraphics implements Graphics {
     this.canvas = canvas;
     this.context = getCanvasContext(canvas);
   }
+
+  clear = () => {
+    const { canvas, context } = this;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
 
   fillRect = (rect: Rect, color: Color) => {
     const { context } = this;
@@ -112,6 +118,11 @@ class OffscreenCanvasGraphics implements Graphics {
 
   getImageBitmap = async (): Promise<ImageBitmap> => {
     return this.canvas.transferToImageBitmap();
+  };
+
+  clear = (): void => {
+    const { canvas, context } = this;
+    context.clearRect(0, 0, canvas.width, canvas.height);
   };
 }
 
