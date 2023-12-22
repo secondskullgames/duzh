@@ -16,7 +16,7 @@
   },
   "strength": 2,
   "dexterity": 1,
-  "life": 40,
+  "life": 30,
   "mana": 5,
   "equipment": [
     "bronze_sword",
@@ -26,13 +26,13 @@
     "long_bow"
   ],
   "aiParameters": {
-    "speed": 0.95,
-    "visionRange": 10,
+    "speed": 0.99,
+    "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
   "levelParameters": {
-    "minLevel": 3,
+    "minLevel": 4,
     "maxLevel": 99,
     "points": 25
   },
