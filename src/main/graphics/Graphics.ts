@@ -5,8 +5,10 @@ import Rect from '../geometry/Rect';
 import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
 
 export interface Graphics {
+  clear: () => void;
   fillRect: (rect: Rect, color: Color) => void;
   fill: (color: Color) => void;
+  drawRect: (rect: Rect, color: Color) => void;
   drawImage: (image: Image, topLeft: Pixel) => void;
   drawImageBitmap: (bitmap: ImageBitmap, topLeft: Pixel) => void;
   drawScaledImage: (image: Image, rect: Rect) => void;
@@ -25,6 +27,11 @@ class CanvasGraphics implements Graphics {
     this.canvas = canvas;
     this.context = getCanvasContext(canvas);
   }
+
+  clear = () => {
+    const { canvas, context } = this;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
 
   fillRect = (rect: Rect, color: Color) => {
     const { context } = this;
@@ -63,6 +70,12 @@ class CanvasGraphics implements Graphics {
   getImageBitmap = async (): Promise<ImageBitmap> => {
     const imageData = this.context.getImageData(0, 0, this.getWidth(), this.getHeight());
     return createImageBitmap(imageData);
+  };
+
+  drawRect = (rect: Rect, color: Color): void => {
+    const { context } = this;
+    context.strokeStyle = color.hex;
+    context.strokeRect(rect.left, rect.top, rect.width, rect.height);
   };
 }
 
@@ -112,6 +125,17 @@ class OffscreenCanvasGraphics implements Graphics {
 
   getImageBitmap = async (): Promise<ImageBitmap> => {
     return this.canvas.transferToImageBitmap();
+  };
+
+  clear = (): void => {
+    const { canvas, context } = this;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  drawRect = (rect: Rect, color: Color): void => {
+    const { context } = this;
+    context.strokeStyle = color.hex;
+    context.strokeRect(rect.left, rect.top, rect.width, rect.height);
   };
 }
 

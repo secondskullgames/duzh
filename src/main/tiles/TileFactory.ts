@@ -9,6 +9,7 @@ import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
 import ImageFactory from '../graphics/images/ImageFactory';
+import { Feature } from '../utils/features';
 
 type CreateTileContext = Readonly<{
   tileType: TileType;
@@ -59,6 +60,10 @@ const getTileSet = async (
  * TODO hardcoding these
  */
 const getTileSetNames = (): string[] => {
+  if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
+    return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
+  }
+
   return [
     'catacomb',
     'catacomb_gold',

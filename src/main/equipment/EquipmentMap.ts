@@ -24,4 +24,6 @@ export default class EquipmentMap {
   getBySlot = (slot: EquipmentSlot): Equipment | null => this._map[slot] ?? null;
 
   getAll = (): Equipment[] => Object.values(this._map);
+
+  includes = (item: Equipment): boolean => this.getAll().includes(item);
 }

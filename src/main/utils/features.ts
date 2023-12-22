@@ -1,12 +1,18 @@
 export enum Feature {
+  ALT_DASH = 'ALT_DASH',
+  ALT_FREE_MOVE = 'ALT_FREE_MOVE',
+  ALT_STRAFE = 'ALT_STRAFE',
+  BUSY_INDICATOR = 'BUSY_INDICATOR',
+  DARK_DUNGEON = 'DARK_DUNGEON',
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
-  PRODUCTION = 'PRODUCTION',
-  LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN'
+  INVENTORY_V2 = 'INVENTORY_V2',
+  LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
+  PRODUCTION = 'PRODUCTION'
 }
 
 export namespace Feature {
@@ -21,6 +27,16 @@ export namespace Feature {
     switch (feature) {
       case Feature.PRODUCTION:
         return _isProduction();
+      case Feature.ALT_DASH:
+        return false;
+      case Feature.ALT_FREE_MOVE:
+        return false;
+      case Feature.ALT_STRAFE:
+        return true;
+      case Feature.BUSY_INDICATOR:
+        return true;
+      case Feature.DARK_DUNGEON:
+        return false;
       case Feature.DEBUG_BUTTONS:
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);
@@ -34,6 +50,8 @@ export namespace Feature {
         return false;
       case Feature.FAST_MOVE:
         return false;
+      case Feature.INVENTORY_V2:
+        return true;
     }
   };
 }

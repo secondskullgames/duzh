@@ -8,7 +8,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
   const { state, session } = context;
   const { key, modifiers } = command;
   const playerUnit = state.getPlayerUnit();
-  const inventory = session.getInventory();
+  const inventory = session.getInventoryV2();
 
   switch (key) {
     case 'UP':
@@ -47,12 +47,12 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
 const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
-  const inventory = session.getInventory();
+  const inventory = session.getInventoryV2();
   const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
     await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });
-    session.prepareInventoryScreen(playerUnit);
+    session.prepareInventoryV2(playerUnit);
   }
 };
 

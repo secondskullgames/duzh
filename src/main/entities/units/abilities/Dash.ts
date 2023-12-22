@@ -8,7 +8,7 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 
-const manaCost = 5;
+const manaCost = 4;
 
 export const Dash: UnitAbility = {
   name: AbilityName.DASH,
@@ -39,7 +39,7 @@ export const Dash: UnitAbility = {
         await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
         moved = true;
         if (map.isTileRevealed({ x, y })) {
-          await sleep(75);
+          await sleep(100);
         }
       } else {
         break;
