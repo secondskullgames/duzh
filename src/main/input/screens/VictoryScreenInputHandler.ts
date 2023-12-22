@@ -16,7 +16,8 @@ const handleKeyCommand = async (
         await toggleFullScreen();
       } else {
         await showSplashScreen({ state, session });
-        await state.reset();
+        state.reset();
+        session.reset();
         await addInitialState({
           state,
           imageFactory,

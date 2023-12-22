@@ -70,5 +70,12 @@
   "HAT2_HIGHLIGHT": "#0080ff",
   "HAT2_BORDER": "#000080",
   "SKIRT_MAIN": "#0000ff",
-  "SKIRT_BORDER": "#000000"
+  "SKIRT_BORDER": "#000000",
+
+  "GRAY_64": "#404040",
+  "GRAY_96": "#606060",
+  "GRAY_128": "#808080",
+  "GRAY_160": "#a0a0a0",
+  "GRAY_192": "#c0c0c0",
+  "GRAY_224": "#e0e0e0"
 }

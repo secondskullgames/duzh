@@ -13,17 +13,28 @@ type Context = Readonly<{
   session: Session;
 }>;
 
-export const playTurn = async ({ state, map, imageFactory, session }: Context) => {
+/**
+ * TODO ugly inverted boolean
+ */
+export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
+  const { state, map, imageFactory, session } = context;
   session.setTurnInProgress(true);
-  const sortedUnits = _sortUnits(map.getAllUnits());
-  for (const unit of sortedUnits) {
-    if (unit.getLife() > 0) {
-      await unit.update({ state, map, imageFactory, session });
+  if (!notPlayerOnly) {
+    const playerUnit = state.getPlayerUnit();
+    if (playerUnit.getLife() > 0) {
+      await playerUnit.update({ state, map, imageFactory, session });
     }
-  }
+  } else {
+    const sortedUnits = _sortUnits(map.getAllUnits());
+    for (const unit of sortedUnits) {
+      if (unit.getLife() > 0) {
+        await unit.update({ state, map, imageFactory, session });
+      }
+    }
 
-  for (const object of map.getAllObjects()) {
-    await object.update({ state, map, imageFactory, session });
+    for (const object of map.getAllObjects()) {
+      await object.update({ state, map, imageFactory, session });
+    }
   }
 
   updateRevealedTiles({ state, map });

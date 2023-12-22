@@ -27,7 +27,7 @@ export const fastMove = async (
     coordinates = Coordinates.plus(unit.getCoordinates(), direction);
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, { state, map, imageFactory, session });
-      await playTurn({ state, map, imageFactory, session });
+      await playTurn(true, { state, map, imageFactory, session });
       await sleep(100);
     } else {
       break;
