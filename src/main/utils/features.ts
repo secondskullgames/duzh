@@ -2,6 +2,7 @@ export enum Feature {
   ALT_DASH = 'ALT_DASH',
   ALT_FREE_MOVE = 'ALT_FREE_MOVE',
   ALT_STRAFE = 'ALT_STRAFE',
+  BUSY_INDICATOR = 'BUSY_INDICATOR',
   DARK_DUNGEON = 'DARK_DUNGEON',
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
   DEBUG_LEVEL = 'DEBUG_LEVEL',
@@ -27,11 +28,13 @@ export namespace Feature {
       case Feature.PRODUCTION:
         return _isProduction();
       case Feature.ALT_DASH:
-        return false;
-      case Feature.ALT_FREE_MOVE:
         return true;
+      case Feature.ALT_FREE_MOVE:
+        return false;
       case Feature.ALT_STRAFE:
         return false;
+      case Feature.BUSY_INDICATOR:
+        return true;
       case Feature.DARK_DUNGEON:
         return true;
       case Feature.DEBUG_BUTTONS:

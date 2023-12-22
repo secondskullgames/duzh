@@ -162,8 +162,10 @@ export default class GameRenderer implements Renderer {
     await this.hudRenderer.render(context);
     await this._renderTicker();
 
-    if (context.session.isTurnInProgress()) {
-      this._drawTurnProgressIndicator(context);
+    if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
+      if (context.session.isTurnInProgress()) {
+        this._drawTurnProgressIndicator(context);
+      }
     }
   };
 

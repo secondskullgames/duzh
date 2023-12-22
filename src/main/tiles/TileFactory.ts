@@ -61,7 +61,7 @@ const getTileSet = async (
  */
 const getTileSetNames = (): string[] => {
   if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
-    return ['dungeon_dark1', 'dungeon_dark2', 'dungeon_dark3'];
+    return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
   }
 
   return [

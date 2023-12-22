@@ -51,12 +51,8 @@ const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerConte
   const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
-    if (!['ARMOR', 'WEAPON'].includes(selectedItem.category)) {
-      session.setScreen(GameScreen.GAME);
-    }
-
     await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });
-    session.prepareInventoryScreen(playerUnit);
+    session.prepareInventoryV2(playerUnit);
   }
 };
 

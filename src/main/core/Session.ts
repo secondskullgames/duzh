@@ -130,7 +130,8 @@ export class InventoryV2State {
         this.selectedCategory = 'ITEMS';
         this.selectedItemCategory = displayCategories[0];
         this.selectedEquipment = null;
-        this.selectedItem = playerUnit.getInventory().get(this.selectedItemCategory)[0];
+        this.selectedItem =
+          playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         break;
       case 'ITEMS': {
         const index =
@@ -139,7 +140,8 @@ export class InventoryV2State {
             : -1;
         if (index < displayCategories.length - 1) {
           this.selectedItemCategory = displayCategories[index + 1];
-          this.selectedItem = playerUnit.getInventory().get(this.selectedItemCategory)[0];
+          this.selectedItem =
+            playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         } else {
           this.selectedItemCategory = null;
           this.selectedItem = null;
@@ -346,6 +348,9 @@ export class Session {
         const selectedItem = this.inventoryV2.getSelectedItem();
         if (selectedItem && !playerUnit.getInventory().includes(selectedItem)) {
           this.inventoryV2.clearSelectedItem();
+        }
+        if (selectedItem === null) {
+          this.inventoryV2.nextItem(playerUnit);
         }
         break;
       }
