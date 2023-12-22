@@ -34,25 +34,27 @@ export default class InventoryRendererV2 implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, session, imageFactory }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
+  render = async (context: RenderContext) => {
+    await this._drawBackground(context);
+    await this._drawEquipment(context);
+    await this._drawInventory(context);
+  };
+
+  private _drawText = async (
+    text: string,
+    font: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment
+  ) => {
+    const image = await this.textRenderer.renderText(text, font, color);
+    drawAligned(image, this.graphics, pixel, textAlign);
+  };
+
+  private _drawEquipment = async (context: RenderContext) => {
+    const { state, session } = context;
     const inventory = session.getInventoryV2();
-    const { graphics } = this;
-
-    const image = await imageFactory.getImage({
-      filename: INVENTORY_BACKGROUND_FILENAME
-    });
-    // TODO: need a 640x360 version of this image
-    graphics.drawScaledImage(image, {
-      left: INVENTORY_LEFT,
-      top: INVENTORY_TOP,
-      width: INVENTORY_WIDTH,
-      height: INVENTORY_HEIGHT
-    });
-
-    // draw equipment
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
-    const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
 
     await this._drawText(
       'EQUIPMENT',
@@ -73,6 +75,7 @@ export default class InventoryRendererV2 implements Renderer {
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
+    const playerUnit = state.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
       await this._drawText(
@@ -84,11 +87,15 @@ export default class InventoryRendererV2 implements Renderer {
       );
       y += LINE_HEIGHT;
     }
+  };
 
-    // draw inventory categories
+  private _drawInventory = async (context: RenderContext) => {
+    const { state, session } = context;
+    const inventory = session.getInventoryV2();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
+    const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
 
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;
@@ -115,7 +122,7 @@ export default class InventoryRendererV2 implements Renderer {
     // draw inventory items
     const selectedItemCategory = inventory.getSelectedItemCategory();
     if (selectedItemCategory) {
-      const items = inventory.getItems(playerUnit, selectedItemCategory);
+      const items = inventory.getItems(state.getPlayerUnit(), selectedItemCategory);
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -136,15 +143,19 @@ export default class InventoryRendererV2 implements Renderer {
     }
   };
 
-  private _drawText = async (
-    text: string,
-    font: FontName,
-    pixel: Pixel,
-    color: Color,
-    textAlign: Alignment
-  ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+  private _drawBackground = async ({ imageFactory }: RenderContext) => {
+    const { graphics } = this;
+
+    const image = await imageFactory.getImage({
+      filename: INVENTORY_BACKGROUND_FILENAME
+    });
+    // TODO: need a 640x360 version of this image
+    graphics.drawScaledImage(image, {
+      left: INVENTORY_LEFT,
+      top: INVENTORY_TOP,
+      width: INVENTORY_WIDTH,
+      height: INVENTORY_HEIGHT
+    });
   };
 }
 
