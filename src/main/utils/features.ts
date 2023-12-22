@@ -28,11 +28,11 @@ export namespace Feature {
       case Feature.PRODUCTION:
         return _isProduction();
       case Feature.ALT_DASH:
-        return true;
+        return false;
       case Feature.ALT_FREE_MOVE:
         return false;
       case Feature.ALT_STRAFE:
-        return false;
+        return true;
       case Feature.BUSY_INDICATOR:
         return true;
       case Feature.DARK_DUNGEON:
