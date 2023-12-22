@@ -38,6 +38,7 @@ export default class InventoryRendererV2 implements Renderer {
     await this._drawBackground(context);
     await this._drawEquipment(context);
     await this._drawInventory(context);
+    await this._drawTooltip(context);
   };
 
   private _drawText = async (
@@ -49,6 +50,22 @@ export default class InventoryRendererV2 implements Renderer {
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.graphics, pixel, textAlign);
+  };
+
+  private _drawBackground = async ({ imageFactory }: RenderContext) => {
+    const { graphics } = this;
+    graphics.clear();
+
+    const image = await imageFactory.getImage({
+      filename: INVENTORY_BACKGROUND_FILENAME
+    });
+    // TODO: need a 640x360 version of this image
+    graphics.drawScaledImage(image, {
+      left: INVENTORY_LEFT,
+      top: INVENTORY_TOP,
+      width: INVENTORY_WIDTH,
+      height: INVENTORY_HEIGHT
+    });
   };
 
   private _drawEquipment = async (context: RenderContext) => {
@@ -143,20 +160,51 @@ export default class InventoryRendererV2 implements Renderer {
     }
   };
 
-  private _drawBackground = async ({ imageFactory }: RenderContext) => {
+  private _drawTooltip = async ({ session }: RenderContext) => {
     const { graphics } = this;
-    graphics.clear();
+    const left = 10;
+    const top = graphics.getHeight() * 0.6;
+    const width = graphics.getWidth() * 0.4;
+    const height = graphics.getHeight() * 0.4 - 10;
+    graphics.drawRect({ left, top, width, height }, Colors.GRAY_128);
 
-    const image = await imageFactory.getImage({
-      filename: INVENTORY_BACKGROUND_FILENAME
-    });
-    // TODO: need a 640x360 version of this image
-    graphics.drawScaledImage(image, {
-      left: INVENTORY_LEFT,
-      top: INVENTORY_TOP,
-      width: INVENTORY_WIDTH,
-      height: INVENTORY_HEIGHT
-    });
+    const lines: string[] | null = (() => {
+      const inventory = session.getInventoryV2();
+      const selectedEquipment = inventory.getSelectedEquipment();
+      if (selectedEquipment) {
+        const lines: string[] = [];
+        lines.push(selectedEquipment.getName());
+        const damage = selectedEquipment.damage;
+        if (damage !== undefined) {
+          lines.push(`${damage} damage`);
+        }
+        return lines;
+      }
+      const selectedItem = inventory.getSelectedItem();
+      if (selectedItem) {
+        const lines: string[] = [];
+        lines.push(selectedItem.name);
+
+        // TODO tooltip
+        return lines;
+      }
+      return null;
+    })();
+
+    if (lines) {
+      const lineLeft = left + 5;
+      let lineTop = top + 5;
+      for (const line of lines) {
+        await this._drawText(
+          line,
+          FontName.APPLE_II,
+          { x: lineLeft, y: lineTop },
+          Colors.WHITE,
+          Alignment.LEFT
+        );
+        lineTop += 20;
+      }
+    }
   };
 }
 

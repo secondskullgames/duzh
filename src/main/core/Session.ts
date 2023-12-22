@@ -146,6 +146,8 @@ export class InventoryV2State {
           this.selectedItemCategory = null;
           this.selectedItem = null;
           this.selectedCategory = 'EQUIPMENT';
+          this.selectedEquipment =
+            this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
         }
         break;
       }
@@ -166,38 +168,18 @@ export class InventoryV2State {
             : -1;
         if (index > 0) {
           this.selectedItemCategory = displayCategories[index - 1];
-          this.selectedItem = playerUnit.getInventory().get(this.selectedItemCategory)[0];
+          this.selectedItem =
+            playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         } else {
           this.selectedItemCategory = null;
           this.selectedItem = null;
           this.selectedCategory = 'EQUIPMENT';
+          this.selectedEquipment =
+            this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
         }
         break;
       }
     }
-  };
-
-  nextItemCategory = (playerUnit: Unit) => {
-    const index =
-      this.selectedItemCategory !== null
-        ? displayCategories.indexOf(this.selectedItemCategory)
-        : -1;
-    this.selectedItemCategory = displayCategories[(index + 1) % displayCategories.length];
-    this.selectedItem =
-      playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
-  };
-
-  previousItemCategory = (playerUnit: Unit) => {
-    const index =
-      this.selectedItemCategory !== null
-        ? displayCategories.indexOf(this.selectedItemCategory)
-        : -1;
-    this.selectedItemCategory =
-      displayCategories[
-        (index - 1 + displayCategories.length) % displayCategories.length
-      ];
-    this.selectedItem =
-      playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
   };
 
   nextItem = (playerUnit: Unit) => {

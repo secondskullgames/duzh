@@ -36,7 +36,7 @@ export namespace Feature {
       case Feature.BUSY_INDICATOR:
         return true;
       case Feature.DARK_DUNGEON:
-        return true;
+        return false;
       case Feature.DEBUG_BUTTONS:
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);

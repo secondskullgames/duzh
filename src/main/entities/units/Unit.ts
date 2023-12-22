@@ -23,7 +23,7 @@ import UnitType from '../../schemas/UnitType';
 /**
  * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN = 1 / 2;
+const LIFE_PER_TURN = 0.75;
 const MAX_PLAYER_LEVEL = 20;
 
 // TODO hardcoding this player-specific stuff here
