@@ -16,6 +16,7 @@ type EquipmentModel = {
   slot: EquipmentSlot;
   sprite: string;
   stats: EquipmentStats;
+  tooltip?: string;
 };
 
 export default EquipmentModel;

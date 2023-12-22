@@ -4,6 +4,9 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { moveUnit } from '../../../actions/moveUnit';
+import SoundPlayer from '../../../sounds/SoundPlayer';
+import { playSound } from '../../../sounds/playSound';
+import Sounds from '../../../sounds/Sounds';
 
 const manaCost = 4;
 
@@ -26,7 +29,11 @@ export const FreeMove: UnitAbility = {
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
-    unit.spendMana(manaCost);
+    if (!map.isBlocked({ x, y })) {
+      await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
+      unit.spendMana(manaCost);
+    } else {
+      playSound(Sounds.BLOCKED);
+    }
   }
 };

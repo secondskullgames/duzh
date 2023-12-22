@@ -1,4 +1,5 @@
 import { EquipmentScriptName } from './EquipmentScript';
+import { getEquipmentTooltip } from './getEquipmentTooltip';
 import Sprite from '../graphics/sprites/Sprite';
 import Animatable from '../graphics/animations/Animatable';
 import Direction from '../geometry/Direction';
@@ -15,6 +16,7 @@ type Props = Readonly<{
   model: EquipmentModel;
   sprite: Sprite;
   inventoryItem?: InventoryItem | null;
+  tooltip: string;
 }>;
 
 export default class Equipment implements Animatable {
@@ -27,8 +29,9 @@ export default class Equipment implements Animatable {
   private readonly name: string;
   readonly script: EquipmentScriptName | null;
   private _unit: Unit | null;
+  private readonly tooltip: string;
 
-  constructor({ model, sprite, inventoryItem }: Props) {
+  constructor({ model, sprite, inventoryItem, tooltip }: Props) {
     this.name = model.name;
     this.slot = model.slot as EquipmentSlot;
     this.inventoryItem = inventoryItem ?? null;
@@ -37,6 +40,7 @@ export default class Equipment implements Animatable {
     this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
+    this.tooltip = getEquipmentTooltip(model);
     this._unit = null;
   }
 
@@ -64,4 +68,6 @@ export default class Equipment implements Animatable {
     const image = this.sprite.getImage();
     return image?.filename?.endsWith(DRAW_BEHIND_PREFIX) ?? false;
   };
+
+  getTooltip = (): string => this.tooltip;
 }
