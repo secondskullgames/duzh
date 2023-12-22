@@ -17,6 +17,7 @@ import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
+import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
 import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -37,7 +38,8 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   return new InventoryItem({
     name: 'Life Potion',
     category: 'POTION',
-    onUse
+    onUse,
+    tooltip: `Restores ${lifeRestored} life`
   });
 };
 
@@ -59,7 +61,8 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   return new InventoryItem({
     name: 'Mana Potion',
     category: 'POTION',
-    onUse
+    onUse,
+    tooltip: `Restores ${manaRestored} mana`
   });
 };
 
@@ -113,7 +116,12 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   return new InventoryItem({
     name: 'Scroll of Floor Fire',
     category: 'SCROLL',
-    onUse
+    onUse,
+    tooltip: [
+      'Unleashes a wave of fire',
+      'in all directions that',
+      `deals ${damage} damage`
+    ].join('\n')
   });
 };
 
@@ -133,7 +141,8 @@ const createInventoryEquipment = async (
   return new InventoryItem({
     name: model.name,
     category: model.itemCategory,
-    onUse
+    onUse,
+    tooltip: getEquipmentTooltip(model)
   });
 };
 
@@ -174,7 +183,8 @@ const createEquipment = async (
 
   // TODO wtf is this
   const inventoryItem = await createInventoryEquipment(equipmentClass);
-  const equipment = new Equipment({ model, sprite, inventoryItem });
+  const tooltip = getEquipmentTooltip(model);
+  const equipment = new Equipment({ model, sprite, inventoryItem, tooltip });
   sprite.bind(equipment);
   return equipment;
 };

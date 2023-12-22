@@ -174,9 +174,11 @@ export default class InventoryRendererV2 implements Renderer {
       if (selectedEquipment) {
         const lines: string[] = [];
         lines.push(selectedEquipment.getName());
-        const damage = selectedEquipment.damage;
-        if (damage !== undefined) {
-          lines.push(`${damage} damage`);
+        const tooltip = selectedEquipment.getTooltip();
+        if (tooltip) {
+          for (const line of tooltip.split('\n')) {
+            lines.push(line);
+          }
         }
         return lines;
       }
@@ -184,8 +186,13 @@ export default class InventoryRendererV2 implements Renderer {
       if (selectedItem) {
         const lines: string[] = [];
         lines.push(selectedItem.name);
+        const tooltip = selectedItem.getTooltip();
+        if (tooltip) {
+          for (const line of tooltip.split('\n')) {
+            lines.push(line);
+          }
+        }
 
-        // TODO tooltip
         return lines;
       }
       return null;
@@ -195,14 +202,16 @@ export default class InventoryRendererV2 implements Renderer {
       const lineLeft = left + 5;
       let lineTop = top + 5;
       for (const line of lines) {
-        await this._drawText(
-          line,
-          FontName.APPLE_II,
-          { x: lineLeft, y: lineTop },
-          Colors.WHITE,
-          Alignment.LEFT
-        );
-        lineTop += 20;
+        if (line.length > 0) {
+          await this._drawText(
+            line,
+            FontName.APPLE_II,
+            { x: lineLeft, y: lineTop },
+            Colors.WHITE,
+            Alignment.LEFT
+          );
+          lineTop += 15;
+        }
       }
     }
   };

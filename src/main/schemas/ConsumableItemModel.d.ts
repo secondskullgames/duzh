@@ -12,6 +12,7 @@ type ConsumableItemModel = {
   params?: {
     [key: string]: string;
   };
+  tooltip?: string;
 };
 
 export default ConsumableItemModel;
