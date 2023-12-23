@@ -102,6 +102,7 @@ export class Session {
   reset = (): void => {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
+    this.ticker.clear();
   };
 
   setTurnInProgress = (val: boolean) => {

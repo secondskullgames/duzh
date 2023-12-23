@@ -2,6 +2,7 @@ export enum Feature {
   ALT_DASH = 'ALT_DASH',
   ALT_FREE_MOVE = 'ALT_FREE_MOVE',
   ALT_STRAFE = 'ALT_STRAFE',
+  BLINK_THROUGH_WALLS = 'BLINK_THROUGH_WALLS',
   BUSY_INDICATOR = 'BUSY_INDICATOR',
   DARK_DUNGEON = 'DARK_DUNGEON',
   DEBUG_BUTTONS = 'DEBUG_BUTTONS',
@@ -33,6 +34,8 @@ export namespace Feature {
         return false;
       case Feature.ALT_STRAFE:
         return true;
+      case Feature.BLINK_THROUGH_WALLS:
+        return false;
       case Feature.BUSY_INDICATOR:
         return true;
       case Feature.DARK_DUNGEON:
