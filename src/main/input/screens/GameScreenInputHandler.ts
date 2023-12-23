@@ -94,9 +94,9 @@ const _handleArrowKey = async (
       order = {
         execute: async (_unit, context) => {
           await Strafe.use(playerUnit, coordinates, context);
-          willCompleteTurn = true;
         }
       };
+      willCompleteTurn = true;
     }
   } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_DASH)) {
     if (playerUnit.canSpendMana(Dash.manaCost)) {
@@ -104,9 +104,9 @@ const _handleArrowKey = async (
       order = {
         execute: async (_unit, context) => {
           await Dash.use(playerUnit, coordinates, context);
-          willCompleteTurn = true;
         }
       };
+      willCompleteTurn = true;
     }
   } else if (
     modifiers.includes(ModifierKey.ALT) &&
