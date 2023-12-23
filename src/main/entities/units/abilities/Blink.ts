@@ -28,20 +28,23 @@ export const Blink: UnitAbility = {
 
     const distance = 2;
     let { x, y } = unit.getCoordinates();
-    let moved = false;
+    let blocked = false;
+    const isBlocked = (coordinates: Coordinates): boolean => {
+      return !map.contains(coordinates) || map.getTile(coordinates).isBlocking();
+    };
     for (let i = 0; i < distance; i++) {
       x += dx;
       y += dy;
-    }
-    if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-      await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
-      moved = true;
+      if (isBlocked({ x, y })) {
+        blocked = true;
+      }
     }
 
-    if (moved) {
-      unit.spendMana(manaCost);
-    } else {
+    if (blocked) {
       playSound(Sounds.BLOCKED);
+    } else {
+      await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
+      unit.spendMana(manaCost);
     }
   }
 };
