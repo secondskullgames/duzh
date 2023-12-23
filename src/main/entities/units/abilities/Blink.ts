@@ -6,6 +6,7 @@ import { pointAt } from '../../../utils/geometry';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
+import { Feature } from '../../../utils/features';
 
 const manaCost = 10;
 
@@ -32,11 +33,22 @@ export const Blink: UnitAbility = {
     const isBlocked = (coordinates: Coordinates): boolean => {
       return !map.contains(coordinates) || map.getTile(coordinates).isBlocking();
     };
-    for (let i = 0; i < distance; i++) {
-      x += dx;
-      y += dy;
+
+    if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
+      for (let i = 0; i < distance; i++) {
+        x += dx;
+        y += dy;
+      }
       if (isBlocked({ x, y })) {
         blocked = true;
+      }
+    } else {
+      for (let i = 0; i < distance; i++) {
+        x += dx;
+        y += dy;
+        if (isBlocked({ x, y })) {
+          blocked = true;
+        }
       }
     }
 
