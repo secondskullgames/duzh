@@ -84,6 +84,7 @@ const _handleArrowKey = async (
       playerUnit.canSpendMana(ShootArrow.manaCost)
     ) {
       order = new AbilityOrder({ coordinates, ability: ShootArrow });
+      willCompleteTurn = true;
     }
   } else if (
     modifiers.includes(ModifierKey.ALT) &&
