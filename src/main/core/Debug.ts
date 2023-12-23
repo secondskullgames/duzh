@@ -11,19 +11,16 @@ import Sounds from '../sounds/Sounds';
 
 type Props = Readonly<{
   state: GameState;
-  imageFactory: ImageFactory;
   session: Session;
 }>;
 
 export class Debug {
   private readonly state: GameState;
-  private readonly imageFactory: ImageFactory;
   private readonly session: Session;
   private _isMapRevealed: boolean;
 
-  constructor({ state, imageFactory, session }: Props) {
+  constructor({ state, session }: Props) {
     this.state = state;
-    this.imageFactory = imageFactory;
     this.session = session;
     this._isMapRevealed = false;
   }
@@ -39,7 +36,6 @@ export class Debug {
     await die(playerUnit, {
       state: this.state,
       map: this.state.getMap(),
-      imageFactory: this.imageFactory,
       session: this.session
     });
   };

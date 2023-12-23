@@ -3,7 +3,6 @@ import { recordKill } from './recordKill';
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
@@ -23,19 +22,18 @@ type Context = Readonly<{
   state: GameState;
   session: Session;
   map: MapInstance;
-  imageFactory: ImageFactory;
 }>;
 
 export const attackUnit = async (
   { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
-  { state, map, imageFactory, session }: Context
+  { state, map, session }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, imageFactory, session }
+        { state, map, session }
       );
     }
   }
@@ -59,7 +57,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, map, imageFactory, session });
+    await die(defender, { state, map, session });
     recordKill(attacker, { state, session });
   }
 

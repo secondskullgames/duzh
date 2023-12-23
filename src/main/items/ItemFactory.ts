@@ -80,7 +80,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, map, imageFactory, session }: ItemProcContext
+    { state, map, session }: ItemProcContext
   ) => {
     // TODO - optimization opportunity
     const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
@@ -96,7 +96,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     playSound(Sounds.PLAYER_HITS_ENEMY);
     const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
       map,
-      imageFactory
+      imageFactory: session.getImageFactory()
     });
     await playAnimation(animation, { map });
 
@@ -107,7 +107,7 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       });
 
       if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, map, imageFactory, session });
+        await die(adjacentUnit, { state, map, session });
         recordKill(unit, { state, session });
       }
     }
@@ -131,9 +131,11 @@ const createInventoryEquipment = async (
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, imageFactory, session }: ItemProcContext
+    { state, session }: ItemProcContext
   ) => {
-    const equipment = await createEquipment(equipmentClass, { imageFactory });
+    const equipment = await createEquipment(equipmentClass, {
+      imageFactory: session.getImageFactory()
+    });
     return equipItem(item, equipment, unit, { state, session });
   };
 

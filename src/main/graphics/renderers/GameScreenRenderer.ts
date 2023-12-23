@@ -183,7 +183,7 @@ export default class GameScreenRenderer implements Renderer {
     color: Color,
     context: RenderContext
   ) => {
-    const { imageFactory } = context;
+    const imageFactory = context.session.getImageFactory();
     const pixel = this._gridToPixel(coordinates, context);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await imageFactory.getImage({

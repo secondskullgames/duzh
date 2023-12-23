@@ -21,7 +21,7 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -51,7 +51,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await maybeSleep();
 
-      await moveUnit(unit, coordinates, { state, map, imageFactory, session });
+      await moveUnit(unit, coordinates, { state, map, session });
       await maybeSleep();
 
       for (let i = 1; i <= 4; i++) {

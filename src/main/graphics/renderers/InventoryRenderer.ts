@@ -34,12 +34,12 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, session, imageFactory }: RenderContext) => {
+  render = async ({ state, session }: RenderContext) => {
     const playerUnit = state.getPlayerUnit();
     const inventory = session.getInventory();
     const { graphics } = this;
 
-    const image = await imageFactory.getImage({
+    const image = await session.getImageFactory().getImage({
       filename: INVENTORY_BACKGROUND_FILENAME
     });
     // TODO: need a 640x360 version of this image

@@ -4,25 +4,51 @@ import { InventoryState, InventoryV2State } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
 import { checkNotNull } from '../utils/preconditions';
+import ImageFactory from '../graphics/images/ImageFactory';
 
-export class Session {
+export interface Session {
+  getImageFactory: () => ImageFactory;
+  getScreen: () => GameScreen;
+  setScreen: (screen: GameScreen) => void;
+  showPrevScreen: () => void;
+  initLevelUpScreen: (playerUnit: Unit) => void;
+  getLevelUpScreen: () => LevelUpScreenState;
+  prepareInventoryScreen: (playerUnit: Unit) => void;
+  prepareInventoryV2: (playerUnit: Unit) => void;
+  getInventory: () => InventoryState;
+  getInventoryV2: () => InventoryV2State;
+  getTicker: () => Ticker;
+  reset: () => void;
+  setTurnInProgress: (val: boolean) => void;
+  isTurnInProgress: () => boolean;
+}
+
+export namespace Session {
+  export const create = (): Session => new SessionImpl();
+}
+
+class SessionImpl implements Session {
+  private readonly imageFactory: ImageFactory;
+  private readonly ticker: Ticker;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
   private inventory: InventoryState | null;
   private inventoryV2: InventoryV2State | null;
-  private readonly ticker: Ticker;
   private _isTurnInProgress: boolean;
 
   constructor() {
+    this.imageFactory = new ImageFactory();
+    this.ticker = new Ticker();
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.levelUpScreen = null;
     this.inventory = null;
     this.inventoryV2 = null;
-    this.ticker = new Ticker();
     this._isTurnInProgress = false;
   }
+
+  getImageFactory = (): ImageFactory => this.imageFactory;
 
   getScreen = (): GameScreen => this.screen;
   setScreen = (screen: GameScreen) => {

@@ -3,7 +3,6 @@ import GameState from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
@@ -13,7 +12,6 @@ type Context = Readonly<{
   state: GameState;
   session: Session;
   map: MapInstance;
-  imageFactory: ImageFactory;
 }>;
 
 export type EquipmentScript = Readonly<{
@@ -30,7 +28,7 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, session, map, imageFactory }: Context
+    { state, session, map }: Context
   ) => {
     const unit = checkNotNull(equipment.getUnit());
 
@@ -45,7 +43,7 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await ShootBolt.use(unit, target, { state, map, imageFactory, session });
+      await ShootBolt.use(unit, target, { state, map, session });
     }
   }
 };

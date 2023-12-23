@@ -69,7 +69,7 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, imageFactory, session }: ScreenHandlerContext
+  { state, session }: ScreenHandlerContext
 ) => {
   const direction = getDirection(key);
   const playerUnit = state.getPlayerUnit();
@@ -101,12 +101,7 @@ const _handleArrowKey = async (
     }
   } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_DASH)) {
     if (playerUnit.canSpendMana(Dash.manaCost)) {
-      // TODO make this into an Order
-      order = {
-        execute: async (_unit, context) => {
-          await Dash.use(playerUnit, coordinates, context);
-        }
-      };
+      order = new AbilityOrder({ coordinates, ability: Dash });
       willCompleteTurn = true;
     }
   } else if (
@@ -114,12 +109,7 @@ const _handleArrowKey = async (
     Feature.isEnabled(Feature.ALT_FREE_MOVE)
   ) {
     if (playerUnit.canSpendMana(FreeMove.manaCost)) {
-      // TODO make this into an Order
-      order = {
-        execute: async (_unit, context) => {
-          await FreeMove.use(playerUnit, coordinates, context);
-        }
-      };
+      order = new AbilityOrder({ coordinates, ability: FreeMove });
     }
   } else if (
     modifiers.includes(ModifierKey.CTRL) &&
@@ -140,7 +130,7 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn(willCompleteTurn, { state, map, imageFactory, session });
+    await playTurn(willCompleteTurn, { state, map, session });
   }
 };
 
@@ -157,7 +147,7 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
   }
 };
 
-const _handleEnter = async ({ state, imageFactory, session }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const playerUnit = state.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
@@ -169,7 +159,7 @@ const _handleEnter = async ({ state, imageFactory, session }: ScreenHandlerConte
     playSound(Sounds.DESCEND_STAIRS);
     await loadNextMap({ state, session });
   }
-  await playTurn(false, { state, map, imageFactory, session });
+  await playTurn(false, { state, map, session });
 };
 
 export default {

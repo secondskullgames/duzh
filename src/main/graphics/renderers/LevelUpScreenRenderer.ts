@@ -24,12 +24,14 @@ export default class LevelUpScreenRenderer implements Renderer {
     this.textRenderer = textRenderer;
   }
 
-  render = async ({ state, session, imageFactory }: RenderContext) => {
+  render = async ({ state, session }: RenderContext) => {
     const { graphics } = this;
     const playerUnit = state.getPlayerUnit();
     const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const image = await session
+      .getImageFactory()
+      .getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

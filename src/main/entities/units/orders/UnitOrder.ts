@@ -1,13 +1,11 @@
 import Unit from '../Unit';
 import GameState from '../../../core/GameState';
-import ImageFactory from '../../../graphics/images/ImageFactory';
 import MapInstance from '../../../maps/MapInstance';
 import { Session } from '../../../core/Session';
 
 export type OrderContext = Readonly<{
   state: GameState;
   map: MapInstance;
-  imageFactory: ImageFactory;
   session: Session;
 }>;
 

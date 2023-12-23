@@ -12,7 +12,6 @@ import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
 import InventoryV2InputHandler from './screens/InventoryV2InputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
-import ImageFactory from '../graphics/images/ImageFactory';
 import GameState from '../core/GameState';
 import MapFactory from '../maps/MapFactory';
 import { Session } from '../core/Session';
@@ -37,14 +36,12 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 type Props = Readonly<{
   state: GameState;
   session: Session;
-  imageFactory: ImageFactory;
   mapFactory: MapFactory;
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
   private readonly session: Session;
-  private readonly imageFactory: ImageFactory;
   private readonly mapFactory: MapFactory;
 
   private busy: boolean;
@@ -52,10 +49,9 @@ export default class InputHandler {
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, session, imageFactory, mapFactory }: Props) {
+  constructor({ state, session, mapFactory }: Props) {
     this.state = state;
     this.session = session;
-    this.imageFactory = imageFactory;
     this.mapFactory = mapFactory;
     this.busy = false;
     this.eventTarget = null;
@@ -89,12 +85,11 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, session, imageFactory, mapFactory } = this;
+    const { state, session, mapFactory } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[session.getScreen()]);
     await handler.handleKeyCommand(command, {
       state,
       session,
-      imageFactory,
       mapFactory
     });
   };

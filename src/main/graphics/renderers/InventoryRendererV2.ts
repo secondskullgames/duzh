@@ -52,7 +52,8 @@ export default class InventoryRendererV2 implements Renderer {
     drawAligned(image, this.graphics, pixel, textAlign);
   };
 
-  private _drawBackground = async ({ imageFactory }: RenderContext) => {
+  private _drawBackground = async ({ session }: RenderContext) => {
+    const imageFactory = session.getImageFactory();
     const { graphics } = this;
     graphics.clear();
 

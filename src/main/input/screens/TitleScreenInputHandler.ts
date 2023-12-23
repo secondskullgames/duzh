@@ -8,7 +8,7 @@ import { Feature } from '../../utils/features';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, session, imageFactory, mapFactory }: ScreenHandlerContext
+  { state, session, mapFactory }: ScreenHandlerContext
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -22,7 +22,7 @@ const handleKeyCommand = async (
         ) {
           const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
-            { state, imageFactory }
+            { state, imageFactory: session.getImageFactory() }
           );
           await startGameDebug(mapInstance, { state });
         } else {

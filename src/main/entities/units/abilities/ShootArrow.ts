@@ -25,7 +25,7 @@ export const ShootArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
@@ -56,7 +56,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, imageFactory }
+        { map, imageFactory: session.getImageFactory() }
       );
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
@@ -67,7 +67,7 @@ export const ShootArrow: UnitAbility = {
       session.getTicker().log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, map, imageFactory, session });
+        await die(targetUnit, { state, map, session });
       }
     } else {
       const arrowAnimation = await AnimationFactory.getArrowAnimation(
@@ -75,7 +75,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { map, imageFactory }
+        { map, imageFactory: session.getImageFactory() }
       );
       await playAnimation(arrowAnimation, { map });
     }

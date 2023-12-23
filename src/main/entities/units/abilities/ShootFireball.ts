@@ -26,7 +26,7 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -53,7 +53,7 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, imageFactory }
+        { map, imageFactory: session.getImageFactory() }
       );
       await playAnimation(fireballAnimation, { map });
       const adjustedDamage = await dealDamage(DAMAGE, {
@@ -64,7 +64,7 @@ export const ShootFireball: UnitAbility = {
       session.getTicker().log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, map, imageFactory, session });
+        await die(targetUnit, { state, map, session });
       }
     } else {
       const fireballAnimation = await AnimationFactory.getFireballAnimation(
@@ -72,7 +72,7 @@ export const ShootFireball: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { map, imageFactory }
+        { map, imageFactory: session.getImageFactory() }
       );
       await playAnimation(fireballAnimation, { map });
     }

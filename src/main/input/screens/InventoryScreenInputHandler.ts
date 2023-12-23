@@ -44,14 +44,14 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
   }
 };
 
-const _handleEnter = async ({ state, session, imageFactory }: ScreenHandlerContext) => {
+const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   const playerUnit = state.getPlayerUnit();
   const map = state.getMap();
   const inventory = session.getInventory();
   const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
-    await useItem(playerUnit, selectedItem, { state, map, imageFactory, session });
+    await useItem(playerUnit, selectedItem, { state, map, session });
     session.prepareInventoryScreen(playerUnit);
   }
 };
