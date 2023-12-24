@@ -18,10 +18,7 @@ export class FastMoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (
-    unit: Unit,
-    { state, map, imageFactory, session }: OrderContext
-  ): Promise<void> => {
+  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
     const { direction } = this;
     unit.setDirection(direction);
     const firstCoordinates = Coordinates.plus(unit.getCoordinates(), direction);
@@ -31,6 +28,6 @@ export class FastMoveOrder implements UnitOrder {
       return;
     }
 
-    return fastMove(unit, direction, { state, map, imageFactory, session });
+    return fastMove(unit, direction, { state, map, session });
   };
 }

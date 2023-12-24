@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { moveUnit } from '../../../actions/moveUnit';
-import SoundPlayer from '../../../sounds/SoundPlayer';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 
@@ -17,7 +16,7 @@ export const FreeMove: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('FreeMove requires a target!');
@@ -30,7 +29,7 @@ export const FreeMove: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (!map.isBlocked({ x, y })) {
-      await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
+      await moveUnit(unit, { x, y }, { state, map, session });
       unit.spendMana(manaCost);
     } else {
       playSound(Sounds.BLOCKED);

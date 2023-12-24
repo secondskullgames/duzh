@@ -1,6 +1,5 @@
 import GameState from '../core/GameState';
 import UnitFactory from '../entities/units/UnitFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapSpec from '../schemas/MapSpec';
 import { MapSupplier } from '../maps/MapSupplier';
 import MapFactory from '../maps/MapFactory';
@@ -10,25 +9,21 @@ import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
-  imageFactory: ImageFactory;
   mapFactory: MapFactory;
   session: Session;
 }>;
 
-export const addInitialState = async ({
-  state,
-  imageFactory,
-  mapFactory,
-  session
-}: Context) => {
+export const addInitialState = async ({ state, mapFactory, session }: Context) => {
   const ticker = session.getTicker();
   const playerUnit = await UnitFactory.createPlayerUnit({
-    imageFactory
+    imageFactory: session.getImageFactory()
   });
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: state.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
-      const equipment = await ItemFactory.createEquipment(equipmentId, { imageFactory });
+      const equipment = await ItemFactory.createEquipment(equipmentId, {
+        imageFactory: session.getImageFactory()
+      });
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
       ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
@@ -45,7 +40,7 @@ export const addInitialState = async ({
     return () =>
       mapFactory.loadMap(spec, {
         state,
-        imageFactory
+        imageFactory: session.getImageFactory()
       });
   });
   state.addMaps(maps);

@@ -17,7 +17,7 @@ export const Blink: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
@@ -55,7 +55,7 @@ export const Blink: UnitAbility = {
     if (blocked) {
       playSound(Sounds.BLOCKED);
     } else {
-      await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
+      await moveUnit(unit, { x, y }, { state, map, session });
       unit.spendMana(manaCost);
     }
   }

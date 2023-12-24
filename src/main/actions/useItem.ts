@@ -8,15 +8,14 @@ import { Session } from '../core/Session';
 type Context = Readonly<{
   state: GameState;
   map: MapInstance;
-  imageFactory: ImageFactory;
   session: Session;
 }>;
 
 export const useItem = async (
   unit: Unit,
   item: InventoryItem,
-  { state, map, imageFactory, session }: Context
+  { state, map, session }: Context
 ) => {
-  await item.use(unit, { state, map, imageFactory, session });
+  await item.use(unit, { state, map, session });
   unit.getInventory().remove(item);
 };

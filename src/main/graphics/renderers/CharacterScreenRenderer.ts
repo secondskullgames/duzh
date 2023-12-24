@@ -30,8 +30,10 @@ export default class CharacterScreenRenderer implements Renderer {
    */
   render = async (context: RenderContext) => {
     const { graphics } = this;
-    const { imageFactory } = context;
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const { session } = context;
+    const image = await session
+      .getImageFactory()
+      .getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

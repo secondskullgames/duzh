@@ -23,10 +23,7 @@ export class MoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (
-    unit: Unit,
-    { state, map, imageFactory, session }: OrderContext
-  ): Promise<void> => {
+  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
     const { coordinates } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -35,7 +32,7 @@ export class MoveOrder implements UnitOrder {
       // do nothing
       return;
     } else if (!map.isBlocked(coordinates)) {
-      await walk(unit, direction, { state, map, imageFactory, session });
+      await walk(unit, direction, { state, map, session });
       return;
     } else {
       const door = getDoor(map, coordinates);
@@ -51,7 +48,7 @@ export class MoveOrder implements UnitOrder {
         .find(block => block.isMovable());
 
       if (block) {
-        await pushBlock(unit, block, { state, map, imageFactory, session });
+        await pushBlock(unit, block, { state, map, session });
         return;
       }
     }

@@ -2,14 +2,12 @@ import { updateRevealedTiles } from './updateRevealedTiles';
 import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
   map: MapInstance;
-  imageFactory: ImageFactory;
   session: Session;
 }>;
 
@@ -17,23 +15,23 @@ type Context = Readonly<{
  * TODO ugly inverted boolean
  */
 export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
-  const { state, map, imageFactory, session } = context;
+  const { state, map, session } = context;
   session.setTurnInProgress(true);
   if (!notPlayerOnly) {
     const playerUnit = state.getPlayerUnit();
     if (playerUnit.getLife() > 0) {
-      await playerUnit.update({ state, map, imageFactory, session });
+      await playerUnit.update({ state, map, session });
     }
   } else {
     const sortedUnits = _sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
-        await unit.update({ state, map, imageFactory, session });
+        await unit.update({ state, map, session });
       }
     }
 
     for (const object of map.getAllObjects()) {
-      await object.update({ state, map, imageFactory, session });
+      await object.update({ state, map, session });
     }
   }
 

@@ -2,14 +2,12 @@ import { EntityType } from './EntityType';
 import Coordinates from '../geometry/Coordinates';
 import Sprite from '../graphics/sprites/Sprite';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
 export type UpdateContext = Readonly<{
   state: GameState;
   map: MapInstance;
-  imageFactory: ImageFactory;
   session: Session;
 }>;
 

@@ -2,7 +2,6 @@ import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door, { DoorState } from '../../entities/objects/Door';
 import ItemFactory from '../../items/ItemFactory';
@@ -24,6 +23,8 @@ import { Faction } from '../../types/types';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
+import { Session } from '../../core/Session';
+import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Context = Readonly<{
   imageFactory: ImageFactory;

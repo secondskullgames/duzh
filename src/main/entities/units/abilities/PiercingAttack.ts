@@ -20,7 +20,7 @@ export const PiercingAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
@@ -39,7 +39,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { state, map, imageFactory, session }
+        { state, map, session }
       );
     }
 
@@ -54,7 +54,7 @@ export const PiercingAttack: UnitAbility = {
           sound: Sounds.SPECIAL_ATTACK,
           getDamageLogMessage
         },
-        { state, map, imageFactory, session }
+        { state, map, session }
       );
     }
 

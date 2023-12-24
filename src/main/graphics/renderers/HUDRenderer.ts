@@ -49,8 +49,8 @@ export default class HUDRenderer implements Renderer {
     await this._renderRightPanel(context);
   };
 
-  private _renderFrame = async ({ imageFactory }: RenderContext) => {
-    const image = await imageFactory.getImage({
+  private _renderFrame = async ({ session }: RenderContext) => {
+    const image = await session.getImageFactory().getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -155,7 +155,7 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    { state, imageFactory }: RenderContext
+    { state, session }: RenderContext
   ) => {
     const playerUnit = state.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
@@ -174,7 +174,7 @@ export default class HUDRenderer implements Renderer {
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
-      const icon = await imageFactory.getImage({
+      const icon = await session.getImageFactory().getImage({
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });

@@ -7,7 +7,6 @@ import { Session } from '../../core/Session';
 export type ScreenHandlerContext = Readonly<{
   state: GameState;
   session: Session;
-  imageFactory: ImageFactory;
   mapFactory: MapFactory;
 }>;
 

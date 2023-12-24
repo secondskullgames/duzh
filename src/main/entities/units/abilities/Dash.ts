@@ -17,7 +17,7 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, imageFactory, session }: UnitAbilityContext
+    { state, map, session }: UnitAbilityContext
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
@@ -36,7 +36,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(unit, { x, y }, { state, map, imageFactory, session });
+        await moveUnit(unit, { x, y }, { state, map, session });
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);
