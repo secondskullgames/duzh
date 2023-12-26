@@ -1,0 +1,9 @@
+{
+  "name": "map_boots",
+  "filename": "boots_icon",
+  "offsets": {
+    "dx": 0,
+    "dy": 0
+  },
+  "transparentColor": "WHITE"
+}

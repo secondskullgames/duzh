@@ -70,7 +70,11 @@ const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
     },
     { imageFactory }
   );
-  if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+
+  if (
+    !Feature.isEnabled(Feature.ITEM_ABILITIES) &&
+    !Feature.isEnabled(Feature.LEVEL_UP_SCREEN)
+  ) {
     unit.learnAbility(abilityForName(AbilityName.DASH));
   }
   return unit;

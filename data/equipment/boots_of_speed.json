@@ -1,0 +1,14 @@
+{
+  "id": "boots_of_speed",
+  "name": "Boots of Speed",
+  "sprite": "sword",
+  "mapIcon": "map_boots",
+  "itemCategory": "ARMOR",
+  "slot": "FEET",
+  "paletteSwaps": {},
+  "points": 50,
+  "level": 1,
+  "stats": {},
+  "tooltip": "Special ability: Dash",
+  "abilityName": "DASH"
+}

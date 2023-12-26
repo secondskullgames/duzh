@@ -12,6 +12,7 @@ export enum Feature {
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
   INVENTORY_V2 = 'INVENTORY_V2',
+  ITEM_ABILITIES = 'ITEM_ABILITIES',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
   PRODUCTION = 'PRODUCTION'
 }
@@ -54,6 +55,8 @@ export namespace Feature {
       case Feature.FAST_MOVE:
         return false;
       case Feature.INVENTORY_V2:
+        return true;
+      case Feature.ITEM_ABILITIES:
         return true;
     }
   };

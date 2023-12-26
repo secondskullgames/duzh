@@ -5,6 +5,7 @@ type EquipmentSlot =
   | 'HEAD'
   | 'SHIELD'
   | 'LEGS'
+  | 'FEET'
   | 'CLOAK';
 
 export default EquipmentSlot;

@@ -9,6 +9,7 @@ import { checkNotNull } from '../utils/preconditions';
 import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
+import { AbilityName } from '../entities/units/abilities/AbilityName';
 
 const DRAW_BEHIND_PREFIX = '_B';
 
@@ -16,7 +17,6 @@ type Props = Readonly<{
   model: EquipmentModel;
   sprite: Sprite;
   inventoryItem?: InventoryItem | null;
-  tooltip: string;
 }>;
 
 export default class Equipment implements Animatable {
@@ -26,12 +26,15 @@ export default class Equipment implements Animatable {
   readonly blockAmount?: number; // typically only for shields
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
+  private readonly id: string;
   private readonly name: string;
   readonly script: EquipmentScriptName | null;
   private _unit: Unit | null;
   private readonly tooltip: string;
+  private readonly abilityName: AbilityName | null;
 
-  constructor({ model, sprite, inventoryItem, tooltip }: Props) {
+  constructor({ model, sprite, inventoryItem }: Props) {
+    this.id = model.id;
     this.name = model.name;
     this.slot = model.slot as EquipmentSlot;
     this.inventoryItem = inventoryItem ?? null;
@@ -41,13 +44,20 @@ export default class Equipment implements Animatable {
     this.sprite = sprite;
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this.tooltip = getEquipmentTooltip(model);
+    this.abilityName = model.abilityName ? (model.abilityName as AbilityName) : null;
     this._unit = null;
   }
+
+  getId = () => this.id;
 
   getName = () => this.name;
 
   attach = (unit: Unit) => {
     this._unit = unit;
+  };
+
+  unattach = () => {
+    this._unit = null;
   };
 
   getUnit = () => this._unit;
@@ -70,4 +80,6 @@ export default class Equipment implements Animatable {
   };
 
   getTooltip = (): string => this.tooltip;
+
+  getAbilityName = (): AbilityName | null => this.abilityName;
 }

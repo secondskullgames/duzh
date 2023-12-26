@@ -18,7 +18,6 @@ type Context = Readonly<{
 export const levelUp = (unit: Unit, { state, session }: Context) => {
   const ticker = session.getTicker();
   unit.incrementLevel();
-  // TODO - maybe these should go in player.json (again?)
   if (unit.getFaction() === Faction.PLAYER) {
     unit.increaseMaxLife(lifePerLevel);
     unit.increaseMaxMana(manaPerLevel);
@@ -29,6 +28,8 @@ export const levelUp = (unit: Unit, { state, session }: Context) => {
         turn: state.getTurn()
       });
       unit.awardAbilityPoint();
+    } else if (Feature.isEnabled(Feature.ITEM_ABILITIES)) {
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
     } else {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
       switch (unit.getLevel()) {

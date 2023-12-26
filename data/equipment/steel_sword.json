@@ -13,5 +13,7 @@
   "level": 4,
   "stats": {
     "damage": 5
-  }
+  },
+  "tooltip": "Special attack:\nStuns target",
+  "abilityName": "STUN_ATTACK"
 }

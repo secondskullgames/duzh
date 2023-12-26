@@ -13,5 +13,7 @@
   "level": 3,
   "stats": {
     "damage": 4
-  }
+  },
+  "tooltip": "Special attack:\nDeals double damage",
+  "abilityName": "HEAVY_ATTACK"
 }

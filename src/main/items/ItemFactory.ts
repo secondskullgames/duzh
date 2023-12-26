@@ -183,10 +183,8 @@ const createEquipment = async (
     { imageFactory }
   );
 
-  // TODO wtf is this
   const inventoryItem = await createInventoryEquipment(equipmentClass);
-  const tooltip = getEquipmentTooltip(model);
-  const equipment = new Equipment({ model, sprite, inventoryItem, tooltip });
+  const equipment = new Equipment({ model, sprite, inventoryItem });
   sprite.bind(equipment);
   return equipment;
 };

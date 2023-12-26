@@ -352,6 +352,13 @@ export default class Unit implements Entity, Animatable {
     this.abilityPoints--;
   };
 
+  forgetAbility = (ability: UnitAbility) => {
+    const index = this.abilities.indexOf(ability);
+    if (index !== -1) {
+      this.abilities.splice(index, 1);
+    }
+  };
+
   awardAbilityPoint = () => {
     this.abilityPoints++;
   };

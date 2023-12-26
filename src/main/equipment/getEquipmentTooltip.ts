@@ -2,7 +2,7 @@ import EquipmentModel from '../schemas/EquipmentModel';
 
 export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   const lines = [];
-  lines.push(`Slot: ${equipment.slot}`);
+  lines.push(`Slot: ${equipment.slot.replaceAll('_', ' ')}`);
   if (equipment.stats.damage) {
     lines.push(`Damage: ${equipment.stats.damage}`);
   }
@@ -14,7 +14,7 @@ export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   }
   if (equipment.tooltip) {
     lines.push('');
-    lines.push(equipment.tooltip.split('\n'));
+    lines.push(...equipment.tooltip.split('\n'));
   }
   return lines.join('\n');
 };

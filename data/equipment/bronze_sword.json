@@ -14,5 +14,7 @@
   "level": 1,
   "stats": {
     "damage": 3
-  }
+  },
+  "tooltip": "Special attack:\nDeals double damage",
+  "abilityName": "DASH"
 }
