@@ -177,15 +177,19 @@ const createEquipment = async (
 ): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(
-    spriteName,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
-  );
+  const sprite = spriteName
+    ? await SpriteFactory.createEquipmentSprite(
+        spriteName,
+        PaletteSwaps.create(model.paletteSwaps),
+        { imageFactory }
+      )
+    : null;
 
   const inventoryItem = await createInventoryEquipment(equipmentClass);
   const equipment = new Equipment({ model, sprite, inventoryItem });
-  sprite.bind(equipment);
+  if (sprite) {
+    sprite.bind(equipment);
+  }
   return equipment;
 };
 

@@ -1,7 +1,7 @@
 {
   "id": "boots_of_speed",
   "name": "Boots of Speed",
-  "sprite": "sword",
+  "sprite": null,
   "mapIcon": "map_boots",
   "itemCategory": "ARMOR",
   "slot": "FEET",

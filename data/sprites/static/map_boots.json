@@ -3,7 +3,7 @@
   "filename": "boots_icon",
   "offsets": {
     "dx": 0,
-    "dy": 0
+    "dy": -8
   },
   "transparentColor": "WHITE"
 }

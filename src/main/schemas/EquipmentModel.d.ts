@@ -14,7 +14,7 @@ type EquipmentModel = {
   points: number | null;
   script?: string;
   slot: EquipmentSlot;
-  sprite: string;
+  sprite: string | null;
   stats: EquipmentStats;
   abilityName?: string | null;
   tooltip?: string;

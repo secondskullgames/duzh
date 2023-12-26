@@ -15,7 +15,7 @@ const DRAW_BEHIND_PREFIX = '_B';
 
 type Props = Readonly<{
   model: EquipmentModel;
-  sprite: Sprite;
+  sprite: Sprite | null;
   inventoryItem?: InventoryItem | null;
 }>;
 
@@ -24,7 +24,7 @@ export default class Equipment implements Animatable {
   readonly damage?: number; // typically only for weapons
   readonly absorbAmount?: number; // typically for armor
   readonly blockAmount?: number; // typically only for shields
-  private readonly sprite: Sprite;
+  private readonly sprite: Sprite | null;
   readonly slot: EquipmentSlot;
   private readonly id: string;
   private readonly name: string;
@@ -72,9 +72,12 @@ export default class Equipment implements Animatable {
     )}_${unit.getFrameNumber()}`;
   };
 
-  getSprite = (): Sprite => this.sprite;
+  getSprite = (): Sprite | null => this.sprite;
 
   drawBehind = (): boolean => {
+    if (!this.sprite) {
+      return false;
+    }
     const image = this.sprite.getImage();
     return image?.filename?.endsWith(DRAW_BEHIND_PREFIX) ?? false;
   };
