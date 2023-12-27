@@ -10,6 +10,7 @@ import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
+import { ObjectType } from '../../entities/objects/GameObject';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -171,7 +172,9 @@ export default class GameScreenRenderer implements Renderer {
     }
     if (
       objects.find(
-        object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
+        object =>
+          object.getObjectType() === ObjectType.ITEM ||
+          object.getObjectType() === ObjectType.BLOCK
       )
     ) {
       return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);

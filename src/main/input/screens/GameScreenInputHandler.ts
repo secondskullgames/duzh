@@ -88,6 +88,39 @@ const _handleArrowKey = async (
     }
   } else if (
     modifiers.includes(ModifierKey.ALT) &&
+    Feature.isEnabled(Feature.ITEM_ABILITIES)
+  ) {
+    const movementAbility = playerUnit.getAbilities().find(ability => {
+      return [AbilityName.DASH, AbilityName.FREE_MOVE, AbilityName.BLINK].includes(
+        ability.name
+      );
+    });
+    if (movementAbility) {
+      if (playerUnit.canSpendMana(movementAbility.manaCost)) {
+        order = new AbilityOrder({ coordinates, ability: movementAbility });
+        willCompleteTurn = true;
+      }
+    }
+  } else if (
+    modifiers.includes(ModifierKey.CTRL) &&
+    Feature.isEnabled(Feature.ITEM_ABILITIES)
+  ) {
+    const meleeAbility = playerUnit.getAbilities().find(ability => {
+      return [
+        AbilityName.HEAVY_ATTACK,
+        AbilityName.KNOCKBACK_ATTACK,
+        AbilityName.STUN_ATTACK,
+        AbilityName.MINOR_STUN_ATTACK
+      ].includes(ability.name);
+    });
+    if (meleeAbility) {
+      if (playerUnit.canSpendMana(meleeAbility.manaCost)) {
+        order = new AbilityOrder({ coordinates, ability: meleeAbility });
+        willCompleteTurn = true;
+      }
+    }
+  } else if (
+    modifiers.includes(ModifierKey.ALT) &&
     Feature.isEnabled(Feature.ALT_STRAFE)
   ) {
     if (playerUnit.canSpendMana(Strafe.manaCost)) {

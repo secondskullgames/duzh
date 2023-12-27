@@ -17,6 +17,29 @@ export enum Feature {
   PRODUCTION = 'PRODUCTION'
 }
 
+const _isProduction = (): boolean => {
+  return document.location.href === 'https://duzh.netlify.app';
+};
+
+const ENABLED_FEATURES: Record<Feature, boolean> = {
+  [Feature.PRODUCTION]: _isProduction(),
+  [Feature.ALT_DASH]: false,
+  [Feature.ALT_FREE_MOVE]: false,
+  [Feature.ALT_STRAFE]: false,
+  [Feature.BLINK_THROUGH_WALLS]: false,
+  [Feature.BUSY_INDICATOR]: true,
+  [Feature.DARK_DUNGEON]: false,
+  [Feature.DEBUG_BUTTONS]: false,
+  [Feature.DEBUG_LEVEL]: false,
+  [Feature.DEDUPLICATE_EQUIPMENT]: true,
+  [Feature.DEBUG_LOGGING]: false,
+  [Feature.FAST_MOVE]: false,
+  [Feature.GOD_MODE]: false,
+  [Feature.INVENTORY_V2]: true,
+  [Feature.ITEM_ABILITIES]: true,
+  [Feature.LEVEL_UP_SCREEN]: false
+};
+
 export namespace Feature {
   export const isEnabled = (feature: Feature): boolean => {
     const queryParam = getQueryParam(feature);
@@ -26,39 +49,8 @@ export namespace Feature {
     if (queryParam === 'false') {
       return false;
     }
-    switch (feature) {
-      case Feature.PRODUCTION:
-        return _isProduction();
-      case Feature.ALT_DASH:
-        return false;
-      case Feature.ALT_FREE_MOVE:
-        return true;
-      case Feature.ALT_STRAFE:
-        return false;
-      case Feature.BLINK_THROUGH_WALLS:
-        return false;
-      case Feature.BUSY_INDICATOR:
-        return true;
-      case Feature.DARK_DUNGEON:
-        return false;
-      case Feature.DEBUG_BUTTONS:
-      case Feature.DEBUG_LEVEL:
-        return !Feature.isEnabled(Feature.PRODUCTION);
-      case Feature.LEVEL_UP_SCREEN:
-        return false;
-      case Feature.DEDUPLICATE_EQUIPMENT:
-        return true;
-      case Feature.DEBUG_LOGGING:
-        return false;
-      case Feature.GOD_MODE:
-        return false;
-      case Feature.FAST_MOVE:
-        return false;
-      case Feature.INVENTORY_V2:
-        return true;
-      case Feature.ITEM_ABILITIES:
-        return true;
-    }
+
+    return ENABLED_FEATURES[feature];
   };
 }
 
@@ -74,8 +66,4 @@ const getQueryParam = (param: string): string | null => {
     }
   }
   return null;
-};
-
-const _isProduction = (): boolean => {
-  return document.location.href === 'https://duzh.netlify.app';
 };

@@ -29,7 +29,7 @@ export default class Equipment implements Animatable {
   private readonly id: string;
   private readonly name: string;
   readonly script: EquipmentScriptName | null;
-  private _unit: Unit | null;
+  private unit: Unit | null;
   private readonly tooltip: string;
   private readonly abilityName: AbilityName | null;
 
@@ -45,7 +45,7 @@ export default class Equipment implements Animatable {
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this.tooltip = getEquipmentTooltip(model);
     this.abilityName = model.abilityName ? (model.abilityName as AbilityName) : null;
-    this._unit = null;
+    this.unit = null;
   }
 
   getId = () => this.id;
@@ -53,23 +53,24 @@ export default class Equipment implements Animatable {
   getName = () => this.name;
 
   attach = (unit: Unit) => {
-    this._unit = unit;
+    this.unit = unit;
   };
 
   unattach = () => {
-    this._unit = null;
+    this.unit = null;
   };
 
-  getUnit = () => this._unit;
+  getUnit = () => this.unit;
 
   /**
    * @override {@link Animatable#getAnimationKey}
    */
   getAnimationKey = () => {
-    const unit = checkNotNull(this._unit);
-    return `${Activity.toString(unit.getActivity())}_${Direction.toString(
-      unit.getDirection()
-    )}_${unit.getFrameNumber()}`;
+    const unit = checkNotNull(this.unit);
+    const activity = Activity.toString(unit.getActivity());
+    const direction = Direction.toString(unit.getDirection());
+    const frameNumber = unit.getFrameNumber();
+    return `${activity}_${direction}_${frameNumber}`;
   };
 
   getSprite = (): Sprite | null => this.sprite;

@@ -18,6 +18,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
 import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
+import { Feature } from '../utils/features';
 import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -260,6 +261,12 @@ const loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
   const models: EquipmentModel[] = [];
   for (const filename of requireContext.keys()) {
     const model = (await requireContext(filename)) as EquipmentModel;
+    // TODO HACK
+    if (!Feature.isEnabled(Feature.ITEM_ABILITIES)) {
+      if (model.id === 'boots_of_speed') {
+        continue;
+      }
+    }
     models.push(model);
   }
   return models;

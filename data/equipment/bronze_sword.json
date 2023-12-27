@@ -16,5 +16,5 @@
     "damage": 3
   },
   "tooltip": "Special attack:\nDeals double damage",
-  "abilityName": "DASH"
+  "abilityName": "HEAVY_ATTACK"
 }
