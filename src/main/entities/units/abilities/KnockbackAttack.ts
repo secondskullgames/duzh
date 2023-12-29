@@ -8,8 +8,9 @@ import { sleep } from '../../../utils/promises';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 10;
-const damageCoefficient = 1;
+const manaCost = 8;
+const damageCoefficient = 0.5;
+const stunDuration = 1;
 
 export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,
@@ -51,7 +52,7 @@ export const KnockbackAttack: UnitAbility = {
       };
       await attackUnit(unit, targetUnit, attack, { state, map, session });
 
-      targetUnit.setStunned(1);
+      targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {

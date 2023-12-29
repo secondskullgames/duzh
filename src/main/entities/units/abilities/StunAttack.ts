@@ -6,8 +6,9 @@ import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 10;
+const manaCost = 12;
 const damageCoefficient = 1;
+const stunDuration = 2;
 
 export const StunAttack: UnitAbility = {
   name: AbilityName.STUN_ATTACK,
@@ -48,7 +49,7 @@ export const StunAttack: UnitAbility = {
         }
       };
       await attackUnit(unit, targetUnit, attack, { state, map, session });
-      targetUnit.setStunned(2);
+      targetUnit.setStunned(stunDuration);
     }
   }
 };
