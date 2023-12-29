@@ -52,6 +52,12 @@ type Props = Readonly<{
   equipment: Equipment[];
 }>;
 
+export type DefendResult = Readonly<{
+  incomingDamage: number;
+  damageTaken: number;
+  damageAbsorbed: number;
+}>;
+
 export default class Unit implements Entity, Animatable {
   /** integer, starts at 0 */
   private readonly id: number;
@@ -257,15 +263,17 @@ export default class Unit implements Entity, Animatable {
   getLifetimeManaSpent = (): number => this.lifetimeManaSpent;
   getLifetimeStepsTaken = (): number => this.lifetimeStepsTaken;
 
-  /**
-   * @return the actual amount of damage taken, after mitigation and not including overkill
-   */
-  takeDamage = (amount: number, sourceUnit: Unit | null): number => {
-    const adjustedDamage = this._calculateIncomingDamage(amount, sourceUnit);
-    const actualDamageTaken = Math.min(adjustedDamage, this.life);
-    this.life -= actualDamageTaken;
-    this.lifetimeDamageTaken += actualDamageTaken;
-    return actualDamageTaken;
+  takeDamage = (incomingDamage: number, sourceUnit: Unit | null): DefendResult => {
+    const damageAbsorbed = this._calculateAbsorbedDamage(incomingDamage, sourceUnit);
+    const damageTaken = Math.min(incomingDamage - damageAbsorbed, this.life);
+    this.life -= damageTaken;
+    this.lifetimeDamageTaken += damageTaken;
+
+    return {
+      incomingDamage,
+      damageTaken,
+      damageAbsorbed
+    };
   };
 
   /**
@@ -402,27 +410,27 @@ export default class Unit implements Entity, Animatable {
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
   };
 
-  private _calculateIncomingDamage = (
+  private _calculateAbsorbedDamage = (
     baseDamage: number,
     sourceUnit: Unit | null
   ): number => {
-    let adjustedDamage = baseDamage;
+    let absorbRatio = 0;
     for (const equipment of this.equipment.getAll()) {
-      if (equipment.absorbAmount !== null) {
-        adjustedDamage = Math.round(adjustedDamage * (1 - (equipment.absorbAmount ?? 0)));
-      }
+      absorbRatio += equipment.absorbAmount ?? 0;
       if (equipment.blockAmount !== null) {
         if (
           sourceUnit !== null &&
           isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())
         ) {
-          adjustedDamage = Math.round(
-            adjustedDamage * (1 - (equipment.blockAmount ?? 0))
-          );
+          absorbRatio += equipment.blockAmount ?? 0;
         }
       }
     }
-    return Math.max(adjustedDamage, 0);
+    if (absorbRatio > 1) {
+      absorbRatio = 1;
+    }
+
+    return Math.round(baseDamage * absorbRatio);
   };
 
   getStrength = (): number => this.strength;

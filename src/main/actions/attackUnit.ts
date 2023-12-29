@@ -1,6 +1,6 @@
 import { die } from './die';
 import { recordKill } from './recordKill';
-import Unit from '../entities/units/Unit';
+import Unit, { DefendResult } from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
 import GameState from '../core/GameState';
 import Activity from '../entities/units/Activity';
@@ -10,11 +10,14 @@ import { SoundEffect } from '../sounds/types';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
-type Props = Readonly<{
-  attacker: Unit;
-  defender: Unit;
-  getDamage: (unit: Unit) => number;
-  getDamageLogMessage: (unit: Unit, target: Unit, damageTaken: number) => string;
+export type AttackResult = Readonly<{
+  /** the "outgoing", pre-mitigation damage */
+  damage: number;
+}>;
+
+export type Attack = Readonly<{
+  calculateAttackResult: (attacker: Unit) => AttackResult;
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult) => string;
   sound: SoundEffect;
 }>;
 
@@ -25,7 +28,9 @@ type Context = Readonly<{
 }>;
 
 export const attackUnit = async (
-  { attacker, defender, getDamage, getDamageLogMessage, sound }: Props,
+  attacker: Unit,
+  defender: Unit,
+  attack: Attack,
   { state, map, session }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
@@ -46,11 +51,11 @@ export const attackUnit = async (
   // damaged frame
   defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
 
-  const damage = getDamage(attacker);
-  const adjustedDamage = defender.takeDamage(damage, attacker);
-  attacker.recordDamageDealt(adjustedDamage);
-  playSound(sound);
-  const message = getDamageLogMessage(attacker, defender, adjustedDamage);
+  const attackResult = attack.calculateAttackResult(attacker);
+  const defendResult = defender.takeDamage(attackResult.damage, attacker);
+  attacker.recordDamageDealt(defendResult.damageTaken);
+  playSound(attack.sound);
+  const message = attack.getDamageLogMessage(attacker, defender, defendResult);
   session.getTicker().log(message, { turn: state.getTurn() });
 
   attacker.refreshCombat();
