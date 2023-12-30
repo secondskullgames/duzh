@@ -6,7 +6,7 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
-import { randChoice, randInt } from '../../utils/random';
+import { randChoice, randInt, weightedRandom } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
@@ -179,8 +179,35 @@ export default class GeneratedMapBuilder {
 
       checkState(possibleItemSpecs.length > 0);
 
-      // TODO weighted random
-      itemSpecs.push(randChoice(possibleItemSpecs));
+      // weighted random
+      const probabilities: Record<string, number> = {};
+      const mappedObjects: Record<string, ItemSpec> = {};
+
+      for (const itemSpec of possibleItemSpecs) {
+        const key = `${itemSpec.type}_${itemSpec.id}`;
+        const model = (() => {
+          switch (itemSpec.type) {
+            case 'equipment':
+              return possibleEquipmentModels.find(
+                equipmentModel => equipmentModel.id === itemSpec.id
+              );
+            case 'consumable':
+              return possibleItemModels.find(itemClass => itemClass.id === itemSpec.id);
+          }
+        })();
+
+        // Each rarity is 2x less common than the previous rarity.
+        // So P[rarity] = 2 ^ -rarity
+        probabilities[key] = 1 / 2 ** (model?.rarity ?? 0);
+        mappedObjects[key] = itemSpec;
+      }
+      const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
+      console.log(
+        `chose item ${JSON.stringify(chosenItemSpec)} weights=${JSON.stringify(
+          probabilities
+        )}`
+      );
+      itemSpecs.push(chosenItemSpec);
       itemsRemaining--;
     }
 
