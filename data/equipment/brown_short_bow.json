@@ -9,7 +9,7 @@
     "DARK_GREEN": "DARK_BROWN",
     "GREEN": "DARK_GRAY"
   },
-  "points": null,
+  "rarity": null,
   "level": null,
   "stats": {
     "damage": 2

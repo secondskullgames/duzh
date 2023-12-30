@@ -16,8 +16,7 @@
   },
   "levelParameters": {
     "minLevel": 1,
-    "maxLevel": 2,
-    "points": 6
+    "maxLevel": 2
   },
   "abilities": ["ATTACK"]
 }

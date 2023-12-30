@@ -24,8 +24,7 @@
   },
   "levelParameters": {
     "minLevel": 5,
-    "maxLevel": 99,
-    "points": 40
+    "maxLevel": 99
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK"]
 }

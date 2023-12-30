@@ -16,8 +16,7 @@
   },
   "levelParameters": {
     "minLevel": 4,
-    "maxLevel": 99,
-    "points": 30
+    "maxLevel": 99
   },
   "abilities": ["ATTACK", "MINOR_STUN_ATTACK"]
 }

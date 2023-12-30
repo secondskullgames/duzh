@@ -16,8 +16,7 @@
   },
   "levelParameters": {
     "minLevel": 2,
-    "maxLevel": 99,
-    "points": 25
+    "maxLevel": 99
   },
   "abilities": ["ATTACK", "DASH"]
 }

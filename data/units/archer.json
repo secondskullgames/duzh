@@ -33,8 +33,7 @@
   },
   "levelParameters": {
     "minLevel": 4,
-    "maxLevel": 99,
-    "points": 25
+    "maxLevel": 99
   },
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }

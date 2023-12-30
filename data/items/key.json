@@ -1,7 +1,7 @@
 {
   "id": "key",
   "level": null,
-  "points": null,
+  "rarity": null,
   "mapSprite": "map_key",
   "type": "key"
 }
