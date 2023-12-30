@@ -18,6 +18,7 @@ import { Faction } from '../../types/types';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 import { Range } from '../../schemas/GeneratedMapModel';
+import UnitModel from '../../schemas/UnitModel';
 
 type Props = Readonly<{
   level: number;
@@ -95,8 +96,17 @@ export default class GeneratedMapBuilder {
         break;
       }
 
-      // TODO: weighted random, favoring higher-level units
-      const model = randChoice(possibleUnitModels);
+      // weighted random, favoring higher-level units
+      const probabilities: Record<string, number> = {};
+      const mappedUnitModels: Record<string, UnitModel> = {};
+      for (const model of possibleUnitModels) {
+        const key = model.id;
+        // Each rarity is 2x less common than the previous rarity.
+        // So P[rarity] = 2 ^ -rarity
+        probabilities[key] = 1 / 2 ** (model?.levelParameters!.rarity ?? 0);
+        mappedUnitModels[key] = model;
+      }
+      const model = weightedRandom(probabilities, mappedUnitModels);
       sortByReversed(candidateLocations, loc =>
         Math.min(
           ...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y }))
@@ -202,11 +212,6 @@ export default class GeneratedMapBuilder {
         mappedObjects[key] = itemSpec;
       }
       const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
-      console.log(
-        `chose item ${JSON.stringify(chosenItemSpec)} weights=${JSON.stringify(
-          probabilities
-        )}`
-      );
       itemSpecs.push(chosenItemSpec);
       itemsRemaining--;
     }

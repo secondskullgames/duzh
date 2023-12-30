@@ -4,9 +4,9 @@
   "type": "ANIMAL",
   "sprite": "beetle",
   "paletteSwaps": {},
-  "life": 40,
+  "life": 50,
   "mana": 15,
-  "strength": 5,
+  "strength": 6,
   "dexterity": 2,
   "aiParameters": {
     "speed": 0.97,
@@ -16,7 +16,8 @@
   },
   "levelParameters": {
     "minLevel": 2,
-    "maxLevel": 99
+    "maxLevel": 99,
+    "rarity": 2
   },
   "abilities": ["ATTACK", "DASH"]
 }

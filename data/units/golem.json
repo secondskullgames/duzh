@@ -14,7 +14,7 @@
   },
   "strength": 12,
   "dexterity": 2,
-  "life": 90,
+  "life": 100,
   "mana": 8,
   "aiParameters": {
     "speed": 0.9,
@@ -24,7 +24,8 @@
   },
   "levelParameters": {
     "minLevel": 5,
-    "maxLevel": 99
+    "maxLevel": 99,
+    "rarity": 3
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK"]
 }

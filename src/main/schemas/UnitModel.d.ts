@@ -37,7 +37,7 @@ type UnitModel = {
   levelParameters?: {
     minLevel: number;
     maxLevel: number;
-    // TODO rarity?
+    rarity: number;
   };
   life: number;
   mana: number;

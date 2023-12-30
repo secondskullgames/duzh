@@ -16,7 +16,7 @@
   },
   "life": 70,
   "mana": 15,
-  "strength": 3,
+  "strength": 4,
   "dexterity": 2,
   "equipment": [
     "green_chain_mail",
@@ -31,7 +31,8 @@
   },
   "levelParameters": {
     "minLevel": 3,
-    "maxLevel": 99
+    "maxLevel": 99,
+    "rarity": 2
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"]
 }
