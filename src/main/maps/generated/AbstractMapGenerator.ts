@@ -50,7 +50,8 @@ abstract class AbstractMapGenerator {
       width: mapModel.width,
       height: mapModel.height,
       tiles,
-      pointAllocation: mapModel.pointAllocation
+      enemies: mapModel.enemies,
+      items: mapModel.items
     });
   };
 

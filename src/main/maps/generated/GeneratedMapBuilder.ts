@@ -6,25 +6,26 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
-import { randChoice } from '../../utils/random';
+import { randChoice, randInt } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
-import { GeneratedMapModel_PointAllocation } from '../../schemas/GeneratedMapModel';
-import { checkNotNull } from '../../utils/preconditions';
+import { checkNotNull, checkState } from '../../utils/preconditions';
 import GameObject from '../../entities/objects/GameObject';
 import { Faction } from '../../types/types';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
+import { Range } from '../../schemas/GeneratedMapModel';
 
 type Props = Readonly<{
   level: number;
   width: number;
   height: number;
   tiles: Tile[][];
-  pointAllocation: GeneratedMapModel_PointAllocation;
+  enemies: Range;
+  items: Range;
 }>;
 
 type Context = Readonly<{
@@ -37,15 +38,17 @@ export default class GeneratedMapBuilder {
   private readonly width: number;
   private readonly height: number;
   private readonly tiles: Tile[][];
-  private readonly pointAllocation: GeneratedMapModel_PointAllocation;
+  private readonly numEnemies: Range;
+  private readonly numItems: Range;
   private readonly entityLocations: CustomSet<Coordinates>;
 
-  constructor({ level, width, height, tiles, pointAllocation }: Props) {
+  constructor({ level, width, height, tiles, enemies, items }: Props) {
     this.level = level;
     this.width = width;
     this.height = height;
     this.tiles = tiles;
-    this.pointAllocation = pointAllocation;
+    this.numEnemies = enemies;
+    this.numItems = items;
     this.entityLocations = new CustomSet();
   }
 
@@ -73,14 +76,14 @@ export default class GeneratedMapBuilder {
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []).filter(
       coordinates => !this.entityLocations.includes(coordinates)
     );
-    let points = this.pointAllocation.enemies;
+    let enemiesRemaining = randInt(this.numEnemies.min, this.numEnemies.max);
 
-    while (points > 0) {
-      const possibleUnitModels = (await UnitFactory.loadAllModels()).filter(model => {
+    const allUnitModels = await UnitFactory.loadAllModels();
+    while (enemiesRemaining > 0) {
+      const possibleUnitModels = allUnitModels.filter(model => {
         const { levelParameters } = model;
         if (levelParameters) {
           return (
-            levelParameters.points <= points &&
             levelParameters.minLevel <= this.level &&
             levelParameters.maxLevel >= this.level
           );
@@ -92,6 +95,7 @@ export default class GeneratedMapBuilder {
         break;
       }
 
+      // TODO: weighted random, favoring higher-level units
       const model = randChoice(possibleUnitModels);
       sortByReversed(candidateLocations, loc =>
         Math.min(
@@ -119,7 +123,7 @@ export default class GeneratedMapBuilder {
         }
       );
       units.push(unit);
-      points -= model.levelParameters!.points;
+      enemiesRemaining--;
       this.entityLocations.add(coordinates);
     }
     return units;
@@ -134,66 +138,81 @@ export default class GeneratedMapBuilder {
       coordinates => !this.entityLocations.includes(coordinates)
     );
 
-    let points = this.pointAllocation.equipment;
-    while (points > 0) {
-      const possibleEquipmentClasses = (await ItemFactory.loadAllEquipmentModels())
-        .filter(equipmentClass => {
+    const allEquipmentModels = await ItemFactory.loadAllEquipmentModels();
+    const allConsumableModels = await ItemFactory.loadAllConsumableModels();
+    let itemsRemaining = randInt(this.numItems.min, this.numItems.max);
+
+    type ItemType = 'equipment' | 'consumable';
+    type ItemSpec = Readonly<{
+      type: ItemType;
+      id: string;
+    }>;
+
+    const itemSpecs: ItemSpec[] = [];
+    while (itemsRemaining > 0) {
+      const possibleEquipmentModels = allEquipmentModels
+        .filter(equipmentModel => {
           if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-            return !state.getGeneratedEquipmentIds().includes(equipmentClass.id);
+            return !state.getGeneratedEquipmentIds().includes(equipmentModel.id);
           }
           return true;
         })
         .filter(
-          equipmentClass =>
-            equipmentClass.level !== null && equipmentClass.level <= this.level
-        )
-        .filter(
-          equipmentClass =>
-            equipmentClass.points !== null && equipmentClass.points <= points
+          equipmentModel =>
+            equipmentModel.level !== null && equipmentModel.level <= this.level
         );
 
-      if (possibleEquipmentClasses.length === 0) {
-        break;
-      }
-
-      const equipmentClass = randChoice(possibleEquipmentClasses);
-      sortByReversed(candidateLocations, loc =>
-        Math.min(
-          ...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y }))
-        )
+      const possibleItemModels = allConsumableModels.filter(
+        itemClass => itemClass.level !== null && itemClass.level <= this.level
       );
-      const coordinates = checkNotNull(candidateLocations.shift());
-      const item = await ItemFactory.createMapEquipment(equipmentClass.id, coordinates, {
-        imageFactory
-      });
-      objects.push(item);
-      points -= equipmentClass.points!;
-      this.entityLocations.add(coordinates);
-      state.recordEquipmentGenerated(equipmentClass.id);
+
+      const possibleItemSpecs: ItemSpec[] = [
+        ...possibleEquipmentModels.map(model => ({
+          type: 'equipment' as const,
+          id: model.id
+        })),
+        ...possibleItemModels.map(model => ({
+          type: 'consumable' as const,
+          id: model.id
+        }))
+      ];
+
+      checkState(possibleItemSpecs.length > 0);
+
+      // TODO weighted random
+      itemSpecs.push(randChoice(possibleItemSpecs));
+      itemsRemaining--;
     }
 
-    points = this.pointAllocation.items;
-    while (points > 0) {
-      const possibleItemClasses = (await ItemFactory.loadAllConsumableModels())
-        .filter(itemClass => itemClass.level !== null && itemClass.level <= this.level)
-        .filter(itemClass => itemClass.points !== null && itemClass.points <= points);
-
-      if (possibleItemClasses.length === 0) {
-        break;
-      }
-
-      const itemClass = randChoice(possibleItemClasses);
+    for (const itemSpec of itemSpecs) {
       sortByReversed(candidateLocations, loc =>
         Math.min(
           ...this.entityLocations.values().map(({ x, y }) => hypotenuse(loc, { x, y }))
         )
       );
       const coordinates = checkNotNull(candidateLocations.shift());
-      const item = await ItemFactory.createMapItem(itemClass.id, coordinates, {
-        imageFactory
-      });
-      objects.push(item);
-      points -= itemClass.points!;
+      switch (itemSpec.type) {
+        case 'equipment': {
+          const equipment = await ItemFactory.createMapEquipment(
+            itemSpec.id,
+            coordinates,
+            {
+              imageFactory
+            }
+          );
+
+          objects.push(equipment);
+          state.recordEquipmentGenerated(itemSpec.id);
+          break;
+        }
+        case 'consumable': {
+          const item = await ItemFactory.createMapItem(itemSpec.id, coordinates, {
+            imageFactory
+          });
+          objects.push(item);
+        }
+      }
+      itemsRemaining--;
       this.entityLocations.add(coordinates);
     }
 

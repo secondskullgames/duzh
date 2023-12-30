@@ -10,7 +10,7 @@
     "DARK_GRAY": "LIGHT_BROWN",
     "LIGHT_GRAY": "LIGHT_BROWN"
   },
-  "points": 50,
+  "rarity": 1,
   "level": 1,
   "stats": {
     "damage": 3
