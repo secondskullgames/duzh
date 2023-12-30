@@ -72,7 +72,7 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  _generateUnits = async ({ imageFactory }: Context): Promise<Unit[]> => {
+  private _generateUnits = async ({ imageFactory }: Context): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []).filter(
       coordinates => !this.entityLocations.includes(coordinates)
@@ -213,6 +213,9 @@ export default class GeneratedMapBuilder {
       }
       const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
       itemSpecs.push(chosenItemSpec);
+      if (chosenItemSpec.type === 'equipment') {
+        state.recordEquipmentGenerated(chosenItemSpec.id);
+      }
       itemsRemaining--;
     }
 
@@ -234,7 +237,6 @@ export default class GeneratedMapBuilder {
           );
 
           objects.push(equipment);
-          state.recordEquipmentGenerated(itemSpec.id);
           break;
         }
         case 'consumable': {
