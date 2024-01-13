@@ -18,5 +18,5 @@ npm run electron
 ## Data
 Much of the game data is stored as JSON files in the `data/` directory.
 The corresponding JSON-Schema schemas are in `schemas/`.
-We use `json-schema-to-typescript` to compile these to Typescript files in the `src/gen-schema` directory.
+We use `typescript-json-schema` to generate these schemas from regular Typescript definitions.
 We use `ajv` to validate schemas at runtime, as well as statically during tests (`src/test/schema.test.ts`).

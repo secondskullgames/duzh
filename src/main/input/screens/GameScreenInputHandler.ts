@@ -13,7 +13,7 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import UnitOrder from '../../entities/units/orders/UnitOrder';
+import UnitOrder, { OrderContext } from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '../../core/GameScreen';
@@ -23,6 +23,7 @@ import { Feature } from '../../utils/features';
 import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 import { Dash } from '../../entities/units/abilities/Dash';
 import { FreeMove } from '../../entities/units/abilities/FreeMove';
+import Unit from '../../entities/units/Unit';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
@@ -111,6 +112,13 @@ const _handleArrowKey = async (
     if (playerUnit.canSpendMana(FreeMove.manaCost)) {
       order = new AbilityOrder({ coordinates, ability: FreeMove });
     }
+  } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_TURN)) {
+    order = {
+      execute: async (unit: Unit): Promise<void> => {
+        unit.setDirection(direction);
+      }
+    };
+    // don't set willCompleteTurn=true
   } else if (
     modifiers.includes(ModifierKey.CTRL) &&
     Feature.isEnabled(Feature.FAST_MOVE)

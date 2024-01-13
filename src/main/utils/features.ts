@@ -1,7 +1,10 @@
 export enum Feature {
+  // Note: Only one ALT_ feature should be enabled at any one time.
+  // They don't work together and the precedence is undefined.
   ALT_DASH = 'ALT_DASH',
   ALT_FREE_MOVE = 'ALT_FREE_MOVE',
   ALT_STRAFE = 'ALT_STRAFE',
+  ALT_TURN = 'ALT_TURN',
   BLINK_THROUGH_WALLS = 'BLINK_THROUGH_WALLS',
   BUSY_INDICATOR = 'BUSY_INDICATOR',
   DARK_DUNGEON = 'DARK_DUNGEON',
@@ -31,8 +34,10 @@ export namespace Feature {
       case Feature.ALT_DASH:
         return false;
       case Feature.ALT_FREE_MOVE:
-        return true;
+        return false;
       case Feature.ALT_STRAFE:
+        return true;
+      case Feature.ALT_TURN:
         return false;
       case Feature.BLINK_THROUGH_WALLS:
         return false;

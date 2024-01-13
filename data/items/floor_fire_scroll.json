@@ -1,7 +1,7 @@
 {
   "id": "floor_fire_scroll",
   "level": 2,
-  "rarity": 2,
+  "rarity": 3,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {
