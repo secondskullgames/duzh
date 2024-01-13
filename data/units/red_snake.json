@@ -8,12 +8,12 @@
     "DARK_GREEN": "DARK_RED",
     "YELLOW": "DARK_RED"
   },
-  "life": 12,
-  "mana": 10,
+  "life": 15,
+  "mana": 0,
   "strength": 6,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.98,
+    "speed": 0.99,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
@@ -21,7 +21,7 @@
   "levelParameters": {
     "minLevel": 1,
     "maxLevel": 2,
-    "points": 6
+    "rarity": 2
   },
-  "abilities": ["ATTACK", "DASH"]
+  "abilities": ["ATTACK"]
 }

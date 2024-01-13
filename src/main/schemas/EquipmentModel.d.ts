@@ -11,7 +11,10 @@ type EquipmentModel = {
   paletteSwaps: {
     [key: string]: string;
   };
-  points: number | null;
+  /**
+   * between 1 and 5, where 5 is most rare, or null if this should never be randomly generated
+   */
+  rarity: number | null;
   script?: string;
   slot: EquipmentSlot;
   sprite: string;

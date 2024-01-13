@@ -6,7 +6,7 @@
   "itemCategory": "ARMOR",
   "slot": "CHEST",
   "paletteSwaps": {},
-  "points": 100,
+  "rarity": 3,
   "level": 3,
   "stats": {
     "absorbAmount": 0.2

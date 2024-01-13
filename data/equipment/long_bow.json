@@ -9,7 +9,7 @@
     "DARK_GREEN": "DARK_RED",
     "GREEN": "RED"
   },
-  "points": 150,
+  "rarity": 3,
   "level": 4,
   "stats": {
     "damage": 10

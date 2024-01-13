@@ -12,8 +12,8 @@ export const dealDamage = async (
 ): Promise<number> => {
   const sourceUnit = params.sourceUnit ?? null;
   const targetUnit = params.targetUnit;
-  const adjustedDamage = targetUnit.takeDamage(baseDamage, sourceUnit);
+  const { damageTaken } = targetUnit.takeDamage(baseDamage, sourceUnit);
   sourceUnit?.refreshCombat();
   targetUnit.refreshCombat();
-  return adjustedDamage;
+  return damageTaken;
 };

@@ -8,7 +8,7 @@
   "paletteSwaps": {
     "DARK_GRAY": "DARK_RED"
   },
-  "points": null,
+  "rarity": null,
   "level": null,
   "stats": {
     "absorbAmount": 0.1

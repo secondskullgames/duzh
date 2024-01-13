@@ -10,7 +10,7 @@
     "DARK_GRAY": "DARK_RED_CGA",
     "LIGHT_GRAY": "LIGHT_RED_CGA"
   },
-  "points": null,
+  "rarity": null,
   "level": null,
   "stats": {
     "damage": 6

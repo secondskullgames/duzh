@@ -1,16 +1,14 @@
 import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
+import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { attackUnit } from '../../../actions/attackUnit';
+import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { attackObject } from '../../../actions/attackObject';
 import { getSpawner } from '../../../maps/MapUtils';
 
-const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()} hit ${target.getName()} for ${damageTaken} damage!`;
-};
+const damageCoefficient = 1;
 
 export const PiercingAttack: UnitAbility = {
   name: AbilityName.PIERCE,
@@ -31,31 +29,47 @@ export const PiercingAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attackUnit(
-        {
-          attacker: unit,
-          defender: targetUnit,
-          getDamage: unit => unit.getMeleeDamage(),
-          sound: Sounds.SPECIAL_ATTACK,
-          getDamageLogMessage
+      const attack: Attack = {
+        sound: Sounds.SPECIAL_ATTACK,
+        calculateAttackResult: (unit: Unit): AttackResult => {
+          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+          return { damage };
         },
-        { state, map, session }
-      );
+        getDamageLogMessage: (
+          attacker: Unit,
+          defender: Unit,
+          result: DefendResult
+        ): string => {
+          const attackerName = attacker.getName();
+          const defenderName = defender.getName();
+          const damage = result.damageTaken;
+          return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+        }
+      };
+      await attackUnit(unit, targetUnit, attack, { state, map, session });
     }
 
     const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
     const nextUnit = map.getUnit(nextCoordinates);
     if (nextUnit) {
-      await attackUnit(
-        {
-          attacker: unit,
-          defender: nextUnit,
-          getDamage: unit => unit.getMeleeDamage(),
-          sound: Sounds.SPECIAL_ATTACK,
-          getDamageLogMessage
+      const attack: Attack = {
+        sound: Sounds.SPECIAL_ATTACK,
+        calculateAttackResult: (unit: Unit): AttackResult => {
+          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+          return { damage };
         },
-        { state, map, session }
-      );
+        getDamageLogMessage: (
+          attacker: Unit,
+          defender: Unit,
+          result: DefendResult
+        ): string => {
+          const attackerName = attacker.getName();
+          const defenderName = defender.getName();
+          const damage = result.damageTaken;
+          return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+        }
+      };
+      await attackUnit(unit, nextUnit, attack, { state, map, session });
     }
 
     const spawner = getSpawner(map, coordinates);

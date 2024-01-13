@@ -6,7 +6,7 @@
   "itemCategory": "ARMOR",
   "slot": "SHIELD",
   "paletteSwaps": {},
-  "points": 100,
+  "rarity": 3,
   "level": 3,
   "stats": {
     "blockAmount": 0.2

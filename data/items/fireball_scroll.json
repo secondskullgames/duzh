@@ -1,11 +1,11 @@
 {
-  "id": "floor_fire_scroll",
+  "id": "fireball_scroll",
   "level": 2,
   "rarity": 3,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {
-    "spell": "floor_fire",
+    "spell": "fireball",
     "damage": "50"
   }
 }

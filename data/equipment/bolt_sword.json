@@ -10,7 +10,7 @@
     "LIGHT_GRAY": "CYAN"
   },
   "script": "bolt_sword",
-  "points": 200,
+  "rarity": 5,
   "level": 4,
   "stats": {
     "damage": 4

@@ -18,6 +18,9 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { die } from '../actions/die';
 import { recordKill } from '../actions/recordKill';
 import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
+import { shootFireball } from '../actions/shootFireball';
+import { GameScreen } from '../core/GameScreen';
+import { floorFire } from '../actions/floorFire';
 import type { ItemProc, ItemProcContext } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -82,35 +85,8 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
     unit: Unit,
     { state, map, session }: ItemProcContext
   ) => {
-    // TODO - optimization opportunity
-    const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
-      const { dx, dy } = Coordinates.difference(
-        unit.getCoordinates(),
-        u.getCoordinates()
-      );
-      return (
-        [-1, 0, 1].includes(dx) && [-1, 0, 1].includes(dy) && !(dx === 0 && dy === 0)
-      );
-    });
-
-    playSound(Sounds.PLAYER_HITS_ENEMY);
-    const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
-      map,
-      imageFactory: session.getImageFactory()
-    });
-    await playAnimation(animation, { map });
-
-    for (const adjacentUnit of adjacentUnits) {
-      await dealDamage(damage, {
-        sourceUnit: unit,
-        targetUnit: adjacentUnit
-      });
-
-      if (adjacentUnit.getLife() <= 0) {
-        await die(adjacentUnit, { state, map, session });
-        recordKill(unit, { state, session });
-      }
-    }
+    session.setScreen(GameScreen.GAME);
+    await floorFire(unit, damage, { state, map, session });
   };
 
   return new InventoryItem({
@@ -122,6 +98,24 @@ const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> =
       'in all directions that',
       `deals ${damage} damage`
     ].join('\n')
+  });
+};
+
+const createScrollOfFireball = async (damage: number): Promise<InventoryItem> => {
+  const onUse: ItemProc = async (
+    _item: InventoryItem,
+    unit: Unit,
+    { state, map, session }: ItemProcContext
+  ) => {
+    session.setScreen(GameScreen.GAME);
+    await shootFireball(unit, unit.getDirection(), damage, { state, map, session });
+  };
+
+  return new InventoryItem({
+    name: 'Scroll of Fireball',
+    category: 'SCROLL',
+    onUse,
+    tooltip: ['Shoots a fireball that deals', `${damage} damage`].join('\n')
   });
 };
 
@@ -212,6 +206,10 @@ const createInventoryItem = async (
         case 'floor_fire': {
           const damage = parseInt(model.params?.damage ?? '0');
           return createScrollOfFloorFire(damage);
+        }
+        case 'fireball': {
+          const damage = parseInt(model.params?.damage ?? '0');
+          return createScrollOfFireball(damage);
         }
         default:
           throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);
