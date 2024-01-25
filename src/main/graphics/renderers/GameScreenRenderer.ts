@@ -61,8 +61,8 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates, { state }: RenderContext): Pixel => {
-    const playerUnit = state.getPlayerUnit();
+  private _gridToPixel = ({ x, y }: Coordinates, { session }: RenderContext): Pixel => {
+    const playerUnit = session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
@@ -157,13 +157,13 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _drawShadow = async (coordinates: Coordinates, context: RenderContext) => {
-    const { state } = context;
+    const { state, session } = context;
     const map = checkNotNull(state.getMap());
     const unit = map.getUnit(coordinates);
     const objects = map.getObjects(coordinates);
 
     if (unit) {
-      if (unit === state.getPlayerUnit()) {
+      if (unit === session.getPlayerUnit()) {
         return this._drawEllipse(coordinates, Colors.GREEN, context);
       } else {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);
@@ -183,7 +183,8 @@ export default class GameScreenRenderer implements Renderer {
     color: Color,
     context: RenderContext
   ) => {
-    const imageFactory = context.session.getImageFactory();
+    const { session } = context;
+    const imageFactory = session.getImageFactory();
     const pixel = this._gridToPixel(coordinates, context);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await imageFactory.getImage({

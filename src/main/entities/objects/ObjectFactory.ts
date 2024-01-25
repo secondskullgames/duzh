@@ -89,7 +89,7 @@ const createHealthGlobe = async (
   const lifeGained = 10;
 
   const onUse = async (unit: Unit, { state, map, session }: OnUseContext) => {
-    if (unit === state.getPlayerUnit()) {
+    if (unit === session.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
         playSound(Sounds.HEALTH_GLOBE);

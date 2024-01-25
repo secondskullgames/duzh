@@ -5,9 +5,9 @@ import { abilityForName } from '../../entities/units/abilities/abilityForName';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, session }: ScreenHandlerContext
+  { session }: ScreenHandlerContext
 ) => {
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const levelUpState = session.getLevelUpScreen();
 
   switch (command.key) {

@@ -26,7 +26,7 @@ export const walk = async (
     // do nothing
   } else {
     await moveUnit(unit, coordinates, { state, map, session });
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     if (unit === playerUnit) {
       playSound(Sounds.FOOTSTEP);
     }

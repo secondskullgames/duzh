@@ -27,8 +27,11 @@ export default class WizardController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, { state, map }: UnitControllerContext): UnitOrder => {
-    const playerUnit = state.getPlayerUnit();
+  issueOrder = (
+    unit: Unit,
+    { state, map, session }: UnitControllerContext
+  ): UnitOrder => {
+    const playerUnit = session.getPlayerUnit();
 
     const distanceToPlayerUnit = manhattanDistance(
       unit.getCoordinates(),

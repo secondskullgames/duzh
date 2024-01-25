@@ -1,7 +1,6 @@
 import MapInstance from '../maps/MapInstance';
-import Unit from '../entities/units/Unit';
 import { type UnitAbility } from '../entities/units/abilities/UnitAbility';
-import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
+import { checkArgument, checkNotNull } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 
@@ -9,7 +8,6 @@ import { clear } from '../utils/arrays';
  * Global mutable state
  */
 export default class GameState {
-  private playerUnit: Unit | null;
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private mapIndex: number;
@@ -19,7 +17,6 @@ export default class GameState {
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
-    this.playerUnit = null;
     this.mapSuppliers = [];
     this.maps = [];
     this.mapIndex = -1;
@@ -28,12 +25,6 @@ export default class GameState {
     this.queuedAbility = null;
     this.generatedEquipmentIds = [];
   }
-
-  getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
-  setPlayerUnit = (unit: Unit): void => {
-    checkState(this.playerUnit === null);
-    this.playerUnit = unit;
-  };
 
   hasNextMap = () => this.mapIndex < this.mapSuppliers.length - 1;
   getMapIndex = () => this.mapIndex;
@@ -78,7 +69,6 @@ export default class GameState {
   };
 
   reset = () => {
-    this.playerUnit = null;
     clear(this.mapSuppliers);
     Object.keys(this.maps).forEach(key => {
       delete this.maps[parseInt(key)];

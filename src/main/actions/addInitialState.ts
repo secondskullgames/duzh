@@ -29,7 +29,7 @@ export const addInitialState = async ({ state, mapFactory, session }: Context) =
       ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
     }
   }
-  state.setPlayerUnit(playerUnit);
+  session.setPlayerUnit(playerUnit);
   const mapSpecs = (
     await import(
       /* webpackChunkName: "models" */
@@ -40,6 +40,7 @@ export const addInitialState = async ({ state, mapFactory, session }: Context) =
     return () =>
       mapFactory.loadMap(spec, {
         state,
+        session,
         imageFactory: session.getImageFactory()
       });
   });

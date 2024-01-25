@@ -19,7 +19,7 @@ type Context = Readonly<{
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (unit: Unit, { state, session, map }: Context) => {
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const coordinates = unit.getCoordinates();
 
   map.removeUnit(unit);

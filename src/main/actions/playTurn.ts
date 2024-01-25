@@ -19,7 +19,7 @@ export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
   const { state, map, session } = context;
   session.setTurnInProgress(true);
   if (!notPlayerOnly) {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     if (playerUnit.getLife() > 0) {
       await playerUnit.update({ state, map, session });
     }
@@ -36,7 +36,7 @@ export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
     }
   }
 
-  updateRevealedTiles({ state, map });
+  updateRevealedTiles({ session, map });
   state.nextTurn();
   session.setTurnInProgress(false);
 };

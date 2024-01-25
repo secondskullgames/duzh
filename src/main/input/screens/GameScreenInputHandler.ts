@@ -38,11 +38,11 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     playSound(Sounds.FOOTSTEP);
     await playTurn(true, { ...context, map });
   } else if (key === 'TAB') {
-    session.prepareInventoryScreen(state.getPlayerUnit());
-    session.prepareInventoryV2(state.getPlayerUnit());
+    session.prepareInventoryScreen(session.getPlayerUnit());
+    session.prepareInventoryV2(session.getPlayerUnit());
     session.setScreen(GameScreen.INVENTORY);
   } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-    session.initLevelUpScreen(state.getPlayerUnit());
+    session.initLevelUpScreen(session.getPlayerUnit());
     session.setScreen(GameScreen.LEVEL_UP);
   } else if (key === 'M') {
     session.setScreen(GameScreen.MAP);
@@ -73,7 +73,7 @@ const _handleArrowKey = async (
   { state, session }: ScreenHandlerContext
 ) => {
   const direction = getDirection(key);
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
@@ -142,8 +142,11 @@ const _handleArrowKey = async (
   }
 };
 
-const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) => {
-  const playerUnit = state.getPlayerUnit();
+const _handleAbility = async (
+  key: NumberKey,
+  { state, session }: ScreenHandlerContext
+) => {
+  const playerUnit = session.getPlayerUnit();
 
   const index = parseInt(key.toString());
   const innateAbilities = AbilityName.getInnateAbilities();
@@ -157,7 +160,7 @@ const _handleAbility = async (key: NumberKey, { state }: ScreenHandlerContext) =
 
 const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   const map = checkNotNull(state.getMap(), 'Map is not loaded!');
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {

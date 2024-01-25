@@ -93,7 +93,7 @@ export default class InventoryRendererV2 implements Renderer {
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
       await this._drawText(
@@ -140,7 +140,7 @@ export default class InventoryRendererV2 implements Renderer {
     // draw inventory items
     const selectedItemCategory = inventory.getSelectedItemCategory();
     if (selectedItemCategory) {
-      const items = inventory.getItems(state.getPlayerUnit(), selectedItemCategory);
+      const items = inventory.getItems(session.getPlayerUnit(), selectedItemCategory);
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;

@@ -1,13 +1,13 @@
-import GameState from '../../core/GameState';
 import MapInstance from '../../maps/MapInstance';
+import { Session } from '../../core/Session';
 
 type Context = Readonly<{
-  state: GameState;
+  session: Session;
   map: MapInstance;
 }>;
 
-export const killEnemies = async ({ state, map }: Context) => {
-  const playerUnit = state.getPlayerUnit();
+export const killEnemies = async ({ session, map }: Context) => {
+  const playerUnit = session.getPlayerUnit();
   for (const unit of map.getAllUnits()) {
     if (unit !== playerUnit) {
       map.removeUnit(unit);

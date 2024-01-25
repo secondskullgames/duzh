@@ -34,8 +34,8 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ state, session }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
+  render = async ({ session }: RenderContext) => {
+    const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventory();
     const { graphics } = this;
 

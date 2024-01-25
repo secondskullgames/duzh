@@ -6,7 +6,7 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
-import { randChoice, randInt, weightedRandom } from '../../utils/random';
+import { randInt, weightedRandom } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
@@ -19,6 +19,7 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 import { Range } from '../../schemas/GeneratedMapModel';
 import UnitModel from '../../schemas/UnitModel';
+import { Session } from '../../core/Session';
 
 type Props = Readonly<{
   level: number;
@@ -31,6 +32,7 @@ type Props = Readonly<{
 
 type Context = Readonly<{
   state: GameState;
+  session: Session;
   imageFactory: ImageFactory;
 }>;
 
@@ -53,14 +55,15 @@ export default class GeneratedMapBuilder {
     this.entityLocations = new CustomSet();
   }
 
-  build = async ({ state, imageFactory }: Context): Promise<MapInstance> => {
+  build = async (context: Context): Promise<MapInstance> => {
+    const { session } = context;
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
     playerUnit.setCoordinates(playerUnitCoordinates);
     this.entityLocations.add(playerUnitCoordinates);
-    const units = [playerUnit, ...(await this._generateUnits({ state, imageFactory }))];
-    const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
+    const units = [playerUnit, ...(await this._generateUnits(context))];
+    const objects: GameObject[] = await this._generateObjects(context);
 
     return new MapInstance({
       width: this.width,

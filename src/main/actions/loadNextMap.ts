@@ -17,7 +17,7 @@ export const loadNextMap = async ({ state, session }: Context) => {
     const nextMapIndex = state.getMapIndex() + 1;
     await state.setMapIndex(nextMapIndex);
     const map = state.getMap();
-    updateRevealedTiles({ state, map: map });
+    updateRevealedTiles({ session, map });
     if (map.music) {
       await Music.playMusic(map.music);
     }

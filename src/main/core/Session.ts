@@ -3,7 +3,7 @@ import { GameScreen } from './GameScreen';
 import { InventoryState, InventoryV2State } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
-import { checkNotNull } from '../utils/preconditions';
+import { checkNotNull, checkState } from '../utils/preconditions';
 import ImageFactory from '../graphics/images/ImageFactory';
 
 export interface Session {
@@ -19,6 +19,8 @@ export interface Session {
   getInventoryV2: () => InventoryV2State;
   getTicker: () => Ticker;
   reset: () => void;
+  getPlayerUnit: () => Unit;
+  setPlayerUnit: (unit: Unit) => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
 }
@@ -35,6 +37,7 @@ class SessionImpl implements Session {
   private levelUpScreen: LevelUpScreenState | null;
   private inventory: InventoryState | null;
   private inventoryV2: InventoryV2State | null;
+  private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
 
   constructor() {
@@ -46,7 +49,14 @@ class SessionImpl implements Session {
     this.inventory = null;
     this.inventoryV2 = null;
     this._isTurnInProgress = false;
+    this.playerUnit = null;
   }
+
+  getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
+  setPlayerUnit = (unit: Unit): void => {
+    checkState(this.playerUnit === null);
+    this.playerUnit = unit;
+  };
 
   getImageFactory = (): ImageFactory => this.imageFactory;
 
@@ -129,6 +139,7 @@ class SessionImpl implements Session {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
     this.ticker.clear();
+    this.playerUnit = null;
   };
 
   setTurnInProgress = (val: boolean) => {

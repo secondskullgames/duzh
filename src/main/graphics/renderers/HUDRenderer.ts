@@ -60,8 +60,8 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async ({ state }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
+  private _renderLeftPanel = async ({ session }: RenderContext) => {
+    const playerUnit = session.getPlayerUnit();
 
     const lines = [
       playerUnit.getName(),
@@ -89,9 +89,9 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (context: RenderContext) => {
-    const { state } = context;
+    const { state, session } = context;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
 
     let keyNumber = 1;
     const abilities = playerUnit.getAbilities();
@@ -123,8 +123,8 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async ({ state }: RenderContext) => {
-    const playerUnit = state.getPlayerUnit();
+  private _renderRightPanel = async ({ state, session }: RenderContext) => {
+    const playerUnit = session.getPlayerUnit();
     const turn = state.getTurn();
     const mapIndex = state.getMapIndex();
 
@@ -157,7 +157,7 @@ export default class HUDRenderer implements Renderer {
     topLeft: Pixel,
     { state, session }: RenderContext
   ) => {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     const queuedAbility = state.getQueuedAbility();
 
     let borderColor: Color;

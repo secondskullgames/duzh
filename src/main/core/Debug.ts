@@ -32,7 +32,7 @@ export class Debug {
   isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.session.getPlayerUnit();
     await die(playerUnit, {
       state: this.state,
       map: this.state.getMap(),
@@ -41,7 +41,7 @@ export class Debug {
   };
 
   levelUp = async () => {
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.session.getPlayerUnit();
     _levelUp(playerUnit, {
       state: this.state,
       session: this.session
@@ -52,7 +52,7 @@ export class Debug {
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await ItemFactory.createInventoryEquipment(id);
-    const playerUnit = this.state.getPlayerUnit();
+    const playerUnit = this.session.getPlayerUnit();
     playerUnit.getInventory().add(item);
     this.session
       .getTicker()
@@ -70,7 +70,7 @@ export class Debug {
       ...this,
       killEnemies: () =>
         killEnemies({
-          state: this.state,
+          session: this.session,
           map: this.state.getMap()
         }),
       nextLevel: async () => {

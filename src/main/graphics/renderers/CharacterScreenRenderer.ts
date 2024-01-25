@@ -46,8 +46,8 @@ export default class CharacterScreenRenderer implements Renderer {
 
   private _renderStatistics = async (context: RenderContext) => {
     const { graphics } = this;
-    const { state } = context;
-    const playerUnit = state.getPlayerUnit();
+    const { session } = context;
+    const playerUnit = session.getPlayerUnit();
     let top = 20;
     await this._drawText(
       'Character Statistics',
