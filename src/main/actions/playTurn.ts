@@ -13,6 +13,7 @@ type Context = Readonly<{
 
 /**
  * TODO ugly inverted boolean
+ * TODO this method does not make sense
  */
 export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
   const { state, map, session } = context;

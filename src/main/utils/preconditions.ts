@@ -23,3 +23,13 @@ export const checkNotNull = <T>(
   }
   return value;
 };
+
+/**
+ * Half-baked attempt to combine the above
+ */
+export const check = <T>(value: T | null | undefined, message?: string): T => {
+  if (!value) {
+    throw new Error(message ? `Unexpected value: ${message}` : 'Unexpected value');
+  }
+  return value;
+};

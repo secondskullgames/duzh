@@ -4,6 +4,7 @@ import { UnitController } from './controllers/UnitController';
 import { type UnitAbility } from './abilities/UnitAbility';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
+import { PlayerUnitClass } from './PlayerUnitClass';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import Coordinates from '../../geometry/Coordinates';
@@ -14,7 +15,7 @@ import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
 import Entity, { UpdateContext } from '../Entity';
 import { Faction } from '../../types/types';
-import { checkArgument } from '../../utils/preconditions';
+import { check, checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
@@ -23,21 +24,11 @@ import UnitType from '../../schemas/UnitType';
 /**
  * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN = 0.75;
-const MAX_PLAYER_LEVEL = 20;
-
-// TODO hardcoding this player-specific stuff here
-const cumulativeKillsToNextLevel = [
-  4, // 4,
-  10, // 6,
-  18, // 8,
-  28, // 10,
-  40, // 12,
-  54, // 14,
-  70, // 16,
-  88, // 18,
-  108 // 20
-];
+const LIFE_PER_TURN = 1;
+/**
+ * Regenerate this raw amount of mana each turn
+ */
+const MANA_PER_TURN = 1;
 
 let nextId: number = 0;
 
@@ -45,6 +36,7 @@ type Props = Readonly<{
   name: string;
   faction: Faction;
   model: UnitModel;
+  playerUnitClass?: PlayerUnitClass;
   sprite: DynamicSprite<Unit>;
   level: number;
   coordinates: Coordinates;
@@ -66,6 +58,7 @@ export default class Unit implements Entity, Animatable {
   private readonly inventory: InventoryMap;
   private readonly equipment: EquipmentMap;
   private readonly aiParameters: AIParameters | null;
+  private readonly playerUnitClass: PlayerUnitClass | null;
   private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
@@ -105,6 +98,7 @@ export default class Unit implements Entity, Animatable {
     this.id = nextId++;
     this.faction = props.faction;
     this.sprite = props.sprite;
+    this.playerUnitClass = props.playerUnitClass ?? null;
     this.sprite.bind(this);
     this.inventory = new InventoryMap();
 
@@ -251,8 +245,8 @@ export default class Unit implements Entity, Animatable {
   };
 
   getKillsToNextLevel = (): number | null => {
-    if (this.faction === Faction.PLAYER && this.level < MAX_PLAYER_LEVEL) {
-      return cumulativeKillsToNextLevel[this.level - 1];
+    if (this.playerUnitClass) {
+      return this.playerUnitClass.getCumulativeKillsToNextLevel(this.level);
     }
     return null;
   };
@@ -313,6 +307,7 @@ export default class Unit implements Entity, Animatable {
 
   isInCombat = () =>
     this.turnsSinceCombatAction !== null && this.turnsSinceCombatAction <= 10;
+
   refreshCombat = () => {
     this.turnsSinceCombatAction = 0;
   };
@@ -368,21 +363,16 @@ export default class Unit implements Entity, Animatable {
     return this.abilityPoints;
   };
 
-  /**
-   * TODO this should probably be somewhere player-specific,
-   * not in the base Unit class
-   */
   getLearnableAbilities = (): AbilityName[] => {
-    const LEARNABLE_ABILITIES = [
-      AbilityName.BLINK,
-      AbilityName.DASH,
-      AbilityName.HEAVY_ATTACK,
-      AbilityName.KNOCKBACK_ATTACK,
-      AbilityName.SHOOT_FIREBALL,
-      AbilityName.STUN_ATTACK
-    ];
-    return LEARNABLE_ABILITIES.filter(ability => !this.hasAbility(ability));
+    if (this.playerUnitClass) {
+      return this.playerUnitClass
+        .getLearnableAbilities()
+        .filter(abilityName => !this.hasAbility(abilityName));
+    }
+    return [];
   };
+
+  getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
   private _upkeep = () => {
     // life regeneration
@@ -393,8 +383,7 @@ export default class Unit implements Entity, Animatable {
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
-      const manaPerTurn = 1;
-      this.manaRemainder += manaPerTurn;
+      this.manaRemainder += MANA_PER_TURN;
       const deltaMana = Math.floor(this.manaRemainder);
       this.manaRemainder -= deltaMana;
       this.mana = Math.min(this.mana + deltaMana, this.maxMana);

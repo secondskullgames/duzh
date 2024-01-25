@@ -15,11 +15,17 @@ type Context = Readonly<{
  */
 export const recordKill = (unit: Unit, { state, session }: Context) => {
   unit.recordKill();
-  const killsToNextLevel = unit.getKillsToNextLevel();
-  if (killsToNextLevel !== null) {
-    if (unit.getLifetimeKills() >= killsToNextLevel) {
-      levelUp(unit, { session, state });
-      playSound(Sounds.LEVEL_UP);
+
+  const playerUnitClass = unit.getPlayerUnitClass();
+  if (playerUnitClass) {
+    const killsToNextLevel = playerUnitClass.getCumulativeKillsToNextLevel(
+      unit.getLevel()
+    );
+    if (killsToNextLevel !== null) {
+      if (unit.getLifetimeKills() >= killsToNextLevel) {
+        levelUp(unit, { session, state });
+        playSound(Sounds.LEVEL_UP);
+      }
     }
   }
 };

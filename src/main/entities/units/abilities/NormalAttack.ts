@@ -6,7 +6,8 @@ import { pointAt } from '../../../utils/geometry';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Sounds from '../../../sounds/Sounds';
 
-// Note that you gain 1 passively, so this is really 2 mana per hit
+// Note that you gain 1 passively, so this is really 3 mana per hit
+// TODO should enemy units gain mana?
 const MANA_RETURNED = 1;
 
 export const NormalAttack: UnitAbility = {

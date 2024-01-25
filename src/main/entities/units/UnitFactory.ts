@@ -3,6 +3,7 @@ import { UnitController } from './controllers/UnitController';
 import Unit from './Unit';
 import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
+import { PlayerUnitClass } from './PlayerUnitClass';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
@@ -24,6 +25,7 @@ type CreateUnitProps = Readonly<{
   controller: UnitController;
   level: number;
   coordinates: Coordinates;
+  playerUnitClass?: PlayerUnitClass;
 }>;
 
 type Context = Readonly<{
@@ -31,9 +33,11 @@ type Context = Readonly<{
 }>;
 
 const createUnit = async (
-  { name, unitClass, faction, controller, level, coordinates }: CreateUnitProps,
+  props: CreateUnitProps,
   { imageFactory }: Context
 ): Promise<Unit> => {
+  const { name, unitClass, faction, controller, level, coordinates, playerUnitClass } =
+    props;
   const model: UnitModel = await loadUnitModel(unitClass);
   const sprite = await SpriteFactory.createUnitSprite(
     model.sprite,
@@ -46,7 +50,7 @@ const createUnit = async (
     equipmentList.push(equipment);
   }
 
-  const unit = new Unit({
+  return new Unit({
     name: name ?? model.name,
     model,
     faction,
@@ -54,9 +58,9 @@ const createUnit = async (
     level,
     coordinates,
     equipment: equipmentList,
-    sprite
+    sprite,
+    playerUnitClass
   });
-  return unit;
 };
 
 const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
@@ -66,7 +70,8 @@ const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
       level: 1,
-      coordinates: { x: 0, y: 0 }
+      coordinates: { x: 0, y: 0 },
+      playerUnitClass: PlayerUnitClass.DEFAULT
     },
     { imageFactory }
   );
