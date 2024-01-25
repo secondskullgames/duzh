@@ -15,7 +15,7 @@ import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
 import Entity, { UpdateContext } from '../Entity';
 import { Faction } from '../../types/types';
-import { check, checkArgument } from '../../utils/preconditions';
+import { checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';

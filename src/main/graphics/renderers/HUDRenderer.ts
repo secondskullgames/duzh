@@ -89,7 +89,7 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (context: RenderContext) => {
-    const { state, session } = context;
+    const { session } = context;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
 

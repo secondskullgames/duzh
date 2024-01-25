@@ -10,13 +10,8 @@ import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
-import { playAnimation } from '../graphics/animations/playAnimation';
-import { dealDamage } from '../actions/dealDamage';
 import { equipItem } from '../actions/equipItem';
 import ImageFactory from '../graphics/images/ImageFactory';
-import { die } from '../actions/die';
-import { recordKill } from '../actions/recordKill';
 import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
 import { shootFireball } from '../actions/shootFireball';
 import { GameScreen } from '../core/GameScreen';
@@ -27,7 +22,7 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, session }: ItemProcContext
+    { session }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
@@ -50,7 +45,7 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, session }: ItemProcContext
+    { session }: ItemProcContext
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
@@ -179,8 +174,7 @@ const createEquipment = async (
 
   // TODO wtf is this
   const inventoryItem = await createInventoryEquipment(equipmentClass);
-  const tooltip = getEquipmentTooltip(model);
-  const equipment = new Equipment({ model, sprite, inventoryItem, tooltip });
+  const equipment = new Equipment({ model, sprite, inventoryItem });
   sprite.bind(equipment);
   return equipment;
 };

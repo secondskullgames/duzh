@@ -21,7 +21,7 @@ export default class ArcherController implements UnitController {
 
   private _getBehavior = (
     unit: Unit,
-    { state, session }: UnitControllerContext
+    { session }: UnitControllerContext
   ): UnitController => {
     const playerUnit = session.getPlayerUnit();
 

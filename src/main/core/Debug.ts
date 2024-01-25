@@ -5,7 +5,6 @@ import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 import ItemFactory from '../items/ItemFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
@@ -43,7 +42,6 @@ export class Debug {
   levelUp = async () => {
     const playerUnit = this.session.getPlayerUnit();
     _levelUp(playerUnit, {
-      state: this.state,
       session: this.session
     });
   };

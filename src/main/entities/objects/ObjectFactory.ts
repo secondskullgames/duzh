@@ -88,7 +88,7 @@ const createHealthGlobe = async (
 
   const lifeGained = 10;
 
-  const onUse = async (unit: Unit, { state, map, session }: OnUseContext) => {
+  const onUse = async (unit: Unit, { map, session }: OnUseContext) => {
     if (unit === session.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);

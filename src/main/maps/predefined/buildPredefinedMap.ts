@@ -1,4 +1,3 @@
-import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';

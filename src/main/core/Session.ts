@@ -3,7 +3,7 @@ import { GameScreen } from './GameScreen';
 import { InventoryState, InventoryV2State } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
-import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
+import { checkNotNull, checkState } from '../utils/preconditions';
 import ImageFactory from '../graphics/images/ImageFactory';
 import MapInstance from '../maps/MapInstance';
 import type { UnitAbility } from '../entities/units/abilities/UnitAbility';

@@ -50,7 +50,7 @@ export default class MapScreenRenderer implements Renderer {
   };
 
   private _getColor = (coordinates: Coordinates, context: RenderContext): Color => {
-    const { state, session } = context;
+    const { session } = context;
     const map = checkNotNull(session.getMap());
     const playerUnit = session.getPlayerUnit();
 

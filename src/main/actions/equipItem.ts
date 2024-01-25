@@ -15,7 +15,7 @@ export const equipItem = async (
   item: InventoryItem,
   equipment: Equipment,
   unit: Unit,
-  { state, session }: Context
+  { session }: Context
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {

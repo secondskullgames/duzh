@@ -70,7 +70,7 @@ export default class InventoryRendererV2 implements Renderer {
   };
 
   private _drawEquipment = async (context: RenderContext) => {
-    const { state, session } = context;
+    const { session } = context;
     const inventory = session.getInventoryV2();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
@@ -108,7 +108,7 @@ export default class InventoryRendererV2 implements Renderer {
   };
 
   private _drawInventory = async (context: RenderContext) => {
-    const { state, session } = context;
+    const { session } = context;
     const inventory = session.getInventoryV2();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;

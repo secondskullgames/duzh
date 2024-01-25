@@ -7,7 +7,6 @@ import Color from '../Color';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import { check } from '../../utils/preconditions';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 

@@ -3,7 +3,6 @@ import Unit from '../entities/units/Unit';
 import Direction from '../geometry/Direction';
 import Coordinates from '../geometry/Coordinates';
 import GameState from '../core/GameState';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import MapInstance from '../maps/MapInstance';

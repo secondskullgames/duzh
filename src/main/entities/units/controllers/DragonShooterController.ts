@@ -14,17 +14,14 @@ export default class DragonShooterController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (
-    unit: Unit,
-    { state, map, session }: UnitControllerContext
-  ): UnitOrder => {
-    const behavior = this._getBehavior(unit, { state, map, session });
-    return behavior.issueOrder(unit, { state, map, session });
+  issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
+    const behavior = this._getBehavior(unit, context);
+    return behavior.issueOrder(unit, context);
   };
 
   private _getBehavior = (
     unit: Unit,
-    { state, session }: UnitControllerContext
+    { session }: UnitControllerContext
   ): UnitController => {
     const playerUnit = session.getPlayerUnit();
     if (this._canShoot(unit, playerUnit, { map: session.getMap() })) {
