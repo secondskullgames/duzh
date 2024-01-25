@@ -10,16 +10,17 @@ type Context = Readonly<{
 }>;
 
 export const loadNextMap = async ({ state, session }: Context) => {
-  if (!state.hasNextMap()) {
+  if (!state.hasNextMap(session.getMapIndex())) {
     Music.stop();
     session.setScreen(GameScreen.VICTORY);
   } else {
-    const nextMapIndex = state.getMapIndex() + 1;
-    await state.setMapIndex(nextMapIndex);
-    const map = state.getMap();
+    const nextMapIndex = session.getMapIndex() + 1;
+    session.setMapIndex(nextMapIndex);
+    const map = await state.loadMap(nextMapIndex);
+    session.setMap(map);
     updateRevealedTiles({ session, map });
     if (map.music) {
-      await Music.playMusic(map.music);
+      Music.playMusic(map.music);
     }
   }
 };

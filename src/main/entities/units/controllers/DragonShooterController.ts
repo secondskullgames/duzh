@@ -27,7 +27,7 @@ export default class DragonShooterController implements UnitController {
     { state, session }: UnitControllerContext
   ): UnitController => {
     const playerUnit = session.getPlayerUnit();
-    if (this._canShoot(unit, playerUnit, { map: state.getMap() })) {
+    if (this._canShoot(unit, playerUnit, { map: session.getMap() })) {
       return new ShootUnitStationaryBehavior({ targetUnit: playerUnit });
     } else {
       return new StayBehavior();

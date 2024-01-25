@@ -26,11 +26,11 @@ export const levelUp = (unit: Unit, { state, session }: Context) => {
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
       ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {
-        turn: state.getTurn()
+        turn: session.getTurn()
       });
       unit.awardAbilityPoint();
     } else {
-      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       switch (unit.getLevel()) {
         case 2:
           unit.learnAbility(abilityForName(AbilityName.HEAVY_ATTACK));

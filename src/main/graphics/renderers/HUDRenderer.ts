@@ -123,10 +123,10 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async ({ state, session }: RenderContext) => {
+  private _renderRightPanel = async ({ session }: RenderContext) => {
     const playerUnit = session.getPlayerUnit();
-    const turn = state.getTurn();
-    const mapIndex = state.getMapIndex();
+    const turn = session.getTurn();
+    const mapIndex = session.getMapIndex();
 
     const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
@@ -158,7 +158,7 @@ export default class HUDRenderer implements Renderer {
     { state, session }: RenderContext
   ) => {
     const playerUnit = session.getPlayerUnit();
-    const queuedAbility = state.getQueuedAbility();
+    const queuedAbility = session.getQueuedAbility();
 
     let borderColor: Color;
 

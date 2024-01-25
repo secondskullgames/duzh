@@ -24,8 +24,8 @@ export default class MapScreenRenderer implements Renderer {
    */
   render = async (context: RenderContext) => {
     const { graphics } = this;
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { session } = context;
+    const map = checkNotNull(session.getMap());
 
     graphics.fill(backgroundColor);
     const cellDimension = Math.floor(
@@ -51,7 +51,7 @@ export default class MapScreenRenderer implements Renderer {
 
   private _getColor = (coordinates: Coordinates, context: RenderContext): Color => {
     const { state, session } = context;
-    const map = checkNotNull(state.getMap());
+    const map = checkNotNull(session.getMap());
     const playerUnit = session.getPlayerUnit();
 
     if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {

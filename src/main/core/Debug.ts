@@ -35,7 +35,7 @@ export class Debug {
     const playerUnit = this.session.getPlayerUnit();
     await die(playerUnit, {
       state: this.state,
-      map: this.state.getMap(),
+      map: this.session.getMap(),
       session: this.session
     });
   };
@@ -56,7 +56,7 @@ export class Debug {
     playerUnit.getInventory().add(item);
     this.session
       .getTicker()
-      .log(`Picked up a ${item.name}.`, { turn: this.state.getTurn() });
+      .log(`Picked up a ${item.name}.`, { turn: this.session.getTurn() });
     playSound(Sounds.PICK_UP_ITEM);
   };
 
@@ -71,7 +71,7 @@ export class Debug {
       killEnemies: () =>
         killEnemies({
           session: this.session,
-          map: this.state.getMap()
+          map: this.session.getMap()
         }),
       nextLevel: async () => {
         await loadNextMap({

@@ -71,8 +71,8 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _renderTiles = (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { session } = context;
+    const map = checkNotNull(session.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -91,8 +91,8 @@ export default class GameScreenRenderer implements Renderer {
    * Render all entities, one row at a time.
    */
   private _renderEntities = async (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { session } = context;
+    const map = checkNotNull(session.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -149,16 +149,16 @@ export default class GameScreenRenderer implements Renderer {
     coordinates: Coordinates,
     context: RenderContext
   ): boolean => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+    const { session } = context;
+    const map = checkNotNull(session.getMap());
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, context: RenderContext) => {
-    const { state, session } = context;
-    const map = checkNotNull(state.getMap());
+    const { session } = context;
+    const map = checkNotNull(session.getMap());
     const unit = map.getUnit(coordinates);
     const objects = map.getObjects(coordinates);
 

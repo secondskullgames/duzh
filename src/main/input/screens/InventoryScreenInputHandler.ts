@@ -46,7 +46,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
 
 const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   const playerUnit = session.getPlayerUnit();
-  const map = state.getMap();
+  const map = session.getMap();
   const inventory = session.getInventory();
   const selectedItem = inventory.getSelectedItem();
 

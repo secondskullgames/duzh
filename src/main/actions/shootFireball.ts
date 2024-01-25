@@ -47,7 +47,7 @@ export const shootFireball = async (
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    session.getTicker().log(message, { turn: state.getTurn() });
+    session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
       await die(targetUnit, { state, map, session });

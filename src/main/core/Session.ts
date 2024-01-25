@@ -3,8 +3,10 @@ import { GameScreen } from './GameScreen';
 import { InventoryState, InventoryV2State } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
-import { checkNotNull, checkState } from '../utils/preconditions';
+import { checkArgument, checkNotNull, checkState } from '../utils/preconditions';
 import ImageFactory from '../graphics/images/ImageFactory';
+import MapInstance from '../maps/MapInstance';
+import type { UnitAbility } from '../entities/units/abilities/UnitAbility';
 
 export interface Session {
   getImageFactory: () => ImageFactory;
@@ -23,6 +25,17 @@ export interface Session {
   setPlayerUnit: (unit: Unit) => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
+  getMapIndex: () => number;
+
+  setMapIndex: (mapIndex: number) => void;
+  setMap: (map: MapInstance) => void;
+  getMap: () => MapInstance;
+
+  getTurn: () => number;
+  nextTurn: () => void;
+
+  getQueuedAbility: () => UnitAbility | null;
+  setQueuedAbility: (ability: UnitAbility | null) => void;
 }
 
 export namespace Session {
@@ -39,6 +52,10 @@ class SessionImpl implements Session {
   private inventoryV2: InventoryV2State | null;
   private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
+  private mapIndex: number;
+  private map: MapInstance | null;
+  private turn: number;
+  private queuedAbility: UnitAbility | null;
 
   constructor() {
     this.imageFactory = new ImageFactory();
@@ -50,6 +67,10 @@ class SessionImpl implements Session {
     this.inventoryV2 = null;
     this._isTurnInProgress = false;
     this.playerUnit = null;
+    this.mapIndex = -1;
+    this.map = null;
+    this.turn = 1;
+    this.queuedAbility = null;
   }
 
   getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
@@ -140,6 +161,10 @@ class SessionImpl implements Session {
     this.prevScreen = null;
     this.ticker.clear();
     this.playerUnit = null;
+    this.mapIndex = -1;
+    this.map = null;
+    this.turn = 1;
+    this.queuedAbility = null;
   };
 
   setTurnInProgress = (val: boolean) => {
@@ -150,4 +175,27 @@ class SessionImpl implements Session {
    * Used for showing the "busy" indicator in the UI
    */
   isTurnInProgress = (): boolean => this._isTurnInProgress;
+
+  getMapIndex = () => this.mapIndex;
+
+  setMapIndex = (mapIndex: number): void => {
+    this.mapIndex = mapIndex;
+  };
+
+  getMap = (): MapInstance =>
+    checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
+
+  setMap = (map: MapInstance): void => {
+    this.map = map;
+  };
+
+  getTurn = () => this.turn;
+  nextTurn = () => {
+    this.turn++;
+  };
+
+  getQueuedAbility = (): UnitAbility | null => this.queuedAbility;
+  setQueuedAbility = (ability: UnitAbility | null) => {
+    this.queuedAbility = ability;
+  };
 }

@@ -26,6 +26,8 @@ export const equipItem = async (
   }
   unit.getEquipment().add(equipment);
   equipment.attach(unit);
-  session.getTicker().log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
+  session
+    .getTicker()
+    .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
   playSound(Sounds.BLOCKED);
 };

@@ -15,6 +15,6 @@ export const pickupItem = (unit: Unit, mapItem: MapItem, { state, session }: Con
   unit.getInventory().add(inventoryItem);
   session
     .getTicker()
-    .log(`Picked up a ${inventoryItem.name}.`, { turn: state.getTurn() });
+    .log(`Picked up a ${inventoryItem.name}.`, { turn: session.getTurn() });
   playSound(Sounds.PICK_UP_ITEM);
 };

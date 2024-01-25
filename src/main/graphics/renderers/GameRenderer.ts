@@ -182,8 +182,8 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderTicker = async () => {
-    const { bufferGraphics: graphics, state, session } = this;
-    const messages = session.getTicker().getRecentMessages(state.getTurn());
+    const { bufferGraphics: graphics, session } = this;
+    const messages = session.getTicker().getRecentMessages(session.getTurn());
 
     const left = 0;
     const top = 0;

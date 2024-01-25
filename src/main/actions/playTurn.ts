@@ -37,7 +37,7 @@ export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
   }
 
   updateRevealedTiles({ session, map });
-  state.nextTurn();
+  session.nextTurn();
   session.setTurnInProgress(false);
 };
 

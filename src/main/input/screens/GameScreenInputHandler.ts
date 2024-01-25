@@ -13,7 +13,7 @@ import { toggleFullScreen } from '../../utils/dom';
 import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
 import { loadNextMap } from '../../actions/loadNextMap';
-import UnitOrder, { OrderContext } from '../../entities/units/orders/UnitOrder';
+import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '../../core/GameScreen';
@@ -27,8 +27,8 @@ import Unit from '../../entities/units/Unit';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
-  const { state, session } = context;
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+  const { session } = context;
+  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
 
   if (_isArrowKey(key)) {
     await _handleArrowKey(key as ArrowKey, modifiers, context);
@@ -74,7 +74,7 @@ const _handleArrowKey = async (
 ) => {
   const direction = getDirection(key);
   const playerUnit = session.getPlayerUnit();
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
@@ -126,8 +126,8 @@ const _handleArrowKey = async (
     order = new FastMoveOrder({ direction });
     willCompleteTurn = true;
   } else {
-    const ability = state.getQueuedAbility();
-    state.setQueuedAbility(null);
+    const ability = session.getQueuedAbility();
+    session.setQueuedAbility(null);
     if (ability) {
       order = new AbilityOrder({ ability, coordinates });
     } else {
@@ -142,10 +142,7 @@ const _handleArrowKey = async (
   }
 };
 
-const _handleAbility = async (
-  key: NumberKey,
-  { state, session }: ScreenHandlerContext
-) => {
+const _handleAbility = async (key: NumberKey, { session }: ScreenHandlerContext) => {
   const playerUnit = session.getPlayerUnit();
 
   const index = parseInt(key.toString());
@@ -154,12 +151,12 @@ const _handleAbility = async (
     .getAbilities()
     .filter(ability => !innateAbilities.includes(ability.name))[index - 1];
   if (ability && playerUnit.canSpendMana(ability.manaCost)) {
-    state.setQueuedAbility(ability);
+    session.setQueuedAbility(ability);
   }
 };
 
 const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
-  const map = checkNotNull(state.getMap(), 'Map is not loaded!');
+  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const playerUnit = session.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);

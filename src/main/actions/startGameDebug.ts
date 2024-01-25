@@ -9,13 +9,10 @@ type Context = Readonly<{
   session: Session;
 }>;
 
-export const startGameDebug = async (
-  mapInstance: MapInstance,
-  { state, session }: Context
-) => {
+export const startGameDebug = async (mapInstance: MapInstance, { session }: Context) => {
   // eslint-disable-next-line no-console
   console.log('debug mode');
-  state.setMap(mapInstance);
+  session.setMap(mapInstance);
   Music.stop();
   // Music.playFigure(Music.TITLE_THEME);
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));

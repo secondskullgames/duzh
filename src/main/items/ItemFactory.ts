@@ -34,7 +34,7 @@ const createLifePotion = (lifeRestored: number): InventoryItem => {
     session
       .getTicker()
       .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-        turn: state.getTurn()
+        turn: session.getTurn()
       });
   };
 
@@ -57,7 +57,7 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
     session
       .getTicker()
       .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-        turn: state.getTurn()
+        turn: session.getTurn()
       });
   };
 
