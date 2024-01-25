@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -8,6 +8,7 @@ import EquipmentSlot from '../../schemas/EquipmentSlot';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import { Session } from '../../core/Session';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -34,7 +35,7 @@ export default class InventoryRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async ({ session }: RenderContext) => {
+  render = async (session: Session) => {
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventory();
     const { graphics } = this;

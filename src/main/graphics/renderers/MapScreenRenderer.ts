@@ -1,10 +1,11 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Coordinates from '../../geometry/Coordinates';
 import Color from '../Color';
 import Colors from '../Colors';
 import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
+import { Session } from '../../core/Session';
 
 const backgroundColor = Color.fromHex('#404040');
 
@@ -22,9 +23,8 @@ export default class MapScreenRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (context: RenderContext) => {
+  render = async (session: Session) => {
     const { graphics } = this;
-    const { session } = context;
     const map = checkNotNull(session.getMap());
 
     graphics.fill(backgroundColor);
@@ -37,7 +37,7 @@ export default class MapScreenRenderer implements Renderer {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const color = this._getColor({ x, y }, context);
+        const color = this._getColor({ x, y }, session);
         const rect = {
           left: x * cellDimension + left,
           top: y * cellDimension + top,
@@ -49,8 +49,7 @@ export default class MapScreenRenderer implements Renderer {
     }
   };
 
-  private _getColor = (coordinates: Coordinates, context: RenderContext): Color => {
-    const { session } = context;
+  private _getColor = (coordinates: Coordinates, session: Session): Color => {
     const map = checkNotNull(session.getMap());
     const playerUnit = session.getPlayerUnit();
 

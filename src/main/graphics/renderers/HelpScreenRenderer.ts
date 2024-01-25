@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
@@ -7,6 +7,7 @@ import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
+import { Session } from '../../core/Session';
 
 type Props = Readonly<{
   textRenderer: TextRenderer;
@@ -23,7 +24,7 @@ export default class HelpScreenRenderer implements Renderer {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render = async (context: RenderContext) => {
+  render = async (session: Session) => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;

@@ -18,8 +18,6 @@ const main = async () => {
   const textRenderer = new TextRenderer({ imageFactory, fonts });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
-    state,
-    session,
     imageFactory,
     textRenderer
   });
@@ -38,7 +36,7 @@ const main = async () => {
   await addInitialState({ state, mapFactory, session });
   await showSplashScreen({ state, session });
   setInterval(async () => {
-    await renderer.render({ state, session });
+    await renderer.render(session);
   }, 20);
 };
 

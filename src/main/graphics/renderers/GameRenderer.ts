@@ -2,7 +2,7 @@ import GameScreenRenderer from './GameScreenRenderer';
 import HUDRenderer from './HUDRenderer';
 import InventoryRenderer from './InventoryRenderer';
 import MapScreenRenderer from './MapScreenRenderer';
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
@@ -28,10 +28,8 @@ const VICTORY_FILENAME = 'victory';
 
 type Props = Readonly<{
   parent: Element;
-  state: GameState;
   imageFactory: ImageFactory;
   textRenderer: TextRenderer;
-  session: Session;
 }>;
 
 export default class GameRenderer implements Renderer {
@@ -46,12 +44,10 @@ export default class GameRenderer implements Renderer {
   private readonly characterScreenRenderer: Renderer;
   private readonly helpScreenRenderer: Renderer;
   private readonly levelUpScreenRenderer: Renderer;
-  private readonly state: GameState;
   private readonly imageFactory: ImageFactory;
   private readonly textRenderer: TextRenderer;
-  private readonly session: Session;
 
-  constructor({ parent, state, session, imageFactory, textRenderer }: Props) {
+  constructor({ parent, imageFactory, textRenderer }: Props) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,
@@ -62,10 +58,8 @@ export default class GameRenderer implements Renderer {
     this._graphics = Graphics.forCanvas(this.canvas);
     const { canvas, bufferGraphics } = this;
 
-    this.state = state;
     this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
-    this.session = session;
     this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
     this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
     this.inventoryRenderer = Feature.isEnabled(Feature.INVENTORY_V2)
@@ -99,8 +93,8 @@ export default class GameRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (context: RenderContext) => {
-    const screen = this.session.getScreen();
+  render = async (session: Session) => {
+    const screen = session.getScreen();
 
     switch (screen) {
       case GameScreen.TITLE:
@@ -116,13 +110,13 @@ export default class GameRenderer implements Renderer {
         }
         break;
       case GameScreen.GAME:
-        await this._renderGameScreen(context);
+        await this._renderGameScreen(session);
         break;
       case GameScreen.INVENTORY:
-        await this._renderInventoryScreen(context);
+        await this._renderInventoryScreen(session);
         break;
       case GameScreen.CHARACTER:
-        await this._renderCharacterScreen(context);
+        await this._renderCharacterScreen(session);
         break;
       case GameScreen.VICTORY:
         await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
@@ -131,13 +125,13 @@ export default class GameRenderer implements Renderer {
         await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
         break;
       case GameScreen.MAP:
-        await this._renderMapScreen(context);
+        await this._renderMapScreen(session);
         break;
       case GameScreen.HELP:
-        await this._renderHelpScreen(context);
+        await this._renderHelpScreen(session);
         break;
       case GameScreen.LEVEL_UP:
-        await this._renderLevelUpScreen(context);
+        await this._renderLevelUpScreen(session);
         break;
       default:
         // unreachable
@@ -150,7 +144,7 @@ export default class GameRenderer implements Renderer {
     });
   };
 
-  private _renderGameScreen = async (context: RenderContext) => {
+  private _renderGameScreen = async (session: Session) => {
     // TODO Ideally this would logic would be part of GameScreenRenderer
     const { bufferGraphics: graphics, canvas } = this;
     graphics.fillRect(
@@ -158,31 +152,31 @@ export default class GameRenderer implements Renderer {
       Colors.BLACK
     );
 
-    await this.gameScreenRenderer.render(context);
-    await this.hudRenderer.render(context);
-    await this._renderTicker();
+    await this.gameScreenRenderer.render(session);
+    await this.hudRenderer.render(session);
+    await this._renderTicker(session);
 
     if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
-      if (context.session.isTurnInProgress()) {
-        this._drawTurnProgressIndicator(context);
+      if (session.isTurnInProgress()) {
+        this._drawTurnProgressIndicator(session);
       }
     }
   };
 
-  private _renderInventoryScreen = async (context: RenderContext) => {
-    await this.inventoryRenderer.render(context);
+  private _renderInventoryScreen = async (session: Session) => {
+    await this.inventoryRenderer.render(session);
   };
 
-  private _renderMapScreen = async (context: RenderContext) => {
-    await this.mapScreenRenderer.render(context);
+  private _renderMapScreen = async (session: Session) => {
+    await this.mapScreenRenderer.render(session);
   };
 
-  private _renderCharacterScreen = async (context: RenderContext) => {
-    await this.characterScreenRenderer.render(context);
+  private _renderCharacterScreen = async (session: Session) => {
+    await this.characterScreenRenderer.render(session);
   };
 
-  private _renderTicker = async () => {
-    const { bufferGraphics: graphics, session } = this;
+  private _renderTicker = async (session: Session) => {
+    const { bufferGraphics: graphics } = this;
     const messages = session.getTicker().getRecentMessages(session.getTurn());
 
     const left = 0;
@@ -204,8 +198,7 @@ export default class GameRenderer implements Renderer {
     }
   };
 
-  private _drawTurnProgressIndicator = (context: RenderContext) => {
-    const { session } = context;
+  private _drawTurnProgressIndicator = (session: Session) => {
     const graphics = this.bufferGraphics;
     if (session.isTurnInProgress()) {
       const width = 20;
@@ -234,12 +227,12 @@ export default class GameRenderer implements Renderer {
     );
   };
 
-  private _renderHelpScreen = async (context: RenderContext) => {
-    await this.helpScreenRenderer.render(context);
+  private _renderHelpScreen = async (session: Session) => {
+    await this.helpScreenRenderer.render(session);
   };
 
-  private _renderLevelUpScreen = async (context: RenderContext) => {
-    await this.levelUpScreenRenderer.render(context);
+  private _renderLevelUpScreen = async (session: Session) => {
+    await this.levelUpScreenRenderer.render(session);
   };
 
   private _drawText = async (

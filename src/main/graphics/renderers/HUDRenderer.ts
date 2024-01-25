@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import Color from '../Color';
 import Colors from '../Colors';
@@ -10,6 +10,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
+import { Session } from '../../core/Session';
 import getInnateAbilities = AbilityName.getInnateAbilities;
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -42,14 +43,14 @@ export default class HUDRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (context: RenderContext) => {
-    await this._renderFrame(context);
-    await this._renderLeftPanel(context);
-    await this._renderMiddlePanel(context);
-    await this._renderRightPanel(context);
+  render = async (session: Session) => {
+    await this._renderFrame(session);
+    await this._renderLeftPanel(session);
+    await this._renderMiddlePanel(session);
+    await this._renderRightPanel(session);
   };
 
-  private _renderFrame = async ({ session }: RenderContext) => {
+  private _renderFrame = async (session: Session) => {
     const image = await session.getImageFactory().getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
@@ -60,7 +61,7 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async ({ session }: RenderContext) => {
+  private _renderLeftPanel = async (session: Session) => {
     const playerUnit = session.getPlayerUnit();
 
     const lines = [
@@ -88,8 +89,7 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderMiddlePanel = async (context: RenderContext) => {
-    const { session } = context;
+  private _renderMiddlePanel = async (session: Session) => {
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
 
@@ -103,7 +103,7 @@ export default class HUDRenderer implements Renderer {
         (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
       if (!getInnateAbilities().includes(ability.name)) {
-        await this._renderAbility(ability, { x: left, y: top }, context);
+        await this._renderAbility(ability, { x: left, y: top }, session);
         await this._drawText(
           `${keyNumber}`,
           FontName.APPLE_II,
@@ -123,7 +123,7 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async ({ session }: RenderContext) => {
+  private _renderRightPanel = async (session: Session) => {
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
@@ -155,7 +155,7 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    { state, session }: RenderContext
+    session: Session
   ) => {
     const playerUnit = session.getPlayerUnit();
     const queuedAbility = session.getQueuedAbility();
