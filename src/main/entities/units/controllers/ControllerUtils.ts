@@ -1,10 +1,6 @@
 import { Session } from '../../../core/Session';
 
-type Context = Readonly<{
-  session: Session;
-}>;
-
-export const canMove = (speed: number, { session }: Context): boolean => {
+export const canMove = (speed: number, session: Session): boolean => {
   // deterministic version
   const turn = session.getTurn();
   return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));

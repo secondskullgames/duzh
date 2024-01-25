@@ -31,7 +31,7 @@ export default class BasicEnemyController implements UnitController {
       playerUnit.getCoordinates()
     );
 
-    if (!canMove(speed, { session })) {
+    if (!canMove(speed, session)) {
       return new StayOrder();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit }).issueOrder(unit, {

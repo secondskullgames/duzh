@@ -9,11 +9,7 @@ const lifePerLevel = 0;
 const manaPerLevel = 2;
 const strengthPerLevel = 1;
 
-type Context = Readonly<{
-  session: Session;
-}>;
-
-export const levelUp = (unit: Unit, { session }: Context) => {
+export const levelUp = (unit: Unit, session: Session) => {
   const ticker = session.getTicker();
   unit.incrementLevel();
   // TODO - maybe these should go in player.json (again?)

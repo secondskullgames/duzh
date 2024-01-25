@@ -161,7 +161,7 @@ const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   const coordinates = playerUnit.getCoordinates();
   const item = getItem(map, coordinates);
   if (item) {
-    pickupItem(playerUnit, item, { session });
+    pickupItem(playerUnit, item, session);
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);

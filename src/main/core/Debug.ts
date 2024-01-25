@@ -41,9 +41,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    _levelUp(playerUnit, {
-      session: this.session
-    });
+    _levelUp(playerUnit, this.session);
   };
 
   awardEquipment = async () => {

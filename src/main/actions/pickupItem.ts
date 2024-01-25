@@ -4,11 +4,7 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { Session } from '../core/Session';
 
-type Context = Readonly<{
-  session: Session;
-}>;
-
-export const pickupItem = (unit: Unit, mapItem: MapItem, { session }: Context) => {
+export const pickupItem = (unit: Unit, mapItem: MapItem, session: Session) => {
   const { inventoryItem } = mapItem;
   unit.getInventory().add(inventoryItem);
   session

@@ -63,7 +63,7 @@ export const attackUnit = async (
 
   if (defender.getLife() <= 0) {
     await die(defender, { state, map, session });
-    recordKill(attacker, { session });
+    recordKill(attacker, session);
   }
 
   await sleep(150);
