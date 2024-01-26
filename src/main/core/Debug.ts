@@ -64,11 +64,7 @@ export class Debug {
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies: () =>
-        killEnemies({
-          session: this.session,
-          map: this.session.getMap()
-        }),
+      killEnemies: () => killEnemies(this.session.getMap(), this.session),
       nextLevel: async () => {
         await loadNextMap({
           state: this.state,
