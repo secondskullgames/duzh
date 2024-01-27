@@ -6,7 +6,7 @@ import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
 
-const manaCost = 10;
+const manaCost = 8;
 const damageCoefficient = 2;
 
 export const HeavyAttack: UnitAbility = {

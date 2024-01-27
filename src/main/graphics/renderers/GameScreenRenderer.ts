@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
@@ -10,6 +10,7 @@ import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
+import { Session } from '../../core/Session';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -28,19 +29,19 @@ export default class GameScreenRenderer implements Renderer {
     this.graphics = graphics;
   }
 
-  render = async (context: RenderContext) => {
+  render = async (session: Session) => {
     this.graphics.fill(Colors.BLACK);
 
-    this._renderTiles(context);
-    await this._renderEntities(context);
+    this._renderTiles(session);
+    await this._renderEntities(session);
   };
 
   private _renderElement = (
     element: Element,
     coordinates: Coordinates,
-    context: RenderContext
+    session: Session
   ) => {
-    const pixel = this._gridToPixel(coordinates, context);
+    const pixel = this._gridToPixel(coordinates, session);
 
     if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
@@ -61,8 +62,8 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates, { state }: RenderContext): Pixel => {
-    const playerUnit = state.getPlayerUnit();
+  private _gridToPixel = ({ x, y }: Coordinates, session: Session): Pixel => {
+    const playerUnit = session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
@@ -70,17 +71,16 @@ export default class GameScreenRenderer implements Renderer {
     };
   };
 
-  private _renderTiles = (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+  private _renderTiles = (session: Session) => {
+    const map = checkNotNull(session.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates, context)) {
+        if (this._isTileRevealed(coordinates, session)) {
           const tile = map.getTile(coordinates);
           if (tile) {
-            this._renderElement(tile, coordinates, context);
+            this._renderElement(tile, coordinates, session);
           }
         }
       }
@@ -90,27 +90,26 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * Render all entities, one row at a time.
    */
-  private _renderEntities = async (context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+  private _renderEntities = async (session: Session) => {
+    const map = checkNotNull(session.getMap());
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates, context)) {
-          await this._drawShadow(coordinates, context);
+        if (this._isTileRevealed(coordinates, session)) {
+          await this._drawShadow(coordinates, session);
           for (const object of map.getObjects(coordinates)) {
-            this._renderElement(object, coordinates, context);
+            this._renderElement(object, coordinates, session);
           }
 
           const projectile = map.getProjectile(coordinates);
           if (projectile) {
-            this._renderElement(projectile, coordinates, context);
+            this._renderElement(projectile, coordinates, session);
           }
 
           const unit = map.getUnit(coordinates);
           if (unit) {
-            this._renderUnit(unit, coordinates, context);
+            this._renderUnit(unit, coordinates, session);
           }
         }
       }
@@ -120,11 +119,7 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * Render the unit, all of its equipment, and the ceorresponding overlay.
    */
-  private _renderUnit = (
-    unit: Unit,
-    coordinates: Coordinates,
-    context: RenderContext
-  ) => {
+  private _renderUnit = (unit: Unit, coordinates: Coordinates, session: Session) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
@@ -137,36 +132,31 @@ export default class GameScreenRenderer implements Renderer {
     }
 
     for (const equipment of behindEquipment) {
-      this._renderElement(equipment, coordinates, context);
+      this._renderElement(equipment, coordinates, session);
     }
-    this._renderElement(unit, coordinates, context);
+    this._renderElement(unit, coordinates, session);
     for (const equipment of aheadEquipment) {
-      this._renderElement(equipment, coordinates, context);
+      this._renderElement(equipment, coordinates, session);
     }
   };
 
-  private _isTileRevealed = (
-    coordinates: Coordinates,
-    context: RenderContext
-  ): boolean => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+  private _isTileRevealed = (coordinates: Coordinates, session: Session): boolean => {
+    const map = checkNotNull(session.getMap());
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
-  private _drawShadow = async (coordinates: Coordinates, context: RenderContext) => {
-    const { state } = context;
-    const map = checkNotNull(state.getMap());
+  private _drawShadow = async (coordinates: Coordinates, session: Session) => {
+    const map = checkNotNull(session.getMap());
     const unit = map.getUnit(coordinates);
     const objects = map.getObjects(coordinates);
 
     if (unit) {
-      if (unit === state.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, context);
+      if (unit === session.getPlayerUnit()) {
+        return this._drawEllipse(coordinates, Colors.GREEN, session);
       } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);
+        return this._drawEllipse(coordinates, Colors.DARK_GRAY, session);
       }
     }
     if (
@@ -174,17 +164,17 @@ export default class GameScreenRenderer implements Renderer {
         object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
       )
     ) {
-      return this._drawEllipse(coordinates, Colors.DARK_GRAY, context);
+      return this._drawEllipse(coordinates, Colors.DARK_GRAY, session);
     }
   };
 
   private _drawEllipse = async (
     coordinates: Coordinates,
     color: Color,
-    context: RenderContext
+    session: Session
   ) => {
-    const imageFactory = context.session.getImageFactory();
-    const pixel = this._gridToPixel(coordinates, context);
+    const imageFactory = session.getImageFactory();
+    const pixel = this._gridToPixel(coordinates, session);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await imageFactory.getImage({
       filename: SHADOW_FILENAME,

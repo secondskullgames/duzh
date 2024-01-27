@@ -14,8 +14,11 @@ export default class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, { state, map }: UnitControllerContext): UnitOrder => {
-    const playerUnit = state.getPlayerUnit();
+  issueOrder = (
+    unit: Unit,
+    { state, map, session }: UnitControllerContext
+  ): UnitOrder => {
+    const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
@@ -28,7 +31,7 @@ export default class BasicEnemyController implements UnitController {
       playerUnit.getCoordinates()
     );
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, session)) {
       return new StayOrder();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit }).issueOrder(unit, {

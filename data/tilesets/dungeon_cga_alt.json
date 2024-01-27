@@ -7,6 +7,7 @@
     "WALL_HALL": ["tile_wall"],
     "WALL": ["tile_wall"],
     "STAIRS_DOWN": ["stairs_down2"],
+    "STAIRS_UP": ["stairs_up"],
     "NONE": ["tile_wall_top"]
   },
   "paletteSwaps": {

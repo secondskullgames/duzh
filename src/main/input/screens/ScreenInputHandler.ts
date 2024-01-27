@@ -1,5 +1,4 @@
 import GameState from '../../core/GameState';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { KeyCommand } from '../inputTypes';
 import MapFactory from '../../maps/MapFactory';
 import { Session } from '../../core/Session';

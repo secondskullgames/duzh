@@ -1,4 +1,3 @@
-import GameState from '../../core/GameState';
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
@@ -23,12 +22,13 @@ import { Faction } from '../../types/types';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
-import { Session } from '../../core/Session';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import { Session } from '../../core/Session';
+import Coordinates from '../../geometry/Coordinates';
 
 type Context = Readonly<{
   imageFactory: ImageFactory;
-  state: GameState;
+  session: Session;
 }>;
 
 /** TODO this should go somewhere else */
@@ -46,20 +46,38 @@ const _getEnemyController = (enemyUnitModel: UnitModel) => {
 
 export const buildPredefinedMap = async (
   mapId: string,
-  { state, imageFactory }: Context
+  { session, imageFactory }: Context
 ): Promise<MapInstance> => {
   const model = await loadPredefinedMapModel(mapId);
   const image = await imageFactory.getImage({
     filename: `maps/${model.imageFilename}`
   });
 
+  const tiles = await _loadTiles(model, image, { session, imageFactory });
+  let startingCoordinates: Coordinates | null = (() => {
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x].getTileType() === 'STAIRS_UP') {
+          return { x, y };
+        }
+      }
+    }
+    return null;
+  })();
+
+  const units = await _loadUnits(model, image, { session, imageFactory });
+  if (!startingCoordinates) {
+    startingCoordinates = session.getPlayerUnit().getCoordinates();
+  }
+
   return new MapInstance({
     width: image.bitmap.width,
     height: image.bitmap.height,
-    tiles: await _loadTiles(model, image, { state, imageFactory }),
-    units: await _loadUnits(model, image, { state, imageFactory }),
-    objects: await _loadObjects(model, image, { state, imageFactory }),
-    music: model.music ? await Music.loadMusic(model.music as string) : null
+    tiles,
+    startingCoordinates,
+    units: units,
+    objects: await _loadObjects(model, image, { session, imageFactory }),
+    music: model.music ? await Music.loadMusic(model.music) : null
   });
 };
 
@@ -96,7 +114,7 @@ const _loadTiles = async (
 const _loadUnits = async (
   model: PredefinedMapModel,
   image: Image,
-  { state, imageFactory }: Context
+  { session, imageFactory }: Context
 ): Promise<Unit[]> => {
   const units: Unit[] = [];
   const enemyColors = _toHexColors(model.enemyColors);
@@ -114,7 +132,7 @@ const _loadUnits = async (
         }
         const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
         if (Color.equals(color, startingPointColor)) {
-          const playerUnit = state.getPlayerUnit();
+          const playerUnit = session.getPlayerUnit();
           playerUnit.setCoordinates({ x, y });
           units.push(playerUnit);
           addedStartingPoint = true;

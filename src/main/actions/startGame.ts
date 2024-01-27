@@ -13,5 +13,5 @@ export const startGame = async ({ state, session }: Context) => {
   await loadNextMap({ state, session });
   Music.stop();
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  updateRevealedTiles({ state, map: state.getMap() });
+  updateRevealedTiles({ session, map: session.getMap() });
 };

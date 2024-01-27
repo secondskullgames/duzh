@@ -5,9 +5,9 @@ import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
-  const { state, session } = context;
+  const { session } = context;
   const { key, modifiers } = command;
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const inventory = session.getInventoryV2();
 
   switch (key) {
@@ -45,8 +45,8 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
 };
 
 const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
-  const playerUnit = state.getPlayerUnit();
-  const map = state.getMap();
+  const playerUnit = session.getPlayerUnit();
+  const map = session.getMap();
   const inventory = session.getInventoryV2();
   const selectedItem = inventory.getSelectedItem();
 

@@ -14,9 +14,11 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
+import { Session } from '../core/Session';
 
 type Context = Readonly<{
   state: GameState;
+  session: Session;
   imageFactory: ImageFactory;
 }>;
 
@@ -34,21 +36,15 @@ namespace MapStyle {
 export default class MapFactory {
   private readonly usedMapStyles: MapStyle[] = [];
 
-  loadMap = async (
-    mapSpec: MapSpec,
-    { state, imageFactory }: Context
-  ): Promise<MapInstance> => {
+  loadMap = async (mapSpec: MapSpec, context: Context): Promise<MapInstance> => {
     switch (mapSpec.type) {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
-        const mapBuilder = await this._loadGeneratedMap(mapClass, {
-          state,
-          imageFactory
-        });
-        return mapBuilder.build({ state, imageFactory });
+        const mapBuilder = await this._loadGeneratedMap(mapClass, context);
+        return mapBuilder.build(context);
       }
       case 'predefined': {
-        return this._loadPredefinedMap(mapSpec.id, { state, imageFactory });
+        return this._loadPredefinedMap(mapSpec.id, context);
       }
     }
   };
@@ -64,9 +60,9 @@ export default class MapFactory {
 
   private _loadPredefinedMap = async (
     mapId: string,
-    { state, imageFactory }: Context
+    context: Context
   ): Promise<MapInstance> => {
-    return buildPredefinedMap(mapId, { state, imageFactory });
+    return buildPredefinedMap(mapId, context);
   };
 
   private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {

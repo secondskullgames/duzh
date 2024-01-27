@@ -1,12 +1,8 @@
-import GameState from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
-type Context = Readonly<{
-  state: GameState;
-}>;
-
-export const canMove = (speed: number, { state }: Context): boolean => {
+export const canMove = (speed: number, session: Session): boolean => {
   // deterministic version
-  const turn = state.getTurn();
+  const turn = session.getTurn();
   return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
 
   // random version

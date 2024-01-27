@@ -19,7 +19,7 @@ type Context = Readonly<{
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
 
 export const die = async (unit: Unit, { state, session, map }: Context) => {
-  const playerUnit = state.getPlayerUnit();
+  const playerUnit = session.getPlayerUnit();
   const coordinates = unit.getCoordinates();
 
   map.removeUnit(unit);
@@ -28,7 +28,7 @@ export const die = async (unit: Unit, { state, session, map }: Context) => {
     return;
   } else {
     playSound(Sounds.ENEMY_DIES);
-    session.getTicker().log(`${unit.getName()} dies!`, { turn: state.getTurn() });
+    session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
       const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, {

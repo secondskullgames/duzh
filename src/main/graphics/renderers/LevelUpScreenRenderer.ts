@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
@@ -7,6 +7,7 @@ import Color from '../Color';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
+import { Session } from '../../core/Session';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 
@@ -24,9 +25,9 @@ export default class LevelUpScreenRenderer implements Renderer {
     this.textRenderer = textRenderer;
   }
 
-  render = async ({ state, session }: RenderContext) => {
+  render = async (session: Session) => {
     const { graphics } = this;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
     const image = await session

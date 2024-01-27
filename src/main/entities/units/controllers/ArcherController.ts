@@ -14,16 +14,16 @@ export default class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, { state, map }: UnitControllerContext): UnitOrder => {
-    const behavior = this._getBehavior(unit, { state, map });
-    return behavior.issueOrder(unit, { state, map });
+  issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
+    const behavior = this._getBehavior(unit, context);
+    return behavior.issueOrder(unit, context);
   };
 
   private _getBehavior = (
     unit: Unit,
-    { state }: UnitControllerContext
+    { session }: UnitControllerContext
   ): UnitController => {
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
@@ -36,7 +36,7 @@ export default class ArcherController implements UnitController {
       playerUnit.getCoordinates()
     );
 
-    if (!canMove(speed, { state })) {
+    if (!canMove(speed, session)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });

@@ -12,6 +12,7 @@ import type Rect from '../geometry/Rect';
 type Props = Readonly<{
   width: number;
   height: number;
+  startingCoordinates: Coordinates;
   tiles: Tile[][];
   units: Unit[];
   objects: GameObject[];
@@ -21,6 +22,7 @@ type Props = Readonly<{
 export default class MapInstance {
   readonly width: number;
   readonly height: number;
+  readonly startingCoordinates: Coordinates;
   private readonly tiles: Grid<Tile>;
   private readonly units: Grid<Unit>;
   private readonly objects: MultiGrid<GameObject>;
@@ -28,9 +30,18 @@ export default class MapInstance {
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
 
-  constructor({ width, height, tiles, units, objects, music }: Props) {
+  constructor({
+    width,
+    height,
+    tiles,
+    startingCoordinates,
+    units,
+    objects,
+    music
+  }: Props) {
     this.width = width;
     this.height = height;
+    this.startingCoordinates = startingCoordinates;
     this.units = new Grid({ width, height });
     for (const unit of units) {
       this.units.put(unit.getCoordinates(), unit);
@@ -137,4 +148,6 @@ export default class MapInstance {
     const coordinates = unit.getCoordinates();
     return this.units.get(coordinates) === unit;
   };
+
+  getStartingCoordinates = (): Coordinates => this.startingCoordinates;
 }

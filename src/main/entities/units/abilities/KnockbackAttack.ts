@@ -57,7 +57,7 @@ export const KnockbackAttack: UnitAbility = {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
           await moveUnit(targetUnit, first, { state, map, session });
-          await sleep(50);
+          await sleep(75);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {

@@ -15,7 +15,7 @@ export const equipItem = async (
   item: InventoryItem,
   equipment: Equipment,
   unit: Unit,
-  { state, session }: Context
+  { session }: Context
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
@@ -26,6 +26,8 @@ export const equipItem = async (
   }
   unit.getEquipment().add(equipment);
   equipment.attach(unit);
-  session.getTicker().log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
+  session
+    .getTicker()
+    .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
   playSound(Sounds.BLOCKED);
 };

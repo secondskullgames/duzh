@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Color from '../Color';
 import Colors from '../Colors';
 import { TextRenderer } from '../TextRenderer';
@@ -7,6 +7,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
+import { Session } from '../../core/Session';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
@@ -28,9 +29,8 @@ export default class CharacterScreenRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (context: RenderContext) => {
+  render = async (session: Session) => {
     const { graphics } = this;
-    const { session } = context;
     const image = await session
       .getImageFactory()
       .getImage({ filename: BACKGROUND_FILENAME });
@@ -41,13 +41,12 @@ export default class CharacterScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    await this._renderStatistics(context);
+    await this._renderStatistics(session);
   };
 
-  private _renderStatistics = async (context: RenderContext) => {
+  private _renderStatistics = async (session: Session) => {
     const { graphics } = this;
-    const { state } = context;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     let top = 20;
     await this._drawText(
       'Character Statistics',

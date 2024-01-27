@@ -1,4 +1,4 @@
-import { RenderContext, Renderer } from './Renderer';
+import { Renderer } from './Renderer';
 import Color from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -8,6 +8,7 @@ import EquipmentSlot from '../../schemas/EquipmentSlot';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import { Session } from '../../core/Session';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -34,11 +35,11 @@ export default class InventoryRendererV2 implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (context: RenderContext) => {
-    await this._drawBackground(context);
-    await this._drawEquipment(context);
-    await this._drawInventory(context);
-    await this._drawTooltip(context);
+  render = async (session: Session) => {
+    await this._drawBackground(session);
+    await this._drawEquipment(session);
+    await this._drawInventory(session);
+    await this._drawTooltip(session);
   };
 
   private _drawText = async (
@@ -52,7 +53,7 @@ export default class InventoryRendererV2 implements Renderer {
     drawAligned(image, this.graphics, pixel, textAlign);
   };
 
-  private _drawBackground = async ({ session }: RenderContext) => {
+  private _drawBackground = async (session: Session) => {
     const imageFactory = session.getImageFactory();
     const { graphics } = this;
     graphics.clear();
@@ -69,8 +70,7 @@ export default class InventoryRendererV2 implements Renderer {
     });
   };
 
-  private _drawEquipment = async (context: RenderContext) => {
-    const { state, session } = context;
+  private _drawEquipment = async (session: Session) => {
     const inventory = session.getInventoryV2();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
@@ -93,7 +93,7 @@ export default class InventoryRendererV2 implements Renderer {
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
-    const playerUnit = state.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
       await this._drawText(
@@ -107,8 +107,7 @@ export default class InventoryRendererV2 implements Renderer {
     }
   };
 
-  private _drawInventory = async (context: RenderContext) => {
-    const { state, session } = context;
+  private _drawInventory = async (session: Session) => {
     const inventory = session.getInventoryV2();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
@@ -140,7 +139,7 @@ export default class InventoryRendererV2 implements Renderer {
     // draw inventory items
     const selectedItemCategory = inventory.getSelectedItemCategory();
     if (selectedItemCategory) {
-      const items = inventory.getItems(state.getPlayerUnit(), selectedItemCategory);
+      const items = inventory.getItems(session.getPlayerUnit(), selectedItemCategory);
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -161,7 +160,7 @@ export default class InventoryRendererV2 implements Renderer {
     }
   };
 
-  private _drawTooltip = async ({ session }: RenderContext) => {
+  private _drawTooltip = async (session: Session) => {
     const { graphics } = this;
     const left = 10;
     const top = graphics.getHeight() * 0.6;

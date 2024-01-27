@@ -6,7 +6,7 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
-import { randChoice, randInt, weightedRandom } from '../../utils/random';
+import { randInt, weightedRandom } from '../../utils/random';
 import MapInstance from '../MapInstance';
 import { UnitController } from '../../entities/units/controllers/UnitController';
 import { getUnoccupiedLocations, hypotenuse } from '../MapUtils';
@@ -19,6 +19,9 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
 import { Range } from '../../schemas/GeneratedMapModel';
 import UnitModel from '../../schemas/UnitModel';
+import { Session } from '../../core/Session';
+import TileFactory from '../../tiles/TileFactory';
+import TileSet from '../../tiles/TileSet';
 
 type Props = Readonly<{
   level: number;
@@ -27,10 +30,12 @@ type Props = Readonly<{
   tiles: Tile[][];
   enemies: Range;
   items: Range;
+  tileSet: TileSet;
 }>;
 
 type Context = Readonly<{
   state: GameState;
+  session: Session;
   imageFactory: ImageFactory;
 }>;
 
@@ -42,8 +47,9 @@ export default class GeneratedMapBuilder {
   private readonly numEnemies: Range;
   private readonly numItems: Range;
   private readonly entityLocations: CustomSet<Coordinates>;
+  private readonly tileSet: TileSet;
 
-  constructor({ level, width, height, tiles, enemies, items }: Props) {
+  constructor({ level, width, height, tiles, enemies, items, tileSet }: Props) {
     this.level = level;
     this.width = width;
     this.height = height;
@@ -51,21 +57,35 @@ export default class GeneratedMapBuilder {
     this.numEnemies = enemies;
     this.numItems = items;
     this.entityLocations = new CustomSet();
+    this.tileSet = tileSet;
   }
 
-  build = async ({ state, imageFactory }: Context): Promise<MapInstance> => {
+  /**
+   * TODO: it is really really really questionable that this moves the player unit
+   */
+  build = async (context: Context): Promise<MapInstance> => {
+    const { session } = context;
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
-    const playerUnit = state.getPlayerUnit();
-    const playerUnitCoordinates = checkNotNull(candidateLocations.shift());
-    playerUnit.setCoordinates(playerUnitCoordinates);
-    this.entityLocations.add(playerUnitCoordinates);
-    const units = [playerUnit, ...(await this._generateUnits({ state, imageFactory }))];
-    const objects: GameObject[] = await this._generateObjects({ state, imageFactory });
+    const playerUnit = session.getPlayerUnit();
+    const startingCoordinates = checkNotNull(candidateLocations.shift());
+
+    if (Feature.isEnabled(Feature.STAIRS_UP)) {
+      this.tiles[startingCoordinates.y][startingCoordinates.x] = TileFactory.createTile({
+        tileType: 'STAIRS_UP',
+        tileSet: this.tileSet,
+        coordinates: startingCoordinates
+      });
+    }
+    playerUnit.setCoordinates(startingCoordinates);
+    this.entityLocations.add(startingCoordinates);
+    const units = [playerUnit, ...(await this._generateUnits(context))];
+    const objects: GameObject[] = await this._generateObjects(context);
 
     return new MapInstance({
       width: this.width,
       height: this.height,
       tiles: this.tiles,
+      startingCoordinates,
       units,
       objects,
       music: null

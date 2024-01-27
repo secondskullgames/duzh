@@ -25,7 +25,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     const numPoints = 20;
 
     const firstPoint = _randomEmptyTile(tiles);
-    tiles[firstPoint.y][firstPoint.x] = 'FLOOR';
+    tiles[firstPoint.y][firstPoint.x] = 'NONE';
 
     const pathfinder = new Pathfinder(() => 1);
 

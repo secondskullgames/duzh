@@ -20,8 +20,8 @@
   },
   "levelParameters": {
     "minLevel": 1,
-    "maxLevel": 2,
-    "rarity": 2
+    "maxLevel": 3,
+    "rarity": 3
   },
   "abilities": ["ATTACK"]
 }

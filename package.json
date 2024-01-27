@@ -18,9 +18,9 @@
     "build": "npm run gen-schema && npx webpack",
     "dev": "npx webpack serve",
     "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
-    "test": "npm run build && jest",
-    "coverage": "npm run build && jest --coverage",
-    "electron": "npm run build && cd electron && npm i && npm run make && npx electron .",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "electron": "cd electron && npm i && npm run make && npx electron .",
     "lint": "npx eslint '{src,scripts}/**/*.ts' && npx prettier --check '{src,scripts}/**/*.ts'"
   },
   "devDependencies": {

@@ -16,7 +16,6 @@ type Props = Readonly<{
   model: EquipmentModel;
   sprite: Sprite;
   inventoryItem?: InventoryItem | null;
-  tooltip: string;
 }>;
 
 export default class Equipment implements Animatable {
@@ -31,7 +30,7 @@ export default class Equipment implements Animatable {
   private _unit: Unit | null;
   private readonly tooltip: string;
 
-  constructor({ model, sprite, inventoryItem, tooltip }: Props) {
+  constructor({ model, sprite, inventoryItem }: Props) {
     this.name = model.name;
     this.slot = model.slot as EquipmentSlot;
     this.inventoryItem = inventoryItem ?? null;

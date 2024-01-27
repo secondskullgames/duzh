@@ -19,17 +19,17 @@ export const addInitialState = async ({ state, mapFactory, session }: Context) =
     imageFactory: session.getImageFactory()
   });
   if (Feature.isEnabled(Feature.GOD_MODE)) {
-    ticker.log('You are a god! Use your power wisely!', { turn: state.getTurn() });
+    ticker.log('You are a god! Use your power wisely!', { turn: session.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
       const equipment = await ItemFactory.createEquipment(equipmentId, {
         imageFactory: session.getImageFactory()
       });
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
-      ticker.log(`Equipped ${equipment.getName()}.`, { turn: state.getTurn() });
+      ticker.log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
     }
   }
-  state.setPlayerUnit(playerUnit);
+  session.setPlayerUnit(playerUnit);
   const mapSpecs = (
     await import(
       /* webpackChunkName: "models" */
@@ -40,6 +40,7 @@ export const addInitialState = async ({ state, mapFactory, session }: Context) =
     return () =>
       mapFactory.loadMap(spec, {
         state,
+        session,
         imageFactory: session.getImageFactory()
       });
   });

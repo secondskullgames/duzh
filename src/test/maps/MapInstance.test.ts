@@ -23,6 +23,7 @@ const _emptyMap = (): MapInstance =>
   new MapInstance({
     width: 10,
     height: 10,
+    startingCoordinates: { x: 0, y: 0 },
     tiles: [],
     units: [],
     objects: [],

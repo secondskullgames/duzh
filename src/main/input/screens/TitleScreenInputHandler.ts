@@ -22,9 +22,9 @@ const handleKeyCommand = async (
         ) {
           const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
-            { state, imageFactory: session.getImageFactory() }
+            { state, session, imageFactory: session.getImageFactory() }
           );
-          await startGameDebug(mapInstance, { state });
+          await startGameDebug(mapInstance, { state, session });
         } else {
           await startGame({ state, session });
         }

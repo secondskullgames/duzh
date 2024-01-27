@@ -4,7 +4,7 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 75,
+  "life": 60,
   "mana": 0,
   "strength": 8,
   "dexterity": 2,
