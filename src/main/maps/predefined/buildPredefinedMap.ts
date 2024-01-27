@@ -77,7 +77,7 @@ export const buildPredefinedMap = async (
     startingCoordinates,
     units: units,
     objects: await _loadObjects(model, image, { session, imageFactory }),
-    music: model.music ? await Music.loadMusic(model.music as string) : null
+    music: model.music ? await Music.loadMusic(model.music) : null
   });
 };
 

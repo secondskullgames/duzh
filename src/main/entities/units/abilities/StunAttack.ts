@@ -6,7 +6,7 @@ import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 12;
+const manaCost = 8;
 const damageCoefficient = 1;
 const stunDuration = 2;
 
