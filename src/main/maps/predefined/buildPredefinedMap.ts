@@ -52,10 +52,23 @@ export const buildPredefinedMap = async (
     filename: `maps/${model.imageFilename}`
   });
 
+  const tiles = await _loadTiles(model, image, { session, imageFactory });
+  const startingCoordinates = (() => {
+    for (let y = 0; y < tiles.length; y++) {
+      for (let x = 0; x < tiles[y].length; x++) {
+        if (tiles[y][x].getTileType() === 'STAIRS_UP') {
+          return { x, y };
+        }
+      }
+    }
+    throw new Error('No starting point');
+  })();
+
   return new MapInstance({
     width: image.bitmap.width,
     height: image.bitmap.height,
-    tiles: await _loadTiles(model, image, { session, imageFactory }),
+    tiles,
+    startingCoordinates,
     units: await _loadUnits(model, image, { session, imageFactory }),
     objects: await _loadObjects(model, image, { session, imageFactory }),
     music: model.music ? await Music.loadMusic(model.music as string) : null

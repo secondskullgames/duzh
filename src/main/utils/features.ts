@@ -16,7 +16,8 @@ export enum Feature {
   GOD_MODE = 'GOD_MODE',
   INVENTORY_V2 = 'INVENTORY_V2',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
-  PRODUCTION = 'PRODUCTION'
+  PRODUCTION = 'PRODUCTION',
+  STAIRS_UP = 'STAIRS_UP'
 }
 
 export namespace Feature {
@@ -60,6 +61,8 @@ export namespace Feature {
         return false;
       case Feature.INVENTORY_V2:
         return true;
+      case Feature.STAIRS_UP:
+        return false;
     }
   };
 }

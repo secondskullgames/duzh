@@ -24,6 +24,7 @@ import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 import { Dash } from '../../entities/units/abilities/Dash';
 import { FreeMove } from '../../entities/units/abilities/FreeMove';
 import Unit from '../../entities/units/Unit';
+import { loadPreviousMap } from '../../actions/loadPreviousMap';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
@@ -166,6 +167,9 @@ const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
     await loadNextMap({ state, session });
+  } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
+    playSound(Sounds.DESCEND_STAIRS); // TODO
+    await loadPreviousMap({ state, session });
   }
   await playTurn(false, { state, map, session });
 };
