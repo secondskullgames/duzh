@@ -24,6 +24,7 @@ import ArcherController from '../../entities/units/controllers/ArcherController'
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import { Session } from '../../core/Session';
+import Coordinates from '../../geometry/Coordinates';
 
 type Context = Readonly<{
   imageFactory: ImageFactory;
@@ -53,7 +54,7 @@ export const buildPredefinedMap = async (
   });
 
   const tiles = await _loadTiles(model, image, { session, imageFactory });
-  const startingCoordinates = (() => {
+  let startingCoordinates: Coordinates | null = (() => {
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
         if (tiles[y][x].getTileType() === 'STAIRS_UP') {
@@ -61,15 +62,20 @@ export const buildPredefinedMap = async (
         }
       }
     }
-    throw new Error('No starting point');
+    return null;
   })();
+
+  const units = await _loadUnits(model, image, { session, imageFactory });
+  if (!startingCoordinates) {
+    startingCoordinates = session.getPlayerUnit().getCoordinates();
+  }
 
   return new MapInstance({
     width: image.bitmap.width,
     height: image.bitmap.height,
     tiles,
     startingCoordinates,
-    units: await _loadUnits(model, image, { session, imageFactory }),
+    units: units,
     objects: await _loadObjects(model, image, { session, imageFactory }),
     music: model.music ? await Music.loadMusic(model.music as string) : null
   });
