@@ -14,7 +14,7 @@
   },
   "strength": 12,
   "dexterity": 2,
-  "life": 75,
+  "life": 80,
   "mana": 0,
   "aiParameters": {
     "speed": 0.95,
@@ -27,5 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK"]
+  "abilities": ["ATTACK"],
+  "experience": 1
 }

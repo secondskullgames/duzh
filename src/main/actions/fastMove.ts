@@ -1,6 +1,6 @@
 import { moveUnit } from './moveUnit';
 import { playTurn } from './playTurn';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';

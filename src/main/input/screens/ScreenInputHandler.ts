@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import { GameState } from '../../core/GameState';
 import { KeyCommand } from '../inputTypes';
 import MapFactory from '../../maps/MapFactory';
 import { Session } from '../../core/Session';

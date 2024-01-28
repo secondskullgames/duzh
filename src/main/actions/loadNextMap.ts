@@ -1,6 +1,6 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
 import Music from '../sounds/Music';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
 import { Session } from '../core/Session';
 

@@ -1,7 +1,7 @@
 import { loadNextMap } from './loadNextMap';
 import { updateRevealedTiles } from './updateRevealedTiles';
 import Music from '../sounds/Music';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 
 type Context = Readonly<{

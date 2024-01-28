@@ -4,21 +4,26 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { Session } from '../core/Session';
 
-/**
- * @param unit the unit who performed the kill
- */
-export const recordKill = (unit: Unit, session: Session) => {
-  unit.recordKill();
+export const recordKill = (attacker: Unit, defender: Unit, session: Session) => {
+  const experience = defender.getExperienceRewarded();
+  if (!experience || experience <= 0) {
+    return;
+  }
 
-  const playerUnitClass = unit.getPlayerUnitClass();
+  attacker.gainExperience(experience);
+
+  const playerUnitClass = attacker.getPlayerUnitClass();
   if (playerUnitClass) {
-    const killsToNextLevel = playerUnitClass.getCumulativeKillsToNextLevel(
-      unit.getLevel()
-    );
-    if (killsToNextLevel !== null) {
-      if (unit.getLifetimeKills() >= killsToNextLevel) {
-        levelUp(unit, session);
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const killsToNextLevel = playerUnitClass.getCumulativeKillsToNextLevel(
+        attacker.getLevel()
+      );
+      if (killsToNextLevel !== null && attacker.getLifetimeKills() >= killsToNextLevel) {
+        levelUp(attacker, session);
         playSound(Sounds.LEVEL_UP);
+      } else {
+        break;
       }
     }
   }

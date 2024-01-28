@@ -23,5 +23,6 @@
     "aggressiveness": 1,
     "fleeThreshold": 0
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK"]
+  "abilities": ["ATTACK", "HEAVY_ATTACK"],
+  "experience": 1
 }

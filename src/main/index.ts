@@ -1,5 +1,5 @@
 import { Debug } from './core/Debug';
-import GameState from './core/GameState';
+import { GameState } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
@@ -11,7 +11,7 @@ import { addInitialState } from './actions/addInitialState';
 import { Session } from './core/Session';
 
 const main = async () => {
-  const state = new GameState();
+  const state = GameState.create();
   const session = Session.create();
   const imageFactory = session.getImageFactory();
   const fonts = await loadFonts({ imageFactory });
@@ -34,7 +34,7 @@ const main = async () => {
     document.getElementById('debug')?.classList.remove('production');
   }
   await addInitialState({ state, mapFactory, session });
-  await showSplashScreen({ state, session });
+  await showSplashScreen(session);
   setInterval(async () => {
     await renderer.render(session);
   }, 20);

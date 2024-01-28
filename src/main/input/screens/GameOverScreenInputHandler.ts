@@ -15,7 +15,7 @@ const handleKeyCommand = async (
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await showSplashScreen({ state, session });
+        await showSplashScreen(session);
         state.reset();
         session.reset();
         await addInitialState({

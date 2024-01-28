@@ -1,4 +1,4 @@
-import GameState from '../../core/GameState';
+import { GameState } from '../../core/GameState';
 import Coordinates from '../../geometry/Coordinates';
 import { CustomSet } from '../../types/CustomSet';
 import ItemFactory from '../../items/ItemFactory';

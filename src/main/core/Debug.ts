@@ -1,4 +1,4 @@
-import GameState from './GameState';
+import { GameState } from './GameState';
 import { Session } from './Session';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
@@ -33,7 +33,6 @@ export class Debug {
   killPlayer = async () => {
     const playerUnit = this.session.getPlayerUnit();
     await die(playerUnit, {
-      state: this.state,
       map: this.session.getMap(),
       session: this.session
     });

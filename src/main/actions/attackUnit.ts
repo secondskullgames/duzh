@@ -2,7 +2,7 @@ import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
@@ -62,8 +62,8 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, map, session });
-    recordKill(attacker, session);
+    await die(defender, { map, session });
+    recordKill(attacker, defender, session);
   }
 
   await sleep(150);

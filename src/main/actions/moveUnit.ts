@@ -1,7 +1,7 @@
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import { EquipmentScript } from '../equipment/EquipmentScript';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import { getBonus } from '../maps/MapUtils';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';

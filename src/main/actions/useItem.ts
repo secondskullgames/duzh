@@ -1,6 +1,6 @@
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 

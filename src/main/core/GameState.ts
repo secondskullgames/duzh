@@ -3,10 +3,23 @@ import { checkArgument } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 
+export interface GameState {
+  addMaps: (suppliers: MapSupplier[]) => void;
+  getGeneratedEquipmentIds: () => string[];
+  recordEquipmentGenerated: (equipmentId: string) => void;
+  reset: () => void;
+  hasNextMap: (currentIndex: number) => boolean;
+  loadMap: (mapIndex: number) => Promise<MapInstance>;
+}
+
+export namespace GameState {
+  export const create = (): GameState => new GameStateImpl();
+}
+
 /**
  * Global mutable state
  */
-export default class GameState {
+class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];

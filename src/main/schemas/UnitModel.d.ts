@@ -47,6 +47,10 @@ type UnitModel = {
   sprite: string;
   summonedUnitClass?: string;
   type: UnitType;
+  /**
+   * experience rewarded on death
+   */
+  experience?: number;
 };
 
 export default UnitModel;

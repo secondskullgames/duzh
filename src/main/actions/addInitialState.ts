@@ -1,4 +1,4 @@
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import UnitFactory from '../entities/units/UnitFactory';
 import MapSpec from '../schemas/MapSpec';
 import { MapSupplier } from '../maps/MapSupplier';

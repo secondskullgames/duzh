@@ -5,7 +5,7 @@
   "sprite": "beetle",
   "paletteSwaps": {},
   "life": 60,
-  "mana": 15,
+  "mana": 8,
   "strength": 6,
   "dexterity": 2,
   "aiParameters": {
@@ -19,5 +19,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "DASH"]
+  "abilities": ["ATTACK", "DASH"],
+  "experience": 1
 }

@@ -9,7 +9,7 @@ import MapInstance from './MapInstance';
 import { buildPredefinedMap } from './predefined/buildPredefinedMap';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';

@@ -50,7 +50,7 @@ export const shootFireball = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, { state, map, session });
+      await die(targetUnit, { map, session });
     }
   } else {
     const fireballAnimation = await AnimationFactory.getFireballAnimation(

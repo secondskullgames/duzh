@@ -1,5 +1,5 @@
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
+import { GameState } from '../../../core/GameState';
 import UnitOrder from '../orders/UnitOrder';
 import MapInstance from '../../../maps/MapInstance';
 import { Session } from '../../../core/Session';

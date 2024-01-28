@@ -1,7 +1,7 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
 import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 

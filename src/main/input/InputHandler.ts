@@ -12,7 +12,7 @@ import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
 import InventoryV2InputHandler from './screens/InventoryV2InputHandler';
 import { checkNotNull } from '../utils/preconditions';
 import { GameScreen } from '../core/GameScreen';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import MapFactory from '../maps/MapFactory';
 import { Session } from '../core/Session';
 import { Feature } from '../utils/features';

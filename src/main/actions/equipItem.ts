@@ -1,7 +1,7 @@
 import InventoryItem from '../items/InventoryItem';
 import Equipment from '../equipment/Equipment';
 import Unit from '../entities/units/Unit';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { Session } from '../core/Session';

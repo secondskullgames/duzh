@@ -3,7 +3,7 @@ import { moveObject } from './moveObject';
 import Unit from '../entities/units/Unit';
 import Block from '../entities/objects/Block';
 import Coordinates from '../geometry/Coordinates';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 

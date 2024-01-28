@@ -1,7 +1,7 @@
 import { AbilityName } from './AbilityName';
 import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
+import { GameState } from '../../../core/GameState';
 import MapInstance from '../../../maps/MapInstance';
 import { Session } from '../../../core/Session';
 

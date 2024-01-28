@@ -15,7 +15,7 @@
     "PLAYER_FEET": "DARK_BROWN"
   },
   "strength": 2,
-  "dexterity": 1,
+  "dexterity": 2,
   "life": 30,
   "mana": 5,
   "equipment": [
@@ -36,5 +36,6 @@
     "maxLevel": 99,
     "rarity": 4
   },
-  "abilities": ["ATTACK", "SHOOT_ARROW"]
+  "abilities": ["ATTACK", "SHOOT_ARROW"],
+  "experience": 1
 }
