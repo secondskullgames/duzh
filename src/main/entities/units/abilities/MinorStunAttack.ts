@@ -1,10 +1,12 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 15;
 const damageCoefficient = 1;
@@ -20,12 +22,14 @@ export const MinorStunAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('MinorStunAttack requires a target!');
     }
 
+    const map = session.getMap();
     const { x, y } = coordinates;
 
     const direction = pointAt(unit.getCoordinates(), coordinates);

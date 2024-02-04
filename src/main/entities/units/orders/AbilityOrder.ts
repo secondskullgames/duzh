@@ -21,6 +21,6 @@ export class AbilityOrder implements UnitOrder {
    * @override {@link UnitOrder#execute}
    */
   execute = async (unit: Unit, context: OrderContext): Promise<void> => {
-    await this.ability.use(unit, this.coordinates, context);
+    await this.ability.use(unit, this.coordinates, context.session, context.state);
   };
 }

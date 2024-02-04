@@ -100,10 +100,10 @@ const createScrollOfFireball = async (damage: number): Promise<InventoryItem> =>
   const onUse: ItemProc = async (
     _item: InventoryItem,
     unit: Unit,
-    { state, map, session }: ItemProcContext
+    { session }: ItemProcContext
   ) => {
     session.setScreen(GameScreen.GAME);
-    await shootFireball(unit, unit.getDirection(), damage, { state, map, session });
+    await shootFireball(unit, unit.getDirection(), damage, session);
   };
 
   return new InventoryItem({

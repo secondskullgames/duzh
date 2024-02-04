@@ -2,13 +2,14 @@ import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
-import { UnitAbilityContext } from '../entities/units/abilities/UnitAbility';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import { sleep } from '../utils/promises';
 import Direction from '../geometry/Direction';
+import { Session } from '../core/Session';
+import { GameState } from '../core/GameState';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
@@ -18,11 +19,12 @@ export const shootFireball = async (
   unit: Unit,
   direction: Direction,
   damage: number,
-  { state, map, session }: UnitAbilityContext
+  session: Session
 ) => {
   const { dx, dy } = direction;
   unit.setDirection(direction);
 
+  const map = session.getMap();
   const coordinatesList = [];
   let { x, y } = Coordinates.plus(unit.getCoordinates(), direction);
   while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {

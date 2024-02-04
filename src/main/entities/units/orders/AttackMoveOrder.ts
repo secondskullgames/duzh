@@ -41,7 +41,7 @@ export class AttackMoveOrder implements UnitOrder {
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, { state, map, session });
+          await ability.use(unit, coordinates, session, state);
           return;
         }
         const door = getDoor(map, coordinates);

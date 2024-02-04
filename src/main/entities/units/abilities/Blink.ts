@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,6 +7,8 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Feature } from '../../../utils/features';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 10;
 
@@ -17,12 +19,14 @@ export const Blink: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
     }
 
+    const map = session.getMap();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));

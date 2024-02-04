@@ -100,7 +100,7 @@ const _handleArrowKey = async (
       // TODO make this into an Order
       order = {
         execute: async (_, context) => {
-          await Strafe.use(playerUnit, coordinates, context);
+          await Strafe.use(playerUnit, coordinates, context.session, context.state);
         }
       };
       willCompleteTurn = true;

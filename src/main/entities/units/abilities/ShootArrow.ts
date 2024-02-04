@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -10,6 +10,7 @@ import { dealDamage } from '../../../actions/dealDamage';
 import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
+import { Session } from '../../../core/Session';
 
 const manaCost = 5;
 
@@ -22,11 +23,7 @@ export const ShootArrow: UnitAbility = {
   icon: null,
   manaCost,
 
-  use: async (
-    unit: Unit,
-    coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
-  ) => {
+  use: async (unit: Unit, coordinates: Coordinates | null, session: Session) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
     }
@@ -34,6 +31,7 @@ export const ShootArrow: UnitAbility = {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
+    const map = session.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
