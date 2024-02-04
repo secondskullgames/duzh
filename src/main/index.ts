@@ -14,6 +14,7 @@ import AnimationFactory from './graphics/animations/AnimationFactory';
 import TileFactory from './tiles/TileFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ItemFactory from './items/ItemFactory';
+import UnitFactory from './entities/units/UnitFactory';
 
 const main = async () => {
   const imageFactory = new ImageFactory();
@@ -26,13 +27,15 @@ const main = async () => {
     itemFactory
   });
   const animationFactory = new AnimationFactory({ spriteFactory });
+  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
   const state = GameState.create({
     imageFactory,
     mapFactory,
     animationFactory,
     spriteFactory,
     tileFactory,
-    itemFactory
+    itemFactory,
+    unitFactory
   });
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });

@@ -2,7 +2,6 @@ import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
-import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
@@ -22,16 +21,13 @@ const createMirror = async (
 ): Promise<Spawner> => {
   const sprite = await state.getSpriteFactory().createMirrorSprite();
   const spawnFunction = (coordinates: Coordinates) =>
-    UnitFactory.createUnit(
-      {
-        unitClass: 'shade',
-        coordinates: coordinates,
-        level: 1,
-        controller: new BasicEnemyController(),
-        faction: Faction.ENEMY
-      },
-      state
-    );
+    state.getUnitFactory().createUnit({
+      unitClass: 'shade',
+      coordinates: coordinates,
+      level: 1,
+      controller: new BasicEnemyController(),
+      faction: Faction.ENEMY
+    });
   const spawner = new Spawner({
     spawnFunction,
     sprite,

@@ -4,7 +4,6 @@ import { CustomSet } from '../../types/CustomSet';
 import ItemFactory from '../../items/ItemFactory';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
-import UnitFactory from '../../entities/units/UnitFactory';
 import { sortByReversed } from '../../utils/arrays';
 import { randInt, weightedRandom } from '../../utils/random';
 import MapInstance from '../MapInstance';
@@ -100,7 +99,7 @@ export default class GeneratedMapBuilder {
     );
     let enemiesRemaining = randInt(this.numEnemies.min, this.numEnemies.max);
 
-    const allUnitModels = await UnitFactory.loadAllModels();
+    const allUnitModels = await state.getUnitFactory().loadAllModels();
     while (enemiesRemaining > 0) {
       const possibleUnitModels = allUnitModels.filter(model => {
         const { levelParameters } = model;
@@ -141,16 +140,13 @@ export default class GeneratedMapBuilder {
       } else {
         controller = new BasicEnemyController();
       }
-      const unit = await UnitFactory.createUnit(
-        {
-          unitClass: model.id,
-          controller,
-          faction: Faction.ENEMY,
-          coordinates,
-          level: this.level
-        },
-        state
-      );
+      const unit = await state.getUnitFactory().createUnit({
+        unitClass: model.id,
+        controller,
+        faction: Faction.ENEMY,
+        coordinates,
+        level: this.level
+      });
       units.push(unit);
       enemiesRemaining--;
       this.entityLocations.add(coordinates);

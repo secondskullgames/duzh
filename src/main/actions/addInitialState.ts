@@ -1,5 +1,4 @@
 import { GameState } from '../core/GameState';
-import UnitFactory from '../entities/units/UnitFactory';
 import MapSpec from '../schemas/MapSpec';
 import { MapSupplier } from '../maps/MapSupplier';
 import { Feature } from '../utils/features';
@@ -10,7 +9,7 @@ import { Session } from '../core/Session';
  */
 export const addInitialState = async (state: GameState, session: Session) => {
   const ticker = session.getTicker();
-  const playerUnit = await UnitFactory.createPlayerUnit(state);
+  const playerUnit = await state.getUnitFactory().createPlayerUnit();
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: session.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {

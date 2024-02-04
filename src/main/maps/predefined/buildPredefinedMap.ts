@@ -7,7 +7,6 @@ import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
-import UnitFactory from '../../entities/units/UnitFactory';
 import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull, checkState } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
@@ -136,17 +135,14 @@ const _loadUnits = async (
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await loadUnitModel(enemyUnitClass);
             const controller = _getEnemyController(enemyUnitModel);
-            const unit = await UnitFactory.createUnit(
-              {
-                name: enemyUnitModel.name,
-                unitClass: enemyUnitClass,
-                faction: Faction.ENEMY,
-                controller,
-                level: model.levelNumber,
-                coordinates: { x, y }
-              },
-              state
-            );
+            const unit = await state.getUnitFactory().createUnit({
+              name: enemyUnitModel.name,
+              unitClass: enemyUnitClass,
+              faction: Faction.ENEMY,
+              controller,
+              level: model.levelNumber,
+              coordinates: { x, y }
+            });
             units.push(unit);
           }
         }

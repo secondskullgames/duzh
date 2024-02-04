@@ -3,7 +3,6 @@ import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
-import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../sprites/SpriteFactory';
