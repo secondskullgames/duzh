@@ -32,7 +32,8 @@ export const attackUnit = async (
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, session }
+        state,
+        session
       );
     }
   }

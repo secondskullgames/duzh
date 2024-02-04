@@ -7,26 +7,28 @@ import { Session } from '../core/Session';
 
 export type EquipmentScriptName = 'bolt_sword';
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
 export type EquipmentScript = Readonly<{
   onAttack?: (
     equipment: Equipment,
     target: Coordinates,
-    context: Context
+    state: GameState,
+    session: Session
   ) => Promise<void>;
 
-  onMove?: (equipment: Equipment, target: Coordinates, context: Context) => Promise<void>;
+  onMove?: (
+    equipment: Equipment,
+    target: Coordinates,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
 }>;
 
 const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, session }: Context
+    state: GameState,
+    session: Session
   ) => {
     const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
