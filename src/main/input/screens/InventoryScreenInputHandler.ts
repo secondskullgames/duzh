@@ -8,12 +8,11 @@ import { GameState } from '../../core/GameState';
 
 const _handleEnter = async (session: Session, state: GameState) => {
   const playerUnit = session.getPlayerUnit();
-  const map = session.getMap();
   const inventory = session.getInventory();
   const selectedItem = inventory.getSelectedItem();
 
   if (selectedItem) {
-    await useItem(playerUnit, selectedItem, { state, map, session });
+    await useItem(playerUnit, selectedItem, state, session);
     session.prepareInventoryScreen(playerUnit);
   }
 };

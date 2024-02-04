@@ -16,13 +16,16 @@ import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
 import { shootFireball } from '../actions/shootFireball';
 import { GameScreen } from '../core/GameScreen';
 import { floorFire } from '../actions/floorFire';
-import type { ItemProc, ItemProcContext } from './ItemProc';
+import { GameState } from '../core/GameState';
+import { Session } from '../core/Session';
+import type { ItemProc } from './ItemProc';
 
 const createLifePotion = (lifeRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { session }: ItemProcContext
+    _: GameState,
+    session: Session
   ) => {
     playSound(Sounds.USE_POTION);
     const lifeGained = unit.gainLife(lifeRestored);
@@ -45,7 +48,8 @@ const createManaPotion = (manaRestored: number): InventoryItem => {
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { session }: ItemProcContext
+    _: GameState,
+    session: Session
   ) => {
     playSound(Sounds.USE_POTION);
     const manaGained = unit.gainMana(manaRestored);
@@ -76,12 +80,13 @@ const createKey = (): InventoryItem => {
 
 const createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
   const onUse: ItemProc = async (
-    item: InventoryItem,
+    _: InventoryItem,
     unit: Unit,
-    { state, map, session }: ItemProcContext
+    state: GameState,
+    session: Session
   ) => {
     session.setScreen(GameScreen.GAME);
-    await floorFire(unit, damage, { state, map, session });
+    await floorFire(unit, damage, state, session);
   };
 
   return new InventoryItem({
@@ -100,7 +105,8 @@ const createScrollOfFireball = async (damage: number): Promise<InventoryItem> =>
   const onUse: ItemProc = async (
     _: InventoryItem,
     unit: Unit,
-    { session, state }: ItemProcContext
+    state: GameState,
+    session: Session
   ) => {
     session.setScreen(GameScreen.GAME);
     await shootFireball(unit, unit.getDirection(), damage, session, state);
@@ -118,9 +124,10 @@ const createInventoryEquipment = async (
   equipmentClass: string
 ): Promise<InventoryItem> => {
   const onUse: ItemProc = async (
-    item: InventoryItem,
+    _: InventoryItem,
     unit: Unit,
-    { session, state }: ItemProcContext
+    state: GameState,
+    session: Session
   ) => {
     const equipment = await createEquipment(equipmentClass, {
       imageFactory: state.getImageFactory()
