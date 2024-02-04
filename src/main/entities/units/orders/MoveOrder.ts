@@ -1,4 +1,4 @@
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
@@ -8,6 +8,8 @@ import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { pushBlock } from '../../../actions/pushBlock';
 import { getDoor } from '../../../maps/MapUtils';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -23,7 +25,8 @@ export class MoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
+  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
+    const map = session.getMap();
     const { coordinates } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -32,7 +35,7 @@ export class MoveOrder implements UnitOrder {
       // do nothing
       return;
     } else if (!map.isBlocked(coordinates)) {
-      await walk(unit, direction, { state, map, session });
+      await walk(unit, direction, session, state);
       return;
     } else {
       const door = getDoor(map, coordinates);
@@ -48,7 +51,7 @@ export class MoveOrder implements UnitOrder {
         .find(block => block.isMovable());
 
       if (block) {
-        await pushBlock(unit, block, { state, map, session });
+        await pushBlock(unit, block, session, state);
         return;
       }
     }

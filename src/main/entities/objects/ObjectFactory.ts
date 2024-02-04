@@ -1,30 +1,26 @@
 import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
-import Bonus, { OnUseContext } from './Bonus';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import Bonus from './Bonus';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
-type CreateObjectContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
 const createMirror = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<Spawner> => {
-  const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
+  const sprite = await state.getSpriteFactory().createMirrorSprite();
   const spawnFunction = (coordinates: Coordinates) =>
     UnitFactory.createUnit(
       {
@@ -34,7 +30,7 @@ const createMirror = async (
         controller: new BasicEnemyController(),
         faction: Faction.ENEMY
       },
-      { imageFactory }
+      state
     );
   const spawner = new Spawner({
     spawnFunction,
@@ -51,11 +47,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { imageFactory });
+      return createMirror(coordinates, state);
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
@@ -63,11 +59,11 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<GameObject> => {
-  const sprite = await SpriteFactory.createStaticSprite('block', PaletteSwaps.empty(), {
-    imageFactory
-  });
+  const sprite = await state
+    .getSpriteFactory()
+    .createStaticSprite('block', PaletteSwaps.empty());
 
   return new Block({
     coordinates,
@@ -78,17 +74,15 @@ const createMovableBlock = async (
 
 const createHealthGlobe = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<GameObject> => {
-  const sprite = await SpriteFactory.createStaticSprite(
-    'map_health_globe',
-    PaletteSwaps.empty(),
-    { imageFactory }
-  );
+  const sprite = await state
+    .getSpriteFactory()
+    .createStaticSprite('map_health_globe', PaletteSwaps.empty());
 
   const lifeGained = 10;
 
-  const onUse = async (unit: Unit, { map, session }: OnUseContext) => {
+  const onUse = async (unit: Unit, _: GameState, session: Session) => {
     if (unit === session.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
@@ -98,6 +92,7 @@ const createHealthGlobe = async (
           .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
             turn: session.getTurn()
           });
+        const map = session.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }

@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,9 +7,10 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 5;
 
@@ -25,12 +26,14 @@ export const ShootTurretArrow: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('ShootTurretArrow requires a target!');
     }
 
+    const map = session.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
@@ -48,13 +51,9 @@ export const ShootTurretArrow: UnitAbility = {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        targetUnit,
-        { map, imageFactory: session.getImageFactory() }
-      );
+      const arrowAnimation = await state
+        .getAnimationFactory()
+        .getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -64,16 +63,12 @@ export const ShootTurretArrow: UnitAbility = {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { state, map, session });
+        await die(targetUnit, state, session);
       }
     } else {
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        null,
-        { map, imageFactory: session.getImageFactory() }
-      );
+      const arrowAnimation = await state
+        .getAnimationFactory()
+        .getArrowAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(arrowAnimation, { map });
     }
   }

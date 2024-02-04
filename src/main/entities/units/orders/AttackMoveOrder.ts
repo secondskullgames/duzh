@@ -1,4 +1,4 @@
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -8,6 +8,8 @@ import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
 import { attackObject } from '../../../actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner } from '../../../maps/MapUtils';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -26,7 +28,8 @@ export class AttackMoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
+  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
+    const map = session.getMap();
     const { coordinates, ability } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -36,12 +39,12 @@ export class AttackMoveOrder implements UnitOrder {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state, map, session });
+        await walk(unit, direction, session, state);
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, { state, map, session });
+          await ability.use(unit, coordinates, session, state);
           return;
         }
         const door = getDoor(map, coordinates);
@@ -57,7 +60,7 @@ export class AttackMoveOrder implements UnitOrder {
 
         const block = getMovableBlock(map, coordinates);
         if (block) {
-          await pushBlock(unit, block, { state, map, session });
+          await pushBlock(unit, block, session, state);
           return;
         }
       }

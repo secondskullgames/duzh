@@ -35,9 +35,9 @@ export namespace Feature {
       case Feature.ALT_DASH:
         return false;
       case Feature.ALT_FREE_MOVE:
-        return true;
-      case Feature.ALT_STRAFE:
         return false;
+      case Feature.ALT_STRAFE:
+        return true;
       case Feature.ALT_TURN:
         return false;
       case Feature.BLINK_THROUGH_WALLS:

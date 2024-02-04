@@ -11,6 +11,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { checkNotNull } from '../../utils/preconditions';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -20,13 +21,16 @@ type Element = Readonly<{
 
 type Props = Readonly<{
   graphics: Graphics;
+  imageFactory: ImageFactory;
 }>;
 
 export default class GameScreenRenderer implements Renderer {
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ graphics }: Props) {
+  constructor({ graphics, imageFactory }: Props) {
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   render = async (session: Session) => {
@@ -173,10 +177,9 @@ export default class GameScreenRenderer implements Renderer {
     color: Color,
     session: Session
   ) => {
-    const imageFactory = session.getImageFactory();
     const pixel = this._gridToPixel(coordinates, session);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
-    const image = await imageFactory.getImage({
+    const image = await this.imageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps

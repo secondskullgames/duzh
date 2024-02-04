@@ -9,6 +9,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -21,22 +22,25 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 type Props = Readonly<{
   textRenderer: TextRenderer;
   graphics: Graphics;
+  imageFactory: ImageFactory;
 }>;
 
 export default class InventoryRendererV2 implements Renderer {
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, graphics, imageFactory }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   /**
    * @override {@link Renderer#render}
    */
   render = async (session: Session) => {
-    await this._drawBackground(session);
+    await this._drawBackground();
     await this._drawEquipment(session);
     await this._drawInventory(session);
     await this._drawTooltip(session);
@@ -53,9 +57,8 @@ export default class InventoryRendererV2 implements Renderer {
     drawAligned(image, this.graphics, pixel, textAlign);
   };
 
-  private _drawBackground = async (session: Session) => {
-    const imageFactory = session.getImageFactory();
-    const { graphics } = this;
+  private _drawBackground = async () => {
+    const { graphics, imageFactory } = this;
     graphics.clear();
 
     const image = await imageFactory.getImage({

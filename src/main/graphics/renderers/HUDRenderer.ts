@@ -11,6 +11,7 @@ import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 import getInnateAbilities = AbilityName.getInnateAbilities;
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -29,29 +30,32 @@ const ABILITY_ICON_WIDTH = 20;
 type Props = Readonly<{
   textRenderer: TextRenderer;
   graphics: Graphics;
+  imageFactory: ImageFactory;
 }>;
 
 export default class HUDRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, graphics, imageFactory }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   /**
    * @override {@link Renderer#render}
    */
   render = async (session: Session) => {
-    await this._renderFrame(session);
+    await this._renderFrame();
     await this._renderLeftPanel(session);
     await this._renderMiddlePanel(session);
     await this._renderRightPanel(session);
   };
 
-  private _renderFrame = async (session: Session) => {
-    const image = await session.getImageFactory().getImage({
+  private _renderFrame = async () => {
+    const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
@@ -157,6 +161,7 @@ export default class HUDRenderer implements Renderer {
     topLeft: Pixel,
     session: Session
   ) => {
+    const { imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
     const queuedAbility = session.getQueuedAbility();
 
@@ -174,7 +179,7 @@ export default class HUDRenderer implements Renderer {
       .addMapping(Colors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
-      const icon = await session.getImageFactory().getImage({
+      const icon = await imageFactory.getImage({
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });

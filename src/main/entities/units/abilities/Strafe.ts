@@ -1,8 +1,10 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { moveUnit } from '../../../actions/moveUnit';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 export const Strafe: UnitAbility = {
   name: AbilityName.STRAFE,
@@ -12,14 +14,16 @@ export const Strafe: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('Strafe requires a target!');
     }
 
+    const map = session.getMap();
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state, map, session });
+      await moveUnit(unit, coordinates, session, state);
     }
   }
 };

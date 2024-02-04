@@ -1,4 +1,4 @@
-import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
+import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
@@ -8,10 +8,13 @@ import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
 import { abilityForName } from '../abilities/abilityForName';
 import { AbilityName } from '../abilities/AbilityName';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
-  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+    const map = session.getMap();
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {

@@ -1,12 +1,10 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
+import { Session } from '../../core/Session';
 
-const handleKeyCommand = async (
-  command: KeyCommand,
-  { session }: ScreenHandlerContext
-) => {
+const handleKeyCommand = async (command: KeyCommand, session: Session) => {
   const { key, modifiers } = command;
   switch (key) {
     case 'M':

@@ -1,4 +1,4 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
 import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
@@ -25,19 +25,23 @@ import { Dash } from '../../entities/units/abilities/Dash';
 import { FreeMove } from '../../entities/units/abilities/FreeMove';
 import Unit from '../../entities/units/Unit';
 import { loadPreviousMap } from '../../actions/loadPreviousMap';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 
-const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
+const handleKeyCommand = async (
+  command: KeyCommand,
+  session: Session,
+  state: GameState
+) => {
   const { key, modifiers } = command;
-  const { session } = context;
-  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
 
   if (_isArrowKey(key)) {
-    await _handleArrowKey(key as ArrowKey, modifiers, context);
+    await _handleArrowKey(key as ArrowKey, modifiers, session, state);
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, context);
+    await _handleAbility(key as NumberKey, session);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn(true, { ...context, map });
+    await playTurn(true, state, session);
   } else if (key === 'TAB') {
     session.prepareInventoryScreen(session.getPlayerUnit());
     session.prepareInventoryV2(session.getPlayerUnit());
@@ -53,7 +57,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
     } else {
-      await _handleEnter(context);
+      await _handleEnter(session, state);
     }
   } else if (key === 'F1') {
     session.setScreen(GameScreen.HELP);
@@ -71,11 +75,11 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, session }: ScreenHandlerContext
+  session: Session,
+  state: GameState
 ) => {
   const direction = getDirection(key);
   const playerUnit = session.getPlayerUnit();
-  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
@@ -95,8 +99,8 @@ const _handleArrowKey = async (
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (_unit, context) => {
-          await Strafe.use(playerUnit, coordinates, context);
+        execute: async (unit, state, session) => {
+          await Strafe.use(unit, coordinates, session, state);
         }
       };
       willCompleteTurn = true;
@@ -139,11 +143,11 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn(willCompleteTurn, { state, map, session });
+    await playTurn(willCompleteTurn, state, session);
   }
 };
 
-const _handleAbility = async (key: NumberKey, { session }: ScreenHandlerContext) => {
+const _handleAbility = async (key: NumberKey, session: Session) => {
   const playerUnit = session.getPlayerUnit();
 
   const index = parseInt(key.toString());
@@ -156,7 +160,7 @@ const _handleAbility = async (key: NumberKey, { session }: ScreenHandlerContext)
   }
 };
 
-const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
+const _handleEnter = async (session: Session, state: GameState) => {
   const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const playerUnit = session.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();
@@ -166,12 +170,12 @@ const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state, session });
+    await loadNextMap(session, state);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
     playSound(Sounds.DESCEND_STAIRS); // TODO
-    await loadPreviousMap({ state, session });
+    await loadPreviousMap(session, state);
   }
-  await playTurn(false, { state, map, session });
+  await playTurn(false, state, session);
 };
 
 export default {

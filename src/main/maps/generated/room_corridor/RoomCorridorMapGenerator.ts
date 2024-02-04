@@ -8,10 +8,16 @@ import TileGenerator from './TileGenerator';
 import EmptyMap from '../EmptyMap';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import TileType from '../../../schemas/TileType';
+import ImageFactory from '../../../graphics/images/ImageFactory';
+import TileFactory from '../../../tiles/TileFactory';
+import ItemFactory from '../../../items/ItemFactory';
 
 type Props = Readonly<{
   minRoomDimension: number;
   maxRoomDimension: number;
+  imageFactory: ImageFactory;
+  tileFactory: TileFactory;
+  itemFactory: ItemFactory;
 }>;
 
 const MIN_ROOM_FRACTION = 0.4;
@@ -27,8 +33,14 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
    */
   private readonly maxRoomDimension: number;
 
-  constructor({ minRoomDimension, maxRoomDimension }: Props) {
-    super();
+  constructor({
+    minRoomDimension,
+    maxRoomDimension,
+    imageFactory,
+    tileFactory,
+    itemFactory
+  }: Props) {
+    super({ imageFactory, tileFactory, itemFactory });
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
   }

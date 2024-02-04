@@ -1,6 +1,8 @@
-import { ItemProc, ItemProcContext } from './ItemProc';
+import { ItemProc } from './ItemProc';
 import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
+import { GameState } from '../core/GameState';
+import { Session } from '../core/Session';
 
 type Props = Readonly<{
   name: string;
@@ -22,8 +24,8 @@ export default class InventoryItem {
     this.tooltip = tooltip ?? null;
   }
 
-  use = async (unit: Unit, context: ItemProcContext) => {
-    await this.onUse(this, unit, context);
+  use = async (unit: Unit, state: GameState, session: Session) => {
+    await this.onUse(this, unit, state, session);
   };
 
   getTooltip = (): string | null => this.tooltip;

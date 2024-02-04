@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,6 +7,8 @@ import { sleep } from '../../../utils/promises';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 4;
 
@@ -17,12 +19,14 @@ export const Dash: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('Dash requires a target!');
     }
 
+    const map = session.getMap();
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);
     dy = Math.sign(dy);
@@ -36,7 +40,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(unit, { x, y }, { state, map, session });
+        await moveUnit(unit, { x, y }, session, state);
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);

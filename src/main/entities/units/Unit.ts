@@ -13,13 +13,15 @@ import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import Entity, { UpdateContext } from '../Entity';
+import Entity from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -59,6 +61,7 @@ export default class Unit implements Entity, Animatable {
   private readonly equipment: EquipmentMap;
   private readonly aiParameters: AIParameters | null;
   private readonly playerUnitClass: PlayerUnitClass | null;
+  private readonly experienceRewarded: number | null;
   private coordinates: Coordinates;
   private readonly name: string;
   private level: number;
@@ -90,7 +93,7 @@ export default class Unit implements Entity, Animatable {
 
   private lifetimeDamageDealt: number;
   private lifetimeDamageTaken: number;
-  private lifetimeKills: number;
+  private experience: number;
   private lifetimeManaSpent: number;
   private lifetimeStepsTaken: number;
 
@@ -108,7 +111,7 @@ export default class Unit implements Entity, Animatable {
     this.abilityPoints = 0;
     this.lifetimeDamageDealt = 0;
     this.lifetimeDamageTaken = 0;
-    this.lifetimeKills = 0;
+    this.experience = 0;
     this.lifetimeManaSpent = 0;
     this.lifetimeStepsTaken = 0;
 
@@ -123,6 +126,7 @@ export default class Unit implements Entity, Animatable {
     this.dexterity = model.dexterity;
     this.unitClass = model.id;
     this.unitType = model.type;
+    this.experienceRewarded = model.experience ?? null;
     this.controller = props.controller;
     this.activity = Activity.STANDING;
     this.direction = Direction.getDefaultUnitDirection();
@@ -150,6 +154,7 @@ export default class Unit implements Entity, Animatable {
   getName = (): string => this.name;
   getFaction = (): Faction => this.faction;
   getController = (): UnitController => this.controller;
+  getExperienceRewarded = (): number | null => this.experienceRewarded;
 
   /** @override */
   getCoordinates = (): Coordinates => this.coordinates;
@@ -185,11 +190,11 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, map, session }: UpdateContext) => {
+  playTurnAction = async (state: GameState, session: Session) => {
     this._upkeep();
     if (this.stunDuration === 0) {
-      const order = this.controller.issueOrder(this, { state, map, session });
-      await order.execute(this, { state, map, session });
+      const order = this.controller.issueOrder(this, state, session);
+      await order.execute(this, state, session);
     }
     this._endOfTurn();
   };
@@ -217,8 +222,8 @@ export default class Unit implements Entity, Animatable {
     this.lifetimeDamageDealt += amount;
   };
 
-  recordKill = () => {
-    this.lifetimeKills++;
+  gainExperience = (amount: number) => {
+    this.experience += amount;
   };
 
   recordStepTaken = () => {
@@ -253,7 +258,7 @@ export default class Unit implements Entity, Animatable {
 
   getLifetimeDamageDealt = (): number => this.lifetimeDamageDealt;
   getLifetimeDamageTaken = (): number => this.lifetimeDamageTaken;
-  getLifetimeKills = (): number => this.lifetimeKills;
+  getLifetimeKills = (): number => this.experience;
   getLifetimeManaSpent = (): number => this.lifetimeManaSpent;
   getLifetimeStepsTaken = (): number => this.lifetimeStepsTaken;
 

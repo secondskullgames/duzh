@@ -1,7 +1,9 @@
-import Entity, { UpdateContext } from '../Entity';
+import Entity from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 
 export enum ObjectType {
   SPAWNER = 'spawner',
@@ -43,7 +45,8 @@ export default abstract class GameObject implements Entity {
   getType = (): EntityType => EntityType.OBJECT;
 
   /** @override */
-  abstract update: ({ state }: UpdateContext) => Promise<void>;
+  abstract playTurnAction: (state: GameState, session: Session) => Promise<void>;
+
   /** @override */
   abstract isBlocking: () => boolean;
 

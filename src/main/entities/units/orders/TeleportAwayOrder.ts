@@ -1,9 +1,11 @@
-import UnitOrder, { OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -17,8 +19,9 @@ export default class TeleportAwayOrder implements UnitOrder {
   }
 
   /** @override */
-  execute = async (unit: Unit, { state, map, session }: OrderContext) => {
+  execute = async (unit: Unit, state: GameState, session: Session) => {
     const { targetUnit } = this;
+    const map = session.getMap();
     const tiles: Coordinates[] = [];
 
     for (let y = 0; y < map.height; y++) {
@@ -41,7 +44,7 @@ export default class TeleportAwayOrder implements UnitOrder {
       );
 
       const coordinates = orderedTiles[0];
-      await Teleport.use(unit, coordinates, { state, map, session });
+      await Teleport.use(unit, coordinates, session, state);
     }
   };
 }

@@ -1,19 +1,40 @@
 import { Debug } from './core/Debug';
-import GameState from './core/GameState';
+import { GameState } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import MapFactory from './maps/MapFactory';
 import { addInitialState } from './actions/addInitialState';
 import { Session } from './core/Session';
+import MapFactory from './maps/MapFactory';
+import ImageFactory from './graphics/images/ImageFactory';
+import AnimationFactory from './graphics/animations/AnimationFactory';
+import TileFactory from './tiles/TileFactory';
+import SpriteFactory from './graphics/sprites/SpriteFactory';
+import ItemFactory from './items/ItemFactory';
 
 const main = async () => {
-  const state = new GameState();
+  const imageFactory = new ImageFactory();
+  const spriteFactory = new SpriteFactory({ imageFactory });
+  const tileFactory = new TileFactory({ spriteFactory });
+  const itemFactory = new ItemFactory({ spriteFactory });
+  const mapFactory = new MapFactory({
+    imageFactory,
+    tileFactory,
+    itemFactory
+  });
+  const animationFactory = new AnimationFactory({ spriteFactory });
+  const state = GameState.create({
+    imageFactory,
+    mapFactory,
+    animationFactory,
+    spriteFactory,
+    tileFactory,
+    itemFactory
+  });
   const session = Session.create();
-  const imageFactory = session.getImageFactory();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
   const renderer = new GameRenderer({
@@ -21,11 +42,9 @@ const main = async () => {
     imageFactory,
     textRenderer
   });
-  const mapFactory = new MapFactory();
   const inputHandler = new InputHandler({
     state,
-    session,
-    mapFactory
+    session
   });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
@@ -33,8 +52,8 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await addInitialState({ state, mapFactory, session });
-  await showSplashScreen({ state, session });
+  await addInitialState(state, session);
+  await showSplashScreen(session);
   setInterval(async () => {
     await renderer.render(session);
   }, 20);

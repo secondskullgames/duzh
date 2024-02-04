@@ -1,15 +1,10 @@
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
-
-type Context = Readonly<{
-  session: Session;
-  map: MapInstance;
-}>;
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-export const updateRevealedTiles = ({ session, map }: Context) => {
+export const updateRevealedTiles = (session: Session) => {
+  const map = session.getMap();
   const playerUnit = session.getPlayerUnit();
 
   const radius = 3;

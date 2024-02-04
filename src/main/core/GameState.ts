@@ -2,16 +2,65 @@ import MapInstance from '../maps/MapInstance';
 import { checkArgument } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
+import MapFactory from '../maps/MapFactory';
+import ImageFactory from '../graphics/images/ImageFactory';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import TileFactory from '../tiles/TileFactory';
+import ItemFactory from '../items/ItemFactory';
+
+/**
+ * Represents the "game world": persistent state that is shared across all current sessions.
+ */
+export interface GameState {
+  addMaps: (suppliers: MapSupplier[]) => void;
+  getGeneratedEquipmentIds: () => string[];
+  recordEquipmentGenerated: (equipmentId: string) => void;
+  reset: () => void;
+  getMapFactory: () => MapFactory;
+  getImageFactory: () => ImageFactory;
+  getAnimationFactory: () => AnimationFactory;
+  getSpriteFactory: () => SpriteFactory;
+  getTileFactory: () => TileFactory;
+  getItemFactory: () => ItemFactory;
+  hasNextMap: (currentIndex: number) => boolean;
+  loadMap: (mapIndex: number) => Promise<MapInstance>;
+}
+
+type Props = Readonly<{
+  imageFactory: ImageFactory;
+  mapFactory: MapFactory;
+  animationFactory: AnimationFactory;
+  spriteFactory: SpriteFactory;
+  tileFactory: TileFactory;
+  itemFactory: ItemFactory;
+}>;
+
+export namespace GameState {
+  export const create = (props: Props): GameState => new GameStateImpl(props);
+}
 
 /**
  * Global mutable state
  */
-export default class GameState {
+class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
+  private readonly mapFactory: MapFactory;
+  private readonly imageFactory: ImageFactory;
+  private readonly animationFactory: AnimationFactory;
+  private readonly spriteFactory: SpriteFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly itemFactory: ItemFactory;
   private readonly generatedEquipmentIds: string[];
 
-  constructor() {
+  constructor(props: Props) {
+    this.imageFactory = props.imageFactory;
+    this.mapFactory = props.mapFactory;
+    this.animationFactory = props.animationFactory;
+    this.spriteFactory = props.spriteFactory;
+    this.tileFactory = props.tileFactory;
+    this.itemFactory = props.itemFactory;
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -49,4 +98,11 @@ export default class GameState {
     }
     return this.maps[mapIndex];
   };
+
+  getMapFactory = (): MapFactory => this.mapFactory;
+  getImageFactory = (): ImageFactory => this.imageFactory;
+  getAnimationFactory = (): AnimationFactory => this.animationFactory;
+  getSpriteFactory = (): SpriteFactory => this.spriteFactory;
+  getTileFactory = (): TileFactory => this.tileFactory;
+  getItemFactory = (): ItemFactory => this.itemFactory;
 }

@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,6 +7,8 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import BasicEnemyController from '../controllers/BasicEnemyController';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 25;
 
@@ -18,12 +20,14 @@ export const Summon: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
     }
 
+    const map = session.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
     // TODO pick a sound
@@ -37,9 +41,7 @@ export const Summon: UnitAbility = {
         level: 1, // whatever
         coordinates
       },
-      {
-        imageFactory: session.getImageFactory()
-      }
+      state
     );
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);

@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,6 +7,8 @@ import Sounds from '../../../sounds/Sounds';
 import { sleep } from '../../../utils/promises';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 8;
 const damageCoefficient = 0.5;
@@ -19,12 +21,14 @@ export const KnockbackAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('KnockbackAttack requires a target!');
     }
 
+    const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
     unit.setDirection(direction);
@@ -50,18 +54,18 @@ export const KnockbackAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
 
       targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
-          await moveUnit(targetUnit, first, { state, map, session });
+          await moveUnit(targetUnit, first, session, state);
           await sleep(75);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, { state, map, session });
+              await moveUnit(targetUnit, second, session, state);
             }
           }
         }

@@ -6,14 +6,12 @@ import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import ItemFactory from '../../items/ItemFactory';
 import { Faction } from '../../types/types';
 import { loadUnitModel } from '../../utils/models';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
+import { GameState } from '../../core/GameState';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -28,25 +26,16 @@ type CreateUnitProps = Readonly<{
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-type Context = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
-const createUnit = async (
-  props: CreateUnitProps,
-  { imageFactory }: Context
-): Promise<Unit> => {
+const createUnit = async (props: CreateUnitProps, state: GameState): Promise<Unit> => {
   const { name, unitClass, faction, controller, level, coordinates, playerUnitClass } =
     props;
   const model: UnitModel = await loadUnitModel(unitClass);
-  const sprite = await SpriteFactory.createUnitSprite(
-    model.sprite,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
-  );
+  const sprite = await state
+    .getSpriteFactory()
+    .createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of model.equipment ?? []) {
-    const equipment = await ItemFactory.createEquipment(equipmentClass, { imageFactory });
+    const equipment = await state.getItemFactory().createEquipment(equipmentClass);
     equipmentList.push(equipment);
   }
 
@@ -63,7 +52,7 @@ const createUnit = async (
   });
 };
 
-const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
+const createPlayerUnit = async (state: GameState): Promise<Unit> => {
   const unit = await createUnit(
     {
       unitClass: 'player',
@@ -73,7 +62,7 @@ const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
       coordinates: { x: 0, y: 0 },
       playerUnitClass: PlayerUnitClass.DEFAULT
     },
-    { imageFactory }
+    state
   );
   if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     unit.learnAbility(abilityForName(AbilityName.DASH));

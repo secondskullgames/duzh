@@ -19,5 +19,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK"]
+  "abilities": ["ATTACK"],
+  "experience": 1
 }

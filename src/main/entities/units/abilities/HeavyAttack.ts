@@ -4,7 +4,9 @@ import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
-import type { UnitAbility, UnitAbilityContext } from './UnitAbility';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
+import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;
 const damageCoefficient = 2;
@@ -16,12 +18,14 @@ export const HeavyAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('HeavyAttack requires a target!');
     }
 
+    const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -45,7 +49,7 @@ export const HeavyAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} with a heavy attack for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
     }
   }
 };

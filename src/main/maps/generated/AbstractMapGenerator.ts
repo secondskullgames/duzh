@@ -3,28 +3,36 @@ import GeneratedMapBuilder from './GeneratedMapBuilder';
 import Tile from '../../tiles/Tile';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
-import TileFactory from '../../tiles/TileFactory';
 import ImageFactory from '../../graphics/images/ImageFactory';
-import { checkNotNull } from '../../utils/preconditions';
-import { Feature } from '../../utils/features';
+import TileFactory from '../../tiles/TileFactory';
+import ItemFactory from '../../items/ItemFactory';
 
-type Context = Readonly<{
+export type MapGeneratorProps = Readonly<{
   imageFactory: ImageFactory;
+  tileFactory: TileFactory;
+  itemFactory: ItemFactory;
 }>;
 
 abstract class AbstractMapGenerator {
-  protected constructor() {}
+  private readonly imageFactory: ImageFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly itemFactory: ItemFactory;
+
+  protected constructor({ imageFactory, tileFactory, itemFactory }: MapGeneratorProps) {
+    this.imageFactory = imageFactory;
+    this.tileFactory = tileFactory;
+    this.itemFactory = itemFactory;
+  }
 
   generateMap = async (
     mapModel: GeneratedMapModel,
-    tileSetId: string,
-    { imageFactory }: Context
+    tileSetId: string
   ): Promise<GeneratedMapBuilder> => {
     const { width, height, levelNumber } = mapModel;
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
-    const tileSet = await TileFactory.getTileSet(tileSetId, { imageFactory });
+    const tileSet = await this.tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -36,7 +44,7 @@ abstract class AbstractMapGenerator {
       for (let x = 0; x < tileTypes[y].length; x++) {
         const coordinates = { x, y };
         const tileType = tileTypes[y][x];
-        const tile = TileFactory.createTile({
+        const tile = this.tileFactory.createTile({
           tileType,
           tileSet,
           coordinates
@@ -54,7 +62,10 @@ abstract class AbstractMapGenerator {
       tiles,
       enemies: mapModel.enemies,
       items: mapModel.items,
-      tileSet
+      tileSet,
+      imageFactory: this.imageFactory,
+      tileFactory: this.tileFactory,
+      itemFactory: this.itemFactory
     });
   };
 

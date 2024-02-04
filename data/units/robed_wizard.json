@@ -15,5 +15,6 @@
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK", "TELEPORT", "SUMMON"],
-  "summonedUnitClass": "golem"
+  "summonedUnitClass": "golem",
+  "experience": 1
 }

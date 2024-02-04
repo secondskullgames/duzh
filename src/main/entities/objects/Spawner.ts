@@ -3,7 +3,8 @@ import Sprite from '../../graphics/sprites/Sprite';
 import Animatable from '../../graphics/animations/Animatable';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
-import { UpdateContext } from '../Entity';
+import { Session } from '../../core/Session';
+import { GameState } from '../../core/GameState';
 
 export enum SpawnerState {
   ALIVE = 'ALIVE',
@@ -58,13 +59,14 @@ export default class Spawner extends GameObject implements Animatable {
 
   getAnimationKey = (): string => `${this._state.toLowerCase()}`;
 
-  update = async ({ map }: UpdateContext) => {
+  playTurnAction = async (state: GameState, session: Session) => {
     if (this._state === 'DEAD') {
       return;
     }
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 
+    const map = session.getMap();
     for (const spawnedUnit of [...this.spawnedUnits]) {
       if (!map.unitExists(spawnedUnit)) {
         this.spawnedUnits.delete(spawnedUnit);

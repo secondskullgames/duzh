@@ -1,10 +1,12 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Sounds from '../../../sounds/Sounds';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?
@@ -17,13 +19,15 @@ export const NormalAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('NormalAttack requires a target!');
     }
     // TODO: verify coordinates are adjacent
 
+    const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
@@ -45,7 +49,7 @@ export const NormalAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
       unit.gainMana(MANA_RETURNED);
     }
   }

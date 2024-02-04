@@ -1,4 +1,4 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -9,6 +9,8 @@ import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 export const range = 3;
 const manaCost = 20;
@@ -21,7 +23,8 @@ export const Teleport: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
@@ -30,6 +33,8 @@ export const Teleport: UnitAbility = {
     if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
       throw new Error(`Can't teleport more than ${range} units`);
     }
+
+    const map = session.getMap();
 
     const maybeSleep = async () => {
       if (map.isTileRevealed(coordinates)) {
@@ -51,7 +56,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await maybeSleep();
 
-      await moveUnit(unit, coordinates, { state, map, session });
+      await moveUnit(unit, coordinates, session, state);
       await maybeSleep();
 
       for (let i = 1; i <= 4; i++) {

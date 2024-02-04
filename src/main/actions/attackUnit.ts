@@ -2,12 +2,11 @@ import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
-import GameState from '../core/GameState';
+import { GameState } from '../core/GameState';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
 export type AttackResult = Readonly<{
@@ -21,24 +20,19 @@ export type Attack = Readonly<{
   sound: SoundEffect;
 }>;
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-  map: MapInstance;
-}>;
-
 export const attackUnit = async (
   attacker: Unit,
   defender: Unit,
   attack: Attack,
-  { state, map, session }: Context
+  session: Session,
+  state: GameState
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, session }
+        { state, session }
       );
     }
   }
@@ -62,8 +56,8 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { state, map, session });
-    recordKill(attacker, session);
+    await die(defender, state, session);
+    recordKill(attacker, defender, session);
   }
 
   await sleep(150);

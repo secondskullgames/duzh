@@ -1,15 +1,8 @@
 import { AbilityName } from './AbilityName';
 import Coordinates from '../../../geometry/Coordinates';
 import Unit from '../Unit';
-import GameState from '../../../core/GameState';
-import MapInstance from '../../../maps/MapInstance';
+import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
-
-export type UnitAbilityContext = Readonly<{
-  state: GameState;
-  session: Session;
-  map: MapInstance;
-}>;
 
 export type UnitAbility = Readonly<{
   name: AbilityName;
@@ -19,6 +12,7 @@ export type UnitAbility = Readonly<{
   use: (
     unit: Unit,
     coordinates: Coordinates | null,
-    context: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => Promise<void>;
 }>;

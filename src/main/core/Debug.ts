@@ -1,10 +1,9 @@
-import GameState from './GameState';
+import { GameState } from './GameState';
 import { Session } from './Session';
 import { loadNextMap } from '../actions/loadNextMap';
 import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
-import ItemFactory from '../items/ItemFactory';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 
@@ -32,11 +31,7 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    await die(playerUnit, {
-      state: this.state,
-      map: this.session.getMap(),
-      session: this.session
-    });
+    await die(playerUnit, this.state, this.session);
   };
 
   levelUp = async () => {
@@ -47,7 +42,7 @@ export class Debug {
   awardEquipment = async () => {
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
-    const item = await ItemFactory.createInventoryEquipment(id);
+    const item = await this.state.getItemFactory().createInventoryEquipment(id);
     const playerUnit = this.session.getPlayerUnit();
     playerUnit.getInventory().add(item);
     this.session
@@ -66,10 +61,7 @@ export class Debug {
       ...this,
       killEnemies: () => killEnemies(this.session.getMap(), this.session),
       nextLevel: async () => {
-        await loadNextMap({
-          state: this.state,
-          session: this.session
-        });
+        await loadNextMap(this.session, this.state);
       }
     };
   };

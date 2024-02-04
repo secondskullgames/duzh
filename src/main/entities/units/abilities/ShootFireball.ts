@@ -1,9 +1,11 @@
-import { type UnitAbility, type UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { shootFireball } from '../../../actions/shootFireball';
 import { pointAt } from '../../../utils/geometry';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const MANA_COST = 25;
 const DAMAGE = 20;
@@ -16,7 +18,8 @@ export const ShootFireball: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('ShootFireball requires a target!');
@@ -24,6 +27,6 @@ export const ShootFireball: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
     unit.spendMana(MANA_COST);
-    await shootFireball(unit, direction, DAMAGE, { state, map, session });
+    await shootFireball(unit, direction, DAMAGE, session, state);
   }
 };

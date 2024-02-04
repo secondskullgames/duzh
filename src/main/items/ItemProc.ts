@@ -1,17 +1,11 @@
 import InventoryItem from './InventoryItem';
 import Unit from '../entities/units/Unit';
-import GameState from '../core/GameState';
-import MapInstance from '../maps/MapInstance';
+import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
-
-export type ItemProcContext = Readonly<{
-  state: GameState;
-  map: MapInstance;
-  session: Session;
-}>;
 
 export type ItemProc = (
   item: InventoryItem,
   unit: Unit,
-  context: ItemProcContext
+  state: GameState,
+  session: Session
 ) => Promise<void>;

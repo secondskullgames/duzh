@@ -1,4 +1,4 @@
-import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
+import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
@@ -11,6 +11,8 @@ import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import { AbilityName } from '../abilities/AbilityName';
 import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -24,8 +26,9 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
+  issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
+    const map = session.getMap();
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {

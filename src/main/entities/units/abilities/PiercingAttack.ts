@@ -1,4 +1,4 @@
-import { type UnitAbility, UnitAbilityContext } from './UnitAbility';
+import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
@@ -7,6 +7,8 @@ import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { attackObject } from '../../../actions/attackObject';
 import { getSpawner } from '../../../maps/MapUtils';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const damageCoefficient = 1;
 
@@ -18,12 +20,14 @@ export const PiercingAttack: UnitAbility = {
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
-    { state, map, session }: UnitAbilityContext
+    session: Session,
+    state: GameState
   ) => {
     if (!coordinates) {
       throw new Error('PiercingAttack requires a target!');
     }
 
+    const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -46,7 +50,7 @@ export const PiercingAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
     }
 
     const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
@@ -69,7 +73,7 @@ export const PiercingAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, nextUnit, attack, { state, map, session });
+      await attackUnit(unit, nextUnit, attack, session, state);
     }
 
     const spawner = getSpawner(map, coordinates);
