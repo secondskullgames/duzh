@@ -36,7 +36,7 @@ export class AttackMoveOrder implements UnitOrder {
       return;
     } else {
       if (!map.isBlocked(coordinates)) {
-        await walk(unit, direction, { state, map, session });
+        await walk(unit, direction, session, state);
         return;
       } else {
         const targetUnit = map.getUnit(coordinates);
@@ -57,7 +57,7 @@ export class AttackMoveOrder implements UnitOrder {
 
         const block = getMovableBlock(map, coordinates);
         if (block) {
-          await pushBlock(unit, block, { state, map, session });
+          await pushBlock(unit, block, session, state);
           return;
         }
       }

@@ -56,7 +56,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await maybeSleep();
 
-      await moveUnit(unit, coordinates, { state, map, session });
+      await moveUnit(unit, coordinates, session, state);
       await maybeSleep();
 
       for (let i = 1; i <= 4; i++) {

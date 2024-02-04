@@ -54,18 +54,18 @@ export const KnockbackAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
 
       targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
-          await moveUnit(targetUnit, first, { state, map, session });
+          await moveUnit(targetUnit, first, session, state);
           await sleep(75);
           if (targetUnit.getLife() > 0) {
             const second = Coordinates.plus(first, direction);
             if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, { state, map, session });
+              await moveUnit(targetUnit, second, session, state);
             }
           }
         }

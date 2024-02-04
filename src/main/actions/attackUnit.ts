@@ -7,7 +7,6 @@ import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { SoundEffect } from '../sounds/types';
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
 export type AttackResult = Readonly<{
@@ -21,16 +20,12 @@ export type Attack = Readonly<{
   sound: SoundEffect;
 }>;
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
 export const attackUnit = async (
   attacker: Unit,
   defender: Unit,
   attack: Attack,
-  { state, session }: Context
+  session: Session,
+  state: GameState
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {

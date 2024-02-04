@@ -59,7 +59,7 @@ export const Blink: UnitAbility = {
     if (blocked) {
       playSound(Sounds.BLOCKED);
     } else {
-      await moveUnit(unit, { x, y }, { state, map, session });
+      await moveUnit(unit, { x, y }, session, state);
       unit.spendMana(manaCost);
     }
   }

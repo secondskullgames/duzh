@@ -50,7 +50,7 @@ export const PiercingAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
     }
 
     const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
@@ -73,7 +73,7 @@ export const PiercingAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, nextUnit, attack, { state, session });
+      await attackUnit(unit, nextUnit, attack, session, state);
     }
 
     const spawner = getSpawner(map, coordinates);

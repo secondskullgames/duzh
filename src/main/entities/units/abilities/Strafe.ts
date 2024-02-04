@@ -23,7 +23,7 @@ export const Strafe: UnitAbility = {
 
     const map = session.getMap();
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
-      await moveUnit(unit, coordinates, { state, map, session });
+      await moveUnit(unit, coordinates, session, state);
     }
   }
 };

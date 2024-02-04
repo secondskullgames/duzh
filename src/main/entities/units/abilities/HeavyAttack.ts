@@ -49,7 +49,7 @@ export const HeavyAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} with a heavy attack for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, session });
+      await attackUnit(unit, targetUnit, attack, session, state);
     }
   }
 };

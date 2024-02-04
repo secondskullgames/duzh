@@ -40,7 +40,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
-        await moveUnit(unit, { x, y }, { state, map, session });
+        await moveUnit(unit, { x, y }, session, state);
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);

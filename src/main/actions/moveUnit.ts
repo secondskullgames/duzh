@@ -3,20 +3,15 @@ import Coordinates from '../geometry/Coordinates';
 import { EquipmentScript } from '../equipment/EquipmentScript';
 import { GameState } from '../core/GameState';
 import { getBonus } from '../maps/MapUtils';
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
-
-type Context = Readonly<{
-  state: GameState;
-  map: MapInstance;
-  session: Session;
-}>;
 
 export const moveUnit = async (
   unit: Unit,
   coordinates: Coordinates,
-  { state, map, session }: Context
+  session: Session,
+  state: GameState
 ) => {
+  const map = session.getMap();
   map.removeUnit(unit);
 
   unit.setCoordinates(coordinates);

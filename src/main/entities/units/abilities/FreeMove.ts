@@ -33,7 +33,7 @@ export const FreeMove: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (!map.isBlocked({ x, y })) {
-      await moveUnit(unit, { x, y }, { state, map, session });
+      await moveUnit(unit, { x, y }, session, state);
       unit.spendMana(manaCost);
     } else {
       playSound(Sounds.BLOCKED);
