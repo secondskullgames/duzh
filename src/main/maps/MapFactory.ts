@@ -16,12 +16,6 @@ import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import { Session } from '../core/Session';
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-  imageFactory: ImageFactory;
-}>;
-
 type MapStyle = Readonly<{
   tileSet: string;
   layout: string;
@@ -36,49 +30,60 @@ namespace MapStyle {
 export default class MapFactory {
   private readonly usedMapStyles: MapStyle[] = [];
 
-  loadMap = async (mapSpec: MapSpec, context: Context): Promise<MapInstance> => {
+  loadMap = async (
+    mapSpec: MapSpec,
+    state: GameState,
+    session: Session
+  ): Promise<MapInstance> => {
     switch (mapSpec.type) {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
-        const mapBuilder = await this._loadGeneratedMap(mapClass, context);
-        return mapBuilder.build(context);
+        const mapBuilder = await this._loadGeneratedMap(
+          mapClass,
+          state.getImageFactory()
+        );
+        return mapBuilder.build(state, session);
       }
       case 'predefined': {
-        return buildPredefinedMap(mapSpec.id, context.session, context.state);
+        return buildPredefinedMap(mapSpec.id, session, state);
       }
     }
   };
 
   private _loadGeneratedMap = async (
     mapClass: GeneratedMapModel,
-    { imageFactory }: Context
+    imageFactory: ImageFactory
   ): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
-    const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    return dungeonGenerator.generateMap(mapClass, style.tileSet, imageFactory);
+    const dungeonGenerator = this._getDungeonGenerator(style.layout, imageFactory);
+    return dungeonGenerator.generateMap(mapClass, style.tileSet);
   };
 
-  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
+  private _getDungeonGenerator = (
+    mapLayout: string,
+    imageFactory: ImageFactory
+  ): AbstractMapGenerator => {
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
-          return new RoomCorridorMapGenerator2();
+          return new RoomCorridorMapGenerator2({ imageFactory });
         }
         const minRoomDimension = 3;
         const maxRoomDimension = 7;
         return new RoomCorridorMapGenerator({
           minRoomDimension,
-          maxRoomDimension
+          maxRoomDimension,
+          imageFactory
         });
       }
       case 'ROOMS_AND_CORRIDORS_3': {
-        return new RoomCorridorMapGenerator3();
+        return new RoomCorridorMapGenerator3({ imageFactory });
       }
       case 'BLOB':
-        return new BlobMapGenerator();
+        return new BlobMapGenerator({ imageFactory });
       case 'PATH':
-        return new PathMapGenerator();
+        return new PathMapGenerator({ imageFactory });
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
     }

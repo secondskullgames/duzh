@@ -1,15 +1,9 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
 import MapInstance from '../maps/MapInstance';
 import Music from '../sounds/Music';
-import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
-export const startGameDebug = async (mapInstance: MapInstance, { session }: Context) => {
+export const startGameDebug = async (mapInstance: MapInstance, session: Session) => {
   // eslint-disable-next-line no-console
   console.log('debug mode');
   session.setMap(mapInstance);

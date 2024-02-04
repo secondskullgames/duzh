@@ -88,8 +88,7 @@ export default class InputHandler {
 
   addEventListener = (target: HTMLElement) => {
     this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    this._onKeyUp = async (e: KeyboardEvent) => {};
+    this._onKeyUp = async () => {};
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);

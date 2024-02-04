@@ -31,12 +31,7 @@ export const addInitialState = async (state: GameState, session: Session) => {
     )
   ).default as MapSpec[];
   const maps: MapSupplier[] = mapSpecs.map(spec => {
-    return () =>
-      state.getMapFactory().loadMap(spec, {
-        state,
-        session,
-        imageFactory: state.getImageFactory()
-      });
+    return () => state.getMapFactory().loadMap(spec, state, session);
   });
   state.addMaps(maps);
 };

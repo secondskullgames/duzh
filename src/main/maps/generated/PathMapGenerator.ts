@@ -1,4 +1,4 @@
-import AbstractMapGenerator from './AbstractMapGenerator';
+import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
 import EmptyMap from './EmptyMap';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
@@ -7,8 +7,8 @@ import { randInt } from '../../utils/random';
 import TileType from '../../schemas/TileType';
 
 class PathMapGenerator extends AbstractMapGenerator {
-  constructor() {
-    super();
+  constructor(props: MapGeneratorProps) {
+    super(props);
   }
 
   /** @override {@link AbstractMapGenerator#generateEmptyMap} */

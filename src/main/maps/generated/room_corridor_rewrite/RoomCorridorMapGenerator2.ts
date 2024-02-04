@@ -3,7 +3,7 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import EmptyMap from '../EmptyMap';
-import AbstractMapGenerator from '../AbstractMapGenerator';
+import AbstractMapGenerator, { MapGeneratorProps } from '../AbstractMapGenerator';
 import Rect from '../../../geometry/Rect';
 import TileType from '../../../schemas/TileType';
 
@@ -40,8 +40,8 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor() {
-    super();
+  constructor(props: MapGeneratorProps) {
+    super(props);
   }
 
   /**
