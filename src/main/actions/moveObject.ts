@@ -15,7 +15,6 @@ export const moveObject = async (
   { map }: Context
 ) => {
   map.removeObject(object);
-
   object.setCoordinates(coordinates);
   map.addObject(object);
 };
