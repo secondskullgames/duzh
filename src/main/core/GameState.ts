@@ -7,6 +7,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import TileFactory from '../tiles/TileFactory';
+import ItemFactory from '../items/ItemFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -21,6 +22,7 @@ export interface GameState {
   getAnimationFactory: () => AnimationFactory;
   getSpriteFactory: () => SpriteFactory;
   getTileFactory: () => TileFactory;
+  getItemFactory: () => ItemFactory;
   hasNextMap: (currentIndex: number) => boolean;
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 }
@@ -31,6 +33,7 @@ type Props = Readonly<{
   animationFactory: AnimationFactory;
   spriteFactory: SpriteFactory;
   tileFactory: TileFactory;
+  itemFactory: ItemFactory;
 }>;
 
 export namespace GameState {
@@ -48,6 +51,7 @@ class GameStateImpl implements GameState {
   private readonly animationFactory: AnimationFactory;
   private readonly spriteFactory: SpriteFactory;
   private readonly tileFactory: TileFactory;
+  private readonly itemFactory: ItemFactory;
   private readonly generatedEquipmentIds: string[];
 
   constructor(props: Props) {
@@ -56,6 +60,7 @@ class GameStateImpl implements GameState {
     this.animationFactory = props.animationFactory;
     this.spriteFactory = props.spriteFactory;
     this.tileFactory = props.tileFactory;
+    this.itemFactory = props.itemFactory;
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -99,4 +104,5 @@ class GameStateImpl implements GameState {
   getAnimationFactory = (): AnimationFactory => this.animationFactory;
   getSpriteFactory = (): SpriteFactory => this.spriteFactory;
   getTileFactory = (): TileFactory => this.tileFactory;
+  getItemFactory = (): ItemFactory => this.itemFactory;
 }

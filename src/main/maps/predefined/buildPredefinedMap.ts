@@ -2,7 +2,6 @@ import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import Door, { DoorState } from '../../entities/objects/Door';
-import ItemFactory from '../../items/ItemFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
@@ -201,21 +200,15 @@ const _loadObjects = async (
 
       const itemId = itemColors?.[color.hex] ?? null;
       if (itemId) {
-        const item = await ItemFactory.createMapItem(
-          itemId,
-          { x, y },
-          state.getSpriteFactory()
-        );
+        const item = await state.getItemFactory().createMapItem(itemId, { x, y });
         objects.push(item);
       }
 
       const equipmentId = equipmentColors?.[color.hex] ?? null;
       if (equipmentId) {
-        const equipment = await ItemFactory.createMapEquipment(
-          equipmentId,
-          { x, y },
-          state.getSpriteFactory()
-        );
+        const equipment = await state
+          .getItemFactory()
+          .createMapEquipment(equipmentId, { x, y });
         objects.push(equipment);
       }
     }

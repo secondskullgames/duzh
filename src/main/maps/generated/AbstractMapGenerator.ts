@@ -5,23 +5,23 @@ import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import TileFactory from '../../tiles/TileFactory';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import ItemFactory from '../../items/ItemFactory';
 
 export type MapGeneratorProps = Readonly<{
   imageFactory: ImageFactory;
   tileFactory: TileFactory;
-  spriteFactory: SpriteFactory;
+  itemFactory: ItemFactory;
 }>;
 
 abstract class AbstractMapGenerator {
   private readonly imageFactory: ImageFactory;
   private readonly tileFactory: TileFactory;
-  private readonly spriteFactory: SpriteFactory;
+  private readonly itemFactory: ItemFactory;
 
-  protected constructor({ imageFactory, tileFactory, spriteFactory }: MapGeneratorProps) {
+  protected constructor({ imageFactory, tileFactory, itemFactory }: MapGeneratorProps) {
     this.imageFactory = imageFactory;
     this.tileFactory = tileFactory;
-    this.spriteFactory = spriteFactory;
+    this.itemFactory = itemFactory;
   }
 
   generateMap = async (
@@ -65,7 +65,7 @@ abstract class AbstractMapGenerator {
       tileSet,
       imageFactory: this.imageFactory,
       tileFactory: this.tileFactory,
-      spriteFactory: this.spriteFactory
+      itemFactory: this.itemFactory
     });
   };
 

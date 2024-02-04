@@ -3,17 +3,11 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
-import ImageFactory from '../../graphics/images/ImageFactory';
-
-type Props = Readonly<{
-  imageFactory: ImageFactory;
-  spriteFactory: SpriteFactory;
-}>;
 
 const createArrow = async (
   coordinates: Coordinates,
   direction: Direction,
-  { spriteFactory }: Props
+  spriteFactory: SpriteFactory
 ): Promise<Projectile> => {
   const sprite = await spriteFactory.createProjectileSprite(
     'arrow',
@@ -30,7 +24,7 @@ const createArrow = async (
 const createBolt = async (
   coordinates: Coordinates,
   direction: Direction,
-  { imageFactory, spriteFactory }: Props
+  spriteFactory: SpriteFactory
 ): Promise<Projectile> => {
   const sprite = await spriteFactory.createProjectileSprite(
     'bolt',

@@ -6,7 +6,6 @@ import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
-import ItemFactory from '../../items/ItemFactory';
 import { Faction } from '../../types/types';
 import { loadUnitModel } from '../../utils/models';
 import Equipment from '../../equipment/Equipment';
@@ -36,10 +35,7 @@ const createUnit = async (props: CreateUnitProps, state: GameState): Promise<Uni
     .createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
   const equipmentList: Equipment[] = [];
   for (const equipmentClass of model.equipment ?? []) {
-    const equipment = await ItemFactory.createEquipment(
-      equipmentClass,
-      state.getSpriteFactory()
-    );
+    const equipment = await state.getItemFactory().createEquipment(equipmentClass);
     equipmentList.push(equipment);
   }
 

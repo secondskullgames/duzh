@@ -4,7 +4,6 @@ import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { randChance } from '../utils/random';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import ItemFactory from '../items/ItemFactory';
 import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
 
@@ -31,11 +30,7 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {
-      const key = await ItemFactory.createMapItem(
-        'key',
-        coordinates,
-        state.getSpriteFactory()
-      );
+      const key = await state.getItemFactory().createMapItem('key', coordinates);
       map.addObject(key);
     }
   }

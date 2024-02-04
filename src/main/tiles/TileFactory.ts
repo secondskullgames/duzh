@@ -8,7 +8,6 @@ import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { Feature } from '../utils/features';
 
 type CreateTileParams = Readonly<{
@@ -19,16 +18,13 @@ type CreateTileParams = Readonly<{
 
 type Props = Readonly<{
   spriteFactory: SpriteFactory;
-  imageFactory: ImageFactory;
 }>;
 
 export default class TileFactory {
   private readonly spriteFactory: SpriteFactory;
-  private readonly imageFactory: ImageFactory;
 
-  constructor({ spriteFactory, imageFactory }: Props) {
+  constructor({ spriteFactory }: Props) {
     this.spriteFactory = spriteFactory;
-    this.imageFactory = imageFactory;
   }
 
   createTile = ({ tileType, tileSet, coordinates }: CreateTileParams): Tile => {

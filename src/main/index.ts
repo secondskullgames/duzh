@@ -13,23 +13,26 @@ import ImageFactory from './graphics/images/ImageFactory';
 import AnimationFactory from './graphics/animations/AnimationFactory';
 import TileFactory from './tiles/TileFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
+import ItemFactory from './items/ItemFactory';
 
 const main = async () => {
   const imageFactory = new ImageFactory();
   const spriteFactory = new SpriteFactory({ imageFactory });
-  const tileFactory = new TileFactory({ imageFactory, spriteFactory });
+  const tileFactory = new TileFactory({ spriteFactory });
+  const itemFactory = new ItemFactory({ spriteFactory });
   const mapFactory = new MapFactory({
     imageFactory,
     tileFactory,
-    spriteFactory
+    itemFactory
   });
-  const animationFactory = new AnimationFactory({ imageFactory, spriteFactory });
+  const animationFactory = new AnimationFactory({ spriteFactory });
   const state = GameState.create({
     imageFactory,
     mapFactory,
     animationFactory,
     spriteFactory,
-    tileFactory
+    tileFactory,
+    itemFactory
   });
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });

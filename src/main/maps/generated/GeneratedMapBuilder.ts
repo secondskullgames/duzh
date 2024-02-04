@@ -22,7 +22,6 @@ import UnitModel from '../../schemas/UnitModel';
 import { Session } from '../../core/Session';
 import TileFactory from '../../tiles/TileFactory';
 import TileSet from '../../tiles/TileSet';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 type Props = Readonly<{
   level: number;
@@ -34,7 +33,7 @@ type Props = Readonly<{
   tileSet: TileSet;
   imageFactory: ImageFactory;
   tileFactory: TileFactory;
-  spriteFactory: SpriteFactory;
+  itemFactory: ItemFactory;
 }>;
 
 export default class GeneratedMapBuilder {
@@ -46,9 +45,8 @@ export default class GeneratedMapBuilder {
   private readonly numItems: Range;
   private readonly entityLocations: CustomSet<Coordinates>;
   private readonly tileSet: TileSet;
-  private readonly imageFactory: ImageFactory;
   private readonly tileFactory: TileFactory;
-  private readonly spriteFactory: SpriteFactory;
+  private readonly itemFactory: ItemFactory;
 
   constructor(props: Props) {
     this.level = props.level;
@@ -59,9 +57,8 @@ export default class GeneratedMapBuilder {
     this.numItems = props.items;
     this.entityLocations = new CustomSet();
     this.tileSet = props.tileSet;
-    this.imageFactory = props.imageFactory;
     this.tileFactory = props.tileFactory;
-    this.spriteFactory = props.spriteFactory;
+    this.itemFactory = props.itemFactory;
   }
 
   /**
@@ -167,8 +164,8 @@ export default class GeneratedMapBuilder {
       coordinates => !this.entityLocations.includes(coordinates)
     );
 
-    const allEquipmentModels = await ItemFactory.loadAllEquipmentModels();
-    const allConsumableModels = await ItemFactory.loadAllConsumableModels();
+    const allEquipmentModels = await this.itemFactory.loadAllEquipmentModels();
+    const allConsumableModels = await this.itemFactory.loadAllConsumableModels();
     let itemsRemaining = randInt(this.numItems.min, this.numItems.max);
 
     type ItemType = 'equipment' | 'consumable';
@@ -247,21 +244,16 @@ export default class GeneratedMapBuilder {
       const coordinates = checkNotNull(candidateLocations.shift());
       switch (itemSpec.type) {
         case 'equipment': {
-          const equipment = await ItemFactory.createMapEquipment(
+          const equipment = await this.itemFactory.createMapEquipment(
             itemSpec.id,
-            coordinates,
-            this.spriteFactory
+            coordinates
           );
 
           objects.push(equipment);
           break;
         }
         case 'consumable': {
-          const item = await ItemFactory.createMapItem(
-            itemSpec.id,
-            coordinates,
-            this.spriteFactory
-          );
+          const item = await this.itemFactory.createMapItem(itemSpec.id, coordinates);
           objects.push(item);
         }
       }
