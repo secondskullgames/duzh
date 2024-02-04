@@ -48,13 +48,13 @@ export default class HUDRenderer implements Renderer {
    * @override {@link Renderer#render}
    */
   render = async (session: Session) => {
-    await this._renderFrame(session);
+    await this._renderFrame();
     await this._renderLeftPanel(session);
     await this._renderMiddlePanel(session);
     await this._renderRightPanel(session);
   };
 
-  private _renderFrame = async (session: Session) => {
+  private _renderFrame = async () => {
     const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE

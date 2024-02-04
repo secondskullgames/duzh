@@ -1,4 +1,4 @@
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -8,6 +8,8 @@ import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
 import { attackObject } from '../../../actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner } from '../../../maps/MapUtils';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -26,7 +28,8 @@ export class AttackMoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
+  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
+    const map = session.getMap();
     const { coordinates, ability } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

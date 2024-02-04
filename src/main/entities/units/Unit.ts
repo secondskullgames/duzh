@@ -193,9 +193,8 @@ export default class Unit implements Entity, Animatable {
   playTurnAction = async (state: GameState, session: Session) => {
     this._upkeep();
     if (this.stunDuration === 0) {
-      const map = session.getMap();
-      const order = this.controller.issueOrder(this, { state, map, session });
-      await order.execute(this, { state, map, session });
+      const order = this.controller.issueOrder(this, state, session);
+      await order.execute(this, state, session);
     }
     this._endOfTurn();
   };

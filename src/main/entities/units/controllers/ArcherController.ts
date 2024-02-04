@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
@@ -10,20 +10,19 @@ import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
+import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 export default class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
-    const behavior = this._getBehavior(unit, context);
-    return behavior.issueOrder(unit, context.state, context.session);
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+    const behavior = this._getBehavior(unit, session);
+    return behavior.issueOrder(unit, state, session);
   };
 
-  private _getBehavior = (
-    unit: Unit,
-    { session }: UnitControllerContext
-  ): UnitBehavior => {
+  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
     const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(

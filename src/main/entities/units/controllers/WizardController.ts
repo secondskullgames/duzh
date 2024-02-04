@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
@@ -13,6 +13,8 @@ import { AbilityName } from '../abilities/AbilityName';
 import UnitOrder from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import MapInstance from '../../../maps/MapInstance';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.25;
@@ -27,11 +29,9 @@ export default class WizardController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (
-    unit: Unit,
-    { state, map, session }: UnitControllerContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const playerUnit = session.getPlayerUnit();
+    const map = session.getMap();
 
     const distanceToPlayerUnit = manhattanDistance(
       unit.getCoordinates(),

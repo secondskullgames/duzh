@@ -1,8 +1,10 @@
-import UnitOrder, { type OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { fastMove } from '../../../actions/fastMove';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   direction: Direction;
@@ -18,8 +20,10 @@ export class FastMoveOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (unit: Unit, { state, map, session }: OrderContext): Promise<void> => {
+  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
+    const map = session.getMap();
     const { direction } = this;
+
     unit.setDirection(direction);
     const firstCoordinates = Coordinates.plus(unit.getCoordinates(), direction);
 

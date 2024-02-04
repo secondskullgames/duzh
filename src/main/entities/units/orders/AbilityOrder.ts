@@ -1,7 +1,9 @@
-import UnitOrder, { OrderContext } from './UnitOrder';
+import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { UnitAbility } from '../abilities/UnitAbility';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -20,7 +22,7 @@ export class AbilityOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
-  execute = async (unit: Unit, context: OrderContext): Promise<void> => {
-    await this.ability.use(unit, this.coordinates, context.session, context.state);
+  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
+    await this.ability.use(unit, this.coordinates, session, state);
   };
 }

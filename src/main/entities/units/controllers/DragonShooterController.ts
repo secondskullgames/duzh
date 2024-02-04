@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
@@ -10,20 +10,19 @@ import Direction from '../../../geometry/Direction';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import MapInstance from '../../../maps/MapInstance';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 export default class DragonShooterController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
-    const behavior = this._getBehavior(unit, context);
-    return behavior.issueOrder(unit, context.state, context.session);
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+    const behavior = this._getBehavior(unit, session);
+    return behavior.issueOrder(unit, state, session);
   };
 
-  private _getBehavior = (
-    unit: Unit,
-    { session }: UnitControllerContext
-  ): UnitBehavior => {
+  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
     const playerUnit = session.getPlayerUnit();
     if (this._canShoot(unit, playerUnit, session.getMap())) {
       return new ShootUnitStationaryBehavior({ targetUnit: playerUnit });

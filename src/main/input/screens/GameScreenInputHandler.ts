@@ -99,8 +99,8 @@ const _handleArrowKey = async (
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (_, context) => {
-          await Strafe.use(playerUnit, coordinates, context.session, context.state);
+        execute: async (unit, state, session) => {
+          await Strafe.use(unit, coordinates, session, state);
         }
       };
       willCompleteTurn = true;

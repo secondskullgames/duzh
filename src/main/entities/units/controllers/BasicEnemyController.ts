@@ -1,4 +1,4 @@
-import { UnitController, type UnitControllerContext } from './UnitController';
+import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
@@ -9,12 +9,14 @@ import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
 
 export default class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, { state, session }: UnitControllerContext): UnitOrder => {
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(

@@ -7,7 +7,6 @@ import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
-import { Session } from '../../core/Session';
 
 type Props = Readonly<{
   textRenderer: TextRenderer;
@@ -23,8 +22,7 @@ export default class HelpScreenRenderer implements Renderer {
     this.graphics = graphics;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  render = async (session: Session) => {
+  render = async () => {
     this.graphics.fill(Colors.BLACK);
 
     const left = 4;
