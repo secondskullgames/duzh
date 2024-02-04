@@ -5,6 +5,8 @@ import { clear } from '../utils/arrays';
 import MapFactory from '../maps/MapFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import TileFactory from '../tiles/TileFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -17,6 +19,8 @@ export interface GameState {
   getMapFactory: () => MapFactory;
   getImageFactory: () => ImageFactory;
   getAnimationFactory: () => AnimationFactory;
+  getSpriteFactory: () => SpriteFactory;
+  getTileFactory: () => TileFactory;
   hasNextMap: (currentIndex: number) => boolean;
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 }
@@ -25,6 +29,8 @@ type Props = Readonly<{
   imageFactory: ImageFactory;
   mapFactory: MapFactory;
   animationFactory: AnimationFactory;
+  spriteFactory: SpriteFactory;
+  tileFactory: TileFactory;
 }>;
 
 export namespace GameState {
@@ -40,12 +46,16 @@ class GameStateImpl implements GameState {
   private readonly mapFactory: MapFactory;
   private readonly imageFactory: ImageFactory;
   private readonly animationFactory: AnimationFactory;
+  private readonly spriteFactory: SpriteFactory;
+  private readonly tileFactory: TileFactory;
   private readonly generatedEquipmentIds: string[];
 
-  constructor({ imageFactory, mapFactory, animationFactory }: Props) {
-    this.imageFactory = imageFactory;
-    this.mapFactory = mapFactory;
-    this.animationFactory = animationFactory;
+  constructor(props: Props) {
+    this.imageFactory = props.imageFactory;
+    this.mapFactory = props.mapFactory;
+    this.animationFactory = props.animationFactory;
+    this.spriteFactory = props.spriteFactory;
+    this.tileFactory = props.tileFactory;
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -87,4 +97,6 @@ class GameStateImpl implements GameState {
   getMapFactory = (): MapFactory => this.mapFactory;
   getImageFactory = (): ImageFactory => this.imageFactory;
   getAnimationFactory = (): AnimationFactory => this.animationFactory;
+  getSpriteFactory = (): SpriteFactory => this.spriteFactory;
+  getTileFactory = (): TileFactory => this.tileFactory;
 }

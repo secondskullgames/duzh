@@ -11,7 +11,6 @@ import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
 import { equipItem } from '../actions/equipItem';
-import ImageFactory from '../graphics/images/ImageFactory';
 import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
 import { shootFireball } from '../actions/shootFireball';
 import { GameScreen } from '../core/GameScreen';
@@ -129,9 +128,7 @@ const createInventoryEquipment = async (
     state: GameState,
     session: Session
   ) => {
-    const equipment = await createEquipment(equipmentClass, {
-      imageFactory: state.getImageFactory()
-    });
+    const equipment = await createEquipment(equipmentClass, state.getSpriteFactory());
     return equipItem(equipment, unit, session);
   };
 
@@ -144,39 +141,29 @@ const createInventoryEquipment = async (
   });
 };
 
-type CreateMapEquipmentContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
 const createMapEquipment = async (
   equipmentClass: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapEquipmentContext
+  spriteFactory: SpriteFactory
 ): Promise<MapItem> => {
   const model = await loadEquipmentModel(equipmentClass);
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     model.mapIcon,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
   const inventoryItem: InventoryItem = await createInventoryEquipment(equipmentClass);
   return new MapItem({ coordinates, sprite, inventoryItem });
 };
 
-type CreateEquipmentContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
 const createEquipment = async (
   equipmentClass: string,
-  { imageFactory }: CreateEquipmentContext
+  spriteFactory: SpriteFactory
 ): Promise<Equipment> => {
   const model = await loadEquipmentModel(equipmentClass);
   const spriteName = model.sprite;
-  const sprite = await SpriteFactory.createEquipmentSprite(
+  const sprite = await spriteFactory.createEquipmentSprite(
     spriteName,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
 
   // TODO wtf is this
@@ -221,21 +208,16 @@ const createInventoryItem = async (
   }
 };
 
-type CreateMapItemContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
 const createMapItem = async (
   itemId: string,
   coordinates: Coordinates,
-  { imageFactory }: CreateMapItemContext
+  spriteFactory: SpriteFactory
 ) => {
   const model: ConsumableItemModel = await loadItemModel(itemId);
   const inventoryItem = await createInventoryItem(model);
-  const sprite = await SpriteFactory.createStaticSprite(
+  const sprite = await spriteFactory.createStaticSprite(
     model.mapSprite,
-    PaletteSwaps.create(model.paletteSwaps),
-    { imageFactory }
+    PaletteSwaps.create(model.paletteSwaps)
   );
   return new MapItem({ coordinates, sprite, inventoryItem });
 };

@@ -22,6 +22,7 @@ import UnitModel from '../../schemas/UnitModel';
 import { Session } from '../../core/Session';
 import TileFactory from '../../tiles/TileFactory';
 import TileSet from '../../tiles/TileSet';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 type Props = Readonly<{
   level: number;
@@ -32,6 +33,8 @@ type Props = Readonly<{
   items: Range;
   tileSet: TileSet;
   imageFactory: ImageFactory;
+  tileFactory: TileFactory;
+  spriteFactory: SpriteFactory;
 }>;
 
 export default class GeneratedMapBuilder {
@@ -44,6 +47,8 @@ export default class GeneratedMapBuilder {
   private readonly entityLocations: CustomSet<Coordinates>;
   private readonly tileSet: TileSet;
   private readonly imageFactory: ImageFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly spriteFactory: SpriteFactory;
 
   constructor(props: Props) {
     this.level = props.level;
@@ -55,6 +60,8 @@ export default class GeneratedMapBuilder {
     this.entityLocations = new CustomSet();
     this.tileSet = props.tileSet;
     this.imageFactory = props.imageFactory;
+    this.tileFactory = props.tileFactory;
+    this.spriteFactory = props.spriteFactory;
   }
 
   /**
@@ -66,11 +73,12 @@ export default class GeneratedMapBuilder {
     const startingCoordinates = checkNotNull(candidateLocations.shift());
 
     if (Feature.isEnabled(Feature.STAIRS_UP)) {
-      this.tiles[startingCoordinates.y][startingCoordinates.x] = TileFactory.createTile({
-        tileType: 'STAIRS_UP',
-        tileSet: this.tileSet,
-        coordinates: startingCoordinates
-      });
+      this.tiles[startingCoordinates.y][startingCoordinates.x] =
+        this.tileFactory.createTile({
+          tileType: 'STAIRS_UP',
+          tileSet: this.tileSet,
+          coordinates: startingCoordinates
+        });
     }
     playerUnit.setCoordinates(startingCoordinates);
     this.entityLocations.add(startingCoordinates);
@@ -242,16 +250,18 @@ export default class GeneratedMapBuilder {
           const equipment = await ItemFactory.createMapEquipment(
             itemSpec.id,
             coordinates,
-            { imageFactory: this.imageFactory }
+            this.spriteFactory
           );
 
           objects.push(equipment);
           break;
         }
         case 'consumable': {
-          const item = await ItemFactory.createMapItem(itemSpec.id, coordinates, {
-            imageFactory: this.imageFactory
-          });
+          const item = await ItemFactory.createMapItem(
+            itemSpec.id,
+            coordinates,
+            this.spriteFactory
+          );
           objects.push(item);
         }
       }

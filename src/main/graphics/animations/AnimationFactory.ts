@@ -6,16 +6,20 @@ import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
+import SpriteFactory from '../sprites/SpriteFactory';
 
 type Props = Readonly<{
   imageFactory: ImageFactory;
+  spriteFactory: SpriteFactory;
 }>;
 
 export default class AnimationFactory {
   private readonly imageFactory: ImageFactory;
+  private readonly spriteFactory: SpriteFactory;
 
-  constructor({ imageFactory }: Props) {
+  constructor({ imageFactory, spriteFactory }: Props) {
     this.imageFactory = imageFactory;
+    this.spriteFactory = spriteFactory;
   }
 
   getArrowAnimation = async (
@@ -45,7 +49,8 @@ export default class AnimationFactory {
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
-        imageFactory: this.imageFactory
+        imageFactory: this.imageFactory,
+        spriteFactory: this.spriteFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
@@ -112,7 +117,8 @@ export default class AnimationFactory {
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
-        imageFactory: this.imageFactory
+        imageFactory: this.imageFactory,
+        spriteFactory: this.spriteFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
@@ -180,7 +186,8 @@ export default class AnimationFactory {
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
-        imageFactory: this.imageFactory
+        imageFactory: this.imageFactory,
+        spriteFactory: this.spriteFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],

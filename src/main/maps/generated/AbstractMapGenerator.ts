@@ -3,18 +3,25 @@ import GeneratedMapBuilder from './GeneratedMapBuilder';
 import Tile from '../../tiles/Tile';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
-import TileFactory from '../../tiles/TileFactory';
 import ImageFactory from '../../graphics/images/ImageFactory';
+import TileFactory from '../../tiles/TileFactory';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 
 export type MapGeneratorProps = Readonly<{
   imageFactory: ImageFactory;
+  tileFactory: TileFactory;
+  spriteFactory: SpriteFactory;
 }>;
 
 abstract class AbstractMapGenerator {
   private readonly imageFactory: ImageFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly spriteFactory: SpriteFactory;
 
-  protected constructor({ imageFactory }: MapGeneratorProps) {
+  protected constructor({ imageFactory, tileFactory, spriteFactory }: MapGeneratorProps) {
     this.imageFactory = imageFactory;
+    this.tileFactory = tileFactory;
+    this.spriteFactory = spriteFactory;
   }
 
   generateMap = async (
@@ -25,7 +32,7 @@ abstract class AbstractMapGenerator {
 
     const map = this._generateEmptyMap(width, height, levelNumber);
     const tileTypes = map.tiles;
-    const tileSet = await TileFactory.getTileSet(tileSetId, this.imageFactory);
+    const tileSet = await this.tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -37,7 +44,7 @@ abstract class AbstractMapGenerator {
       for (let x = 0; x < tileTypes[y].length; x++) {
         const coordinates = { x, y };
         const tileType = tileTypes[y][x];
-        const tile = TileFactory.createTile({
+        const tile = this.tileFactory.createTile({
           tileType,
           tileSet,
           coordinates
@@ -56,7 +63,9 @@ abstract class AbstractMapGenerator {
       enemies: mapModel.enemies,
       items: mapModel.items,
       tileSet,
-      imageFactory: this.imageFactory
+      imageFactory: this.imageFactory,
+      tileFactory: this.tileFactory,
+      spriteFactory: this.spriteFactory
     });
   };
 

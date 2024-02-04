@@ -1,7 +1,6 @@
 import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Door, { DoorState } from '../../entities/objects/Door';
 import ItemFactory from '../../items/ItemFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
@@ -22,7 +21,6 @@ import { Faction } from '../../types/types';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { Session } from '../../core/Session';
 import Coordinates from '../../geometry/Coordinates';
 import { GameState } from '../../core/GameState';
@@ -50,7 +48,7 @@ export const buildPredefinedMap = async (
     filename: `maps/${model.imageFilename}`
   });
 
-  const tiles = await _loadTiles(model, image, state.getImageFactory());
+  const tiles = await _loadTiles(model, image, state.getTileFactory());
   let startingCoordinates: Coordinates | null = (() => {
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
@@ -81,10 +79,10 @@ export const buildPredefinedMap = async (
 const _loadTiles = async (
   model: PredefinedMapModel,
   image: Image,
-  imageFactory: ImageFactory
+  tileFactory: TileFactory
 ): Promise<Tile[][]> => {
   const tileColors = _toHexColors(model.tileColors);
-  const tileSet = await TileFactory.getTileSet(model.tileset, imageFactory);
+  const tileSet = await tileFactory.getTileSet(model.tileset);
   const tiles: Tile[][] = [];
   for (let y = 0; y < image.height; y++) {
     tiles.push([]);
@@ -94,7 +92,7 @@ const _loadTiles = async (
 
       const tileType = tileColors[color.hex] ?? model.defaultTile ?? null;
       if (tileType !== null) {
-        tiles[y][x] = TileFactory.createTile({
+        tiles[y][x] = tileFactory.createTile({
           tileType: tileType as TileType,
           tileSet,
           coordinates: { x, y }
@@ -180,9 +178,7 @@ const _loadObjects = async (
       if (objectName?.startsWith('door_')) {
         const doorDirection =
           objectName === 'door_horizontal' ? 'horizontal' : 'vertical';
-        const sprite = await SpriteFactory.createDoorSprite({
-          imageFactory: state.getImageFactory()
-        });
+        const sprite = await state.getSpriteFactory().createDoorSprite();
 
         const door = new Door({
           direction: doorDirection,
@@ -208,7 +204,7 @@ const _loadObjects = async (
         const item = await ItemFactory.createMapItem(
           itemId,
           { x, y },
-          { imageFactory: state.getImageFactory() }
+          state.getSpriteFactory()
         );
         objects.push(item);
       }
@@ -218,7 +214,7 @@ const _loadObjects = async (
         const equipment = await ItemFactory.createMapEquipment(
           equipmentId,
           { x, y },
-          { imageFactory: state.getImageFactory() }
+          state.getSpriteFactory()
         );
         objects.push(equipment);
       }

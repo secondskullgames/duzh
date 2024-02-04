@@ -17,68 +17,76 @@ type CreateTileParams = Readonly<{
   coordinates: Coordinates;
 }>;
 
-const createTile = ({ tileType, tileSet, coordinates }: CreateTileParams): Tile => {
-  const tilesOfType = checkNotNull(tileSet[tileType]);
-  const sprite = randChoice(tilesOfType);
-  return new Tile({ tileType, sprite, coordinates });
-};
+type Props = Readonly<{
+  spriteFactory: SpriteFactory;
+  imageFactory: ImageFactory;
+}>;
 
-const getTileSet = async (id: string, imageFactory: ImageFactory): Promise<TileSet> => {
-  const model = await loadTileSetModel(id);
-  const tileSet: {
-    [key in TileType]?: (Sprite | null)[];
-  } = {};
+export default class TileFactory {
+  private readonly spriteFactory: SpriteFactory;
+  private readonly imageFactory: ImageFactory;
 
-  for (const [tileType, filenames] of Object.entries(model.tiles)) {
-    const tileSprites: Sprite[] = [];
-    for (let index = 0; index < filenames.length; index++) {
-      const filename = filenames[index];
-      if (filename) {
-        const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
-        const tileSprite = await SpriteFactory.createTileSprite(
-          `${model.path}/${filename}`,
-          paletteSwaps,
-          { imageFactory }
-        );
-        tileSprites.push(tileSprite);
+  constructor({ spriteFactory, imageFactory }: Props) {
+    this.spriteFactory = spriteFactory;
+    this.imageFactory = imageFactory;
+  }
+
+  createTile = ({ tileType, tileSet, coordinates }: CreateTileParams): Tile => {
+    const tilesOfType = checkNotNull(tileSet[tileType]);
+    const sprite = randChoice(tilesOfType);
+    return new Tile({ tileType, sprite, coordinates });
+  };
+
+  getTileSet = async (id: string): Promise<TileSet> => {
+    const model = await loadTileSetModel(id);
+    const tileSet: {
+      [key in TileType]?: (Sprite | null)[];
+    } = {};
+
+    for (const [tileType, filenames] of Object.entries(model.tiles)) {
+      const tileSprites: Sprite[] = [];
+      for (let index = 0; index < filenames.length; index++) {
+        const filename = filenames[index];
+        if (filename) {
+          const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
+          const tileSprite = await this.spriteFactory.createTileSprite(
+            `${model.path}/${filename}`,
+            paletteSwaps
+          );
+          tileSprites.push(tileSprite);
+        }
       }
+      tileSet[tileType as TileType] = tileSprites;
     }
-    tileSet[tileType as TileType] = tileSprites;
-  }
 
-  return tileSet as TileSet;
-};
+    return tileSet as TileSet;
+  };
 
-/**
- * TODO hardcoding these
- */
-const getTileSetNames = (): string[] => {
-  if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
-    return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
-  }
+  /**
+   * TODO hardcoding these
+   */
+  getTileSetNames = (): string[] => {
+    if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
+      return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
+    }
 
-  return [
-    'catacomb',
-    'catacomb_gold',
-    'catacomb_red',
-    'cave',
-    'cave_blue',
-    'dungeon',
-    'dungeon_brown',
-    'dungeon_cga',
-    'dungeon_cga_alt',
-    'dungeon_green',
-    'kroz',
-    'kroz_teal',
-    'kroz_green',
-    'kroz_yellow',
-    'zzt',
-    'zzt_alt'
-  ];
-};
-
-export default {
-  getTileSet,
-  createTile,
-  getTileSetNames
-};
+    return [
+      'catacomb',
+      'catacomb_gold',
+      'catacomb_red',
+      'cave',
+      'cave_blue',
+      'dungeon',
+      'dungeon_brown',
+      'dungeon_cga',
+      'dungeon_cga_alt',
+      'dungeon_green',
+      'kroz',
+      'kroz_teal',
+      'kroz_green',
+      'kroz_yellow',
+      'zzt',
+      'zzt_alt'
+    ];
+  };
+}

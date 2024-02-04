@@ -15,6 +15,7 @@ import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import { Session } from '../core/Session';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type MapStyle = Readonly<{
   tileSet: string;
@@ -27,8 +28,23 @@ namespace MapStyle {
   };
 }
 
+type Props = Readonly<{
+  imageFactory: ImageFactory;
+  tileFactory: TileFactory;
+  spriteFactory: SpriteFactory;
+}>;
+
 export default class MapFactory {
+  private readonly imageFactory: ImageFactory;
+  private readonly tileFactory: TileFactory;
+  private readonly spriteFactory: SpriteFactory;
   private readonly usedMapStyles: MapStyle[] = [];
+
+  constructor({ imageFactory, tileFactory, spriteFactory }: Props) {
+    this.imageFactory = imageFactory;
+    this.tileFactory = tileFactory;
+    this.spriteFactory = spriteFactory;
+  }
 
   loadMap = async (
     mapSpec: MapSpec,
@@ -38,10 +54,7 @@ export default class MapFactory {
     switch (mapSpec.type) {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
-        const mapBuilder = await this._loadGeneratedMap(
-          mapClass,
-          state.getImageFactory()
-        );
+        const mapBuilder = await this._loadGeneratedMap(mapClass);
         return mapBuilder.build(state, session);
       }
       case 'predefined': {
@@ -51,39 +64,54 @@ export default class MapFactory {
   };
 
   private _loadGeneratedMap = async (
-    mapClass: GeneratedMapModel,
-    imageFactory: ImageFactory
+    mapClass: GeneratedMapModel
   ): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
-    const dungeonGenerator = this._getDungeonGenerator(style.layout, imageFactory);
+    const dungeonGenerator = this._getDungeonGenerator(style.layout);
     return dungeonGenerator.generateMap(mapClass, style.tileSet);
   };
 
-  private _getDungeonGenerator = (
-    mapLayout: string,
-    imageFactory: ImageFactory
-  ): AbstractMapGenerator => {
+  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
+    const { imageFactory, tileFactory, spriteFactory } = this;
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
-          return new RoomCorridorMapGenerator2({ imageFactory });
+          return new RoomCorridorMapGenerator2({
+            imageFactory,
+            tileFactory,
+            spriteFactory
+          });
         }
         const minRoomDimension = 3;
         const maxRoomDimension = 7;
         return new RoomCorridorMapGenerator({
           minRoomDimension,
           maxRoomDimension,
-          imageFactory
+          imageFactory,
+          tileFactory,
+          spriteFactory
         });
       }
       case 'ROOMS_AND_CORRIDORS_3': {
-        return new RoomCorridorMapGenerator3({ imageFactory });
+        return new RoomCorridorMapGenerator3({
+          imageFactory,
+          tileFactory,
+          spriteFactory
+        });
       }
       case 'BLOB':
-        return new BlobMapGenerator({ imageFactory });
+        return new BlobMapGenerator({
+          imageFactory,
+          tileFactory,
+          spriteFactory
+        });
       case 'PATH':
-        return new PathMapGenerator({ imageFactory });
+        return new PathMapGenerator({
+          imageFactory,
+          tileFactory,
+          spriteFactory
+        });
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
     }
@@ -98,7 +126,7 @@ export default class MapFactory {
         'PATH',
         'BLOB'
       ]);
-      const tileSet = randChoice(TileFactory.getTileSetNames());
+      const tileSet = randChoice(this.tileFactory.getTileSetNames());
       const chosenStyle = { layout, tileSet };
       if (!this.usedMapStyles.some(style => MapStyle.equals(style, chosenStyle))) {
         this.usedMapStyles.push(chosenStyle);

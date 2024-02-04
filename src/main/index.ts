@@ -11,12 +11,26 @@ import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import ImageFactory from './graphics/images/ImageFactory';
 import AnimationFactory from './graphics/animations/AnimationFactory';
+import TileFactory from './tiles/TileFactory';
+import SpriteFactory from './graphics/sprites/SpriteFactory';
 
 const main = async () => {
   const imageFactory = new ImageFactory();
-  const mapFactory = new MapFactory();
-  const animationFactory = new AnimationFactory({ imageFactory });
-  const state = GameState.create({ imageFactory, mapFactory, animationFactory });
+  const spriteFactory = new SpriteFactory({ imageFactory });
+  const tileFactory = new TileFactory({ imageFactory, spriteFactory });
+  const mapFactory = new MapFactory({
+    imageFactory,
+    tileFactory,
+    spriteFactory
+  });
+  const animationFactory = new AnimationFactory({ imageFactory, spriteFactory });
+  const state = GameState.create({
+    imageFactory,
+    mapFactory,
+    animationFactory,
+    spriteFactory,
+    tileFactory
+  });
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });

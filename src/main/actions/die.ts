@@ -31,9 +31,11 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {
-      const key = await ItemFactory.createMapItem('key', coordinates, {
-        imageFactory: state.getImageFactory()
-      });
+      const key = await ItemFactory.createMapItem(
+        'key',
+        coordinates,
+        state.getSpriteFactory()
+      );
       map.addObject(key);
     }
   }

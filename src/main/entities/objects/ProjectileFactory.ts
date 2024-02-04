@@ -7,18 +7,18 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 
 type Props = Readonly<{
   imageFactory: ImageFactory;
+  spriteFactory: SpriteFactory;
 }>;
 
 const createArrow = async (
   coordinates: Coordinates,
   direction: Direction,
-  { imageFactory }: Props
+  { spriteFactory }: Props
 ): Promise<Projectile> => {
-  const sprite = await SpriteFactory.createProjectileSprite(
+  const sprite = await spriteFactory.createProjectileSprite(
     'arrow',
     direction,
-    PaletteSwaps.empty(),
-    { imageFactory }
+    PaletteSwaps.empty()
   );
   return new Projectile({
     coordinates,
@@ -30,13 +30,12 @@ const createArrow = async (
 const createBolt = async (
   coordinates: Coordinates,
   direction: Direction,
-  { imageFactory }: Props
+  { imageFactory, spriteFactory }: Props
 ): Promise<Projectile> => {
-  const sprite = await SpriteFactory.createProjectileSprite(
+  const sprite = await spriteFactory.createProjectileSprite(
     'bolt',
     direction,
-    PaletteSwaps.empty(),
-    { imageFactory }
+    PaletteSwaps.empty()
   );
   return new Projectile({
     coordinates,
