@@ -4,11 +4,12 @@ import { checkNotNull } from '../../../utils/preconditions';
 import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import UnitOrder from '../orders/UnitOrder';
 import StayBehavior from '../behaviors/StayBehavior';
-import { UnitBehaviorContext } from '../behaviors/UnitBehavior';
+import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import Direction from '../../../geometry/Direction';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
+import MapInstance from '../../../maps/MapInstance';
 
 export default class DragonShooterController implements UnitController {
   /**
@@ -16,26 +17,22 @@ export default class DragonShooterController implements UnitController {
    */
   issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
     const behavior = this._getBehavior(unit, context);
-    return behavior.issueOrder(unit, context);
+    return behavior.issueOrder(unit, context.state, context.session);
   };
 
   private _getBehavior = (
     unit: Unit,
     { session }: UnitControllerContext
-  ): UnitController => {
+  ): UnitBehavior => {
     const playerUnit = session.getPlayerUnit();
-    if (this._canShoot(unit, playerUnit, { map: session.getMap() })) {
+    if (this._canShoot(unit, playerUnit, session.getMap())) {
       return new ShootUnitStationaryBehavior({ targetUnit: playerUnit });
     } else {
       return new StayBehavior();
     }
   };
 
-  private _canShoot = (
-    unit: Unit,
-    targetUnit: Unit,
-    { map }: Pick<UnitBehaviorContext, 'map'>
-  ): boolean => {
+  private _canShoot = (unit: Unit, targetUnit: Unit, map: MapInstance): boolean => {
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
       'DragonShooterController requires aiParams!'

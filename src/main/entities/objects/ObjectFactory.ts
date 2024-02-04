@@ -1,7 +1,7 @@
 import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
-import Bonus, { OnUseContext } from './Bonus';
+import Bonus from './Bonus';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
@@ -12,6 +12,7 @@ import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
@@ -86,7 +87,7 @@ const createHealthGlobe = async (
 
   const lifeGained = 10;
 
-  const onUse = async (unit: Unit, { map, session }: OnUseContext) => {
+  const onUse = async (unit: Unit, _: GameState, session: Session) => {
     if (unit === session.getPlayerUnit()) {
       if (unit.getLife() < unit.getMaxLife()) {
         unit.gainLife(lifeGained);
@@ -96,6 +97,7 @@ const createHealthGlobe = async (
           .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
             turn: session.getTurn()
           });
+        const map = session.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }

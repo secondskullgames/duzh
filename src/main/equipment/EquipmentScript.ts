@@ -3,7 +3,6 @@ import { GameState } from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
 
 export type EquipmentScriptName = 'bolt_sword';

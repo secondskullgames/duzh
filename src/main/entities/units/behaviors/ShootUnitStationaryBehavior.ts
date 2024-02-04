@@ -1,4 +1,4 @@
-import { UnitBehavior, UnitBehaviorContext } from './UnitBehavior';
+import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { isInStraightLine } from '../../../maps/MapUtils';
@@ -7,6 +7,9 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
 import StayOrder from '../orders/StayOrder';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
+import MapInstance from '../../../maps/MapInstance';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -20,10 +23,11 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
+    const map = session.getMap();
 
-    if (this._canShoot(unit, targetUnit, { map })) {
+    if (this._canShoot(unit, targetUnit, map)) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       return new AbilityOrder({
@@ -35,11 +39,7 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
     return new StayOrder();
   };
 
-  private _canShoot = (
-    unit: Unit,
-    targetUnit: Unit,
-    { map }: Pick<UnitBehaviorContext, 'map'>
-  ): boolean => {
+  private _canShoot = (unit: Unit, targetUnit: Unit, map: MapInstance): boolean => {
     return (
       unit.getMana() >= ShootTurretArrow.manaCost &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&

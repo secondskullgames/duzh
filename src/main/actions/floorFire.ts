@@ -5,7 +5,6 @@ import Unit from '../entities/units/Unit';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 import Coordinates from '../geometry/Coordinates';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';

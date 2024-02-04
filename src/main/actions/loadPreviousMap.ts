@@ -4,12 +4,7 @@ import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import { checkState } from '../utils/preconditions';
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
-export const loadPreviousMap = async ({ state, session }: Context) => {
+export const loadPreviousMap = async (session: Session, state: GameState) => {
   checkState(session.getMapIndex() > 0);
   const previousMapIndex = session.getMapIndex() - 1;
   session.setMapIndex(previousMapIndex);

@@ -9,6 +9,7 @@ import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
+import { UnitBehavior } from '../behaviors/UnitBehavior';
 
 export default class ArcherController implements UnitController {
   /**
@@ -16,13 +17,13 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (unit: Unit, context: UnitControllerContext): UnitOrder => {
     const behavior = this._getBehavior(unit, context);
-    return behavior.issueOrder(unit, context);
+    return behavior.issueOrder(unit, context.state, context.session);
   };
 
   private _getBehavior = (
     unit: Unit,
     { session }: UnitControllerContext
-  ): UnitController => {
+  ): UnitBehavior => {
     const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(

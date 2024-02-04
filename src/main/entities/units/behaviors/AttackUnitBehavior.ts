@@ -1,4 +1,4 @@
-import { UnitBehavior, type UnitBehaviorContext } from './UnitBehavior';
+import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Pathfinder from '../../../geometry/Pathfinder';
@@ -12,6 +12,9 @@ import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { abilityForName } from '../abilities/abilityForName';
 import { Dash } from '../abilities/Dash';
+import { GameState } from '../../../core/GameState';
+import { Session } from '../../../core/Session';
+import MapInstance from '../../../maps/MapInstance';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -29,8 +32,9 @@ export default class AttackUnitBehavior implements UnitBehavior {
   }
 
   /** @override */
-  issueOrder = (unit: Unit, { map }: UnitBehaviorContext): UnitOrder => {
+  issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
+    const map = session.getMap();
     const mapRect = map.getRect();
     const unblockedTiles: Coordinates[] = [];
 
@@ -56,7 +60,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
     if (path.length > 1) {
       const coordinates = path[1]; // first tile is the unit's own tile
       const second = path[2];
-      if (this._canDash(unit, second, { map })) {
+      if (this._canDash(unit, second, map)) {
         return new AbilityOrder({
           ability: abilityForName(AbilityName.DASH),
           coordinates: second
@@ -96,7 +100,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   private _canDash = (
     unit: Unit,
     coordinates: Coordinates | undefined,
-    { map }: Pick<UnitBehaviorContext, 'map'>
+    map: MapInstance
   ) => {
     if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
       return false;

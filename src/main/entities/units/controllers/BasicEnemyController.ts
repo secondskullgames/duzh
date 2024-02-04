@@ -14,10 +14,7 @@ export default class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (
-    unit: Unit,
-    { state, map, session }: UnitControllerContext
-  ): UnitOrder => {
+  issueOrder = (unit: Unit, { state, session }: UnitControllerContext): UnitOrder => {
     const playerUnit = session.getPlayerUnit();
 
     const aiParameters = checkNotNull(
@@ -34,29 +31,32 @@ export default class BasicEnemyController implements UnitController {
     if (!canMove(speed, session)) {
       return new StayOrder();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
-      return new AvoidUnitBehavior({ targetUnit: playerUnit }).issueOrder(unit, {
+      return new AvoidUnitBehavior({ targetUnit: playerUnit }).issueOrder(
+        unit,
         state,
-        map
-      });
+        session
+      );
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        return new AttackUnitBehavior({ targetUnit: playerUnit }).issueOrder(unit, {
+        return new AttackUnitBehavior({ targetUnit: playerUnit }).issueOrder(
+          unit,
           state,
-          map
-        });
+          session
+        );
       } else if (randChance(aggressiveness)) {
-        return new AttackUnitBehavior({ targetUnit: playerUnit }).issueOrder(unit, {
+        return new AttackUnitBehavior({ targetUnit: playerUnit }).issueOrder(
+          unit,
           state,
-          map
-        });
+          session
+        );
       } else {
-        return new WanderBehavior().issueOrder(unit, { state, map });
+        return new WanderBehavior().issueOrder(unit, state, session);
       }
     } else {
       if (randBoolean()) {
         return new StayOrder();
       } else {
-        return new WanderBehavior().issueOrder(unit, { state, map });
+        return new WanderBehavior().issueOrder(unit, state, session);
       }
     }
   };

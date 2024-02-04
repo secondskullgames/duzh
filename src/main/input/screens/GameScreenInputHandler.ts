@@ -38,7 +38,7 @@ const handleKeyCommand = async (
   if (_isArrowKey(key)) {
     await _handleArrowKey(key as ArrowKey, modifiers, session, state);
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, session, state);
+    await _handleAbility(key as NumberKey, session);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
     await playTurn(true, state, session);
@@ -147,7 +147,7 @@ const _handleArrowKey = async (
   }
 };
 
-const _handleAbility = async (key: NumberKey, session: Session, state: GameState) => {
+const _handleAbility = async (key: NumberKey, session: Session) => {
   const playerUnit = session.getPlayerUnit();
 
   const index = parseInt(key.toString());
@@ -173,7 +173,7 @@ const _handleEnter = async (session: Session, state: GameState) => {
     await loadNextMap(session, state);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
     playSound(Sounds.DESCEND_STAIRS); // TODO
-    await loadPreviousMap({ state, session });
+    await loadPreviousMap(session, state);
   }
   await playTurn(false, state, session);
 };
