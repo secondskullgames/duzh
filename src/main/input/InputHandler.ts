@@ -85,13 +85,9 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, session, mapFactory } = this;
+    const { state, session } = this;
     const handler: ScreenInputHandler = checkNotNull(screenHandlers[session.getScreen()]);
-    await handler.handleKeyCommand(command, {
-      state,
-      session,
-      mapFactory
-    });
+    await handler.handleKeyCommand(command, session, state);
   };
 
   addEventListener = (target: HTMLElement) => {

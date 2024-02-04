@@ -5,8 +5,6 @@ import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
 import ImageFactory from '../../graphics/images/ImageFactory';
-import { checkNotNull } from '../../utils/preconditions';
-import { Feature } from '../../utils/features';
 
 type Context = Readonly<{
   imageFactory: ImageFactory;

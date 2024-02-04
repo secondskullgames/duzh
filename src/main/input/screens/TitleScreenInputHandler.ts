@@ -1,14 +1,17 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { startGameDebug } from '../../actions/startGameDebug';
 import { startGame } from '../../actions/startGame';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
+import { Session } from '../../core/Session';
+import { GameState } from '../../core/GameState';
 
 const handleKeyCommand = async (
   command: KeyCommand,
-  { state, session, mapFactory }: ScreenHandlerContext
+  session: Session,
+  state: GameState
 ) => {
   const { key, modifiers } = command;
   switch (key) {
@@ -20,13 +23,14 @@ const handleKeyCommand = async (
           Feature.isEnabled(Feature.DEBUG_LEVEL) &&
           modifiers.includes(ModifierKey.SHIFT)
         ) {
+          const mapFactory = state.getMapFactory();
           const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
             { state, session, imageFactory: session.getImageFactory() }
           );
           await startGameDebug(mapInstance, { state, session });
         } else {
-          await startGame({ state, session });
+          await startGame(session, state);
         }
       }
       session.setScreen(GameScreen.GAME);

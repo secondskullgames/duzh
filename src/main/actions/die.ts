@@ -2,7 +2,6 @@ import { gameOver } from './gameOver';
 import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
-import { GameState } from '../core/GameState';
 import { randChance } from '../utils/random';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import MapInstance from '../maps/MapInstance';

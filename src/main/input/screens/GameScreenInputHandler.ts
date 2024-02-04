@@ -1,4 +1,4 @@
-import { type ScreenHandlerContext, ScreenInputHandler } from './ScreenInputHandler';
+import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
 import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
@@ -25,15 +25,20 @@ import { Dash } from '../../entities/units/abilities/Dash';
 import { FreeMove } from '../../entities/units/abilities/FreeMove';
 import Unit from '../../entities/units/Unit';
 import { loadPreviousMap } from '../../actions/loadPreviousMap';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 
-const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
+const handleKeyCommand = async (
+  command: KeyCommand,
+  session: Session,
+  state: GameState
+) => {
   const { key, modifiers } = command;
-  const { state, session } = context;
 
   if (_isArrowKey(key)) {
-    await _handleArrowKey(key as ArrowKey, modifiers, context);
+    await _handleArrowKey(key as ArrowKey, modifiers, session, state);
   } else if (_isNumberKey(key)) {
-    await _handleAbility(key as NumberKey, context);
+    await _handleAbility(key as NumberKey, session, state);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
     await playTurn(true, state, session);
@@ -52,7 +57,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     if (modifiers.includes(ModifierKey.ALT)) {
       await toggleFullScreen();
     } else {
-      await _handleEnter(context);
+      await _handleEnter(session, state);
     }
   } else if (key === 'F1') {
     session.setScreen(GameScreen.HELP);
@@ -70,7 +75,8 @@ const _isNumberKey = (key: Key) => {
 const _handleArrowKey = async (
   key: ArrowKey,
   modifiers: ModifierKey[],
-  { state, session }: ScreenHandlerContext
+  session: Session,
+  state: GameState
 ) => {
   const direction = getDirection(key);
   const playerUnit = session.getPlayerUnit();
@@ -93,7 +99,7 @@ const _handleArrowKey = async (
     if (playerUnit.canSpendMana(Strafe.manaCost)) {
       // TODO make this into an Order
       order = {
-        execute: async (_unit, context) => {
+        execute: async (_, context) => {
           await Strafe.use(playerUnit, coordinates, context);
         }
       };
@@ -141,7 +147,7 @@ const _handleArrowKey = async (
   }
 };
 
-const _handleAbility = async (key: NumberKey, { session }: ScreenHandlerContext) => {
+const _handleAbility = async (key: NumberKey, session: Session, state: GameState) => {
   const playerUnit = session.getPlayerUnit();
 
   const index = parseInt(key.toString());
@@ -154,7 +160,7 @@ const _handleAbility = async (key: NumberKey, { session }: ScreenHandlerContext)
   }
 };
 
-const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
+const _handleEnter = async (session: Session, state: GameState) => {
   const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const playerUnit = session.getPlayerUnit();
   const coordinates = playerUnit.getCoordinates();

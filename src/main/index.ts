@@ -33,7 +33,7 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await addInitialState({ state, mapFactory, session });
+  await addInitialState(state, session);
   await showSplashScreen(session);
   setInterval(async () => {
     await renderer.render(session);
