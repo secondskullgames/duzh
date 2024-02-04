@@ -36,23 +36,20 @@ const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
 type Props = Readonly<{
   state: GameState;
   session: Session;
-  mapFactory: MapFactory;
 }>;
 
 export default class InputHandler {
   private readonly state: GameState;
   private readonly session: Session;
-  private readonly mapFactory: MapFactory;
 
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, session, mapFactory }: Props) {
+  constructor({ state, session }: Props) {
     this.state = state;
     this.session = session;
-    this.mapFactory = mapFactory;
     this.busy = false;
     this.eventTarget = null;
   }

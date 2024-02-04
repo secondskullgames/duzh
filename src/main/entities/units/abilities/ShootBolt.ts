@@ -60,7 +60,7 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, imageFactory: session.getImageFactory() }
+        { map, imageFactory: state.getImageFactory() }
       );
       await playAnimation(boltAnimation, { map });
       session.getTicker().log(message, { turn: session.getTurn() });
@@ -74,7 +74,7 @@ export const ShootBolt: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { map, imageFactory: session.getImageFactory() }
+        { map, imageFactory: state.getImageFactory() }
       );
       await playAnimation(boltAnimation, { map });
     }

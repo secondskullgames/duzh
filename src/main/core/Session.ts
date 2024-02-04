@@ -4,12 +4,10 @@ import { InventoryState, InventoryV2State } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
 import { checkNotNull, checkState } from '../utils/preconditions';
-import ImageFactory from '../graphics/images/ImageFactory';
 import MapInstance from '../maps/MapInstance';
 import type { UnitAbility } from '../entities/units/abilities/UnitAbility';
 
 export interface Session {
-  getImageFactory: () => ImageFactory;
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
@@ -43,7 +41,6 @@ export namespace Session {
 }
 
 class SessionImpl implements Session {
-  private readonly imageFactory: ImageFactory;
   private readonly ticker: Ticker;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
@@ -58,7 +55,6 @@ class SessionImpl implements Session {
   private queuedAbility: UnitAbility | null;
 
   constructor() {
-    this.imageFactory = new ImageFactory();
     this.ticker = new Ticker();
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
@@ -78,8 +74,6 @@ class SessionImpl implements Session {
     checkState(this.playerUnit === null);
     this.playerUnit = unit;
   };
-
-  getImageFactory = (): ImageFactory => this.imageFactory;
 
   getScreen = (): GameScreen => this.screen;
   setScreen = (screen: GameScreen) => {

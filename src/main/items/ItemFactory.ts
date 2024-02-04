@@ -120,12 +120,12 @@ const createInventoryEquipment = async (
   const onUse: ItemProc = async (
     item: InventoryItem,
     unit: Unit,
-    { state, session }: ItemProcContext
+    { session, state }: ItemProcContext
   ) => {
     const equipment = await createEquipment(equipmentClass, {
-      imageFactory: session.getImageFactory()
+      imageFactory: state.getImageFactory()
     });
-    return equipItem(item, equipment, unit, { state, session });
+    return equipItem(equipment, unit, session);
   };
 
   const model = await loadEquipmentModel(equipmentClass);

@@ -9,6 +9,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -21,15 +22,18 @@ const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 type Props = Readonly<{
   textRenderer: TextRenderer;
   graphics: Graphics;
+  imageFactory: ImageFactory;
 }>;
 
 export default class InventoryRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, graphics, imageFactory }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   /**
@@ -38,9 +42,9 @@ export default class InventoryRenderer implements Renderer {
   render = async (session: Session) => {
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventory();
-    const { graphics } = this;
+    const { graphics, imageFactory } = this;
 
-    const image = await session.getImageFactory().getImage({
+    const image = await imageFactory.getImage({
       filename: INVENTORY_BACKGROUND_FILENAME
     });
     // TODO: need a 640x360 version of this image

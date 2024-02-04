@@ -42,7 +42,7 @@ export const shootFireball = async (
       { dx, dy },
       coordinatesList,
       targetUnit,
-      { map, imageFactory: session.getImageFactory() }
+      { map, imageFactory: state.getImageFactory() }
     );
     await playAnimation(fireballAnimation, { map });
     const adjustedDamage = await dealDamage(damage, {
@@ -61,7 +61,7 @@ export const shootFireball = async (
       direction,
       coordinatesList,
       null,
-      { map, imageFactory: session.getImageFactory() }
+      { map, imageFactory: state.getImageFactory() }
     );
     await playAnimation(fireballAnimation, { map });
   }

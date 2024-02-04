@@ -6,14 +6,13 @@ import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import MapFactory from './maps/MapFactory';
 import { addInitialState } from './actions/addInitialState';
 import { Session } from './core/Session';
 
 const main = async () => {
   const state = GameState.create();
   const session = Session.create();
-  const imageFactory = session.getImageFactory();
+  const imageFactory = state.getImageFactory();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
   const renderer = new GameRenderer({
@@ -21,11 +20,9 @@ const main = async () => {
     imageFactory,
     textRenderer
   });
-  const mapFactory = new MapFactory();
   const inputHandler = new InputHandler({
     state,
-    session,
-    mapFactory
+    session
   });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {

@@ -8,31 +8,33 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 
 type Props = Readonly<{
   graphics: Graphics;
   textRenderer: TextRenderer;
+  imageFactory: ImageFactory;
 }>;
 
 export default class LevelUpScreenRenderer implements Renderer {
   private readonly graphics: Graphics;
   private readonly textRenderer: TextRenderer;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ graphics, textRenderer }: Props) {
+  constructor({ graphics, textRenderer, imageFactory }: Props) {
     this.graphics = graphics;
     this.textRenderer = textRenderer;
+    this.imageFactory = imageFactory;
   }
 
   render = async (session: Session) => {
-    const { graphics } = this;
+    const { graphics, imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
     const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
-    const image = await session
-      .getImageFactory()
-      .getImage({ filename: BACKGROUND_FILENAME });
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

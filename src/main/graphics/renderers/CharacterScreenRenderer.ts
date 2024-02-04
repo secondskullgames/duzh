@@ -8,6 +8,7 @@ import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
+import ImageFactory from '../images/ImageFactory';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
@@ -15,25 +16,26 @@ const LINE_HEIGHT = 15;
 type Props = Readonly<{
   textRenderer: TextRenderer;
   graphics: Graphics;
+  imageFactory: ImageFactory;
 }>;
 
 export default class CharacterScreenRenderer implements Renderer {
   private readonly textRenderer: TextRenderer;
   private readonly graphics: Graphics;
+  private readonly imageFactory: ImageFactory;
 
-  constructor({ textRenderer, graphics }: Props) {
+  constructor({ textRenderer, graphics, imageFactory }: Props) {
     this.textRenderer = textRenderer;
     this.graphics = graphics;
+    this.imageFactory = imageFactory;
   }
 
   /**
    * @override {@link Renderer#render}
    */
   render = async (session: Session) => {
-    const { graphics } = this;
-    const image = await session
-      .getImageFactory()
-      .getImage({ filename: BACKGROUND_FILENAME });
+    const { graphics, imageFactory } = this;
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,

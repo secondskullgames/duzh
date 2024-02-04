@@ -23,7 +23,7 @@ export const floorFire = async (
   playSound(Sounds.PLAYER_HITS_ENEMY);
   const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
     map,
-    imageFactory: session.getImageFactory()
+    imageFactory: state.getImageFactory()
   });
   await playAnimation(animation, { map });
 

@@ -11,13 +11,13 @@ import { loadTileSetModel } from '../utils/models';
 import ImageFactory from '../graphics/images/ImageFactory';
 import { Feature } from '../utils/features';
 
-type CreateTileContext = Readonly<{
+type CreateTileParams = Readonly<{
   tileType: TileType;
   tileSet: TileSet;
   coordinates: Coordinates;
 }>;
 
-const createTile = ({ tileType, tileSet, coordinates }: CreateTileContext): Tile => {
+const createTile = ({ tileType, tileSet, coordinates }: CreateTileParams): Tile => {
   const tilesOfType = checkNotNull(tileSet[tileType]);
   const sprite = randChoice(tilesOfType);
   return new Tile({ tileType, sprite, coordinates });

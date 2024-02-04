@@ -16,7 +16,7 @@ export const addInitialState = async (state: GameState, session: Session) => {
     ticker.log('You are a god! Use your power wisely!', { turn: session.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {
       const equipment = await ItemFactory.createEquipment(equipmentId, {
-        imageFactory: session.getImageFactory()
+        imageFactory: state.getImageFactory()
       });
       playerUnit.getEquipment().add(equipment);
       equipment.attach(playerUnit);
@@ -35,7 +35,7 @@ export const addInitialState = async (state: GameState, session: Session) => {
       state.getMapFactory().loadMap(spec, {
         state,
         session,
-        imageFactory: session.getImageFactory()
+        imageFactory: state.getImageFactory()
       });
   });
   state.addMaps(maps);

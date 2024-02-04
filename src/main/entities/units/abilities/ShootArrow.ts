@@ -60,7 +60,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, imageFactory: session.getImageFactory() }
+        { map, imageFactory: state.getImageFactory() }
       );
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
@@ -79,7 +79,7 @@ export const ShootArrow: UnitAbility = {
         { dx, dy },
         coordinatesList,
         null,
-        { map, imageFactory: session.getImageFactory() }
+        { map, imageFactory: state.getImageFactory() }
       );
       await playAnimation(arrowAnimation, { map });
     }

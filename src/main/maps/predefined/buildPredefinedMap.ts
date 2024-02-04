@@ -27,11 +27,6 @@ import { Session } from '../../core/Session';
 import Coordinates from '../../geometry/Coordinates';
 import { GameState } from '../../core/GameState';
 
-type Context = Readonly<{
-  imageFactory: ImageFactory;
-  session: Session;
-}>;
-
 /** TODO this should go somewhere else */
 const _getEnemyController = (enemyUnitModel: UnitModel) => {
   if (enemyUnitModel.type === 'WIZARD') {

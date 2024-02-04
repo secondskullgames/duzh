@@ -59,21 +59,31 @@ export default class GameRenderer implements Renderer {
 
     this.imageFactory = imageFactory;
     this.textRenderer = textRenderer;
-    this.gameScreenRenderer = new GameScreenRenderer({ graphics: bufferGraphics });
-    this.hudRenderer = new HUDRenderer({ textRenderer, graphics: bufferGraphics });
+    this.gameScreenRenderer = new GameScreenRenderer({
+      graphics: bufferGraphics,
+      imageFactory
+    });
+    this.hudRenderer = new HUDRenderer({
+      textRenderer,
+      graphics: bufferGraphics,
+      imageFactory
+    });
     this.inventoryRenderer = Feature.isEnabled(Feature.INVENTORY_V2)
       ? new InventoryRendererV2({
           textRenderer,
-          graphics: bufferGraphics
+          graphics: bufferGraphics,
+          imageFactory
         })
       : new InventoryRenderer({
           textRenderer,
-          graphics: bufferGraphics
+          graphics: bufferGraphics,
+          imageFactory
         });
     this.mapScreenRenderer = new MapScreenRenderer({ graphics: bufferGraphics });
     this.characterScreenRenderer = new CharacterScreenRenderer({
       textRenderer,
-      graphics: bufferGraphics
+      graphics: bufferGraphics,
+      imageFactory
     });
     this.helpScreenRenderer = new HelpScreenRenderer({
       textRenderer,
@@ -81,7 +91,8 @@ export default class GameRenderer implements Renderer {
     });
     this.levelUpScreenRenderer = new LevelUpScreenRenderer({
       textRenderer,
-      graphics: bufferGraphics
+      graphics: bufferGraphics,
+      imageFactory
     });
 
     parent.appendChild(canvas);
