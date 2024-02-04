@@ -7,18 +7,23 @@ import ImageFactory from '../images/ImageFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
 
-type Context = Readonly<{
-  map: MapInstance;
+type Props = Readonly<{
   imageFactory: ImageFactory;
 }>;
 
-export default {
-  getArrowAnimation: async (
+export default class AnimationFactory {
+  private readonly imageFactory: ImageFactory;
+
+  constructor({ imageFactory }: Props) {
+    this.imageFactory = imageFactory;
+  }
+
+  getArrowAnimation = async (
     source: Unit,
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    map: MapInstance
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -40,7 +45,7 @@ export default {
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
-        imageFactory
+        imageFactory: this.imageFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
@@ -80,14 +85,14 @@ export default {
     return {
       frames
     };
-  },
+  };
 
-  getBoltAnimation: async (
+  getBoltAnimation = async (
     source: Unit,
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    map: MapInstance
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -107,7 +112,7 @@ export default {
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createBolt(coordinates, direction, {
-        imageFactory
+        imageFactory: this.imageFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
@@ -146,14 +151,14 @@ export default {
     return {
       frames
     };
-  },
+  };
 
-  getFireballAnimation: async (
+  getFireballAnimation = async (
     source: Unit,
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    { map, imageFactory }: Context
+    map: MapInstance
   ): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     // first frame
@@ -175,7 +180,7 @@ export default {
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(coordinates, direction, {
-        imageFactory
+        imageFactory: this.imageFactory
       });
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
@@ -215,14 +220,9 @@ export default {
     return {
       frames
     };
-  },
+  };
 
-  getFloorFireAnimation: async (
-    source: Unit,
-    targets: Unit[],
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    context: Context
-  ): Promise<Animation> => {
+  getFloorFireAnimation = async (source: Unit, targets: Unit[]): Promise<Animation> => {
     const frames: AnimationFrame[] = [];
     for (let i = 0; i < targets.length; i++) {
       const unitFrames: UnitAnimationFrame[] = [];
@@ -254,5 +254,5 @@ export default {
     return {
       frames
     };
-  }
-};
+  };
+}

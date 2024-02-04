@@ -4,6 +4,7 @@ import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import MapFactory from '../maps/MapFactory';
 import ImageFactory from '../graphics/images/ImageFactory';
+import AnimationFactory from '../graphics/animations/AnimationFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -15,12 +16,19 @@ export interface GameState {
   reset: () => void;
   getMapFactory: () => MapFactory;
   getImageFactory: () => ImageFactory;
+  getAnimationFactory: () => AnimationFactory;
   hasNextMap: (currentIndex: number) => boolean;
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 }
 
+type Props = Readonly<{
+  imageFactory: ImageFactory;
+  mapFactory: MapFactory;
+  animationFactory: AnimationFactory;
+}>;
+
 export namespace GameState {
-  export const create = (): GameState => new GameStateImpl();
+  export const create = (props: Props): GameState => new GameStateImpl(props);
 }
 
 /**
@@ -31,11 +39,13 @@ class GameStateImpl implements GameState {
   private readonly maps: Record<number, MapInstance>;
   private readonly mapFactory: MapFactory;
   private readonly imageFactory: ImageFactory;
+  private readonly animationFactory: AnimationFactory;
   private readonly generatedEquipmentIds: string[];
 
-  constructor() {
-    this.mapFactory = new MapFactory();
-    this.imageFactory = new ImageFactory();
+  constructor({ imageFactory, mapFactory, animationFactory }: Props) {
+    this.imageFactory = imageFactory;
+    this.mapFactory = mapFactory;
+    this.animationFactory = animationFactory;
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -76,4 +86,5 @@ class GameStateImpl implements GameState {
 
   getMapFactory = (): MapFactory => this.mapFactory;
   getImageFactory = (): ImageFactory => this.imageFactory;
+  getAnimationFactory = (): AnimationFactory => this.animationFactory;
 }

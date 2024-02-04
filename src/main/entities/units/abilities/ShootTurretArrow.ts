@@ -7,7 +7,6 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
@@ -52,13 +51,9 @@ export const ShootTurretArrow: UnitAbility = {
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        targetUnit,
-        { map, imageFactory: state.getImageFactory() }
-      );
+      const arrowAnimation = await state
+        .getAnimationFactory()
+        .getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -71,13 +66,9 @@ export const ShootTurretArrow: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        null,
-        { map, imageFactory: state.getImageFactory() }
-      );
+      const arrowAnimation = await state
+        .getAnimationFactory()
+        .getArrowAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(arrowAnimation, { map });
     }
   }

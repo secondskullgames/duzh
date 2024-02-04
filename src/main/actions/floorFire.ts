@@ -24,10 +24,9 @@ export const floorFire = async (
   });
 
   playSound(Sounds.PLAYER_HITS_ENEMY);
-  const animation = await AnimationFactory.getFloorFireAnimation(unit, adjacentUnits, {
-    map,
-    imageFactory: state.getImageFactory()
-  });
+  const animation = await state
+    .getAnimationFactory()
+    .getFloorFireAnimation(unit, adjacentUnits);
   await playAnimation(animation, { map });
 
   for (const adjacentUnit of adjacentUnits) {

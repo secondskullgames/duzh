@@ -7,7 +7,6 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
@@ -55,13 +54,9 @@ export const ShootBolt: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        targetUnit,
-        { map, imageFactory: state.getImageFactory() }
-      );
+      const boltAnimation = await state
+        .getAnimationFactory()
+        .getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
       await playAnimation(boltAnimation, { map });
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
@@ -69,13 +64,9 @@ export const ShootBolt: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      const boltAnimation = await AnimationFactory.getBoltAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        null,
-        { map, imageFactory: state.getImageFactory() }
-      );
+      const boltAnimation = await state
+        .getAnimationFactory()
+        .getBoltAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(boltAnimation, { map });
     }
   }

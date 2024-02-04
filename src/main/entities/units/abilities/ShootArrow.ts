@@ -7,7 +7,6 @@ import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
-import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
@@ -52,15 +51,16 @@ export const ShootArrow: UnitAbility = {
     }
 
     const targetUnit = map.getUnit({ x, y });
+    const animationFactory = state.getAnimationFactory();
     if (targetUnit) {
       const damage = unit.getRangedDamage();
       playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
+      const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         targetUnit,
-        { map, imageFactory: state.getImageFactory() }
+        map
       );
       await playAnimation(arrowAnimation, { map });
       const adjustedDamage = await dealDamage(damage, {
@@ -74,12 +74,12 @@ export const ShootArrow: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      const arrowAnimation = await AnimationFactory.getArrowAnimation(
+      const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },
         coordinatesList,
         null,
-        { map, imageFactory: state.getImageFactory() }
+        map
       );
       await playAnimation(arrowAnimation, { map });
     }

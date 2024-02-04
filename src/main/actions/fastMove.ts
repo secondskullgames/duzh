@@ -4,21 +4,16 @@ import { GameState } from '../core/GameState';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
-import MapInstance from '../maps/MapInstance';
 import { sleep } from '../utils/promises';
 import { Session } from '../core/Session';
-
-type Context = Readonly<{
-  state: GameState;
-  map: MapInstance;
-  session: Session;
-}>;
 
 export const fastMove = async (
   unit: Unit,
   direction: Direction,
-  { state, map, session }: Context
+  state: GameState,
+  session: Session
 ) => {
+  const map = session.getMap();
   let coordinates: Coordinates;
   // eslint-disable-next-line no-constant-condition
   while (true) {

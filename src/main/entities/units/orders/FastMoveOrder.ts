@@ -28,6 +28,6 @@ export class FastMoveOrder implements UnitOrder {
       return;
     }
 
-    return fastMove(unit, direction, { state, map, session });
+    return fastMove(unit, direction, state, session);
   };
 }
