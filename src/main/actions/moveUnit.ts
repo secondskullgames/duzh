@@ -31,7 +31,7 @@ export const moveUnit = async (
       await EquipmentScript.forName(equipment.script).onMove?.(
         equipment,
         nextCoordinates,
-        { state, map, session }
+        { state, session }
       );
     }
   }

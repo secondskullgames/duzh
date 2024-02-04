@@ -24,21 +24,20 @@ export type Attack = Readonly<{
 type Context = Readonly<{
   state: GameState;
   session: Session;
-  map: MapInstance;
 }>;
 
 export const attackUnit = async (
   attacker: Unit,
   defender: Unit,
   attack: Attack,
-  { state, map, session }: Context
+  { state, session }: Context
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).onAttack?.(
         equipment,
         defender.getCoordinates(),
-        { state, map, session }
+        { state, session }
       );
     }
   }
@@ -62,7 +61,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { map, session });
+    await die(defender, { map: session.getMap(), session });
     recordKill(attacker, defender, session);
   }
 

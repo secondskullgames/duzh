@@ -54,7 +54,7 @@ export const KnockbackAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, { state, session });
 
       targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {

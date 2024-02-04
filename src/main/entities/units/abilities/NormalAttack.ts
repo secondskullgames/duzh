@@ -49,7 +49,7 @@ export const NormalAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, { state, session });
       unit.gainMana(MANA_RETURNED);
     }
   }

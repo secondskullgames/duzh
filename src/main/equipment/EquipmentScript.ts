@@ -11,7 +11,6 @@ export type EquipmentScriptName = 'bolt_sword';
 type Context = Readonly<{
   state: GameState;
   session: Session;
-  map: MapInstance;
 }>;
 
 export type EquipmentScript = Readonly<{
@@ -28,8 +27,9 @@ const BoltSwordScript: EquipmentScript = {
   onMove: async (
     equipment: Equipment,
     target: Coordinates,
-    { state, session, map }: Context
+    { state, session }: Context
   ) => {
+    const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
 
     const direction = unit.getDirection();

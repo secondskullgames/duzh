@@ -52,7 +52,7 @@ export const StunAttack: UnitAbility = {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, { state, map, session });
+      await attackUnit(unit, targetUnit, attack, { state, session });
       targetUnit.setStunned(stunDuration);
     }
   }
