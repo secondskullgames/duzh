@@ -28,8 +28,7 @@ import { loadPreviousMap } from '../../actions/loadPreviousMap';
 
 const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerContext) => {
   const { key, modifiers } = command;
-  const { session } = context;
-  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
+  const { state, session } = context;
 
   if (_isArrowKey(key)) {
     await _handleArrowKey(key as ArrowKey, modifiers, context);
@@ -37,7 +36,7 @@ const handleKeyCommand = async (command: KeyCommand, context: ScreenHandlerConte
     await _handleAbility(key as NumberKey, context);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn(true, { ...context, map });
+    await playTurn(true, state, session);
   } else if (key === 'TAB') {
     session.prepareInventoryScreen(session.getPlayerUnit());
     session.prepareInventoryV2(session.getPlayerUnit());
@@ -75,7 +74,6 @@ const _handleArrowKey = async (
 ) => {
   const direction = getDirection(key);
   const playerUnit = session.getPlayerUnit();
-  const map = checkNotNull(session.getMap(), 'Map is not loaded!');
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
@@ -139,7 +137,7 @@ const _handleArrowKey = async (
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn(willCompleteTurn, { state, map, session });
+    await playTurn(willCompleteTurn, state, session);
   }
 };
 
@@ -171,7 +169,7 @@ const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
     playSound(Sounds.DESCEND_STAIRS); // TODO
     await loadPreviousMap({ state, session });
   }
-  await playTurn(false, { state, map, session });
+  await playTurn(false, state, session);
 };
 
 export default {

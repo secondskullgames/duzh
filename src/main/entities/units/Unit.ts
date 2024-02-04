@@ -13,13 +13,15 @@ import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import { isInStraightLine } from '../../maps/MapUtils';
-import Entity, { UpdateContext } from '../Entity';
+import Entity from '../Entity';
 import { Faction } from '../../types/types';
 import { checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
+import { GameState } from '../../core/GameState';
+import { Session } from '../../core/Session';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -188,9 +190,10 @@ export default class Unit implements Entity, Animatable {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  update = async ({ state, map, session }: UpdateContext) => {
+  playTurnAction = async (state: GameState, session: Session) => {
     this._upkeep();
     if (this.stunDuration === 0) {
+      const map = session.getMap();
       const order = this.controller.issueOrder(this, { state, map, session });
       await order.execute(this, { state, map, session });
     }

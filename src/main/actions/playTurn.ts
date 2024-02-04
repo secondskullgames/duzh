@@ -2,37 +2,34 @@ import { updateRevealedTiles } from './updateRevealedTiles';
 import Unit from '../entities/units/Unit';
 import { sortBy } from '../utils/arrays';
 import { GameState } from '../core/GameState';
-import MapInstance from '../maps/MapInstance';
 import { Session } from '../core/Session';
-
-type Context = Readonly<{
-  state: GameState;
-  map: MapInstance;
-  session: Session;
-}>;
 
 /**
  * TODO ugly inverted boolean
  * TODO this method does not make sense
  */
-export const playTurn = async (notPlayerOnly: boolean, context: Context) => {
-  const { state, map, session } = context;
+export const playTurn = async (
+  notPlayerOnly: boolean,
+  state: GameState,
+  session: Session
+) => {
+  const map = session.getMap();
   session.setTurnInProgress(true);
   if (!notPlayerOnly) {
     const playerUnit = session.getPlayerUnit();
     if (playerUnit.getLife() > 0) {
-      await playerUnit.update({ state, map, session });
+      await playerUnit.playTurnAction(state, session);
     }
   } else {
     const sortedUnits = _sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
-        await unit.update({ state, map, session });
+        await unit.playTurnAction(state, session);
       }
     }
 
     for (const object of map.getAllObjects()) {
-      await object.update({ state, map, session });
+      await object.playTurnAction(state, session);
     }
   }
 

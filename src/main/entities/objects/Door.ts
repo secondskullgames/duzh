@@ -57,7 +57,7 @@ export default class Door extends GameObject implements Animatable {
   getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
 
   /** @override {@link Entity#update} */
-  update = async () => {};
+  playTurnAction = async () => {};
 
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => this._state === DoorState.CLOSED;

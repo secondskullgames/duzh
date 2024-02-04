@@ -31,7 +31,7 @@ export default class Bonus extends GameObject {
   }
 
   /** @override {@link Entity#update} */
-  update = async () => {};
+  playTurnAction = async () => {};
 
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => false;
