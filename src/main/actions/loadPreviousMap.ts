@@ -15,7 +15,7 @@ export const loadPreviousMap = async ({ state, session }: Context) => {
   session.setMapIndex(previousMapIndex);
   const map = await state.loadMap(previousMapIndex);
   session.setMap(map);
-  updateRevealedTiles({ session, map });
+  updateRevealedTiles(session);
   //session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
   if (map.music) {
     Music.playMusic(map.music);

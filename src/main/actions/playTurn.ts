@@ -33,7 +33,7 @@ export const playTurn = async (
     }
   }
 
-  updateRevealedTiles({ session, map });
+  updateRevealedTiles(session);
   session.nextTurn();
   session.setTurnInProgress(false);
 };

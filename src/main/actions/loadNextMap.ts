@@ -4,12 +4,7 @@ import { GameState } from '../core/GameState';
 import { GameScreen } from '../core/GameScreen';
 import { Session } from '../core/Session';
 
-type Context = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
-export const loadNextMap = async ({ state, session }: Context) => {
+export const loadNextMap = async (session: Session, state: GameState) => {
   if (!state.hasNextMap(session.getMapIndex())) {
     Music.stop();
     session.setScreen(GameScreen.VICTORY);
@@ -18,7 +13,7 @@ export const loadNextMap = async ({ state, session }: Context) => {
     session.setMapIndex(nextMapIndex);
     const map = await state.loadMap(nextMapIndex);
     session.setMap(map);
-    updateRevealedTiles({ session, map });
+    updateRevealedTiles(session);
     //session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
     if (map.music) {
       Music.playMusic(map.music);

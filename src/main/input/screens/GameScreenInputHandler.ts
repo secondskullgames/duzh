@@ -164,7 +164,7 @@ const _handleEnter = async ({ state, session }: ScreenHandlerContext) => {
     map.removeObject(item);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
     playSound(Sounds.DESCEND_STAIRS);
-    await loadNextMap({ state, session });
+    await loadNextMap(session, state);
   } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
     playSound(Sounds.DESCEND_STAIRS); // TODO
     await loadPreviousMap({ state, session });

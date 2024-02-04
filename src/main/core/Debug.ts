@@ -65,10 +65,7 @@ export class Debug {
       ...this,
       killEnemies: () => killEnemies(this.session.getMap(), this.session),
       nextLevel: async () => {
-        await loadNextMap({
-          state: this.state,
-          session: this.session
-        });
+        await loadNextMap(this.session, this.state);
       }
     };
   };

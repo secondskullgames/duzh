@@ -10,8 +10,8 @@ type Context = Readonly<{
 }>;
 
 export const startGame = async ({ state, session }: Context) => {
-  await loadNextMap({ state, session });
+  await loadNextMap(session, state);
   Music.stop();
   // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
-  updateRevealedTiles({ session, map: session.getMap() });
+  updateRevealedTiles(session);
 };
