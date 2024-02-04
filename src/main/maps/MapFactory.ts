@@ -44,7 +44,7 @@ export default class MapFactory {
         return mapBuilder.build(context);
       }
       case 'predefined': {
-        return this._loadPredefinedMap(mapSpec.id, context);
+        return buildPredefinedMap(mapSpec.id, context.session, context.state);
       }
     }
   };
@@ -55,14 +55,7 @@ export default class MapFactory {
   ): Promise<GeneratedMapBuilder> => {
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    return dungeonGenerator.generateMap(mapClass, style.tileSet, { imageFactory });
-  };
-
-  private _loadPredefinedMap = async (
-    mapId: string,
-    context: Context
-  ): Promise<MapInstance> => {
-    return buildPredefinedMap(mapId, context);
+    return dungeonGenerator.generateMap(mapClass, style.tileSet, imageFactory);
   };
 
   private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {

@@ -11,6 +11,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 5;
 
@@ -23,7 +24,12 @@ export const ShootArrow: UnitAbility = {
   icon: null,
   manaCost,
 
-  use: async (unit: Unit, coordinates: Coordinates | null, session: Session) => {
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    session: Session,
+    state: GameState
+  ) => {
     if (!coordinates) {
       throw new Error('ShootArrow requires a target!');
     }
@@ -65,7 +71,7 @@ export const ShootArrow: UnitAbility = {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { map, session });
+        await die(targetUnit, state, session);
       }
     } else {
       const arrowAnimation = await AnimationFactory.getArrowAnimation(

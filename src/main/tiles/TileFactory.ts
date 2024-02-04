@@ -23,14 +23,7 @@ const createTile = ({ tileType, tileSet, coordinates }: CreateTileContext): Tile
   return new Tile({ tileType, sprite, coordinates });
 };
 
-type GetTileSetContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
-const getTileSet = async (
-  id: string,
-  { imageFactory }: GetTileSetContext
-): Promise<TileSet> => {
+const getTileSet = async (id: string, imageFactory: ImageFactory): Promise<TileSet> => {
   const model = await loadTileSetModel(id);
   const tileSet: {
     [key in TileType]?: (Sprite | null)[];

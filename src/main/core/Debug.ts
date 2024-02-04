@@ -32,10 +32,7 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    await die(playerUnit, {
-      map: this.session.getMap(),
-      session: this.session
-    });
+    await die(playerUnit, this.state, this.session);
   };
 
   levelUp = async () => {

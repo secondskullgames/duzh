@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import UnitFactory from '../UnitFactory';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const manaCost = 25;
 
@@ -16,7 +17,12 @@ export const Summon: UnitAbility = {
   manaCost,
   icon: null,
 
-  use: async (unit: Unit, coordinates: Coordinates | null, session: Session) => {
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    session: Session,
+    state: GameState
+  ) => {
     if (!coordinates) {
       throw new Error('Summon requires a target!');
     }
@@ -35,9 +41,7 @@ export const Summon: UnitAbility = {
         level: 1, // whatever
         coordinates
       },
-      {
-        imageFactory: session.getImageFactory()
-      }
+      state
     );
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);

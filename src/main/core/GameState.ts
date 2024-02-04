@@ -3,6 +3,7 @@ import { checkArgument } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
 import MapFactory from '../maps/MapFactory';
+import ImageFactory from '../graphics/images/ImageFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -13,6 +14,7 @@ export interface GameState {
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
   getMapFactory: () => MapFactory;
+  getImageFactory: () => ImageFactory;
   hasNextMap: (currentIndex: number) => boolean;
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 }
@@ -28,10 +30,12 @@ class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly mapFactory: MapFactory;
+  private readonly imageFactory: ImageFactory;
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
     this.mapFactory = new MapFactory();
+    this.imageFactory = new ImageFactory();
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -71,4 +75,5 @@ class GameStateImpl implements GameState {
   };
 
   getMapFactory = (): MapFactory => this.mapFactory;
+  getImageFactory = (): ImageFactory => this.imageFactory;
 }

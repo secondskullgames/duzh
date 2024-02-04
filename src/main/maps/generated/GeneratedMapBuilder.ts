@@ -64,7 +64,7 @@ export default class GeneratedMapBuilder {
    * TODO: it is really really really questionable that this moves the player unit
    */
   build = async (context: Context): Promise<MapInstance> => {
-    const { session } = context;
+    const { state, session } = context;
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []);
     const playerUnit = session.getPlayerUnit();
     const startingCoordinates = checkNotNull(candidateLocations.shift());
@@ -78,7 +78,7 @@ export default class GeneratedMapBuilder {
     }
     playerUnit.setCoordinates(startingCoordinates);
     this.entityLocations.add(startingCoordinates);
-    const units = [playerUnit, ...(await this._generateUnits(context))];
+    const units = [playerUnit, ...(await this._generateUnits(state))];
     const objects: GameObject[] = await this._generateObjects(context);
 
     return new MapInstance({
@@ -92,7 +92,7 @@ export default class GeneratedMapBuilder {
     });
   };
 
-  private _generateUnits = async ({ imageFactory }: Context): Promise<Unit[]> => {
+  private _generateUnits = async (state: GameState): Promise<Unit[]> => {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(this.tiles, ['FLOOR'], []).filter(
       coordinates => !this.entityLocations.includes(coordinates)
@@ -148,9 +148,7 @@ export default class GeneratedMapBuilder {
           coordinates,
           level: this.level
         },
-        {
-          imageFactory
-        }
+        state
       );
       units.push(unit);
       enemiesRemaining--;

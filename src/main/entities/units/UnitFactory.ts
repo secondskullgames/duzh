@@ -12,8 +12,8 @@ import { Faction } from '../../types/types';
 import { loadUnitModel } from '../../utils/models';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import { Feature } from '../../utils/features';
+import { GameState } from '../../core/GameState';
 
 type CreateUnitProps = Readonly<{
   /**
@@ -28,17 +28,11 @@ type CreateUnitProps = Readonly<{
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-type Context = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
-const createUnit = async (
-  props: CreateUnitProps,
-  { imageFactory }: Context
-): Promise<Unit> => {
+const createUnit = async (props: CreateUnitProps, state: GameState): Promise<Unit> => {
   const { name, unitClass, faction, controller, level, coordinates, playerUnitClass } =
     props;
   const model: UnitModel = await loadUnitModel(unitClass);
+  const imageFactory = state.getImageFactory();
   const sprite = await SpriteFactory.createUnitSprite(
     model.sprite,
     PaletteSwaps.create(model.paletteSwaps),
@@ -63,7 +57,7 @@ const createUnit = async (
   });
 };
 
-const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
+const createPlayerUnit = async (state: GameState): Promise<Unit> => {
   const unit = await createUnit(
     {
       unitClass: 'player',
@@ -73,7 +67,7 @@ const createPlayerUnit = async ({ imageFactory }: Context): Promise<Unit> => {
       coordinates: { x: 0, y: 0 },
       playerUnitClass: PlayerUnitClass.DEFAULT
     },
-    { imageFactory }
+    state
   );
   if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
     unit.learnAbility(abilityForName(AbilityName.DASH));

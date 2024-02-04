@@ -34,7 +34,7 @@ export const floorFire = async (
     });
 
     if (adjacentUnit.getLife() <= 0) {
-      await die(adjacentUnit, { map, session });
+      await die(adjacentUnit, state, session);
       recordKill(unit, adjacentUnit, session);
     }
   }

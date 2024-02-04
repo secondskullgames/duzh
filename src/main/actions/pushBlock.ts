@@ -18,7 +18,7 @@ export const pushBlock = async (
 
   const map = session.getMap();
   if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
-    await moveObject(block, nextCoordinates, { map });
+    await moveObject(block, nextCoordinates, map);
     await moveUnit(unit, coordinates, session, state);
   }
 };

@@ -56,7 +56,7 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, { map: session.getMap(), session });
+    await die(defender, state, session);
     recordKill(attacker, defender, session);
   }
 

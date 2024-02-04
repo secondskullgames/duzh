@@ -6,25 +6,23 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
+import { GameState } from '../../core/GameState';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
-type CreateObjectContext = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
 const createMirror = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<Spawner> => {
-  const sprite = await SpriteFactory.createMirrorSprite({ imageFactory });
+  const sprite = await SpriteFactory.createMirrorSprite({
+    imageFactory: state.getImageFactory()
+  });
   const spawnFunction = (coordinates: Coordinates) =>
     UnitFactory.createUnit(
       {
@@ -34,7 +32,7 @@ const createMirror = async (
         controller: new BasicEnemyController(),
         faction: Faction.ENEMY
       },
-      { imageFactory }
+      state
     );
   const spawner = new Spawner({
     spawnFunction,
@@ -51,11 +49,11 @@ const createMirror = async (
 const createSpawner = async (
   coordinates: Coordinates,
   type: SpawnerClass,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, { imageFactory });
+      return createMirror(coordinates, state);
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
@@ -63,10 +61,10 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite('block', PaletteSwaps.empty(), {
-    imageFactory
+    imageFactory: state.getImageFactory()
   });
 
   return new Block({
@@ -78,12 +76,12 @@ const createMovableBlock = async (
 
 const createHealthGlobe = async (
   coordinates: Coordinates,
-  { imageFactory }: CreateObjectContext
+  state: GameState
 ): Promise<GameObject> => {
   const sprite = await SpriteFactory.createStaticSprite(
     'map_health_globe',
     PaletteSwaps.empty(),
-    { imageFactory }
+    { imageFactory: state.getImageFactory() }
   );
 
   const lifeGained = 10;

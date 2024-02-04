@@ -19,7 +19,8 @@ export const shootFireball = async (
   unit: Unit,
   direction: Direction,
   damage: number,
-  session: Session
+  session: Session,
+  state: GameState
 ) => {
   const { dx, dy } = direction;
   unit.setDirection(direction);
@@ -52,7 +53,7 @@ export const shootFireball = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, { map, session });
+      await die(targetUnit, state, session);
     }
   } else {
     const fireballAnimation = await AnimationFactory.getFireballAnimation(

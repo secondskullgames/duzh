@@ -11,9 +11,7 @@ import { Session } from '../core/Session';
  */
 export const addInitialState = async (state: GameState, session: Session) => {
   const ticker = session.getTicker();
-  const playerUnit = await UnitFactory.createPlayerUnit({
-    imageFactory: session.getImageFactory()
-  });
+  const playerUnit = await UnitFactory.createPlayerUnit(state);
   if (Feature.isEnabled(Feature.GOD_MODE)) {
     ticker.log('You are a god! Use your power wisely!', { turn: session.getTurn() });
     for (const equipmentId of ['god_sword', 'god_armor']) {

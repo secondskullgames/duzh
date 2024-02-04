@@ -11,6 +11,7 @@ import AnimationFactory from '../../../graphics/animations/AnimationFactory';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
+import { GameState } from '../../../core/GameState';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -21,7 +22,12 @@ export const ShootBolt: UnitAbility = {
   icon: null,
   manaCost: 0,
 
-  use: async (unit: Unit, coordinates: Coordinates | null, session: Session) => {
+  use: async (
+    unit: Unit,
+    coordinates: Coordinates | null,
+    session: Session,
+    state: GameState
+  ) => {
     if (!coordinates) {
       throw new Error('Bolt requires a target!');
     }
@@ -60,7 +66,7 @@ export const ShootBolt: UnitAbility = {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, { map, session });
+        await die(targetUnit, state, session);
       }
     } else {
       const boltAnimation = await AnimationFactory.getBoltAnimation(
