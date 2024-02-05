@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Debug } from './core/Debug';
 import { GameState } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
@@ -18,6 +19,10 @@ import UnitFactory from './entities/units/UnitFactory';
 import ProjectileFactory from './entities/objects/ProjectileFactory';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import MapSpec from './schemas/MapSpec';
+import { Symbols } from './Symbols';
+import ImageLoader from './graphics/images/ImageLoader';
+import { ImageCacheImpl } from './graphics/images/ImageCache';
+import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
   (
@@ -28,7 +33,12 @@ const _loadMapSpecs = async (): Promise<MapSpec[]> =>
   ).default as MapSpec[];
 
 const main = async () => {
-  const imageFactory = new ImageFactory();
+  const container = new Container({ defaultScope: 'Singleton' });
+  container.bind(Symbols.ImageCache).to(ImageCacheImpl);
+  container.bind(ImageLoader).toSelf();
+  container.bind(ImageFactory).toSelf();
+
+  const imageFactory = container.get(ImageFactory);
   const spriteFactory = new SpriteFactory({ imageFactory });
   const tileFactory = new TileFactory({ spriteFactory });
   const itemFactory = new ItemFactory({ spriteFactory });

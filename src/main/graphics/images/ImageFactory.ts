@@ -1,12 +1,14 @@
 import { Image } from './Image';
-import ImageCache from './ImageCache';
+import { ImageCache } from './ImageCache';
 import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import PaletteSwaps from '../PaletteSwaps';
 import Color from '../Color';
+import { Symbols } from '../../Symbols';
+import { inject, injectable } from 'inversify';
 
-type Props = Readonly<{
+type Params = Readonly<{
   filename?: string;
   filenames?: string[];
   transparentColor?: Color | null;
@@ -14,23 +16,27 @@ type Props = Readonly<{
   effects?: ImageEffect[];
 }>;
 
+@injectable()
 export default class ImageFactory {
-  private readonly imageLoader = new ImageLoader();
-  private readonly cache: ImageCache = ImageCache.create();
   private readonly rawCache: Record<string, ImageData | null> = {};
 
-  getImage = async (props: Props): Promise<Image> => {
+  constructor(
+    @inject(ImageLoader) private readonly imageLoader: ImageLoader,
+    @inject(Symbols.ImageCache) private readonly cache: ImageCache
+  ) {}
+
+  getImage = async (params: Params): Promise<Image> => {
     const { cache, rawCache } = this;
 
     let filenames: string[];
-    if (props.filenames) {
-      filenames = props.filenames;
-    } else if (props.filename) {
-      filenames = [props.filename];
+    if (params.filenames) {
+      filenames = params.filenames;
+    } else if (params.filename) {
+      filenames = [params.filename];
     } else {
       throw new Error('No filenames were specified!');
     }
-    const { transparentColor, paletteSwaps, effects } = props;
+    const { transparentColor, paletteSwaps, effects } = params;
 
     for (const filename of filenames) {
       const cacheKey = { filename, paletteSwaps, transparentColor, effects };
