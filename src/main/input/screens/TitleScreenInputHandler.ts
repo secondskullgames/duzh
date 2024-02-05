@@ -1,12 +1,12 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { startGameDebug } from '../../actions/startGameDebug';
-import { startGame } from '../../actions/startGame';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
 import { Session } from '../../core/Session';
 import { GameState } from '../../core/GameState';
+import { loadFirstMap } from '../../actions/loadFirstMap';
 
 const handleKeyCommand = async (
   command: KeyCommand,
@@ -30,7 +30,7 @@ const handleKeyCommand = async (
           );
           await startGameDebug(mapInstance, session);
         } else {
-          await startGame(session, state);
+          await loadFirstMap(session, state);
         }
       }
       session.setScreen(GameScreen.GAME);

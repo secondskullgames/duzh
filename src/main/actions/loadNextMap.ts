@@ -5,8 +5,8 @@ import { GameScreen } from '../core/GameScreen';
 import { Session } from '../core/Session';
 
 export const loadNextMap = async (session: Session, state: GameState) => {
+  Music.stop();
   if (!state.hasNextMap(session.getMapIndex())) {
-    Music.stop();
     session.setScreen(GameScreen.VICTORY);
   } else {
     const nextMapIndex = session.getMapIndex() + 1;
@@ -15,10 +15,11 @@ export const loadNextMap = async (session: Session, state: GameState) => {
     session.setMap(map);
     updateRevealedTiles(session);
     // TODO really need some bidirectional magic
-    session.getPlayerUnit().getMap().removeUnit(session.getPlayerUnit());
-    session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
-    session.getPlayerUnit().setMap(map);
-    map.addUnit(session.getPlayerUnit());
+    const playerUnit = session.getPlayerUnit();
+    playerUnit.getMap().removeUnit(playerUnit);
+    playerUnit.setCoordinates(map.getStartingCoordinates());
+    playerUnit.setMap(map);
+    map.addUnit(playerUnit);
     if (map.music) {
       Music.playMusic(map.music);
     }

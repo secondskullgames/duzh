@@ -15,6 +15,7 @@ export const loadFirstMap = async (session: Session, state: GameState) => {
   map.addUnit(playerUnit);
   session.setPlayerUnit(playerUnit);
   updateRevealedTiles(session);
+  Music.stop();
   if (map.music) {
     Music.playMusic(map.music);
   }
