@@ -19,8 +19,10 @@ export default class ScreenHandlers {
     characterScreenInputHandler: CharacterScreenInputHandler,
     gameScreenInputHandler: GameScreenInputHandler,
     gameOverScreenInputHandler: GameOverScreenInputHandler,
+    helpScreenInputHandler: HelpScreenInputHandler,
     inventoryInputHandler: InventoryV2InputHandler,
     levelUpScreenInputHandler: LevelUpScreenInputHandler,
+    mapScreenInputHandler: MapScreenInputHandler,
     titleScreenInputHandler: TitleScreenInputHandler,
     victoryScreenInputHandler: VictoryScreenInputHandler
   ) {
@@ -29,10 +31,10 @@ export default class ScreenHandlers {
       [GameScreen.CHARACTER]: characterScreenInputHandler,
       [GameScreen.GAME]: gameScreenInputHandler,
       [GameScreen.GAME_OVER]: gameOverScreenInputHandler,
-      [GameScreen.HELP]: HelpScreenInputHandler,
+      [GameScreen.HELP]: helpScreenInputHandler,
       [GameScreen.INVENTORY]: inventoryInputHandler,
       [GameScreen.LEVEL_UP]: levelUpScreenInputHandler,
-      [GameScreen.MAP]: MapScreenInputHandler,
+      [GameScreen.MAP]: mapScreenInputHandler,
       [GameScreen.TITLE]: titleScreenInputHandler,
       [GameScreen.VICTORY]: victoryScreenInputHandler
     };

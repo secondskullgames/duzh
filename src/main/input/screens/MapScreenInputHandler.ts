@@ -3,26 +3,33 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
 import { Session } from '../../core/Session';
+import { inject, injectable } from 'inversify';
 
-const handleKeyCommand = async (command: KeyCommand, session: Session) => {
-  const { key, modifiers } = command;
-  switch (key) {
-    case 'M':
-      session.setScreen(GameScreen.GAME);
-      break;
-    case 'F1':
-      session.setScreen(GameScreen.HELP);
-      break;
-    case 'ENTER':
-      if (modifiers.includes(ModifierKey.ALT)) {
-        await toggleFullScreen();
-      }
-      break;
-    case 'ESCAPE':
-      session.setScreen(GameScreen.GAME);
-  }
-};
+@injectable()
+export default class MapScreenInputHandler implements ScreenInputHandler {
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session
+  ) {}
 
-export default {
-  handleKeyCommand
-} as ScreenInputHandler;
+  handleKeyCommand = async (command: KeyCommand) => {
+    const { session } = this;
+    const { key, modifiers } = command;
+
+    switch (key) {
+      case 'M':
+        session.setScreen(GameScreen.GAME);
+        break;
+      case 'F1':
+        session.setScreen(GameScreen.HELP);
+        break;
+      case 'ENTER':
+        if (modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        }
+        break;
+      case 'ESCAPE':
+        session.setScreen(GameScreen.GAME);
+    }
+  };
+}
