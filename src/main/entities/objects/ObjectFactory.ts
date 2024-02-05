@@ -11,12 +11,14 @@ import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
+import MapInstance from '../../maps/MapInstance';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
 const createMirror = async (
   coordinates: Coordinates,
+  map: MapInstance,
   state: GameState
 ): Promise<Spawner> => {
   const sprite = await state.getSpriteFactory().createMirrorSprite();
@@ -24,6 +26,7 @@ const createMirror = async (
     state.getUnitFactory().createUnit({
       unitClass: 'shade',
       coordinates: coordinates,
+      map,
       level: 1,
       controller: new BasicEnemyController(),
       faction: Faction.ENEMY
@@ -33,7 +36,8 @@ const createMirror = async (
     sprite,
     maxUnits: 10,
     cooldown: 5,
-    coordinates: coordinates,
+    coordinates,
+    map,
     isBlocking: true
   });
   sprite.bind(spawner);
@@ -42,12 +46,13 @@ const createMirror = async (
 
 const createSpawner = async (
   coordinates: Coordinates,
+  map: MapInstance,
   type: SpawnerClass,
   state: GameState
 ): Promise<Spawner> => {
   switch (type) {
     case 'mirror':
-      return createMirror(coordinates, state);
+      return createMirror(coordinates, map, state);
     default:
       throw new Error(`Unknown spawner type: ${type}`);
   }
@@ -55,6 +60,7 @@ const createSpawner = async (
 
 const createMovableBlock = async (
   coordinates: Coordinates,
+  map: MapInstance,
   state: GameState
 ): Promise<GameObject> => {
   const sprite = await state
@@ -63,6 +69,7 @@ const createMovableBlock = async (
 
   return new Block({
     coordinates,
+    map,
     sprite,
     movable: true
   });
@@ -70,6 +77,7 @@ const createMovableBlock = async (
 
 const createHealthGlobe = async (
   coordinates: Coordinates,
+  map: MapInstance,
   state: GameState
 ): Promise<GameObject> => {
   const sprite = await state
@@ -97,6 +105,7 @@ const createHealthGlobe = async (
 
   return new Bonus({
     coordinates,
+    map,
     sprite,
     onUse
   });

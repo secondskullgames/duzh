@@ -24,13 +24,13 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, state);
+      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, map, state);
       map.addObject(healthGlobe);
     }
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {
-      const key = await state.getItemFactory().createMapItem('key', coordinates);
+      const key = await state.getItemFactory().createMapItem('key', coordinates, map);
       map.addObject(key);
     }
   }

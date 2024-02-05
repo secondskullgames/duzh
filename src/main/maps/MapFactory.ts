@@ -55,7 +55,7 @@ export default class MapFactory {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
         const mapBuilder = await this._loadGeneratedMap(mapClass);
-        return mapBuilder.build(state, session);
+        return mapBuilder.build(state);
       }
       case 'predefined': {
         return buildPredefinedMap(mapSpec.id, session, state);

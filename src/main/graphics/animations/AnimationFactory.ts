@@ -46,6 +46,7 @@ export default class AnimationFactory {
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(
         coordinates,
+        map,
         direction,
         this.spriteFactory
       );
@@ -115,6 +116,7 @@ export default class AnimationFactory {
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createBolt(
         coordinates,
+        map,
         direction,
         this.spriteFactory
       );
@@ -185,6 +187,7 @@ export default class AnimationFactory {
     for (const coordinates of visibleCoordinatesList) {
       const projectile = await ProjectileFactory.createArrow(
         coordinates,
+        map,
         direction,
         this.spriteFactory
       );

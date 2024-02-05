@@ -13,9 +13,6 @@ type Props = Readonly<{
   width: number;
   height: number;
   startingCoordinates: Coordinates;
-  tiles: Tile[][];
-  units: Unit[];
-  objects: GameObject[];
   music: Figure[] | null;
 }>;
 
@@ -30,34 +27,14 @@ export default class MapInstance {
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
 
-  constructor({
-    width,
-    height,
-    tiles,
-    startingCoordinates,
-    units,
-    objects,
-    music
-  }: Props) {
+  constructor({ width, height, startingCoordinates, music }: Props) {
     this.width = width;
     this.height = height;
     this.startingCoordinates = startingCoordinates;
     this.units = new Grid({ width, height });
-    for (const unit of units) {
-      this.units.put(unit.getCoordinates(), unit);
-    }
     this.objects = new MultiGrid({ width, height });
-    for (const object of objects) {
-      this.objects.put(object.getCoordinates(), object);
-    }
     this.projectiles = new Set();
     this.tiles = new Grid({ width, height });
-    for (let y = 0; y < tiles.length; y++) {
-      for (let x = 0; x < tiles[y].length; x++) {
-        const tile = tiles[y][x];
-        this.tiles.put({ x, y }, tile);
-      }
-    }
     this.revealedTiles = new Grid({ width, height });
     this.music = music;
   }
@@ -104,6 +81,10 @@ export default class MapInstance {
       return true;
     }
     return false;
+  };
+
+  addTile = (tile: Tile) => {
+    this.tiles.put(tile.getCoordinates(), tile);
   };
 
   addUnit = (unit: Unit) => {

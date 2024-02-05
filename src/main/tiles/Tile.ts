@@ -3,21 +3,25 @@ import TileType from '../schemas/TileType';
 import Entity from '../entities/Entity';
 import Coordinates from '../geometry/Coordinates';
 import { EntityType } from '../entities/EntityType';
+import MapInstance from '../maps/MapInstance';
 
 type Props = Readonly<{
   tileType: TileType;
   sprite: Sprite | null;
   coordinates: Coordinates;
+  map: MapInstance;
 }>;
 
 export default class Tile implements Entity {
   private coordinates: Coordinates;
+  private map: MapInstance;
   private readonly tileType: TileType;
   private readonly sprite: Sprite | null;
 
-  constructor({ tileType, sprite, coordinates }: Props) {
+  constructor({ tileType, sprite, coordinates, map }: Props) {
     this.tileType = tileType;
     this.coordinates = coordinates;
+    this.map = map;
     this.sprite = sprite;
   }
 
@@ -26,6 +30,13 @@ export default class Tile implements Entity {
   /** @override {@link Entity#setCoordinates} */
   setCoordinates = (coordinates: Coordinates) => {
     this.coordinates = coordinates;
+  };
+
+  /** @override */
+  getMap = (): MapInstance => this.map;
+  /** @override {@link Entity#setMap} */
+  setMap = (map: MapInstance) => {
+    this.map = map;
   };
 
   /** @override */

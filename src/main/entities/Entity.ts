@@ -3,6 +3,7 @@ import Coordinates from '../geometry/Coordinates';
 import Sprite from '../graphics/sprites/Sprite';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
+import MapInstance from '../maps/MapInstance';
 
 /**
  * An Entity is basically anything that goes on the game grid.
@@ -11,6 +12,8 @@ import { Session } from '../core/Session';
 export default interface Entity {
   getCoordinates: () => Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
+  getMap: () => MapInstance;
+  setMap: (map: MapInstance) => void;
   getSprite: () => Sprite | null;
   /**
    * Execute this entity's action for the current turn.

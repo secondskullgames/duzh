@@ -37,7 +37,8 @@ export const Summon: UnitAbility = {
       faction: unit.getFaction(),
       controller: new BasicEnemyController(),
       level: 1, // whatever
-      coordinates
+      coordinates,
+      map
     });
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);

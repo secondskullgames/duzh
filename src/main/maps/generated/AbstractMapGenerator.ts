@@ -1,11 +1,11 @@
 import EmptyMap from './EmptyMap';
 import GeneratedMapBuilder from './GeneratedMapBuilder';
-import Tile from '../../tiles/Tile';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import TileFactory from '../../tiles/TileFactory';
 import ItemFactory from '../../items/ItemFactory';
+import TileType from '../../schemas/TileType';
 
 export type MapGeneratorProps = Readonly<{
   imageFactory: ImageFactory;
@@ -38,18 +38,12 @@ abstract class AbstractMapGenerator {
     const stairsLocation = unoccupiedLocations.shift()!;
     tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
 
-    const tiles: Tile[][] = [];
+    const tiles: TileType[][] = [];
     for (let y = 0; y < tileTypes.length; y++) {
-      const row: Tile[] = [];
+      const row: TileType[] = [];
       for (let x = 0; x < tileTypes[y].length; x++) {
-        const coordinates = { x, y };
         const tileType = tileTypes[y][x];
-        const tile = this.tileFactory.createTile({
-          tileType,
-          tileSet,
-          coordinates
-        });
-        row.push(tile);
+        row.push(tileType);
       }
 
       tiles.push(row);

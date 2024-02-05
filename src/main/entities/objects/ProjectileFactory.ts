@@ -3,9 +3,11 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
+import MapInstance from '../../maps/MapInstance';
 
 const createArrow = async (
   coordinates: Coordinates,
+  map: MapInstance,
   direction: Direction,
   spriteFactory: SpriteFactory
 ): Promise<Projectile> => {
@@ -16,6 +18,7 @@ const createArrow = async (
   );
   return new Projectile({
     coordinates,
+    map,
     direction,
     sprite
   });
@@ -23,6 +26,7 @@ const createArrow = async (
 
 const createBolt = async (
   coordinates: Coordinates,
+  map: MapInstance,
   direction: Direction,
   spriteFactory: SpriteFactory
 ): Promise<Projectile> => {
@@ -33,6 +37,7 @@ const createBolt = async (
   );
   return new Projectile({
     coordinates,
+    map,
     direction,
     sprite
   });

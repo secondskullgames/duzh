@@ -51,7 +51,7 @@ export default class DragonShooterController implements UnitController {
       hasUnblockedStraightLineBetween(
         unit.getCoordinates(),
         targetUnit.getCoordinates(),
-        { map }
+        map
       )
     ) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());

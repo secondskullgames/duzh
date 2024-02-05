@@ -13,6 +13,7 @@ import UnitModel from '../../schemas/UnitModel';
 import { Feature } from '../../utils/features';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
+import MapInstance from '../../maps/MapInstance';
 
 type CreateUnitParams = Readonly<{
   /**
@@ -24,6 +25,7 @@ type CreateUnitParams = Readonly<{
   controller: UnitController;
   level: number;
   coordinates: Coordinates;
+  map: MapInstance;
   playerUnitClass?: PlayerUnitClass;
 }>;
 
@@ -43,9 +45,7 @@ export default class UnitFactory {
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
     const { itemFactory, spriteFactory } = this;
-    const { name, unitClass, faction, controller, level, coordinates, playerUnitClass } =
-      params;
-    const model: UnitModel = await loadUnitModel(unitClass);
+    const model: UnitModel = await loadUnitModel(params.unitClass);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
       PaletteSwaps.create(model.paletteSwaps)
@@ -57,25 +57,30 @@ export default class UnitFactory {
     }
 
     return new Unit({
-      name: name ?? model.name,
+      name: params.name ?? model.name,
       model,
-      faction,
-      controller,
-      level,
-      coordinates,
+      faction: params.faction,
+      controller: params.controller,
+      level: params.level,
+      coordinates: params.coordinates,
+      map: params.map,
       equipment: equipmentList,
       sprite,
-      playerUnitClass
+      playerUnitClass: params.playerUnitClass
     });
   };
 
-  createPlayerUnit = async (): Promise<Unit> => {
+  createPlayerUnit = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<Unit> => {
     const unit = await this.createUnit({
       unitClass: 'player',
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
       level: 1,
-      coordinates: { x: 0, y: 0 },
+      coordinates,
+      map,
       playerUnitClass: PlayerUnitClass.DEFAULT
     });
     if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
