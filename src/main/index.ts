@@ -7,7 +7,6 @@ import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { FontBundle, loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import { loadGameMaps } from './actions/loadGameMaps';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import ImageFactory from './graphics/images/ImageFactory';
@@ -22,6 +21,10 @@ import MapSpec from './schemas/MapSpec';
 import ImageLoader from './graphics/images/ImageLoader';
 import { ImageCache, ImageCacheImpl } from './graphics/images/ImageCache';
 import { PredefinedMapFactory } from './maps/predefined/PredefinedMapFactory';
+import ScreenHandlers from './input/screens/ScreenHandlers';
+import TitleScreenInputHandler from './input/screens/TitleScreenInputHandler';
+import GameOverScreenInputHandler from './input/screens/GameOverScreenInputHandler';
+import VictoryScreenInputHandler from './input/screens/VictoryScreenInputHandler';
 import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
@@ -55,6 +58,10 @@ const setupContainer = () => {
     .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
     .toConstantValue(document.getElementById('container')!);
   container.bind(GameRenderer).toSelf();
+  container.bind(TitleScreenInputHandler).toSelf();
+  container.bind(GameOverScreenInputHandler).toSelf();
+  container.bind(VictoryScreenInputHandler).toSelf();
+  container.bind(ScreenHandlers).toSelf();
   return container;
 };
 
@@ -83,13 +90,15 @@ const main = async () => {
     objectFactory,
     projectileFactory
   });
-  const maps = await loadGameMaps(mapSpecs, state);
+  const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);
   const session = Session.create();
   const renderer = await container.getAsync(GameRenderer);
+  const screenHandlers = container.get(ScreenHandlers);
   const inputHandler = new InputHandler({
     state,
-    session
+    session,
+    screenHandlers
   });
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {

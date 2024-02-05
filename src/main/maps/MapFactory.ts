@@ -7,6 +7,7 @@ import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
+import { MapSupplier } from './MapSupplier';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import { GameState } from '../core/GameState';
@@ -50,6 +51,19 @@ export default class MapFactory {
         return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id, state);
       }
     }
+  };
+
+  loadMapSuppliers = async (
+    mapSpecs: MapSpec[],
+    state: GameState
+  ): Promise<MapSupplier[]> => {
+    const mapSuppliers: MapSupplier[] = [];
+    for (const spec of mapSpecs) {
+      mapSuppliers.push(async () => {
+        return this.loadMap(spec, state);
+      });
+    }
+    return mapSuppliers;
   };
 
   private _loadGeneratedMap = async (

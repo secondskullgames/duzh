@@ -30,14 +30,19 @@ export interface GameState {
 
   // TODO is this ass-backwards?
 
+  /** @deprecated */
   getMapFactory: () => MapFactory;
+  /** @deprecated */
   getImageFactory: () => ImageFactory;
   getAnimationFactory: () => AnimationFactory;
+  /** @deprecated */
   getSpriteFactory: () => SpriteFactory;
+  /** @deprecated */
   getTileFactory: () => TileFactory;
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
   getObjectFactory: () => ObjectFactory;
+  /** @deprecated */
   getProjectileFactory: () => ProjectileFactory;
 }
 
