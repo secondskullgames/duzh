@@ -6,7 +6,7 @@ import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import { addInitialState } from './actions/addInitialState';
+import { loadGameMaps } from './actions/loadGameMaps';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import ImageFactory from './graphics/images/ImageFactory';
@@ -17,6 +17,15 @@ import ItemFactory from './items/ItemFactory';
 import UnitFactory from './entities/units/UnitFactory';
 import ProjectileFactory from './entities/objects/ProjectileFactory';
 import ObjectFactory from './entities/objects/ObjectFactory';
+import MapSpec from './schemas/MapSpec';
+
+const _loadMapSpecs = async (): Promise<MapSpec[]> =>
+  (
+    await import(
+      /* webpackChunkName: "models" */
+      '../../data/maps.json'
+    )
+  ).default as MapSpec[];
 
 const main = async () => {
   const imageFactory = new ImageFactory();
@@ -33,7 +42,9 @@ const main = async () => {
   const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
   const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
   const objectFactory = new ObjectFactory({ spriteFactory });
+  const mapSpecs = await _loadMapSpecs();
   const state = GameState.create({
+    mapSpecs,
     imageFactory,
     mapFactory,
     animationFactory,
@@ -44,6 +55,8 @@ const main = async () => {
     objectFactory,
     projectileFactory
   });
+  const maps = await loadGameMaps(mapSpecs, state);
+  state.addMaps(maps);
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });
   const textRenderer = new TextRenderer({ imageFactory, fonts });
@@ -62,7 +75,6 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await addInitialState(state, session);
   await showSplashScreen(session);
   setInterval(async () => {
     await renderer.render(session);

@@ -11,16 +11,21 @@ import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
+import MapSpec from '../schemas/MapSpec';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
  */
 export interface GameState {
+  getMapSpecs: () => MapSpec[];
   addMaps: (suppliers: MapSupplier[]) => void;
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
   hasNextMap: (currentIndex: number) => boolean;
+  /**
+   * TODO wrong place to put this method
+   */
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 
   // TODO is this ass-backwards?
@@ -37,6 +42,7 @@ export interface GameState {
 }
 
 type Props = Readonly<{
+  mapSpecs: MapSpec[];
   imageFactory: ImageFactory;
   mapFactory: MapFactory;
   animationFactory: AnimationFactory;
@@ -56,6 +62,7 @@ export namespace GameState {
  * Global mutable state
  */
 class GameStateImpl implements GameState {
+  private readonly mapSpecs: MapSpec[];
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly mapFactory: MapFactory;
@@ -70,6 +77,7 @@ class GameStateImpl implements GameState {
   private readonly generatedEquipmentIds: string[];
 
   constructor(props: Props) {
+    this.mapSpecs = props.mapSpecs;
     this.imageFactory = props.imageFactory;
     this.mapFactory = props.mapFactory;
     this.animationFactory = props.animationFactory;
@@ -83,6 +91,8 @@ class GameStateImpl implements GameState {
     this.maps = [];
     this.generatedEquipmentIds = [];
   }
+
+  getMapSpecs = (): MapSpec[] => this.mapSpecs;
 
   addMaps = (suppliers: MapSupplier[]) => {
     this.mapSuppliers.push(...suppliers);
