@@ -20,18 +20,15 @@ import { FontName } from '../Fonts';
 import { GameScreen } from '../../core/GameScreen';
 import { Feature } from '../../utils/features';
 import { Session } from '../../core/Session';
+import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title2';
 const VICTORY_FILENAME = 'victory';
 
-type Props = Readonly<{
-  parent: Element;
-  imageFactory: ImageFactory;
-  textRenderer: TextRenderer;
-}>;
-
+@injectable()
 export default class GameRenderer implements Renderer {
+  static PARENT_ELEMENT_SYMBOL: symbol = Symbol('GameRenderer_ParentElement');
   private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
   private readonly canvas: HTMLCanvasElement;
@@ -43,10 +40,12 @@ export default class GameRenderer implements Renderer {
   private readonly characterScreenRenderer: Renderer;
   private readonly helpScreenRenderer: Renderer;
   private readonly levelUpScreenRenderer: Renderer;
-  private readonly imageFactory: ImageFactory;
-  private readonly textRenderer: TextRenderer;
 
-  constructor({ parent, imageFactory, textRenderer }: Props) {
+  constructor(
+    @inject(ImageFactory) private readonly imageFactory: ImageFactory,
+    @inject(TextRenderer) private readonly textRenderer: TextRenderer,
+    @inject(GameRenderer.PARENT_ELEMENT_SYMBOL) private readonly parent: HTMLElement
+  ) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,

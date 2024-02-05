@@ -5,7 +5,7 @@ import GameRenderer from './graphics/renderers/GameRenderer';
 import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
-import { loadFonts } from './graphics/Fonts';
+import { FontBundle, loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { loadGameMaps } from './actions/loadGameMaps';
 import { Session } from './core/Session';
@@ -46,6 +46,15 @@ const setupContainer = () => {
   container.bind(MapFactory).toSelf();
   container.bind(ProjectileFactory).toSelf();
   container.bind(AnimationFactory).toSelf();
+  container.bind<FontBundle>(FontBundle.SYMBOL).toDynamicValue(async context => {
+    const imageFactory = context.container.get(ImageFactory);
+    return loadFonts({ imageFactory });
+  });
+  container.bind(TextRenderer).toSelf();
+  container
+    .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
+    .toConstantValue(document.getElementById('container')!);
+  container.bind(GameRenderer).toSelf();
   return container;
 };
 
@@ -77,13 +86,7 @@ const main = async () => {
   const maps = await loadGameMaps(mapSpecs, state);
   state.addMaps(maps);
   const session = Session.create();
-  const fonts = await loadFonts({ imageFactory });
-  const textRenderer = new TextRenderer({ fonts });
-  const renderer = new GameRenderer({
-    parent: document.getElementById('container')!,
-    imageFactory,
-    textRenderer
-  });
+  const renderer = await container.getAsync(GameRenderer);
   const inputHandler = new InputHandler({
     state,
     session

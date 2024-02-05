@@ -25,6 +25,10 @@ export type FontBundle = Readonly<{
   getFont(fontName: FontName): FontInstance;
 }>;
 
+export const FontBundle = {
+  SYMBOL: Symbol('FontBundle')
+};
+
 const fontDefinitions: Record<FontName, FontDefinition> = {
   [FontName.PERFECT_DOS_VGA]: {
     name: 'PERFECT_DOS_VGA',
