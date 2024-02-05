@@ -6,14 +6,23 @@ import { GameScreen } from '../../core/GameScreen';
 import { Session } from '../../core/Session';
 import { GameState } from '../../core/GameState';
 import MapFactory from '../../maps/MapFactory';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export default class GameOverScreenInputHandler implements ScreenInputHandler {
-  constructor(private readonly mapFactory: MapFactory) {}
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
+    @inject(MapFactory)
+    private readonly mapFactory: MapFactory
+  ) {}
 
-  handleKeyCommand = async (command: KeyCommand, session: Session, state: GameState) => {
+  handleKeyCommand = async (command: KeyCommand) => {
+    const { state, session } = this;
     const { key, modifiers } = command;
+
     switch (key) {
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {

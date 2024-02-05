@@ -53,11 +53,11 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, session } = this;
+    const { session } = this;
     const handler: ScreenInputHandler = this.screenHandlers.getHandler(
       session.getScreen()
     );
-    await handler.handleKeyCommand(command, session, state);
+    await handler.handleKeyCommand(command);
   };
 
   addEventListener = (target: HTMLElement) => {

@@ -4,12 +4,10 @@ import GameScreenInputHandler from './GameScreenInputHandler';
 import GameOverScreenInputHandler from './GameOverScreenInputHandler';
 import HelpScreenInputHandler from './HelpScreenInputHandler';
 import InventoryV2InputHandler from './InventoryV2InputHandler';
-import InventoryScreenInputHandler from './InventoryScreenInputHandler';
 import LevelUpScreenInputHandler from './LevelUpScreenInputHandler';
 import MapScreenInputHandler from './MapScreenInputHandler';
 import TitleScreenInputHandler from './TitleScreenInputHandler';
 import VictoryScreenInputHandler from './VictoryScreenInputHandler';
-import { Feature } from '../../utils/features';
 import { GameScreen } from '../../core/GameScreen';
 import { injectable } from 'inversify';
 
@@ -18,20 +16,22 @@ export default class ScreenHandlers {
   private readonly screenHandlers: Record<GameScreen, ScreenInputHandler>;
 
   constructor(
+    characterScreenInputHandler: CharacterScreenInputHandler,
+    gameScreenInputHandler: GameScreenInputHandler,
     gameOverScreenInputHandler: GameOverScreenInputHandler,
+    inventoryInputHandler: InventoryV2InputHandler,
+    levelUpScreenInputHandler: LevelUpScreenInputHandler,
     titleScreenInputHandler: TitleScreenInputHandler,
     victoryScreenInputHandler: VictoryScreenInputHandler
   ) {
     this.screenHandlers = {
       [GameScreen.NONE]: { handleKeyCommand: async () => {} },
-      [GameScreen.CHARACTER]: CharacterScreenInputHandler,
-      [GameScreen.GAME]: GameScreenInputHandler,
+      [GameScreen.CHARACTER]: characterScreenInputHandler,
+      [GameScreen.GAME]: gameScreenInputHandler,
       [GameScreen.GAME_OVER]: gameOverScreenInputHandler,
       [GameScreen.HELP]: HelpScreenInputHandler,
-      [GameScreen.INVENTORY]: Feature.isEnabled(Feature.INVENTORY_V2)
-        ? InventoryV2InputHandler
-        : InventoryScreenInputHandler,
-      [GameScreen.LEVEL_UP]: LevelUpScreenInputHandler,
+      [GameScreen.INVENTORY]: inventoryInputHandler,
+      [GameScreen.LEVEL_UP]: levelUpScreenInputHandler,
       [GameScreen.MAP]: MapScreenInputHandler,
       [GameScreen.TITLE]: titleScreenInputHandler,
       [GameScreen.VICTORY]: victoryScreenInputHandler

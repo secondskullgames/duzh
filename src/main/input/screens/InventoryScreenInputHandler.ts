@@ -5,6 +5,7 @@ import { useItem } from '../../actions/useItem';
 import { GameScreen } from '../../core/GameScreen';
 import { Session } from '../../core/Session';
 import { GameState } from '../../core/GameState';
+import { inject, injectable } from 'inversify';
 
 const _handleEnter = async (session: Session, state: GameState) => {
   const playerUnit = session.getPlayerUnit();
@@ -17,8 +18,17 @@ const _handleEnter = async (session: Session, state: GameState) => {
   }
 };
 
-const InventoryScreenInputHandler: ScreenInputHandler = {
-  handleKeyCommand: async (command: KeyCommand, session: Session, state: GameState) => {
+@injectable()
+export default class InventoryScreenInputHandler implements ScreenInputHandler {
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState
+  ) {}
+
+  handleKeyCommand = async (command: KeyCommand) => {
+    const { state, session } = this;
     const { key, modifiers } = command;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventory();
@@ -55,7 +65,5 @@ const InventoryScreenInputHandler: ScreenInputHandler = {
       case 'ESCAPE':
         session.setScreen(GameScreen.GAME);
     }
-  }
-};
-
-export default InventoryScreenInputHandler;
+  };
+}
