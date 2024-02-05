@@ -26,7 +26,7 @@ export const Blink: UnitAbility = {
       throw new Error('Blink requires a target!');
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));

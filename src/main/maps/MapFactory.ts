@@ -14,7 +14,6 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
-import { Session } from '../core/Session';
 import ItemFactory from '../items/ItemFactory';
 
 type MapStyle = Readonly<{
@@ -46,11 +45,7 @@ export default class MapFactory {
     this.itemFactory = itemFactory;
   }
 
-  loadMap = async (
-    mapSpec: MapSpec,
-    state: GameState,
-    session: Session
-  ): Promise<MapInstance> => {
+  loadMap = async (mapSpec: MapSpec, state: GameState): Promise<MapInstance> => {
     switch (mapSpec.type) {
       case 'generated': {
         const mapClass = await loadGeneratedMapModel(mapSpec.id);
@@ -58,7 +53,7 @@ export default class MapFactory {
         return mapBuilder.build(state);
       }
       case 'predefined': {
-        return buildPredefinedMap(mapSpec.id, session, state);
+        return buildPredefinedMap(mapSpec.id, state);
       }
     }
   };

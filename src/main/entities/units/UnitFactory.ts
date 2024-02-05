@@ -29,7 +29,7 @@ type CreateUnitParams = Readonly<{
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-type props = Readonly<{
+type Props = Readonly<{
   spriteFactory: SpriteFactory;
   itemFactory: ItemFactory;
 }>;
@@ -38,7 +38,7 @@ export default class UnitFactory {
   private readonly spriteFactory: SpriteFactory;
   private readonly itemFactory: ItemFactory;
 
-  constructor(props: props) {
+  constructor(props: Props) {
     this.spriteFactory = props.spriteFactory;
     this.itemFactory = props.itemFactory;
   }

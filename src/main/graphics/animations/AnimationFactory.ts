@@ -9,13 +9,16 @@ import SpriteFactory from '../sprites/SpriteFactory';
 
 type Props = Readonly<{
   spriteFactory: SpriteFactory;
+  projectileFactory: ProjectileFactory;
 }>;
 
 export default class AnimationFactory {
   private readonly spriteFactory: SpriteFactory;
+  private readonly projectileFactory: ProjectileFactory;
 
-  constructor({ spriteFactory }: Props) {
+  constructor({ spriteFactory, projectileFactory }: Props) {
     this.spriteFactory = spriteFactory;
+    this.projectileFactory = projectileFactory;
   }
 
   getArrowAnimation = async (
@@ -44,11 +47,10 @@ export default class AnimationFactory {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
+      const projectile = await this.projectileFactory.createArrow(
         coordinates,
         map,
-        direction,
-        this.spriteFactory
+        direction
       );
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],
@@ -114,11 +116,10 @@ export default class AnimationFactory {
 
     // bolt movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createBolt(
+      const projectile = await this.projectileFactory.createBolt(
         coordinates,
         map,
-        direction,
-        this.spriteFactory
+        direction
       );
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.ATTACKING }],
@@ -185,11 +186,10 @@ export default class AnimationFactory {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await ProjectileFactory.createArrow(
+      const projectile = await this.projectileFactory.createArrow(
         coordinates,
         map,
-        direction,
-        this.spriteFactory
+        direction
       );
       const frame: AnimationFrame = {
         units: [{ unit: source, activity: Activity.SHOOTING }],

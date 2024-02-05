@@ -26,8 +26,7 @@ const handleKeyCommand = async (
           const mapFactory = state.getMapFactory();
           const mapInstance = await mapFactory.loadMap(
             { type: 'predefined', id: 'test' },
-            state,
-            session
+            state
           );
           await startGameDebug(mapInstance, session);
         } else {

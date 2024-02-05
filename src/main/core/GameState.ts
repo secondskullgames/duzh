@@ -9,6 +9,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
+import ProjectileFactory from '../entities/objects/ProjectileFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -18,6 +19,11 @@ export interface GameState {
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
+  hasNextMap: (currentIndex: number) => boolean;
+  loadMap: (mapIndex: number) => Promise<MapInstance>;
+
+  // TODO is this ass-backwards?
+
   getMapFactory: () => MapFactory;
   getImageFactory: () => ImageFactory;
   getAnimationFactory: () => AnimationFactory;
@@ -25,8 +31,7 @@ export interface GameState {
   getTileFactory: () => TileFactory;
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
-  hasNextMap: (currentIndex: number) => boolean;
-  loadMap: (mapIndex: number) => Promise<MapInstance>;
+  getProjectileFactory: () => ProjectileFactory;
 }
 
 type Props = Readonly<{
@@ -37,6 +42,7 @@ type Props = Readonly<{
   tileFactory: TileFactory;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
+  projectileFactory: ProjectileFactory;
 }>;
 
 export namespace GameState {
@@ -56,6 +62,7 @@ class GameStateImpl implements GameState {
   private readonly tileFactory: TileFactory;
   private readonly itemFactory: ItemFactory;
   private readonly unitFactory: UnitFactory;
+  private readonly projectileFactory: ProjectileFactory;
   private readonly generatedEquipmentIds: string[];
 
   constructor(props: Props) {
@@ -66,6 +73,7 @@ class GameStateImpl implements GameState {
     this.tileFactory = props.tileFactory;
     this.itemFactory = props.itemFactory;
     this.unitFactory = props.unitFactory;
+    this.projectileFactory = props.projectileFactory;
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -111,4 +119,5 @@ class GameStateImpl implements GameState {
   getTileFactory = (): TileFactory => this.tileFactory;
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;
+  getProjectileFactory = (): ProjectileFactory => this.projectileFactory;
 }

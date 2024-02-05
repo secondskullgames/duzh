@@ -15,6 +15,7 @@ import TileFactory from './tiles/TileFactory';
 import SpriteFactory from './graphics/sprites/SpriteFactory';
 import ItemFactory from './items/ItemFactory';
 import UnitFactory from './entities/units/UnitFactory';
+import ProjectileFactory from './entities/objects/ProjectileFactory';
 
 const main = async () => {
   const imageFactory = new ImageFactory();
@@ -26,7 +27,9 @@ const main = async () => {
     tileFactory,
     itemFactory
   });
-  const animationFactory = new AnimationFactory({ spriteFactory });
+  const projectileFactory = new ProjectileFactory({ spriteFactory });
+  // TODO is this an insane dependency?
+  const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
   const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
   const state = GameState.create({
     imageFactory,
@@ -35,7 +38,8 @@ const main = async () => {
     spriteFactory,
     tileFactory,
     itemFactory,
-    unitFactory
+    unitFactory,
+    projectileFactory
   });
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });

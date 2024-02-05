@@ -96,7 +96,7 @@ const createHealthGlobe = async (
           .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
             turn: session.getTurn()
           });
-        const map = session.getMap();
+        const map = unit.getMap();
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }

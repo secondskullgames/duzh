@@ -19,7 +19,6 @@ import { Faction } from '../../types/types';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
-import { Session } from '../../core/Session';
 import Coordinates from '../../geometry/Coordinates';
 import { GameState } from '../../core/GameState';
 
@@ -38,7 +37,6 @@ const _getEnemyController = (enemyUnitModel: UnitModel) => {
 
 export const buildPredefinedMap = async (
   mapId: string,
-  session: Session,
   state: GameState
 ): Promise<MapInstance> => {
   const model = await loadPredefinedMapModel(mapId);
@@ -55,6 +53,11 @@ export const buildPredefinedMap = async (
   });
 
   const tiles = await _loadTiles(model, image, map, state.getTileFactory());
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      map.addTile(tiles[y][x]);
+    }
+  }
 
   const units = await _loadUnits(model, image, state, map);
   for (const unit of units) {
