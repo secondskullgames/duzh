@@ -14,7 +14,11 @@ export const loadNextMap = async (session: Session, state: GameState) => {
     const map = await state.loadMap(nextMapIndex);
     session.setMap(map);
     updateRevealedTiles(session);
-    //session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
+    // TODO really need some bidirectional magic
+    session.getPlayerUnit().getMap().removeUnit(session.getPlayerUnit());
+    session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
+    session.getPlayerUnit().setMap(map);
+    map.addUnit(session.getPlayerUnit());
     if (map.music) {
       Music.playMusic(map.music);
     }
