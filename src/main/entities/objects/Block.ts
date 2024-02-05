@@ -1,9 +1,11 @@
 import GameObject, { ObjectType } from './GameObject';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
+import MapInstance from '../../maps/MapInstance';
 
 type Props = Readonly<{
   coordinates: Coordinates;
+  map: MapInstance;
   sprite: Sprite;
   movable: boolean;
 }>;
@@ -11,9 +13,10 @@ type Props = Readonly<{
 export default class Block extends GameObject {
   private readonly movable: boolean;
 
-  constructor({ coordinates, sprite, movable }: Props) {
+  constructor({ coordinates, map, sprite, movable }: Props) {
     super({
       coordinates,
+      map,
       objectType: ObjectType.BLOCK,
       sprite
     });

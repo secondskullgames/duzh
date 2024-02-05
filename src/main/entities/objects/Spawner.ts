@@ -5,6 +5,7 @@ import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
 import { Session } from '../../core/Session';
 import { GameState } from '../../core/GameState';
+import MapInstance from '../../maps/MapInstance';
 
 export enum SpawnerState {
   ALIVE = 'ALIVE',
@@ -21,6 +22,7 @@ type Props = Readonly<{
   spawnFunction: SpawnFunction;
   sprite: Sprite;
   coordinates: Coordinates;
+  map: MapInstance;
   cooldown: number;
   maxUnits: number;
   isBlocking: boolean;
@@ -38,6 +40,7 @@ export default class Spawner extends GameObject implements Animatable {
   constructor({
     spawnFunction,
     coordinates,
+    map,
     sprite,
     cooldown,
     maxUnits,
@@ -45,6 +48,7 @@ export default class Spawner extends GameObject implements Animatable {
   }: Props) {
     super({
       coordinates,
+      map,
       objectType: ObjectType.SPAWNER,
       sprite
     });

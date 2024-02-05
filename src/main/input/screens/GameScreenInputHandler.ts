@@ -22,8 +22,6 @@ import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
 import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 import { Dash } from '../../entities/units/abilities/Dash';
-import { FreeMove } from '../../entities/units/abilities/FreeMove';
-import Unit from '../../entities/units/Unit';
 import { loadPreviousMap } from '../../actions/loadPreviousMap';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
@@ -41,7 +39,7 @@ const handleKeyCommand = async (
     await _handleAbility(key as NumberKey, session);
   } else if (key === 'SPACEBAR') {
     playSound(Sounds.FOOTSTEP);
-    await playTurn(true, state, session);
+    await playTurn(state, session);
   } else if (key === 'TAB') {
     session.prepareInventoryScreen(session.getPlayerUnit());
     session.prepareInventoryV2(session.getPlayerUnit());
@@ -83,14 +81,12 @@ const _handleArrowKey = async (
   const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
   let order: UnitOrder | null = null;
-  let willCompleteTurn: boolean = false;
   if (modifiers.includes(ModifierKey.SHIFT)) {
     if (
       playerUnit.getEquipment().getBySlot('RANGED_WEAPON') &&
       playerUnit.canSpendMana(ShootArrow.manaCost)
     ) {
       order = new AbilityOrder({ coordinates, ability: ShootArrow });
-      willCompleteTurn = true;
     }
   } else if (
     modifiers.includes(ModifierKey.ALT) &&
@@ -103,33 +99,16 @@ const _handleArrowKey = async (
           await Strafe.use(unit, coordinates, session, state);
         }
       };
-      willCompleteTurn = true;
     }
   } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_DASH)) {
     if (playerUnit.canSpendMana(Dash.manaCost)) {
       order = new AbilityOrder({ coordinates, ability: Dash });
-      willCompleteTurn = true;
     }
-  } else if (
-    modifiers.includes(ModifierKey.ALT) &&
-    Feature.isEnabled(Feature.ALT_FREE_MOVE)
-  ) {
-    if (playerUnit.canSpendMana(FreeMove.manaCost)) {
-      order = new AbilityOrder({ coordinates, ability: FreeMove });
-    }
-  } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled(Feature.ALT_TURN)) {
-    order = {
-      execute: async (unit: Unit): Promise<void> => {
-        unit.setDirection(direction);
-      }
-    };
-    // don't set willCompleteTurn=true
   } else if (
     modifiers.includes(ModifierKey.CTRL) &&
     Feature.isEnabled(Feature.FAST_MOVE)
   ) {
     order = new FastMoveOrder({ direction });
-    willCompleteTurn = true;
   } else {
     const ability = session.getQueuedAbility();
     session.setQueuedAbility(null);
@@ -138,12 +117,11 @@ const _handleArrowKey = async (
     } else {
       order = new AttackMoveOrder({ ability: NormalAttack, coordinates });
     }
-    willCompleteTurn = true;
   }
   const playerController = playerUnit.getController() as PlayerUnitController;
   if (order) {
     playerController.queueOrder(order);
-    await playTurn(willCompleteTurn, state, session);
+    await playTurn(state, session);
   }
 };
 
@@ -175,7 +153,7 @@ const _handleEnter = async (session: Session, state: GameState) => {
     playSound(Sounds.DESCEND_STAIRS); // TODO
     await loadPreviousMap(session, state);
   }
-  await playTurn(false, state, session);
+  await playTurn(state, session);
 };
 
 export default {

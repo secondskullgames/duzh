@@ -44,7 +44,7 @@ class PathMapGenerator extends AbstractMapGenerator {
         );
         if (path.length === 0) {
           // eslint-disable-next-line no-console
-          console.error(
+          console.debug(
             `No path from ${JSON.stringify(lastPoint)} to ${JSON.stringify(nextPoint)}`
           );
           //throw new Error();

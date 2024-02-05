@@ -4,6 +4,7 @@ import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
+import MapInstance from '../../maps/MapInstance';
 
 export enum ObjectType {
   SPAWNER = 'spawner',
@@ -15,17 +16,20 @@ export enum ObjectType {
 
 type Props = Readonly<{
   coordinates: Coordinates;
+  map: MapInstance;
   objectType: ObjectType;
   sprite: Sprite;
 }>;
 
 export default abstract class GameObject implements Entity {
   private coordinates: Coordinates;
+  private map: MapInstance;
   private readonly objectType: ObjectType;
   private readonly sprite: Sprite | null;
 
-  protected constructor({ coordinates, objectType, sprite }: Props) {
+  protected constructor({ coordinates, map, objectType, sprite }: Props) {
     this.coordinates = coordinates;
+    this.map = map;
     this.objectType = objectType;
     this.sprite = sprite;
   }
@@ -36,6 +40,14 @@ export default abstract class GameObject implements Entity {
   /** @override */
   setCoordinates = (coordinates: Coordinates) => {
     this.coordinates = coordinates;
+  };
+
+  /** @override {@link Entity#getMap} */
+  getMap = (): MapInstance => this.map;
+
+  /** @override {@link Entity#setMap} */
+  setMap = (map: MapInstance) => {
+    this.map = map;
   };
 
   /** @override */

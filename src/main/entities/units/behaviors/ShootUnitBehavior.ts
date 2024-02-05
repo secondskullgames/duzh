@@ -51,7 +51,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       hasUnblockedStraightLineBetween(
         unit.getCoordinates(),
         targetUnit.getCoordinates(),
-        { map }
+        map
       )
     );
   };

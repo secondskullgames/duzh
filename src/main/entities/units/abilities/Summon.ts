@@ -5,7 +5,6 @@ import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
 import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
-import UnitFactory from '../UnitFactory';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
@@ -33,16 +32,14 @@ export const Summon: UnitAbility = {
     // TODO pick a sound
     playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
-    const summonedUnit = await UnitFactory.createUnit(
-      {
-        unitClass,
-        faction: unit.getFaction(),
-        controller: new BasicEnemyController(),
-        level: 1, // whatever
-        coordinates
-      },
-      state
-    );
+    const summonedUnit = await state.getUnitFactory().createUnit({
+      unitClass,
+      faction: unit.getFaction(),
+      controller: new BasicEnemyController(),
+      level: 1, // whatever
+      coordinates,
+      map
+    });
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);
   }

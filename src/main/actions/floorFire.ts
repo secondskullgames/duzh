@@ -15,7 +15,7 @@ export const floorFire = async (
   state: GameState,
   session: Session
 ) => {
-  const map = session.getMap();
+  const map = unit.getMap();
   // TODO - optimization opportunity
   const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());

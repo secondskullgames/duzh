@@ -47,7 +47,6 @@ export const ShootBolt: UnitAbility = {
 
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
-      playSound(Sounds.PLAYER_HITS_ENEMY);
       const damage = unit.getMeleeDamage();
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -58,6 +57,7 @@ export const ShootBolt: UnitAbility = {
         .getAnimationFactory()
         .getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
       await playAnimation(boltAnimation, { map });
+      playSound(Sounds.PLAYER_HITS_ENEMY);
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);

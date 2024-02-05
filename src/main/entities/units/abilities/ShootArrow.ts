@@ -54,7 +54,6 @@ export const ShootArrow: UnitAbility = {
     const animationFactory = state.getAnimationFactory();
     if (targetUnit) {
       const damage = unit.getRangedDamage();
-      playSound(Sounds.PLAYER_HITS_ENEMY);
       const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },
@@ -63,6 +62,7 @@ export const ShootArrow: UnitAbility = {
         map
       );
       await playAnimation(arrowAnimation, { map });
+      playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit

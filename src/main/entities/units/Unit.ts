@@ -22,11 +22,12 @@ import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
+import MapInstance from '../../maps/MapInstance';
 
 /**
  * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN = 1;
+const LIFE_PER_TURN = 0.5;
 /**
  * Regenerate this raw amount of mana each turn
  */
@@ -42,6 +43,7 @@ type Props = Readonly<{
   sprite: DynamicSprite<Unit>;
   level: number;
   coordinates: Coordinates;
+  map: MapInstance;
   controller: UnitController;
   equipment: Equipment[];
 }>;
@@ -63,6 +65,7 @@ export default class Unit implements Entity, Animatable {
   private readonly playerUnitClass: PlayerUnitClass | null;
   private readonly experienceRewarded: number | null;
   private coordinates: Coordinates;
+  private map: MapInstance;
   private readonly name: string;
   private level: number;
   private abilityPoints: number;
@@ -106,6 +109,7 @@ export default class Unit implements Entity, Animatable {
     this.inventory = new InventoryMap();
 
     this.coordinates = props.coordinates;
+    this.map = props.map;
     this.name = props.name;
     this.level = 1;
     this.abilityPoints = 0;
@@ -162,6 +166,14 @@ export default class Unit implements Entity, Animatable {
   /** @override */
   setCoordinates = (coordinates: Coordinates) => {
     this.coordinates = coordinates;
+  };
+
+  /** @override {@link Entity#getMap} */
+  getMap = (): MapInstance => this.map;
+
+  /** @override {@link Entity#setMap} */
+  setMap = (map: MapInstance) => {
+    this.map = map;
   };
 
   getLife = () => this.life;

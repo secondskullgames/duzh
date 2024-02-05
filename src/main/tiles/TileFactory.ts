@@ -9,11 +9,11 @@ import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
 import { Feature } from '../utils/features';
+import MapInstance from '../maps/MapInstance';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
   tileSet: TileSet;
-  coordinates: Coordinates;
 }>;
 
 type Props = Readonly<{
@@ -27,10 +27,14 @@ export default class TileFactory {
     this.spriteFactory = spriteFactory;
   }
 
-  createTile = ({ tileType, tileSet, coordinates }: CreateTileParams): Tile => {
+  createTile = (
+    { tileType, tileSet }: CreateTileParams,
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Tile => {
     const tilesOfType = checkNotNull(tileSet[tileType]);
     const sprite = randChoice(tilesOfType);
-    return new Tile({ tileType, sprite, coordinates });
+    return new Tile({ tileType, sprite, coordinates, map });
   };
 
   getTileSet = async (id: string): Promise<TileSet> => {

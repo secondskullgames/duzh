@@ -3,6 +3,7 @@ import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
 import Coordinates from '../../geometry/Coordinates';
+import MapInstance from '../../maps/MapInstance';
 
 export enum DoorState {
   OPEN = 'OPEN',
@@ -17,6 +18,7 @@ type Props = Readonly<{
   direction: DoorDirection;
   state: DoorState;
   coordinates: Coordinates;
+  map: MapInstance;
   sprite: DynamicSprite<Door>;
 }>;
 
@@ -24,9 +26,10 @@ export default class Door extends GameObject implements Animatable {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
 
-  constructor({ direction, state, coordinates, sprite }: Props) {
+  constructor({ direction, state, coordinates, map, sprite }: Props) {
     super({
       coordinates,
+      map,
       objectType: ObjectType.DOOR,
       sprite
     });

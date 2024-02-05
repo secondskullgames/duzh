@@ -17,6 +17,7 @@ import { GameScreen } from '../core/GameScreen';
 import { floorFire } from '../actions/floorFire';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
+import MapInstance from '../maps/MapInstance';
 import type { ItemProc } from './ItemProc';
 
 type Props = Readonly<{
@@ -134,7 +135,7 @@ export default class ItemFactory {
     const onUse: ItemProc = async (
       _: InventoryItem,
       unit: Unit,
-      state: GameState,
+      __: GameState,
       session: Session
     ) => {
       const equipment = await this.createEquipment(equipmentClass);
@@ -152,7 +153,8 @@ export default class ItemFactory {
 
   createMapEquipment = async (
     equipmentClass: string,
-    coordinates: Coordinates
+    coordinates: Coordinates,
+    map: MapInstance
   ): Promise<MapItem> => {
     const model = await loadEquipmentModel(equipmentClass);
     const sprite = await this.spriteFactory.createStaticSprite(
@@ -161,7 +163,7 @@ export default class ItemFactory {
     );
     const inventoryItem: InventoryItem =
       await this.createInventoryEquipment(equipmentClass);
-    return new MapItem({ coordinates, sprite, inventoryItem });
+    return new MapItem({ coordinates, map, sprite, inventoryItem });
   };
 
   createEquipment = async (equipmentClass: string): Promise<Equipment> => {
@@ -212,14 +214,14 @@ export default class ItemFactory {
     }
   };
 
-  createMapItem = async (itemId: string, coordinates: Coordinates) => {
+  createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
     const model: ConsumableItemModel = await loadItemModel(itemId);
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,
       PaletteSwaps.create(model.paletteSwaps)
     );
-    return new MapItem({ coordinates, sprite, inventoryItem });
+    return new MapItem({ coordinates, map, sprite, inventoryItem });
   };
 
   loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {

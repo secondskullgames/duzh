@@ -11,9 +11,11 @@ import { loadUnitModel } from '../../utils/models';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
 import { Feature } from '../../utils/features';
-import { GameState } from '../../core/GameState';
+import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import ItemFactory from '../../items/ItemFactory';
+import MapInstance from '../../maps/MapInstance';
 
-type CreateUnitProps = Readonly<{
+type CreateUnitParams = Readonly<{
   /**
    * if undefined, default to unit model's name
    */
@@ -23,66 +25,78 @@ type CreateUnitProps = Readonly<{
   controller: UnitController;
   level: number;
   coordinates: Coordinates;
+  map: MapInstance;
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-const createUnit = async (props: CreateUnitProps, state: GameState): Promise<Unit> => {
-  const { name, unitClass, faction, controller, level, coordinates, playerUnitClass } =
-    props;
-  const model: UnitModel = await loadUnitModel(unitClass);
-  const sprite = await state
-    .getSpriteFactory()
-    .createUnitSprite(model.sprite, PaletteSwaps.create(model.paletteSwaps));
-  const equipmentList: Equipment[] = [];
-  for (const equipmentClass of model.equipment ?? []) {
-    const equipment = await state.getItemFactory().createEquipment(equipmentClass);
-    equipmentList.push(equipment);
+type Props = Readonly<{
+  spriteFactory: SpriteFactory;
+  itemFactory: ItemFactory;
+}>;
+
+export default class UnitFactory {
+  private readonly spriteFactory: SpriteFactory;
+  private readonly itemFactory: ItemFactory;
+
+  constructor(props: Props) {
+    this.spriteFactory = props.spriteFactory;
+    this.itemFactory = props.itemFactory;
   }
 
-  return new Unit({
-    name: name ?? model.name,
-    model,
-    faction,
-    controller,
-    level,
-    coordinates,
-    equipment: equipmentList,
-    sprite,
-    playerUnitClass
-  });
-};
+  createUnit = async (params: CreateUnitParams): Promise<Unit> => {
+    const { itemFactory, spriteFactory } = this;
+    const model: UnitModel = await loadUnitModel(params.unitClass);
+    const sprite = await spriteFactory.createUnitSprite(
+      model.sprite,
+      PaletteSwaps.create(model.paletteSwaps)
+    );
+    const equipmentList: Equipment[] = [];
+    for (const equipmentClass of model.equipment ?? []) {
+      const equipment = await itemFactory.createEquipment(equipmentClass);
+      equipmentList.push(equipment);
+    }
 
-const createPlayerUnit = async (state: GameState): Promise<Unit> => {
-  const unit = await createUnit(
-    {
+    return new Unit({
+      name: params.name ?? model.name,
+      model,
+      faction: params.faction,
+      controller: params.controller,
+      level: params.level,
+      coordinates: params.coordinates,
+      map: params.map,
+      equipment: equipmentList,
+      sprite,
+      playerUnitClass: params.playerUnitClass
+    });
+  };
+
+  createPlayerUnit = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<Unit> => {
+    const unit = await this.createUnit({
       unitClass: 'player',
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
       level: 1,
-      coordinates: { x: 0, y: 0 },
+      coordinates,
+      map,
       playerUnitClass: PlayerUnitClass.DEFAULT
-    },
-    state
-  );
-  if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-    unit.learnAbility(abilityForName(AbilityName.DASH));
-  }
-  return unit;
-};
+    });
+    if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+      unit.learnAbility(abilityForName(AbilityName.DASH));
+    }
+    return unit;
+  };
 
-const loadAllModels = async (): Promise<UnitModel[]> => {
-  const requireContext = require.context('../../../../data/units', false, /\.json$/i);
+  loadAllModels = async (): Promise<UnitModel[]> => {
+    const requireContext = require.context('../../../../data/units', false, /\.json$/i);
 
-  const models: UnitModel[] = [];
-  for (const filename of requireContext.keys()) {
-    const model = (await requireContext(filename)) as UnitModel;
-    models.push(model);
-  }
-  return models;
-};
-
-export default {
-  createUnit,
-  createPlayerUnit,
-  loadAllModels
-};
+    const models: UnitModel[] = [];
+    for (const filename of requireContext.keys()) {
+      const model = (await requireContext(filename)) as UnitModel;
+      models.push(model);
+    }
+    return models;
+  };
+}

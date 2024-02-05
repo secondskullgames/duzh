@@ -14,14 +14,10 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   }
 };
 
-type StraightLineContext = Readonly<{
-  map: MapInstance;
-}>;
-
 export const hasUnblockedStraightLineBetween = (
   startCoordinates: Coordinates,
   targetCoordinates: Coordinates,
-  { map }: StraightLineContext
+  map: MapInstance
 ): boolean => {
   let { x, y } = startCoordinates;
   const { x: targetX, y: targetY } = targetCoordinates;

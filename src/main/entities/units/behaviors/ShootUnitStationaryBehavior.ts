@@ -46,7 +46,7 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
       hasUnblockedStraightLineBetween(
         unit.getCoordinates(),
         targetUnit.getCoordinates(),
-        { map }
+        map
       )
     );
   };

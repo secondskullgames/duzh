@@ -3,7 +3,7 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { showSplashScreen } from '../../actions/showSplashScreen';
 import { toggleFullScreen } from '../../utils/dom';
 import { GameScreen } from '../../core/GameScreen';
-import { addInitialState } from '../../actions/addInitialState';
+import { loadGameMaps } from '../../actions/loadGameMaps';
 import { Session } from '../../core/Session';
 import { GameState } from '../../core/GameState';
 
@@ -21,7 +21,8 @@ const handleKeyCommand = async (
         await showSplashScreen(session);
         state.reset();
         session.reset();
-        await addInitialState(state, session);
+        const maps = await loadGameMaps(state.getMapSpecs(), state);
+        state.addMaps(maps);
       }
       break;
     case 'ESCAPE':

@@ -5,8 +5,8 @@ import { GameScreen } from '../core/GameScreen';
 import { Session } from '../core/Session';
 
 export const loadNextMap = async (session: Session, state: GameState) => {
+  Music.stop();
   if (!state.hasNextMap(session.getMapIndex())) {
-    Music.stop();
     session.setScreen(GameScreen.VICTORY);
   } else {
     const nextMapIndex = session.getMapIndex() + 1;
@@ -14,7 +14,12 @@ export const loadNextMap = async (session: Session, state: GameState) => {
     const map = await state.loadMap(nextMapIndex);
     session.setMap(map);
     updateRevealedTiles(session);
-    //session.getPlayerUnit().setCoordinates(map.getStartingCoordinates());
+    // TODO really need some bidirectional magic
+    const playerUnit = session.getPlayerUnit();
+    playerUnit.getMap().removeUnit(playerUnit);
+    playerUnit.setCoordinates(map.getStartingCoordinates());
+    playerUnit.setMap(map);
+    map.addUnit(playerUnit);
     if (map.music) {
       Music.playMusic(map.music);
     }

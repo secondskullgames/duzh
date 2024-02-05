@@ -3,42 +3,52 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
+import MapInstance from '../../maps/MapInstance';
 
-const createArrow = async (
-  coordinates: Coordinates,
-  direction: Direction,
-  spriteFactory: SpriteFactory
-): Promise<Projectile> => {
-  const sprite = await spriteFactory.createProjectileSprite(
-    'arrow',
-    direction,
-    PaletteSwaps.empty()
-  );
-  return new Projectile({
-    coordinates,
-    direction,
-    sprite
-  });
-};
+type Props = Readonly<{
+  spriteFactory: SpriteFactory;
+}>;
 
-const createBolt = async (
-  coordinates: Coordinates,
-  direction: Direction,
-  spriteFactory: SpriteFactory
-): Promise<Projectile> => {
-  const sprite = await spriteFactory.createProjectileSprite(
-    'bolt',
-    direction,
-    PaletteSwaps.empty()
-  );
-  return new Projectile({
-    coordinates,
-    direction,
-    sprite
-  });
-};
+export default class ProjectileFactory {
+  private readonly spriteFactory: SpriteFactory;
 
-export default {
-  createArrow,
-  createBolt
-};
+  constructor({ spriteFactory }: Props) {
+    this.spriteFactory = spriteFactory;
+  }
+
+  createArrow = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    direction: Direction
+  ): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createProjectileSprite(
+      'arrow',
+      direction,
+      PaletteSwaps.empty()
+    );
+    return new Projectile({
+      coordinates,
+      map,
+      direction,
+      sprite
+    });
+  };
+
+  createBolt = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    direction: Direction
+  ): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createProjectileSprite(
+      'bolt',
+      direction,
+      PaletteSwaps.empty()
+    );
+    return new Projectile({
+      coordinates,
+      map,
+      direction,
+      sprite
+    });
+  };
+}
