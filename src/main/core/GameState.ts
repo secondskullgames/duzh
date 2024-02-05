@@ -2,16 +2,12 @@ import MapInstance from '../maps/MapInstance';
 import { checkArgument } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
-import MapFactory from '../maps/MapFactory';
-import ImageFactory from '../graphics/images/ImageFactory';
 import AnimationFactory from '../graphics/animations/AnimationFactory';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
-import ProjectileFactory from '../entities/objects/ProjectileFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import MapSpec from '../schemas/MapSpec';
+import { inject, injectable } from 'inversify';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -28,70 +24,40 @@ export interface GameState {
    */
   loadMap: (mapIndex: number) => Promise<MapInstance>;
 
-  // TODO is this ass-backwards?
+  // TODO trying to find ways to remove the remainder
 
-  /** @deprecated */
-  getMapFactory: () => MapFactory;
-  /** @deprecated */
-  getImageFactory: () => ImageFactory;
   getAnimationFactory: () => AnimationFactory;
-  /** @deprecated */
-  getSpriteFactory: () => SpriteFactory;
-  /** @deprecated */
-  getTileFactory: () => TileFactory;
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
   getObjectFactory: () => ObjectFactory;
-  /** @deprecated */
-  getProjectileFactory: () => ProjectileFactory;
 }
 
-type Props = Readonly<{
-  mapSpecs: MapSpec[];
-  imageFactory: ImageFactory;
-  mapFactory: MapFactory;
-  animationFactory: AnimationFactory;
-  spriteFactory: SpriteFactory;
-  tileFactory: TileFactory;
-  itemFactory: ItemFactory;
-  unitFactory: UnitFactory;
-  objectFactory: ObjectFactory;
-  projectileFactory: ProjectileFactory;
-}>;
-
 export namespace GameState {
-  export const create = (props: Props): GameState => new GameStateImpl(props);
+  export const SYMBOL: symbol = Symbol('GameState');
+  export const SYMBOL_MAP_SPECS: symbol = Symbol('GameState_MapSpecs');
 }
 
 /**
  * Global mutable state
  */
-class GameStateImpl implements GameState {
-  private readonly mapSpecs: MapSpec[];
+@injectable()
+export class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
-  private readonly mapFactory: MapFactory;
-  private readonly imageFactory: ImageFactory;
-  private readonly animationFactory: AnimationFactory;
-  private readonly spriteFactory: SpriteFactory;
-  private readonly tileFactory: TileFactory;
-  private readonly itemFactory: ItemFactory;
-  private readonly unitFactory: UnitFactory;
-  private readonly objectFactory: ObjectFactory;
-  private readonly projectileFactory: ProjectileFactory;
   private readonly generatedEquipmentIds: string[];
 
-  constructor(props: Props) {
-    this.mapSpecs = props.mapSpecs;
-    this.imageFactory = props.imageFactory;
-    this.mapFactory = props.mapFactory;
-    this.animationFactory = props.animationFactory;
-    this.spriteFactory = props.spriteFactory;
-    this.tileFactory = props.tileFactory;
-    this.itemFactory = props.itemFactory;
-    this.unitFactory = props.unitFactory;
-    this.objectFactory = props.objectFactory;
-    this.projectileFactory = props.projectileFactory;
+  constructor(
+    @inject(GameState.SYMBOL_MAP_SPECS)
+    private readonly mapSpecs: MapSpec[],
+    @inject(AnimationFactory)
+    private readonly animationFactory: AnimationFactory,
+    @inject(ItemFactory)
+    private readonly itemFactory: ItemFactory,
+    @inject(UnitFactory)
+    private readonly unitFactory: UnitFactory,
+    @inject(ObjectFactory)
+    private readonly objectFactory: ObjectFactory
+  ) {
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -132,13 +98,8 @@ class GameStateImpl implements GameState {
     return this.maps[mapIndex];
   };
 
-  getMapFactory = (): MapFactory => this.mapFactory;
-  getImageFactory = (): ImageFactory => this.imageFactory;
   getAnimationFactory = (): AnimationFactory => this.animationFactory;
-  getSpriteFactory = (): SpriteFactory => this.spriteFactory;
-  getTileFactory = (): TileFactory => this.tileFactory;
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;
   getObjectFactory = (): ObjectFactory => this.objectFactory;
-  getProjectileFactory = (): ProjectileFactory => this.projectileFactory;
 }

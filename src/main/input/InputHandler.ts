@@ -1,31 +1,26 @@
 import { mapToCommand } from './inputMappers';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import ScreenHandlers from './screens/ScreenHandlers';
-import { checkNotNull } from '../utils/preconditions';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
+import { inject, injectable } from 'inversify';
 import type { KeyCommand } from './inputTypes';
 
-type Props = Readonly<{
-  state: GameState;
-  session: Session;
-  screenHandlers: ScreenHandlers;
-}>;
-
+@injectable()
 export default class InputHandler {
-  private readonly state: GameState;
-  private readonly session: Session;
-  private readonly screenHandlers: ScreenHandlers;
-
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, session, screenHandlers }: Props) {
-    this.state = state;
-    this.session = session;
-    this.screenHandlers = screenHandlers;
+  constructor(
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(ScreenHandlers)
+    private readonly screenHandlers: ScreenHandlers
+  ) {
     this.busy = false;
     this.eventTarget = null;
   }

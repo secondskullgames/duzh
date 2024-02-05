@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Debug } from './core/Debug';
-import { GameState } from './core/GameState';
+import { GameState, GameStateImpl } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
@@ -62,44 +62,24 @@ const setupContainer = () => {
   container.bind(GameOverScreenInputHandler).toSelf();
   container.bind(VictoryScreenInputHandler).toSelf();
   container.bind(ScreenHandlers).toSelf();
+  container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
+  container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
+  container.bind(GameState.SYMBOL).to(GameStateImpl);
+  container.bind(InputHandler).toSelf();
   return container;
 };
 
 const main = async () => {
   const container = setupContainer();
 
-  const imageFactory = container.get(ImageFactory);
-  const spriteFactory = container.get(SpriteFactory);
-  const tileFactory = container.get(TileFactory);
-  const itemFactory = container.get(ItemFactory);
-  const unitFactory = container.get(UnitFactory);
-  const objectFactory = container.get(ObjectFactory);
   const mapFactory = container.get(MapFactory);
-  const projectileFactory = container.get(ProjectileFactory);
-  const animationFactory = container.get(AnimationFactory);
   const mapSpecs = await _loadMapSpecs();
-  const state = GameState.create({
-    mapSpecs,
-    imageFactory,
-    mapFactory,
-    animationFactory,
-    spriteFactory,
-    tileFactory,
-    itemFactory,
-    unitFactory,
-    objectFactory,
-    projectileFactory
-  });
+  const state = await container.getAsync<GameState>(GameState.SYMBOL);
   const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);
-  const session = Session.create();
+  const session = await container.getAsync<Session>(Session.SYMBOL);
   const renderer = await container.getAsync(GameRenderer);
-  const screenHandlers = container.get(ScreenHandlers);
-  const inputHandler = new InputHandler({
-    state,
-    session,
-    screenHandlers
-  });
+  const inputHandler = container.get(InputHandler);
   inputHandler.addEventListener(renderer.getCanvas());
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, session });
