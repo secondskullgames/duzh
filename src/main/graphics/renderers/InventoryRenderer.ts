@@ -10,6 +10,7 @@ import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { inject } from 'inversify';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -19,30 +20,23 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
-type Props = Readonly<{
-  textRenderer: TextRenderer;
-  graphics: Graphics;
-  imageFactory: ImageFactory;
-}>;
-
 export default class InventoryRenderer implements Renderer {
-  private readonly textRenderer: TextRenderer;
-  private readonly graphics: Graphics;
-  private readonly imageFactory: ImageFactory;
-
-  constructor({ textRenderer, graphics, imageFactory }: Props) {
-    this.textRenderer = textRenderer;
-    this.graphics = graphics;
-    this.imageFactory = imageFactory;
-  }
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {}
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async (session: Session) => {
+  render = async (graphics: Graphics) => {
+    const { session, imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventory();
-    const { graphics, imageFactory } = this;
 
     const image = await imageFactory.getImage({
       filename: INVENTORY_BACKGROUND_FILENAME
@@ -64,14 +58,16 @@ export default class InventoryRenderer implements Renderer {
       FontName.APPLE_II,
       { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       Colors.WHITE,
-      Alignment.CENTER
+      Alignment.CENTER,
+      graphics
     );
     await this._drawText(
       'INVENTORY',
       FontName.APPLE_II,
       { x: (INVENTORY_WIDTH * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       Colors.WHITE,
-      Alignment.CENTER
+      Alignment.CENTER,
+      graphics
     );
 
     // draw equipment items
@@ -85,7 +81,8 @@ export default class InventoryRenderer implements Renderer {
         FontName.APPLE_II,
         { x: equipmentLeft, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
       y += LINE_HEIGHT;
     }
@@ -103,7 +100,8 @@ export default class InventoryRenderer implements Renderer {
         FontName.APPLE_II,
         { x, y: top },
         Colors.WHITE,
-        Alignment.CENTER
+        Alignment.CENTER,
+        graphics
       );
       if (inventoryCategories[i] === inventory.getSelectedCategory()) {
         // TODO can we make a `drawLine`?
@@ -113,7 +111,7 @@ export default class InventoryRenderer implements Renderer {
           width: categoryWidth - 8,
           height: 1
         };
-        this.graphics.fillRect(rect, Colors.WHITE);
+        graphics.fillRect(rect, Colors.WHITE);
       }
     }
 
@@ -134,7 +132,8 @@ export default class InventoryRenderer implements Renderer {
           FontName.APPLE_II,
           { x, y },
           color,
-          Alignment.LEFT
+          Alignment.LEFT,
+          graphics
         );
       }
     }
@@ -145,10 +144,11 @@ export default class InventoryRenderer implements Renderer {
     font: FontName,
     pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+    drawAligned(image, graphics, pixel, textAlign);
   };
 }
 

@@ -7,23 +7,14 @@ import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
 import Color from '../Color';
+import { injectable } from 'inversify';
 
-type Props = Readonly<{
-  textRenderer: TextRenderer;
-  graphics: Graphics;
-}>;
-
+@injectable()
 export default class HelpScreenRenderer implements Renderer {
-  private readonly textRenderer: TextRenderer;
-  private readonly graphics: Graphics;
+  constructor(private readonly textRenderer: TextRenderer) {}
 
-  constructor({ textRenderer, graphics }: Props) {
-    this.textRenderer = textRenderer;
-    this.graphics = graphics;
-  }
-
-  render = async () => {
-    this.graphics.fill(Colors.BLACK);
+  render = async (graphics: Graphics) => {
+    graphics.fill(Colors.BLACK);
 
     const left = 4;
     const top = 4;
@@ -53,13 +44,14 @@ export default class HelpScreenRenderer implements Renderer {
         FontName.APPLE_II,
         { x: left, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
     }
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + LINE_HEIGHT * (i + intro.length + 2);
-      this.graphics.fillRect(
+      graphics.fillRect(
         { left, top: y, width: SCREEN_WIDTH, height: LINE_HEIGHT },
         Colors.BLACK
       );
@@ -69,14 +61,16 @@ export default class HelpScreenRenderer implements Renderer {
         FontName.APPLE_II,
         { x: left, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
       await this._drawText(
         description,
         FontName.APPLE_II,
         { x: left + 200, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
     }
   };
@@ -86,9 +80,10 @@ export default class HelpScreenRenderer implements Renderer {
     font: FontName,
     pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+    drawAligned(image, graphics, pixel, textAlign);
   };
 }

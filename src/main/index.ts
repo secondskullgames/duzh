@@ -25,6 +25,17 @@ import ScreenHandlers from './input/screens/ScreenHandlers';
 import TitleScreenInputHandler from './input/screens/TitleScreenInputHandler';
 import GameOverScreenInputHandler from './input/screens/GameOverScreenInputHandler';
 import VictoryScreenInputHandler from './input/screens/VictoryScreenInputHandler';
+import { createCanvas } from './utils/dom';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
+import { checkNotNull } from './utils/preconditions';
+import { Graphics } from './graphics/Graphics';
+import GameScreenRenderer from './graphics/renderers/GameScreenRenderer';
+import HUDRenderer from './graphics/renderers/HUDRenderer';
+import InventoryRendererV2 from './graphics/renderers/InventoryRendererV2';
+import CharacterScreenRenderer from './graphics/renderers/CharacterScreenRenderer';
+import MapScreenRenderer from './graphics/renderers/MapScreenRenderer';
+import HelpScreenRenderer from './graphics/renderers/HelpScreenRenderer';
+import LevelUpScreenRenderer from './graphics/renderers/LevelUpScreenRenderer';
 import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
@@ -66,6 +77,13 @@ const setupContainer = () => {
   container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(InputHandler).toSelf();
+  container.bind(GameScreenRenderer).toSelf();
+  container.bind(HUDRenderer).toSelf();
+  container.bind(InventoryRendererV2).toSelf();
+  container.bind(CharacterScreenRenderer).toSelf();
+  container.bind(MapScreenRenderer).toSelf();
+  container.bind(HelpScreenRenderer).toSelf();
+  container.bind(LevelUpScreenRenderer).toSelf();
   return container;
 };
 
@@ -78,9 +96,17 @@ const main = async () => {
   const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);
   const session = await container.getAsync<Session>(Session.SYMBOL);
+
+  const rootElement = checkNotNull(document.getElementById('container'));
+  const canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+  rootElement.appendChild(canvas);
+  canvas.tabIndex = 0;
+  canvas.focus();
+  const canvasGraphics = Graphics.forCanvas(canvas);
+
   const renderer = await container.getAsync(GameRenderer);
   const inputHandler = container.get(InputHandler);
-  inputHandler.addEventListener(renderer.getCanvas());
+  inputHandler.addEventListener(canvas);
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = new Debug({ state, session });
     debug.attachToWindow();
@@ -88,7 +114,7 @@ const main = async () => {
   }
   await showSplashScreen(session);
   setInterval(async () => {
-    await renderer.render(session);
+    await renderer.render(canvasGraphics);
   }, 20);
 };
 

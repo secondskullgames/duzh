@@ -6,25 +6,22 @@ import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
 import { checkNotNull } from '../../utils/preconditions';
 import { Session } from '../../core/Session';
+import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
 
-type Props = Readonly<{
-  graphics: Graphics;
-}>;
-
+@injectable()
 export default class MapScreenRenderer implements Renderer {
-  private readonly graphics: Graphics;
-
-  constructor({ graphics }: Props) {
-    this.graphics = graphics;
-  }
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session
+  ) {}
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async (session: Session) => {
-    const { graphics } = this;
+  render = async (graphics: Graphics) => {
+    const { session } = this;
     const map = checkNotNull(session.getMap());
 
     graphics.fill(backgroundColor);

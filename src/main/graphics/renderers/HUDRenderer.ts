@@ -12,6 +12,7 @@ import { FontName } from '../Fonts';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { inject, injectable } from 'inversify';
 import getInnateAbilities = AbilityName.getInnateAbilities;
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -27,45 +28,40 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
-type Props = Readonly<{
-  textRenderer: TextRenderer;
-  graphics: Graphics;
-  imageFactory: ImageFactory;
-}>;
-
+@injectable()
 export default class HUDRenderer implements Renderer {
-  private readonly textRenderer: TextRenderer;
-  private readonly graphics: Graphics;
-  private readonly imageFactory: ImageFactory;
-
-  constructor({ textRenderer, graphics, imageFactory }: Props) {
-    this.textRenderer = textRenderer;
-    this.graphics = graphics;
-    this.imageFactory = imageFactory;
-  }
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {}
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async (session: Session) => {
-    await this._renderFrame();
-    await this._renderLeftPanel(session);
-    await this._renderMiddlePanel(session);
-    await this._renderRightPanel(session);
+  render = async (graphics: Graphics) => {
+    await this._renderFrame(graphics);
+    await this._renderLeftPanel(graphics);
+    await this._renderMiddlePanel(graphics);
+    await this._renderRightPanel(graphics);
   };
 
-  private _renderFrame = async () => {
+  private _renderFrame = async (graphics: Graphics) => {
     const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
-    this.graphics.drawImage(image, { x: 0, y: TOP });
+    graphics.drawImage(image, { x: 0, y: TOP });
   };
 
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async (session: Session) => {
+  private _renderLeftPanel = async (graphics: Graphics) => {
+    const { session } = this;
     const playerUnit = session.getPlayerUnit();
 
     const lines = [
@@ -88,12 +84,14 @@ export default class HUDRenderer implements Renderer {
         FontName.APPLE_II,
         { x: left, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
     }
   };
 
-  private _renderMiddlePanel = async (session: Session) => {
+  private _renderMiddlePanel = async (graphics: Graphics) => {
+    const { session } = this;
     const top = TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
 
@@ -107,27 +105,30 @@ export default class HUDRenderer implements Renderer {
         (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
       if (!getInnateAbilities().includes(ability.name)) {
-        await this._renderAbility(ability, { x: left, y: top }, session);
+        await this._renderAbility(ability, { x: left, y: top }, graphics);
         await this._drawText(
           `${keyNumber}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 },
           Colors.WHITE,
-          Alignment.CENTER
+          Alignment.CENTER,
+          graphics
         );
         await this._drawText(
           `${ability.manaCost}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 + LINE_HEIGHT },
           Colors.LIGHT_GRAY,
-          Alignment.CENTER
+          Alignment.CENTER,
+          graphics
         );
         keyNumber++;
       }
     }
   };
 
-  private _renderRightPanel = async (session: Session) => {
+  private _renderRightPanel = async (graphics: Graphics) => {
+    const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
@@ -151,7 +152,8 @@ export default class HUDRenderer implements Renderer {
         FontName.APPLE_II,
         { x: left, y },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
     }
   };
@@ -159,9 +161,9 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
-    session: Session
+    graphics: Graphics
   ) => {
-    const { imageFactory } = this;
+    const { imageFactory, session } = this;
     const playerUnit = session.getPlayerUnit();
     const queuedAbility = session.getQueuedAbility();
 
@@ -183,7 +185,7 @@ export default class HUDRenderer implements Renderer {
         filename: `abilities/${ability.icon}`,
         paletteSwaps
       });
-      this.graphics.drawImage(icon, topLeft);
+      graphics.drawImage(icon, topLeft);
     }
   };
 
@@ -192,9 +194,10 @@ export default class HUDRenderer implements Renderer {
     font: FontName,
     pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+    drawAligned(image, graphics, pixel, textAlign);
   };
 }
