@@ -6,7 +6,7 @@ import RoomCorridorMapGenerator2 from './generated/room_corridor_rewrite/RoomCor
 import PathMapGenerator from './generated/PathMapGenerator';
 import RoomCorridorMapGenerator3 from './generated/RoomCorridorMapGenerator3';
 import MapInstance from './MapInstance';
-import { buildPredefinedMap } from './predefined/buildPredefinedMap';
+import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import { GameState } from '../core/GameState';
@@ -15,6 +15,9 @@ import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
+import UnitFactory from '../entities/units/UnitFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
 
 type MapStyle = Readonly<{
   tileSet: string;
@@ -31,18 +34,37 @@ type Props = Readonly<{
   imageFactory: ImageFactory;
   tileFactory: TileFactory;
   itemFactory: ItemFactory;
+  unitFactory: UnitFactory;
+  objectFactory: ObjectFactory;
+  spriteFactory: SpriteFactory;
 }>;
 
 export default class MapFactory {
   private readonly imageFactory: ImageFactory;
   private readonly tileFactory: TileFactory;
   private readonly itemFactory: ItemFactory;
+  private readonly predefinedMapFactory: PredefinedMapFactory;
   private readonly usedMapStyles: MapStyle[] = [];
 
-  constructor({ imageFactory, tileFactory, itemFactory }: Props) {
+  constructor({
+    imageFactory,
+    tileFactory,
+    itemFactory,
+    unitFactory,
+    objectFactory,
+    spriteFactory
+  }: Props) {
     this.imageFactory = imageFactory;
     this.tileFactory = tileFactory;
     this.itemFactory = itemFactory;
+    this.predefinedMapFactory = new PredefinedMapFactory({
+      imageFactory,
+      tileFactory,
+      objectFactory,
+      unitFactory,
+      itemFactory,
+      spriteFactory
+    });
   }
 
   loadMap = async (mapSpec: MapSpec, state: GameState): Promise<MapInstance> => {
@@ -53,7 +75,7 @@ export default class MapFactory {
         return mapBuilder.build(state);
       }
       case 'predefined': {
-        return buildPredefinedMap(mapSpec.id, state);
+        return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id, state);
       }
     }
   };

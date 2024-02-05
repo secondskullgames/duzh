@@ -32,16 +32,19 @@ const main = async () => {
   const spriteFactory = new SpriteFactory({ imageFactory });
   const tileFactory = new TileFactory({ spriteFactory });
   const itemFactory = new ItemFactory({ spriteFactory });
+  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
+  const objectFactory = new ObjectFactory({ spriteFactory });
   const mapFactory = new MapFactory({
     imageFactory,
     tileFactory,
-    itemFactory
+    itemFactory,
+    unitFactory,
+    objectFactory,
+    spriteFactory
   });
   const projectileFactory = new ProjectileFactory({ spriteFactory });
   // TODO is this an insane dependency?
   const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
-  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
-  const objectFactory = new ObjectFactory({ spriteFactory });
   const mapSpecs = await _loadMapSpecs();
   const state = GameState.create({
     mapSpecs,
