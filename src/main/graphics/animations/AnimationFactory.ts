@@ -5,21 +5,11 @@ import Unit from '../../entities/units/Unit';
 import ProjectileFactory from '../../entities/objects/ProjectileFactory';
 import Activity from '../../entities/units/Activity';
 import MapInstance from '../../maps/MapInstance';
-import SpriteFactory from '../sprites/SpriteFactory';
+import { injectable } from 'inversify';
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-  projectileFactory: ProjectileFactory;
-}>;
-
+@injectable()
 export default class AnimationFactory {
-  private readonly spriteFactory: SpriteFactory;
-  private readonly projectileFactory: ProjectileFactory;
-
-  constructor({ spriteFactory, projectileFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-    this.projectileFactory = projectileFactory;
-  }
+  constructor(private readonly projectileFactory: ProjectileFactory) {}
 
   getArrowAnimation = async (
     source: Unit,

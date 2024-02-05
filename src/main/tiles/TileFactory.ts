@@ -10,22 +10,16 @@ import { randChoice } from '../utils/random';
 import { loadTileSetModel } from '../utils/models';
 import { Feature } from '../utils/features';
 import MapInstance from '../maps/MapInstance';
+import { injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
   tileSet: TileSet;
 }>;
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class TileFactory {
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
+  constructor(private readonly spriteFactory: SpriteFactory) {}
 
   createTile = (
     { tileType, tileSet }: CreateTileParams,

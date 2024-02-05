@@ -50,3 +50,7 @@ export class ImageCacheImpl implements ImageCache {
     this.map[_stringify(key)] = image;
   };
 }
+
+export const ImageCache = {
+  SYMBOL: Symbol('image')
+};

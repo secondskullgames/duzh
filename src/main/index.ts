@@ -19,9 +19,9 @@ import UnitFactory from './entities/units/UnitFactory';
 import ProjectileFactory from './entities/objects/ProjectileFactory';
 import ObjectFactory from './entities/objects/ObjectFactory';
 import MapSpec from './schemas/MapSpec';
-import { Symbols } from './Symbols';
 import ImageLoader from './graphics/images/ImageLoader';
-import { ImageCacheImpl } from './graphics/images/ImageCache';
+import { ImageCache, ImageCacheImpl } from './graphics/images/ImageCache';
+import { PredefinedMapFactory } from './maps/predefined/PredefinedMapFactory';
 import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
@@ -32,29 +32,35 @@ const _loadMapSpecs = async (): Promise<MapSpec[]> =>
     )
   ).default as MapSpec[];
 
-const main = async () => {
+const setupContainer = () => {
   const container = new Container({ defaultScope: 'Singleton' });
-  container.bind(Symbols.ImageCache).to(ImageCacheImpl);
+  container.bind(ImageCache.SYMBOL).to(ImageCacheImpl);
   container.bind(ImageLoader).toSelf();
   container.bind(ImageFactory).toSelf();
+  container.bind(SpriteFactory).toSelf();
+  container.bind(TileFactory).toSelf();
+  container.bind(ItemFactory).toSelf();
+  container.bind(UnitFactory).toSelf();
+  container.bind(ObjectFactory).toSelf();
+  container.bind(PredefinedMapFactory).toSelf();
+  container.bind(MapFactory).toSelf();
+  container.bind(ProjectileFactory).toSelf();
+  container.bind(AnimationFactory).toSelf();
+  return container;
+};
+
+const main = async () => {
+  const container = setupContainer();
 
   const imageFactory = container.get(ImageFactory);
-  const spriteFactory = new SpriteFactory({ imageFactory });
-  const tileFactory = new TileFactory({ spriteFactory });
-  const itemFactory = new ItemFactory({ spriteFactory });
-  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
-  const objectFactory = new ObjectFactory({ spriteFactory });
-  const mapFactory = new MapFactory({
-    imageFactory,
-    tileFactory,
-    itemFactory,
-    unitFactory,
-    objectFactory,
-    spriteFactory
-  });
-  const projectileFactory = new ProjectileFactory({ spriteFactory });
-  // TODO is this an insane dependency?
-  const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
+  const spriteFactory = container.get(SpriteFactory);
+  const tileFactory = container.get(TileFactory);
+  const itemFactory = container.get(ItemFactory);
+  const unitFactory = container.get(UnitFactory);
+  const objectFactory = container.get(ObjectFactory);
+  const mapFactory = container.get(MapFactory);
+  const projectileFactory = container.get(ProjectileFactory);
+  const animationFactory = container.get(AnimationFactory);
   const mapSpecs = await _loadMapSpecs();
   const state = GameState.create({
     mapSpecs,
@@ -72,7 +78,7 @@ const main = async () => {
   state.addMaps(maps);
   const session = Session.create();
   const fonts = await loadFonts({ imageFactory });
-  const textRenderer = new TextRenderer({ imageFactory, fonts });
+  const textRenderer = new TextRenderer({ fonts });
   const renderer = new GameRenderer({
     parent: document.getElementById('container')!,
     imageFactory,

@@ -4,17 +4,11 @@ import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
 import MapInstance from '../../maps/MapInstance';
+import { injectable } from 'inversify';
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class ProjectileFactory {
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
+  constructor(private readonly spriteFactory: SpriteFactory) {}
 
   createArrow = async (
     coordinates: Coordinates,

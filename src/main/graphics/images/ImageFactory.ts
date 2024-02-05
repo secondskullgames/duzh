@@ -5,7 +5,6 @@ import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import PaletteSwaps from '../PaletteSwaps';
 import Color from '../Color';
-import { Symbols } from '../../Symbols';
 import { inject, injectable } from 'inversify';
 
 type Params = Readonly<{
@@ -22,7 +21,7 @@ export default class ImageFactory {
 
   constructor(
     @inject(ImageLoader) private readonly imageLoader: ImageLoader,
-    @inject(Symbols.ImageCache) private readonly cache: ImageCache
+    @inject(ImageCache.SYMBOL) private readonly cache: ImageCache
   ) {}
 
   getImage = async (params: Params): Promise<Image> => {

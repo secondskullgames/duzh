@@ -13,20 +13,14 @@ import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import { injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class ObjectFactory {
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
+  constructor(private readonly spriteFactory: SpriteFactory) {}
 
   createMirror = async (
     coordinates: Coordinates,

@@ -15,9 +15,7 @@ import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
-import UnitFactory from '../entities/units/UnitFactory';
-import ObjectFactory from '../entities/objects/ObjectFactory';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import { injectable } from 'inversify';
 
 type MapStyle = Readonly<{
   tileSet: string;
@@ -30,42 +28,16 @@ namespace MapStyle {
   };
 }
 
-type Props = Readonly<{
-  imageFactory: ImageFactory;
-  tileFactory: TileFactory;
-  itemFactory: ItemFactory;
-  unitFactory: UnitFactory;
-  objectFactory: ObjectFactory;
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class MapFactory {
-  private readonly imageFactory: ImageFactory;
-  private readonly tileFactory: TileFactory;
-  private readonly itemFactory: ItemFactory;
-  private readonly predefinedMapFactory: PredefinedMapFactory;
   private readonly usedMapStyles: MapStyle[] = [];
 
-  constructor({
-    imageFactory,
-    tileFactory,
-    itemFactory,
-    unitFactory,
-    objectFactory,
-    spriteFactory
-  }: Props) {
-    this.imageFactory = imageFactory;
-    this.tileFactory = tileFactory;
-    this.itemFactory = itemFactory;
-    this.predefinedMapFactory = new PredefinedMapFactory({
-      imageFactory,
-      tileFactory,
-      objectFactory,
-      unitFactory,
-      itemFactory,
-      spriteFactory
-    });
-  }
+  constructor(
+    private readonly imageFactory: ImageFactory,
+    private readonly tileFactory: TileFactory,
+    private readonly itemFactory: ItemFactory,
+    private readonly predefinedMapFactory: PredefinedMapFactory
+  ) {}
 
   loadMap = async (mapSpec: MapSpec, state: GameState): Promise<MapInstance> => {
     switch (mapSpec.type) {

@@ -14,18 +14,12 @@ import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
+import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
-type Props = Readonly<{
-  imageFactory: ImageFactory;
-}>;
-
+@injectable()
 export default class SpriteFactory {
-  private readonly imageFactory: ImageFactory;
-
-  constructor({ imageFactory }: Props) {
-    this.imageFactory = imageFactory;
-  }
+  constructor(private readonly imageFactory: ImageFactory) {}
 
   /**
    * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))

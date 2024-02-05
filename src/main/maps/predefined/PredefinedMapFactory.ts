@@ -25,6 +25,7 @@ import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import { injectable } from 'inversify';
 
 /** TODO this should go somewhere else */
 const _getEnemyController = (enemyUnitModel: UnitModel) => {
@@ -39,38 +40,16 @@ const _getEnemyController = (enemyUnitModel: UnitModel) => {
   }
 };
 
-type Props = Readonly<{
-  imageFactory: ImageFactory;
-  tileFactory: TileFactory;
-  objectFactory: ObjectFactory;
-  unitFactory: UnitFactory;
-  itemFactory: ItemFactory;
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export class PredefinedMapFactory {
-  private readonly imageFactory: ImageFactory;
-  private readonly tileFactory: TileFactory;
-  private readonly objectFactory: ObjectFactory;
-  private readonly unitFactory: UnitFactory;
-  private readonly itemFactory: ItemFactory;
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({
-    imageFactory,
-    tileFactory,
-    objectFactory,
-    unitFactory,
-    itemFactory,
-    spriteFactory
-  }: Props) {
-    this.imageFactory = imageFactory;
-    this.tileFactory = tileFactory;
-    this.objectFactory = objectFactory;
-    this.unitFactory = unitFactory;
-    this.itemFactory = itemFactory;
-    this.spriteFactory = spriteFactory;
-  }
+  constructor(
+    private readonly imageFactory: ImageFactory,
+    private readonly tileFactory: TileFactory,
+    private readonly objectFactory: ObjectFactory,
+    private readonly unitFactory: UnitFactory,
+    private readonly itemFactory: ItemFactory,
+    private readonly spriteFactory: SpriteFactory
+  ) {}
 
   buildPredefinedMap = async (mapId: string, state: GameState): Promise<MapInstance> => {
     const model = await loadPredefinedMapModel(mapId);
