@@ -13,7 +13,7 @@ export const fastMove = async (
   state: GameState,
   session: Session
 ) => {
-  const map = session.getMap();
+  const map = unit.getMap();
   let coordinates: Coordinates;
   // eslint-disable-next-line no-constant-condition
   while (true) {

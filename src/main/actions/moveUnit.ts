@@ -11,7 +11,7 @@ export const moveUnit = async (
   session: Session,
   state: GameState
 ) => {
-  const map = session.getMap();
+  const map = unit.getMap();
   map.removeUnit(unit);
 
   unit.setCoordinates(coordinates);
@@ -19,6 +19,7 @@ export const moveUnit = async (
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
+      // TODO - why are we using the next coordinates?
       const nextCoordinates = Coordinates.plus(
         unit.getCoordinates(),
         unit.getDirection()
