@@ -217,7 +217,7 @@ export class PredefinedMapFactory {
           objects.push(door);
         } else {
           if (objectName === 'mirror') {
-            const spawner = await this.objectFactory.createMirror({ x, y }, map, state);
+            const spawner = await this.objectFactory.createMirror({ x, y }, map);
             objects.push(spawner);
           } else if (objectName === 'movable_block') {
             const block = await this.objectFactory.createMovableBlock({ x, y }, map);

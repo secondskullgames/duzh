@@ -65,7 +65,7 @@ const main = async () => {
   const inputHandler = container.get(InputHandler);
   inputHandler.addEventListener(canvas);
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, session });
+    const debug = container.get(Debug);
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }

@@ -1,25 +1,27 @@
 import { GameState } from './GameState';
 import { Session } from './Session';
 import { loadNextMap } from '../actions/loadNextMap';
-import { killEnemies } from '../actions/debug/killEnemies';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
+import ItemFactory from '../items/ItemFactory';
+import MapInstance from '../maps/MapInstance';
+import { Faction } from '../types/types';
+import { inject, injectable } from 'inversify';
 
-type Props = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
+@injectable()
 export class Debug {
-  private readonly state: GameState;
-  private readonly session: Session;
   private _isMapRevealed: boolean;
 
-  constructor({ state, session }: Props) {
-    this.state = state;
-    this.session = session;
+  constructor(
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(ItemFactory)
+    private readonly itemFactory: ItemFactory
+  ) {
     this._isMapRevealed = false;
   }
 
@@ -40,18 +42,20 @@ export class Debug {
   };
 
   awardEquipment = async () => {
+    const { session, itemFactory } = this;
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
-    const item = await this.state.getItemFactory().createInventoryEquipment(id);
-    const playerUnit = this.session.getPlayerUnit();
+    const item = await itemFactory.createInventoryEquipment(id);
+    const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    this.session
+    session
       .getTicker()
       .log(`Picked up a ${item.name}.`, { turn: this.session.getTurn() });
     playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {
+    const { session, state } = this;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb = window.jwb ?? {};
@@ -59,10 +63,18 @@ export class Debug {
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies: () => killEnemies(this.session.getMap(), this.session),
+      killEnemies: () => this.killEnemies(session.getMap()),
       nextLevel: async () => {
-        await loadNextMap(this.session, this.state);
+        await loadNextMap(session, state);
       }
     };
+  };
+
+  private killEnemies = async (map: MapInstance) => {
+    for (const unit of map.getAllUnits()) {
+      if (unit.getFaction() === Faction.ENEMY) {
+        map.removeUnit(unit);
+      }
+    }
   };
 }
