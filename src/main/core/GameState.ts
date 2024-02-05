@@ -10,6 +10,7 @@ import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
+import ObjectFactory from '../entities/objects/ObjectFactory';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -31,6 +32,7 @@ export interface GameState {
   getTileFactory: () => TileFactory;
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
+  getObjectFactory: () => ObjectFactory;
   getProjectileFactory: () => ProjectileFactory;
 }
 
@@ -42,6 +44,7 @@ type Props = Readonly<{
   tileFactory: TileFactory;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
+  objectFactory: ObjectFactory;
   projectileFactory: ProjectileFactory;
 }>;
 
@@ -62,6 +65,7 @@ class GameStateImpl implements GameState {
   private readonly tileFactory: TileFactory;
   private readonly itemFactory: ItemFactory;
   private readonly unitFactory: UnitFactory;
+  private readonly objectFactory: ObjectFactory;
   private readonly projectileFactory: ProjectileFactory;
   private readonly generatedEquipmentIds: string[];
 
@@ -73,6 +77,7 @@ class GameStateImpl implements GameState {
     this.tileFactory = props.tileFactory;
     this.itemFactory = props.itemFactory;
     this.unitFactory = props.unitFactory;
+    this.objectFactory = props.objectFactory;
     this.projectileFactory = props.projectileFactory;
     this.mapSuppliers = [];
     this.maps = [];
@@ -119,5 +124,6 @@ class GameStateImpl implements GameState {
   getTileFactory = (): TileFactory => this.tileFactory;
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;
+  getObjectFactory = (): ObjectFactory => this.objectFactory;
   getProjectileFactory = (): ProjectileFactory => this.projectileFactory;
 }

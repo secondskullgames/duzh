@@ -3,7 +3,6 @@ import Unit from '../entities/units/Unit';
 import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { randChance } from '../utils/random';
-import ObjectFactory from '../entities/objects/ObjectFactory';
 import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
 
@@ -24,7 +23,9 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await ObjectFactory.createHealthGlobe(coordinates, map, state);
+      const healthGlobe = await state
+        .getObjectFactory()
+        .createHealthGlobe(coordinates, map);
       map.addObject(healthGlobe);
     }
 

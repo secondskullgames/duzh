@@ -2,7 +2,6 @@ import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import Door, { DoorState } from '../../entities/objects/Door';
-import ObjectFactory from '../../entities/objects/ObjectFactory';
 import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
@@ -176,6 +175,7 @@ const _loadObjects = async (
   state: GameState,
   map: MapInstance
 ): Promise<GameObject[]> => {
+  const objectFactory = state.getObjectFactory();
   const objects: GameObject[] = [];
 
   const objectColors = _toHexColors(model.objectColors);
@@ -203,10 +203,10 @@ const _loadObjects = async (
         objects.push(door);
       } else {
         if (objectName === 'mirror') {
-          const spawner = await ObjectFactory.createMirror({ x, y }, map, state);
+          const spawner = await objectFactory.createMirror({ x, y }, map, state);
           objects.push(spawner);
         } else if (objectName === 'movable_block') {
-          const block = await ObjectFactory.createMovableBlock({ x, y }, map, state);
+          const block = await objectFactory.createMovableBlock({ x, y }, map);
           objects.push(block);
         } else if (objectName) {
           throw new Error(`Unrecognized object name: ${objectName}`);
