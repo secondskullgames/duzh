@@ -8,7 +8,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 8;
+const manaCost = 10;
 const damageCoefficient = 1;
 const stunDuration = 2;
 

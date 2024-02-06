@@ -42,8 +42,8 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
           } else {
             await loadFirstMap(session, state);
           }
+          session.setScreen(GameScreen.GAME);
         }
-        session.setScreen(GameScreen.GAME);
         break;
       case 'ESCAPE':
         session.setScreen(GameScreen.GAME);

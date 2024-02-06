@@ -43,7 +43,7 @@ export default {
   // modulePathIgnorePatterns: [],
   // notify: false,
   // notifyMode: "failure-change",
-  preset: 'ts-jest'
+  preset: 'ts-jest',
   // projects: undefined,
   // reporters: undefined,
   // resetMocks: false,
@@ -55,7 +55,7 @@ export default {
   //   "<rootDir>"
   // ],
   // runner: "jest-runner",
-  // setupFiles: [],
+  setupFiles: ['reflect-metadata']
   // setupFilesAfterEnv: [],
   // slowTestThreshold: 5,
   // snapshotSerializers: [],

@@ -1,12 +1,10 @@
-import { Session } from '../core/Session';
+import Unit from '../entities/units/Unit';
+import MapInstance from '../maps/MapInstance';
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.
  */
-export const updateRevealedTiles = (session: Session) => {
-  const map = session.getMap();
-  const playerUnit = session.getPlayerUnit();
-
+export const updateRevealedTiles = (map: MapInstance, playerUnit: Unit) => {
   const radius = 3;
 
   const { x: playerX, y: playerY } = playerUnit.getCoordinates();
