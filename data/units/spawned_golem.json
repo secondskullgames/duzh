@@ -1,5 +1,5 @@
 {
-  "id": "golem",
+  "id": "spawned_golem",
   "name": "Golem",
   "type": "GOLEM",
   "sprite": "zombie",
@@ -14,7 +14,7 @@
   },
   "strength": 20,
   "dexterity": 2,
-  "life": 150,
+  "life": 80,
   "mana": 0,
   "aiParameters": {
     "speed": 0.7,
@@ -22,11 +22,6 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "minLevel": 5,
-    "maxLevel": 99,
-    "rarity": 3
-  },
   "abilities": ["ATTACK"],
-  "experience": 1
+  "experience": 0
 }
