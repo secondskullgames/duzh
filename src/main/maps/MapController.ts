@@ -5,6 +5,7 @@ import { checkState } from '../utils/preconditions';
 import { updateRevealedTiles } from '../actions/updateRevealedTiles';
 import Music from '../sounds/Music';
 import { GameScreen } from '../core/GameScreen';
+import UnitFactory from '../entities/units/UnitFactory';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {
@@ -26,18 +27,21 @@ export class MapControllerImpl implements MapController {
     @inject(GameState.SYMBOL)
     private readonly state: GameState,
     @inject(MapFactory)
-    private readonly mapFactory: MapFactory
+    private readonly mapFactory: MapFactory,
+    @inject(UnitFactory)
+    private readonly unitFactory: UnitFactory
   ) {}
 
   loadFirstMap = async () => {
-    const { state, session } = this;
+    const { state, session, unitFactory } = this;
     checkState(session.getMapIndex() === -1);
     session.setMapIndex(0);
     const map = await state.loadMap(0);
     session.setMap(map);
-    const playerUnit = await state
-      .getUnitFactory()
-      .createPlayerUnit(map.getStartingCoordinates(), map);
+    const playerUnit = await unitFactory.createPlayerUnit(
+      map.getStartingCoordinates(),
+      map
+    );
     map.addUnit(playerUnit);
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
