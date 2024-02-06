@@ -15,6 +15,7 @@ import { createCanvas } from './utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
+import { MapController, MapControllerImpl } from './maps/MapController';
 import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
@@ -41,6 +42,7 @@ const setupContainer = () => {
   container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
   container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
   container.bind(GameState.SYMBOL).to(GameStateImpl);
+  container.bind(MapController.SYMBOL).to(MapControllerImpl);
   return container;
 };
 

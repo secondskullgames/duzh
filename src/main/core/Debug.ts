@@ -1,6 +1,5 @@
 import { GameState } from './GameState';
 import { Session } from './Session';
-import { loadNextMap } from '../actions/loadNextMap';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
 import { playSound } from '../sounds/playSound';
@@ -8,6 +7,7 @@ import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
 import { Faction } from '../types/types';
+import { MapController } from '../maps/MapController';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -19,6 +19,8 @@ export class Debug {
     private readonly state: GameState,
     @inject(Session.SYMBOL)
     private readonly session: Session,
+    @inject(MapController.SYMBOL)
+    private readonly mapController: MapController,
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory
   ) {
@@ -55,7 +57,7 @@ export class Debug {
   };
 
   attachToWindow = () => {
-    const { session, state } = this;
+    const { session, mapController } = this;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb = window.jwb ?? {};
@@ -65,7 +67,7 @@ export class Debug {
       ...this,
       killEnemies: () => this.killEnemies(session.getMap()),
       nextLevel: async () => {
-        await loadNextMap(session, state);
+        await mapController.loadNextMap();
       }
     };
   };
