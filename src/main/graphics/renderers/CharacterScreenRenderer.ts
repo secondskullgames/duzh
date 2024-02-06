@@ -9,32 +9,27 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
-type Props = Readonly<{
-  textRenderer: TextRenderer;
-  graphics: Graphics;
-  imageFactory: ImageFactory;
-}>;
-
+@injectable()
 export default class CharacterScreenRenderer implements Renderer {
-  private readonly textRenderer: TextRenderer;
-  private readonly graphics: Graphics;
-  private readonly imageFactory: ImageFactory;
-
-  constructor({ textRenderer, graphics, imageFactory }: Props) {
-    this.textRenderer = textRenderer;
-    this.graphics = graphics;
-    this.imageFactory = imageFactory;
-  }
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {}
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async (session: Session) => {
-    const { graphics, imageFactory } = this;
+  render = async (graphics: Graphics) => {
+    const { imageFactory } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -43,11 +38,11 @@ export default class CharacterScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    await this._renderStatistics(session);
+    await this._renderStatistics(graphics);
   };
 
-  private _renderStatistics = async (session: Session) => {
-    const { graphics } = this;
+  private _renderStatistics = async (graphics: Graphics) => {
+    const { session } = this;
     const playerUnit = session.getPlayerUnit();
     let top = 20;
     await this._drawText(
@@ -55,7 +50,8 @@ export default class CharacterScreenRenderer implements Renderer {
       FontName.APPLE_II,
       { x: graphics.getWidth() / 2, y: top },
       Colors.WHITE,
-      Alignment.CENTER
+      Alignment.CENTER,
+      graphics
     );
 
     top += 20;
@@ -71,7 +67,8 @@ export default class CharacterScreenRenderer implements Renderer {
           FontName.APPLE_II,
           { x: 20, y: top },
           Colors.WHITE,
-          Alignment.LEFT
+          Alignment.LEFT,
+          graphics
         );
         top += LINE_HEIGHT;
       }
@@ -93,7 +90,8 @@ export default class CharacterScreenRenderer implements Renderer {
           FontName.APPLE_II,
           { x: 20, y: top },
           Colors.WHITE,
-          Alignment.LEFT
+          Alignment.LEFT,
+          graphics
         );
         top += LINE_HEIGHT;
       }
@@ -105,9 +103,10 @@ export default class CharacterScreenRenderer implements Renderer {
     font: FontName,
     pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+    drawAligned(image, graphics, pixel, textAlign);
   };
 }

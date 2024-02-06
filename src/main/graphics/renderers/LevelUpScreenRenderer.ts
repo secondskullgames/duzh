@@ -9,28 +9,23 @@ import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
 
-type Props = Readonly<{
-  graphics: Graphics;
-  textRenderer: TextRenderer;
-  imageFactory: ImageFactory;
-}>;
-
+@injectable()
 export default class LevelUpScreenRenderer implements Renderer {
-  private readonly graphics: Graphics;
-  private readonly textRenderer: TextRenderer;
-  private readonly imageFactory: ImageFactory;
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {}
 
-  constructor({ graphics, textRenderer, imageFactory }: Props) {
-    this.graphics = graphics;
-    this.textRenderer = textRenderer;
-    this.imageFactory = imageFactory;
-  }
-
-  render = async (session: Session) => {
-    const { graphics, imageFactory } = this;
+  render = async (graphics: Graphics) => {
+    const { session, imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
     const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
@@ -52,7 +47,8 @@ export default class LevelUpScreenRenderer implements Renderer {
         FontName.APPLE_II,
         { x: 20, y: top },
         color,
-        Alignment.LEFT
+        Alignment.LEFT,
+        graphics
       );
       top += 10;
     }
@@ -62,7 +58,8 @@ export default class LevelUpScreenRenderer implements Renderer {
       FontName.APPLE_II,
       { x: 20, y: top },
       Colors.WHITE,
-      Alignment.LEFT
+      Alignment.LEFT,
+      graphics
     );
   };
 
@@ -71,9 +68,10 @@ export default class LevelUpScreenRenderer implements Renderer {
     font: FontName,
     pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.graphics, pixel, textAlign);
+    drawAligned(image, graphics, pixel, textAlign);
   };
 }

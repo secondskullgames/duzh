@@ -13,30 +13,27 @@ import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import UnitFactory from '../units/UnitFactory';
+import { inject, injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class ObjectFactory {
-  private readonly spriteFactory: SpriteFactory;
+  constructor(
+    @inject(SpriteFactory)
+    private readonly spriteFactory: SpriteFactory,
+    @inject(UnitFactory)
+    private readonly unitFactory: UnitFactory
+  ) {}
 
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
+  createMirror = async (coordinates: Coordinates, map: MapInstance): Promise<Spawner> => {
+    const { spriteFactory, unitFactory } = this;
 
-  createMirror = async (
-    coordinates: Coordinates,
-    map: MapInstance,
-    state: GameState
-  ): Promise<Spawner> => {
-    const sprite = await this.spriteFactory.createMirrorSprite();
-    // TODO: Introduces a circular dependency on `unitFactory`
+    const sprite = await spriteFactory.createMirrorSprite();
     const spawnFunction = (coordinates: Coordinates) =>
-      state.getUnitFactory().createUnit({
+      unitFactory.createUnit({
         unitClass: 'shade',
         coordinates: coordinates,
         map,
@@ -60,12 +57,11 @@ export default class ObjectFactory {
   createSpawner = async (
     coordinates: Coordinates,
     map: MapInstance,
-    type: SpawnerClass,
-    state: GameState
+    type: SpawnerClass
   ): Promise<Spawner> => {
     switch (type) {
       case 'mirror':
-        return this.createMirror(coordinates, map, state);
+        return this.createMirror(coordinates, map);
       default:
         throw new Error(`Unknown spawner type: ${type}`);
     }

@@ -1,5 +1,7 @@
 import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
+import { injectable } from 'inversify';
 
+@injectable()
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;

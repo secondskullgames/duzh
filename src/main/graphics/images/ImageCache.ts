@@ -3,6 +3,7 @@ import { ImageEffect } from './ImageEffect';
 import { comparing } from '../../utils/arrays';
 import Color from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
+import { injectable } from 'inversify';
 
 type CacheKey = Readonly<{
   filename: string;
@@ -11,7 +12,7 @@ type CacheKey = Readonly<{
   effects?: ImageEffect[];
 }>;
 
-interface ImageCache {
+export interface ImageCache {
   get: (key: CacheKey) => Image | null | undefined;
   put: (key: CacheKey, image: Image | null) => void;
 }
@@ -33,8 +34,10 @@ const _stringify = (key: CacheKey): string => {
   }_${stringifiedPaletteSwaps}_${effectNames}`;
 };
 
-class Impl implements ImageCache {
+@injectable()
+export class ImageCacheImpl implements ImageCache {
   private readonly map: Record<string, Image | null>;
+
   constructor() {
     this.map = {};
   }
@@ -48,8 +51,6 @@ class Impl implements ImageCache {
   };
 }
 
-namespace ImageCache {
-  export const create = (): ImageCache => new Impl();
-}
-
-export default ImageCache;
+export const ImageCache = {
+  SYMBOL: Symbol('image')
+};

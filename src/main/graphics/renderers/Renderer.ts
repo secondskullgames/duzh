@@ -1,5 +1,5 @@
-import { Session } from '../../core/Session';
+import { Graphics } from '../Graphics';
 
 export interface Renderer {
-  render: (session: Session) => Promise<void>;
+  render: (graphics: Graphics) => Promise<void>;
 }

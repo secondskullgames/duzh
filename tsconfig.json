@@ -13,7 +13,10 @@
     "strict": true,
     "plugins": [{
       "name": "typescript-plugin-css-modules"
-    }]
+    }],
+    "types": ["reflect-metadata", "jest", "webpack-env"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "paths": {
     "*": ["*"]

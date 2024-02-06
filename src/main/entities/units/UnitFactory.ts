@@ -14,6 +14,7 @@ import { Feature } from '../../utils/features';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
+import { injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{
   /**
@@ -29,19 +30,12 @@ type CreateUnitParams = Readonly<{
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-  itemFactory: ItemFactory;
-}>;
-
+@injectable()
 export default class UnitFactory {
-  private readonly spriteFactory: SpriteFactory;
-  private readonly itemFactory: ItemFactory;
-
-  constructor(props: Props) {
-    this.spriteFactory = props.spriteFactory;
-    this.itemFactory = props.itemFactory;
-  }
+  constructor(
+    private readonly spriteFactory: SpriteFactory,
+    private readonly itemFactory: ItemFactory
+  ) {}
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
     const { itemFactory, spriteFactory } = this;

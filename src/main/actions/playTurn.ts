@@ -18,7 +18,7 @@ export const playTurn = async (state: GameState, session: Session) => {
     await object.playTurnAction(state, session);
   }
 
-  updateRevealedTiles(session);
+  updateRevealedTiles(map, session.getPlayerUnit());
   session.nextTurn();
   session.setTurnInProgress(false);
 };

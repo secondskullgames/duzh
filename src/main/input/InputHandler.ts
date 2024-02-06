@@ -1,54 +1,26 @@
 import { mapToCommand } from './inputMappers';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
-import GameScreenInputHandler from './screens/GameScreenInputHandler';
-import InventoryScreenInputHandler from './screens/InventoryScreenInputHandler';
-import TitleScreenInputHandler from './screens/TitleScreenInputHandler';
-import CharacterScreenInputHandler from './screens/CharacterScreenInputHandler';
-import GameOverScreenInputHandler from './screens/GameOverScreenInputHandler';
-import MapScreenInputHandler from './screens/MapScreenInputHandler';
-import VictoryScreenInputHandler from './screens/VictoryScreenInputHandler';
-import HelpScreenInputHandler from './screens/HelpScreenInputHandler';
-import LevelUpScreenInputHandler from './screens/LevelUpScreenInputHandler';
-import InventoryV2InputHandler from './screens/InventoryV2InputHandler';
-import { checkNotNull } from '../utils/preconditions';
-import { GameScreen } from '../core/GameScreen';
+import ScreenHandlers from './screens/ScreenHandlers';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
-import { Feature } from '../utils/features';
+import { inject, injectable } from 'inversify';
 import type { KeyCommand } from './inputTypes';
 
-const screenHandlers: Record<GameScreen, ScreenInputHandler> = {
-  [GameScreen.NONE]: { handleKeyCommand: async () => {} },
-  [GameScreen.CHARACTER]: CharacterScreenInputHandler,
-  [GameScreen.GAME]: GameScreenInputHandler,
-  [GameScreen.GAME_OVER]: GameOverScreenInputHandler,
-  [GameScreen.HELP]: HelpScreenInputHandler,
-  [GameScreen.INVENTORY]: Feature.isEnabled(Feature.INVENTORY_V2)
-    ? InventoryV2InputHandler
-    : InventoryScreenInputHandler,
-  [GameScreen.LEVEL_UP]: LevelUpScreenInputHandler,
-  [GameScreen.MAP]: MapScreenInputHandler,
-  [GameScreen.TITLE]: TitleScreenInputHandler,
-  [GameScreen.VICTORY]: VictoryScreenInputHandler
-};
-
-type Props = Readonly<{
-  state: GameState;
-  session: Session;
-}>;
-
+@injectable()
 export default class InputHandler {
-  private readonly state: GameState;
-  private readonly session: Session;
-
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: ((e: KeyboardEvent) => Promise<void>) | null = null;
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
-  constructor({ state, session }: Props) {
-    this.state = state;
-    this.session = session;
+  constructor(
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(ScreenHandlers)
+    private readonly screenHandlers: ScreenHandlers
+  ) {
     this.busy = false;
     this.eventTarget = null;
   }
@@ -81,9 +53,11 @@ export default class InputHandler {
   };
 
   private _handleKeyCommand = async (command: KeyCommand) => {
-    const { state, session } = this;
-    const handler: ScreenInputHandler = checkNotNull(screenHandlers[session.getScreen()]);
-    await handler.handleKeyCommand(command, session, state);
+    const { session } = this;
+    const handler: ScreenInputHandler = this.screenHandlers.getHandler(
+      session.getScreen()
+    );
+    await handler.handleKeyCommand(command);
   };
 
   addEventListener = (target: HTMLElement) => {

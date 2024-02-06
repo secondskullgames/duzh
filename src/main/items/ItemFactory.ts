@@ -18,18 +18,12 @@ import { floorFire } from '../actions/floorFire';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import MapInstance from '../maps/MapInstance';
+import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
-type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-}>;
-
+@injectable()
 export default class ItemFactory {
-  private readonly spriteFactory: SpriteFactory;
-
-  constructor({ spriteFactory }: Props) {
-    this.spriteFactory = spriteFactory;
-  }
+  constructor(private readonly spriteFactory: SpriteFactory) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
     const onUse: ItemProc = async (

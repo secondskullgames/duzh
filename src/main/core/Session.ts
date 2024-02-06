@@ -37,6 +37,7 @@ export interface Session {
 }
 
 export namespace Session {
+  export const SYMBOL = Symbol('Session');
   export const create = (): Session => new SessionImpl();
 }
 

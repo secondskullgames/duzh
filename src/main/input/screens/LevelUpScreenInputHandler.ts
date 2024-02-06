@@ -3,9 +3,17 @@ import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
 import { abilityForName } from '../../entities/units/abilities/abilityForName';
 import { Session } from '../../core/Session';
+import { inject, injectable } from 'inversify';
 
-const HelpScreenInputHandler: ScreenInputHandler = {
-  handleKeyCommand: async (command: KeyCommand, session: Session) => {
+@injectable()
+export default class HelpScreenInputHandler implements ScreenInputHandler {
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session
+  ) {}
+
+  handleKeyCommand = async (command: KeyCommand) => {
+    const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const levelUpState = session.getLevelUpScreen();
 
@@ -30,7 +38,5 @@ const HelpScreenInputHandler: ScreenInputHandler = {
         }
       }
     }
-  }
-};
-
-export default HelpScreenInputHandler;
+  };
+}

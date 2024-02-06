@@ -1,23 +1,21 @@
+import 'reflect-metadata';
 import { Debug } from './core/Debug';
-import { GameState } from './core/GameState';
+import { GameState, GameStateImpl } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
-import { TextRenderer } from './graphics/TextRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
-import { loadFonts } from './graphics/Fonts';
+import { FontBundle, loadFonts } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import { loadGameMaps } from './actions/loadGameMaps';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import ImageFactory from './graphics/images/ImageFactory';
-import AnimationFactory from './graphics/animations/AnimationFactory';
-import TileFactory from './tiles/TileFactory';
-import SpriteFactory from './graphics/sprites/SpriteFactory';
-import ItemFactory from './items/ItemFactory';
-import UnitFactory from './entities/units/UnitFactory';
-import ProjectileFactory from './entities/objects/ProjectileFactory';
-import ObjectFactory from './entities/objects/ObjectFactory';
 import MapSpec from './schemas/MapSpec';
+import { ImageCache, ImageCacheImpl } from './graphics/images/ImageCache';
+import { createCanvas } from './utils/dom';
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
+import { checkNotNull } from './utils/preconditions';
+import { Graphics } from './graphics/Graphics';
+import { Container } from 'inversify';
 
 const _loadMapSpecs = async (): Promise<MapSpec[]> =>
   (
@@ -27,60 +25,53 @@ const _loadMapSpecs = async (): Promise<MapSpec[]> =>
     )
   ).default as MapSpec[];
 
+const setupContainer = () => {
+  const container = new Container({
+    defaultScope: 'Singleton',
+    autoBindInjectable: true
+  });
+  container.bind(ImageCache.SYMBOL).to(ImageCacheImpl);
+  container.bind<FontBundle>(FontBundle.SYMBOL).toDynamicValue(async context => {
+    const imageFactory = context.container.get(ImageFactory);
+    return loadFonts({ imageFactory });
+  });
+  container
+    .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
+    .toConstantValue(document.getElementById('container')!);
+  container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
+  container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
+  container.bind(GameState.SYMBOL).to(GameStateImpl);
+  return container;
+};
+
 const main = async () => {
-  const imageFactory = new ImageFactory();
-  const spriteFactory = new SpriteFactory({ imageFactory });
-  const tileFactory = new TileFactory({ spriteFactory });
-  const itemFactory = new ItemFactory({ spriteFactory });
-  const unitFactory = new UnitFactory({ spriteFactory, itemFactory });
-  const objectFactory = new ObjectFactory({ spriteFactory });
-  const mapFactory = new MapFactory({
-    imageFactory,
-    tileFactory,
-    itemFactory,
-    unitFactory,
-    objectFactory,
-    spriteFactory
-  });
-  const projectileFactory = new ProjectileFactory({ spriteFactory });
-  // TODO is this an insane dependency?
-  const animationFactory = new AnimationFactory({ spriteFactory, projectileFactory });
+  const container = setupContainer();
+
+  const mapFactory = container.get(MapFactory);
   const mapSpecs = await _loadMapSpecs();
-  const state = GameState.create({
-    mapSpecs,
-    imageFactory,
-    mapFactory,
-    animationFactory,
-    spriteFactory,
-    tileFactory,
-    itemFactory,
-    unitFactory,
-    objectFactory,
-    projectileFactory
-  });
-  const maps = await loadGameMaps(mapSpecs, state);
+  const state = await container.getAsync<GameState>(GameState.SYMBOL);
+  const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);
-  const session = Session.create();
-  const fonts = await loadFonts({ imageFactory });
-  const textRenderer = new TextRenderer({ imageFactory, fonts });
-  const renderer = new GameRenderer({
-    parent: document.getElementById('container')!,
-    imageFactory,
-    textRenderer
-  });
-  const inputHandler = new InputHandler({
-    state,
-    session
-  });
-  inputHandler.addEventListener(renderer.getCanvas());
+  const session = await container.getAsync<Session>(Session.SYMBOL);
+
+  const rootElement = checkNotNull(document.getElementById('container'));
+  const canvas = createCanvas({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+  rootElement.appendChild(canvas);
+  canvas.tabIndex = 0;
+  canvas.focus();
+  const canvasGraphics = Graphics.forCanvas(canvas);
+
+  const renderer = await container.getAsync(GameRenderer);
+  const inputHandler = container.get(InputHandler);
+  inputHandler.addEventListener(canvas);
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = new Debug({ state, session });
+    const debug = container.get(Debug);
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
   await showSplashScreen(session);
   setInterval(async () => {
-    await renderer.render(session);
+    await renderer.render(canvasGraphics);
   }, 20);
 };
 

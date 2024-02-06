@@ -14,9 +14,9 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "strength": 2,
+  "strength": 4,
   "dexterity": 2,
-  "life": 35,
+  "life": 50,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
@@ -24,9 +24,9 @@
     "bronze_sword"
   ],
   "aiParameters": {
-    "speed": 0.99,
+    "speed": 0.8,
     "visionRange": 12,
-    "aggressiveness": 0.95,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "levelParameters": {

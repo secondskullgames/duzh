@@ -9,9 +9,9 @@ import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
-import { checkNotNull } from '../../utils/preconditions';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -19,55 +19,50 @@ type Element = Readonly<{
   getSprite: () => Sprite | null;
 }>;
 
-type Props = Readonly<{
-  graphics: Graphics;
-  imageFactory: ImageFactory;
-}>;
-
+@injectable()
 export default class GameScreenRenderer implements Renderer {
-  private readonly graphics: Graphics;
-  private readonly imageFactory: ImageFactory;
+  constructor(
+    @inject(Session.SYMBOL)
+    private readonly session: Session,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {}
 
-  constructor({ graphics, imageFactory }: Props) {
-    this.graphics = graphics;
-    this.imageFactory = imageFactory;
-  }
+  render = async (graphics: Graphics) => {
+    graphics.fill(Colors.BLACK);
 
-  render = async (session: Session) => {
-    this.graphics.fill(Colors.BLACK);
-
-    this._renderTiles(session);
-    await this._renderEntities(session);
+    this._renderTiles(graphics);
+    await this._renderEntities(graphics);
   };
 
   private _renderElement = (
     element: Element,
     coordinates: Coordinates,
-    session: Session
+    graphics: Graphics
   ) => {
-    const pixel = this._gridToPixel(coordinates, session);
+    const pixel = this._gridToPixel(coordinates);
 
     if (_isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
-        this._drawSprite(sprite, pixel);
+        this._drawSprite(sprite, pixel, graphics);
       }
     }
   };
 
-  private _drawSprite = (sprite: Sprite, pixel: Pixel) => {
+  private _drawSprite = (sprite: Sprite, pixel: Pixel, graphics: Graphics) => {
     const image = sprite.getImage();
     if (image) {
       const { dx, dy } = sprite.getOffsets();
-      this.graphics.drawImage(image, { x: pixel.x + dx, y: pixel.y + dy });
+      graphics.drawImage(image, { x: pixel.x + dx, y: pixel.y + dy });
     }
   };
 
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates, session: Session): Pixel => {
-    const playerUnit = session.getPlayerUnit();
+  private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
+    const playerUnit = this.session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
@@ -75,16 +70,16 @@ export default class GameScreenRenderer implements Renderer {
     };
   };
 
-  private _renderTiles = (session: Session) => {
-    const map = checkNotNull(session.getMap());
+  private _renderTiles = (graphics: Graphics) => {
+    const map = this.session.getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates, session)) {
+        if (this._isTileRevealed(coordinates)) {
           const tile = map.getTile(coordinates);
           if (tile) {
-            this._renderElement(tile, coordinates, session);
+            this._renderElement(tile, coordinates, graphics);
           }
         }
       }
@@ -94,26 +89,26 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * Render all entities, one row at a time.
    */
-  private _renderEntities = async (session: Session) => {
-    const map = checkNotNull(session.getMap());
+  private _renderEntities = async (graphics: Graphics) => {
+    const map = this.session.getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates, session)) {
-          await this._drawShadow(coordinates, session);
+        if (this._isTileRevealed(coordinates)) {
+          await this._drawShadow(coordinates, graphics);
           for (const object of map.getObjects(coordinates)) {
-            this._renderElement(object, coordinates, session);
+            this._renderElement(object, coordinates, graphics);
           }
 
           const projectile = map.getProjectile(coordinates);
           if (projectile) {
-            this._renderElement(projectile, coordinates, session);
+            this._renderElement(projectile, coordinates, graphics);
           }
 
           const unit = map.getUnit(coordinates);
           if (unit) {
-            this._renderUnit(unit, coordinates, session);
+            this._renderUnit(unit, coordinates, graphics);
           }
         }
       }
@@ -123,7 +118,7 @@ export default class GameScreenRenderer implements Renderer {
   /**
    * Render the unit, all of its equipment, and the ceorresponding overlay.
    */
-  private _renderUnit = (unit: Unit, coordinates: Coordinates, session: Session) => {
+  private _renderUnit = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
@@ -136,31 +131,32 @@ export default class GameScreenRenderer implements Renderer {
     }
 
     for (const equipment of behindEquipment) {
-      this._renderElement(equipment, coordinates, session);
+      this._renderElement(equipment, coordinates, graphics);
     }
-    this._renderElement(unit, coordinates, session);
+    this._renderElement(unit, coordinates, graphics);
     for (const equipment of aheadEquipment) {
-      this._renderElement(equipment, coordinates, session);
+      this._renderElement(equipment, coordinates, graphics);
     }
   };
 
-  private _isTileRevealed = (coordinates: Coordinates, session: Session): boolean => {
-    const map = checkNotNull(session.getMap());
+  private _isTileRevealed = (coordinates: Coordinates): boolean => {
+    const map = this.session.getMap();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
-  private _drawShadow = async (coordinates: Coordinates, session: Session) => {
-    const map = checkNotNull(session.getMap());
+  private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
+    const { session } = this;
+    const map = session.getMap();
     const unit = map.getUnit(coordinates);
     const objects = map.getObjects(coordinates);
 
     if (unit) {
       if (unit === session.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, session);
+        return this._drawEllipse(coordinates, Colors.GREEN, graphics);
       } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, session);
+        return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
       }
     }
     if (
@@ -168,23 +164,23 @@ export default class GameScreenRenderer implements Renderer {
         object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
       )
     ) {
-      return this._drawEllipse(coordinates, Colors.DARK_GRAY, session);
+      return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
     }
   };
 
   private _drawEllipse = async (
     coordinates: Coordinates,
     color: Color,
-    session: Session
+    graphics: Graphics
   ) => {
-    const pixel = this._gridToPixel(coordinates, session);
+    const pixel = this._gridToPixel(coordinates);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await this.imageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps
     });
-    this.graphics.drawImage(image, pixel);
+    graphics.drawImage(image, pixel);
   };
 }
 
