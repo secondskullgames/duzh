@@ -10,9 +10,7 @@ import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes
 import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { toggleFullScreen } from '../../utils/dom';
-import { checkNotNull } from '../../utils/preconditions';
 import { pickupItem } from '../../actions/pickupItem';
-import { loadNextMap } from '../../actions/loadNextMap';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { AbilityOrder } from '../../entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '../../entities/units/orders/AttackMoveOrder';
@@ -22,9 +20,9 @@ import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
 import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 import { Dash } from '../../entities/units/abilities/Dash';
-import { loadPreviousMap } from '../../actions/loadPreviousMap';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
+import { MapController } from '../../maps/MapController';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -33,7 +31,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     @inject(Session.SYMBOL)
     private readonly session: Session,
     @inject(GameState.SYMBOL)
-    private readonly state: GameState
+    private readonly state: GameState,
+    @inject(MapController.SYMBOL)
+    private readonly mapController: MapController
   ) {}
 
   handleKeyCommand = async (command: KeyCommand) => {
@@ -62,7 +62,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await this._handleEnter(session, state);
+        await this._handleEnter();
       }
     } else if (key === 'F1') {
       session.setScreen(GameScreen.HELP);
@@ -145,8 +145,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _handleEnter = async (session: Session, state: GameState) => {
-    const map = checkNotNull(session.getMap(), 'Map is not loaded!');
+  private _handleEnter = async () => {
+    const { state, session, mapController } = this;
+    const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
     const item = getItem(map, coordinates);
@@ -155,10 +156,10 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       map.removeObject(item);
     } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
       playSound(Sounds.DESCEND_STAIRS);
-      await loadNextMap(session, state);
+      await mapController.loadNextMap();
     } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
       playSound(Sounds.DESCEND_STAIRS); // TODO
-      await loadPreviousMap(session, state);
+      await mapController.loadPreviousMap();
     }
     await playTurn(state, session);
   };
