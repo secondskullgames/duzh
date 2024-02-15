@@ -13,7 +13,7 @@ import { Feature } from '../../utils/features';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
-import ModelLoader from '../../utils/models';
+import ModelLoader from '../../utils/ModelLoader';
 import { injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{

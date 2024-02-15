@@ -2,7 +2,6 @@ import Color from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import Door, { DoorState } from '../../entities/objects/Door';
-import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
@@ -24,7 +23,7 @@ import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import ModelLoader from '../../utils/models';
+import ModelLoader from '../../utils/ModelLoader';
 import { injectable } from 'inversify';
 
 /** TODO this should go somewhere else */
@@ -63,7 +62,7 @@ export class PredefinedMapFactory {
       width: image.bitmap.width,
       height: image.bitmap.height,
       startingCoordinates,
-      music: model.music ? await Music.loadMusic(model.music) : null
+      music: model.music ? await state.getMusicController().loadMusic(model.music) : null
     });
 
     const tiles = await this._loadTiles(model, image, map);

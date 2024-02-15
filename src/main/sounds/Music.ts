@@ -2,101 +2,91 @@ import { transpose8vb } from './AudioUtils';
 import SoundPlayer from './SoundPlayer';
 import { Figure, Suite } from './types';
 import { randChoice } from '../utils/random';
+import { AssetLoader } from '../assets/AssetLoader';
+import { inject, injectable } from 'inversify';
 
-let PLAYER: SoundPlayer | null = null;
+@injectable()
+export default class MusicController {
+  private readonly soundPlayer: SoundPlayer;
+  private activeMusic: Suite | Figure[] | null = null;
 
-let ACTIVE_MUSIC: Suite | Figure[] | null = null;
-
-const _getMusicPlayer = () => new SoundPlayer({ polyphony: 4, gain: 0.06 });
-
-const playSuite = (suite: Suite) => {
-  ACTIVE_MUSIC = suite;
-  const sections = Object.values(suite.sections);
-  const numRepeats = 4;
-
-  for (let i = 0; i < sections.length; i++) {
-    const section = sections[i];
-    const bass = section.bass ? randChoice(section.bass) : null;
-    let lead: Figure | null;
-    if (section.lead) {
-      do {
-        lead = randChoice(section.lead);
-      } while (lead === bass);
-    }
-
-    for (let j = 0; j < numRepeats; j++) {
-      setTimeout(
-        () => {
-          if (ACTIVE_MUSIC === suite) {
-            const figures = [
-              ...(bass ? [bass.map(transpose8vb)] : []),
-              ...(lead ? [lead] : [])
-            ];
-            for (const figure of figures) {
-              playFigure(figure);
-            }
-          }
-        },
-        (numRepeats * i + j) * suite.length
-      );
-    }
+  constructor(
+    @inject(AssetLoader)
+    private readonly assetLoader: AssetLoader
+  ) {
+    this.soundPlayer = new SoundPlayer({ polyphony: 4, gain: 0.06 });
   }
 
-  setTimeout(
-    () => {
-      if (ACTIVE_MUSIC === suite) {
-        playSuite(suite);
+  playSuite = (suite: Suite) => {
+    this.activeMusic = suite;
+    const sections = Object.values(suite.sections);
+    const numRepeats = 4;
+
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i];
+      const bass = section.bass ? randChoice(section.bass) : null;
+      let lead: Figure | null;
+      if (section.lead) {
+        do {
+          lead = randChoice(section.lead);
+        } while (lead === bass);
       }
-    },
-    sections.length * suite.length * numRepeats
-  );
-};
 
-const playMusic = (figures: Figure[]) => {
-  ACTIVE_MUSIC = figures;
-  const length = figures[0].map(sample => sample[1]).reduce((a, b) => a + b);
-  for (const figure of figures) {
-    playFigure(figure);
-  }
-
-  setTimeout(() => {
-    if (ACTIVE_MUSIC === figures) {
-      playMusic(figures);
+      for (let j = 0; j < numRepeats; j++) {
+        setTimeout(
+          () => {
+            if (this.activeMusic === suite) {
+              const figures = [
+                ...(bass ? [bass.map(transpose8vb)] : []),
+                ...(lead ? [lead] : [])
+              ];
+              for (const figure of figures) {
+                this.playFigure(figure);
+              }
+            }
+          },
+          (numRepeats * i + j) * suite.length
+        );
+      }
     }
-  }, length);
-};
 
-const playFigure = (figure: Figure) => {
-  if (!PLAYER) {
-    PLAYER = _getMusicPlayer();
-  }
-  PLAYER.playSound(figure, false);
-};
+    setTimeout(
+      () => {
+        if (this.activeMusic === suite) {
+          this.playSuite(suite);
+        }
+      },
+      sections.length * suite.length * numRepeats
+    );
+  };
 
-const stopMusic = () => {
-  if (PLAYER) {
-    PLAYER.stop();
-  }
-};
+  playMusic = (figures: Figure[]) => {
+    this.activeMusic = figures;
+    const length = figures[0].map(sample => sample[1]).reduce((a, b) => a + b);
+    for (const figure of figures) {
+      this.playFigure(figure);
+    }
 
-const stop = () => {
-  stopMusic();
-  ACTIVE_MUSIC = null;
-};
+    setTimeout(() => {
+      if (this.activeMusic === figures) {
+        this.playMusic(figures);
+      }
+    }, length);
+  };
 
-const loadMusic = async (filename: string): Promise<Figure[]> =>
-  (
-    await import(
-      /* webpackMode: "lazy-once" */
-      /* webpackChunkName: "models" */
-      `../../../data/music/${filename}.json`
-    )
-  ).default;
+  playFigure = (figure: Figure) => {
+    this.soundPlayer.playSound(figure, false);
+  };
 
-export default {
-  loadMusic,
-  playFigure,
-  playMusic,
-  playSuite,
-  stop
-};
+  stopMusic = () => {
+    this.soundPlayer.stop();
+  };
+
+  stop = () => {
+    this.soundPlayer.stop();
+    this.activeMusic = null;
+  };
+
+  loadMusic = async (filename: string): Promise<Figure[]> =>
+    this.assetLoader.loadDataAsset(`music/${filename}.json`);
+}

@@ -16,7 +16,7 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
 
   map.removeUnit(unit);
   if (unit === playerUnit) {
-    await gameOver(session);
+    await gameOver(state, session);
     return;
   } else {
     playSound(Sounds.ENEMY_DIES);

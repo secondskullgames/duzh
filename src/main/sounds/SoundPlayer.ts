@@ -1,5 +1,6 @@
 import CustomOscillator from './CustomOscillator';
 import { Sample } from './types';
+import { injectable } from 'inversify';
 
 type Props = {
   polyphony: number;

@@ -13,7 +13,7 @@ import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
-import ModelLoader from '../../utils/models';
+import ModelLoader from '../../utils/ModelLoader';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 

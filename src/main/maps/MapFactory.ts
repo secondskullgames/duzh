@@ -15,7 +15,7 @@ import ImageFactory from '../graphics/images/ImageFactory';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
-import ModelLoader from '../utils/models';
+import ModelLoader from '../utils/ModelLoader';
 import { injectable } from 'inversify';
 
 type MapStyle = Readonly<{

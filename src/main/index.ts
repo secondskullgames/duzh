@@ -17,6 +17,7 @@ import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import SoundPlayer from './sounds/SoundPlayer';
 import { Container } from 'inversify';
 
 const setupContainer = () => {
@@ -69,7 +70,7 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen(session);
+  await showSplashScreen(state, session);
   setInterval(async () => {
     await renderer.render(canvasGraphics);
   }, 20);

@@ -17,7 +17,7 @@ import { floorFire } from '../actions/floorFire';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import MapInstance from '../maps/MapInstance';
-import ModelLoader from '../utils/models';
+import ModelLoader from '../utils/ModelLoader';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 

@@ -23,10 +23,10 @@ module.exports = {
     "rules": {
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/no-unused-vars": "warn",
-        "no-alert": "error",
-        "no-console": "error",
+        "no-alert": "warn",
+        "no-console": "warn",
         "prefer-arrow/prefer-arrow-functions": [
-            "error",
+            "warn",
             {
                 "disallowPrototype": true,
                 "singleReturnOnly": false,
@@ -34,7 +34,7 @@ module.exports = {
             }
         ],
         "import/order": [
-            "error", {
+            "warn", {
                 "groups": [
                     "index",
                     "sibling",

@@ -9,7 +9,7 @@ import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
 import { Feature } from '../utils/features';
 import MapInstance from '../maps/MapInstance';
-import ModelLoader from '../utils/models';
+import ModelLoader from '../utils/ModelLoader';
 import { inject, injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{

@@ -28,7 +28,7 @@ export default class GameOverScreenInputHandler implements ScreenInputHandler {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await showSplashScreen(session);
+          await showSplashScreen(state, session);
           state.reset();
           session.reset();
           const maps = await this.mapFactory.loadMapSuppliers(state.getMapSpecs(), state);
