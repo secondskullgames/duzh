@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import Activity from '../Activity';
@@ -46,7 +45,7 @@ export const Teleport: UnitAbility = {
 
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       unit.spendMana(manaCost);
-      playSound(Sounds.WIZARD_VANISH);
+      state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
@@ -61,7 +60,7 @@ export const Teleport: UnitAbility = {
 
       for (let i = 1; i <= 4; i++) {
         if (i === 1) {
-          playSound(Sounds.WIZARD_APPEAR);
+          state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
         }
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
         await maybeSleep();
@@ -69,7 +68,7 @@ export const Teleport: UnitAbility = {
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     } else {
-      playSound(Sounds.BLOCKED);
+      state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
   }
 };

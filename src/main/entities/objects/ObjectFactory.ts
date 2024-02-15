@@ -7,7 +7,6 @@ import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';
-import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
@@ -95,11 +94,11 @@ export default class ObjectFactory {
 
     const lifeGained = 10;
 
-    const onUse = async (unit: Unit, _: GameState, session: Session) => {
+    const onUse = async (unit: Unit, state: GameState, session: Session) => {
       if (unit === session.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           unit.gainLife(lifeGained);
-          playSound(Sounds.HEALTH_GLOBE);
+          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
           session
             .getTicker()
             .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {

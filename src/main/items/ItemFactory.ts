@@ -1,7 +1,6 @@
 import InventoryItem from './InventoryItem';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';
@@ -32,10 +31,10 @@ export default class ItemFactory {
     const onUse: ItemProc = async (
       item: InventoryItem,
       unit: Unit,
-      _: GameState,
+      state: GameState,
       session: Session
     ) => {
-      playSound(Sounds.USE_POTION);
+      state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
       session
         .getTicker()
@@ -56,10 +55,10 @@ export default class ItemFactory {
     const onUse: ItemProc = async (
       item: InventoryItem,
       unit: Unit,
-      _: GameState,
+      state: GameState,
       session: Session
     ) => {
-      playSound(Sounds.USE_POTION);
+      state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
       session
         .getTicker()
@@ -132,11 +131,11 @@ export default class ItemFactory {
     const onUse: ItemProc = async (
       _: InventoryItem,
       unit: Unit,
-      __: GameState,
+      state: GameState,
       session: Session
     ) => {
       const equipment = await this.createEquipment(equipmentClass);
-      return equipItem(equipment, unit, session);
+      return equipItem(equipment, unit, session, state);
     };
 
     const model = await this.modelLoader.loadEquipmentModel(equipmentClass);

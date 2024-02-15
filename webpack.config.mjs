@@ -1,7 +1,7 @@
-const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+import path from 'path';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
-module.exports = {
+export default {
   entry: './src/main/index.ts',
   devtool: 'source-map',
   mode: 'development',
@@ -15,21 +15,6 @@ module.exports = {
       {
         test: /\.png$/i,
         type: 'asset/inline'
-      },
-      {
-        test: /\.css$/i,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                mode: 'local',
-                localIdentName: '[name]-[local]'
-              }
-            },
-          }
-        ]
       },
       {
         test: /\.json$/i,
@@ -52,7 +37,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve('build'),
     publicPath: '',
     clean: true,
     globalObject: 'this' // WTF, webpack
@@ -67,7 +52,7 @@ module.exports = {
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join('public'),
     },
     compress: true,
     port: 3000,

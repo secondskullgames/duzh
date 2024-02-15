@@ -1,7 +1,6 @@
 import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../entities/units/Unit';
-import { playSound } from '../sounds/playSound';
 import { GameState } from '../core/GameState';
 import Activity from '../entities/units/Activity';
 import { sleep } from '../utils/promises';
@@ -49,7 +48,7 @@ export const attackUnit = async (
   const attackResult = attack.calculateAttackResult(attacker);
   const defendResult = defender.takeDamage(attackResult.damage, attacker);
   attacker.recordDamageDealt(defendResult.damageTaken);
-  playSound(attack.sound);
+  state.getSoundPlayer().playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
   session.getTicker().log(message, { turn: session.getTurn() });
 
@@ -58,7 +57,7 @@ export const attackUnit = async (
 
   if (defender.getLife() <= 0) {
     await die(defender, state, session);
-    recordKill(attacker, defender, session);
+    recordKill(attacker, defender, session, state);
   }
 
   await sleep(150);

@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -62,7 +61,7 @@ export const ShootArrow: UnitAbility = {
         map
       );
       await playAnimation(arrowAnimation, { map });
-      playSound(Sounds.PLAYER_HITS_ENEMY);
+      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit

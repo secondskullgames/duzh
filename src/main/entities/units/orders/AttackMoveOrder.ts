@@ -49,13 +49,13 @@ export class AttackMoveOrder implements UnitOrder {
         }
         const door = getDoor(map, coordinates);
         if (door) {
-          await openDoor(unit, door);
+          await openDoor(unit, door, state);
           return;
         }
 
         const spawner = getSpawner(map, coordinates);
         if (spawner && spawner.isBlocking()) {
-          await attackObject(unit, spawner);
+          await attackObject(unit, spawner, state);
         }
 
         const block = getMovableBlock(map, coordinates);

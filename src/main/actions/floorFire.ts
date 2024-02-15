@@ -3,7 +3,6 @@ import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
 import { playAnimation } from '../graphics/animations/playAnimation';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import { GameState } from '../core/GameState';
@@ -22,7 +21,7 @@ export const floorFire = async (
     return [-1, 0, 1].includes(dx) && [-1, 0, 1].includes(dy) && !(dx === 0 && dy === 0);
   });
 
-  playSound(Sounds.PLAYER_HITS_ENEMY);
+  state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
   const animation = await state
     .getAnimationFactory()
     .getFloorFireAnimation(unit, adjacentUnits);
@@ -36,7 +35,7 @@ export const floorFire = async (
 
     if (adjacentUnit.getLife() <= 0) {
       await die(adjacentUnit, state, session);
-      recordKill(unit, adjacentUnit, session);
+      recordKill(unit, adjacentUnit, session, state);
     }
   }
 };

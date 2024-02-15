@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -50,7 +49,7 @@ export const ShootTurretArrow: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       const damage = unit.getRangedDamage();
-      playSound(Sounds.PLAYER_HITS_ENEMY);
+      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const arrowAnimation = await state
         .getAnimationFactory()
         .getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);

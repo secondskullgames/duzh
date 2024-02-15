@@ -78,12 +78,12 @@ export const PiercingAttack: UnitAbility = {
 
     const spawner = getSpawner(map, coordinates);
     if (spawner && spawner.isBlocking()) {
-      await attackObject(unit, spawner);
+      await attackObject(unit, spawner, state);
     }
 
     const nextSpawner = getSpawner(map, nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
-      await attackObject(unit, nextSpawner);
+      await attackObject(unit, nextSpawner, state);
     }
   }
 };
