@@ -7,7 +7,7 @@ import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import MapSpec from '../schemas/MapSpec';
-import MusicController from '../sounds/Music';
+import MusicController from '../sounds/MusicController';
 import { inject, injectable } from 'inversify';
 
 /**

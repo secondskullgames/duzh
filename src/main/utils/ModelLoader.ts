@@ -82,13 +82,7 @@ export default class ModelLoader {
       throw new Error(`Failed to load schema ${schema}`);
     }
 
-    const data = (
-      await import(
-        /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "models" */
-        `../../../data/${path}.json`
-      )
-    ).default;
+    const data = await this.assetLoader.loadDataAsset(`${path}.json`);
     if (!validate(data)) {
       throw new Error(
         `Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`
