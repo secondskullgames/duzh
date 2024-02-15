@@ -7,13 +7,13 @@ import { PlayerUnitClass } from './PlayerUnitClass';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import { Faction } from '../../types/types';
-import { loadUnitModel } from '../../utils/models';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
 import { Feature } from '../../utils/features';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
+import ModelLoader from '../../utils/models';
 import { injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{
@@ -34,12 +34,13 @@ type CreateUnitParams = Readonly<{
 export default class UnitFactory {
   constructor(
     private readonly spriteFactory: SpriteFactory,
-    private readonly itemFactory: ItemFactory
+    private readonly itemFactory: ItemFactory,
+    private readonly modelLoader: ModelLoader
   ) {}
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
     const { itemFactory, spriteFactory } = this;
-    const model: UnitModel = await loadUnitModel(params.unitClass);
+    const model: UnitModel = await this.modelLoader.loadUnitModel(params.unitClass);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
       PaletteSwaps.create(model.paletteSwaps)

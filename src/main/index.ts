@@ -16,15 +16,8 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
+import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
 import { Container } from 'inversify';
-
-const _loadMapSpecs = async (): Promise<MapSpec[]> =>
-  (
-    await import(
-      /* webpackChunkName: "models" */
-      '../../data/maps.json'
-    )
-  ).default as MapSpec[];
 
 const setupContainer = () => {
   const container = new Container({
@@ -40,9 +33,14 @@ const setupContainer = () => {
     .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
     .toConstantValue(document.getElementById('container')!);
   container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
-  container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
+  container
+    .bind(GameState.SYMBOL_MAP_SPECS)
+    .toDynamicValue(async () =>
+      container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
+    );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
+  container.bind(AssetLoader).to(AssetLoaderImpl);
   return container;
 };
 
@@ -50,7 +48,7 @@ const main = async () => {
   const container = setupContainer();
 
   const mapFactory = container.get(MapFactory);
-  const mapSpecs = await _loadMapSpecs();
+  const mapSpecs = await container.getAsync<MapSpec[]>(GameState.SYMBOL_MAP_SPECS);
   const state = await container.getAsync<GameState>(GameState.SYMBOL);
   const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);

@@ -1,5 +1,7 @@
 import { SpriteCategory } from '../graphics/sprites/SpriteCategory';
+import { AssetLoader } from '../assets/AssetLoader';
 import Ajv from 'ajv';
+import { inject, injectable } from 'inversify';
 import type UnitModel from '../schemas/UnitModel';
 import type EquipmentModel from '../schemas/EquipmentModel';
 import type GeneratedMapModel from '../schemas/GeneratedMapModel';
@@ -52,71 +54,73 @@ type SchemaType =
   | 'ConsumableType'
   | 'ConsumableItemModel';
 
-const ajv = new Ajv();
-let loadedSchemas = false;
+@injectable()
+export default class ModelLoader {
+  private readonly ajv = new Ajv();
+  private loadedSchemas = false;
 
-const _loadSchemas = async () => {
-  for (const schemaName of schemaNames) {
-    const schema = (
+  constructor(
+    @inject(AssetLoader)
+    private readonly assetLoader: AssetLoader
+  ) {}
+
+  private _loadSchemas = async () => {
+    for (const schemaName of schemaNames) {
+      const schema = await this.assetLoader.loadSchemaAsset(`${schemaName}.schema.json`);
+      this.ajv.addSchema(schema);
+    }
+  };
+
+  private _loadModel = async <T>(path: string, schema: SchemaType): Promise<T> => {
+    if (!this.loadedSchemas) {
+      await this._loadSchemas();
+      this.loadedSchemas = true;
+    }
+
+    const validate = this.ajv.getSchema(schema);
+    if (!validate) {
+      throw new Error(`Failed to load schema ${schema}`);
+    }
+
+    const data = (
       await import(
         /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "schemas" */
-        `../../gen-schema/${schemaName}.schema.json`
+        /* webpackChunkName: "models" */
+        `../../../data/${path}.json`
       )
     ).default;
-    ajv.addSchema(schema);
-  }
-};
+    if (!validate(data)) {
+      throw new Error(
+        `Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`
+      );
+    }
+    return data as T;
+  };
 
-const loadModel = async <T>(path: string, schema: SchemaType): Promise<T> => {
-  if (!loadedSchemas) {
-    await _loadSchemas();
-    loadedSchemas = true;
-  }
+  loadUnitModel = async (id: string): Promise<UnitModel> =>
+    this._loadModel(`units/${id}`, 'UnitModel');
 
-  const validate = ajv.getSchema(schema);
-  if (!validate) {
-    throw new Error(`Failed to load schema ${schema}`);
-  }
+  loadEquipmentModel = async (id: string): Promise<EquipmentModel> =>
+    this._loadModel(`equipment/${id}`, 'EquipmentModel');
 
-  const data = (
-    await import(
-      /* webpackMode: "lazy-once" */
-      /* webpackChunkName: "models" */
-      `../../../data/${path}.json`
-    )
-  ).default;
-  if (!validate(data)) {
-    throw new Error(
-      `Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`
-    );
-  }
-  return data as T;
-};
+  loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> =>
+    this._loadModel(`maps/generated/${id}`, 'GeneratedMapModel');
 
-export const loadUnitModel = async (id: string): Promise<UnitModel> =>
-  loadModel(`units/${id}`, 'UnitModel');
+  loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> =>
+    this._loadModel(`maps/predefined/${id}`, 'PredefinedMapModel');
 
-export const loadEquipmentModel = async (id: string): Promise<EquipmentModel> =>
-  loadModel(`equipment/${id}`, 'EquipmentModel');
+  loadDynamicSpriteModel = async (
+    id: string,
+    category: SpriteCategory
+  ): Promise<DynamicSpriteModel> =>
+    this._loadModel(`sprites/${category}/${id}`, 'DynamicSpriteModel');
 
-export const loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> =>
-  loadModel(`maps/generated/${id}`, 'GeneratedMapModel');
+  loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
+    this._loadModel(`sprites/static/${id}`, 'StaticSpriteModel');
 
-export const loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> =>
-  loadModel(`maps/predefined/${id}`, 'PredefinedMapModel');
+  loadTileSetModel = async (id: string): Promise<TileSetModel> =>
+    this._loadModel(`tilesets/${id}`, 'TileSetModel');
 
-export const loadDynamicSpriteModel = async (
-  id: string,
-  category: SpriteCategory
-): Promise<DynamicSpriteModel> =>
-  loadModel(`sprites/${category}/${id}`, 'DynamicSpriteModel');
-
-export const loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
-  loadModel(`sprites/static/${id}`, 'StaticSpriteModel');
-
-export const loadTileSetModel = async (id: string): Promise<TileSetModel> =>
-  loadModel(`tilesets/${id}`, 'TileSetModel');
-
-export const loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
-  loadModel(`items/${id}`, 'ConsumableItemModel');
+  loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
+    this._loadModel(`items/${id}`, 'ConsumableItemModel');
+}

@@ -11,14 +11,9 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
-    "plugins": [{
-      "name": "typescript-plugin-css-modules"
-    }],
+    "plugins": [],
     "types": ["reflect-metadata", "jest", "webpack-env"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
-  },
-  "paths": {
-    "*": ["*"]
   }
 }

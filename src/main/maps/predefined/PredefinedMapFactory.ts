@@ -6,7 +6,6 @@ import Music from '../../sounds/Music';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
-import { loadPredefinedMapModel, loadUnitModel } from '../../utils/models';
 import { checkNotNull } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../entities/units/controllers/WizardController';
@@ -25,6 +24,7 @@ import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
+import ModelLoader from '../../utils/models';
 import { injectable } from 'inversify';
 
 /** TODO this should go somewhere else */
@@ -48,11 +48,12 @@ export class PredefinedMapFactory {
     private readonly objectFactory: ObjectFactory,
     private readonly unitFactory: UnitFactory,
     private readonly itemFactory: ItemFactory,
-    private readonly spriteFactory: SpriteFactory
+    private readonly spriteFactory: SpriteFactory,
+    private readonly modelLoader: ModelLoader
   ) {}
 
   buildPredefinedMap = async (mapId: string, state: GameState): Promise<MapInstance> => {
-    const model = await loadPredefinedMapModel(mapId);
+    const model = await this.modelLoader.loadPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
@@ -165,7 +166,7 @@ export class PredefinedMapFactory {
           }
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
-            const enemyUnitModel = await loadUnitModel(enemyUnitClass);
+            const enemyUnitModel = await this.modelLoader.loadUnitModel(enemyUnitClass);
             const controller = _getEnemyController(enemyUnitModel);
             const unit = await this.unitFactory.createUnit({
               name: enemyUnitModel.name,

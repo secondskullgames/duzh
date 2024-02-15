@@ -7,10 +7,10 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import { randChoice } from '../utils/random';
-import { loadTileSetModel } from '../utils/models';
 import { Feature } from '../utils/features';
 import MapInstance from '../maps/MapInstance';
-import { injectable } from 'inversify';
+import ModelLoader from '../utils/models';
+import { inject, injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
@@ -19,7 +19,12 @@ type CreateTileParams = Readonly<{
 
 @injectable()
 export default class TileFactory {
-  constructor(private readonly spriteFactory: SpriteFactory) {}
+  constructor(
+    @inject(SpriteFactory)
+    private readonly spriteFactory: SpriteFactory,
+    @inject(ModelLoader)
+    private readonly modelLoader: ModelLoader
+  ) {}
 
   createTile = (
     { tileType, tileSet }: CreateTileParams,
@@ -32,7 +37,7 @@ export default class TileFactory {
   };
 
   getTileSet = async (id: string): Promise<TileSet> => {
-    const model = await loadTileSetModel(id);
+    const model = await this.modelLoader.loadTileSetModel(id);
     const tileSet: {
       [key in TileType]?: (Sprite | null)[];
     } = {};

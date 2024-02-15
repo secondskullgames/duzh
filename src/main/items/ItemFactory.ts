@@ -6,7 +6,6 @@ import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
-import { loadEquipmentModel, loadItemModel } from '../utils/models';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import EquipmentModel from '../schemas/EquipmentModel';
@@ -18,12 +17,16 @@ import { floorFire } from '../actions/floorFire';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import MapInstance from '../maps/MapInstance';
+import ModelLoader from '../utils/models';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
 @injectable()
 export default class ItemFactory {
-  constructor(private readonly spriteFactory: SpriteFactory) {}
+  constructor(
+    private readonly spriteFactory: SpriteFactory,
+    private readonly modelLoader: ModelLoader
+  ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
     const onUse: ItemProc = async (
@@ -136,7 +139,7 @@ export default class ItemFactory {
       return equipItem(equipment, unit, session);
     };
 
-    const model = await loadEquipmentModel(equipmentClass);
+    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
     return new InventoryItem({
       name: model.name,
       category: model.itemCategory,
@@ -150,7 +153,7 @@ export default class ItemFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
-    const model = await loadEquipmentModel(equipmentClass);
+    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
       PaletteSwaps.create(model.paletteSwaps)
@@ -161,7 +164,7 @@ export default class ItemFactory {
   };
 
   createEquipment = async (equipmentClass: string): Promise<Equipment> => {
-    const model = await loadEquipmentModel(equipmentClass);
+    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
@@ -209,7 +212,7 @@ export default class ItemFactory {
   };
 
   createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
-    const model: ConsumableItemModel = await loadItemModel(itemId);
+    const model: ConsumableItemModel = await this.modelLoader.loadItemModel(itemId);
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,

@@ -6,7 +6,6 @@ import Equipment from '../../equipment/Equipment';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
-import { loadDynamicSpriteModel, loadStaticSpriteModel } from '../../utils/models';
 import Colors from '../Colors';
 import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
@@ -14,12 +13,16 @@ import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
 import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
+import ModelLoader from '../../utils/models';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 @injectable()
 export default class SpriteFactory {
-  constructor(private readonly imageFactory: ImageFactory) {}
+  constructor(
+    private readonly imageFactory: ImageFactory,
+    private readonly modelLoader: ModelLoader
+  ) {}
 
   /**
    * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
@@ -46,7 +49,7 @@ export default class SpriteFactory {
     spriteName: string,
     paletteSwaps: PaletteSwaps
   ): Promise<Sprite> => {
-    const model = await loadStaticSpriteModel(spriteName);
+    const model = await this.modelLoader.loadStaticSpriteModel(spriteName);
     const { filename, offsets, transparentColor } = model;
     const image = await this.imageFactory.getImage({
       filename,
@@ -60,7 +63,10 @@ export default class SpriteFactory {
     spriteName: string,
     paletteSwaps: PaletteSwaps
   ): Promise<DynamicSprite<Unit>> => {
-    const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.UNITS);
+    const model = await this.modelLoader.loadDynamicSpriteModel(
+      spriteName,
+      SpriteCategory.UNITS
+    );
     const imageMap = await this._loadAnimations(
       SpriteCategory.UNITS,
       model,
@@ -75,7 +81,10 @@ export default class SpriteFactory {
   };
 
   createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps) => {
-    const model = await loadDynamicSpriteModel(spriteName, SpriteCategory.EQUIPMENT);
+    const model = await this.modelLoader.loadDynamicSpriteModel(
+      spriteName,
+      SpriteCategory.EQUIPMENT
+    );
     const imageMap = await this._loadAnimations(
       SpriteCategory.EQUIPMENT,
       model,

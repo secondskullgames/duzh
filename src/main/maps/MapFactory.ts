@@ -12,10 +12,10 @@ import MapSpec from '../schemas/MapSpec';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import { GameState } from '../core/GameState';
 import ImageFactory from '../graphics/images/ImageFactory';
-import { loadGeneratedMapModel } from '../utils/models';
 import { randChoice } from '../utils/random';
 import TileFactory from '../tiles/TileFactory';
 import ItemFactory from '../items/ItemFactory';
+import ModelLoader from '../utils/models';
 import { injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -37,13 +37,14 @@ export default class MapFactory {
     private readonly imageFactory: ImageFactory,
     private readonly tileFactory: TileFactory,
     private readonly itemFactory: ItemFactory,
-    private readonly predefinedMapFactory: PredefinedMapFactory
+    private readonly predefinedMapFactory: PredefinedMapFactory,
+    private readonly modelLoader: ModelLoader
   ) {}
 
   loadMap = async (mapSpec: MapSpec, state: GameState): Promise<MapInstance> => {
     switch (mapSpec.type) {
       case 'generated': {
-        const mapClass = await loadGeneratedMapModel(mapSpec.id);
+        const mapClass = await this.modelLoader.loadGeneratedMapModel(mapSpec.id);
         const mapBuilder = await this._loadGeneratedMap(mapClass);
         return mapBuilder.build(state);
       }
