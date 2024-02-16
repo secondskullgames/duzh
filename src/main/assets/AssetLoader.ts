@@ -1,4 +1,3 @@
-import EquipmentModel from '../schemas/EquipmentModel';
 import { injectable } from 'inversify';
 import { AnySchema } from 'ajv';
 

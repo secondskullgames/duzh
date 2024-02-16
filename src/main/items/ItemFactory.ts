@@ -7,7 +7,6 @@ import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
-import EquipmentModel from '../schemas/EquipmentModel';
 import { equipItem } from '../actions/equipItem';
 import { getEquipmentTooltip } from '../equipment/getEquipmentTooltip';
 import { shootFireball } from '../actions/shootFireball';
