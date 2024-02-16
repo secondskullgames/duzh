@@ -71,7 +71,7 @@ export default class InventoryRenderer implements Renderer {
 
   private _drawEquipment = async (graphics: Graphics) => {
     const { session } = this;
-    const inventory = session.getInventoryV2();
+    const inventory = session.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
     await this._drawText(
@@ -111,7 +111,7 @@ export default class InventoryRenderer implements Renderer {
   };
 
   private _drawInventory = async (graphics: Graphics) => {
-    const inventory = this.session.getInventoryV2();
+    const inventory = this.session.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
@@ -177,7 +177,7 @@ export default class InventoryRenderer implements Renderer {
     graphics.drawRect({ left, top, width, height }, Colors.GRAY_128);
 
     const lines: string[] | null = (() => {
-      const inventory = session.getInventoryV2();
+      const inventory = session.getInventoryState();
       const selectedEquipment = inventory.getSelectedEquipment();
       if (selectedEquipment) {
         const lines: string[] = [];

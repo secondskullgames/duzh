@@ -1,6 +1,6 @@
 import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
-import { InventoryState, InventoryV2State } from './session/InventoryState';
+import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
 import { checkNotNull, checkState } from '../utils/preconditions';
@@ -14,9 +14,7 @@ export interface Session {
   initLevelUpScreen: (playerUnit: Unit) => void;
   getLevelUpScreen: () => LevelUpScreenState;
   prepareInventoryScreen: (playerUnit: Unit) => void;
-  prepareInventoryV2: (playerUnit: Unit) => void;
-  getInventory: () => InventoryState;
-  getInventoryV2: () => InventoryV2State;
+  getInventoryState: () => InventoryState;
   getTicker: () => Ticker;
   reset: () => void;
   getPlayerUnit: () => Unit;
@@ -46,8 +44,7 @@ class SessionImpl implements Session {
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
-  private inventory: InventoryState | null;
-  private inventoryV2: InventoryV2State | null;
+  private inventoryState: InventoryState | null;
   private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
   private mapIndex: number;
@@ -60,8 +57,7 @@ class SessionImpl implements Session {
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.levelUpScreen = null;
-    this.inventory = null;
-    this.inventoryV2 = null;
+    this.inventoryState = null;
     this._isTurnInProgress = false;
     this.playerUnit = null;
     this.mapIndex = -1;
@@ -102,53 +98,34 @@ class SessionImpl implements Session {
   getLevelUpScreen = (): LevelUpScreenState => checkNotNull(this.levelUpScreen);
 
   prepareInventoryScreen = (playerUnit: Unit): void => {
-    if (this.inventory === null) {
-      this.inventory = new InventoryState();
+    if (this.inventoryState === null) {
+      this.inventoryState = new InventoryState();
     }
-    if (this.inventory.getSelectedCategory() === null) {
-      this.inventory.nextCategory(playerUnit);
-    }
-    if (this.inventory.getSelectedItem() !== null) {
-      const selectedItem = this.inventory.getSelectedItem();
-      if (selectedItem !== null && !playerUnit.getInventory().includes(selectedItem)) {
-        this.inventory.clearSelectedItem();
-      }
-    }
-    if (this.inventory.getSelectedItem() === null) {
-      this.inventory.nextItem(playerUnit);
-    }
-  };
-
-  prepareInventoryV2 = (playerUnit: Unit): void => {
-    if (this.inventoryV2 === null) {
-      this.inventoryV2 = new InventoryV2State();
-    }
-    switch (this.inventoryV2.getSelectedCategory()) {
+    switch (this.inventoryState.getSelectedCategory()) {
       case 'EQUIPMENT': {
-        const equipment = this.inventoryV2.getSelectedEquipment();
+        const equipment = this.inventoryState.getSelectedEquipment();
         if (equipment !== null && !playerUnit.getEquipment().includes(equipment)) {
-          this.inventoryV2.clearSelectedItem();
+          this.inventoryState.clearSelectedItem();
         }
         if (equipment === null) {
-          this.inventoryV2.nextItem(playerUnit);
+          this.inventoryState.nextItem(playerUnit);
         }
         break;
       }
       case 'ITEMS': {
-        const selectedItem = this.inventoryV2.getSelectedItem();
+        const selectedItem = this.inventoryState.getSelectedItem();
         if (selectedItem && !playerUnit.getInventory().includes(selectedItem)) {
-          this.inventoryV2.clearSelectedItem();
+          this.inventoryState.clearSelectedItem();
         }
         if (selectedItem === null) {
-          this.inventoryV2.nextItem(playerUnit);
+          this.inventoryState.nextItem(playerUnit);
         }
         break;
       }
     }
   };
 
-  getInventory = (): InventoryState => checkNotNull(this.inventory);
-  getInventoryV2 = (): InventoryV2State => checkNotNull(this.inventoryV2);
+  getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
   getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {

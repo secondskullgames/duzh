@@ -49,44 +49,6 @@ namespace Direction {
     return lookup[_getName(direction)];
   };
 
-  export const rotateClockwise = (direction: Direction): Direction => {
-    const directionName = _getName(direction);
-    const rotated: DirectionName = (() => {
-      switch (directionName) {
-        case 'N':
-          return 'E';
-        case 'E':
-          return 'S';
-        case 'S':
-          return 'W';
-        case 'W':
-          return 'N';
-        default:
-          throw new Error(`Unknown direction ${directionName}`);
-      }
-    })();
-    return _nameToDirection[rotated];
-  };
-
-  export const rotateCounterClockwise = (direction: Direction): Direction => {
-    const directionName = _getName(direction);
-    const rotated: DirectionName = (() => {
-      switch (directionName) {
-        case 'N':
-          return 'W';
-        case 'E':
-          return 'N';
-        case 'S':
-          return 'E';
-        case 'W':
-          return 'S';
-        default:
-          throw new Error(`Unknown direction ${directionName}`);
-      }
-    })();
-    return _nameToDirection[rotated];
-  };
-
   export const getDefaultUnitDirection = (): Direction => Direction.S;
 }
 

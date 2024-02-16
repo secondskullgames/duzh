@@ -11,58 +11,6 @@ type DisplayCategory = 'WEAPON' | 'ARMOR' | 'POTION' | 'SCROLL';
  */
 const displayCategories: DisplayCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'];
 
-export class InventoryState {
-  private selectedCategory: DisplayCategory;
-  private selectedItem: InventoryItem | null;
-
-  constructor() {
-    this.selectedCategory = displayCategories[0];
-    this.selectedItem = null;
-  }
-
-  nextCategory = (playerUnit: Unit) => {
-    const index = displayCategories.indexOf(this.selectedCategory);
-    this.selectedCategory = displayCategories[(index + 1) % displayCategories.length];
-    this.selectedItem = playerUnit.getInventory().get(this.selectedCategory)[0] ?? null;
-  };
-
-  previousCategory = (playerUnit: Unit) => {
-    const index = displayCategories.indexOf(this.selectedCategory);
-    this.selectedCategory =
-      displayCategories[
-        (index - 1 + displayCategories.length) % displayCategories.length
-      ];
-    this.selectedItem = playerUnit.getInventory().get(this.selectedCategory)[0] ?? null;
-  };
-
-  nextItem = (playerUnit: Unit) => {
-    const items = playerUnit.getInventory().get(this.selectedCategory);
-    if (items.length > 0) {
-      const index = this.selectedItem !== null ? items.indexOf(this.selectedItem) : -1;
-      this.selectedItem = items[(index + 1) % items.length] ?? null;
-    }
-  };
-
-  previousItem = (playerUnit: Unit) => {
-    const items = playerUnit.getInventory().get(this.selectedCategory);
-    if (items.length > 0 && this.selectedItem !== null) {
-      const index = items.indexOf(this.selectedItem);
-      this.selectedItem = items[(index - 1 + items.length) % items.length] ?? null;
-    }
-  };
-
-  clearSelectedItem = (): void => {
-    this.selectedItem = null;
-  };
-
-  getCategories = (): DisplayCategory[] => displayCategories;
-  getSelectedCategory = (): DisplayCategory => this.selectedCategory;
-  getSelectedItem = (): InventoryItem | null => this.selectedItem;
-  getItems = (playerUnit: Unit, category: DisplayCategory): InventoryItem[] => {
-    return playerUnit.getInventory().get(category);
-  };
-}
-
 const orderedEquipmentSlots: EquipmentSlot[] = [
   'MELEE_WEAPON',
   'RANGED_WEAPON',
@@ -73,12 +21,12 @@ const orderedEquipmentSlots: EquipmentSlot[] = [
   'CLOAK'
 ];
 
-type InventoryV2Category = 'EQUIPMENT' | 'ITEMS';
-type InventoryV2Subcategory = DisplayCategory;
+type InventoryCategory = 'EQUIPMENT' | 'ITEMS';
+type InventorySubcategory = DisplayCategory;
 
-export class InventoryV2State {
-  private selectedCategory: InventoryV2Category;
-  private selectedItemCategory: InventoryV2Subcategory | null;
+export class InventoryState {
+  private selectedCategory: InventoryCategory;
+  private selectedItemCategory: InventorySubcategory | null;
   private selectedItem: InventoryItem | null;
   private selectedEquipment: Equipment | null;
 
@@ -199,10 +147,9 @@ export class InventoryV2State {
     this.selectedItem = null;
   };
 
-  getSelectedCategory = (): InventoryV2Category => this.selectedCategory;
-  getItemCategories = (): InventoryV2Subcategory[] => displayCategories;
-  getSelectedItemCategory = (): InventoryV2Subcategory | null =>
-    this.selectedItemCategory;
+  getSelectedCategory = (): InventoryCategory => this.selectedCategory;
+  getItemCategories = (): InventorySubcategory[] => displayCategories;
+  getSelectedItemCategory = (): InventorySubcategory | null => this.selectedItemCategory;
   getSelectedItem = (): InventoryItem | null => this.selectedItem;
   getItems = (playerUnit: Unit, category: DisplayCategory): InventoryItem[] => {
     return playerUnit.getInventory().get(category);
