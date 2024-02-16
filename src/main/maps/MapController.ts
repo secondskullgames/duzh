@@ -94,10 +94,7 @@ export class MapControllerImpl implements MapController {
   loadDebugMap = async () => {
     const { session, state, mapFactory } = this;
 
-    const mapInstance = await mapFactory.loadMap(
-      { type: 'predefined', id: 'test' },
-      state
-    );
+    const mapInstance = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
     // eslint-disable-next-line no-console
     console.log('debug mode');
     session.setMap(mapInstance);

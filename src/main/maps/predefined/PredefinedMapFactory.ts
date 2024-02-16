@@ -17,13 +17,13 @@ import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
 import Coordinates from '../../geometry/Coordinates';
-import { GameState } from '../../core/GameState';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ModelLoader from '../../utils/ModelLoader';
+import MusicController from '../../sounds/MusicController';
 import { injectable } from 'inversify';
 
 /** TODO this should go somewhere else */
@@ -48,10 +48,11 @@ export class PredefinedMapFactory {
     private readonly unitFactory: UnitFactory,
     private readonly itemFactory: ItemFactory,
     private readonly spriteFactory: SpriteFactory,
-    private readonly modelLoader: ModelLoader
+    private readonly modelLoader: ModelLoader,
+    private readonly musicController: MusicController
   ) {}
 
-  buildPredefinedMap = async (mapId: string, state: GameState): Promise<MapInstance> => {
+  buildPredefinedMap = async (mapId: string): Promise<MapInstance> => {
     const model = await this.modelLoader.loadPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
@@ -62,7 +63,7 @@ export class PredefinedMapFactory {
       width: image.bitmap.width,
       height: image.bitmap.height,
       startingCoordinates,
-      music: model.music ? await state.getMusicController().loadMusic(model.music) : null
+      music: model.music ? await this.musicController.loadMusic(model.music) : null
     });
 
     const tiles = await this._loadTiles(model, image, map);
@@ -72,12 +73,12 @@ export class PredefinedMapFactory {
       }
     }
 
-    const units = await this._loadUnits(model, image, state, map);
+    const units = await this._loadUnits(model, image, map);
     for (const unit of units) {
       map.addUnit(unit);
     }
 
-    const objects = await this._loadObjects(model, image, state, map);
+    const objects = await this._loadObjects(model, image, map);
     for (const object of objects) {
       map.addObject(object);
     }
@@ -147,7 +148,6 @@ export class PredefinedMapFactory {
   private _loadUnits = async (
     model: PredefinedMapModel,
     image: Image,
-    state: GameState,
     map: MapInstance
   ): Promise<Unit[]> => {
     const units: Unit[] = [];
@@ -187,7 +187,6 @@ export class PredefinedMapFactory {
   private _loadObjects = async (
     model: PredefinedMapModel,
     image: Image,
-    state: GameState,
     map: MapInstance
   ): Promise<GameObject[]> => {
     const objects: GameObject[] = [];

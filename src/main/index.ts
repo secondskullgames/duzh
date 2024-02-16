@@ -9,7 +9,6 @@ import { Feature } from './utils/features';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import MapSpec from './schemas/MapSpec';
-import { ImageCache, ImageCacheImpl } from './graphics/images/ImageCache';
 import { createCanvas } from './utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
@@ -23,33 +22,30 @@ const setupContainer = () => {
     defaultScope: 'Singleton',
     autoBindInjectable: true
   });
-  container.bind(ImageCache.SYMBOL).to(ImageCacheImpl);
-  container.bind<FontBundle>(FontBundle.SYMBOL).toDynamicValue(async context => {
+  container.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
     const fontFactory = context.container.get(FontFactory);
     return fontFactory.loadFonts();
   });
-  container
-    .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
-    .toConstantValue(document.getElementById('container')!);
-  container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
+  container.bind(Session.SYMBOL).toConstantValue(Session.create());
+  container.bind(AssetLoader).to(AssetLoaderImpl);
   container
     .bind(GameState.SYMBOL_MAP_SPECS)
-    .toDynamicValue(async () =>
+    .toConstantValue(
       container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
     );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
-  container.bind(AssetLoader).to(AssetLoaderImpl);
   return container;
 };
 
 const main = async () => {
   const container = setupContainer();
 
-  const mapFactory = container.get(MapFactory);
+  // TODO why does this need to load asynchronously?
+  const mapFactory = await container.getAsync(MapFactory);
   const mapSpecs = await container.getAsync<MapSpec[]>(GameState.SYMBOL_MAP_SPECS);
   const state = await container.getAsync<GameState>(GameState.SYMBOL);
-  const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
+  const maps = await mapFactory.loadMapSuppliers(mapSpecs);
   state.addMaps(maps);
   const session = await container.getAsync<Session>(Session.SYMBOL);
 

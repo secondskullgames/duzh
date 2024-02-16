@@ -12,10 +12,12 @@ import { inject, injectable } from 'inversify';
 export class TextRenderer {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
-
   private readonly imageCache: Record<string, Image> = {};
 
-  constructor(@inject(FontBundle.SYMBOL) private readonly fonts: FontBundle) {
+  constructor(
+    @inject(FontBundle)
+    private readonly fonts: FontBundle
+  ) {
     this.canvas = createCanvas({
       width: SCREEN_WIDTH,
       height: SCREEN_HEIGHT,

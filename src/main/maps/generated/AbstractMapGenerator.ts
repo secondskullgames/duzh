@@ -50,12 +50,9 @@ abstract class AbstractMapGenerator {
     }
 
     return new GeneratedMapBuilder({
-      level: mapModel.levelNumber,
       width: mapModel.width,
       height: mapModel.height,
       tiles,
-      enemies: mapModel.enemies,
-      items: mapModel.items,
       tileSet,
       imageFactory: this.imageFactory,
       tileFactory: this.tileFactory,

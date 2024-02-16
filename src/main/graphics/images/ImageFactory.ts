@@ -20,8 +20,10 @@ export default class ImageFactory {
   private readonly rawCache: Record<string, ImageData | null> = {};
 
   constructor(
-    @inject(ImageLoader) private readonly imageLoader: ImageLoader,
-    @inject(ImageCache.SYMBOL) private readonly cache: ImageCache
+    @inject(ImageLoader)
+    private readonly imageLoader: ImageLoader,
+    @inject(ImageCache)
+    private readonly cache: ImageCache
   ) {}
 
   getImage = async (params: Params): Promise<Image> => {
