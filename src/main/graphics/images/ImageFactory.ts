@@ -4,7 +4,7 @@ import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import PaletteSwaps from '../PaletteSwaps';
-import Color from '../Color';
+import { Color } from '../Color';
 import { inject, injectable } from 'inversify';
 
 type Params = Readonly<{

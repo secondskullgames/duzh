@@ -1,4 +1,4 @@
-import Color from './Color';
+import { Color } from './Color';
 import { Image } from './images/Image';
 import { Pixel } from './Pixel';
 import Rect from '../geometry/Rect';

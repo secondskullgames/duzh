@@ -3,7 +3,7 @@ import { Figure, Sample, Suite } from './types';
 
 const _duplicate = (samples: Sample[]): Sample[] => [...samples, ...samples];
 
-const SUITE_1: Suite = (() => {
+export const SUITE_1: Suite = (() => {
   const FIGURE_1: Figure = [
     [300, 2000],
     [200, 1000],
@@ -85,7 +85,7 @@ const SUITE_1: Suite = (() => {
   };
 })();
 
-const SUITE_2: Suite = (() => {
+export const SUITE_2: Suite = (() => {
   const FIGURE_1: Figure = (<Sample[]>[
     [100, 1000],
     [80, 1000],
@@ -184,7 +184,7 @@ const SUITE_2: Suite = (() => {
   };
 })();
 
-const SUITE_3: Suite = (() => {
+export const SUITE_3: Suite = (() => {
   const FIGURE_1: Figure = (<Sample[]>[
     [100, 400],
     [0, 200],
@@ -376,7 +376,7 @@ const SUITE_3: Suite = (() => {
   };
 })();
 
-const SUITE_4: Suite = (() => {
+export const SUITE_4: Suite = (() => {
   const FIGURE_1: Figure = (<Sample[]>[
     [100, 1920],
     [135, 1920],
@@ -472,5 +472,3 @@ const SUITE_4: Suite = (() => {
     }
   };
 })();
-
-export { SUITE_1, SUITE_2, SUITE_3, SUITE_4 };

@@ -1,4 +1,4 @@
-import Color from '../../graphics/Color';
+import { Color } from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
 import { Image } from '../../graphics/images/Image';
 import Door, { DoorState } from '../../entities/objects/Door';

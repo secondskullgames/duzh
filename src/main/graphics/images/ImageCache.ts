@@ -1,7 +1,7 @@
 import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
 import { comparing } from '../../utils/arrays';
-import Color from '../Color';
+import { Color } from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
 import { injectable } from 'inversify';
 

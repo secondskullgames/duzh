@@ -1,5 +1,5 @@
 import { Renderer } from './Renderer';
-import Color from '../Color';
+import { Color } from '../Color';
 import Colors from '../Colors';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
