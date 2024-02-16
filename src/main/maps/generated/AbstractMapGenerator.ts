@@ -1,4 +1,3 @@
-import EmptyMap from './EmptyMap';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
@@ -25,8 +24,7 @@ abstract class AbstractMapGenerator {
     const { tileFactory } = this;
     const { width, height, levelNumber } = mapModel;
 
-    const emptyMap = this._generateEmptyMap(width, height, levelNumber);
-    const tileTypes = emptyMap.tiles;
+    const tileTypes = this._generateTiles(width, height, levelNumber);
     const tileSet = await tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
@@ -75,24 +73,24 @@ abstract class AbstractMapGenerator {
     return map;
   };
 
-  protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
+  protected abstract generateTiles(width: number, height: number): TileType[][];
 
-  private _generateEmptyMap = (
+  private _generateTiles = (
     width: number,
     height: number,
     level: number
-  ): EmptyMap => {
+  ): TileType[][] => {
     const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
-      let map;
+      let tiles;
       try {
-        map = this.generateEmptyMap(width, height);
+        tiles = this.generateTiles(width, height);
       } catch (e) {
         continue;
       }
-      const isValid = this._validateTiles(map);
+      const isValid = this._validateTiles(tiles);
       if (isValid) {
-        return map;
+        return tiles;
       } else {
         // eslint-disable-next-line no-console
         console.error(
@@ -115,18 +113,21 @@ abstract class AbstractMapGenerator {
    * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
    * which we are no longer doing.
    */
-  private _validateTiles = (map: EmptyMap): boolean => this._validateWallPlacement(map);
+  private _validateTiles = (tiles: TileType[][]): boolean =>
+    this._validateWallPlacement(tiles);
 
   /**
    * Validate that walls are placed correctly:
    * they can't be at the very top of the map, and they must have a "wall top" tile above them
    */
-  private _validateWallPlacement = (map: EmptyMap): boolean => {
+  private _validateWallPlacement = (tiles: TileType[][]): boolean => {
     const floorTypes = ['FLOOR', 'FLOOR_HALL'];
     const wallTypes = ['WALL', 'WALL_HALL'];
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        const tileType = map.tiles[y][x];
+    const width = tiles[0].length;
+    const height = tiles.length;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tileType = tiles[y][x];
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
@@ -134,8 +135,8 @@ abstract class AbstractMapGenerator {
             console.warn("Invalid map: can't place a wall at the top of the map");
             return false;
           }
-          const oneUp = map.tiles[y - 1][x];
-          const twoUp = map.tiles[y - 2][x];
+          const oneUp = tiles[y - 1][x];
+          const twoUp = tiles[y - 2][x];
           if (floorTypes.includes(oneUp)) {
             // continue, can't place a wall directly below a floor
             // (because we have to show the top of the wall above it)

@@ -1,5 +1,4 @@
 import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
-import EmptyMap from './EmptyMap';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import { range } from '../../utils/arrays';
@@ -11,8 +10,8 @@ class PathMapGenerator extends AbstractMapGenerator {
     super(props);
   }
 
-  /** @override {@link AbstractMapGenerator#generateEmptyMap} */
-  protected generateEmptyMap = (width: number, height: number): EmptyMap => {
+  /** @override {@link AbstractMapGenerator#generateTiles} */
+  protected generateTiles = (width: number, height: number): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -60,11 +59,7 @@ class PathMapGenerator extends AbstractMapGenerator {
 
     _addWalls(tiles);
 
-    return {
-      width,
-      height,
-      tiles
-    };
+    return tiles;
   };
 }
 

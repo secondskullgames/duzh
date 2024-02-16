@@ -2,7 +2,6 @@ import Section from './Section';
 import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
-import EmptyMap from '../EmptyMap';
 import AbstractMapGenerator, { MapGeneratorProps } from '../AbstractMapGenerator';
 import Rect from '../../../geometry/Rect';
 import TileType from '../../../schemas/TileType';
@@ -44,10 +43,7 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
     super(props);
   }
 
-  /**
-   * @override
-   */
-  generateEmptyMap = (width: number, height: number): EmptyMap => {
+  generateTiles = (width: number, height: number): TileType[][] => {
     const rect: Rect = { left: 0, top: 0, width, height };
     let section: Section = new Section({ rect });
     const splitter = SectionSplitter.create({
@@ -60,13 +56,7 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
     const connector = SectionConnector.create();
     section = connector.connectRecursively(section);
     const tileGenerator = TileGenerator.create();
-    const tiles: TileType[][] = tileGenerator.generateTiles(section);
-
-    return {
-      width,
-      height,
-      tiles
-    };
+    return tileGenerator.generateTiles(section);
   };
 }
 

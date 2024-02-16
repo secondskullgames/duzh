@@ -5,7 +5,6 @@ import RegionConnector from './RegionConnector';
 import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
-import EmptyMap from '../EmptyMap';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import TileType from '../../../schemas/TileType';
 import TileFactory from '../../../tiles/TileFactory';
@@ -35,10 +34,7 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
     this.maxRoomDimension = maxRoomDimension;
   }
 
-  /**
-   * @override {@link AbstractMapGenerator#generateEmptyMap}
-   */
-  protected generateEmptyMap = (width: number, height: number): EmptyMap => {
+  protected generateTiles = (width: number, height: number): TileType[][] => {
     // 1. Recursively subdivide the map into regions.
     //    Each region must fall within the max dimensions.
     // 2. Add rooms within regions, with appropriate padding.
@@ -105,10 +101,6 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
       emptyRegionConnections
     );
 
-    return {
-      tiles,
-      width,
-      height
-    };
+    return tiles;
   };
 }
