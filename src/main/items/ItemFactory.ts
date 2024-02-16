@@ -17,14 +17,19 @@ import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
-import { injectable } from 'inversify';
+import { AssetLoader } from '../assets/AssetLoader';
+import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
 @injectable()
 export default class ItemFactory {
   constructor(
+    @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
-    private readonly modelLoader: ModelLoader
+    @inject(ModelLoader)
+    private readonly modelLoader: ModelLoader,
+    @inject(AssetLoader)
+    private readonly assetLoader: AssetLoader
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -218,27 +223,5 @@ export default class ItemFactory {
       PaletteSwaps.create(model.paletteSwaps)
     );
     return new MapItem({ coordinates, map, sprite, inventoryItem });
-  };
-
-  loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
-    const requireContext = require.context('../../../data/items', false, /\.json$/i);
-
-    const models: ConsumableItemModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as ConsumableItemModel;
-      models.push(model);
-    }
-    return models;
-  };
-
-  loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
-    const requireContext = require.context('../../../data/equipment', false, /\.json$/i);
-
-    const models: EquipmentModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as EquipmentModel;
-      models.push(model);
-    }
-    return models;
   };
 }

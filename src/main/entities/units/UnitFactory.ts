@@ -14,7 +14,7 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
 import ModelLoader from '../../utils/ModelLoader';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{
   /**
@@ -33,8 +33,11 @@ type CreateUnitParams = Readonly<{
 @injectable()
 export default class UnitFactory {
   constructor(
+    @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
+    @inject(ItemFactory)
     private readonly itemFactory: ItemFactory,
+    @inject(ModelLoader)
     private readonly modelLoader: ModelLoader
   ) {}
 
@@ -82,16 +85,5 @@ export default class UnitFactory {
       unit.learnAbility(abilityForName(AbilityName.DASH));
     }
     return unit;
-  };
-
-  loadAllModels = async (): Promise<UnitModel[]> => {
-    const requireContext = require.context('../../../../data/units', false, /\.json$/i);
-
-    const models: UnitModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as UnitModel;
-      models.push(model);
-    }
-    return models;
   };
 }

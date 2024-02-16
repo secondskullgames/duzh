@@ -188,7 +188,7 @@ export class GeneratedMapFactory {
   };
 
   private _getPossibleUnitModels = async (model: GeneratedMapModel) => {
-    const allUnitModels = await this.unitFactory.loadAllModels();
+    const allUnitModels = await this.modelLoader.loadAllUnitModels();
     const possibleUnitModels = allUnitModels.filter(unitModel => {
       const { levelParameters } = unitModel;
       if (levelParameters) {
@@ -225,8 +225,8 @@ export class GeneratedMapFactory {
       []
     ).filter(coordinates => !this._isOccupied(coordinates, map));
 
-    const allEquipmentModels = await this.itemFactory.loadAllEquipmentModels();
-    const allConsumableModels = await this.itemFactory.loadAllConsumableModels();
+    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
+    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
 
     const itemSpecs: ItemSpec[] = [];

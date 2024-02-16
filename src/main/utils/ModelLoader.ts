@@ -117,4 +117,37 @@ export default class ModelLoader {
 
   loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
     this._loadModel(`items/${id}`, 'ConsumableItemModel');
+
+  loadAllUnitModels = async (): Promise<UnitModel[]> => {
+    const requireContext = require.context('../../../data/units', false, /\.json$/i);
+
+    const models: UnitModel[] = [];
+    for (const filename of requireContext.keys()) {
+      const model = (await requireContext(filename)) as UnitModel;
+      models.push(model);
+    }
+    return models;
+  };
+
+  loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
+    const requireContext = require.context('../../../data/items', false, /\.json$/i);
+
+    const models: ConsumableItemModel[] = [];
+    for (const filename of requireContext.keys()) {
+      const model = (await requireContext(filename)) as ConsumableItemModel;
+      models.push(model);
+    }
+    return models;
+  };
+
+  loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
+    const requireContext = require.context('../../../data/equipment', false, /\.json$/i);
+
+    const models: EquipmentModel[] = [];
+    for (const filename of requireContext.keys()) {
+      const model = (await requireContext(filename)) as EquipmentModel;
+      models.push(model);
+    }
+    return models;
+  };
 }
