@@ -47,6 +47,18 @@ export default class MapInstance {
     throw new Error(`Illegal coordinates ${x}, ${y}`);
   };
 
+  getTiles = (): Tile[][] => {
+    const tiles: Tile[][] = [];
+    for (let y = 0; y < this.height; y++) {
+      const row: Tile[] = [];
+      for (let x = 0; x < this.width; x++) {
+        row.push(this.tiles.get({ x, y })!);
+      }
+      tiles.push(row);
+    }
+    return tiles;
+  };
+
   getUnit = (coordinates: Coordinates): Unit | null => {
     return this.units.get(coordinates);
   };

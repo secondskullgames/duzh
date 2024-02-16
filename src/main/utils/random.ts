@@ -1,4 +1,5 @@
 import { head } from './arrays';
+import { checkNotNull } from './preconditions';
 
 /**
  * @param max inclusive
@@ -9,7 +10,8 @@ export const randBoolean = () => randInt(0, 1) === 1;
 export const random = () => Math.random();
 export const randChance = (chance: number) => Math.random() <= chance;
 
-export const randChoice = <T>(list: T[]): T => list[randInt(0, list.length - 1)];
+export const randChoice = <T>(list: T[]): T =>
+  checkNotNull(list[randInt(0, list.length - 1)]);
 
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
