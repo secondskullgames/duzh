@@ -12,9 +12,21 @@ type CacheKey = Readonly<{
   effects?: ImageEffect[];
 }>;
 
-export interface ImageCache {
-  get: (key: CacheKey) => Image | null | undefined;
-  put: (key: CacheKey, image: Image | null) => void;
+@injectable()
+export class ImageCache {
+  private readonly map: Record<string, Image | null>;
+
+  constructor() {
+    this.map = {};
+  }
+
+  get = (key: CacheKey): Image | null => {
+    return this.map[_stringify(key)] ?? null;
+  };
+
+  put = (key: CacheKey, image: Image | null) => {
+    this.map[_stringify(key)] = image;
+  };
 }
 
 const _stringify = (key: CacheKey): string => {
@@ -32,25 +44,4 @@ const _stringify = (key: CacheKey): string => {
   return `${filename}_${
     transparentColor?.hex ?? 'null'
   }_${stringifiedPaletteSwaps}_${effectNames}`;
-};
-
-@injectable()
-export class ImageCacheImpl implements ImageCache {
-  private readonly map: Record<string, Image | null>;
-
-  constructor() {
-    this.map = {};
-  }
-
-  get = (key: CacheKey): Image | null => {
-    return this.map[_stringify(key)] ?? null;
-  };
-
-  put = (key: CacheKey, image: Image | null) => {
-    this.map[_stringify(key)] = image;
-  };
-}
-
-export const ImageCache = {
-  SYMBOL: Symbol('image')
 };

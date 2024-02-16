@@ -38,8 +38,6 @@ export default class GameRenderer implements Renderer {
     private readonly textRenderer: TextRenderer,
     @inject(Session.SYMBOL)
     private readonly session: Session,
-    @inject(GameRenderer.PARENT_ELEMENT_SYMBOL)
-    parent: HTMLElement,
     @inject(GameScreenRenderer)
     private readonly gameScreenRenderer: Renderer,
     @inject(HUDRenderer)

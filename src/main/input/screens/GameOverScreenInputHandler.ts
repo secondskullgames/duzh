@@ -31,7 +31,7 @@ export default class GameOverScreenInputHandler implements ScreenInputHandler {
           await showSplashScreen(state, session);
           state.reset();
           session.reset();
-          const maps = await this.mapFactory.loadMapSuppliers(state.getMapSpecs(), state);
+          const maps = await this.mapFactory.loadMapSuppliers(state.getMapSpecs());
           state.addMaps(maps);
         }
         break;

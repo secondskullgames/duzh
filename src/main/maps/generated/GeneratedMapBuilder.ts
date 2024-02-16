@@ -34,9 +34,6 @@ type Props = Readonly<{
   itemFactory: ItemFactory;
 }>;
 
-/**
- * An uninitialized map, which hasn't yet been loaded in the game.
- */
 export default class GeneratedMapBuilder {
   private readonly level: number;
   private readonly width: number;
