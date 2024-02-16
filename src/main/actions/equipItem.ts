@@ -1,10 +1,15 @@
 import Equipment from '../equipment/Equipment';
 import Unit from '../entities/units/Unit';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { Session } from '../core/Session';
+import { GameState } from '../core/GameState';
 
-export const equipItem = async (equipment: Equipment, unit: Unit, session: Session) => {
+export const equipItem = async (
+  equipment: Equipment,
+  unit: Unit,
+  session: Session,
+  state: GameState
+) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
     const inventoryItem = currentEquipment.inventoryItem;
@@ -17,5 +22,5 @@ export const equipItem = async (equipment: Equipment, unit: Unit, session: Sessi
   session
     .getTicker()
     .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
-  playSound(Sounds.BLOCKED);
+  state.getSoundPlayer().playSound(Sounds.BLOCKED);
 };

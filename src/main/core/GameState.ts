@@ -7,6 +7,8 @@ import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import MapSpec from '../schemas/MapSpec';
+import MusicController from '../sounds/MusicController';
+import SoundPlayer from '../sounds/SoundPlayer';
 import { inject, injectable } from 'inversify';
 
 /**
@@ -30,6 +32,8 @@ export interface GameState {
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
   getObjectFactory: () => ObjectFactory;
+  getSoundPlayer: () => SoundPlayer;
+  getMusicController: () => MusicController;
 }
 
 export namespace GameState {
@@ -45,6 +49,7 @@ export class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
+  private readonly soundPlayer: SoundPlayer;
 
   constructor(
     @inject(GameState.SYMBOL_MAP_SPECS)
@@ -56,11 +61,14 @@ export class GameStateImpl implements GameState {
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
     @inject(ObjectFactory)
-    private readonly objectFactory: ObjectFactory
+    private readonly objectFactory: ObjectFactory,
+    @inject(MusicController)
+    private readonly musicController: MusicController
   ) {
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
+    this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
   }
 
   getMapSpecs = (): MapSpec[] => this.mapSpecs;
@@ -102,4 +110,6 @@ export class GameStateImpl implements GameState {
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;
   getObjectFactory = (): ObjectFactory => this.objectFactory;
+  getSoundPlayer = (): SoundPlayer => this.soundPlayer;
+  getMusicController = (): MusicController => this.musicController;
 }

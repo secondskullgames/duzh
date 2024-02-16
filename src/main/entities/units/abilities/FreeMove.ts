@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { moveUnit } from '../../../actions/moveUnit';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
@@ -36,7 +35,7 @@ export const FreeMove: UnitAbility = {
       await moveUnit(unit, { x, y }, session, state);
       unit.spendMana(manaCost);
     } else {
-      playSound(Sounds.BLOCKED);
+      state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
   }
 };

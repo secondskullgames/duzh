@@ -1,17 +1,20 @@
 import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
-import { injectable } from 'inversify';
+import { AssetLoader } from '../../assets/AssetLoader';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
+  private readonly assetLoader: AssetLoader;
 
   private img: HTMLImageElement;
 
   private _listener: (() => void) | null;
   private _errorListener: (() => void) | null;
 
-  constructor() {
+  constructor(@inject(AssetLoader) assetLoader: AssetLoader) {
+    this.assetLoader = assetLoader;
     // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
       width: 2000,
@@ -27,17 +30,8 @@ export default class ImageLoader {
   }
 
   loadImage = async (filename: string): Promise<ImageData | null> => {
-    let imageDataUrl: string;
-    try {
-      imageDataUrl = (
-        await import(
-          /* webpackMode: "lazy-once" */
-          /* webpackChunkName: "images" */
-          `../../../../png/${filename}.png`
-        )
-      ).default;
-    } catch {
-      // this is expected for _B filenames
+    const imageDataUrl = await this.assetLoader.loadImageAsset(`${filename}.png`);
+    if (!imageDataUrl) {
       return null;
     }
 

@@ -3,7 +3,6 @@ import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
 import { checkState } from '../utils/preconditions';
 import { updateRevealedTiles } from '../actions/updateRevealedTiles';
-import Music from '../sounds/Music';
 import { GameScreen } from '../core/GameScreen';
 import UnitFactory from '../entities/units/UnitFactory';
 import { inject, injectable } from 'inversify';
@@ -45,15 +44,15 @@ export class MapControllerImpl implements MapController {
     map.addUnit(playerUnit);
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
-    Music.stop();
+    state.getMusicController().stop();
     if (map.music) {
-      Music.playMusic(map.music);
+      state.getMusicController().playMusic(map.music);
     }
   };
 
   loadNextMap = async () => {
     const { state, session } = this;
-    Music.stop();
+    state.getMusicController().stop();
     if (!state.hasNextMap(session.getMapIndex())) {
       session.setScreen(GameScreen.VICTORY);
     } else {
@@ -69,7 +68,7 @@ export class MapControllerImpl implements MapController {
       map.addUnit(playerUnit);
       updateRevealedTiles(map, playerUnit);
       if (map.music) {
-        Music.playMusic(map.music);
+        state.getMusicController().playMusic(map.music);
       }
     }
   };
@@ -88,7 +87,7 @@ export class MapControllerImpl implements MapController {
     playerUnit.setCoordinates(map.getStartingCoordinates());
     updateRevealedTiles(map, playerUnit);
     if (map.music) {
-      Music.playMusic(map.music);
+      state.getMusicController().playMusic(map.music);
     }
   };
 
@@ -102,9 +101,9 @@ export class MapControllerImpl implements MapController {
     // eslint-disable-next-line no-console
     console.log('debug mode');
     session.setMap(mapInstance);
-    Music.stop();
-    // Music.playFigure(Music.TITLE_THEME);
-    // Music.playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
+    state.getMusicController().stop();
+    // state.getMusicController().playFigure(TITLE_THEME);
+    // state.getMusicController().playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
     updateRevealedTiles(session.getMap(), session.getPlayerUnit());
   };
 }

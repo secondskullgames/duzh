@@ -40,7 +40,7 @@ export class MoveOrder implements UnitOrder {
     } else {
       const door = getDoor(map, coordinates);
       if (door) {
-        await openDoor(unit, door);
+        await openDoor(unit, door, state);
         return;
       }
 

@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { Session } from '../../../core/Session';
@@ -30,7 +29,7 @@ export const Summon: UnitAbility = {
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
     // TODO pick a sound
-    playSound(Sounds.WIZARD_APPEAR);
+    state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
     // TODO animation
     const summonedUnit = await state.getUnitFactory().createUnit({
       unitClass,

@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Feature } from '../../../utils/features';
@@ -57,7 +56,7 @@ export const Blink: UnitAbility = {
     }
 
     if (blocked) {
-      playSound(Sounds.BLOCKED);
+      state.getSoundPlayer().playSound(Sounds.BLOCKED);
     } else {
       await moveUnit(unit, { x, y }, session, state);
       unit.spendMana(manaCost);

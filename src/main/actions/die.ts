@@ -1,6 +1,5 @@
 import { gameOver } from './gameOver';
 import Unit from '../entities/units/Unit';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { randChance } from '../utils/random';
 import { Session } from '../core/Session';
@@ -16,10 +15,10 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
 
   map.removeUnit(unit);
   if (unit === playerUnit) {
-    await gameOver(session);
+    await gameOver(state, session);
     return;
   } else {
-    playSound(Sounds.ENEMY_DIES);
+    state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);
     session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {

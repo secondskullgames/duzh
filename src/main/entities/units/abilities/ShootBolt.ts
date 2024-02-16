@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
@@ -57,7 +56,7 @@ export const ShootBolt: UnitAbility = {
         .getAnimationFactory()
         .getBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
       await playAnimation(boltAnimation, { map });
-      playSound(Sounds.PLAYER_HITS_ENEMY);
+      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);

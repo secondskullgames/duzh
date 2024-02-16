@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import { sleep } from '../../../utils/promises';
-import { playSound } from '../../../sounds/playSound';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
@@ -53,7 +52,7 @@ export const Dash: UnitAbility = {
     if (moved) {
       unit.spendMana(manaCost);
     } else {
-      playSound(Sounds.BLOCKED);
+      state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
   }
 };

@@ -7,7 +7,6 @@ import { NormalAttack } from '../../entities/units/abilities/NormalAttack';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
-import { playSound } from '../../sounds/playSound';
 import Sounds from '../../sounds/Sounds';
 import { toggleFullScreen } from '../../utils/dom';
 import { pickupItem } from '../../actions/pickupItem';
@@ -45,7 +44,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     } else if (this._isNumberKey(key)) {
       await this._handleAbility(key as NumberKey);
     } else if (key === 'SPACEBAR') {
-      playSound(Sounds.FOOTSTEP);
+      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
       await playTurn(state, session);
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
@@ -152,13 +151,13 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const coordinates = playerUnit.getCoordinates();
     const item = getItem(map, coordinates);
     if (item) {
-      pickupItem(playerUnit, item, session);
+      pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
     } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
-      playSound(Sounds.DESCEND_STAIRS);
+      state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();
     } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
-      playSound(Sounds.DESCEND_STAIRS); // TODO
+      state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     }
     await playTurn(state, session);

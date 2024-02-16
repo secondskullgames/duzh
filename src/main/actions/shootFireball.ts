@@ -2,7 +2,6 @@ import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import { playAnimation } from '../graphics/animations/playAnimation';
 import { sleep } from '../utils/promises';
@@ -35,7 +34,7 @@ export const shootFireball = async (
 
   const targetUnit = map.getUnit({ x, y });
   if (targetUnit) {
-    playSound(Sounds.PLAYER_HITS_ENEMY);
+    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
     const fireballAnimation = await state
       .getAnimationFactory()
       .getFireballAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);

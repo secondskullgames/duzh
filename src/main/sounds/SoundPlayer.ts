@@ -1,10 +1,10 @@
 import CustomOscillator from './CustomOscillator';
 import { Sample } from './types';
 
-type Props = {
+type Props = Readonly<{
   polyphony: number;
   gain: number;
-};
+}>;
 
 export default class SoundPlayer {
   private readonly context: AudioContext;

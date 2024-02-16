@@ -2,7 +2,6 @@ import { GameState } from './GameState';
 import { Session } from './Session';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { die } from '../actions/die';
-import { playSound } from '../sounds/playSound';
 import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
@@ -44,7 +43,7 @@ export class Debug {
   };
 
   awardEquipment = async () => {
-    const { session, itemFactory } = this;
+    const { session, state, itemFactory } = this;
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
@@ -53,7 +52,7 @@ export class Debug {
     session
       .getTicker()
       .log(`Picked up a ${item.name}.`, { turn: this.session.getTurn() });
-    playSound(Sounds.PICK_UP_ITEM);
+    state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {

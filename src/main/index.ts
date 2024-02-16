@@ -4,11 +4,10 @@ import { GameState, GameStateImpl } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
-import { FontBundle, loadFonts } from './graphics/Fonts';
+import { FontBundle, FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
-import ImageFactory from './graphics/images/ImageFactory';
 import MapSpec from './schemas/MapSpec';
 import { ImageCache, ImageCacheImpl } from './graphics/images/ImageCache';
 import { createCanvas } from './utils/dom';
@@ -16,15 +15,8 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
+import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
 import { Container } from 'inversify';
-
-const _loadMapSpecs = async (): Promise<MapSpec[]> =>
-  (
-    await import(
-      /* webpackChunkName: "models" */
-      '../../data/maps.json'
-    )
-  ).default as MapSpec[];
 
 const setupContainer = () => {
   const container = new Container({
@@ -33,16 +25,21 @@ const setupContainer = () => {
   });
   container.bind(ImageCache.SYMBOL).to(ImageCacheImpl);
   container.bind<FontBundle>(FontBundle.SYMBOL).toDynamicValue(async context => {
-    const imageFactory = context.container.get(ImageFactory);
-    return loadFonts({ imageFactory });
+    const fontFactory = context.container.get(FontFactory);
+    return fontFactory.loadFonts();
   });
   container
     .bind(GameRenderer.PARENT_ELEMENT_SYMBOL)
     .toConstantValue(document.getElementById('container')!);
   container.bind(Session.SYMBOL).toDynamicValue(() => Session.create());
-  container.bind(GameState.SYMBOL_MAP_SPECS).toDynamicValue(async () => _loadMapSpecs());
+  container
+    .bind(GameState.SYMBOL_MAP_SPECS)
+    .toDynamicValue(async () =>
+      container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
+    );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
+  container.bind(AssetLoader).to(AssetLoaderImpl);
   return container;
 };
 
@@ -50,7 +47,7 @@ const main = async () => {
   const container = setupContainer();
 
   const mapFactory = container.get(MapFactory);
-  const mapSpecs = await _loadMapSpecs();
+  const mapSpecs = await container.getAsync<MapSpec[]>(GameState.SYMBOL_MAP_SPECS);
   const state = await container.getAsync<GameState>(GameState.SYMBOL);
   const maps = await mapFactory.loadMapSuppliers(mapSpecs, state);
   state.addMaps(maps);
@@ -71,7 +68,7 @@ const main = async () => {
     debug.attachToWindow();
     document.getElementById('debug')?.classList.remove('production');
   }
-  await showSplashScreen(session);
+  await showSplashScreen(state, session);
   setInterval(async () => {
     await renderer.render(canvasGraphics);
   }, 20);
