@@ -29,7 +29,7 @@ export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
   private readonly maxRoomDimension: number;
 
   constructor({ minRoomDimension, maxRoomDimension, tileFactory }: Props) {
-    super({ tileFactory });
+    super(tileFactory);
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
   }

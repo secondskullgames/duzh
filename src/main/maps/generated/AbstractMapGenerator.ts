@@ -6,16 +6,8 @@ import MapInstance from '../MapInstance';
 import { checkNotNull } from '../../utils/preconditions';
 import { Feature } from '../../utils/features';
 
-export type MapGeneratorProps = Readonly<{
-  tileFactory: TileFactory;
-}>;
-
 abstract class AbstractMapGenerator {
-  private readonly tileFactory: TileFactory;
-
-  protected constructor({ tileFactory }: MapGeneratorProps) {
-    this.tileFactory = tileFactory;
-  }
+  protected constructor(private readonly tileFactory: TileFactory) {}
 
   generateMap = async (
     mapModel: GeneratedMapModel,

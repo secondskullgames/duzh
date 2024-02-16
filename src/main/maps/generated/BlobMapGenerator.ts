@@ -1,13 +1,14 @@
-import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
+import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
 import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
 
 class BlobMapGenerator extends AbstractMapGenerator {
-  constructor(props: MapGeneratorProps) {
-    super(props);
+  constructor(tileFactory: TileFactory) {
+    super(tileFactory);
   }
 
   /**

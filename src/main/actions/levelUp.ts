@@ -1,22 +1,19 @@
 import Unit from '../entities/units/Unit';
-import { Faction } from '../types/types';
 import { Feature } from '../utils/features';
 import { abilityForName } from '../entities/units/abilities/abilityForName';
 import { AbilityName } from '../entities/units/abilities/AbilityName';
 import { Session } from '../core/Session';
-
-const lifePerLevel = 0;
-const manaPerLevel = 2;
-const strengthPerLevel = 1;
+import { Faction } from '../entities/units/Faction';
+import { checkNotNull } from '../utils/preconditions';
 
 export const levelUp = (unit: Unit, session: Session) => {
   const ticker = session.getTicker();
   unit.incrementLevel();
-  // TODO - maybe these should go in player.json (again?)
   if (unit.getFaction() === Faction.PLAYER) {
-    unit.increaseMaxLife(lifePerLevel);
-    unit.increaseMaxMana(manaPerLevel);
-    unit.increaseStrength(strengthPerLevel);
+    const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
+    unit.increaseMaxLife(playerUnitClass.lifePerLevel);
+    unit.increaseMaxMana(playerUnitClass.manaPerLevel);
+    unit.increaseStrength(playerUnitClass.strengthPerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
       ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {

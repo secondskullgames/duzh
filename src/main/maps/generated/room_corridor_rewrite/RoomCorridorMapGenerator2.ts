@@ -2,9 +2,10 @@ import Section from './Section';
 import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
-import AbstractMapGenerator, { MapGeneratorProps } from '../AbstractMapGenerator';
+import AbstractMapGenerator from '../AbstractMapGenerator';
 import Rect from '../../../geometry/Rect';
 import TileType from '../../../schemas/TileType';
+import TileFactory from '../../../tiles/TileFactory';
 
 const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;
@@ -39,8 +40,8 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor(props: MapGeneratorProps) {
-    super(props);
+  constructor(tileFactory: TileFactory) {
+    super(tileFactory);
   }
 
   generateTiles = (width: number, height: number): TileType[][] => {

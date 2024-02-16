@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import RoomCorridorMapGenerator from './room_corridor/RoomCorridorMapGenerator';
+import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import RoomCorridorMapGenerator3 from './RoomCorridorMapGenerator3';
 import BlobMapGenerator from './BlobMapGenerator';
 import PathMapGenerator from './PathMapGenerator';
@@ -16,13 +16,13 @@ import { getUnoccupiedLocations } from '../MapUtils';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
-import { Faction } from '../../types/types';
 import { Feature } from '../../utils/features';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import UnitFactory from '../../entities/units/UnitFactory';
 import Coordinates from '../../geometry/Coordinates';
 import MapItem from '../../entities/objects/MapItem';
+import { Faction } from '../../entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -81,9 +81,7 @@ export class GeneratedMapFactory {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
-          return new RoomCorridorMapGenerator2({
-            tileFactory
-          });
+          return new RoomCorridorMapGenerator2(tileFactory);
         }
         const minRoomDimension = 3;
         const maxRoomDimension = 7;
@@ -93,19 +91,12 @@ export class GeneratedMapFactory {
           tileFactory
         });
       }
-      case 'ROOMS_AND_CORRIDORS_3': {
-        return new RoomCorridorMapGenerator3({
-          tileFactory
-        });
-      }
+      case 'ROOMS_AND_CORRIDORS_3':
+        return new RoomCorridorMapGenerator3(tileFactory);
       case 'BLOB':
-        return new BlobMapGenerator({
-          tileFactory
-        });
+        return new BlobMapGenerator(tileFactory);
       case 'PATH':
-        return new PathMapGenerator({
-          tileFactory
-        });
+        return new PathMapGenerator(tileFactory);
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
     }

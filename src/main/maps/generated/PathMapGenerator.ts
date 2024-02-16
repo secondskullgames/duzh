@@ -1,13 +1,14 @@
-import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
+import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import { range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
 
 class PathMapGenerator extends AbstractMapGenerator {
-  constructor(props: MapGeneratorProps) {
-    super(props);
+  constructor(tileFactory: TileFactory) {
+    super(tileFactory);
   }
 
   /** @override {@link AbstractMapGenerator#generateTiles} */

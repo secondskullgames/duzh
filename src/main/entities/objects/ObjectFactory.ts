@@ -2,7 +2,6 @@ import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
-import { Faction } from '../../types/types';
 import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
@@ -13,6 +12,7 @@ import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
+import { Faction } from '../units/Faction';
 import { inject, injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 
