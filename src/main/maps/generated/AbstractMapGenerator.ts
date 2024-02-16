@@ -1,38 +1,33 @@
 import EmptyMap from './EmptyMap';
-import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import TileFactory from '../../tiles/TileFactory';
-import ItemFactory from '../../items/ItemFactory';
 import TileType from '../../schemas/TileType';
+import MapInstance from '../MapInstance';
+import { checkNotNull } from '../../utils/preconditions';
+import { Feature } from '../../utils/features';
 
 export type MapGeneratorProps = Readonly<{
-  imageFactory: ImageFactory;
   tileFactory: TileFactory;
-  itemFactory: ItemFactory;
 }>;
 
 abstract class AbstractMapGenerator {
-  private readonly imageFactory: ImageFactory;
   private readonly tileFactory: TileFactory;
-  private readonly itemFactory: ItemFactory;
 
-  protected constructor({ imageFactory, tileFactory, itemFactory }: MapGeneratorProps) {
-    this.imageFactory = imageFactory;
+  protected constructor({ tileFactory }: MapGeneratorProps) {
     this.tileFactory = tileFactory;
-    this.itemFactory = itemFactory;
   }
 
   generateMap = async (
     mapModel: GeneratedMapModel,
     tileSetId: string
-  ): Promise<GeneratedMapBuilder> => {
+  ): Promise<MapInstance> => {
+    const { tileFactory } = this;
     const { width, height, levelNumber } = mapModel;
 
-    const map = this._generateEmptyMap(width, height, levelNumber);
-    const tileTypes = map.tiles;
-    const tileSet = await this.tileFactory.getTileSet(tileSetId);
+    const emptyMap = this._generateEmptyMap(width, height, levelNumber);
+    const tileTypes = emptyMap.tiles;
+    const tileSet = await tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -49,15 +44,35 @@ abstract class AbstractMapGenerator {
       tiles.push(row);
     }
 
-    return new GeneratedMapBuilder({
-      width: mapModel.width,
-      height: mapModel.height,
-      tiles,
-      tileSet,
-      imageFactory: this.imageFactory,
-      tileFactory: this.tileFactory,
-      itemFactory: this.itemFactory
+    const candidateLocations = getUnoccupiedLocations(tiles, ['FLOOR'], []);
+    const startingCoordinates = checkNotNull(candidateLocations.shift());
+
+    if (Feature.isEnabled(Feature.STAIRS_UP)) {
+      tiles[startingCoordinates.y][startingCoordinates.x] = 'STAIRS_UP';
+    }
+
+    const map = new MapInstance({
+      width,
+      height,
+      startingCoordinates,
+      music: null
     });
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tile = tileFactory.createTile(
+          {
+            tileType: tiles[y][x],
+            tileSet
+          },
+          { x, y },
+          map
+        );
+        map.addTile(tile);
+      }
+    }
+
+    return map;
   };
 
   protected abstract generateEmptyMap(width: number, height: number): EmptyMap;

@@ -27,7 +27,6 @@ const VICTORY_FILENAME = 'victory';
 
 @injectable()
 export default class GameRenderer implements Renderer {
-  static PARENT_ELEMENT_SYMBOL: symbol = Symbol('GameRenderer_ParentElement');
   private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
 

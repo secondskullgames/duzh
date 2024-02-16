@@ -17,7 +17,7 @@ import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
 import { Container } from 'inversify';
 
-const setupContainer = () => {
+const setupContainer = async (): Promise<Container> => {
   const container = new Container({
     defaultScope: 'Singleton',
     autoBindInjectable: true
@@ -31,7 +31,7 @@ const setupContainer = () => {
   container
     .bind(GameState.SYMBOL_MAP_SPECS)
     .toConstantValue(
-      container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
+      await container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
     );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
@@ -39,10 +39,8 @@ const setupContainer = () => {
 };
 
 const main = async () => {
-  const container = setupContainer();
-
-  // TODO why does this need to load asynchronously?
-  const mapFactory = await container.getAsync(MapFactory);
+  const container = await setupContainer();
+  const mapFactory = container.get(MapFactory);
   const mapSpecs = await container.getAsync<MapSpec[]>(GameState.SYMBOL_MAP_SPECS);
   const state = await container.getAsync<GameState>(GameState.SYMBOL);
   const maps = await mapFactory.loadMapSuppliers(mapSpecs);

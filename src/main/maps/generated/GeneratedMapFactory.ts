@@ -10,7 +10,6 @@ import { GameState } from '../../core/GameState';
 import { randChoice, randInt, weightedRandom } from '../../utils/random';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import GameObject from '../../entities/objects/GameObject';
 import Unit from '../../entities/units/Unit';
 import { getUnoccupiedLocations } from '../MapUtils';
@@ -50,8 +49,6 @@ export class GeneratedMapFactory {
   constructor(
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
     @inject(TileFactory)
     private readonly tileFactory: TileFactory,
     @inject(ItemFactory)
@@ -66,8 +63,7 @@ export class GeneratedMapFactory {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    const builder = await dungeonGenerator.generateMap(model, style.tileSet);
-    const map = await builder.build();
+    const map = await dungeonGenerator.generateMap(model, style.tileSet);
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
       map.addUnit(unit);
@@ -80,15 +76,13 @@ export class GeneratedMapFactory {
   };
 
   private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
-    const { imageFactory, tileFactory, itemFactory } = this;
+    const { tileFactory } = this;
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
           return new RoomCorridorMapGenerator2({
-            imageFactory,
-            tileFactory,
-            itemFactory
+            tileFactory
           });
         }
         const minRoomDimension = 3;
@@ -96,29 +90,21 @@ export class GeneratedMapFactory {
         return new RoomCorridorMapGenerator({
           minRoomDimension,
           maxRoomDimension,
-          imageFactory,
-          tileFactory,
-          itemFactory
+          tileFactory
         });
       }
       case 'ROOMS_AND_CORRIDORS_3': {
         return new RoomCorridorMapGenerator3({
-          imageFactory,
-          tileFactory,
-          itemFactory
+          tileFactory
         });
       }
       case 'BLOB':
         return new BlobMapGenerator({
-          imageFactory,
-          tileFactory,
-          itemFactory
+          tileFactory
         });
       case 'PATH':
         return new PathMapGenerator({
-          imageFactory,
-          tileFactory,
-          itemFactory
+          tileFactory
         });
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
