@@ -15,8 +15,8 @@
     "PLAYER_FACE": "LIGHT_GRAY"
   },
   "strength": 1,
-  "dexterity": 2,
-  "life": 6,
+  "dexterity": 0,
+  "life": 4,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",

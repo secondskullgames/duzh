@@ -6,6 +6,6 @@
   "type": "scroll",
   "params": {
     "spell": "fireball",
-    "damage": "50"
+    "damage": "5"
   }
 }

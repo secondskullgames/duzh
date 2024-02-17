@@ -4,10 +4,10 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 6,
+  "life": 8,
   "mana": 15,
   "strength": 2,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 12,

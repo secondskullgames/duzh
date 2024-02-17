@@ -17,7 +17,7 @@
   "life": 6,
   "mana": 15,
   "strength": 1,
-  "dexterity": 1,
+  "dexterity": 0,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
