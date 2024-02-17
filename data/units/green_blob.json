@@ -5,11 +5,11 @@
   "sprite": "blob",
   "paletteSwaps": {},
   "life": 8,
-  "mana": 0,
+  "lifePerTurn": 0.2,
   "strength": 1,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.75,
+    "speed": 0.8,
     "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0

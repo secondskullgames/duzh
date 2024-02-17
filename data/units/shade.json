@@ -5,7 +5,6 @@
   "sprite": "shade",
   "paletteSwaps": {},
   "life": 1,
-  "mana": 0,
   "strength": 10,
   "dexterity": 2,
   "aiParameters": {

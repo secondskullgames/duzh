@@ -15,11 +15,10 @@
   "strength": 3,
   "dexterity": 0,
   "life": 10,
-  "mana": 0,
   "aiParameters": {
-    "speed": 0.7,
-    "visionRange": 8,
-    "aggressiveness": 0.95,
+    "speed": 0.75,
+    "visionRange": 6,
+    "aggressiveness": 1,
     "fleeThreshold": 0
   },
   "levelParameters": {

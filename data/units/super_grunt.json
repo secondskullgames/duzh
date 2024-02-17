@@ -8,10 +8,9 @@
     "GREEN": "RED",
     "CYAN": "RED"
   },
-  "life": 200,
-  "mana": 0,
-  "strength": 10,
-  "dexterity": 2,
+  "life": 10,
+  "strength": 3,
+  "dexterity": 1,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",
@@ -23,6 +22,6 @@
     "aggressiveness": 1,
     "fleeThreshold": 0
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK"],
+  "abilities": ["ATTACK"],
   "experience": 1
 }

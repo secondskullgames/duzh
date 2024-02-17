@@ -22,6 +22,7 @@
   ],
   "life": 100,
   "mana": 15,
+  "manaPerTurn": 1,
   "strength": 6,
   "dexterity": 2,
   "aiParameters": {

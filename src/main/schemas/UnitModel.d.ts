@@ -40,7 +40,9 @@ type UnitModel = {
     rarity: number;
   };
   life: number;
-  mana: number;
+  mana?: number;
+  lifePerTurn?: number;
+  manaPerTurn?: number;
   paletteSwaps: {
     [key: string]: string;
   };

@@ -5,7 +5,7 @@
   "sprite": "beetle",
   "paletteSwaps": {},
   "life": 5,
-  "mana": 3,
+  "mana": 5,
   "strength": 1,
   "dexterity": 0,
   "aiParameters": {

@@ -18,6 +18,7 @@
   "dexterity": 1,
   "life": 6,
   "mana": 5,
+  "manaPerTurn": 1,
   "equipment": [
     "bronze_sword",
     "red_chain_mail",

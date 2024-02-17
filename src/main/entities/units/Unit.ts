@@ -24,15 +24,6 @@ import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 
-/**
- * Regenerate this raw amount of health each turn
- */
-const LIFE_PER_TURN = 0.05;
-/**
- * Regenerate this raw amount of mana each turn
- */
-const MANA_PER_TURN = 1;
-
 let nextId: number = 0;
 
 type Props = Readonly<{
@@ -73,6 +64,8 @@ export default class Unit implements Entity, Animatable {
   private maxLife: number;
   private mana: number;
   private maxMana: number;
+  private lifePerTurn: number;
+  private manaPerTurn: number;
   private lifeRemainder: number;
   private manaRemainder: number;
   private strength: number;
@@ -122,10 +115,12 @@ export default class Unit implements Entity, Animatable {
     const { model } = props;
     this.life = model.life;
     this.maxLife = model.life;
-    this.mana = model.mana;
-    this.maxMana = model.mana;
+    this.mana = model.mana ?? 0;
+    this.maxMana = model.mana ?? 0;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
+    this.lifePerTurn = model.lifePerTurn ?? 0;
+    this.manaPerTurn = model.manaPerTurn ?? 0;
     this.strength = model.strength;
     this.dexterity = model.dexterity;
     this.unitClass = model.id;
@@ -393,14 +388,14 @@ export default class Unit implements Entity, Animatable {
 
   private _upkeep = () => {
     // life regeneration
-    this.lifeRemainder += LIFE_PER_TURN;
+    this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
     this.life = Math.min(this.life + deltaLife, this.maxLife);
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
-      this.manaRemainder += MANA_PER_TURN;
+      this.manaRemainder += this.manaPerTurn;
       const deltaMana = Math.floor(this.manaRemainder);
       this.manaRemainder -= deltaMana;
       this.mana = Math.min(this.mana + deltaMana, this.maxMana);
