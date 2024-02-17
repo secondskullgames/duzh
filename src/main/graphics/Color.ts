@@ -1,6 +1,6 @@
-import RGB from './RGB';
+import { RGB } from './RGB';
 
-type Color = Readonly<{
+export type Color = Readonly<{
   hex: string;
   rgb: RGB;
 }>;
@@ -28,9 +28,8 @@ const rgb2hex = ({ r, g, b }: RGB): string => {
   return `#${p(r)}${p(g)}${p(b)}`;
 };
 
-const _hex2Color: Record<string, Color> = {};
-
-namespace Color {
+export namespace Color {
+  const _hex2Color: Record<string, Color> = {};
   export const fromHex = (hex: string) => {
     if (_hex2Color[hex]) {
       return _hex2Color[hex];
@@ -55,5 +54,3 @@ namespace Color {
   export const equals = (first: Color, second: Color): boolean =>
     first.hex === second.hex;
 }
-
-export default Color;

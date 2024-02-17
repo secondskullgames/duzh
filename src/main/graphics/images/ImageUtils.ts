@@ -1,8 +1,8 @@
-import Color from '../Color';
+import { Color } from '../Color';
 import PaletteSwaps from '../PaletteSwaps';
-import RGB from '../RGB';
+import { RGB } from '../RGB';
 
-const applyTransparentColor = (
+export const applyTransparentColor = (
   imageData: ImageData,
   transparentColor: Color
 ): ImageData => {
@@ -27,7 +27,10 @@ const applyTransparentColor = (
   return new ImageData(array, imageData.width, imageData.height);
 };
 
-const replaceColors = (imageData: ImageData, colorMap: PaletteSwaps): ImageData => {
+export const replaceColors = (
+  imageData: ImageData,
+  colorMap: PaletteSwaps
+): ImageData => {
   if (!colorMap) {
     return imageData;
   }
@@ -63,7 +66,7 @@ const replaceColors = (imageData: ImageData, colorMap: PaletteSwaps): ImageData 
 /**
  * Replace all non-transparent colors with the specified `color`.
  */
-const replaceAll = (imageData: ImageData, color: Color): ImageData => {
+export const replaceAll = (imageData: ImageData, color: Color): ImageData => {
   const rgb = color.rgb;
   const array = new Uint8ClampedArray(imageData.data.length);
 
@@ -86,5 +89,3 @@ const replaceAll = (imageData: ImageData, color: Color): ImageData => {
 
   return new ImageData(array, imageData.width, imageData.height);
 };
-
-export { applyTransparentColor, replaceAll, replaceColors };

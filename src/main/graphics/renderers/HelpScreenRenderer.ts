@@ -6,7 +6,7 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
-import Color from '../Color';
+import { Color } from '../Color';
 import { injectable } from 'inversify';
 
 @injectable()

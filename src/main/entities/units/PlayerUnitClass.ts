@@ -4,9 +4,12 @@ import { AbilityName } from './abilities/AbilityName';
  * "Class" in the sense of, like, a D&D class
  */
 export interface PlayerUnitClass {
+  readonly lifePerLevel: number;
+  readonly manaPerLevel: number;
+  readonly strengthPerLevel: number;
+  readonly maxLevel: number;
   getLearnableAbilities: () => AbilityName[];
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
-  getMaxLevel: () => number;
 }
 
 const learnableAbilities = [
@@ -31,11 +34,14 @@ const cumulativeKillsToNextLevel = [
 ];
 
 class DefaultClass implements PlayerUnitClass {
+  readonly lifePerLevel = 0;
+  readonly manaPerLevel = 2;
+  readonly strengthPerLevel = 1;
+  readonly maxLevel = 10;
   getLearnableAbilities = (): AbilityName[] => learnableAbilities;
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };
-  getMaxLevel = (): number => 10;
 }
 
 export const PlayerUnitClass = {

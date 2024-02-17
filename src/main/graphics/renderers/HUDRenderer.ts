@@ -1,6 +1,6 @@
 import { Renderer } from './Renderer';
 import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
-import Color from '../Color';
+import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';

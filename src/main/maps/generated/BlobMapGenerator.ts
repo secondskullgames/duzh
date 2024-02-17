@@ -1,14 +1,14 @@
-import EmptyMap from './EmptyMap';
-import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
+import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
 import { comparing, range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import { isAdjacent } from '../MapUtils';
 import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
 
 class BlobMapGenerator extends AbstractMapGenerator {
-  constructor(props: MapGeneratorProps) {
-    super(props);
+  constructor(tileFactory: TileFactory) {
+    super(tileFactory);
   }
 
   /**
@@ -19,7 +19,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
    * where snakiness is defined as the number of tiles within N units
    * (more adjacent tiles - less snaky).
    */
-  protected generateEmptyMap = (width: number, height: number): EmptyMap => {
+  protected generateTiles = (width: number, height: number): TileType[][] => {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
@@ -30,11 +30,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
       }
     }
     this._addWalls(tiles);
-    return {
-      tiles,
-      width,
-      height
-    };
+    return tiles;
   };
 
   private _initTiles = (width: number, height: number): TileType[][] => {

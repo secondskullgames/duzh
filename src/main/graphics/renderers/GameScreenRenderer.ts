@@ -2,7 +2,7 @@ import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
 import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
-import Color from '../Color';
+import { Color } from '../Color';
 import Colors from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import PaletteSwaps from '../PaletteSwaps';

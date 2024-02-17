@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import RoomCorridorMapGenerator from './room_corridor/RoomCorridorMapGenerator';
+import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import RoomCorridorMapGenerator3 from './RoomCorridorMapGenerator3';
 import BlobMapGenerator from './BlobMapGenerator';
 import PathMapGenerator from './PathMapGenerator';
@@ -10,20 +10,19 @@ import { GameState } from '../../core/GameState';
 import { randChoice, randInt, weightedRandom } from '../../utils/random';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import GameObject from '../../entities/objects/GameObject';
 import Unit from '../../entities/units/Unit';
 import { getUnoccupiedLocations } from '../MapUtils';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
-import { Faction } from '../../types/types';
 import { Feature } from '../../utils/features';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import UnitFactory from '../../entities/units/UnitFactory';
 import Coordinates from '../../geometry/Coordinates';
 import MapItem from '../../entities/objects/MapItem';
+import { Faction } from '../../entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -50,8 +49,6 @@ export class GeneratedMapFactory {
   constructor(
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
     @inject(TileFactory)
     private readonly tileFactory: TileFactory,
     @inject(ItemFactory)
@@ -66,8 +63,7 @@ export class GeneratedMapFactory {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    const builder = await dungeonGenerator.generateMap(model, style.tileSet);
-    const map = await builder.build();
+    const map = await dungeonGenerator.generateMap(model, style.tileSet);
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
       map.addUnit(unit);
@@ -80,46 +76,27 @@ export class GeneratedMapFactory {
   };
 
   private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
-    const { imageFactory, tileFactory, itemFactory } = this;
+    const { tileFactory } = this;
     switch (mapLayout) {
       case 'ROOMS_AND_CORRIDORS': {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
-          return new RoomCorridorMapGenerator2({
-            imageFactory,
-            tileFactory,
-            itemFactory
-          });
+          return new RoomCorridorMapGenerator2(tileFactory);
         }
         const minRoomDimension = 3;
         const maxRoomDimension = 7;
         return new RoomCorridorMapGenerator({
           minRoomDimension,
           maxRoomDimension,
-          imageFactory,
-          tileFactory,
-          itemFactory
+          tileFactory
         });
       }
-      case 'ROOMS_AND_CORRIDORS_3': {
-        return new RoomCorridorMapGenerator3({
-          imageFactory,
-          tileFactory,
-          itemFactory
-        });
-      }
+      case 'ROOMS_AND_CORRIDORS_3':
+        return new RoomCorridorMapGenerator3(tileFactory);
       case 'BLOB':
-        return new BlobMapGenerator({
-          imageFactory,
-          tileFactory,
-          itemFactory
-        });
+        return new BlobMapGenerator(tileFactory);
       case 'PATH':
-        return new PathMapGenerator({
-          imageFactory,
-          tileFactory,
-          itemFactory
-        });
+        return new PathMapGenerator(tileFactory);
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
     }

@@ -5,8 +5,8 @@ import { die } from '../actions/die';
 import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
-import { Faction } from '../types/types';
 import { MapController } from '../maps/MapController';
+import { Faction } from '../entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 @injectable()

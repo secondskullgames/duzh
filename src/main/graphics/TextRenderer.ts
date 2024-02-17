@@ -1,4 +1,4 @@
-import Color from './Color';
+import { Color } from './Color';
 import Colors from './Colors';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';

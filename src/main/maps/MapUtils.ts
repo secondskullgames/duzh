@@ -52,12 +52,6 @@ export const hypotenuse = (first: Coordinates, second: Coordinates): number => {
   return (dx * dx + dy * dy) ** 0.5;
 };
 
-export const civDistance = (first: Coordinates, second: Coordinates): number => {
-  const dx = Math.abs(first.x - second.x);
-  const dy = Math.abs(first.y - second.y);
-  return Math.max(dx, dy) + Math.min(dx, dy) / 2;
-};
-
 export const isAdjacent = (first: Coordinates, second: Coordinates): boolean => {
   const dx = first.x - second.x;
   const dy = first.y - second.y;

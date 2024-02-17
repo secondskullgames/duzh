@@ -1,4 +1,4 @@
-import RGB from '../RGB';
+import { RGB } from '../RGB';
 import { Pixel } from '../Pixel';
 
 export type Image = Readonly<{

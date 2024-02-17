@@ -1,20 +1,17 @@
-import AbstractMapGenerator, { MapGeneratorProps } from './AbstractMapGenerator';
-import EmptyMap from './EmptyMap';
+import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
 import Pathfinder from '../../geometry/Pathfinder';
 import Rect from '../../geometry/Rect';
 import { randInt, shuffle } from '../../utils/random';
 import TileType from '../../schemas/TileType';
+import TileFactory from '../../tiles/TileFactory';
 
 class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
-  constructor(props: MapGeneratorProps) {
-    super(props);
+  constructor(tileFactory: TileFactory) {
+    super(tileFactory);
   }
 
-  /**
-   * @override {@link AbstractMapGenerator#generateEmptyMap}
-   */
-  generateEmptyMap = (width: number, height: number): EmptyMap => {
+  generateTiles = (width: number, height: number): TileType[][] => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -69,11 +66,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
 
     _addWalls(tiles);
 
-    return {
-      width,
-      height,
-      tiles
-    };
+    return tiles;
   };
 }
 

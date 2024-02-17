@@ -1,4 +1,4 @@
-import Color from './Color';
+import { Color } from './Color';
 import jsonColors from '../../../data/colors.json';
 
 const Colors: Record<string, Color> = {};

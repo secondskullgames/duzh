@@ -5,9 +5,9 @@ import { Renderer } from './Renderer';
 import CharacterScreenRenderer from './CharacterScreenRenderer';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
-import InventoryRendererV2 from './InventoryRendererV2';
+import InventoryRenderer from './InventoryRenderer';
 import Coordinates from '../../geometry/Coordinates';
-import Color from '../Color';
+import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';
@@ -27,7 +27,6 @@ const VICTORY_FILENAME = 'victory';
 
 @injectable()
 export default class GameRenderer implements Renderer {
-  static PARENT_ELEMENT_SYMBOL: symbol = Symbol('GameRenderer_ParentElement');
   private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
 
@@ -42,7 +41,7 @@ export default class GameRenderer implements Renderer {
     private readonly gameScreenRenderer: Renderer,
     @inject(HUDRenderer)
     private readonly hudRenderer: Renderer,
-    @inject(InventoryRendererV2)
+    @inject(InventoryRenderer)
     private readonly inventoryRenderer: Renderer,
     @inject(MapScreenRenderer)
     private readonly mapScreenRenderer: Renderer,

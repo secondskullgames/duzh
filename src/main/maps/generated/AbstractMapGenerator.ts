@@ -1,38 +1,23 @@
-import EmptyMap from './EmptyMap';
-import GeneratedMapBuilder from './GeneratedMapBuilder';
 import { getUnoccupiedLocations } from '../MapUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import TileFactory from '../../tiles/TileFactory';
-import ItemFactory from '../../items/ItemFactory';
 import TileType from '../../schemas/TileType';
-
-export type MapGeneratorProps = Readonly<{
-  imageFactory: ImageFactory;
-  tileFactory: TileFactory;
-  itemFactory: ItemFactory;
-}>;
+import MapInstance from '../MapInstance';
+import { checkNotNull } from '../../utils/preconditions';
+import { Feature } from '../../utils/features';
 
 abstract class AbstractMapGenerator {
-  private readonly imageFactory: ImageFactory;
-  private readonly tileFactory: TileFactory;
-  private readonly itemFactory: ItemFactory;
-
-  protected constructor({ imageFactory, tileFactory, itemFactory }: MapGeneratorProps) {
-    this.imageFactory = imageFactory;
-    this.tileFactory = tileFactory;
-    this.itemFactory = itemFactory;
-  }
+  protected constructor(private readonly tileFactory: TileFactory) {}
 
   generateMap = async (
     mapModel: GeneratedMapModel,
     tileSetId: string
-  ): Promise<GeneratedMapBuilder> => {
+  ): Promise<MapInstance> => {
+    const { tileFactory } = this;
     const { width, height, levelNumber } = mapModel;
 
-    const map = this._generateEmptyMap(width, height, levelNumber);
-    const tileTypes = map.tiles;
-    const tileSet = await this.tileFactory.getTileSet(tileSetId);
+    const tileTypes = this._generateTiles(width, height, levelNumber);
+    const tileSet = await tileFactory.getTileSet(tileSetId);
 
     const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
     const stairsLocation = unoccupiedLocations.shift()!;
@@ -49,35 +34,55 @@ abstract class AbstractMapGenerator {
       tiles.push(row);
     }
 
-    return new GeneratedMapBuilder({
-      width: mapModel.width,
-      height: mapModel.height,
-      tiles,
-      tileSet,
-      imageFactory: this.imageFactory,
-      tileFactory: this.tileFactory,
-      itemFactory: this.itemFactory
+    const candidateLocations = getUnoccupiedLocations(tiles, ['FLOOR'], []);
+    const startingCoordinates = checkNotNull(candidateLocations.shift());
+
+    if (Feature.isEnabled(Feature.STAIRS_UP)) {
+      tiles[startingCoordinates.y][startingCoordinates.x] = 'STAIRS_UP';
+    }
+
+    const map = new MapInstance({
+      width,
+      height,
+      startingCoordinates,
+      music: null
     });
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tile = tileFactory.createTile(
+          {
+            tileType: tiles[y][x],
+            tileSet
+          },
+          { x, y },
+          map
+        );
+        map.addTile(tile);
+      }
+    }
+
+    return map;
   };
 
-  protected abstract generateEmptyMap(width: number, height: number): EmptyMap;
+  protected abstract generateTiles(width: number, height: number): TileType[][];
 
-  private _generateEmptyMap = (
+  private _generateTiles = (
     width: number,
     height: number,
     level: number
-  ): EmptyMap => {
+  ): TileType[][] => {
     const iterations = 10;
     for (let iteration = 1; iteration <= iterations; iteration++) {
-      let map;
+      let tiles;
       try {
-        map = this.generateEmptyMap(width, height);
+        tiles = this.generateTiles(width, height);
       } catch (e) {
         continue;
       }
-      const isValid = this._validateTiles(map);
+      const isValid = this._validateTiles(tiles);
       if (isValid) {
-        return map;
+        return tiles;
       } else {
         // eslint-disable-next-line no-console
         console.error(
@@ -100,18 +105,21 @@ abstract class AbstractMapGenerator {
    * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
    * which we are no longer doing.
    */
-  private _validateTiles = (map: EmptyMap): boolean => this._validateWallPlacement(map);
+  private _validateTiles = (tiles: TileType[][]): boolean =>
+    this._validateWallPlacement(tiles);
 
   /**
    * Validate that walls are placed correctly:
    * they can't be at the very top of the map, and they must have a "wall top" tile above them
    */
-  private _validateWallPlacement = (map: EmptyMap): boolean => {
+  private _validateWallPlacement = (tiles: TileType[][]): boolean => {
     const floorTypes = ['FLOOR', 'FLOOR_HALL'];
     const wallTypes = ['WALL', 'WALL_HALL'];
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        const tileType = map.tiles[y][x];
+    const width = tiles[0].length;
+    const height = tiles.length;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const tileType = tiles[y][x];
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
@@ -119,8 +127,8 @@ abstract class AbstractMapGenerator {
             console.warn("Invalid map: can't place a wall at the top of the map");
             return false;
           }
-          const oneUp = map.tiles[y - 1][x];
-          const twoUp = map.tiles[y - 2][x];
+          const oneUp = tiles[y - 1][x];
+          const twoUp = tiles[y - 2][x];
           if (floorTypes.includes(oneUp)) {
             // continue, can't place a wall directly below a floor
             // (because we have to show the top of the wall above it)

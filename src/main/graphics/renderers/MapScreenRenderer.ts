@@ -1,6 +1,6 @@
 import { Renderer } from './Renderer';
 import Coordinates from '../../geometry/Coordinates';
-import Color from '../Color';
+import { Color } from '../Color';
 import Colors from '../Colors';
 import { Graphics } from '../Graphics';
 import { getItem } from '../../maps/MapUtils';
