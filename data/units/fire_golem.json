@@ -12,8 +12,8 @@
     "DARK_RED": "DARK_RED",
     "TEAL": "YELLOW"
   },
-  "strength": 16,
-  "dexterity": 2,
+  "strength": 2,
+  "dexterity": 1,
   "life": 100,
   "mana": 0,
   "aiParameters": {

@@ -92,7 +92,7 @@ export default class ObjectFactory {
       PaletteSwaps.empty()
     );
 
-    const lifeGained = 10;
+    const lifeGained = 1;
 
     const onUse = async (unit: Unit, state: GameState, session: Session) => {
       if (unit === session.getPlayerUnit()) {

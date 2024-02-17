@@ -14,8 +14,8 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "strength": 2,
-  "dexterity": 2,
+  "strength": 1,
+  "dexterity": 1,
   "life": 30,
   "mana": 5,
   "equipment": [

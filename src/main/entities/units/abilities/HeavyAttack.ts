@@ -8,7 +8,7 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 8;
+const manaCost = 6;
 const damageCoefficient = 2;
 
 export const HeavyAttack: UnitAbility = {

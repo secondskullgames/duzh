@@ -4,14 +4,14 @@
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "life": 20,
+  "life": 3,
   "mana": 0,
-  "strength": 3,
+  "strength": 1,
   "dexterity": 2,
   "aiParameters": {
     "speed": 0.8,
-    "visionRange": 10,
-    "aggressiveness": 0.5,
+    "visionRange": 6,
+    "aggressiveness": 0.8,
     "fleeThreshold": 0
   },
   "levelParameters": {

@@ -27,7 +27,7 @@ import MapInstance from '../../maps/MapInstance';
 /**
  * Regenerate this raw amount of health each turn
  */
-const LIFE_PER_TURN = 0.5;
+const LIFE_PER_TURN = 0.1;
 /**
  * Regenerate this raw amount of mana each turn
  */

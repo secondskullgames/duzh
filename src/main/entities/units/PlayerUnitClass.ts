@@ -36,7 +36,7 @@ const cumulativeKillsToNextLevel = [
 class DefaultClass implements PlayerUnitClass {
   readonly lifePerLevel = 0;
   readonly manaPerLevel = 2;
-  readonly strengthPerLevel = 1;
+  readonly strengthPerLevel = 0;
   readonly maxLevel = 10;
   getLearnableAbilities = (): AbilityName[] => learnableAbilities;
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
