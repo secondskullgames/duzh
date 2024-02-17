@@ -42,7 +42,7 @@ export default class Grid<T> {
   };
 
   getAll = (): T[] => {
-    return Object.values(this.array).flatMap(row => row);
+    return Object.values(this.array).flat();
   };
 
   contains = ({ x, y }: Coordinates): boolean => {

@@ -9,7 +9,7 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 3;
+const manaCost = 5;
 
 export const Dash: UnitAbility = {
   name: AbilityName.DASH,

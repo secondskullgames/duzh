@@ -12,14 +12,14 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "strength": 2,
+  "strength": 3,
   "dexterity": 0,
   "life": 10,
-  "mana": 8,
+  "mana": 0,
   "aiParameters": {
     "speed": 0.7,
     "visionRange": 8,
-    "aggressiveness": 0.9,
+    "aggressiveness": 0.95,
     "fleeThreshold": 0
   },
   "levelParameters": {
@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK"],
+  "abilities": ["ATTACK"],
   "experience": 1
 }
