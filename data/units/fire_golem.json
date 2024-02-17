@@ -14,7 +14,7 @@
   },
   "strength": 2,
   "dexterity": 1,
-  "life": 100,
+  "life": 5,
   "mana": 0,
   "aiParameters": {
     "speed": 0.9,

@@ -11,6 +11,7 @@ export enum Feature {
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
+  INLINE_HEALTH_BARS = 'INLINE_HEALTH_BARS',
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
@@ -51,6 +52,8 @@ export namespace Feature {
         return true;
       case Feature.DEBUG_LOGGING:
         return false;
+      case Feature.INLINE_HEALTH_BARS:
+        return true;
       case Feature.GOD_MODE:
         return false;
       case Feature.FAST_MOVE:

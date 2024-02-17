@@ -11,6 +11,8 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { Feature } from '../../utils/features';
+import { Faction } from '../../entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -59,7 +61,7 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   /**
-   * @return the top left pixel
+   * @return the top left pixel of the floor tile
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
     const playerUnit = this.session.getPlayerUnit();
@@ -153,18 +155,26 @@ export default class GameScreenRenderer implements Renderer {
     const objects = map.getObjects(coordinates);
 
     if (unit) {
-      if (unit === session.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, graphics);
+      if (Feature.isEnabled(Feature.INLINE_HEALTH_BARS)) {
+        this._drawHealthBar(unit, coordinates, graphics);
+        this._drawManaBar(unit, coordinates, graphics);
+        return;
       } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+        if (unit === session.getPlayerUnit()) {
+          await this._drawEllipse(coordinates, Colors.GREEN, graphics);
+          return;
+        } else {
+          await this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+          return;
+        }
       }
-    }
-    if (
+    } else if (
       objects.find(
         object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
       )
     ) {
-      return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+      await this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+      return;
     }
   };
 
@@ -181,6 +191,78 @@ export default class GameScreenRenderer implements Renderer {
       paletteSwaps
     });
     graphics.drawImage(image, pixel);
+  };
+
+  private _drawHealthBar = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
+    const { x: tileLeft, y: tileTop } = this._gridToPixel(coordinates);
+    const left = tileLeft;
+    const outerBarWidth = TILE_WIDTH;
+    const top = tileTop;
+    const outerBarHeight = 0.5 * TILE_HEIGHT;
+    const lifeRatio = unit.getLife() / unit.getMaxLife();
+    const innerBarWidth = Math.floor(outerBarWidth * lifeRatio);
+    graphics.fillRect(
+      {
+        left,
+        top,
+        width: outerBarWidth,
+        height: outerBarHeight
+      },
+      Colors.BLACK
+    );
+    const fillColor = (() => {
+      switch (unit.getFaction()) {
+        case Faction.PLAYER:
+          return Colors.GREEN;
+        case Faction.ENEMY:
+          return Colors.DARK_GRAY;
+        default:
+          return Colors.DARK_GRAY;
+      }
+    })();
+    graphics.fillRect(
+      {
+        left,
+        top,
+        width: innerBarWidth,
+        height: outerBarHeight
+      },
+      fillColor
+    );
+  };
+
+  private _drawManaBar = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
+    const { x: tileLeft, y: tileTop } = this._gridToPixel(coordinates);
+    const left = tileLeft;
+    const outerBarWidth = TILE_WIDTH;
+    const outerBarHeight = 0.5 * TILE_HEIGHT;
+    const top = tileTop + TILE_HEIGHT - outerBarHeight;
+    const manaRatio = (() => {
+      if (unit.getMaxMana() === 0) {
+        return 0;
+      } else {
+        return unit.getMana() / unit.getMaxMana();
+      }
+    })();
+    const innerBarWidth = Math.floor(outerBarWidth * manaRatio);
+    graphics.fillRect(
+      {
+        left,
+        top,
+        width: outerBarWidth,
+        height: outerBarHeight
+      },
+      Colors.BLACK
+    );
+    graphics.fillRect(
+      {
+        left,
+        top,
+        width: innerBarWidth,
+        height: outerBarHeight
+      },
+      Colors.BLUE
+    );
   };
 }
 

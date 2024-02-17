@@ -11,7 +11,7 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
 const manaCost = 6;
-const damageCoefficient = 0.5;
+const damageCoefficient = 1;
 const stunDuration = 1;
 
 export const KnockbackAttack: UnitAbility = {

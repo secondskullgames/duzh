@@ -4,12 +4,12 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 60,
+  "life": 12,
   "mana": 0,
-  "strength": 8,
+  "strength": 1,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.95,
+    "speed": 0.75,
     "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
