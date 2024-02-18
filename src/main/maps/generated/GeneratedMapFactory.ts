@@ -23,6 +23,7 @@ import UnitFactory from '../../entities/units/UnitFactory';
 import Coordinates from '../../geometry/Coordinates';
 import MapItem from '../../entities/objects/MapItem';
 import { Faction } from '../../entities/units/Faction';
+import ObjectFactory from '../../entities/objects/ObjectFactory';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -72,6 +73,15 @@ export class GeneratedMapFactory {
     for (const object of objects) {
       map.addObject(object);
     }
+    const items: GameObject[] = await this._generateItems(map, model);
+    for (const item of items) {
+      map.addObject(item);
+    }
+    const equipment: GameObject[] = await this._generateEquipment(map, model);
+    for (const eq of equipment) {
+      map.addObject(eq);
+    }
+
     return map;
   };
 
@@ -192,10 +202,75 @@ export class GeneratedMapFactory {
   };
 
   private _generateObjects = async (
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    map: MapInstance,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    mapModel: GeneratedMapModel
+  ): Promise<GameObject[]> => {
+    return [];
+  };
+
+  private _generateItems = async (
     map: MapInstance,
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
-    const objects: GameObject[] = [];
+    const items: GameObject[] = [];
+    const candidateLocations = getUnoccupiedLocations(
+      map.getTiles(),
+      ['FLOOR'],
+      []
+    ).filter(coordinates => !this._isOccupied(coordinates, map));
+
+    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
+    let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
+
+    const itemSpecs: ItemSpec[] = [];
+    while (itemsRemaining > 0) {
+      const possibleItemModels = allConsumableModels.filter(
+        itemClass => itemClass.level !== null && itemClass.level <= mapModel.levelNumber
+      );
+
+      const possibleItemSpecs: ItemSpec[] = possibleItemModels.map(model => ({
+        type: 'consumable' as const,
+        id: model.id
+      }));
+
+      checkState(possibleItemSpecs.length > 0);
+
+      // weighted random
+      const probabilities: Record<string, number> = {};
+      const mappedObjects: Record<string, ItemSpec> = {};
+
+      for (const itemSpec of possibleItemSpecs) {
+        const key = `${itemSpec.type}_${itemSpec.id}`;
+        const model = possibleItemModels.find(itemClass => itemClass.id === itemSpec.id);
+
+        // Each rarity is 2x less common than the previous rarity.
+        // So P[rarity] = 2 ^ -rarity
+        probabilities[key] = 1 / 2 ** (model?.rarity ?? 0);
+        mappedObjects[key] = itemSpec;
+      }
+      const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
+      itemSpecs.push(chosenItemSpec);
+      itemsRemaining--;
+    }
+
+    for (const itemSpec of itemSpecs) {
+      const coordinates = randChoice(candidateLocations);
+      const item = await this._generateMapItem(itemSpec, coordinates, map);
+      items.push(item);
+      candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
+      itemsRemaining--;
+    }
+
+    return items;
+  };
+
+  private _generateEquipment = async (
+    map: MapInstance,
+    mapModel: GeneratedMapModel
+  ): Promise<GameObject[]> => {
+    const equipment: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(
       map.getTiles(),
       ['FLOOR'],
@@ -203,8 +278,7 @@ export class GeneratedMapFactory {
     ).filter(coordinates => !this._isOccupied(coordinates, map));
 
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
-    let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
+    let itemsRemaining = randInt(mapModel.equipment.min, mapModel.equipment.max);
 
     const itemSpecs: ItemSpec[] = [];
     while (itemsRemaining > 0) {
@@ -220,20 +294,10 @@ export class GeneratedMapFactory {
             equipmentModel.level !== null && equipmentModel.level <= mapModel.levelNumber
         );
 
-      const possibleItemModels = allConsumableModels.filter(
-        itemClass => itemClass.level !== null && itemClass.level <= mapModel.levelNumber
-      );
-
-      const possibleItemSpecs: ItemSpec[] = [
-        ...possibleEquipmentModels.map(model => ({
-          type: 'equipment' as const,
-          id: model.id
-        })),
-        ...possibleItemModels.map(model => ({
-          type: 'consumable' as const,
-          id: model.id
-        }))
-      ];
+      const possibleItemSpecs: ItemSpec[] = possibleEquipmentModels.map(model => ({
+        type: 'equipment' as const,
+        id: model.id
+      }));
 
       checkState(possibleItemSpecs.length > 0);
 
@@ -242,17 +306,10 @@ export class GeneratedMapFactory {
       const mappedObjects: Record<string, ItemSpec> = {};
 
       for (const itemSpec of possibleItemSpecs) {
-        const key = `${itemSpec.type}_${itemSpec.id}`;
-        const model = (() => {
-          switch (itemSpec.type) {
-            case 'equipment':
-              return possibleEquipmentModels.find(
-                equipmentModel => equipmentModel.id === itemSpec.id
-              );
-            case 'consumable':
-              return possibleItemModels.find(itemClass => itemClass.id === itemSpec.id);
-          }
-        })();
+        const key = itemSpec.id;
+        const model = possibleEquipmentModels.find(
+          equipmentModel => equipmentModel.id === itemSpec.id
+        );
 
         // Each rarity is 2x less common than the previous rarity.
         // So P[rarity] = 2 ^ -rarity
@@ -261,21 +318,23 @@ export class GeneratedMapFactory {
       }
       const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
       itemSpecs.push(chosenItemSpec);
-      if (chosenItemSpec.type === 'equipment') {
-        this.state.recordEquipmentGenerated(chosenItemSpec.id);
-      }
+      this.state.recordEquipmentGenerated(chosenItemSpec.id);
       itemsRemaining--;
     }
 
     for (const itemSpec of itemSpecs) {
       const coordinates = randChoice(candidateLocations);
-      const item = await this._generateMapItem(itemSpec, coordinates, map);
-      objects.push(item);
+      const item = await this.itemFactory.createMapEquipment(
+        itemSpec.id,
+        coordinates,
+        map
+      );
+      equipment.push(item);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       itemsRemaining--;
     }
 
-    return objects;
+    return equipment;
   };
 
   private _isOccupied = (coordinates: Coordinates, map: MapInstance) => {

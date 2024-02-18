@@ -22,7 +22,7 @@
   "dexterity": 1,
   "life": 10,
   "mana": 10,
-  "lifePerTurn": 0.1,
+  "lifePerTurn": 0,
   "manaPerTurn": 1,
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }
