@@ -4,8 +4,8 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 60,
-  "mana": 0,
+  "life": 50,
+  "lifePerTurn": 2,
   "strength": 8,
   "dexterity": 2,
   "aiParameters": {

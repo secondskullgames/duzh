@@ -24,15 +24,6 @@ import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 
-/**
- * Regenerate this raw amount of health each turn
- */
-const LIFE_PER_TURN = 0.5;
-/**
- * Regenerate this raw amount of mana each turn
- */
-const MANA_PER_TURN = 1;
-
 let nextId: number = 0;
 
 type Props = Readonly<{
@@ -70,9 +61,13 @@ export default class Unit implements Entity, Animatable {
   private level: number;
   private abilityPoints: number;
   private life: number;
+  /** base max life, does not include life from items */
   private maxLife: number;
   private mana: number;
+  /** base max mana, does not include mana from items */
   private maxMana: number;
+  private lifePerTurn: number;
+  private manaPerTurn: number;
   private lifeRemainder: number;
   private manaRemainder: number;
   private strength: number;
@@ -122,8 +117,12 @@ export default class Unit implements Entity, Animatable {
     const { model } = props;
     this.life = model.life;
     this.maxLife = model.life;
-    this.mana = model.mana;
-    this.maxMana = model.mana;
+    this.mana = model.mana ?? 0;
+    this.maxMana = model.mana ?? 0;
+    this.lifeRemainder = 0;
+    this.manaRemainder = 0;
+    this.lifePerTurn = model.lifePerTurn ?? 0;
+    this.manaPerTurn = model.manaPerTurn ?? 0;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
     this.strength = model.strength;
@@ -147,6 +146,10 @@ export default class Unit implements Entity, Animatable {
       this.equipment.add(eq);
       eq.attach(this);
     }
+
+    // TODO - better way to handle life/mana from items?
+    this.life = this.getMaxLife();
+    this.mana = this.getMaxMana();
 
     /*while (this.level < props.level) {
       levelUp(this, { state });
@@ -177,9 +180,21 @@ export default class Unit implements Entity, Animatable {
   };
 
   getLife = () => this.life;
-  getMaxLife = () => this.maxLife;
+  getMaxLife = () => {
+    let maxLife = this.maxLife;
+    for (const equipment of this.equipment.getAll()) {
+      maxLife += equipment.life;
+    }
+    return maxLife;
+  };
   getMana = () => this.mana;
-  getMaxMana = () => this.maxMana;
+  getMaxMana = () => {
+    let maxMana = this.maxMana;
+    for (const equipment of this.equipment.getAll()) {
+      maxMana += equipment.mana;
+    }
+    return maxMana;
+  };
   getLevel = () => this.level;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
@@ -291,7 +306,7 @@ export default class Unit implements Entity, Animatable {
    * @return the amount of life gained
    */
   gainLife = (life: number): number => {
-    const lifeGained = Math.min(life, this.maxLife - this.life);
+    const lifeGained = Math.min(life, this.getMaxLife() - this.life);
     this.life += lifeGained;
     return lifeGained;
   };
@@ -300,7 +315,7 @@ export default class Unit implements Entity, Animatable {
    * @return the amount of mana gained
    */
   gainMana = (mana: number): number => {
-    const manaGained = Math.min(mana, this.maxMana - this.mana);
+    const manaGained = Math.min(mana, this.getMaxMana() - this.mana);
     this.mana += manaGained;
     return manaGained;
   };
@@ -393,17 +408,17 @@ export default class Unit implements Entity, Animatable {
 
   private _upkeep = () => {
     // life regeneration
-    this.lifeRemainder += LIFE_PER_TURN;
+    this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
-    this.life = Math.min(this.life + deltaLife, this.maxLife);
+    this.life = Math.min(this.life + deltaLife, this.getMaxLife());
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
-      this.manaRemainder += MANA_PER_TURN;
+      this.manaRemainder += this.manaPerTurn;
       const deltaMana = Math.floor(this.manaRemainder);
       this.manaRemainder -= deltaMana;
-      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
+      this.mana = Math.min(this.mana + deltaMana, this.getMaxMana());
     }
 
     if (this.turnsSinceCombatAction !== null) {

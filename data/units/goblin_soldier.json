@@ -14,9 +14,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 60,
+  "life": 50,
   "mana": 15,
-  "strength": 4,
+  "strength": 10,
   "dexterity": 2,
   "equipment": [
     "green_chain_mail",
@@ -26,7 +26,7 @@
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
-    "aggressiveness": 0.7,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
   "levelParameters": {

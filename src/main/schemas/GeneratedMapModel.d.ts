@@ -4,6 +4,8 @@ type GeneratedMapModel = {
   height: number;
   enemies: Range;
   items: Range;
+  equipment: Range;
+  objects: Range;
 };
 
 export type Range = {

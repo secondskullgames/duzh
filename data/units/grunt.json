@@ -14,9 +14,9 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "strength": 4,
+  "strength": 8,
   "dexterity": 2,
-  "life": 50,
+  "life": 40,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
