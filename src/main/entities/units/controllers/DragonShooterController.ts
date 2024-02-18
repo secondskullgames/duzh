@@ -1,7 +1,7 @@
 import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
-import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
+import { hypotenuse, isInStraightLine } from '../../../maps/MapUtils';
 import UnitOrder from '../orders/UnitOrder';
 import StayBehavior from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
@@ -39,7 +39,7 @@ export default class DragonShooterController implements UnitController {
 
     const { visionRange } = aiParameters;
 
-    const distanceToTarget = manhattanDistance(
+    const distanceToTarget = hypotenuse(
       unit.getCoordinates(),
       targetUnit.getCoordinates()
     );

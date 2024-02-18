@@ -1,6 +1,6 @@
 import { UnitController } from './UnitController';
 import Unit from '../Unit';
-import { manhattanDistance } from '../../../maps/MapUtils';
+import { hypotenuse } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChance } from '../../../utils/random';
@@ -33,7 +33,7 @@ export default class WizardController implements UnitController {
     const playerUnit = session.getPlayerUnit();
     const map = session.getMap();
 
-    const distanceToPlayerUnit = manhattanDistance(
+    const distanceToPlayerUnit = hypotenuse(
       unit.getCoordinates(),
       playerUnit.getCoordinates()
     );

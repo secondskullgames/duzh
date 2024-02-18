@@ -17,7 +17,7 @@
   "life": 10,
   "aiParameters": {
     "speed": 0.75,
-    "visionRange": 6,
+    "visionRange": 8,
     "aggressiveness": 1,
     "fleeThreshold": 0
   },

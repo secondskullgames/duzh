@@ -2,7 +2,7 @@ import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
-import { manhattanDistance } from '../../../maps/MapUtils';
+import { hypotenuse } from '../../../maps/MapUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import StayOrder from '../orders/StayOrder';
 import UnitOrder from '../orders/UnitOrder';
@@ -25,7 +25,7 @@ export default class BasicEnemyController implements UnitController {
     );
     const { aggressiveness, speed, visionRange, fleeThreshold } = aiParameters;
 
-    const distanceToPlayer = manhattanDistance(
+    const distanceToPlayer = hypotenuse(
       unit.getCoordinates(),
       playerUnit.getCoordinates()
     );
