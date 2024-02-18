@@ -9,6 +9,7 @@
   "rarity": 3,
   "level": 4,
   "stats": {
-    "absorbAmount": 0
+    "absorbAmount": 0,
+    "life": 4
   }
 }

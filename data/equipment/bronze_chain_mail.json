@@ -11,6 +11,7 @@
   "rarity": 2,
   "level": 2,
   "stats": {
-    "absorbAmount": 0
+    "absorbAmount": 0,
+    "life": 2
   }
 }

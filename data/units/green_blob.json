@@ -5,9 +5,9 @@
   "sprite": "blob",
   "paletteSwaps": {},
   "life": 8,
-  "lifePerTurn": 0.2,
+  "lifePerTurn": 0.1,
   "strength": 1,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 12,

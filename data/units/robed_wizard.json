@@ -4,12 +4,13 @@
   "type": "WIZARD",
   "sprite": "robed_wizard",
   "paletteSwaps": {},
-  "life": 120,
+  "life": 12,
   "mana": 30,
+  "manaPerTurn": 1,
   "strength": 8,
   "dexterity": 2,
   "aiParameters": {
-    "speed": 0.99,
+    "speed": 0.9,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0

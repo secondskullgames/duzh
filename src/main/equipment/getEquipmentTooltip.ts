@@ -12,6 +12,12 @@ export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   if (equipment.stats.blockAmount) {
     lines.push(`Block: ${equipment.stats.blockAmount}`);
   }
+  if (equipment.stats.life) {
+    lines.push(`Life: ${equipment.stats.life}`);
+  }
+  if (equipment.stats.mana) {
+    lines.push(`Mana: ${equipment.stats.mana}`);
+  }
   if (equipment.tooltip) {
     lines.push('');
     lines.push(equipment.tooltip.split('\n'));

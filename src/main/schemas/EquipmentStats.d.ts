@@ -9,6 +9,8 @@ type EquipmentStats = {
    */
   blockAmount?: number;
   damage?: number;
+  life?: number;
+  mana?: number;
 };
 
 export default EquipmentStats;

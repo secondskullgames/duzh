@@ -21,8 +21,10 @@ type Props = Readonly<{
 export default class Equipment implements Animatable {
   readonly inventoryItem: InventoryItem | null;
   readonly damage?: number; // typically only for weapons
-  readonly absorbAmount?: number; // typically for armor
-  readonly blockAmount?: number; // typically only for shields
+  readonly absorbAmount: number; // typically for armor
+  readonly blockAmount: number; // typically only for shields
+  readonly life: number;
+  readonly mana: number;
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   private readonly name: string;
@@ -37,6 +39,8 @@ export default class Equipment implements Animatable {
     this.damage = model.stats.damage;
     this.absorbAmount = model.stats.absorbAmount ?? 0;
     this.blockAmount = model.stats.blockAmount ?? 0;
+    this.life = model.stats.life ?? 0;
+    this.mana = model.stats.mana ?? 0;
     this.sprite = sprite;
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this.tooltip = getEquipmentTooltip(model);

@@ -61,8 +61,10 @@ export default class Unit implements Entity, Animatable {
   private level: number;
   private abilityPoints: number;
   private life: number;
+  /** base max life, does not include life from items */
   private maxLife: number;
   private mana: number;
+  /** base max mana, does not include mana from items */
   private maxMana: number;
   private lifePerTurn: number;
   private manaPerTurn: number;
@@ -172,9 +174,21 @@ export default class Unit implements Entity, Animatable {
   };
 
   getLife = () => this.life;
-  getMaxLife = () => this.maxLife;
+  getMaxLife = () => {
+    let maxLife = this.maxLife;
+    for (const equipment of this.equipment.getAll()) {
+      maxLife += equipment.life;
+    }
+    return maxLife;
+  };
   getMana = () => this.mana;
-  getMaxMana = () => this.maxMana;
+  getMaxMana = () => {
+    let maxMana = this.maxMana;
+    for (const equipment of this.equipment.getAll()) {
+      maxMana += equipment.mana;
+    }
+    return maxMana;
+  };
   getLevel = () => this.level;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
@@ -286,7 +300,7 @@ export default class Unit implements Entity, Animatable {
    * @return the amount of life gained
    */
   gainLife = (life: number): number => {
-    const lifeGained = Math.min(life, this.maxLife - this.life);
+    const lifeGained = Math.min(life, this.getMaxLife() - this.life);
     this.life += lifeGained;
     return lifeGained;
   };
@@ -295,7 +309,7 @@ export default class Unit implements Entity, Animatable {
    * @return the amount of mana gained
    */
   gainMana = (mana: number): number => {
-    const manaGained = Math.min(mana, this.maxMana - this.mana);
+    const manaGained = Math.min(mana, this.getMaxMana() - this.mana);
     this.mana += manaGained;
     return manaGained;
   };
@@ -391,14 +405,14 @@ export default class Unit implements Entity, Animatable {
     this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
-    this.life = Math.min(this.life + deltaLife, this.maxLife);
+    this.life = Math.min(this.life + deltaLife, this.getMaxLife());
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
       this.manaRemainder += this.manaPerTurn;
       const deltaMana = Math.floor(this.manaRemainder);
       this.manaRemainder -= deltaMana;
-      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
+      this.mana = Math.min(this.mana + deltaMana, this.getMaxMana());
     }
 
     if (this.turnsSinceCombatAction !== null) {

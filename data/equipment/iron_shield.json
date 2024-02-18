@@ -9,6 +9,7 @@
   "rarity": 3,
   "level": 3,
   "stats": {
-    "blockAmount": 0
+    "blockAmount": 0,
+    "life": 2
   }
 }
