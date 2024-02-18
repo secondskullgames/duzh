@@ -145,6 +145,10 @@ export default class Unit implements Entity, Animatable {
       eq.attach(this);
     }
 
+    // TODO - better way to handle life/mana from items?
+    this.life = this.getMaxLife();
+    this.mana = this.getMaxMana();
+
     /*while (this.level < props.level) {
       levelUp(this, { state });
     }*/

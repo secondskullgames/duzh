@@ -4,7 +4,7 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 8,
+  "life": 6,
   "lifePerTurn": 0.1,
   "strength": 1,
   "dexterity": 0,
