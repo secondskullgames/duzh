@@ -4,7 +4,7 @@
   "height": 24,
   "enemies": {
     "min": 8,
-    "max": 10
+    "max": 8
   },
   "items": {
     "min": 2,
