@@ -17,6 +17,7 @@ import { ShootFireball } from './ShootFireball';
 import { Blink } from './Blink';
 import { FreeMove } from './FreeMove';
 import { MinorKnockback } from './MinorKnockback';
+import { DashAttack } from './DashAttack';
 import { checkNotNull } from '../../../utils/preconditions';
 
 const _map: Record<AbilityName, UnitAbility> = {
@@ -24,6 +25,7 @@ const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.BLINK]: Blink,
   [AbilityName.BOLT]: ShootBolt,
   [AbilityName.DASH]: Dash,
+  [AbilityName.DASH_ATTACK]: DashAttack,
   [AbilityName.FREE_MOVE]: FreeMove,
   [AbilityName.HEAVY_ATTACK]: HeavyAttack,
   [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,

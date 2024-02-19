@@ -15,6 +15,7 @@ export interface PlayerUnitClass {
 const learnableAbilities = [
   AbilityName.BLINK,
   AbilityName.DASH,
+  AbilityName.DASH_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.SHOOT_FIREBALL,

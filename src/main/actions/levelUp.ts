@@ -33,6 +33,7 @@ export const levelUp = (unit: Unit, session: Session) => {
           unit.learnAbility(abilityForName(AbilityName.STUN_ATTACK));
           break;
         case 5:
+          unit.learnAbility(abilityForName(AbilityName.DASH_ATTACK));
           unit.learnAbility(abilityForName(AbilityName.BLINK));
           break;
       }
