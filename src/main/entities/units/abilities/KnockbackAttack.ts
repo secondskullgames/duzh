@@ -13,6 +13,7 @@ import { GameState } from '../../../core/GameState';
 const manaCost = 6;
 const damageCoefficient = 0.5;
 const stunDuration = 1;
+const TWO_TILES = false;
 
 export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,
@@ -61,11 +62,13 @@ export const KnockbackAttack: UnitAbility = {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
           await moveUnit(targetUnit, first, session, state);
-          await sleep(75);
-          if (targetUnit.getLife() > 0) {
-            const second = Coordinates.plus(first, direction);
-            if (map.contains(second) && !map.isBlocked(second)) {
-              await moveUnit(targetUnit, second, session, state);
+          if (TWO_TILES) {
+            await sleep(75);
+            if (targetUnit.getLife() > 0) {
+              const second = Coordinates.plus(first, direction);
+              if (map.contains(second) && !map.isBlocked(second)) {
+                await moveUnit(targetUnit, second, session, state);
+              }
             }
           }
         }

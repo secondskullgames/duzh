@@ -15,7 +15,7 @@
     "PLAYER_FEET": "BLACK"
   },
   "life": 60,
-  "mana": 15,
+  "mana": 10,
   "strength": 4,
   "dexterity": 2,
   "equipment": [
@@ -26,7 +26,7 @@
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
-    "aggressiveness": 0.7,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
   "levelParameters": {
@@ -34,6 +34,6 @@
     "maxLevel": 99,
     "rarity": 2
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],
+  "abilities": ["ATTACK", "MINOR_KNOCKBACK"],
   "experience": 1
 }
