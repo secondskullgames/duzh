@@ -18,6 +18,7 @@ import { Blink } from './Blink';
 import { FreeMove } from './FreeMove';
 import { MinorKnockback } from './MinorKnockback';
 import { DashAttack } from './DashAttack';
+import { StrafeShot } from './StrafeShot';
 import { checkNotNull } from '../../../utils/preconditions';
 
 const _map: Record<AbilityName, UnitAbility> = {
@@ -36,6 +37,7 @@ const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
   [AbilityName.SHOOT_FIREBALL]: ShootFireball,
   [AbilityName.STRAFE]: Strafe,
+  [AbilityName.STRAFE_SHOT]: StrafeShot,
   [AbilityName.STUN_ATTACK]: StunAttack,
   [AbilityName.SUMMON]: Summon,
   [AbilityName.TELEPORT]: Teleport
