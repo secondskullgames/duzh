@@ -16,6 +16,7 @@ import { MinorStunAttack } from './MinorStunAttack';
 import { ShootFireball } from './ShootFireball';
 import { Blink } from './Blink';
 import { FreeMove } from './FreeMove';
+import { MinorKnockback } from './MinorKnockback';
 import { checkNotNull } from '../../../utils/preconditions';
 
 const _map: Record<AbilityName, UnitAbility> = {
@@ -26,6 +27,7 @@ const _map: Record<AbilityName, UnitAbility> = {
   [AbilityName.FREE_MOVE]: FreeMove,
   [AbilityName.HEAVY_ATTACK]: HeavyAttack,
   [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
+  [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
   [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
   [AbilityName.PIERCE]: PiercingAttack,
   [AbilityName.SHOOT_ARROW]: ShootArrow,
