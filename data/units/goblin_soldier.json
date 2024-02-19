@@ -16,8 +16,8 @@
   },
   "life": 50,
   "mana": 15,
-  "strength": 10,
-  "dexterity": 2,
+  "strength": 4,
+  "dexterity": 0,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
@@ -34,6 +34,6 @@
     "maxLevel": 99,
     "rarity": 2
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],
+  "abilities": ["ATTACK", "KNOCKBACK_ATTACK"],
   "experience": 1
 }
