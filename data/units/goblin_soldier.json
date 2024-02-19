@@ -14,9 +14,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 40,
-  "mana": 15,
-  "strength": 4,
+  "life": 30,
+  "mana": 12,
+  "strength": 2,
   "dexterity": 0,
   "equipment": [
     "green_chain_mail",
@@ -34,6 +34,6 @@
     "maxLevel": 99,
     "rarity": 2
   },
-  "abilities": ["ATTACK", "KNOCKBACK_ATTACK"],
+  "abilities": ["ATTACK", "MINOR_KNOCKBACK"],
   "experience": 1
 }

@@ -81,7 +81,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
     const allowedSpecialAbilityNames = [
       AbilityName.HEAVY_ATTACK,
       AbilityName.KNOCKBACK_ATTACK,
-      AbilityName.MINOR_STUN_ATTACK,
+      AbilityName.MINOR_STUN,
       AbilityName.PIERCE,
       AbilityName.STUN_ATTACK
     ];

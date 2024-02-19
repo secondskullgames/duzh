@@ -21,8 +21,8 @@
   "strength": 4,
   "dexterity": 2,
   "life": 20,
-  "mana": 10,
-  "lifePerTurn": 0.5,
-  "manaPerTurn": 0.5,
+  "mana": 20,
+  "lifePerTurn": 0.25,
+  "manaPerTurn": 1,
   "abilities": ["ATTACK", "SHOOT_ARROW"]
 }

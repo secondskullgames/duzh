@@ -9,7 +9,7 @@ import { Feature } from '../../../utils/features';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 10;
+const manaCost = 15;
 
 export const Blink: UnitAbility = {
   name: AbilityName.BLINK,

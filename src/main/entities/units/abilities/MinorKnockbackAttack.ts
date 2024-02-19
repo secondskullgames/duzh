@@ -8,17 +8,13 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 15;
-const damageCoefficient = 1;
+const manaCost = 8;
+const damageCoefficient = 0.5;
 
-/**
- * A one-turn variant of {@link StunAttack}
- */
-export const MinorStunAttack: UnitAbility = {
-  name: AbilityName.MINOR_STUN,
+export const MinorKnockbackAttack: UnitAbility = {
+  name: AbilityName.MINOR_KNOCKBACK,
   manaCost,
-  icon: 'icon2',
-
+  icon: 'icon6',
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
@@ -26,16 +22,15 @@ export const MinorStunAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('MinorStunAttack requires a target!');
+      throw new Error('KnockbackAttack requires a target!');
     }
 
     const map = session.getMap();
-    const { x, y } = coordinates;
-
     const direction = pointAt(unit.getCoordinates(), coordinates);
+
     unit.setDirection(direction);
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
 
@@ -53,11 +48,10 @@ export const MinorStunAttack: UnitAbility = {
           const attackerName = attacker.getName();
           const defenderName = defender.getName();
           const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
+          return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
       await attackUnit(unit, targetUnit, attack, session, state);
-      targetUnit.setStunned(1);
     }
   }
 };

@@ -6,8 +6,8 @@
   "paletteSwaps": {},
   "life": 60,
   "mana": 15,
-  "strength": 12,
-  "dexterity": 2,
+  "strength": 6,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 12,
@@ -19,6 +19,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
+  "abilities": ["ATTACK", "MINOR_STUN"],
   "experience": 1
 }
