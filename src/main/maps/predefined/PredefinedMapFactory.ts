@@ -63,7 +63,8 @@ export class PredefinedMapFactory {
       width: image.bitmap.width,
       height: image.bitmap.height,
       startingCoordinates,
-      music: model.music ? await this.musicController.loadMusic(model.music) : null
+      music: model.music ? await this.musicController.loadMusic(model.music) : null,
+      fogRadius: model.fogOfWar.radius
     });
 
     const tiles = await this._loadTiles(model, image, map);

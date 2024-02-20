@@ -9,5 +9,9 @@
   "items": {
     "min": 3,
     "max": 5
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 3
   }
 }

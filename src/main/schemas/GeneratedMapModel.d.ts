@@ -4,6 +4,10 @@ type GeneratedMapModel = {
   height: number;
   enemies: Range;
   items: Range;
+  fogOfWar: {
+    enabled: true;
+    radius?: number;
+  };
 };
 
 export type Range = {
