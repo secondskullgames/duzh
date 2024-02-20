@@ -6,10 +6,10 @@
   "paletteSwaps": {},
   "life": 60,
   "mana": 0,
-  "strength": 8,
-  "dexterity": 2,
+  "strength": 6,
+  "dexterity": 0,
   "aiParameters": {
-    "speed": 0.95,
+    "speed": 0.8,
     "visionRange": 12,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
