@@ -84,20 +84,21 @@ export const DoubleDashAttack: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(manaCost);
 
+    const numTiles = 2;
     for (let i = 0; i < 2; i++) {
       const { x, y } = unit.getCoordinates();
       const targetCoordinates = { x: x + dx, y: y + dy };
       if (map.contains(targetCoordinates)) {
         const targetUnit = map.getUnit(targetCoordinates);
         if (targetUnit) {
-          await _doAttack(unit, targetUnit, session, state);
-          if (targetUnit?.getLife() > 0) {
-            const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
-            if (!map.isBlocked(behindCoordinates)) {
-              await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
+          const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
+          if (!map.isBlocked(behindCoordinates)) {
+            await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
+            await moveUnit(unit, targetCoordinates, session, state);
+            if (i === numTiles - 1) {
+              await _doAttack(unit, targetUnit, session, state);
             }
           }
-          await moveUnit(unit, targetCoordinates, session, state);
         } else if (!map.isBlocked(targetCoordinates)) {
           await moveUnit(unit, targetCoordinates, session, state);
         }
