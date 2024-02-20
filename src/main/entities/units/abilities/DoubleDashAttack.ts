@@ -84,10 +84,10 @@ export const DoubleDashAttack: UnitAbility = {
           if (!map.isBlocked(behindCoordinates)) {
             await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
-            if (i === numTiles - 1) {
-              await attackUnit(unit, targetUnit, attack, session, state);
-              targetUnit.setStunned(stunDuration);
-            }
+          }
+          if (i === numTiles - 1) {
+            await attackUnit(unit, targetUnit, attack, session, state);
+            targetUnit.setStunned(stunDuration);
           }
         } else if (!map.isBlocked(targetCoordinates)) {
           await moveUnit(unit, targetCoordinates, session, state);
