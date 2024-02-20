@@ -18,6 +18,7 @@ const learnableAbilities = [
   AbilityName.DOUBLE_DASH_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
+  AbilityName.SCORPION,
   AbilityName.SHOOT_FIREBALL,
   AbilityName.STRAFE_SHOT,
   AbilityName.STUN_ATTACK

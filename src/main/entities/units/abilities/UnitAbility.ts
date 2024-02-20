@@ -19,6 +19,7 @@ import { StunAttack } from './StunAttack';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
 import { DoubleDashAttack } from './DoubleDashAttack';
+import { Scorpion } from './Scorpion';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import Unit from '../Unit';
@@ -52,6 +53,7 @@ export namespace UnitAbility {
     [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
     [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
     [AbilityName.PIERCE]: PiercingAttack,
+    [AbilityName.SCORPION]: Scorpion,
     [AbilityName.SHOOT_ARROW]: ShootArrow,
     [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
     [AbilityName.SHOOT_FIREBALL]: ShootFireball,
