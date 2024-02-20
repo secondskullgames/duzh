@@ -86,7 +86,7 @@ export const DoubleDashAttack: UnitAbility = {
             await moveUnit(unit, targetCoordinates, session, state);
             if (i === numTiles - 1) {
               await attackUnit(unit, targetUnit, attack, session, state);
-              unit.setStunned(stunDuration);
+              targetUnit.setStunned(stunDuration);
             }
           }
         } else if (!map.isBlocked(targetCoordinates)) {
