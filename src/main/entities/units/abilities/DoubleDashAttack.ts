@@ -11,7 +11,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
 
-const manaCost = 12;
+const manaCost = 10;
 const damageCoefficient = 1;
 
 const _doAttack = async (
@@ -102,7 +102,7 @@ export const DoubleDashAttack: UnitAbility = {
         } else if (!map.isBlocked(targetCoordinates)) {
           await moveUnit(unit, targetCoordinates, session, state);
         }
-        await sleep(50);
+        await sleep(100);
       }
     }
   }
