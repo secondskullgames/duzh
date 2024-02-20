@@ -1,8 +1,8 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
 import { GameScreen } from '../../core/GameScreen';
-import { abilityForName } from '../../entities/units/abilities/abilityForName';
 import { Session } from '../../core/Session';
+import { UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -34,7 +34,7 @@ export default class HelpScreenInputHandler implements ScreenInputHandler {
         const selectedAbility = levelUpState.getSelectedAbility();
         if (playerUnit.getAbilityPoints() > 0 && selectedAbility) {
           levelUpState.selectNextAbility(playerUnit);
-          playerUnit.learnAbility(abilityForName(selectedAbility));
+          playerUnit.learnAbility(UnitAbility.abilityForName(selectedAbility));
         }
       }
     }

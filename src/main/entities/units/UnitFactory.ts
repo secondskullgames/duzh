@@ -1,10 +1,10 @@
 import PlayerUnitController from './controllers/PlayerUnitController';
 import { UnitController } from './controllers/UnitController';
 import Unit from './Unit';
-import { abilityForName } from './abilities/abilityForName';
 import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
+import { UnitAbility } from './abilities/UnitAbility';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Equipment from '../../equipment/Equipment';
@@ -82,7 +82,7 @@ export default class UnitFactory {
       playerUnitClass: PlayerUnitClass.DEFAULT
     });
     if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      unit.learnAbility(abilityForName(AbilityName.DASH));
+      unit.learnAbility(UnitAbility.abilityForName(AbilityName.DASH));
     }
     return unit;
   };
