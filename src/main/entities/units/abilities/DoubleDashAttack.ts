@@ -13,31 +13,20 @@ import { sleep } from '../../../utils/promises';
 
 const manaCost = 10;
 const damageCoefficient = 1;
+const stunDuration = 1;
 
-const _doAttack = async (
-  unit: Unit,
-  targetUnit: Unit,
-  session: Session,
-  state: GameState
-) => {
-  const attack: Attack = {
-    sound: Sounds.SPECIAL_ATTACK,
-    calculateAttackResult: (unit: Unit): AttackResult => {
-      const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-      return { damage };
-    },
-    getDamageLogMessage: (
-      attacker: Unit,
-      defender: Unit,
-      result: DefendResult
-    ): string => {
-      const attackerName = attacker.getName();
-      const defenderName = defender.getName();
-      const damage = result.damageTaken;
-      return `${attackerName} hit ${defenderName} for ${damage} damage!`;
-    }
-  };
-  await attackUnit(unit, targetUnit, attack, session, state);
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+  }
 };
 
 const _doKnockback = async (
@@ -96,7 +85,8 @@ export const DoubleDashAttack: UnitAbility = {
             await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
             if (i === numTiles - 1) {
-              await _doAttack(unit, targetUnit, session, state);
+              await attackUnit(unit, targetUnit, attack, session, state);
+              unit.setStunned(stunDuration);
             }
           }
         } else if (!map.isBlocked(targetCoordinates)) {
