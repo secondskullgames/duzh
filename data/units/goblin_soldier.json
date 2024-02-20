@@ -14,10 +14,10 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 60,
+  "life": 50,
   "mana": 10,
   "strength": 4,
-  "dexterity": 2,
+  "dexterity": 0,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",
