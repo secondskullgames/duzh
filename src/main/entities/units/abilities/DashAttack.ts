@@ -10,7 +10,7 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 
-const manaCost = 10;
+const manaCost = 8;
 const damageCoefficient = 1;
 
 export const DashAttack: UnitAbility = {
@@ -62,7 +62,7 @@ export const DashAttack: UnitAbility = {
             const attackerName = attacker.getName();
             const defenderName = defender.getName();
             const damage = result.damageTaken;
-            return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
+            return `${attackerName} hit ${defenderName} for ${damage} damage!`;
           }
         };
         await attackUnit(unit, targetUnit, attack, session, state);
