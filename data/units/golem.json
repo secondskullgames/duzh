@@ -13,7 +13,7 @@
     "TEAL": "CYAN"
   },
   "strength": 20,
-  "dexterity": 2,
+  "dexterity": 0,
   "life": 150,
   "mana": 0,
   "aiParameters": {
