@@ -11,7 +11,7 @@ const outDir = 'src/gen-schema';
 const hashFilename = `${outDir}/HASH`;
 
 const generateSchemas = async () => {
-  const filenames = await glob(`${schemaDir}/**/*.ts`);
+  const filenames = (await glob(`${schemaDir}/**/*.ts`)).sort();
   const updated = await checkForFileUpdates(filenames);
   if (!updated) {
     return;
