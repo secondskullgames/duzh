@@ -5,7 +5,7 @@ type GeneratedMapModel = {
   enemies: Range;
   items: Range;
   fogOfWar: {
-    enabled: true;
+    enabled: boolean;
     radius?: number;
   };
 };

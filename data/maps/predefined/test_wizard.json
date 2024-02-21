@@ -23,5 +23,8 @@
     "LIGHT_BROWN": "door_horizontal"
   },
   "startingPointColor": "RED",
-  "music": "evil"
+  "music": "evil",
+  "fogOfWar": {
+    "enabled": false
+  }
 }
