@@ -1,13 +1,17 @@
 {
   "levelNumber": 1,
-  "width": 24,
-  "height": 20,
+  "width": 22,
+  "height": 18,
   "enemies": {
-    "min": 5,
+    "min": 4,
     "max": 5
   },
   "items": {
     "min": 3,
     "max": 3
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 3
   }
 }

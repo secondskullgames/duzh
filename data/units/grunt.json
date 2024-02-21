@@ -15,8 +15,8 @@
     "PLAYER_FACE": "LIGHT_GRAY"
   },
   "strength": 4,
-  "dexterity": 2,
-  "life": 50,
+  "dexterity": 0,
+  "life": 30,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
@@ -26,7 +26,7 @@
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 12,
-    "aggressiveness": 0.9,
+    "aggressiveness": 0.95,
     "fleeThreshold": 0
   },
   "levelParameters": {

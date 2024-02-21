@@ -92,12 +92,19 @@ export class MapControllerImpl implements MapController {
   };
 
   loadDebugMap = async () => {
-    const { session, state, mapFactory } = this;
+    const { session, state, mapFactory, unitFactory } = this;
 
-    const mapInstance = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
+    const map = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
     // eslint-disable-next-line no-console
     console.log('debug mode');
-    session.setMap(mapInstance);
+    session.setMap(map);
+    const playerUnit = await unitFactory.createPlayerUnit(
+      map.getStartingCoordinates(),
+      map
+    );
+    map.addUnit(playerUnit);
+    session.setPlayerUnit(playerUnit);
+    updateRevealedTiles(map, playerUnit);
     state.getMusicController().stop();
     // state.getMusicController().playFigure(TITLE_THEME);
     // state.getMusicController().playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));

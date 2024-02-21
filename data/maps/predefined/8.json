@@ -31,5 +31,9 @@
     "DARK_BROWN": "door_vertical",
     "CYAN": "mirror"
   },
-  "startingPointColor": "BLUE"
+  "startingPointColor": "BLUE",
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 3
+  }
 }

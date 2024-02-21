@@ -11,7 +11,7 @@
   "life": 15,
   "mana": 0,
   "strength": 6,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.9,
     "visionRange": 12,
@@ -20,7 +20,7 @@
   },
   "levelParameters": {
     "minLevel": 1,
-    "maxLevel": 3,
+    "maxLevel": 2,
     "rarity": 3
   },
   "abilities": ["ATTACK"],

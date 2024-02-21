@@ -45,7 +45,8 @@ abstract class AbstractMapGenerator {
       width,
       height,
       startingCoordinates,
-      music: null
+      music: null,
+      fogRadius: mapModel.fogOfWar.radius
     });
 
     for (let y = 0; y < height; y++) {

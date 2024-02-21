@@ -45,8 +45,6 @@ export namespace Feature {
       case Feature.DEBUG_BUTTONS:
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);
-      case Feature.LEVEL_UP_SCREEN:
-        return false;
       case Feature.DEDUPLICATE_EQUIPMENT:
         return true;
       case Feature.DEBUG_LOGGING:
@@ -54,6 +52,8 @@ export namespace Feature {
       case Feature.GOD_MODE:
         return false;
       case Feature.FAST_MOVE:
+        return false;
+      case Feature.LEVEL_UP_SCREEN:
         return false;
       case Feature.STAIRS_UP:
         return false;

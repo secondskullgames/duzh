@@ -11,6 +11,20 @@ import type { UnitAbility } from './UnitAbility';
 const manaCost = 8;
 const damageCoefficient = 2;
 
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} with a heavy attack for ${damage} damage!`;
+  }
+};
+
 export const HeavyAttack: UnitAbility = {
   name: AbilityName.HEAVY_ATTACK,
   manaCost,
@@ -32,23 +46,6 @@ export const HeavyAttack: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
-      const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
-        calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-          return { damage };
-        },
-        getDamageLogMessage: (
-          attacker: Unit,
-          defender: Unit,
-          result: DefendResult
-        ): string => {
-          const attackerName = attacker.getName();
-          const defenderName = defender.getName();
-          const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} with a heavy attack for ${damage} damage!`;
-        }
-      };
       await attackUnit(unit, targetUnit, attack, session, state);
     }
   }

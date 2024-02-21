@@ -22,6 +22,10 @@ type PredefinedMapModel = {
   };
   defaultTile: TileType;
   tileset: string;
+  fogOfWar: {
+    enabled: boolean;
+    radius?: number;
+  };
 };
 
 export default PredefinedMapModel;

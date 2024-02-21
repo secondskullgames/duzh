@@ -20,5 +20,8 @@
   "objectColors": {
     "DARK_BROWN": "door_vertical"
   },
-  "startingPointColor": "BLUE"
+  "startingPointColor": "BLUE",
+  "fogOfWar": {
+    "enabled": false
+  }
 }

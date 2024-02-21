@@ -4,19 +4,16 @@ import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { sleep } from '../../../utils/promises';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 6;
+const manaCost = 8;
 const damageCoefficient = 0.5;
-const stunDuration = 1;
-const TWO_TILES = false;
 
-export const KnockbackAttack: UnitAbility = {
-  name: AbilityName.KNOCKBACK_ATTACK,
+export const MinorKnockback: UnitAbility = {
+  name: AbilityName.MINOR_KNOCKBACK,
   manaCost,
   icon: 'icon6',
   use: async (
@@ -57,20 +54,10 @@ export const KnockbackAttack: UnitAbility = {
       };
       await attackUnit(unit, targetUnit, attack, session, state);
 
-      targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !map.isBlocked(first)) {
           await moveUnit(targetUnit, first, session, state);
-          if (TWO_TILES) {
-            await sleep(75);
-            if (targetUnit.getLife() > 0) {
-              const second = Coordinates.plus(first, direction);
-              if (map.contains(second) && !map.isBlocked(second)) {
-                await moveUnit(targetUnit, second, session, state);
-              }
-            }
-          }
         }
       }
     }

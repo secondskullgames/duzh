@@ -10,7 +10,6 @@ import { randChoice } from '../../../utils/random';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
-import { abilityForName } from '../abilities/abilityForName';
 import { Dash } from '../abilities/Dash';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
@@ -62,7 +61,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const second = path[2];
       if (this._canDash(unit, second, map)) {
         return new AbilityOrder({
-          ability: abilityForName(AbilityName.DASH),
+          ability: UnitAbility.abilityForName(AbilityName.DASH),
           coordinates: second
         });
       }

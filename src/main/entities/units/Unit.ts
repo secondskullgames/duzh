@@ -1,8 +1,7 @@
 import Activity from './Activity';
 import AIParameters from './controllers/AIParameters';
 import { UnitController } from './controllers/UnitController';
-import { type UnitAbility } from './abilities/UnitAbility';
-import { abilityForName } from './abilities/abilityForName';
+import { UnitAbility } from './abilities/UnitAbility';
 import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
@@ -135,7 +134,9 @@ export default class Unit implements Entity, Animatable {
     this.activity = Activity.STANDING;
     this.direction = Direction.getDefaultUnitDirection();
     this.frameNumber = 1;
-    this.abilities = model.abilities.map(str => str as AbilityName).map(abilityForName);
+    this.abilities = model.abilities.map(abilityName =>
+      UnitAbility.abilityForName(abilityName as AbilityName)
+    );
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 

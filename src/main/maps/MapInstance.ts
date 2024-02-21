@@ -13,7 +13,8 @@ type Props = Readonly<{
   width: number;
   height: number;
   startingCoordinates: Coordinates;
-  music: Figure[] | null;
+  music?: Figure[] | null;
+  fogRadius?: number | null;
 }>;
 
 export default class MapInstance {
@@ -26,8 +27,9 @@ export default class MapInstance {
   readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
+  private readonly fogRadius: number | null;
 
-  constructor({ width, height, startingCoordinates, music }: Props) {
+  constructor({ width, height, startingCoordinates, music, fogRadius }: Props) {
     this.width = width;
     this.height = height;
     this.startingCoordinates = startingCoordinates;
@@ -36,7 +38,15 @@ export default class MapInstance {
     this.projectiles = new Set();
     this.tiles = new Grid({ width, height });
     this.revealedTiles = new Grid({ width, height });
-    this.music = music;
+    this.music = music ?? null;
+    this.fogRadius = fogRadius ?? null;
+    if (this.fogRadius === null) {
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
+          this.revealTile({ x, y });
+        }
+      }
+    }
   }
 
   getTile = (coordinates: Coordinates): Tile => {
@@ -135,6 +145,10 @@ export default class MapInstance {
 
   revealTile = (coordinates: Coordinates) => {
     this.revealedTiles.put(coordinates, true);
+  };
+
+  getFogRadius = (): number | null => {
+    return this.fogRadius;
   };
 
   unitExists = (unit: Unit): boolean => {

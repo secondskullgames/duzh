@@ -9,5 +9,8 @@
   "items": {
     "min": 1,
     "max": 2
+  },
+  "fogOfWar": {
+    "enabled": false
   }
 }

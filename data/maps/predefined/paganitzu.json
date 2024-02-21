@@ -15,5 +15,8 @@
   "objectColors": {
     "DARK_BROWN": "movable_block"
   },
-  "startingPointColor": "BLUE"
+  "startingPointColor": "BLUE",
+  "fogOfWar": {
+    "enabled": false
+  }
 }

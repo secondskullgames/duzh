@@ -21,5 +21,8 @@
     "LIGHT_BROWN": "door_horizontal",
     "WHITE": "mirror"
   },
-  "startingPointColor": "RED"
+  "startingPointColor": "RED",
+  "fogOfWar": {
+    "enabled": false
+  }
 }
