@@ -23,5 +23,8 @@
     "LIGHT_BROWN": "door_horizontal",
     "DARK_BLUE": "movable_block"
   },
-  "startingPointColor": "RED"
+  "startingPointColor": "RED",
+  "fogOfWar": {
+    "enabled": false
+  }
 }

@@ -5,6 +5,6 @@
   "mapSprite": "map_potion",
   "type": "life_potion",
   "params": {
-    "amount": "40"
+    "amount": "25"
   }
 }
