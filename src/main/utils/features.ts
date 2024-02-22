@@ -14,7 +14,6 @@ export enum Feature {
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
-  PATHFINDER_3RD_PARTY = 'PATHFINDER_3RD_PARTY',
   PRODUCTION = 'PRODUCTION',
   STAIRS_UP = 'STAIRS_UP'
 }
@@ -56,8 +55,6 @@ export namespace Feature {
         return false;
       case Feature.LEVEL_UP_SCREEN:
         return false;
-      case Feature.PATHFINDER_3RD_PARTY:
-        return true;
       case Feature.STAIRS_UP:
         return false;
     }

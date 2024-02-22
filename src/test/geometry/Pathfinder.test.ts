@@ -1,4 +1,3 @@
-import { PathfinderImpl } from '../../main/geometry/PathfinderImpl';
 import Coordinates from '../../main/geometry/Coordinates';
 import { PathFinder_3rdParty } from '../../main/geometry/PathFinder_3rdParty';
 
@@ -19,11 +18,6 @@ describe('Pathfinder', () => {
       }
     }
 
-    test('old implementation', () => {
-      const pathfinder = new PathfinderImpl(() => 1);
-      const path = pathfinder.findPath(start, goal, tiles);
-      expect(path.length > 0).toBe(true);
-    });
     test('new implementation', () => {
       const pathfinder = new PathFinder_3rdParty();
       const path = pathfinder.findPath(start, goal, tiles);
