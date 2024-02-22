@@ -8,7 +8,7 @@ import BasicEnemyController from '../controllers/BasicEnemyController';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 25;
+const manaCost = 20;
 
 export const Summon: UnitAbility = {
   name: AbilityName.SUMMON,
