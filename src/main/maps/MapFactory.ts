@@ -4,16 +4,14 @@ import { MapSupplier } from './MapSupplier';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import GeneratedMapModel from '../schemas/GeneratedMapModel';
 import PredefinedMapModel from '../schemas/PredefinedMapModel';
-import {
-  levelEight,
-  levelFive,
-  levelFour,
-  levelSeven,
-  levelSix,
-  levelThree,
-  levelTwo
-} from '../data/maps';
 import levelOne from '../data/maps/levelOne';
+import levelTwo from '../data/maps/levelTwo';
+import levelThree from '../data/maps/levelThree';
+import levelFour from '../data/maps/levelFour';
+import levelFive from '../data/maps/levelFive';
+import levelSix from '../data/maps/levelSix';
+import levelSeven from '../data/maps/levelSeven';
+import levelEight from '../data/maps/levelEight';
 import { injectable } from 'inversify';
 
 type LoadMapParams =
