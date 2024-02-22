@@ -1,4 +1,5 @@
 import { UnitController } from './UnitController';
+import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
@@ -15,9 +16,11 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import MapInstance from '../../../maps/MapInstance';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import StayOrder from '../orders/StayOrder';
+import { checkNotNull } from '../../../utils/preconditions';
 
 const maxSummonedUnits = 3;
-const summonChance = 0.25;
+const summonChance = 0.1;
 const avoidChance = 0.75;
 
 const _countUnits = (map: MapInstance, summonedUnitClass: string): number => {
@@ -59,6 +62,11 @@ export default class WizardController implements UnitController {
           coordinates
         });
       }
+    }
+
+    const aiParameters = checkNotNull(unit.getAiParameters());
+    if (!canMove(aiParameters.speed, session)) {
+      return new StayOrder();
     }
 
     const behavior = randChance(avoidChance)

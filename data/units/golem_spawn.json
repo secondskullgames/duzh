@@ -1,0 +1,27 @@
+{
+  "id": "golem_spawn",
+  "name": "Golem Spawn",
+  "type": "GOLEM",
+  "sprite": "zombie",
+  "paletteSwaps": {
+    "DARK_BROWN": "DARK_GREEN",
+    "DARK_GRAY": "DARK_GRAY",
+    "ZOMBIE_SKIN_LIGHT": "DARK_GREEN",
+    "ZOMBIE_SKIN_DARK": "DARK_GRAY",
+    "BLACK": "BLACK",
+    "DARK_RED": "DARK_GREEN",
+    "TEAL": "CYAN"
+  },
+  "strength": 8,
+  "dexterity": 0,
+  "life": 50,
+  "mana": 0,
+  "aiParameters": {
+    "speed": 0.8,
+    "visionRange": 8,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
+  },
+  "abilities": ["ATTACK"],
+  "experience":0
+}
