@@ -19,7 +19,7 @@ import { Session } from '../../../core/Session';
 import StayOrder from '../orders/StayOrder';
 import { checkNotNull } from '../../../utils/preconditions';
 
-const maxSummonedUnits = 2;
+const maxSummonedUnits = 3;
 const summonChance = 0.1;
 const avoidChance = 0.75;
 
