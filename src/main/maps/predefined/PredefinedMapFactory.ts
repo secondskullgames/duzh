@@ -52,8 +52,7 @@ export class PredefinedMapFactory {
     private readonly musicController: MusicController
   ) {}
 
-  buildPredefinedMap = async (mapId: string): Promise<MapInstance> => {
-    const model = await this.modelLoader.loadPredefinedMapModel(mapId);
+  loadMap = async (model: PredefinedMapModel): Promise<MapInstance> => {
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });

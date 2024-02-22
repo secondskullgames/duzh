@@ -43,7 +43,7 @@ export default class ObjectFactory {
     const spawner = new Spawner({
       spawnFunction,
       sprite,
-      maxUnits: 10,
+      maxUnits: 5,
       cooldown: 5,
       coordinates,
       map,
@@ -117,5 +117,25 @@ export default class ObjectFactory {
       sprite,
       onUse
     });
+  };
+
+  /**
+   * This one is hard-coded and not data-driven.  C'est la vie.
+   */
+  createObject = async (
+    objectId: string,
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<GameObject> => {
+    switch (objectId) {
+      case 'movable_block':
+        return this.createMovableBlock(coordinates, map);
+      case 'health_globe':
+        return this.createHealthGlobe(coordinates, map);
+      case 'mirror':
+        return this.createSpawner(coordinates, map, 'mirror');
+      default:
+        throw new Error(`Unknown object id: ${objectId}`);
+    }
   };
 }

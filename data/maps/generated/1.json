@@ -2,14 +2,19 @@
   "levelNumber": 1,
   "width": 22,
   "height": 18,
-  "enemies": {
-    "min": 4,
-    "max": 5
-  },
-  "items": {
-    "min": 3,
-    "max": 3
-  },
+  "enemies": [
+    { "id": "green_snake", "count": 3 },
+    { "id": "red_snake", "count": 2 }
+  ],
+  "items": [
+    { "id": "life_potion", "count": 2 }
+  ],
+  "equipment": [
+    { "id": "bronze_sword", "count": 1 }
+  ],
+  "objects": [
+    { "id": "health_globe", "count": 2 }
+  ],
   "fogOfWar": {
     "enabled": true,
     "radius": 3

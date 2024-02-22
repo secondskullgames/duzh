@@ -8,7 +8,6 @@ import { FontBundle, FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
-import MapSpec from './schemas/MapSpec';
 import { createCanvas } from './utils/dom';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
@@ -28,11 +27,6 @@ const setupContainer = async (): Promise<Container> => {
   });
   container.bind(Session.SYMBOL).toConstantValue(Session.create());
   container.bind(AssetLoader).to(AssetLoaderImpl);
-  container
-    .bind(GameState.SYMBOL_MAP_SPECS)
-    .toConstantValue(
-      await container.get<AssetLoader>(AssetLoader).loadDataAsset<MapSpec[]>('maps.json')
-    );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
   return container;
@@ -41,9 +35,8 @@ const setupContainer = async (): Promise<Container> => {
 const main = async () => {
   const container = await setupContainer();
   const mapFactory = container.get(MapFactory);
-  const mapSpecs = await container.getAsync<MapSpec[]>(GameState.SYMBOL_MAP_SPECS);
   const state = await container.getAsync<GameState>(GameState.SYMBOL);
-  const maps = await mapFactory.loadMapSuppliers(mapSpecs);
+  const maps = await mapFactory.loadMapSuppliers();
   state.addMaps(maps);
   const session = await container.getAsync<Session>(Session.SYMBOL);
 

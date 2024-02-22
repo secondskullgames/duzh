@@ -2,8 +2,29 @@ import MapInstance from './MapInstance';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 import { MapSupplier } from './MapSupplier';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
-import MapSpec from '../schemas/MapSpec';
+import GeneratedMapModel from '../schemas/GeneratedMapModel';
+import PredefinedMapModel from '../schemas/PredefinedMapModel';
+import {
+  levelEight,
+  levelFive,
+  levelFour,
+  levelSeven,
+  levelSix,
+  levelThree,
+  levelTwo
+} from '../data/maps';
+import levelOne from '../data/maps/levelOne';
 import { injectable } from 'inversify';
+
+type LoadMapParams =
+  | Readonly<{
+      type: 'generated';
+      model: GeneratedMapModel;
+    }>
+  | Readonly<{
+      type: 'predefined';
+      model: PredefinedMapModel;
+    }>;
 
 @injectable()
 export default class MapFactory {
@@ -12,24 +33,27 @@ export default class MapFactory {
     private readonly generatedMapFactory: GeneratedMapFactory
   ) {}
 
-  loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
-    switch (mapSpec.type) {
+  loadMap = async ({ type, model }: LoadMapParams): Promise<MapInstance> => {
+    switch (type) {
       case 'generated': {
-        return this.generatedMapFactory.loadMap(mapSpec.id);
+        return this.generatedMapFactory.loadMap(model);
       }
       case 'predefined': {
-        return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id);
+        return this.predefinedMapFactory.loadMap(model);
       }
     }
   };
 
-  loadMapSuppliers = async (mapSpecs: MapSpec[]): Promise<MapSupplier[]> => {
-    const mapSuppliers: MapSupplier[] = [];
-    for (const spec of mapSpecs) {
-      mapSuppliers.push(async () => {
-        return this.loadMap(spec);
-      });
-    }
-    return mapSuppliers;
+  loadMapSuppliers = async (): Promise<MapSupplier[]> => {
+    return [
+      () => this.loadMap({ type: 'generated', model: levelOne() }),
+      () => this.loadMap({ type: 'generated', model: levelTwo() }),
+      () => this.loadMap({ type: 'generated', model: levelThree() }),
+      () => this.loadMap({ type: 'generated', model: levelFour() }),
+      () => this.loadMap({ type: 'generated', model: levelFive() }),
+      () => this.loadMap({ type: 'generated', model: levelSix() }),
+      () => this.loadMap({ type: 'predefined', model: levelSeven() }),
+      () => this.loadMap({ type: 'predefined', model: levelEight() })
+    ];
   };
 }

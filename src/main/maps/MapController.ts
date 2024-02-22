@@ -5,6 +5,7 @@ import { checkState } from '../utils/preconditions';
 import { updateRevealedTiles } from '../actions/updateRevealedTiles';
 import { GameScreen } from '../core/GameScreen';
 import UnitFactory from '../entities/units/UnitFactory';
+import testLevel from '../data/maps/testLevel';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {
@@ -94,7 +95,7 @@ export class MapControllerImpl implements MapController {
   loadDebugMap = async () => {
     const { session, state, mapFactory, unitFactory } = this;
 
-    const map = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
+    const map = await mapFactory.loadMap({ type: 'predefined', model: testLevel() });
     // eslint-disable-next-line no-console
     console.log('debug mode');
     session.setMap(map);

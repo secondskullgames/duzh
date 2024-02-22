@@ -6,7 +6,6 @@ import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
-import MapSpec from '../schemas/MapSpec';
 import MusicController from '../sounds/MusicController';
 import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
@@ -16,7 +15,6 @@ import { inject, injectable } from 'inversify';
  * Represents the "game world": persistent state that is shared across all current sessions.
  */
 export interface GameState {
-  getMapSpecs: () => MapSpec[];
   addMaps: (suppliers: MapSupplier[]) => void;
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
@@ -40,7 +38,6 @@ export interface GameState {
 
 export namespace GameState {
   export const SYMBOL: symbol = Symbol('GameState');
-  export const SYMBOL_MAP_SPECS: symbol = Symbol('GameState_MapSpecs');
 }
 
 /**
@@ -54,8 +51,6 @@ export class GameStateImpl implements GameState {
   private readonly soundPlayer: SoundPlayer;
 
   constructor(
-    @inject(GameState.SYMBOL_MAP_SPECS)
-    private readonly mapSpecs: MapSpec[],
     @inject(AnimationFactory)
     private readonly animationFactory: AnimationFactory,
     @inject(ItemFactory)
@@ -74,8 +69,6 @@ export class GameStateImpl implements GameState {
     this.generatedEquipmentIds = [];
     this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
   }
-
-  getMapSpecs = (): MapSpec[] => this.mapSpecs;
 
   addMaps = (suppliers: MapSupplier[]) => {
     this.mapSuppliers.push(...suppliers);
