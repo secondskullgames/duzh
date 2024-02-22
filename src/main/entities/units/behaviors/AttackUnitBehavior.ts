@@ -1,7 +1,7 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import Pathfinder from '../../../geometry/Pathfinder';
+import { Pathfinder } from '../../../geometry/Pathfinder';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -50,7 +50,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       }
     }
 
-    const path: Coordinates[] = new Pathfinder(() => 1).findPath(
+    const path: Coordinates[] = Pathfinder.create(() => 1).findPath(
       unit.getCoordinates(),
       targetUnit.getCoordinates(),
       unblockedTiles

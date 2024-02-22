@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
-import Pathfinder from '../../geometry/Pathfinder';
+import { Pathfinder } from '../../geometry/Pathfinder';
 import { range } from '../../utils/arrays';
 import { randInt } from '../../utils/random';
 import TileType from '../../schemas/TileType';
@@ -27,7 +27,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     const firstPoint = _randomEmptyTile(tiles);
     tiles[firstPoint.y][firstPoint.x] = 'NONE';
 
-    const pathfinder = new Pathfinder(() => 1);
+    const pathfinder = Pathfinder.create(() => 1);
 
     let lastPoint = firstPoint;
     for (let i = 1; i < numPoints; i++) {

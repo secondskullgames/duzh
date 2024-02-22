@@ -62,10 +62,26 @@ const traverseParents = (node: Node): Coordinates[] => {
   return path;
 };
 
+export interface Pathfinder {
+  findPath: (
+    start: Coordinates,
+    goal: Coordinates,
+    tiles: Coordinates[]
+  ) => Coordinates[];
+}
+
+export namespace Pathfinder {
+  export const create = (
+    tileCostCalculator: (first: Coordinates, second: Coordinates) => number
+  ): Pathfinder => {
+    return new PathfinderImpl(tileCostCalculator);
+  };
+}
+
 /**
  * http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html
  */
-export default class Pathfinder {
+export class PathfinderImpl implements Pathfinder {
   private readonly _tileCostCalculator: (
     first: Coordinates,
     second: Coordinates
