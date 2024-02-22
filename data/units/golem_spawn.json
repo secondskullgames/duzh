@@ -1,6 +1,6 @@
 {
-  "id": "golem",
-  "name": "Golem",
+  "id": "golem_spawn",
+  "name": "Golem Spawn",
   "type": "GOLEM",
   "sprite": "zombie",
   "paletteSwaps": {
