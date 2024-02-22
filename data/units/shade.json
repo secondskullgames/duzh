@@ -7,12 +7,12 @@
   "life": 1,
   "mana": 0,
   "strength": 10,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.95,
-    "visionRange": 8,
-    "aggressiveness": 0.9,
-    "fleeThreshold": 0.1
+    "visionRange": 40,
+    "aggressiveness": 1,
+    "fleeThreshold": 0
   },
   "abilities": ["ATTACK"],
   "experience": 0

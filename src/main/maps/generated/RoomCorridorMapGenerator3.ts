@@ -34,7 +34,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
       height: height - 3
     });
 
-    const pathfinder = Pathfinder.create(() => 1);
+    const pathfinder = Pathfinder.create();
 
     for (let i = 1; i < rooms.length; i++) {
       const firstTiles = _coordinatesInRect(rooms[i - 1]);

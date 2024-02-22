@@ -1,15 +1,15 @@
-import { PathfinderImpl } from '../../main/geometry/Pathfinder';
+import { PathfinderImpl } from '../../main/geometry/PathfinderImpl';
 import Coordinates from '../../main/geometry/Coordinates';
+import { PathFinder_3rdParty } from '../../main/geometry/PathFinder_3rdParty';
 
 describe('Pathfinder', () => {
-  test('example scenario', () => {
-    const pathfinder = new PathfinderImpl(() => 1);
-    const start = { x: 0, y: 0 };
-    const goal = { x: 4, y: 4 };
+  describe('example scenario', () => {
+    const start = { x: 2, y: 4 };
+    const goal = { x: 1, y: 0 };
     const tiles: Coordinates[] = [];
-    for (let y = 0; y < 4; y++) {
-      for (let x = 0; x < 4; x++) {
-        if (x === 0 && y === 0) {
+    for (let y = 0; y < 5; y++) {
+      for (let x = 0; x < 5; x++) {
+        if (x === 2 && y === 4) {
           continue;
         }
         if (x === 3 && y === 3) {
@@ -18,7 +18,16 @@ describe('Pathfinder', () => {
         tiles.push({ x, y });
       }
     }
-    const path = pathfinder.findPath(start, goal, tiles);
-    expect(path.length > 0).toBe(true);
+
+    test('old implementation', () => {
+      const pathfinder = new PathfinderImpl(() => 1);
+      const path = pathfinder.findPath(start, goal, tiles);
+      expect(path.length > 0).toBe(true);
+    });
+    test('new implementation', () => {
+      const pathfinder = new PathFinder_3rdParty();
+      const path = pathfinder.findPath(start, goal, tiles);
+      expect(path.length > 0).toBe(true);
+    });
   });
 });

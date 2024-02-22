@@ -1,28 +1,19 @@
 {
-  "imageFilename": "test",
-  "tileset": "catacomb",
+  "imageFilename": "test_maze",
+  "tileset": "dungeon",
   "levelNumber": 1,
   "tileColors": {
     "BLACK": "NONE",
     "LIGHT_GRAY": "FLOOR",
-    "DARK_GRAY": "WALL"
+    "DARK_GRAY": "NONE"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "dragon_shooter"
+    "BLUE": "shade"
   },
-  "itemColors": {
-    "MAGENTA": "floor_fire_scroll"
-  },
-  "equipmentColors": {
-    "YELLOW": "fire_sword",
-    "DARK_YELLOW": "iron_shield"
-  },
-  "objectColors": {
-    "DARK_BROWN": "door_vertical",
-    "LIGHT_BROWN": "door_horizontal",
-    "DARK_BLUE": "movable_block"
-  },
+  "itemColors": {},
+  "equipmentColors": {},
+  "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {
     "enabled": false

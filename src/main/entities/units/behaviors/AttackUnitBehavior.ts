@@ -50,7 +50,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       }
     }
 
-    const path: Coordinates[] = Pathfinder.create(() => 1).findPath(
+    const path: Coordinates[] = Pathfinder.create().findPath(
       unit.getCoordinates(),
       targetUnit.getCoordinates(),
       unblockedTiles
