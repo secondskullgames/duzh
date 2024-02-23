@@ -63,6 +63,7 @@ export class GeneratedMapFactory {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
     const style = this._chooseMapStyle();
     const dungeonGenerator = this._getDungeonGenerator(style.layout);
+    console.debug(`Generating map: ${JSON.stringify(style)}`);
     const map = await dungeonGenerator.generateMap(model, style.tileSet);
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
