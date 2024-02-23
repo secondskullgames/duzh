@@ -5,7 +5,6 @@ import Door, { DoorState } from '../../entities/objects/Door';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
-import { checkNotNull } from '../../utils/preconditions';
 import MapInstance from '../MapInstance';
 import WizardController from '../../entities/units/controllers/WizardController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
@@ -135,7 +134,7 @@ export class PredefinedMapFactory {
           if (!hexColors.has(color.hex)) {
             hexColors.add(color.hex);
           }
-          const startingPointColor = checkNotNull(Colors[model.startingPointColor]);
+          const startingPointColor = Colors.colorForName(model.startingPointColor);
           if (Color.equals(color, startingPointColor)) {
             return { x, y };
           }
@@ -256,7 +255,7 @@ export class PredefinedMapFactory {
     } = {};
 
     for (const [colorName, unitClass] of Object.entries(source ?? {})) {
-      const color = checkNotNull(Colors[colorName]);
+      const color = Colors.colorForName(colorName);
       hexColors[color.hex] = unitClass;
     }
     return hexColors;

@@ -54,7 +54,7 @@ export default class SpriteFactory {
     const image = await this.imageFactory.getImage({
       filename,
       paletteSwaps,
-      transparentColor: transparentColor ? Colors[transparentColor] : null
+      transparentColor: transparentColor ? Colors.colorForName(transparentColor) : null
     });
     return new StaticSprite(image, offsets);
   };
