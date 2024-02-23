@@ -20,6 +20,8 @@ export const levelUp = (unit: Unit, session: Session) => {
         turn: session.getTurn()
       });
       unit.awardAbilityPoint();
+    } else if (Feature.isEnabled(Feature.DYNAMIC_ABILITIES)) {
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
     } else {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       switch (unit.getLevel()) {

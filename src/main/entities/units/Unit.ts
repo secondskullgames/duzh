@@ -22,6 +22,7 @@ import UnitType from '../../schemas/UnitType';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
+import { Feature } from '../../utils/features';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -86,6 +87,7 @@ export default class Unit implements Entity, Animatable {
    */
   private frameNumber: number;
   private readonly abilities: UnitAbility[];
+  private readonly abilityCounter: Record<AbilityName, number>;
   private stunDuration: number;
   /**
    * Used by AI to make certain decisions
@@ -137,6 +139,13 @@ export default class Unit implements Entity, Animatable {
     this.abilities = model.abilities.map(abilityName =>
       UnitAbility.abilityForName(abilityName as AbilityName)
     );
+    this.abilityCounter = (() => {
+      const counts: Partial<Record<AbilityName, number>> = {};
+      for (const abilityName of AbilityName.values()) {
+        counts[abilityName] = 0;
+      }
+      return counts as Record<AbilityName, number>;
+    })();
     this.stunDuration = 0;
     this.turnsSinceCombatAction = null;
 
@@ -242,6 +251,15 @@ export default class Unit implements Entity, Animatable {
   recordStepTaken = () => {
     this.lifetimeStepsTaken++;
   };
+
+  recordAbilityUsed = (ability: AbilityName): void => {
+    this.abilityCounter[ability]++;
+    if (Feature.isEnabled(Feature.DYNAMIC_ABILITIES)) {
+      this._learnDynamicAbilities();
+    }
+  };
+
+  getAbilityCounter = (): Record<AbilityName, number> => this.abilityCounter;
 
   getRangedDamage = (): number => {
     let damage = this.dexterity;
@@ -368,6 +386,9 @@ export default class Unit implements Entity, Animatable {
     this.strength += amount;
   };
 
+  /**
+   * TODO: this should just accept an AbilityName
+   */
   learnAbility = (ability: UnitAbility) => {
     this.abilities.push(ability);
     this.abilityPoints--;
@@ -442,4 +463,22 @@ export default class Unit implements Entity, Animatable {
 
   getStrength = (): number => this.strength;
   getDexterity = (): number => this.dexterity;
+
+  private _learnDynamicAbilities = () => {
+    if (this.abilityCounter[AbilityName.ATTACK] >= 20) {
+      if (!this.hasAbility(AbilityName.HEAVY_ATTACK)) {
+        this.learnAbility(UnitAbility.abilityForName(AbilityName.HEAVY_ATTACK));
+      }
+    }
+    if (this.abilityCounter[AbilityName.HEAVY_ATTACK] >= 20) {
+      if (!this.hasAbility(AbilityName.STUN_ATTACK)) {
+        this.learnAbility(UnitAbility.abilityForName(AbilityName.STUN_ATTACK));
+      }
+    }
+    if (this.abilityCounter[AbilityName.DASH] >= 20) {
+      if (!this.hasAbility(AbilityName.BLINK)) {
+        this.learnAbility(UnitAbility.abilityForName(AbilityName.BLINK));
+      }
+    }
+  };
 }

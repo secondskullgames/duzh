@@ -22,7 +22,8 @@ export const Blink: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Blink requires a target!');
+      console.error('Blink requires a target!');
+      return false;
     }
 
     const map = unit.getMap();
@@ -61,5 +62,6 @@ export const Blink: UnitAbility = {
       await moveUnit(unit, { x, y }, session, state);
       unit.spendMana(manaCost);
     }
+    return true;
   }
 };

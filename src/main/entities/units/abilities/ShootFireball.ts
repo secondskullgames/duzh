@@ -22,11 +22,13 @@ export const ShootFireball: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('ShootFireball requires a target!');
+      console.error('ShootFireball requires a target!');
+      return false;
     }
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
     unit.spendMana(MANA_COST);
     await shootFireball(unit, direction, DAMAGE, session, state);
+    return true;
   }
 };

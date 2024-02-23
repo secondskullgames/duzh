@@ -29,10 +29,12 @@ export const ShootArrow: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('ShootArrow requires a target!');
+      console.error('ShootArrow requires a target!');
+      return false;
     }
     if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
-      throw new Error('ShootArrow requires a ranged weapon!');
+      console.error('ShootArrow requires a ranged weapon!');
+      return false;
     }
 
     const map = session.getMap();
@@ -82,5 +84,6 @@ export const ShootArrow: UnitAbility = {
       );
       await playAnimation(arrowAnimation, { map });
     }
+    return true;
   }
 };

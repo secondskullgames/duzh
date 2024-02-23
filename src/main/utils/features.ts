@@ -11,6 +11,7 @@ export enum Feature {
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
+  DYNAMIC_ABILITIES = 'DYNAMIC_ABILITIES',
   FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
@@ -46,6 +47,8 @@ export namespace Feature {
       case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);
       case Feature.DEDUPLICATE_EQUIPMENT:
+        return true;
+      case Feature.DYNAMIC_ABILITIES:
         return true;
       case Feature.DEBUG_LOGGING:
         return false;

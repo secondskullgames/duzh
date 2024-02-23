@@ -24,7 +24,8 @@ export const PiercingAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('PiercingAttack requires a target!');
+      console.error('PiercingAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -85,5 +86,6 @@ export const PiercingAttack: UnitAbility = {
     if (nextSpawner && nextSpawner.isBlocking()) {
       await attackObject(unit, nextSpawner, state);
     }
+    return true;
   }
 };

@@ -82,7 +82,9 @@ export default class CharacterScreenRenderer implements Renderer {
         `Damage Dealt: ${playerUnit.getLifetimeDamageDealt()}`,
         `Damage Taken: ${playerUnit.getLifetimeDamageTaken()}`,
         `Mana Spent: ${playerUnit.getLifetimeManaSpent()}`,
-        `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
+        `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`,
+        // TODO debug
+        `Abilities Used: ${JSON.stringify(playerUnit.getAbilityCounter(), null, 4)}`
       ];
       for (const line of lines) {
         await this._drawText(

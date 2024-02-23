@@ -11,6 +11,19 @@ import { GameState } from '../../../core/GameState';
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?
 const MANA_RETURNED = 1;
+const attack: Attack = {
+  sound: Sounds.PLAYER_HITS_ENEMY,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage());
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+  }
+};
 
 export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
@@ -23,7 +36,8 @@ export const NormalAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('NormalAttack requires a target!');
+      console.error('NormalAttack requires a target!');
+      return false;
     }
     // TODO: verify coordinates are adjacent
 
@@ -32,25 +46,9 @@ export const NormalAttack: UnitAbility = {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      const attack: Attack = {
-        sound: Sounds.PLAYER_HITS_ENEMY,
-        calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage());
-          return { damage };
-        },
-        getDamageLogMessage: (
-          attacker: Unit,
-          defender: Unit,
-          result: DefendResult
-        ): string => {
-          const attackerName = attacker.getName();
-          const defenderName = defender.getName();
-          const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} for ${damage} damage!`;
-        }
-      };
       await attackUnit(unit, targetUnit, attack, session, state);
       unit.gainMana(MANA_RETURNED);
     }
+    return true;
   }
 };

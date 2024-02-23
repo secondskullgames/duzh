@@ -44,7 +44,10 @@ export default class TeleportAwayOrder implements UnitOrder {
       );
 
       const coordinates = orderedTiles[0];
-      await Teleport.use(unit, coordinates, session, state);
+      const success = await Teleport.use(unit, coordinates, session, state);
+      if (success) {
+        unit.recordAbilityUsed(Teleport.name);
+      }
     }
   };
 }

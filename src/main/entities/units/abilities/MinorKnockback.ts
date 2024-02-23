@@ -12,6 +12,20 @@ import { GameState } from '../../../core/GameState';
 const manaCost = 8;
 const damageCoefficient = 0.5;
 
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
+  }
+};
+
 export const MinorKnockback: UnitAbility = {
   name: AbilityName.MINOR_KNOCKBACK,
   manaCost,
@@ -23,7 +37,8 @@ export const MinorKnockback: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('KnockbackAttack requires a target!');
+      console.error('KnockbackAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -34,24 +49,6 @@ export const MinorKnockback: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
-
-      const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
-        calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-          return { damage };
-        },
-        getDamageLogMessage: (
-          attacker: Unit,
-          defender: Unit,
-          result: DefendResult
-        ): string => {
-          const attackerName = attacker.getName();
-          const defenderName = defender.getName();
-          const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
-        }
-      };
       await attackUnit(unit, targetUnit, attack, session, state);
 
       if (targetUnit.getLife() > 0) {
@@ -61,5 +58,6 @@ export const MinorKnockback: UnitAbility = {
         }
       }
     }
+    return true;
   }
 };

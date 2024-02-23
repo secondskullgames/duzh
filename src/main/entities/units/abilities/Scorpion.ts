@@ -60,7 +60,8 @@ export const Scorpion: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Scorpion requires a target!');
+      console.error('Scorpion requires a target!');
+      return false;
     }
 
     const map = unit.getMap();
@@ -113,5 +114,6 @@ export const Scorpion: UnitAbility = {
     if (targetUnit) {
       targetUnit.setStunned(stunDuration);
     }
+    return true;
   }
 };

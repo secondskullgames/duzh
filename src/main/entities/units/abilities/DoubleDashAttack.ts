@@ -51,7 +51,8 @@ export const DoubleDashAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('DashAttack requires a target!');
+      console.error('DashAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -66,7 +67,7 @@ export const DoubleDashAttack: UnitAbility = {
       const isBlocked = map.isBlocked(targetCoordinates);
       const hasUnit = map.getUnit(targetCoordinates);
       if (!isValid || (isBlocked && !hasUnit)) {
-        return;
+        return false;
       }
     }
 
@@ -95,5 +96,6 @@ export const DoubleDashAttack: UnitAbility = {
         await sleep(100);
       }
     }
+    return true;
   }
 };

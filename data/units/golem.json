@@ -15,7 +15,7 @@
   "strength": 12,
   "dexterity": 0,
   "life": 100,
-  "mana": 0,
+  "mana": 15,
   "aiParameters": {
     "speed": 0.7,
     "visionRange": 6,
@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK"],
+  "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
   "experience": 1
 }

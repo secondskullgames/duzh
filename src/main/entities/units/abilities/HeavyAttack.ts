@@ -36,7 +36,8 @@ export const HeavyAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('HeavyAttack requires a target!');
+      console.error('HeavyAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -48,5 +49,6 @@ export const HeavyAttack: UnitAbility = {
       unit.spendMana(manaCost);
       await attackUnit(unit, targetUnit, attack, session, state);
     }
+    return true;
   }
 };

@@ -24,7 +24,8 @@ export const StunAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('StunAttack requires a target!');
+      console.error('StunAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -55,5 +56,6 @@ export const StunAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
       targetUnit.setStunned(stunDuration);
     }
+    return true;
   }
 };

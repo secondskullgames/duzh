@@ -26,11 +26,13 @@ export const Teleport: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Teleport requires a target!');
+      console.error('Teleport requires a target!');
+      return false;
     }
 
     if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
-      throw new Error(`Can't teleport more than ${range} units`);
+      console.error(`Can't teleport more than ${range} units`);
+      return false;
     }
 
     const map = session.getMap();
@@ -70,5 +72,6 @@ export const Teleport: UnitAbility = {
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
+    return false;
   }
 };

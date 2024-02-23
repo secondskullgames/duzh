@@ -21,7 +21,8 @@ export const FreeMove: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('FreeMove requires a target!');
+      console.error('FreeMove requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -37,5 +38,6 @@ export const FreeMove: UnitAbility = {
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
+    return true;
   }
 };

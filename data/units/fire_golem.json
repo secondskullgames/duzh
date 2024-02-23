@@ -15,7 +15,7 @@
   "strength": 12,
   "dexterity": 0,
   "life": 60,
-  "mana": 0,
+  "mana": 10,
   "aiParameters": {
     "speed": 0.9,
     "visionRange": 8,
@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK"],
+  "abilities": ["ATTACK", "HEAVY_ATTACK"],
   "experience": 1
 }

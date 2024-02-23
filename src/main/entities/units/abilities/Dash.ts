@@ -22,7 +22,8 @@ export const Dash: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Dash requires a target!');
+      console.error('Dash requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -54,5 +55,6 @@ export const Dash: UnitAbility = {
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
+    return true;
   }
 };

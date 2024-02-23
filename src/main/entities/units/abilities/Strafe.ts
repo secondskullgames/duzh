@@ -18,12 +18,14 @@ export const Strafe: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Strafe requires a target!');
+      console.error('Strafe requires a target!');
+      return false;
     }
 
     const map = session.getMap();
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, session, state);
     }
+    return true;
   }
 };

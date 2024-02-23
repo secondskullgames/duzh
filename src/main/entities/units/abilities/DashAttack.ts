@@ -13,6 +13,20 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 const manaCost = 8;
 const damageCoefficient = 1;
 
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+  }
+};
+
 export const DashAttack: UnitAbility = {
   name: AbilityName.DASH_ATTACK,
   manaCost,
@@ -24,7 +38,8 @@ export const DashAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('DashAttack requires a target!');
+      console.error('DashAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -47,31 +62,14 @@ export const DashAttack: UnitAbility = {
           await moveUnit(targetUnit, behindCoordinates, session, state);
           await moveUnit(unit, targetCoordinates, session, state);
         }
-
-        const attack: Attack = {
-          sound: Sounds.SPECIAL_ATTACK,
-          calculateAttackResult: (unit: Unit): AttackResult => {
-            const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-            return { damage };
-          },
-          getDamageLogMessage: (
-            attacker: Unit,
-            defender: Unit,
-            result: DefendResult
-          ): string => {
-            const attackerName = attacker.getName();
-            const defenderName = defender.getName();
-            const damage = result.damageTaken;
-            return `${attackerName} hit ${defenderName} for ${damage} damage!`;
-          }
-        };
         await attackUnit(unit, targetUnit, attack, session, state);
         // End DO_ATTACK
         await sleep(100);
-        return;
+        return true;
       }
     }
 
     state.getSoundPlayer().playSound(Sounds.BLOCKED);
+    return false;
   }
 };

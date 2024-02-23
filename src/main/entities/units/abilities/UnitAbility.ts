@@ -26,17 +26,28 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
 
+/**
+ * TODO:
+ *
+ * Need a consistent contract for everything ability-related
+ *
+ * When do we spend mana?
+ * When do we validate?
+ */
 export type UnitAbility = Readonly<{
   name: AbilityName;
   manaCost: number;
   icon: string | null;
 
+  /**
+   * @return false if the ability cannot be used
+   */
   use: (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
     state: GameState
-  ) => Promise<void>;
+  ) => Promise<boolean>;
 }>;
 
 export namespace UnitAbility {

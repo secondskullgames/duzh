@@ -30,10 +30,12 @@ export const StrafeShot: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Strafe requires a target!');
+      console.error('Strafe requires a target!');
+      return false;
     }
     if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
-      throw new Error('ShootArrow requires a ranged weapon!');
+      console.error('ShootArrow requires a ranged weapon!');
+      return false;
     }
 
     const map = session.getMap();
@@ -42,6 +44,7 @@ export const StrafeShot: UnitAbility = {
       unit.spendMana(manaCost);
       await _shootArrow(unit, unit.getDirection(), session, state);
     }
+    return true;
   }
 };
 

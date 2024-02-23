@@ -7,7 +7,7 @@
     "max": 5
   },
   "items": {
-    "min": 3,
+    "min": 2,
     "max": 3
   },
   "fogOfWar": {

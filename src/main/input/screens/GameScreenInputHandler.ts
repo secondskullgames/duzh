@@ -94,12 +94,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
       if (playerUnit.canSpendMana(Strafe.manaCost)) {
-        // TODO make this into an Order
-        order = {
-          execute: async (unit, state, session) => {
-            await Strafe.use(unit, coordinates, session, state);
-          }
-        };
+        order = new AbilityOrder({ coordinates, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&

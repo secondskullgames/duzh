@@ -11,6 +11,20 @@ import { GameState } from '../../../core/GameState';
 const manaCost = 15;
 const damageCoefficient = 1;
 
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
+  }
+};
+
 /**
  * A one-turn variant of {@link StunAttack}
  */
@@ -26,7 +40,8 @@ export const MinorStunAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('MinorStunAttack requires a target!');
+      console.error('MinorStunAttack requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -38,26 +53,9 @@ export const MinorStunAttack: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       unit.spendMana(manaCost);
-
-      const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
-        calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-          return { damage };
-        },
-        getDamageLogMessage: (
-          attacker: Unit,
-          defender: Unit,
-          result: DefendResult
-        ): string => {
-          const attackerName = attacker.getName();
-          const defenderName = defender.getName();
-          const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
-        }
-      };
       await attackUnit(unit, targetUnit, attack, session, state);
       targetUnit.setStunned(1);
     }
+    return true;
   }
 };

@@ -22,7 +22,8 @@ export const Summon: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Summon requires a target!');
+      console.error('Summon requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -41,5 +42,6 @@ export const Summon: UnitAbility = {
     });
     map.addUnit(summonedUnit);
     unit.spendMana(manaCost);
+    return true;
   }
 };

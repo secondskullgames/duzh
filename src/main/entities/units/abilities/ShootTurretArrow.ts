@@ -29,7 +29,8 @@ export const ShootTurretArrow: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('ShootTurretArrow requires a target!');
+      console.error('ShootTurretArrow requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -70,5 +71,6 @@ export const ShootTurretArrow: UnitAbility = {
         .getArrowAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(arrowAnimation, { map });
     }
+    return true;
   }
 };

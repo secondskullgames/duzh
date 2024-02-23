@@ -23,6 +23,9 @@ export class AbilityOrder implements UnitOrder {
    * @override {@link UnitOrder#execute}
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    await this.ability.use(unit, this.coordinates, session, state);
+    const success = await this.ability.use(unit, this.coordinates, session, state);
+    if (success) {
+      unit.recordAbilityUsed(this.ability.name);
+    }
   };
 }

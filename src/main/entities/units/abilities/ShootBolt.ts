@@ -27,7 +27,8 @@ export const ShootBolt: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Bolt requires a target!');
+      console.error('Bolt requires a target!');
+      return false;
     }
 
     const map = session.getMap();
@@ -68,5 +69,6 @@ export const ShootBolt: UnitAbility = {
         .getBoltAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(boltAnimation, { map });
     }
+    return true;
   }
 };

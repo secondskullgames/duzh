@@ -44,7 +44,9 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
+      // TODO it is sketchy to invoke a fake Ability here
       await ShootBolt.use(unit, target, session, state);
+      // but don't record its usage
     }
   }
 };
