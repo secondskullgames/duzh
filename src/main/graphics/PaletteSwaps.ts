@@ -1,6 +1,5 @@
 import { Color } from './Color';
 import Colors from './Colors';
-import { checkNotNull } from '../utils/preconditions';
 
 export interface PaletteSwaps {
   entries: () => [Color, Color][];
@@ -61,14 +60,8 @@ export namespace PaletteSwaps {
     const builder = new Builder();
     if (paletteSwaps) {
       for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-        const srcColor: Color = checkNotNull(
-          Colors[srcName],
-          `Color '${srcName}' not found`
-        );
-        const destColor: Color = checkNotNull(
-          Colors[destName],
-          `Color '${destName}' not found`
-        );
+        const srcColor = Colors.colorForName(srcName);
+        const destColor = Colors.colorForName(destName);
         builder.addMapping(srcColor, destColor);
       }
     }
