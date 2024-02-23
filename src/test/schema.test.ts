@@ -32,8 +32,6 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
     throw new Error(`Failed to load schema ${schemaName}`);
   }
   for (const dataFilename of dataFilenames) {
-    // eslint-disable-next-line no-console
-    console.log(`Validating ${dataFilename}`);
     const data = await loadFile(dataFilename);
     const isValid = validate(data);
     if (!isValid) {
@@ -47,8 +45,6 @@ const validate = async (schemaName: string, dataFilenames: string[]) => {
 test('test validity of JSON data', async () => {
   for (const schemaName of schemaNames) {
     const filename = `src/gen-schema/${schemaName}.schema.json`;
-    // eslint-disable-next-line no-console
-    console.log(`Loading schema ${filename}`);
     const schema = await loadFile(filename);
     ajv.addSchema(schema);
   }

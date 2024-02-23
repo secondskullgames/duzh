@@ -24,7 +24,7 @@ module.exports = {
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/no-unused-vars": "warn",
         "no-alert": "warn",
-        "no-console": "warn",
+        "no-console": ["warn", { "allow": ["debug", "warn", "error"] }], 
         "prefer-arrow/prefer-arrow-functions": [
             "warn",
             {

@@ -10,8 +10,8 @@
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.9,
-    "visionRange": 12,
-    "aggressiveness": 0.9,
+    "visionRange": 10,
+    "aggressiveness": 0.8,
     "fleeThreshold": 0
   },
   "levelParameters": {

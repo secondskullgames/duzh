@@ -26,10 +26,10 @@
     "long_bow"
   ],
   "aiParameters": {
-    "speed": 0.99,
+    "speed": 0.9,
     "visionRange": 12,
     "aggressiveness": 0.9,
-    "fleeThreshold": 0.1
+    "fleeThreshold": 0.5
   },
   "levelParameters": {
     "minLevel": 4,

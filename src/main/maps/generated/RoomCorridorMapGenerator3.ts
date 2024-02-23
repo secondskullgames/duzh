@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
-import Pathfinder from '../../geometry/Pathfinder';
+import { Pathfinder } from '../../geometry/Pathfinder';
 import Rect from '../../geometry/Rect';
 import { randInt, shuffle } from '../../utils/random';
 import TileType from '../../schemas/TileType';
@@ -34,7 +34,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
       height: height - 3
     });
 
-    const pathfinder = new Pathfinder(() => 1);
+    const pathfinder = Pathfinder.create();
 
     for (let i = 1; i < rooms.length; i++) {
       const firstTiles = _coordinatesInRect(rooms[i - 1]);
