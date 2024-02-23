@@ -17,10 +17,7 @@ import USE_POTION from '../../../data/sounds/use_potion.json';
 import WIZARD_APPEAR from '../../../data/sounds/wizard_appear.json';
 import WIZARD_VANISH from '../../../data/sounds/wizard_vanish.json';
 
-/**
- * TODO I hate this
- */
-const Sounds: Record<string, SoundEffect> = {
+const sounds = {
   BLOCKED,
   DEFLECTED_HIT,
   DESCEND_STAIRS,
@@ -38,6 +35,8 @@ const Sounds: Record<string, SoundEffect> = {
   USE_POTION,
   WIZARD_APPEAR,
   WIZARD_VANISH
-} as unknown as Record<string, SoundEffect>;
+};
 
-export default Sounds;
+type SoundName = keyof typeof sounds;
+
+export default sounds as Record<SoundName, SoundEffect>;
