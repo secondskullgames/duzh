@@ -11,10 +11,10 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
 
-const manaCost = 10;
 const damageCoefficient = 1;
 const stunDuration = 1;
 const range = 10;
+const sleepDuration = 75;
 
 const _findTargetUnit = (unit: Unit, { dx, dy }: Direction): Unit | null => {
   const map = unit.getMap();
@@ -48,12 +48,12 @@ const attack: Attack = {
   }
 };
 
-const sleepDuration = 75;
-export const Scorpion: UnitAbility = {
-  name: AbilityName.SCORPION,
-  manaCost,
-  icon: 'icon5', // TODO
-  use: async (
+export class Scorpion implements UnitAbility {
+  readonly name = AbilityName.SCORPION;
+  readonly manaCost = 10;
+  readonly icon = 'icon5'; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -68,7 +68,7 @@ export const Scorpion: UnitAbility = {
     const { dx, dy } = direction;
     unit.setDirection(direction);
     const targetUnit = _findTargetUnit(unit, direction);
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
@@ -113,5 +113,5 @@ export const Scorpion: UnitAbility = {
     if (targetUnit) {
       targetUnit.setStunned(stunDuration);
     }
-  }
-};
+  };
+}

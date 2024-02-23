@@ -11,18 +11,16 @@ import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 5;
-
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootArrow: UnitAbility = {
-  name: AbilityName.SHOOT_ARROW,
-  icon: null,
-  manaCost,
+export class ShootArrow implements UnitAbility {
+  readonly name = AbilityName.SHOOT_ARROW;
+  readonly icon = null;
+  readonly manaCost = 5;
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -39,7 +37,7 @@ export const ShootArrow: UnitAbility = {
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
@@ -82,5 +80,5 @@ export const ShootArrow: UnitAbility = {
       );
       await playAnimation(arrowAnimation, { map });
     }
-  }
-};
+  };
+}

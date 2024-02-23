@@ -7,15 +7,14 @@ import { pointAt } from '../../../utils/geometry';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const MANA_COST = 25;
 const DAMAGE = 20;
 
-export const ShootFireball: UnitAbility = {
-  name: AbilityName.SHOOT_FIREBALL,
-  icon: 'icon6',
-  manaCost: MANA_COST,
+export class ShootFireball implements UnitAbility {
+  readonly name = AbilityName.SHOOT_FIREBALL;
+  readonly icon = 'icon6';
+  readonly manaCost = 25;
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -26,7 +25,7 @@ export const ShootFireball: UnitAbility = {
     }
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
-    unit.spendMana(MANA_COST);
+    unit.spendMana(this.manaCost);
     await shootFireball(unit, direction, DAMAGE, session, state);
-  }
-};
+  };
+}

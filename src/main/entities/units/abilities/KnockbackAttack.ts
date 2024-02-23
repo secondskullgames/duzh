@@ -10,16 +10,16 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 6;
 const damageCoefficient = 0.5;
 const stunDuration = 1;
 const TWO_TILES = false;
 
-export const KnockbackAttack: UnitAbility = {
-  name: AbilityName.KNOCKBACK_ATTACK,
-  manaCost,
-  icon: 'icon6',
-  use: async (
+export class KnockbackAttack implements UnitAbility {
+  readonly name = AbilityName.KNOCKBACK_ATTACK;
+  readonly manaCost = 6;
+  readonly icon = 'icon6';
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -36,7 +36,7 @@ export const KnockbackAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
@@ -74,5 +74,5 @@ export const KnockbackAttack: UnitAbility = {
         }
       }
     }
-  }
-};
+  };
+}

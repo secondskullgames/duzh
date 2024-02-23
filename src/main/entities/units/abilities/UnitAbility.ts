@@ -26,10 +26,10 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { checkNotNull } from '../../../utils/preconditions';
 
-export type UnitAbility = Readonly<{
-  name: AbilityName;
-  manaCost: number;
-  icon: string | null;
+export interface UnitAbility {
+  readonly name: AbilityName;
+  readonly manaCost: number;
+  readonly icon: string | null;
 
   use: (
     unit: Unit,
@@ -37,31 +37,31 @@ export type UnitAbility = Readonly<{
     session: Session,
     state: GameState
   ) => Promise<void>;
-}>;
+}
 
 export namespace UnitAbility {
   const _map: Record<AbilityName, UnitAbility> = {
-    [AbilityName.ATTACK]: NormalAttack,
-    [AbilityName.BLINK]: Blink,
-    [AbilityName.BOLT]: ShootBolt,
-    [AbilityName.DASH]: Dash,
-    [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.DOUBLE_DASH_ATTACK]: DoubleDashAttack,
-    [AbilityName.FREE_MOVE]: FreeMove,
-    [AbilityName.HEAVY_ATTACK]: HeavyAttack,
-    [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
-    [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
-    [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
-    [AbilityName.PIERCE]: PiercingAttack,
-    [AbilityName.SCORPION]: Scorpion,
-    [AbilityName.SHOOT_ARROW]: ShootArrow,
-    [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
-    [AbilityName.SHOOT_FIREBALL]: ShootFireball,
-    [AbilityName.STRAFE]: Strafe,
-    [AbilityName.STRAFE_SHOT]: StrafeShot,
-    [AbilityName.STUN_ATTACK]: StunAttack,
-    [AbilityName.SUMMON]: Summon,
-    [AbilityName.TELEPORT]: Teleport
+    [AbilityName.ATTACK]: new NormalAttack(),
+    [AbilityName.BLINK]: new Blink(),
+    [AbilityName.BOLT]: new ShootBolt(),
+    [AbilityName.DASH]: new Dash(),
+    [AbilityName.DASH_ATTACK]: new DashAttack(),
+    [AbilityName.DOUBLE_DASH_ATTACK]: new DoubleDashAttack(),
+    [AbilityName.FREE_MOVE]: new FreeMove(),
+    [AbilityName.HEAVY_ATTACK]: new HeavyAttack(),
+    [AbilityName.KNOCKBACK_ATTACK]: new KnockbackAttack(),
+    [AbilityName.MINOR_KNOCKBACK]: new MinorKnockback(),
+    [AbilityName.MINOR_STUN_ATTACK]: new MinorStunAttack(),
+    [AbilityName.PIERCE]: new PiercingAttack(),
+    [AbilityName.SCORPION]: new Scorpion(),
+    [AbilityName.SHOOT_ARROW]: new ShootArrow(),
+    [AbilityName.SHOOT_TURRET_ARROW]: new ShootTurretArrow(),
+    [AbilityName.SHOOT_FIREBALL]: new ShootFireball(),
+    [AbilityName.STRAFE]: new Strafe(),
+    [AbilityName.STRAFE_SHOT]: new StrafeShot(),
+    [AbilityName.STUN_ATTACK]: new StunAttack(),
+    [AbilityName.SUMMON]: new Summon(),
+    [AbilityName.TELEPORT]: new Teleport()
   };
 
   export const abilityForName = (name: AbilityName): UnitAbility => {

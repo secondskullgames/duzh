@@ -12,18 +12,16 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import Direction from '../../../geometry/Direction';
 
-const manaCost = 5;
-
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const StrafeShot: UnitAbility = {
-  name: AbilityName.STRAFE_SHOT,
-  manaCost,
-  icon: 'icon5', // TODO
+export class StrafeShot implements UnitAbility {
+  readonly name = AbilityName.STRAFE_SHOT;
+  readonly manaCost = 5;
+  readonly icon = 'icon5'; // TODO
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -39,11 +37,11 @@ export const StrafeShot: UnitAbility = {
     const map = session.getMap();
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, session, state);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       await _shootArrow(unit, unit.getDirection(), session, state);
     }
-  }
-};
+  };
+}
 
 /** 90% copy-pasted from ShootArrow */
 const _shootArrow = async (

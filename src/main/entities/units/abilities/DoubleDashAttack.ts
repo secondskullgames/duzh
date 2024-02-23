@@ -11,7 +11,6 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
 
-const manaCost = 10;
 const damageCoefficient = 1;
 const stunDuration = 1;
 
@@ -40,11 +39,12 @@ const _doKnockback = async (
   await moveUnit(targetUnit, targetCoordinates, session, state);
 };
 
-export const DoubleDashAttack: UnitAbility = {
-  name: AbilityName.DOUBLE_DASH_ATTACK,
-  manaCost,
-  icon: 'icon5', // TODO
-  use: async (
+export class DoubleDashAttack implements UnitAbility {
+  readonly name = AbilityName.DOUBLE_DASH_ATTACK;
+  readonly manaCost = 10;
+  readonly icon = 'icon5'; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -71,7 +71,7 @@ export const DoubleDashAttack: UnitAbility = {
     }
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const numTiles = 2;
     for (let i = 0; i < 2; i++) {
@@ -95,5 +95,5 @@ export const DoubleDashAttack: UnitAbility = {
         await sleep(100);
       }
     }
-  }
-};
+  };
+}

@@ -8,14 +8,12 @@ import BasicEnemyController from '../controllers/BasicEnemyController';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 25;
+export class Summon implements UnitAbility {
+  readonly name = AbilityName.SUMMON;
+  readonly manaCost = 25;
+  readonly icon = null;
 
-export const Summon: UnitAbility = {
-  name: AbilityName.SUMMON,
-  manaCost,
-  icon: null,
-
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -40,6 +38,6 @@ export const Summon: UnitAbility = {
       map
     });
     map.addUnit(summonedUnit);
-    unit.spendMana(manaCost);
-  }
-};
+    unit.spendMana(this.manaCost);
+  };
+}

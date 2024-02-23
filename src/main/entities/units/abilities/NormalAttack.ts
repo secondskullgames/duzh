@@ -12,11 +12,12 @@ import { GameState } from '../../../core/GameState';
 // TODO should enemy units gain mana?
 const MANA_RETURNED = 1;
 
-export const NormalAttack: UnitAbility = {
-  name: AbilityName.ATTACK,
-  icon: null,
-  manaCost: 0,
-  use: async (
+export class NormalAttack implements UnitAbility {
+  readonly name = AbilityName.ATTACK;
+  readonly icon = null;
+  readonly manaCost = 0;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -52,5 +53,5 @@ export const NormalAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
       unit.gainMana(MANA_RETURNED);
     }
-  }
-};
+  };
+}

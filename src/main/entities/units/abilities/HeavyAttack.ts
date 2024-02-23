@@ -8,7 +8,6 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 8;
 const damageCoefficient = 2;
 
 const attack: Attack = {
@@ -25,11 +24,12 @@ const attack: Attack = {
   }
 };
 
-export const HeavyAttack: UnitAbility = {
-  name: AbilityName.HEAVY_ATTACK,
-  manaCost,
-  icon: 'icon1',
-  use: async (
+export class HeavyAttack implements UnitAbility {
+  readonly name = AbilityName.HEAVY_ATTACK;
+  readonly manaCost = 8;
+  readonly icon = 'icon1';
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -45,8 +45,8 @@ export const HeavyAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       await attackUnit(unit, targetUnit, attack, session, state);
     }
-  }
-};
+  };
+}

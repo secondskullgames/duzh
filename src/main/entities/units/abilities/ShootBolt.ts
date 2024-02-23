@@ -15,12 +15,12 @@ const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): str
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootBolt: UnitAbility = {
-  name: AbilityName.BOLT,
-  icon: null,
-  manaCost: 0,
+export class ShootBolt implements UnitAbility {
+  readonly name = AbilityName.BOLT;
+  readonly icon = null;
+  readonly manaCost = 0;
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -68,5 +68,5 @@ export const ShootBolt: UnitAbility = {
         .getBoltAnimation(unit, { dx, dy }, coordinatesList, null, map);
       await playAnimation(boltAnimation, { map });
     }
-  }
-};
+  };
+}

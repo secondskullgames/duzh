@@ -11,13 +11,26 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
 const damageCoefficient = 1;
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+  }
+};
 
-export const PiercingAttack: UnitAbility = {
-  name: AbilityName.PIERCE,
-  manaCost: 0,
-  icon: null,
+export class PiercingAttack implements UnitAbility {
+  readonly name = AbilityName.PIERCE;
+  readonly manaCost = 0;
+  readonly icon = null;
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -33,23 +46,6 @@ export const PiercingAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
-        calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
-          return { damage };
-        },
-        getDamageLogMessage: (
-          attacker: Unit,
-          defender: Unit,
-          result: DefendResult
-        ): string => {
-          const attackerName = attacker.getName();
-          const defenderName = defender.getName();
-          const damage = result.damageTaken;
-          return `${attackerName} hit ${defenderName} for ${damage} damage!`;
-        }
-      };
       await attackUnit(unit, targetUnit, attack, session, state);
     }
 
@@ -85,5 +81,5 @@ export const PiercingAttack: UnitAbility = {
     if (nextSpawner && nextSpawner.isBlocking()) {
       await attackObject(unit, nextSpawner, state);
     }
-  }
-};
+  };
+}

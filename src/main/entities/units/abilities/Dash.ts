@@ -9,13 +9,11 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 4;
-
-export const Dash: UnitAbility = {
-  name: AbilityName.DASH,
-  manaCost,
-  icon: 'icon5',
-  use: async (
+export class Dash implements UnitAbility {
+  readonly name = AbilityName.DASH;
+  readonly manaCost = 4;
+  readonly icon = 'icon5';
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -50,9 +48,9 @@ export const Dash: UnitAbility = {
     }
 
     if (moved) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

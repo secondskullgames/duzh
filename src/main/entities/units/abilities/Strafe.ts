@@ -6,12 +6,12 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-export const Strafe: UnitAbility = {
-  name: AbilityName.STRAFE,
-  manaCost: 0,
-  icon: null,
+export class Strafe implements UnitAbility {
+  readonly name = AbilityName.STRAFE;
+  readonly manaCost = 0;
+  readonly icon = null;
 
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -25,5 +25,5 @@ export const Strafe: UnitAbility = {
     if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
       await moveUnit(unit, coordinates, session, state);
     }
-  }
-};
+  };
+}

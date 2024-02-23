@@ -9,13 +9,12 @@ import { Feature } from '../../../utils/features';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 10;
+export class Blink implements UnitAbility {
+  readonly name = AbilityName.BLINK;
+  readonly manaCost = 10;
+  readonly icon = 'blink_icon';
 
-export const Blink: UnitAbility = {
-  name: AbilityName.BLINK,
-  manaCost,
-  icon: 'blink_icon',
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -59,7 +58,7 @@ export const Blink: UnitAbility = {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     } else {
       await moveUnit(unit, { x, y }, session, state);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     }
-  }
-};
+  };
+}

@@ -8,13 +8,12 @@ import Sounds from '../../../sounds/Sounds';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 
-const manaCost = 4;
+export class FreeMove implements UnitAbility {
+  readonly name = AbilityName.FREE_MOVE;
+  readonly manaCost = 4;
+  readonly icon = 'icon5';
 
-export const FreeMove: UnitAbility = {
-  name: AbilityName.FREE_MOVE,
-  manaCost,
-  icon: 'icon5',
-  use: async (
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -33,9 +32,9 @@ export const FreeMove: UnitAbility = {
     const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (!map.isBlocked({ x, y })) {
       await moveUnit(unit, { x, y }, session, state);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}
