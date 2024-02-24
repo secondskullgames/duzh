@@ -9,6 +9,8 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
+import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 8;
 const damageCoefficient = 1;
@@ -43,7 +45,7 @@ export const DashAttack: UnitAbility = {
         unit.spendMana(manaCost);
 
         const behindCoordinates = { x: x + 2 * dx, y: y + 2 * dy };
-        if (map.contains(behindCoordinates) && !map.isBlocked(behindCoordinates)) {
+        if (map.contains(behindCoordinates) && !isBlocked(map, behindCoordinates)) {
           await moveUnit(targetUnit, behindCoordinates, session, state);
           await moveUnit(unit, targetCoordinates, session, state);
         }
@@ -51,7 +53,7 @@ export const DashAttack: UnitAbility = {
         const attack: Attack = {
           sound: Sounds.SPECIAL_ATTACK,
           calculateAttackResult: (unit: Unit): AttackResult => {
-            const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+            const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
             return { damage };
           },
           getDamageLogMessage: (

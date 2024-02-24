@@ -21,7 +21,9 @@ describe('Pathfinder', () => {
     test('new implementation', () => {
       const pathfinder = new PathFinder_3rdParty();
       const path = pathfinder.findPath(start, goal, tiles);
-      expect(path.length > 0).toBe(true);
+      expect(path.length >= 2).toBe(true);
+      expect(path[0]).toEqual(start);
+      expect(path[path.length - 1]).toEqual(goal);
     });
   });
 });

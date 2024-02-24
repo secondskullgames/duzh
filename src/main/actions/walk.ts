@@ -5,6 +5,7 @@ import Coordinates from '../geometry/Coordinates';
 import { GameState } from '../core/GameState';
 import Sounds from '../sounds/Sounds';
 import { Session } from '../core/Session';
+import { isBlocked } from '../maps/MapUtils';
 
 export const walk = async (
   unit: Unit,
@@ -15,7 +16,7 @@ export const walk = async (
   const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
   const map = unit.getMap();
-  if (!map.contains(coordinates) || map.isBlocked(coordinates)) {
+  if (!map.contains(coordinates) || isBlocked(map, coordinates)) {
     // do nothing
   } else {
     await moveUnit(unit, coordinates, session, state);

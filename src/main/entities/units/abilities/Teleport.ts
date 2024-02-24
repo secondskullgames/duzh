@@ -2,7 +2,6 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
@@ -10,6 +9,8 @@ import Activity from '../Activity';
 import { sleep } from '../../../utils/promises';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 export const range = 3;
 const manaCost = 20;
@@ -43,7 +44,7 @@ export const Teleport: UnitAbility = {
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       unit.spendMana(manaCost);
       state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
 

@@ -1,7 +1,6 @@
 import { UnitController } from './UnitController';
-import { canMove } from './ControllerUtils';
+import { canMove, getClosestEnemy } from './ControllerUtils';
 import Unit from '../Unit';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChance } from '../../../utils/random';
@@ -17,61 +16,79 @@ import MapInstance from '../../../maps/MapInstance';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import StayOrder from '../orders/StayOrder';
-import { checkNotNull } from '../../../utils/preconditions';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const maxSummonedUnits = 3;
-const summonChance = 0.1;
+const summonChance = 0.2;
 const avoidChance = 0.75;
-
-const _countUnits = (map: MapInstance, summonedUnitClass: string): number => {
-  return map.getAllUnits().filter(unit => unit.getUnitClass() === summonedUnitClass)
-    .length;
-};
+const teleportChance = 0.5;
+const teleportMinDistance = 3;
 
 export default class WizardController implements UnitController {
   /**
+   * If we have mana to Summon, and X% chance, cast Summon;
+   * if we have mana to Teleport, and player is within X tiles, cast Teleport;
    * @override {@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const playerUnit = session.getPlayerUnit();
+    const closestEnemyUnit = getClosestEnemy(unit);
     const map = session.getMap();
 
-    const distanceToPlayerUnit = manhattanDistance(
-      unit.getCoordinates(),
-      playerUnit.getCoordinates()
-    );
-
-    const canTeleport =
-      unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
-    const canSummon =
-      unit.hasAbility(AbilityName.SUMMON) &&
-      unit.getMana() >= Summon.manaCost &&
-      _countUnits(map, unit.getSummonedUnitClass()!) <= maxSummonedUnits;
-
-    if (canTeleport && distanceToPlayerUnit <= 2) {
-      return new TeleportAwayOrder({ targetUnit: playerUnit });
-    }
-
-    if (canSummon && randChance(summonChance)) {
-      const coordinates = Direction.values()
-        .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
-        .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
+    if (_canSummon(unit, map) && _wantsToSummon()) {
+      const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return new AbilityOrder({
-          ability: Summon,
-          coordinates
-        });
+        return new AbilityOrder({ ability: Summon, coordinates });
       }
     }
 
-    const aiParameters = checkNotNull(unit.getAiParameters());
-    if (!canMove(aiParameters.speed, session)) {
+    if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
+      return new TeleportAwayOrder({ targetUnit: closestEnemyUnit });
+    }
+
+    if (!canMove(unit, session)) {
       return new StayOrder();
     }
 
     const behavior = randChance(avoidChance)
-      ? new AvoidUnitBehavior({ targetUnit: playerUnit })
+      ? new AvoidUnitBehavior({ targetUnit: closestEnemyUnit })
       : new WanderBehavior();
     return behavior.issueOrder(unit, state, session);
   };
 }
+
+const _canSummon = (unit: Unit, map: MapInstance): boolean => {
+  return (
+    unit.hasAbility(AbilityName.SUMMON) &&
+    unit.getMana() >= Summon.manaCost &&
+    _countUnits(map, unit.getSummonedUnitClass()!) <= maxSummonedUnits
+  );
+};
+
+const _countUnits = (map: MapInstance, unitClass: string): number => {
+  return map.getAllUnits().filter(unit => unit.getUnitClass() === unitClass).length;
+};
+
+const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
+  const map = unit.getMap();
+  const targetCoordinates = Direction.values()
+    .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
+    .find(coordinates => map.contains(coordinates) && !isBlocked(map, coordinates));
+  return targetCoordinates ?? null;
+};
+
+const _wantsToTeleport = (unit: Unit, closestEnemyUnit: Unit) => {
+  const distanceToEnemyUnit = manhattanDistance(
+    unit.getCoordinates(),
+    closestEnemyUnit.getCoordinates()
+  );
+  return distanceToEnemyUnit <= teleportMinDistance && randChance(teleportChance);
+};
+
+const _canTeleport = (unit: Unit) => {
+  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+};
+
+const _wantsToSummon = () => {
+  return randChance(summonChance);
+};

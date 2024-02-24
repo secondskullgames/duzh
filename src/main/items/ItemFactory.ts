@@ -17,6 +17,7 @@ import { Session } from '../core/Session';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
 import { AssetLoader } from '../assets/AssetLoader';
+import { revealMap } from '../maps/MapUtils';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -112,6 +113,19 @@ export default class ItemFactory {
     });
   };
 
+  createScrollOfVision = async (): Promise<InventoryItem> => {
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
+      revealMap(unit.getMap());
+    };
+
+    return new InventoryItem({
+      name: 'Scroll of Vision',
+      category: 'SCROLL',
+      onUse,
+      tooltip: ['Reveals the entire map'].join('\n')
+    });
+  };
+
   createScrollOfFireball = async (damage: number): Promise<InventoryItem> => {
     const onUse: ItemProc = async (
       _: InventoryItem,
@@ -200,6 +214,9 @@ export default class ItemFactory {
           case 'floor_fire': {
             const damage = parseInt(model.params?.damage ?? '0');
             return this.createScrollOfFloorFire(damage);
+          }
+          case 'reveal_map': {
+            return this.createScrollOfVision();
           }
           case 'fireball': {
             const damage = parseInt(model.params?.damage ?? '0');

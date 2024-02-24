@@ -11,6 +11,8 @@ import { dealDamage } from '../../../actions/dealDamage';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import Direction from '../../../geometry/Direction';
+import { getRangedDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 5;
 
@@ -37,7 +39,7 @@ export const StrafeShot: UnitAbility = {
     }
 
     const map = session.getMap();
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       await moveUnit(unit, coordinates, session, state);
       unit.spendMana(manaCost);
       await _shootArrow(unit, unit.getDirection(), session, state);
@@ -57,7 +59,7 @@ const _shootArrow = async (
 
   const coordinatesList = [];
   let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-  while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+  while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
     coordinatesList.push({ x, y });
     x += dx;
     y += dy;
@@ -66,7 +68,7 @@ const _shootArrow = async (
   const targetUnit = map.getUnit({ x, y });
   const animationFactory = state.getAnimationFactory();
   if (targetUnit) {
-    const damage = unit.getRangedDamage();
+    const damage = getRangedDamage(unit);
     const arrowAnimation = await animationFactory.getArrowAnimation(
       unit,
       { dx, dy },

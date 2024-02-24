@@ -1,0 +1,10 @@
+{
+  "id": "vision_scroll",
+  "level": 2,
+  "rarity": 3,
+  "mapSprite": "map_scroll",
+  "type": "scroll",
+  "params": {
+    "spell": "reveal_map"
+  }
+}

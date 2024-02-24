@@ -7,7 +7,7 @@ import { openDoor } from '../../../actions/openDoor';
 import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { pushBlock } from '../../../actions/pushBlock';
-import { getDoor } from '../../../maps/MapUtils';
+import { getDoor, isBlocked } from '../../../maps/MapUtils';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 
@@ -34,7 +34,7 @@ export class MoveOrder implements UnitOrder {
     if (!map.contains(coordinates)) {
       // do nothing
       return;
-    } else if (!map.isBlocked(coordinates)) {
+    } else if (!isBlocked(map, coordinates)) {
       await walk(unit, direction, session, state);
       return;
     } else {

@@ -1,7 +1,6 @@
 import { mapToCommand } from './inputMappers';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import ScreenHandlers from './screens/ScreenHandlers';
-import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
 import { inject, injectable } from 'inversify';
 import type { KeyCommand } from './inputTypes';
@@ -14,8 +13,6 @@ export default class InputHandler {
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
   constructor(
-    @inject(GameState.SYMBOL)
-    private readonly state: GameState,
     @inject(Session.SYMBOL)
     private readonly session: Session,
     @inject(ScreenHandlers)

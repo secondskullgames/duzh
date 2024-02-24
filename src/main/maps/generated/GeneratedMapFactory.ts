@@ -4,6 +4,7 @@ import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGe
 import RoomCorridorMapGenerator3 from './RoomCorridorMapGenerator3';
 import BlobMapGenerator from './BlobMapGenerator';
 import PathMapGenerator from './PathMapGenerator';
+import { getUnoccupiedLocations } from './MapGenerationUtils';
 import ModelLoader from '../../utils/ModelLoader';
 import MapInstance from '../MapInstance';
 import { GameState } from '../../core/GameState';
@@ -12,7 +13,6 @@ import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
 import Unit from '../../entities/units/Unit';
-import { getUnoccupiedLocations } from '../MapUtils';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
@@ -23,6 +23,7 @@ import UnitFactory from '../../entities/units/UnitFactory';
 import Coordinates from '../../geometry/Coordinates';
 import MapItem from '../../entities/objects/MapItem';
 import { Faction } from '../../entities/units/Faction';
+import { chooseUnitController } from '../../entities/units/controllers/ControllerUtils';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -150,7 +151,7 @@ export class GeneratedMapFactory {
       const unitModel = weightedRandom(probabilities, mappedUnitModels);
       const coordinates = randChoice(candidateLocations);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
-      const controller = this._chooseUnitController(unitModel);
+      const controller = chooseUnitController(unitModel.id);
       const unit = await unitFactory.createUnit({
         unitClass: unitModel.id,
         controller,
@@ -182,14 +183,6 @@ export class GeneratedMapFactory {
       throw new Error('no matching unit models');
     }
     return possibleUnitModels;
-  };
-
-  private _chooseUnitController = (unitModel: UnitModel) => {
-    if (unitModel.name === 'Goblin Archer') {
-      return new ArcherController();
-    } else {
-      return new BasicEnemyController();
-    }
   };
 
   private _generateObjects = async (

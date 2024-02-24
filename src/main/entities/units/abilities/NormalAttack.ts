@@ -7,6 +7,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Sounds from '../../../sounds/Sounds';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getMeleeDamage } from '../UnitUtils';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?
@@ -35,7 +36,7 @@ export const NormalAttack: UnitAbility = {
       const attack: Attack = {
         sound: Sounds.PLAYER_HITS_ENEMY,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage());
+          const damage = Math.round(getMeleeDamage(unit));
           return { damage };
         },
         getDamageLogMessage: (

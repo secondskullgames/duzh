@@ -1,11 +1,12 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -26,11 +27,9 @@ export default class TeleportAwayOrder implements UnitOrder {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        if (map.contains({ x, y })) {
-          if (!map.isBlocked({ x, y })) {
-            if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
-              tiles.push({ x, y });
-            }
+        if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+          if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
+            tiles.push({ x, y });
           }
         }
       }

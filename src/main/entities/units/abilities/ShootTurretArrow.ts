@@ -10,6 +10,8 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getRangedDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 5;
 
@@ -40,7 +42,7 @@ export const ShootTurretArrow: UnitAbility = {
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+    while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
       y += dy;
@@ -48,7 +50,7 @@ export const ShootTurretArrow: UnitAbility = {
 
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
-      const damage = unit.getRangedDamage();
+      const damage = getRangedDamage(unit);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const arrowAnimation = await state
         .getAnimationFactory()

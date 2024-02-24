@@ -2,7 +2,7 @@ import Sprite from './Sprite';
 import Offsets from '../../geometry/Offsets';
 import { Image } from '../images/Image';
 
-class StaticSprite implements Sprite {
+export default class StaticSprite implements Sprite {
   private readonly image: Image;
   private readonly offsets: Offsets;
 
@@ -21,5 +21,3 @@ class StaticSprite implements Sprite {
    */
   getOffsets = () => this.offsets;
 }
-
-export default StaticSprite;

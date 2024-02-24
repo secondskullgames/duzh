@@ -9,6 +9,8 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 6;
 const damageCoefficient = 0.5;
@@ -41,7 +43,7 @@ export const KnockbackAttack: UnitAbility = {
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+          const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
           return { damage };
         },
         getDamageLogMessage: (
@@ -60,13 +62,13 @@ export const KnockbackAttack: UnitAbility = {
       targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
-        if (map.contains(first) && !map.isBlocked(first)) {
+        if (map.contains(first) && !isBlocked(map, first)) {
           await moveUnit(targetUnit, first, session, state);
           if (TWO_TILES) {
             await sleep(75);
             if (targetUnit.getLife() > 0) {
               const second = Coordinates.plus(first, direction);
-              if (map.contains(second) && !map.isBlocked(second)) {
+              if (map.contains(second) && !isBlocked(map, second)) {
                 await moveUnit(targetUnit, second, session, state);
               }
             }

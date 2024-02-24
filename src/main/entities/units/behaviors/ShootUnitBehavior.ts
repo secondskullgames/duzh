@@ -3,13 +3,14 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
-import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
-import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
+import { pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
-import MapInstance from '../../../maps/MapInstance';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { canShoot } from '../controllers/ControllerUtils';
+import { AbilityName } from '../abilities/AbilityName';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -25,11 +26,10 @@ export default class ShootUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
-    const map = session.getMap();
 
     if (
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1 &&
-      this._canShoot(unit, targetUnit, map)
+      canShoot(unit, targetUnit, AbilityName.SHOOT_ARROW)
     ) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
@@ -41,18 +41,5 @@ export default class ShootUnitBehavior implements UnitBehavior {
 
     // TODO - instantiating this here is a hack
     return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, state, session);
-  };
-
-  private _canShoot = (unit: Unit, targetUnit: Unit, map: MapInstance): boolean => {
-    return (
-      unit.getEquipment().getBySlot('RANGED_WEAPON') !== null &&
-      unit.getMana() >= ShootArrow.manaCost &&
-      isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-      hasUnblockedStraightLineBetween(
-        unit.getCoordinates(),
-        targetUnit.getCoordinates(),
-        map
-      )
-    );
   };
 }

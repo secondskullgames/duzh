@@ -10,6 +10,8 @@ import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
+import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -18,7 +20,7 @@ const stunDuration = 1;
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
   calculateAttackResult: (unit: Unit): AttackResult => {
-    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
     return { damage };
   },
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
@@ -63,9 +65,9 @@ export const DoubleDashAttack: UnitAbility = {
     {
       const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
       const isValid = map.contains(targetCoordinates);
-      const isBlocked = map.isBlocked(targetCoordinates);
+      const blocked = isBlocked(map, targetCoordinates);
       const hasUnit = map.getUnit(targetCoordinates);
-      if (!isValid || (isBlocked && !hasUnit)) {
+      if (!isValid || (blocked && !hasUnit)) {
         return;
       }
     }
@@ -81,7 +83,7 @@ export const DoubleDashAttack: UnitAbility = {
         const targetUnit = map.getUnit(targetCoordinates);
         if (targetUnit) {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
-          if (!map.isBlocked(behindCoordinates)) {
+          if (!isBlocked(map, behindCoordinates)) {
             await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
           }
@@ -89,7 +91,7 @@ export const DoubleDashAttack: UnitAbility = {
             await attackUnit(unit, targetUnit, attack, session, state);
             targetUnit.setStunned(stunDuration);
           }
-        } else if (!map.isBlocked(targetCoordinates)) {
+        } else if (!isBlocked(map, targetCoordinates)) {
           await moveUnit(unit, targetCoordinates, session, state);
         }
         await sleep(100);

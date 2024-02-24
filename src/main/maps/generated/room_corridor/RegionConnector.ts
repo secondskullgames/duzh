@@ -3,7 +3,7 @@ import { Connection } from './Connection';
 import RoomRegion from './RoomRegion';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChoice, randInt, shuffle } from '../../../utils/random';
-import { areAdjacent } from '../../MapUtils';
+import { areAdjacent } from '../../../geometry/RectUtils';
 
 const MIN_BORDER_LENGTH = 5;
 

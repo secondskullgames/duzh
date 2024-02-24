@@ -8,6 +8,7 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Feature } from '../../../utils/features';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 10;
 
@@ -33,23 +34,20 @@ export const Blink: UnitAbility = {
     const distance = 2;
     let { x, y } = unit.getCoordinates();
     let blocked = false;
-    const isBlocked = (coordinates: Coordinates): boolean => {
-      return !map.contains(coordinates) || map.getTile(coordinates).isBlocking();
-    };
 
     if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
       for (let i = 0; i < distance; i++) {
         x += dx;
         y += dy;
       }
-      if (isBlocked({ x, y })) {
+      if (isBlocked(map, { x, y })) {
         blocked = true;
       }
     } else {
       for (let i = 0; i < distance; i++) {
         x += dx;
         y += dy;
-        if (isBlocked({ x, y })) {
+        if (isBlocked(map, { x, y })) {
           blocked = true;
         }
       }

@@ -6,6 +6,7 @@ import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import { sleep } from '../utils/promises';
 import { Session } from '../core/Session';
+import { isBlocked } from '../maps/MapUtils';
 
 export const fastMove = async (
   unit: Unit,
@@ -18,7 +19,7 @@ export const fastMove = async (
   // eslint-disable-next-line no-constant-condition
   while (true) {
     coordinates = Coordinates.plus(unit.getCoordinates(), direction);
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+    if (!isBlocked(map, coordinates)) {
       await moveUnit(unit, coordinates, session, state);
       await playTurn(state, session);
       await sleep(100);

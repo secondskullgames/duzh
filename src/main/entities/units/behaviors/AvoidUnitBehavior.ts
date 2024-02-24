@@ -3,7 +3,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { maxBy } from '../../../utils/arrays';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import StayOrder from '../orders/StayOrder';
@@ -13,6 +12,8 @@ import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -26,50 +27,68 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
-    const map = session.getMap();
+    if (_canTeleport(unit)) {
+      const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
+      if (targetCoordinates) {
+        return new AbilityOrder({ coordinates: targetCoordinates, ability: Teleport });
+      }
+    }
+
+    const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
+    if (targetCoordinates) {
+      return new AttackMoveOrder({
+        coordinates: targetCoordinates,
+        ability: NormalAttack
+      });
+    }
+    return new StayOrder();
+  };
+
+  private _getTargetTeleportCoordinates = (unit: Unit, closestEnemyUnit: Unit) => {
+    const map = unit.getMap();
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!map.isBlocked(coordinates)) {
-          tiles.push(coordinates);
-        } else if (map.getUnit(coordinates) === targetUnit) {
+        if (!isBlocked(map, coordinates)) {
           tiles.push(coordinates);
         }
       }
     }
-
-    if (tiles.length > 0) {
-      if (_canTeleport(unit)) {
-        const possibleCoordinates = tiles //
-          .filter(
-            coordinates => manhattanDistance(unit.getCoordinates(), coordinates) >= 3
-          )
-          .filter(
-            coordinates =>
-              manhattanDistance(unit.getCoordinates(), coordinates) <= teleportRange
-          );
-        if (possibleCoordinates.length > 0) {
-          const coordinates = maxBy(possibleCoordinates, coordinates =>
-            manhattanDistance(coordinates, targetUnit.getCoordinates())
-          );
-          return new AbilityOrder({ coordinates, ability: Teleport });
-        }
-      }
-
-      const coordinates = maxBy(tiles, coordinates =>
-        manhattanDistance(coordinates, targetUnit.getCoordinates())
+    const possibleCoordinates = tiles
+      .filter(coordinates => manhattanDistance(unit.getCoordinates(), coordinates) >= 3)
+      .filter(
+        coordinates =>
+          manhattanDistance(unit.getCoordinates(), coordinates) <= teleportRange
       );
-
-      return new AttackMoveOrder({
-        coordinates,
-        ability: NormalAttack
-      });
+    if (possibleCoordinates.length > 0) {
+      return maxBy(possibleCoordinates, coordinates =>
+        manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
+      );
     }
-    return new StayOrder();
+    return null;
+  };
+
+  private _getTargetWalkCoordinates = (unit: Unit, targetUnit: Unit) => {
+    const map = unit.getMap();
+    const tiles: Coordinates[] = [];
+
+    for (const direction of Direction.values()) {
+      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+      if (map.contains(coordinates)) {
+        if (!isBlocked(map, coordinates)) {
+          tiles.push(coordinates);
+        }
+      }
+    }
+
+    return maxBy(tiles, coordinates =>
+      manhattanDistance(coordinates, targetUnit.getCoordinates())
+    );
   };
 }
 

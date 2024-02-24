@@ -10,6 +10,8 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getRangedDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 5;
 
@@ -43,7 +45,7 @@ export const ShootArrow: UnitAbility = {
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+    while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
       y += dy;
@@ -52,7 +54,7 @@ export const ShootArrow: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     const animationFactory = state.getAnimationFactory();
     if (targetUnit) {
-      const damage = unit.getRangedDamage();
+      const damage = getRangedDamage(unit);
       const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },

@@ -1,8 +1,8 @@
 import Rect from '../../main/geometry/Rect';
-import { areAdjacent } from '../../main/maps/MapUtils';
+import { areAdjacent } from '../../main/geometry/RectUtils';
 import { expect, test } from '@jest/globals';
 
-test('test adjacent rectangles', () => {
+test('areAdjacent', () => {
   // right-left
   // ####
   // ####****
