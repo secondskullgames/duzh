@@ -1,11 +1,11 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { comparingReversed } from '../../../utils/arrays';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

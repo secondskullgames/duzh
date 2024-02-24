@@ -4,6 +4,7 @@ import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGe
 import RoomCorridorMapGenerator3 from './RoomCorridorMapGenerator3';
 import BlobMapGenerator from './BlobMapGenerator';
 import PathMapGenerator from './PathMapGenerator';
+import { getUnoccupiedLocations } from './MapGenerationUtils';
 import ModelLoader from '../../utils/ModelLoader';
 import MapInstance from '../MapInstance';
 import { GameState } from '../../core/GameState';
@@ -12,7 +13,6 @@ import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
 import Unit from '../../entities/units/Unit';
-import { getUnoccupiedLocations } from '../MapUtils';
 import UnitModel from '../../schemas/UnitModel';
 import ArcherController from '../../entities/units/controllers/ArcherController';
 import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';

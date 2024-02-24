@@ -1,4 +1,4 @@
-import { getUnoccupiedLocations } from '../MapUtils';
+import { getUnoccupiedLocations } from './MapGenerationUtils';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
 import TileType from '../../schemas/TileType';

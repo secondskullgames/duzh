@@ -1,5 +1,5 @@
 import Unit from './Unit';
-import { isInStraightLine } from '../../maps/MapUtils';
+import { isInStraightLine } from '../../geometry/CoordinatesUtils';
 
 export const getMeleeDamage = (unit: Unit): number => {
   let damage = unit.getStrength();

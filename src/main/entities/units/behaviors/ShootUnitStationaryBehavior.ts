@@ -1,7 +1,6 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import { isInStraightLine } from '../../../maps/MapUtils';
 import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
@@ -10,6 +9,7 @@ import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import MapInstance from '../../../maps/MapInstance';
+import { isInStraightLine } from '../../../geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

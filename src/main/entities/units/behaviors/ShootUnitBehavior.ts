@@ -3,13 +3,13 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
-import { isInStraightLine, manhattanDistance } from '../../../maps/MapUtils';
 import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import Coordinates from '../../../geometry/Coordinates';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import MapInstance from '../../../maps/MapInstance';
+import { isInStraightLine, manhattanDistance } from '../../../geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

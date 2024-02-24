@@ -3,7 +3,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { maxBy } from '../../../utils/arrays';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import StayOrder from '../orders/StayOrder';
@@ -13,6 +12,7 @@ import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

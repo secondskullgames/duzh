@@ -1,7 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove, getClosestEnemy } from './ControllerUtils';
 import Unit from '../Unit';
-import { manhattanDistance } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChance } from '../../../utils/random';
@@ -17,6 +16,7 @@ import MapInstance from '../../../maps/MapInstance';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import StayOrder from '../orders/StayOrder';
+import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;

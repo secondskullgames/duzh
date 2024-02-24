@@ -2,7 +2,6 @@ import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
-import { hypotenuse } from '../../../maps/MapUtils';
 import { randBoolean, randChance } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
@@ -12,6 +11,7 @@ import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { hypotenuse } from '../../../geometry/CoordinatesUtils';
 
 export default class ArcherController implements UnitController {
   /**

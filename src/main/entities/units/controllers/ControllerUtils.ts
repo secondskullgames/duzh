@@ -2,7 +2,7 @@ import { Session } from '../../../core/Session';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
 import { Feature } from '../../../utils/features';
-import { hypotenuse } from '../../../maps/MapUtils';
+import { hypotenuse } from '../../../geometry/CoordinatesUtils';
 
 export const canMove = (unit: Unit, session: Session): boolean => {
   const aiParameters = checkNotNull(
