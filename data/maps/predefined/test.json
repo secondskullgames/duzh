@@ -11,11 +11,14 @@
   "enemyColors": {
     "BLUE": "shade"
   },
-  "itemColors": {},
+  "itemColors": {
+    "BLUE": "vision_scroll"
+  },
   "equipmentColors": {},
   "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {
-    "enabled": false
+    "enabled": true,
+    "radius": 2
   }
 }

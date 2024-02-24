@@ -148,3 +148,19 @@ export const getBonus = (map: MapInstance, coordinates: Coordinates): Bonus | nu
       .map(object => object as Bonus)[0] ?? null
   );
 };
+
+export const getAllCoordinates = (map: MapInstance): Coordinates[] => {
+  const allCoordinates = [];
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      allCoordinates.push({ x, y });
+    }
+  }
+  return allCoordinates;
+};
+
+export const revealMap = (map: MapInstance) => {
+  for (const coordinates of getAllCoordinates(map)) {
+    map.revealTile(coordinates);
+  }
+};
