@@ -5,6 +5,7 @@ import { UnitAbility } from './abilities/UnitAbility';
 import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
+import { calculateTotalIncomingDamage } from './UnitUtils';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import Coordinates from '../../geometry/Coordinates';
@@ -12,7 +13,6 @@ import Direction from '../../geometry/Direction';
 import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
-import { isInStraightLine } from '../../maps/MapUtils';
 import Entity from '../Entity';
 import { checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
@@ -191,9 +191,8 @@ export default class Unit implements Entity, Animatable {
   };
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
-  hasAbility = (abilityName: AbilityName): boolean => {
-    return !!this.abilities.find(ability => ability.name === abilityName);
-  };
+  hasAbility = (abilityName: AbilityName): boolean =>
+    this.abilities.some(ability => ability.name === abilityName);
 
   /**
    * @override
@@ -245,8 +244,11 @@ export default class Unit implements Entity, Animatable {
   getLifetimeStepsTaken = (): number => this.lifetimeStepsTaken;
 
   takeDamage = (incomingDamage: number, sourceUnit: Unit | null): DefendResult => {
-    const damageAbsorbed = this._calculateAbsorbedDamage(incomingDamage, sourceUnit);
-    const damageTaken = Math.min(incomingDamage - damageAbsorbed, this.life);
+    const damageTaken = Math.min(
+      calculateTotalIncomingDamage(this, incomingDamage, sourceUnit),
+      this.life
+    );
+    const damageAbsorbed = incomingDamage - damageTaken;
     this.life -= damageTaken;
     this.lifetimeDamageTaken += damageTaken;
 
@@ -384,29 +386,6 @@ export default class Unit implements Entity, Animatable {
   private _endOfTurn = () => {
     // decrement stun duration
     this.stunDuration = Math.max(this.stunDuration - 1, 0);
-  };
-
-  private _calculateAbsorbedDamage = (
-    baseDamage: number,
-    sourceUnit: Unit | null
-  ): number => {
-    let absorbRatio = 0;
-    for (const equipment of this.equipment.getAll()) {
-      absorbRatio += equipment.absorbAmount ?? 0;
-      if (equipment.blockAmount !== null) {
-        if (
-          sourceUnit !== null &&
-          isInStraightLine(this.getCoordinates(), sourceUnit.getCoordinates())
-        ) {
-          absorbRatio += equipment.blockAmount ?? 0;
-        }
-      }
-    }
-    if (absorbRatio > 1) {
-      absorbRatio = 1;
-    }
-
-    return Math.round(baseDamage * absorbRatio);
   };
 
   getStrength = (): number => this.strength;
