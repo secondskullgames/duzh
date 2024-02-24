@@ -170,7 +170,7 @@ export default class ItemFactory {
       name,
       category: 'SCROLL',
       onUse,
-      tooltip: ['Shoots a fireball that deals', `${duration} damage`].join('\n')
+      tooltip: `Freezes nearby enemies for ${duration} turns`
     });
   };
 
