@@ -65,12 +65,20 @@ const BoltSwordScript: EquipmentScript = {
 };
 
 const BowOfFrostScript: EquipmentScript = {
-  afterRangedAttack: async (equipment: Equipment, target: Coordinates) => {
+  afterRangedAttack: async (
+    equipment: Equipment,
+    target: Coordinates,
+    state: GameState,
+    session: Session
+  ) => {
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(5);
+      session
+        .getTicker()
+        .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
     }
   }
 };

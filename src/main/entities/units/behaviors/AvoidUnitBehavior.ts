@@ -73,7 +73,10 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     return null;
   };
 
-  private _getTargetWalkCoordinates = (unit: Unit, targetUnit: Unit) => {
+  private _getTargetWalkCoordinates = (
+    unit: Unit,
+    targetUnit: Unit
+  ): Coordinates | null => {
     const map = unit.getMap();
     const tiles: Coordinates[] = [];
 
@@ -86,6 +89,9 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       }
     }
 
+    if (tiles.length === 0) {
+      return null;
+    }
     return maxBy(tiles, coordinates =>
       manhattanDistance(coordinates, targetUnit.getCoordinates())
     );
