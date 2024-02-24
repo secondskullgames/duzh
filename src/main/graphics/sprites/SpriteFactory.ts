@@ -42,15 +42,15 @@ export default class SpriteFactory {
     return new StaticSprite(image, offsets);
   };
 
-  /**
-   * TODO palette swaps should be part of the JSON, not a parameter here
-   */
   createStaticSprite = async (
     spriteName: string,
-    paletteSwaps: PaletteSwaps
+    paletteSwaps?: PaletteSwaps
   ): Promise<Sprite> => {
     const model = await this.modelLoader.loadStaticSpriteModel(spriteName);
     const { filename, offsets, transparentColor } = model;
+    if (!paletteSwaps) {
+      paletteSwaps = PaletteSwaps.create(model.paletteSwaps);
+    }
     const image = await this.imageFactory.getImage({
       filename,
       paletteSwaps,
@@ -223,6 +223,9 @@ export default class SpriteFactory {
               break;
             case 'burned':
               effects.push(ImageEffect.BURNED);
+              break;
+            case 'frozen':
+              effects.push(ImageEffect.FROZEN);
               break;
           }
 

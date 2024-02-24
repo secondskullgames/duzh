@@ -1,10 +1,14 @@
 {
   "id": "vision_scroll",
+  "name": "Scroll of Vision",
   "level": 2,
   "rarity": 3,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {
     "spell": "reveal_map"
+  },
+  "paletteSwaps": {
+    "DARK_RED": "BLUE"
   }
 }

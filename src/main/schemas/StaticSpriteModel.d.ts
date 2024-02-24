@@ -6,6 +6,7 @@ type StaticSpriteModel = {
     dy: number;
   };
   transparentColor: string;
+  paletteSwaps?: Record<string, string>;
 };
 
 export default StaticSpriteModel;

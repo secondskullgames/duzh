@@ -18,6 +18,7 @@ import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
 import { AssetLoader } from '../assets/AssetLoader';
 import { revealMap } from '../maps/MapUtils';
+import { castFreeze } from '../actions/castFreeze';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -56,7 +57,7 @@ export default class ItemFactory {
     });
   };
 
-  createManaPotion = (manaRestored: number): InventoryItem => {
+  createManaPotion = (name: string, manaRestored: number): InventoryItem => {
     const onUse: ItemProc = async (
       item: InventoryItem,
       unit: Unit,
@@ -73,24 +74,27 @@ export default class ItemFactory {
     };
 
     return new InventoryItem({
-      name: 'Mana Potion',
+      name,
       category: 'POTION',
       onUse,
       tooltip: `Restores ${manaRestored} mana`
     });
   };
 
-  createKey = (): InventoryItem => {
+  createKey = (name: string): InventoryItem => {
     const onUse: ItemProc = async () => {}; // TODO - for now just use these by walking into a door
 
     return new InventoryItem({
-      name: 'Key',
+      name,
       category: 'KEY',
       onUse
     });
   };
 
-  createScrollOfFloorFire = async (damage: number): Promise<InventoryItem> => {
+  createScrollOfFloorFire = async (
+    name: string,
+    damage: number
+  ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (
       _: InventoryItem,
       unit: Unit,
@@ -102,7 +106,7 @@ export default class ItemFactory {
     };
 
     return new InventoryItem({
-      name: 'Scroll of Floor Fire',
+      name,
       category: 'SCROLL',
       onUse,
       tooltip: [
@@ -113,20 +117,23 @@ export default class ItemFactory {
     });
   };
 
-  createScrollOfVision = async (): Promise<InventoryItem> => {
+  createScrollOfVision = async (name: string): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       revealMap(unit.getMap());
     };
 
     return new InventoryItem({
-      name: 'Scroll of Vision',
+      name,
       category: 'SCROLL',
       onUse,
       tooltip: ['Reveals the entire map'].join('\n')
     });
   };
 
-  createScrollOfFireball = async (damage: number): Promise<InventoryItem> => {
+  createScrollOfFireball = async (
+    name: string,
+    damage: number
+  ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (
       _: InventoryItem,
       unit: Unit,
@@ -138,10 +145,32 @@ export default class ItemFactory {
     };
 
     return new InventoryItem({
-      name: 'Scroll of Fireball',
+      name,
       category: 'SCROLL',
       onUse,
       tooltip: ['Shoots a fireball that deals', `${damage} damage`].join('\n')
+    });
+  };
+
+  createScrollOfFreeze = async (
+    name: string,
+    duration: number
+  ): Promise<InventoryItem> => {
+    const onUse: ItemProc = async (
+      _: InventoryItem,
+      unit: Unit,
+      state: GameState,
+      session: Session
+    ) => {
+      session.setScreen(GameScreen.GAME);
+      await castFreeze(unit, 5, duration, session, state);
+    };
+
+    return new InventoryItem({
+      name,
+      category: 'SCROLL',
+      onUse,
+      tooltip: ['Shoots a fireball that deals', `${duration} damage`].join('\n')
     });
   };
 
@@ -203,24 +232,28 @@ export default class ItemFactory {
       }
       case 'mana_potion': {
         const amount = parseInt(model.params?.amount ?? '0');
-        return this.createManaPotion(amount);
+        return this.createManaPotion(model.name, amount);
       }
       case 'key': {
-        return this.createKey();
+        return this.createKey(model.name);
       }
       case 'scroll': {
         const spell = model.params?.spell;
         switch (spell) {
           case 'floor_fire': {
             const damage = parseInt(model.params?.damage ?? '0');
-            return this.createScrollOfFloorFire(damage);
+            return this.createScrollOfFloorFire(model.name, damage);
           }
           case 'reveal_map': {
-            return this.createScrollOfVision();
+            return this.createScrollOfVision(model.name);
           }
           case 'fireball': {
             const damage = parseInt(model.params?.damage ?? '0');
-            return this.createScrollOfFireball(damage);
+            return this.createScrollOfFireball(model.name, damage);
+          }
+          case 'freeze': {
+            const duration = parseInt(model.params?.duration ?? '0');
+            return this.createScrollOfFreeze(model.name, duration);
           }
           default:
             throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);

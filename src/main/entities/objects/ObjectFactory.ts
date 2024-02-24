@@ -71,10 +71,7 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite(
-      'block',
-      PaletteSwaps.empty()
-    );
+    const sprite = await this.spriteFactory.createStaticSprite('block');
 
     return new Block({
       coordinates,
@@ -88,10 +85,7 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite(
-      'map_health_globe',
-      PaletteSwaps.empty()
-    );
+    const sprite = await this.spriteFactory.createStaticSprite('map_health_globe');
 
     const lifeGained = 10;
 
