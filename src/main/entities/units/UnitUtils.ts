@@ -25,7 +25,7 @@ export const getRangedDamage = (unit: Unit): number => {
         // do nothing
         break;
       default:
-        damage += (equipment.damage ?? 0) / 2;
+        damage += Math.floor((equipment.damage ?? 0) / 2);
     }
   }
 
