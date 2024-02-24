@@ -6,10 +6,24 @@ import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import { Session } from '../core/Session';
 import { isBlocked } from '../maps/MapUtils';
 
-export type EquipmentScriptName = 'bolt_sword';
+export type EquipmentScriptName = 'bolt_sword' | 'bow_of_frost';
 
 export type EquipmentScript = Readonly<{
-  onAttack?: (
+  beforeAttack?: (
+    equipment: Equipment,
+    target: Coordinates,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
+
+  afterAttack?: (
+    equipment: Equipment,
+    target: Coordinates,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
+
+  afterRangedAttack?: (
     equipment: Equipment,
     target: Coordinates,
     state: GameState,
@@ -50,11 +64,24 @@ const BoltSwordScript: EquipmentScript = {
   }
 };
 
+const BowOfFrostScript: EquipmentScript = {
+  afterRangedAttack: async (equipment: Equipment, target: Coordinates) => {
+    const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
+    const targetUnit = map.getUnit(target);
+    if (targetUnit) {
+      targetUnit.setFrozen(5);
+    }
+  }
+};
+
 export namespace EquipmentScript {
   export const forName = (name: EquipmentScriptName): EquipmentScript => {
     switch (name) {
       case 'bolt_sword':
         return BoltSwordScript;
+      case 'bow_of_frost':
+        return BowOfFrostScript;
       default:
         throw new Error(`Unknown equipment script ${name}`);
     }

@@ -12,6 +12,7 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { getRangedDamage } from '../UnitUtils';
 import { isBlocked } from '../../../maps/MapUtils';
+import { EquipmentScript } from '../../../equipment/EquipmentScript';
 
 const manaCost = 5;
 
@@ -73,6 +74,17 @@ export const ShootArrow: UnitAbility = {
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);
+      } else {
+        for (const equipment of unit.getEquipment().getAll()) {
+          if (equipment.script) {
+            await EquipmentScript.forName(equipment.script).afterRangedAttack?.(
+              equipment,
+              targetUnit.getCoordinates(),
+              state,
+              session
+            );
+          }
+        }
       }
     } else {
       const arrowAnimation = await animationFactory.getArrowAnimation(

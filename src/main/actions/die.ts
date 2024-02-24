@@ -1,13 +1,13 @@
 import { gameOver } from './gameOver';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { randChance } from '../utils/random';
+import { random } from '../utils/random';
 import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
 
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
-const MANA_GLOBE_DROP_CHANCE = 0.25;
+const MANA_GLOBE_DROP_CHANCE = 0.15;
 
 export const die = async (unit: Unit, state: GameState, session: Session) => {
   const playerUnit = session.getPlayerUnit();
@@ -26,14 +26,16 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     if (unit.getUnitType() === 'WIZARD') {
       const key = await state.getItemFactory().createMapItem('key', coordinates, map);
       map.addObject(key);
-    } else if (randChance(HEALTH_GLOBE_DROP_CHANCE)) {
-      const healthGlobe = await state
-        .getObjectFactory()
-        .createHealthGlobe(coordinates, map);
-      map.addObject(healthGlobe);
-    } else if (randChance(MANA_GLOBE_DROP_CHANCE)) {
-      const manaGlobe = await state.getObjectFactory().createManaGlobe(coordinates, map);
-      map.addObject(manaGlobe);
+    } else {
+      const objectFactory = state.getObjectFactory();
+      const randomRoll = random();
+      if (randomRoll < HEALTH_GLOBE_DROP_CHANCE) {
+        const healthGlobe = await objectFactory.createHealthGlobe(coordinates, map);
+        map.addObject(healthGlobe);
+      } else if (randomRoll < HEALTH_GLOBE_DROP_CHANCE + MANA_GLOBE_DROP_CHANCE) {
+        const manaGlobe = await objectFactory.createManaGlobe(coordinates, map);
+        map.addObject(manaGlobe);
+      }
     }
   }
 };

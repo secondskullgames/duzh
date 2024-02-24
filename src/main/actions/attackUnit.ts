@@ -28,7 +28,7 @@ export const attackUnit = async (
 ) => {
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
-      await EquipmentScript.forName(equipment.script).onAttack?.(
+      await EquipmentScript.forName(equipment.script).beforeAttack?.(
         equipment,
         defender.getCoordinates(),
         state,
@@ -66,4 +66,15 @@ export const attackUnit = async (
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
 
   await sleep(50);
+
+  for (const equipment of attacker.getEquipment().getAll()) {
+    if (equipment.script) {
+      await EquipmentScript.forName(equipment.script).afterAttack?.(
+        equipment,
+        defender.getCoordinates(),
+        state,
+        session
+      );
+    }
+  }
 };
