@@ -87,16 +87,55 @@ export default class ObjectFactory {
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createStaticSprite('map_health_globe');
 
-    const lifeGained = 10;
+    const lifeToGain = 10;
 
     const onUse = async (unit: Unit, state: GameState, session: Session) => {
       if (unit === session.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
-          unit.gainLife(lifeGained);
+          const lifeGained = unit.gainLife(lifeToGain);
           state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
           session
             .getTicker()
             .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
+              turn: session.getTurn()
+            });
+          const map = unit.getMap();
+          const _this = getBonus(map, unit.getCoordinates())!;
+          map.removeObject(_this);
+        }
+      }
+    };
+
+    return new Bonus({
+      coordinates,
+      map,
+      sprite,
+      onUse
+    });
+  };
+
+  createManaGlobe = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<GameObject> => {
+    const sprite = await this.spriteFactory.createStaticSprite(
+      'map_health_globe',
+      PaletteSwaps.create({
+        DARK_RED: 'DARK_BLUE',
+        RED: 'BLUE'
+      })
+    );
+
+    const manaToGain = 10;
+
+    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+      if (unit === session.getPlayerUnit()) {
+        if (unit.getMana() < unit.getMaxMana()) {
+          const manaGained = unit.gainMana(manaToGain);
+          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
+          session
+            .getTicker()
+            .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
               turn: session.getTurn()
             });
           const map = unit.getMap();
