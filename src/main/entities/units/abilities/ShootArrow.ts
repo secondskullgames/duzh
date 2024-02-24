@@ -10,6 +10,7 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getRangedDamage } from '../UnitUtils';
 
 const manaCost = 5;
 
@@ -52,7 +53,7 @@ export const ShootArrow: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     const animationFactory = state.getAnimationFactory();
     if (targetUnit) {
-      const damage = unit.getRangedDamage();
+      const damage = getRangedDamage(unit);
       const arrowAnimation = await animationFactory.getArrowAnimation(
         unit,
         { dx, dy },

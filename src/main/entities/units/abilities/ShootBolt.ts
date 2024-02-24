@@ -10,6 +10,7 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getMeleeDamage } from '../UnitUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -46,7 +47,7 @@ export const ShootBolt: UnitAbility = {
 
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
-      const damage = unit.getMeleeDamage();
+      const damage = getMeleeDamage(unit);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit

@@ -6,10 +6,10 @@ type Coordinates = Readonly<{
 }>;
 
 namespace Coordinates {
-  export const equals = (first: Coordinates, second: Coordinates) =>
+  export const equals = (first: Coordinates, second: Coordinates): boolean =>
     first.x === second.x && first.y === second.y;
 
-  export const plus = ({ x, y }: Coordinates, { dx, dy }: Offsets) => ({
+  export const plus = ({ x, y }: Coordinates, { dx, dy }: Offsets): Coordinates => ({
     x: x + dx,
     y: y + dy
   });

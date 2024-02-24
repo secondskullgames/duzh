@@ -10,6 +10,7 @@ import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
+import { getMeleeDamage } from '../UnitUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -18,7 +19,7 @@ const stunDuration = 1;
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
   calculateAttackResult: (unit: Unit): AttackResult => {
-    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
     return { damage };
   },
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {

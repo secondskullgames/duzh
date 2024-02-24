@@ -23,10 +23,10 @@ namespace Direction {
 
   export const values = (): Direction[] => [N, E, S, W];
 
-  export const equals = (first: Direction, second: Direction) =>
+  export const equals = (first: Direction, second: Direction): boolean =>
     first.dx === second.dx && first.dy === second.dy;
 
-  export const toString = (direction: Direction) => {
+  export const toString = (direction: Direction): string => {
     if (equals(direction, Direction.N)) {
       return 'N';
     } else if (equals(direction, Direction.E)) {
@@ -39,14 +39,14 @@ namespace Direction {
     throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 
+  const _legacyDirectionLookup: Record<DirectionName, string> = {
+    N: 'NW',
+    E: 'NE',
+    S: 'SE',
+    W: 'SW'
+  };
   export const toLegacyDirection = (direction: Direction): string => {
-    const lookup: Record<DirectionName, string> = {
-      N: 'NW',
-      E: 'NE',
-      S: 'SE',
-      W: 'SW'
-    };
-    return lookup[_getName(direction)];
+    return _legacyDirectionLookup[_getName(direction)];
   };
 
   export const getDefaultUnitDirection = (): Direction => Direction.S;

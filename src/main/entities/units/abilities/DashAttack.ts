@@ -9,6 +9,7 @@ import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
+import { getMeleeDamage } from '../UnitUtils';
 
 const manaCost = 8;
 const damageCoefficient = 1;
@@ -51,7 +52,7 @@ export const DashAttack: UnitAbility = {
         const attack: Attack = {
           sound: Sounds.SPECIAL_ATTACK,
           calculateAttackResult: (unit: Unit): AttackResult => {
-            const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+            const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
             return { damage };
           },
           getDamageLogMessage: (

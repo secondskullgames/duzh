@@ -11,6 +11,7 @@ import { dealDamage } from '../../../actions/dealDamage';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import Direction from '../../../geometry/Direction';
+import { getRangedDamage } from '../UnitUtils';
 
 const manaCost = 5;
 
@@ -66,7 +67,7 @@ const _shootArrow = async (
   const targetUnit = map.getUnit({ x, y });
   const animationFactory = state.getAnimationFactory();
   if (targetUnit) {
-    const damage = unit.getRangedDamage();
+    const damage = getRangedDamage(unit);
     const arrowAnimation = await animationFactory.getArrowAnimation(
       unit,
       { dx, dy },

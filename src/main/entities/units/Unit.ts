@@ -215,18 +215,6 @@ export default class Unit implements Entity, Animatable {
   /** @override */
   isBlocking = (): boolean => true;
 
-  getMeleeDamage = (): number => {
-    let damage = this.strength;
-
-    for (const equipment of this.equipment.getAll()) {
-      if (equipment.slot !== 'RANGED_WEAPON') {
-        damage += equipment.damage ?? 0;
-      }
-    }
-
-    return damage;
-  };
-
   /**
    * @param amount the *actual* amount of damage dealt
    *        (not counting mitigated damage, overkill, etc.)
@@ -241,25 +229,6 @@ export default class Unit implements Entity, Animatable {
 
   recordStepTaken = () => {
     this.lifetimeStepsTaken++;
-  };
-
-  getRangedDamage = (): number => {
-    let damage = this.dexterity;
-
-    for (const equipment of this.equipment.getAll()) {
-      switch (equipment.slot) {
-        case 'RANGED_WEAPON':
-          damage += equipment.damage ?? 0;
-          break;
-        case 'MELEE_WEAPON':
-          // do nothing
-          break;
-        default:
-          damage += (equipment.damage ?? 0) / 2;
-      }
-    }
-
-    return Math.round(damage);
   };
 
   getKillsToNextLevel = (): number | null => {

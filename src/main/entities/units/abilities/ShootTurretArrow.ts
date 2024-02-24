@@ -10,6 +10,7 @@ import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getRangedDamage } from '../UnitUtils';
 
 const manaCost = 5;
 
@@ -48,7 +49,7 @@ export const ShootTurretArrow: UnitAbility = {
 
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
-      const damage = unit.getRangedDamage();
+      const damage = getRangedDamage(unit);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const arrowAnimation = await state
         .getAnimationFactory()

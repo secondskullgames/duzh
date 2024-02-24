@@ -6,6 +6,7 @@ import Sounds from '../../../sounds/Sounds';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { getMeleeDamage } from '../UnitUtils';
 import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;
@@ -14,7 +15,7 @@ const damageCoefficient = 2;
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
   calculateAttackResult: (unit: Unit): AttackResult => {
-    const damage = Math.round(unit.getMeleeDamage() * damageCoefficient);
+    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
     return { damage };
   },
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
