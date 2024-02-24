@@ -23,6 +23,7 @@ import UnitFactory from '../../entities/units/UnitFactory';
 import Coordinates from '../../geometry/Coordinates';
 import MapItem from '../../entities/objects/MapItem';
 import { Faction } from '../../entities/units/Faction';
+import { chooseUnitController } from '../../entities/units/controllers/ControllerUtils';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
@@ -150,7 +151,7 @@ export class GeneratedMapFactory {
       const unitModel = weightedRandom(probabilities, mappedUnitModels);
       const coordinates = randChoice(candidateLocations);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
-      const controller = this._chooseUnitController(unitModel);
+      const controller = chooseUnitController(unitModel.id);
       const unit = await unitFactory.createUnit({
         unitClass: unitModel.id,
         controller,
@@ -182,14 +183,6 @@ export class GeneratedMapFactory {
       throw new Error('no matching unit models');
     }
     return possibleUnitModels;
-  };
-
-  private _chooseUnitController = (unitModel: UnitModel) => {
-    if (unitModel.name === 'Goblin Archer') {
-      return new ArcherController();
-    } else {
-      return new BasicEnemyController();
-    }
   };
 
   private _generateObjects = async (

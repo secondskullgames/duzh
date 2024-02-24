@@ -6,6 +6,7 @@ import MapItem from '../entities/objects/MapItem';
 import Door from '../entities/objects/Door';
 import Block from '../entities/objects/Block';
 import Bonus from '../entities/objects/Bonus';
+import { Pathfinder } from '../geometry/Pathfinder';
 
 export const getSpawner = (
   map: MapInstance,
@@ -73,4 +74,27 @@ export const revealMap = (map: MapInstance) => {
   for (const coordinates of getAllCoordinates(map)) {
     map.revealTile(coordinates);
   }
+};
+
+export const findPath = (
+  start: Coordinates,
+  end: Coordinates,
+  map: MapInstance
+): Coordinates[] => {
+  const unblockedCoordinatesList: Coordinates[] = [];
+  const { width, height } = map.getRect();
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const coordinates = { x, y };
+      if (Coordinates.equals(coordinates, end)) {
+        unblockedCoordinatesList.push(coordinates);
+      } else if (!map.isBlocked(coordinates)) {
+        unblockedCoordinatesList.push(coordinates);
+      } else {
+        // blocked
+      }
+    }
+  }
+
+  return Pathfinder.create().findPath(start, end, unblockedCoordinatesList);
 };

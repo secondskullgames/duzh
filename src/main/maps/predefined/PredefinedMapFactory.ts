@@ -6,14 +6,9 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import MapInstance from '../MapInstance';
-import WizardController from '../../entities/units/controllers/WizardController';
-import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import UnitModel from '../../schemas/UnitModel';
-import ArcherController from '../../entities/units/controllers/ArcherController';
-import DragonShooterController from '../../entities/units/controllers/DragonShooterController';
 import Coordinates from '../../geometry/Coordinates';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import ItemFactory from '../../items/ItemFactory';
@@ -23,20 +18,8 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
 import { Faction } from '../../entities/units/Faction';
+import { chooseUnitController } from '../../entities/units/controllers/ControllerUtils';
 import { injectable } from 'inversify';
-
-/** TODO this should go somewhere else */
-const _getEnemyController = (enemyUnitModel: UnitModel) => {
-  if (enemyUnitModel.type === 'WIZARD') {
-    return new WizardController();
-  } else if (enemyUnitModel.id === 'archer') {
-    return new ArcherController();
-  } else if (enemyUnitModel.id === 'dragon_shooter') {
-    return new DragonShooterController();
-  } else {
-    return new BasicEnemyController();
-  }
-};
 
 @injectable()
 export class PredefinedMapFactory {
@@ -166,7 +149,7 @@ export class PredefinedMapFactory {
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
             const enemyUnitModel = await this.modelLoader.loadUnitModel(enemyUnitClass);
-            const controller = _getEnemyController(enemyUnitModel);
+            const controller = chooseUnitController(enemyUnitModel.id);
             const unit = await this.unitFactory.createUnit({
               name: enemyUnitModel.name,
               unitClass: enemyUnitClass,
