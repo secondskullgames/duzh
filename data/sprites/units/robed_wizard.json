@@ -42,6 +42,7 @@
       }]
     },
     "frozen": {
+      "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "standing",
         "number": "1"
