@@ -13,6 +13,7 @@ import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../units/Faction';
+import { chooseUnitController } from '../units/controllers/ControllerUtils';
 import { inject, injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 
@@ -37,7 +38,7 @@ export default class ObjectFactory {
         coordinates: coordinates,
         map,
         level: 1,
-        controller: new BasicEnemyController(),
+        controller: chooseUnitController('shade'),
         faction: Faction.ENEMY
       });
     const spawner = new Spawner({
