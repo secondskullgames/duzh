@@ -4,6 +4,7 @@ import Coordinates from '../geometry/Coordinates';
 import { checkNotNull } from '../utils/preconditions';
 import { ShootBolt } from '../entities/units/abilities/ShootBolt';
 import { Session } from '../core/Session';
+import { isBlocked } from '../maps/MapUtils';
 
 export type EquipmentScriptName = 'bolt_sword';
 
@@ -35,7 +36,7 @@ const BoltSwordScript: EquipmentScript = {
 
     const direction = unit.getDirection();
     let coordinates = Coordinates.plus(unit.getCoordinates(), direction);
-    while (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+    while (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       coordinates = Coordinates.plus(coordinates, direction);
     }
 

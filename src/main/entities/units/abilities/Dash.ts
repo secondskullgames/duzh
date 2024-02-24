@@ -8,6 +8,7 @@ import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 4;
 
@@ -38,7 +39,7 @@ export const Dash: UnitAbility = {
     for (let i = 0; i < distance; i++) {
       x += dx;
       y += dy;
-      if (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
         await moveUnit(unit, { x, y }, session, state);
         moved = true;
         if (map.isTileRevealed({ x, y })) {

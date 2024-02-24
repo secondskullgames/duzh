@@ -7,6 +7,7 @@ import { moveUnit } from '../../../actions/moveUnit';
 import Sounds from '../../../sounds/Sounds';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 4;
 
@@ -30,9 +31,9 @@ export const FreeMove: UnitAbility = {
     dy = Math.sign(dy);
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    const { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    if (!map.isBlocked({ x, y })) {
-      await moveUnit(unit, { x, y }, session, state);
+    const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+    if (!isBlocked(map, targetCoordinates)) {
+      await moveUnit(unit, targetCoordinates, session, state);
       unit.spendMana(manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);

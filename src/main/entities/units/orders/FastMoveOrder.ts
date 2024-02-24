@@ -5,6 +5,7 @@ import Direction from '../../../geometry/Direction';
 import { fastMove } from '../../../actions/fastMove';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { isBlocked } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   direction: Direction;
@@ -27,7 +28,7 @@ export class FastMoveOrder implements UnitOrder {
     unit.setDirection(direction);
     const firstCoordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
-    if (!map.contains(firstCoordinates) || map.isBlocked(firstCoordinates)) {
+    if (!map.contains(firstCoordinates) || isBlocked(map, firstCoordinates)) {
       // do nothing
       return;
     }

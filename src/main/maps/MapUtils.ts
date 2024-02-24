@@ -70,6 +70,15 @@ export const getAllCoordinates = (map: MapInstance): Coordinates[] => {
   return allCoordinates;
 };
 
+export const isBlocked = (map: MapInstance, coordinates: Coordinates): boolean => {
+  return (
+    !map.contains(coordinates) ||
+    map.getTile(coordinates).isBlocking() ||
+    map.getUnit(coordinates) !== null ||
+    map.getObjects(coordinates).some(object => object.isBlocking())
+  );
+};
+
 export const revealMap = (map: MapInstance) => {
   for (const coordinates of getAllCoordinates(map)) {
     map.revealTile(coordinates);
@@ -88,7 +97,7 @@ export const findPath = (
       const coordinates = { x, y };
       if (Coordinates.equals(coordinates, end)) {
         unblockedCoordinatesList.push(coordinates);
-      } else if (!map.isBlocked(coordinates)) {
+      } else if (!isBlocked(map, coordinates)) {
         unblockedCoordinatesList.push(coordinates);
       } else {
         // blocked

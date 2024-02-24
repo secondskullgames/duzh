@@ -5,6 +5,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import { isBlocked } from '../../../maps/MapUtils';
 
 export const Strafe: UnitAbility = {
   name: AbilityName.STRAFE,
@@ -22,7 +23,7 @@ export const Strafe: UnitAbility = {
     }
 
     const map = session.getMap();
-    if (map.contains(coordinates) && !map.isBlocked(coordinates)) {
+    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       await moveUnit(unit, coordinates, session, state);
     }
   }

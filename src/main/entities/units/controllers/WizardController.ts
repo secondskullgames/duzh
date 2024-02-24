@@ -17,6 +17,7 @@ import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import StayOrder from '../orders/StayOrder';
 import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -72,7 +73,7 @@ const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
   const map = unit.getMap();
   const targetCoordinates = Direction.values()
     .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
-    .find(coordinates => map.contains(coordinates) && !map.isBlocked(coordinates));
+    .find(coordinates => map.contains(coordinates) && !isBlocked(map, coordinates));
   return targetCoordinates ?? null;
 };
 

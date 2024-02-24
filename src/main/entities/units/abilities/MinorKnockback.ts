@@ -9,6 +9,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 8;
 const damageCoefficient = 0.5;
@@ -57,7 +58,7 @@ export const MinorKnockback: UnitAbility = {
 
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
-        if (map.contains(first) && !map.isBlocked(first)) {
+        if (map.contains(first) && !isBlocked(map, first)) {
           await moveUnit(targetUnit, first, session, state);
         }
       }

@@ -1,7 +1,6 @@
 import Coordinates from '../geometry/Coordinates';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
-import { checkArgument } from '../utils/preconditions';
 import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
@@ -88,22 +87,6 @@ export default class MapInstance {
 
   contains = ({ x, y }: Coordinates): boolean =>
     x >= 0 && x < this.width && y >= 0 && y < this.height;
-
-  isBlocked = (coordinates: Coordinates): boolean => {
-    const { x, y } = coordinates;
-    checkArgument(this.contains(coordinates), `(${x}, ${y}) is not on the map`);
-
-    if (this.tiles.get(coordinates)!.isBlocking()) {
-      return true;
-    }
-    if (this.units.get(coordinates)?.isBlocking()) {
-      return true;
-    }
-    if (this.objects.get(coordinates).some(e => e.isBlocking())) {
-      return true;
-    }
-    return false;
-  };
 
   addTile = (tile: Tile) => {
     this.tiles.put(tile.getCoordinates(), tile);

@@ -11,6 +11,7 @@ import { die } from '../../../actions/die';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -39,7 +40,7 @@ export const ShootBolt: UnitAbility = {
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+    while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
       y += dy;

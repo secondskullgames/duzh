@@ -5,6 +5,7 @@ import Block from '../entities/objects/Block';
 import Coordinates from '../geometry/Coordinates';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
+import { isBlocked } from '../maps/MapUtils';
 
 export const pushBlock = async (
   unit: Unit,
@@ -17,7 +18,7 @@ export const pushBlock = async (
   const nextCoordinates = Coordinates.plus(coordinates, { dx, dy });
 
   const map = session.getMap();
-  if (map.contains(nextCoordinates) && !map.isBlocked(nextCoordinates)) {
+  if (map.contains(nextCoordinates) && !isBlocked(map, nextCoordinates)) {
     await moveObject(block, nextCoordinates, map);
     await moveUnit(unit, coordinates, session, state);
   }

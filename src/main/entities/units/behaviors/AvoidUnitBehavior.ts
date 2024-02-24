@@ -13,6 +13,7 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -34,7 +35,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!map.isBlocked(coordinates)) {
+        if (!isBlocked(map, coordinates)) {
           tiles.push(coordinates);
         } else if (map.getUnit(coordinates) === targetUnit) {
           tiles.push(coordinates);

@@ -2,6 +2,7 @@ import { checkState } from './preconditions';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import MapInstance from '../maps/MapInstance';
+import { isBlocked } from '../maps/MapUtils';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));
@@ -27,7 +28,7 @@ export const hasUnblockedStraightLineBetween = (
   y += dy;
 
   while (x !== targetX || y !== targetY) {
-    if (map.isBlocked({ x, y })) {
+    if (isBlocked(map, { x, y })) {
       return false;
     }
     x += dx;

@@ -10,6 +10,7 @@ import { AbilityName } from '../abilities/AbilityName';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { UnitAbility } from '../abilities/UnitAbility';
+import { isBlocked } from '../../../maps/MapUtils';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
@@ -19,10 +20,8 @@ export default class WanderBehavior implements UnitBehavior {
 
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
-      if (map.contains(coordinates)) {
-        if (!map.isBlocked(coordinates)) {
-          tiles.push(coordinates);
-        }
+      if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+        tiles.push(coordinates);
       }
     }
 

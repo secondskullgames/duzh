@@ -14,6 +14,7 @@ import { AbilityName } from '../abilities/AbilityName';
 import { UnitAbility } from '../abilities/UnitAbility';
 import Coordinates from '../../../geometry/Coordinates';
 import { Dash } from '../abilities/Dash';
+import { isBlocked } from '../../../maps/MapUtils';
 
 export const canMove = (unit: Unit, session: Session): boolean => {
   const aiParameters = checkNotNull(
@@ -93,8 +94,8 @@ export const canDash = (
     return (
       map.contains(plusOne) &&
       map.contains(plusTwo) &&
-      !map.isBlocked(plusOne) &&
-      !map.isBlocked(plusTwo) &&
+      !isBlocked(map, plusOne) &&
+      !isBlocked(map, plusTwo) &&
       Coordinates.equals(coordinates, plusTwo)
     );
   }

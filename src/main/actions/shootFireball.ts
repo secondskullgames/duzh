@@ -8,6 +8,7 @@ import { sleep } from '../utils/promises';
 import Direction from '../geometry/Direction';
 import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
+import { isBlocked } from '../maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
@@ -26,7 +27,7 @@ export const shootFireball = async (
   const map = session.getMap();
   const coordinatesList = [];
   let { x, y } = Coordinates.plus(unit.getCoordinates(), direction);
-  while (map.contains({ x, y }) && !map.isBlocked({ x, y })) {
+  while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
     coordinatesList.push({ x, y });
     x += dx;
     y += dy;

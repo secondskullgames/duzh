@@ -11,6 +11,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import Direction from '../../../geometry/Direction';
 import { sleep } from '../../../utils/promises';
 import { getMeleeDamage } from '../UnitUtils';
+import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -27,7 +28,7 @@ const _findTargetUnit = (unit: Unit, { dx, dy }: Direction): Unit | null => {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       return targetUnit;
-    } else if (map.isBlocked(coordinates)) {
+    } else if (isBlocked(map, coordinates)) {
       return null;
     }
     coordinates = Coordinates.plus(coordinates, { dx, dy });
@@ -80,7 +81,7 @@ export const Scorpion: UnitAbility = {
         dx: dx * i,
         dy: dy * i
       });
-      if (map.contains(currentCoordinates) && !map.isBlocked(currentCoordinates)) {
+      if (map.contains(currentCoordinates) && !isBlocked(map, currentCoordinates)) {
         projectile.setCoordinates(currentCoordinates);
         await sleep(sleepDuration);
       } else {
