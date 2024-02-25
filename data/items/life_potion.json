@@ -1,5 +1,6 @@
 {
   "id": "life_potion",
+  "name": "Life Potion",
   "level": 1,
   "rarity": 1,
   "mapSprite": "map_potion",

@@ -1,5 +1,6 @@
 {
   "id": "mana_potion",
+  "name": "Mana Potion",
   "level": 1,
   "rarity": 5,
   "mapSprite": "map_potion",

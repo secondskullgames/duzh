@@ -15,4 +15,8 @@ export namespace ImageEffect {
     name: 'BURNED',
     apply: (img: ImageData) => replaceAll(img, Colors.ORANGE)
   };
+  export const FROZEN: ImageEffect = {
+    name: 'FROZEN',
+    apply: (img: ImageData) => replaceAll(img, Colors.CYAN)
+  };
 }

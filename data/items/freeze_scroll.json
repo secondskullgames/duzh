@@ -1,0 +1,15 @@
+{
+  "id": "freeze_scroll",
+  "name": "Scroll of Freeze",
+  "level": 3,
+  "rarity": 3,
+  "mapSprite": "map_scroll",
+  "type": "scroll",
+  "params": {
+    "spell": "freeze",
+    "duration": "5"
+  },
+  "paletteSwaps": {
+    "DARK_RED": "CYAN"
+  }
+}

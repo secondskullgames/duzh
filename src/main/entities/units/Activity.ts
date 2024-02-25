@@ -5,6 +5,7 @@ export enum Activity {
   SHOOTING = 'SHOOTING',
   DAMAGED = 'DAMAGED',
   BURNED = 'BURNED',
+  FROZEN = 'FROZEN',
   VANISHING = 'VANISHING',
   APPEARING = 'APPEARING'
 }
@@ -17,6 +18,7 @@ export namespace Activity {
     Activity.SHOOTING,
     Activity.DAMAGED,
     Activity.BURNED,
+    Activity.FROZEN,
     Activity.VANISHING,
     Activity.APPEARING
   ];

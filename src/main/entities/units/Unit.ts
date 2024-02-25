@@ -1,4 +1,3 @@
-import Activity from './Activity';
 import AIParameters from './controllers/AIParameters';
 import { UnitController } from './controllers/UnitController';
 import { UnitAbility } from './abilities/UnitAbility';
@@ -6,6 +5,7 @@ import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import { calculateTotalIncomingDamage } from './UnitUtils';
+import Activity from './Activity';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import Coordinates from '../../geometry/Coordinates';
@@ -86,7 +86,10 @@ export default class Unit implements Entity, Animatable {
    */
   private frameNumber: number;
   private readonly abilities: UnitAbility[];
-  private stunDuration: number;
+
+  private stunnedDuration: number;
+  private frozenDuration: number;
+
   /**
    * Used by AI to make certain decisions
    */
@@ -137,7 +140,8 @@ export default class Unit implements Entity, Animatable {
     this.abilities = model.abilities.map(abilityName =>
       UnitAbility.abilityForName(abilityName as AbilityName)
     );
-    this.stunDuration = 0;
+    this.stunnedDuration = 0;
+    this.frozenDuration = 0;
     this.turnsSinceCombatAction = null;
 
     this.aiParameters = model.aiParameters ?? null;
@@ -204,7 +208,7 @@ export default class Unit implements Entity, Animatable {
   /** @override */
   playTurnAction = async (state: GameState, session: Session) => {
     this._upkeep();
-    if (this.stunDuration === 0) {
+    if (this.stunnedDuration === 0 && this.frozenDuration === 0) {
       const order = this.controller.issueOrder(this, state, session);
       await order.execute(this, state, session);
     }
@@ -251,6 +255,7 @@ export default class Unit implements Entity, Animatable {
     const damageAbsorbed = incomingDamage - damageTaken;
     this.life -= damageTaken;
     this.lifetimeDamageTaken += damageTaken;
+    this.frozenDuration = 0;
 
     return {
       incomingDamage,
@@ -312,7 +317,12 @@ export default class Unit implements Entity, Animatable {
   };
 
   setStunned = (duration: number) => {
-    this.stunDuration = Math.max(this.stunDuration, duration);
+    this.stunnedDuration = Math.max(this.stunnedDuration, duration);
+  };
+
+  setFrozen = (duration: number) => {
+    this.frozenDuration = Math.max(this.frozenDuration, duration);
+    this.activity = Activity.FROZEN;
   };
 
   /**
@@ -385,7 +395,14 @@ export default class Unit implements Entity, Animatable {
 
   private _endOfTurn = () => {
     // decrement stun duration
-    this.stunDuration = Math.max(this.stunDuration - 1, 0);
+    this.stunnedDuration = Math.max(this.stunnedDuration - 1, 0);
+    // decrement freeze duration
+    if (this.frozenDuration > 0) {
+      this.frozenDuration -= 1;
+      if (this.frozenDuration === 0) {
+        this.activity = Activity.STANDING;
+      }
+    }
   };
 
   getStrength = (): number => this.strength;

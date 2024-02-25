@@ -27,11 +27,8 @@ export const Dash: UnitAbility = {
     }
 
     const map = session.getMap();
-    let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
-    dx = Math.sign(dx);
-    dy = Math.sign(dy);
-
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection({ dx, dy });
 
     const distance = 2;
     let { x, y } = unit.getCoordinates();

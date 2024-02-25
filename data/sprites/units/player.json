@@ -41,6 +41,12 @@
         "activity": "standing",
         "number": "1"
       }]
+    },
+    "frozen": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
     }
   }
 }

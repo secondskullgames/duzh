@@ -41,6 +41,13 @@
         "number": "1"
       }]
     },
+    "frozen": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
     "vanishing": {
       "pattern": "${sprite}_${activity}_SE_${number}",
       "frames": [

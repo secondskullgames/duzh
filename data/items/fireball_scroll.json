@@ -1,5 +1,6 @@
 {
   "id": "fireball_scroll",
+  "name": "Scroll of Fireball",
   "level": 2,
   "rarity": 3,
   "mapSprite": "map_scroll",
