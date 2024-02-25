@@ -11,7 +11,6 @@ import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
-import { checkNotNull } from '../../utils/preconditions';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -95,7 +94,6 @@ export default class HUDRenderer implements Renderer {
     const playerUnit = session.getPlayerUnit();
 
     let keyNumber = 1;
-    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const abilities = playerUnit.getAbilities();
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
