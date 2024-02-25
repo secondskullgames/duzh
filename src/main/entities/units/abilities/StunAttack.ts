@@ -17,6 +17,7 @@ export const StunAttack: UnitAbility = {
   name: AbilityName.STUN_ATTACK,
   manaCost,
   icon: 'icon2',
+  innate: false,
 
   use: async (
     unit: Unit,

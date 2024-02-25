@@ -22,5 +22,5 @@
   "dexterity": 2,
   "life": 75,
   "mana": 10,
-  "abilities": ["ATTACK", "SHOOT_ARROW"]
+  "abilities": ["ATTACK", "SHOOT_ARROW", "DASH"]
 }

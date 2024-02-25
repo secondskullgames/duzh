@@ -15,6 +15,7 @@ export const FreeMove: UnitAbility = {
   name: AbilityName.FREE_MOVE,
   manaCost,
   icon: 'icon5',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

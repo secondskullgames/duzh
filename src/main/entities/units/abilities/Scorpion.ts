@@ -55,6 +55,7 @@ export const Scorpion: UnitAbility = {
   name: AbilityName.SCORPION,
   manaCost,
   icon: 'icon5', // TODO
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

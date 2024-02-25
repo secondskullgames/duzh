@@ -17,6 +17,7 @@ export const PiercingAttack: UnitAbility = {
   name: AbilityName.PIERCE,
   manaCost: 0,
   icon: null,
+  innate: false,
 
   use: async (
     unit: Unit,

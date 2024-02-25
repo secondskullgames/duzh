@@ -19,6 +19,7 @@ export const DashAttack: UnitAbility = {
   name: AbilityName.DASH_ATTACK,
   manaCost,
   icon: 'icon5', // TODO
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

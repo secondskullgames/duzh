@@ -50,6 +50,32 @@ namespace Direction {
   };
 
   export const getDefaultUnitDirection = (): Direction => Direction.S;
+
+  export const rotateClockwise = (direction: Direction): Direction => {
+    if (equals(direction, N)) {
+      return E;
+    } else if (equals(direction, E)) {
+      return S;
+    } else if (equals(direction, S)) {
+      return W;
+    } else if (equals(direction, W)) {
+      return N;
+    }
+    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
+  };
+
+  export const rotateCounterClockwise = (direction: Direction): Direction => {
+    if (equals(direction, N)) {
+      return W;
+    } else if (equals(direction, W)) {
+      return S;
+    } else if (equals(direction, S)) {
+      return E;
+    } else if (equals(direction, E)) {
+      return N;
+    }
+    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
+  };
 }
 
 export default Direction;

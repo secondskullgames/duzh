@@ -9,15 +9,17 @@ export interface PlayerUnitClass {
   readonly strengthPerLevel: number;
   readonly maxLevel: number;
   getLearnableAbilities: () => AbilityName[];
+  getInitialAbilities: () => AbilityName[];
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
 }
 
 const learnableAbilities = [
   AbilityName.BLINK,
-  AbilityName.DASH,
+  AbilityName.CLEAVE,
   AbilityName.DOUBLE_DASH_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
+  AbilityName.PIERCE,
   AbilityName.SCORPION,
   AbilityName.SHOOT_FIREBALL,
   AbilityName.STRAFE_SHOT,
@@ -42,6 +44,11 @@ class DefaultClass implements PlayerUnitClass {
   readonly strengthPerLevel = 0;
   readonly maxLevel = 10;
   getLearnableAbilities = (): AbilityName[] => learnableAbilities;
+  getInitialAbilities = (): AbilityName[] => [
+    AbilityName.ATTACK,
+    AbilityName.SHOOT_ARROW,
+    AbilityName.DASH
+  ];
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };

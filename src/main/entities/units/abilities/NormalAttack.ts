@@ -17,6 +17,7 @@ export const NormalAttack: UnitAbility = {
   name: AbilityName.ATTACK,
   icon: null,
   manaCost: 0,
+  innate: true,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

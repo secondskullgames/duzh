@@ -19,6 +19,7 @@ export const Teleport: UnitAbility = {
   name: AbilityName.TELEPORT,
   icon: null,
   manaCost,
+  innate: false,
 
   use: async (
     unit: Unit,

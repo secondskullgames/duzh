@@ -46,6 +46,7 @@ export const DoubleDashAttack: UnitAbility = {
   name: AbilityName.DOUBLE_DASH_ATTACK,
   manaCost,
   icon: 'icon5', // TODO
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

@@ -14,6 +14,7 @@ export const Summon: UnitAbility = {
   name: AbilityName.SUMMON,
   manaCost,
   icon: null,
+  innate: false,
 
   use: async (
     unit: Unit,

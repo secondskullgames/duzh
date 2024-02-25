@@ -16,6 +16,7 @@ export const Dash: UnitAbility = {
   name: AbilityName.DASH,
   manaCost,
   icon: 'icon5',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

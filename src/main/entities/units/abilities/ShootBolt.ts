@@ -21,6 +21,7 @@ export const ShootBolt: UnitAbility = {
   name: AbilityName.BOLT,
   icon: null,
   manaCost: 0,
+  innate: false,
 
   use: async (
     unit: Unit,

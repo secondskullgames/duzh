@@ -24,6 +24,7 @@ export const ShootArrow: UnitAbility = {
   name: AbilityName.SHOOT_ARROW,
   icon: null,
   manaCost,
+  innate: true,
 
   use: async (
     unit: Unit,

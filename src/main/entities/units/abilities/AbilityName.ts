@@ -2,6 +2,7 @@ export enum AbilityName {
   ATTACK = 'ATTACK',
   BLINK = 'BLINK',
   BOLT = 'BOLT',
+  CLEAVE = 'CLEAVE',
   DASH = 'DASH',
   DASH_ATTACK = 'DASH_ATTACK',
   DOUBLE_DASH_ATTACK = 'DOUBLE_DASH_ATTACK',
@@ -27,6 +28,7 @@ export namespace AbilityName {
     AbilityName.ATTACK,
     AbilityName.BLINK,
     AbilityName.BOLT,
+    AbilityName.CLEAVE,
     AbilityName.DASH,
     AbilityName.DASH_ATTACK,
     AbilityName.HEAVY_ATTACK,
@@ -40,13 +42,5 @@ export namespace AbilityName {
     AbilityName.STUN_ATTACK,
     AbilityName.SUMMON,
     AbilityName.TELEPORT
-  ];
-
-  /**
-   * TODO should probably be a field on UnitAbility
-   */
-  export const getInnateAbilities = (): AbilityName[] => [
-    AbilityName.ATTACK,
-    AbilityName.SHOOT_ARROW
   ];
 }

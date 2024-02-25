@@ -21,6 +21,7 @@ export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,
   manaCost,
   icon: 'icon6',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

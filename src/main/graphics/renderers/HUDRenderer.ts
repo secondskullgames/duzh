@@ -9,11 +9,10 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { checkNotNull } from '../../utils/preconditions';
 import { inject, injectable } from 'inversify';
-import getInnateAbilities = AbilityName.getInnateAbilities;
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -96,6 +95,7 @@ export default class HUDRenderer implements Renderer {
     const playerUnit = session.getPlayerUnit();
 
     let keyNumber = 1;
+    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const abilities = playerUnit.getAbilities();
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
@@ -104,7 +104,7 @@ export default class HUDRenderer implements Renderer {
         BORDER_PADDING +
         (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
-      if (!getInnateAbilities().includes(ability.name)) {
+      if (!ability.innate) {
         await this._renderAbility(ability, { x: left, y: top }, graphics);
         await this._drawText(
           `${keyNumber}`,

@@ -22,6 +22,7 @@ import { Dash } from '../../entities/units/abilities/Dash';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import { MapController } from '../../maps/MapController';
+import { getHotkeyAbility } from '../../entities/units/UnitUtils';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -105,7 +106,10 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (playerUnit.canSpendMana(Dash.manaCost)) {
+      if (
+        playerUnit.hasAbility(AbilityName.DASH) &&
+        playerUnit.canSpendMana(Dash.manaCost)
+      ) {
         order = new AbilityOrder({ coordinates, ability: Dash });
       }
     } else if (
@@ -132,12 +136,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   private _handleAbility = async (key: NumberKey) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
-
-    const index = parseInt(key.toString());
-    const innateAbilities = AbilityName.getInnateAbilities();
-    const ability = playerUnit
-      .getAbilities()
-      .filter(ability => !innateAbilities.includes(ability.name))[index - 1];
+    const ability = getHotkeyAbility(playerUnit, key);
     if (ability && playerUnit.canSpendMana(ability.manaCost)) {
       session.setQueuedAbility(ability);
     }

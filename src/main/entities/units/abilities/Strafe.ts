@@ -11,6 +11,7 @@ export const Strafe: UnitAbility = {
   name: AbilityName.STRAFE,
   manaCost: 0,
   icon: null,
+  innate: true,
 
   use: async (
     unit: Unit,

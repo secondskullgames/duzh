@@ -245,9 +245,7 @@ export default class AnimationFactory {
     for (let i = 0; i < targets.length; i++) {
       unitFrames.push({ unit: targets[i], activity: Activity.STANDING });
     }
-    const frame = {
-      units: unitFrames
-    };
+    const frame = { units: unitFrames };
     frames.push(frame);
 
     return {
