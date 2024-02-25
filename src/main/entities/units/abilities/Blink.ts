@@ -36,19 +36,27 @@ export const Blink: UnitAbility = {
     let blocked = false;
 
     if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
-      for (let i = 0; i < distance; i++) {
+      for (let i = 1; i < distance; i++) {
         x += dx;
         y += dy;
       }
-      if (isBlocked(map, { x, y })) {
+      if (isBlocked(map, { x, y }) && !map.getTile({ x, y }).isBlocking()) {
         blocked = true;
       }
     } else {
-      for (let i = 0; i < distance; i++) {
+      for (let i = 1; i <= distance; i++) {
         x += dx;
         y += dy;
-        if (isBlocked(map, { x, y })) {
-          blocked = true;
+        if (i === distance) {
+          if (isBlocked(map, { x, y })) {
+            if (!map.getUnit({ x, y })) {
+              blocked = true;
+            }
+          } else {
+            if (isBlocked(map, { x, y })) {
+              blocked = true;
+            }
+          }
         }
       }
     }

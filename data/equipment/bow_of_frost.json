@@ -9,7 +9,7 @@
     "DARK_GREEN": "DARK_GRAY",
     "GREEN": "CYAN"
   },
-  "rarity": 4,
+  "rarity": 5,
   "level": 5,
   "stats": {
     "damage": 8
