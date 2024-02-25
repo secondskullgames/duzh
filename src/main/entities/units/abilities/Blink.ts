@@ -9,6 +9,7 @@ import { Feature } from '../../../utils/features';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { isBlocked } from '../../../maps/MapUtils';
+import MapInstance from '../../../maps/MapInstance';
 
 const manaCost = 10;
 
@@ -32,40 +33,36 @@ export const Blink: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     const distance = 2;
-    let { x, y } = unit.getCoordinates();
-    let blocked = false;
+    const { x, y } = unit.getCoordinates();
 
-    if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
-      for (let i = 1; i < distance; i++) {
-        x += dx;
-        y += dy;
-      }
-      if (isBlocked(map, { x, y }) && !map.getTile({ x, y }).isBlocking()) {
-        blocked = true;
-      }
-    } else {
-      for (let i = 1; i <= distance; i++) {
-        x += dx;
-        y += dy;
-        if (i === distance) {
-          if (isBlocked(map, { x, y })) {
-            if (!map.getUnit({ x, y })) {
-              blocked = true;
-            }
-          } else {
-            if (isBlocked(map, { x, y })) {
-              blocked = true;
-            }
-          }
-        }
-      }
-    }
+    const targetCoordinates = {
+      x: x + dx * distance,
+      y: y + dy * distance
+    };
+    const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
 
     if (blocked) {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     } else {
-      await moveUnit(unit, { x, y }, session, state);
+      await moveUnit(unit, targetCoordinates, session, state);
       unit.spendMana(manaCost);
     }
   }
+};
+
+const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boolean => {
+  const { dx, dy } = pointAt(start, end);
+  let { x, y } = start;
+  while (!Coordinates.equals({ x, y }, end)) {
+    x += dx;
+    y += dy;
+    if (Coordinates.equals({ x, y }, end)) {
+      return isBlocked(map, { x, y });
+    } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
+      // do nothing
+    } else {
+      return map.getTile({ x, y }).isBlocking();
+    }
+  }
+  throw new Error();
 };
