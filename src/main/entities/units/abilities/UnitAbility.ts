@@ -18,7 +18,6 @@ import { StrafeShot } from './StrafeShot';
 import { StunAttack } from './StunAttack';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
-import { DoubleDashAttack } from './DoubleDashAttack';
 import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
 import { Session } from '../../../core/Session';
@@ -52,7 +51,6 @@ export namespace UnitAbility {
     [AbilityName.CLEAVE]: Cleave,
     [AbilityName.DASH]: Dash,
     [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.DOUBLE_DASH_ATTACK]: DoubleDashAttack,
     [AbilityName.FREE_MOVE]: FreeMove,
     [AbilityName.HEAVY_ATTACK]: HeavyAttack,
     [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,

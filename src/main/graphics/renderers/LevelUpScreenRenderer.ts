@@ -9,6 +9,8 @@ import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import Unit from '../../entities/units/Unit';
+import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
@@ -37,11 +39,22 @@ export default class LevelUpScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    const availableAbilities = playerUnit.getLearnableAbilities();
+    const listedAbilities = playerUnit
+      .getPlayerUnitClass()!
+      .getAllPossibleLearnableAbilities();
     let top = 10;
-    for (const abilityName of availableAbilities) {
-      const color: Color =
-        abilityName === selectedAbility ? Colors.WHITE : Colors.LIGHT_GRAY;
+    for (const abilityName of listedAbilities) {
+      const isUnlocked = this._isUnlocked(abilityName, playerUnit);
+      const isSelected = abilityName === selectedAbility;
+      const color: Color = (() => {
+        if (playerUnit.hasAbility(abilityName)) {
+          return Colors.DARK_GRAY;
+        } else if (isUnlocked) {
+          return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
+        } else {
+          return isSelected ? Colors.RED : Colors.DARK_RED;
+        }
+      })();
       await this._drawText(
         abilityName,
         FontName.APPLE_II,
@@ -73,5 +86,9 @@ export default class LevelUpScreenRenderer implements Renderer {
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, graphics, pixel, textAlign);
+  };
+
+  private _isUnlocked = (abilityName: AbilityName, playerUnit: Unit): boolean => {
+    return playerUnit.getCurrentlyLearnableAbilities().includes(abilityName);
   };
 }

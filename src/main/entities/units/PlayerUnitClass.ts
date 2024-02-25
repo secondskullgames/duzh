@@ -8,15 +8,15 @@ export interface PlayerUnitClass {
   readonly manaPerLevel: number;
   readonly strengthPerLevel: number;
   readonly maxLevel: number;
-  getLearnableAbilities: () => AbilityName[];
-  getInitialAbilities: () => AbilityName[];
+  getAllPossibleLearnableAbilities: () => AbilityName[];
+  getAbilityDependencies: (ability: AbilityName) => AbilityName[];
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
 }
 
 const learnableAbilities = [
   AbilityName.BLINK,
   AbilityName.CLEAVE,
-  AbilityName.DOUBLE_DASH_ATTACK,
+  AbilityName.DASH_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.PIERCE,
@@ -43,12 +43,19 @@ class DefaultClass implements PlayerUnitClass {
   readonly manaPerLevel = 2;
   readonly strengthPerLevel = 0;
   readonly maxLevel = 10;
-  getLearnableAbilities = (): AbilityName[] => learnableAbilities;
-  getInitialAbilities = (): AbilityName[] => [
-    AbilityName.ATTACK,
-    AbilityName.SHOOT_ARROW,
-    AbilityName.DASH
-  ];
+  getAllPossibleLearnableAbilities = (): AbilityName[] => learnableAbilities;
+  getAbilityDependencies = (ability: AbilityName): AbilityName[] => {
+    switch (ability) {
+      case AbilityName.CLEAVE:
+        return [AbilityName.HEAVY_ATTACK];
+      case AbilityName.PIERCE:
+        return [AbilityName.KNOCKBACK_ATTACK];
+      case AbilityName.DASH_ATTACK:
+        return [AbilityName.KNOCKBACK_ATTACK];
+      default:
+        return [];
+    }
+  };
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };

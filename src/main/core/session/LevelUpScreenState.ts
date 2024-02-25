@@ -15,7 +15,7 @@ export class LevelUpScreenState {
   };
 
   selectNextAbility = (playerUnit: Unit) => {
-    const learnableAbilities = playerUnit.getLearnableAbilities();
+    const learnableAbilities = playerUnit.getCurrentlyLearnableAbilities();
     const index = this.selectedAbility
       ? learnableAbilities.indexOf(this.selectedAbility)
       : -1;
@@ -24,7 +24,7 @@ export class LevelUpScreenState {
   };
 
   selectPreviousAbility = (playerUnit: Unit) => {
-    const learnableAbilities = playerUnit.getLearnableAbilities();
+    const learnableAbilities = playerUnit.getCurrentlyLearnableAbilities();
     const index = this.selectedAbility
       ? learnableAbilities.indexOf(this.selectedAbility)
       : -1;
