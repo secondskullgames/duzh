@@ -45,7 +45,7 @@ const _doKnockback = async (
 export const DashAttack: UnitAbility = {
   name: AbilityName.DASH_ATTACK,
   manaCost,
-  icon: 'icon5', // TODO
+  icon: 'icon5',
   innate: false,
   use: async (
     unit: Unit,

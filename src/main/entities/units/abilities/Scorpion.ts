@@ -54,7 +54,7 @@ const sleepDuration = 75;
 export const Scorpion: UnitAbility = {
   name: AbilityName.SCORPION,
   manaCost,
-  icon: 'icon5', // TODO
+  icon: 'scorpion_icon',
   innate: false,
   use: async (
     unit: Unit,

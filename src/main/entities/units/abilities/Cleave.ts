@@ -30,7 +30,7 @@ const attack: Attack = {
 export const Cleave: UnitAbility = {
   name: AbilityName.CLEAVE,
   manaCost,
-  icon: 'icon1',
+  icon: 'icon7',
   innate: false,
   use: async (
     unit: Unit,

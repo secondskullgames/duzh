@@ -29,7 +29,6 @@ export default class LevelUpScreenRenderer implements Renderer {
   render = async (graphics: Graphics) => {
     const { session, imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
-    const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
@@ -44,17 +43,7 @@ export default class LevelUpScreenRenderer implements Renderer {
       .getAllPossibleLearnableAbilities();
     let top = 10;
     for (const abilityName of listedAbilities) {
-      const isUnlocked = this._isUnlocked(abilityName, playerUnit);
-      const isSelected = abilityName === selectedAbility;
-      const color: Color = (() => {
-        if (playerUnit.hasAbility(abilityName)) {
-          return Colors.DARK_GRAY;
-        } else if (isUnlocked) {
-          return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
-        } else {
-          return isSelected ? Colors.RED : Colors.DARK_RED;
-        }
-      })();
+      const color: Color = this._getAbilityColor(playerUnit, abilityName);
       await this._drawText(
         abilityName,
         FontName.APPLE_II,
@@ -74,6 +63,20 @@ export default class LevelUpScreenRenderer implements Renderer {
       Alignment.LEFT,
       graphics
     );
+  };
+
+  private _getAbilityColor = (playerUnit: Unit, abilityName: AbilityName) => {
+    const isUnlocked = this._isUnlocked(abilityName, playerUnit);
+    const selectedAbility = this.session.getLevelUpScreen().getSelectedAbility();
+    const isSelected = abilityName === selectedAbility;
+
+    if (playerUnit.hasAbility(abilityName)) {
+      return Colors.DARK_GRAY;
+    } else if (isUnlocked) {
+      return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
+    } else {
+      return isSelected ? Colors.RED : Colors.DARK_RED;
+    }
   };
 
   private _drawText = async (

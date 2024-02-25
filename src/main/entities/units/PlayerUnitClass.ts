@@ -21,8 +21,6 @@ const learnableAbilities = [
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.PIERCE,
   AbilityName.SCORPION,
-  AbilityName.SHOOT_FIREBALL,
-  AbilityName.STRAFE_SHOT,
   AbilityName.STUN_ATTACK
 ];
 
