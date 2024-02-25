@@ -123,7 +123,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (ability) {
         order = new AbilityOrder({ ability, coordinates });
       } else {
-        order = new AttackMoveOrder({ ability: NormalAttack, coordinates });
+        order = new AttackMoveOrder({ coordinates });
       }
     }
     const playerController = playerUnit.getController() as PlayerUnitController;

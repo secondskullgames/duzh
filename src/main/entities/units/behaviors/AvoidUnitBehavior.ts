@@ -4,7 +4,6 @@ import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import { maxBy } from '../../../utils/arrays';
 import UnitOrder from '../orders/UnitOrder';
-import { NormalAttack } from '../abilities/NormalAttack';
 import StayOrder from '../orders/StayOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import { AbilityName } from '../abilities/AbilityName';
@@ -39,10 +38,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
 
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
-      return new AttackMoveOrder({
-        coordinates: targetCoordinates,
-        ability: NormalAttack
-      });
+      return new AttackMoveOrder({ coordinates: targetCoordinates });
     }
     return new StayOrder();
   };

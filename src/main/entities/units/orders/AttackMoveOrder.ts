@@ -10,19 +10,17 @@ import { attackObject } from '../../../actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '../../../maps/MapUtils';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
+import { NormalAttack } from '../abilities/NormalAttack';
 
 type Props = Readonly<{
   coordinates: Coordinates;
-  ability: UnitAbility;
 }>;
 
 export class AttackMoveOrder implements UnitOrder {
   private readonly coordinates: Coordinates;
-  private readonly ability: UnitAbility;
 
-  constructor({ coordinates, ability }: Props) {
+  constructor({ coordinates }: Props) {
     this.coordinates = coordinates;
-    this.ability = ability;
   }
 
   /**
@@ -30,7 +28,7 @@ export class AttackMoveOrder implements UnitOrder {
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
     const map = session.getMap();
-    const { coordinates, ability } = this;
+    const { coordinates } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -44,7 +42,7 @@ export class AttackMoveOrder implements UnitOrder {
       } else {
         const targetUnit = map.getUnit(coordinates);
         if (targetUnit) {
-          await ability.use(unit, coordinates, session, state);
+          await NormalAttack.use(unit, coordinates, session, state);
           return;
         }
         const door = getDoor(map, coordinates);
