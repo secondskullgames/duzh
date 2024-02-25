@@ -1,6 +1,4 @@
 import Coordinates from './Coordinates';
-import Direction from './Direction';
-import { checkState } from '../utils/preconditions';
 
 export const manhattanDistance = (first: Coordinates, second: Coordinates): number =>
   Math.abs(first.x - second.x) + Math.abs(first.y - second.y);

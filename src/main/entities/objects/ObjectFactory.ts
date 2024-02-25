@@ -2,7 +2,6 @@ import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
-import BasicEnemyController from '../units/controllers/BasicEnemyController';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
 import { getBonus } from '../../maps/MapUtils';

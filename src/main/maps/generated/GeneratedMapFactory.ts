@@ -14,8 +14,6 @@ import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
 import Unit from '../../entities/units/Unit';
 import UnitModel from '../../schemas/UnitModel';
-import ArcherController from '../../entities/units/controllers/ArcherController';
-import BasicEnemyController from '../../entities/units/controllers/BasicEnemyController';
 import { Feature } from '../../utils/features';
 import { checkState } from '../../utils/preconditions';
 import GeneratedMapModel from '../../schemas/GeneratedMapModel';

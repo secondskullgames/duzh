@@ -3,7 +3,6 @@ import { getDirection } from '../inputMappers';
 import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
 import { Strafe } from '../../entities/units/abilities/Strafe';
-import { NormalAttack } from '../../entities/units/abilities/NormalAttack';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';

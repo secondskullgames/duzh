@@ -1,7 +1,6 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { pointAt } from '../../../utils/geometry';
 import { walk } from '../../../actions/walk';
 import { openDoor } from '../../../actions/openDoor';

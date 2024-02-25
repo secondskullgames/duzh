@@ -10,7 +10,6 @@ import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import MapInstance from '../../../maps/MapInstance';
 import { isInStraightLine } from '../../../geometry/CoordinatesUtils';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
 
