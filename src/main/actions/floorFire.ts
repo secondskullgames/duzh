@@ -2,11 +2,12 @@ import { recordKill } from './recordKill';
 import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
-import { playAnimation } from '../graphics/animations/playAnimation';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
 import { GameState } from '../core/GameState';
 import { Session } from '../core/Session';
+import Activity from '../entities/units/Activity';
+import { sleep } from '../utils/promises';
 
 export const floorFire = async (
   unit: Unit,
@@ -22,10 +23,24 @@ export const floorFire = async (
   });
 
   state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-  const animation = await state
-    .getAnimationFactory()
-    .getFloorFireAnimation(unit, adjacentUnits);
-  await playAnimation(animation, { map });
+
+  for (let i = 0; i < adjacentUnits.length; i++) {
+    unit.setActivity(Activity.STANDING, 1, unit.getDirection());
+
+    for (let j = 0; j < adjacentUnits.length; j++) {
+      const activity = j === i ? Activity.BURNED : Activity.STANDING;
+      adjacentUnits[j].setActivity(activity, 1, unit.getDirection());
+    }
+
+    if (i < adjacentUnits.length - 1) {
+      await sleep(150);
+    }
+  }
+
+  unit.setActivity(Activity.STANDING, 1, unit.getDirection());
+  for (let i = 0; i < adjacentUnits.length; i++) {
+    adjacentUnits[i].setActivity(Activity.STANDING, 1, unit.getDirection());
+  }
 
   for (const adjacentUnit of adjacentUnits) {
     await dealDamage(damage, {

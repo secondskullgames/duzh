@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
@@ -12,6 +11,8 @@ import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { getRangedDamage } from '../UnitUtils';
 import { isBlocked } from '../../../maps/MapUtils';
+import Direction from '../../../geometry/Direction';
+import Activity from '../Activity';
 
 const manaCost = 5;
 
@@ -49,10 +50,7 @@ export const ShootTurretArrow: UnitAbility = {
     if (targetUnit) {
       const damage = getRangedDamage(unit);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      const arrowAnimation = await state
-        .getAnimationFactory()
-        .getArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, map);
-      await playAnimation(arrowAnimation, { map });
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
@@ -64,10 +62,53 @@ export const ShootTurretArrow: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      const arrowAnimation = await state
-        .getAnimationFactory()
-        .getArrowAnimation(unit, { dx, dy }, coordinatesList, null, map);
-      await playAnimation(arrowAnimation, { map });
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null, state);
     }
+  }
+};
+
+/**
+ * TODO: fully copy-pasted from ShootArrow
+ * Probably want to extract a shared `shootArrow` action
+ * Still better than using AnimationFactory
+ */
+const playArrowAnimation = async (
+  source: Unit,
+  direction: Direction,
+  coordinatesList: Coordinates[],
+  target: Unit | null,
+  state: GameState
+) => {
+  const map = source.getMap();
+
+  // first frame
+  source.setActivity(Activity.SHOOTING, 1, source.getDirection());
+  if (target) {
+    target.setActivity(Activity.STANDING, 1, target.getDirection());
+  }
+  await sleep(100);
+
+  const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+    map.isTileRevealed(coordinates)
+  );
+
+  // arrow movement frames
+  for (const coordinates of visibleCoordinatesList) {
+    const projectile = await state
+      .getProjectileFactory()
+      .createArrow(coordinates, map, direction);
+    map.projectiles.add(projectile);
+    await sleep(50);
+    map.removeProjectile(projectile);
+  }
+
+  // last frames
+  if (target) {
+    target.setActivity(Activity.DAMAGED, 1, target.getDirection());
+    await sleep(100);
+  }
+  source.setActivity(Activity.STANDING, 1, source.getDirection());
+  if (target) {
+    target.setActivity(Activity.STANDING, 1, target.getDirection());
   }
 };
