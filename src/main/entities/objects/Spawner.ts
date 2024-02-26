@@ -1,6 +1,5 @@
 import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
-import Animatable from '../../graphics/animations/Animatable';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
 import { Session } from '../../core/Session';
@@ -28,7 +27,7 @@ type Props = Readonly<{
   isBlocking: boolean;
 }>;
 
-export default class Spawner extends GameObject implements Animatable {
+export default class Spawner extends GameObject {
   private readonly spawnFunction: SpawnFunction;
   private _state: SpawnerState;
   private readonly maxCooldown: number;
@@ -61,8 +60,6 @@ export default class Spawner extends GameObject implements Animatable {
     this._isBlocking = isBlocking;
   }
 
-  getAnimationKey = (): string => `${this._state.toLowerCase()}`;
-
   playTurnAction = async (state: GameState, session: Session) => {
     if (this._state === 'DEAD') {
       return;
@@ -88,6 +85,8 @@ export default class Spawner extends GameObject implements Animatable {
       }
     }
   };
+
+  getState = (): SpawnerState => this._state;
 
   setState = (state: SpawnerState) => {
     this._state = state;

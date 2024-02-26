@@ -1,12 +1,8 @@
 import { EquipmentScriptName } from './EquipmentScript';
 import { getEquipmentTooltip } from './getEquipmentTooltip';
 import Sprite from '../graphics/sprites/Sprite';
-import Animatable from '../graphics/animations/Animatable';
-import Direction from '../geometry/Direction';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import { checkNotNull } from '../utils/preconditions';
-import Activity from '../entities/units/Activity';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
 
@@ -18,7 +14,7 @@ type Props = Readonly<{
   inventoryItem?: InventoryItem | null;
 }>;
 
-export default class Equipment implements Animatable {
+export default class Equipment {
   readonly inventoryItem: InventoryItem | null;
   readonly damage?: number; // typically only for weapons
   readonly absorbAmount?: number; // typically for armor
@@ -50,16 +46,6 @@ export default class Equipment implements Animatable {
   };
 
   getUnit = () => this._unit;
-
-  /**
-   * @override {@link Animatable#getAnimationKey}
-   */
-  getAnimationKey = () => {
-    const unit = checkNotNull(this._unit);
-    return `${Activity.toString(unit.getActivity())}_${Direction.toString(
-      unit.getDirection()
-    )}_${unit.getFrameNumber()}`;
-  };
 
   getSprite = (): Sprite => this.sprite;
 
