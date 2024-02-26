@@ -33,14 +33,10 @@ export const HeavyAttack: UnitAbility = {
   innate: false,
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('HeavyAttack requires a target!');
-    }
-
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

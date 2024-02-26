@@ -58,14 +58,10 @@ export const Scorpion: UnitAbility = {
   innate: false,
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Scorpion requires a target!');
-    }
-
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const { dx, dy } = direction;

@@ -15,14 +15,10 @@ export const Strafe: UnitAbility = {
 
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Strafe requires a target!');
-    }
-
     const map = session.getMap();
     if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       await moveUnit(unit, coordinates, session, state);

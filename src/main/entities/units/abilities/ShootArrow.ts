@@ -28,13 +28,10 @@ export const ShootArrow: UnitAbility = {
 
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('ShootArrow requires a target!');
-    }
     if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }

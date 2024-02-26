@@ -79,7 +79,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { state, session } = this;
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
-    const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {

@@ -20,7 +20,7 @@ export const Blink: UnitAbility = {
   innate: false,
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
