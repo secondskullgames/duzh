@@ -34,14 +34,10 @@ export const Cleave: UnitAbility = {
   innate: false,
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Cleave requires a target!');
-    }
-
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

@@ -7,7 +7,7 @@ import { GameState } from '../core/GameState';
 
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
-const MANA_GLOBE_DROP_CHANCE = 0.15;
+const MANA_GLOBE_DROP_CHANCE = 0;
 
 export const die = async (unit: Unit, state: GameState, session: Session) => {
   const playerUnit = session.getPlayerUnit();

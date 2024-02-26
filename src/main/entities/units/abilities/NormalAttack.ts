@@ -20,13 +20,10 @@ export const NormalAttack: UnitAbility = {
   innate: true,
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('NormalAttack requires a target!');
-    }
     // TODO: verify coordinates are adjacent
 
     const map = session.getMap();

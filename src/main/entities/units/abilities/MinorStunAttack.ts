@@ -23,14 +23,10 @@ export const MinorStunAttack: UnitAbility = {
 
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('MinorStunAttack requires a target!');
-    }
-
     const map = session.getMap();
     const { x, y } = coordinates;
 

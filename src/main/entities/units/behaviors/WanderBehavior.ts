@@ -14,18 +14,18 @@ export default class WanderBehavior implements UnitBehavior {
   /** @override */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const map = session.getMap();
-    const tiles: Coordinates[] = [];
+    const possibleDirections: Direction[] = [];
 
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
-        tiles.push(coordinates);
+        possibleDirections.push(direction);
       }
     }
 
-    if (tiles.length > 0) {
-      const coordinates = randChoice(tiles);
-      return new AttackMoveOrder({ coordinates });
+    if (possibleDirections.length > 0) {
+      const direction = randChoice(possibleDirections);
+      return new AttackMoveOrder({ direction });
     }
     return new StayOrder();
   };

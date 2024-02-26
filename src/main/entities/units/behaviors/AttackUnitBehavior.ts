@@ -12,6 +12,7 @@ import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { findPath } from '../../../maps/MapUtils';
 import { canDash } from '../controllers/ControllerUtils';
+import { pointAt } from '../../../utils/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -46,21 +47,26 @@ export default class AttackUnitBehavior implements UnitBehavior {
       map
     );
 
-    if (pathToTarget.length > 1) {
-      const coordinates = pathToTarget[1]; // first tile is the unit's own tile
+    if (pathToTarget.length > 2) {
       const second = pathToTarget[2];
+      const direction = pointAt(unit.getCoordinates(), second);
       if (canDash(unit, second, map)) {
         return new AbilityOrder({
           ability: UnitAbility.abilityForName(AbilityName.DASH),
-          coordinates: second
+          direction
         });
       }
+    }
+
+    if (pathToTarget.length > 1) {
+      const coordinates = pathToTarget[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null) {
         return new MoveOrder({ coordinates });
       } else if (unitAtPoint === targetUnit) {
         const ability = this._chooseAbility(unit);
-        return new AbilityOrder({ ability, coordinates });
+        const direction = pointAt(unit.getCoordinates(), coordinates);
+        return new AbilityOrder({ ability, direction });
       }
     }
     return new StayOrder();

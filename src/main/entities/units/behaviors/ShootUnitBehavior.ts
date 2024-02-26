@@ -32,9 +32,8 @@ export default class ShootUnitBehavior implements UnitBehavior {
       canShoot(unit, targetUnit, AbilityName.SHOOT_ARROW)
     ) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       return new AbilityOrder({
-        coordinates,
+        direction,
         ability: ShootArrow
       });
     }

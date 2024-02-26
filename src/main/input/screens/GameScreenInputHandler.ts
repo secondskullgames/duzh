@@ -79,7 +79,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { state, session } = this;
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
-    const coordinates = Coordinates.plus(playerUnit.getCoordinates(), direction);
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
@@ -87,19 +86,14 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         playerUnit.getEquipment().getBySlot('RANGED_WEAPON') &&
         playerUnit.canSpendMana(ShootArrow.manaCost)
       ) {
-        order = new AbilityOrder({ coordinates, ability: ShootArrow });
+        order = new AbilityOrder({ direction, ability: ShootArrow });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
       if (playerUnit.canSpendMana(Strafe.manaCost)) {
-        // TODO make this into an Order
-        order = {
-          execute: async (unit, state, session) => {
-            await Strafe.use(unit, coordinates, session, state);
-          }
-        };
+        order = new AbilityOrder({ direction, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
@@ -109,7 +103,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         playerUnit.hasAbility(AbilityName.DASH) &&
         playerUnit.canSpendMana(Dash.manaCost)
       ) {
-        order = new AbilityOrder({ coordinates, ability: Dash });
+        order = new AbilityOrder({ direction, ability: Dash });
       }
     } else if (
       modifiers.includes(ModifierKey.CTRL) &&
@@ -120,9 +114,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
       if (ability) {
-        order = new AbilityOrder({ ability, coordinates });
+        order = new AbilityOrder({ ability, direction });
       } else {
-        order = new AttackMoveOrder({ coordinates });
+        order = new AttackMoveOrder({ direction });
       }
     }
     const playerController = playerUnit.getController() as PlayerUnitController;

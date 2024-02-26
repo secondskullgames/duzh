@@ -27,14 +27,10 @@ export const ShootTurretArrow: UnitAbility = {
 
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('ShootTurretArrow requires a target!');
-    }
-
     const map = session.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });

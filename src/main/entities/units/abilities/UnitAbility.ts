@@ -14,7 +14,6 @@ import { ShootArrow } from './ShootArrow';
 import { ShootTurretArrow } from './ShootTurretArrow';
 import { ShootFireball } from './ShootFireball';
 import { Strafe } from './Strafe';
-import { StrafeShot } from './StrafeShot';
 import { StunAttack } from './StunAttack';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
@@ -35,9 +34,12 @@ export type UnitAbility = Readonly<{
    */
   innate: boolean;
 
+  /**
+   * TODO: should accept a direction, not coordinates
+   */
   use: (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => Promise<void>;
@@ -62,7 +64,6 @@ export namespace UnitAbility {
     [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
     [AbilityName.SHOOT_FIREBALL]: ShootFireball,
     [AbilityName.STRAFE]: Strafe,
-    [AbilityName.STRAFE_SHOT]: StrafeShot,
     [AbilityName.STUN_ATTACK]: StunAttack,
     [AbilityName.SUMMON]: Summon,
     [AbilityName.TELEPORT]: Teleport

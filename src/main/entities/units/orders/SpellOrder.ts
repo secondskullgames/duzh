@@ -3,28 +3,27 @@ import Unit from '../Unit';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
-import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 
 type Props = Readonly<{
   ability: UnitAbility;
-  direction: Direction;
+  coordinates: Coordinates;
 }>;
 
-export class AbilityOrder implements UnitOrder {
+export class SpellOrder implements UnitOrder {
+  // For now, these are the same, but think about it
   private readonly ability: UnitAbility;
-  private readonly direction: Direction;
+  private readonly coordinates: Coordinates;
 
-  constructor({ ability, direction }: Props) {
+  constructor({ ability, coordinates }: Props) {
     this.ability = ability;
-    this.direction = direction;
+    this.coordinates = coordinates;
   }
 
   /**
    * @override {@link UnitOrder#execute}
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    const coordinates = Coordinates.plus(unit.getCoordinates(), this.direction);
-    await this.ability.use(unit, coordinates, session, state);
+    await this.ability.use(unit, this.coordinates, session, state);
   };
 }

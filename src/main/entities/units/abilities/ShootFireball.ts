@@ -18,15 +18,11 @@ export const ShootFireball: UnitAbility = {
 
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('ShootFireball requires a target!');
-    }
     const direction = pointAt(unit.getCoordinates(), coordinates);
-
     unit.spendMana(MANA_COST);
     await shootFireball(unit, direction, DAMAGE, session, state);
   }

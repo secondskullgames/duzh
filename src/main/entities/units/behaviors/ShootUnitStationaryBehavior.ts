@@ -29,9 +29,8 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
 
     if (canShoot(unit, targetUnit, AbilityName.SHOOT_TURRET_ARROW)) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
       return new AbilityOrder({
-        coordinates,
+        direction,
         ability: ShootTurretArrow
       });
     }
