@@ -57,7 +57,7 @@ export namespace Feature {
       case Feature.FAST_MOVE:
         return false;
       case Feature.LEVEL_UP_SCREEN:
-        return true;
+        return false;
       case Feature.STAIRS_UP:
         return false;
     }
