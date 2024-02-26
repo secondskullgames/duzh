@@ -80,9 +80,9 @@ const playBoltAnimation = async (
   const map = source.getMap();
 
   // first frame
-  source.setActivity(Activity.SHOOTING, 0, source.getDirection());
+  source.setActivity(Activity.SHOOTING, 1, source.getDirection());
   if (target) {
-    target.setActivity(Activity.STANDING, 0, target.getDirection());
+    target.setActivity(Activity.STANDING, 1, target.getDirection());
   }
   await sleep(100);
 
@@ -102,11 +102,11 @@ const playBoltAnimation = async (
 
   // last frames
   if (target) {
-    target.setActivity(Activity.DAMAGED, 0, target.getDirection());
+    target.setActivity(Activity.DAMAGED, 1, target.getDirection());
     await sleep(100);
   }
-  source.setActivity(Activity.STANDING, 0, source.getDirection());
+  source.setActivity(Activity.STANDING, 1, source.getDirection());
   if (target) {
-    target.setActivity(Activity.STANDING, 0, target.getDirection());
+    target.setActivity(Activity.STANDING, 1, target.getDirection());
   }
 };

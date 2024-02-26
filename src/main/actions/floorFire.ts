@@ -25,11 +25,11 @@ export const floorFire = async (
   state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
 
   for (let i = 0; i < adjacentUnits.length; i++) {
-    unit.setActivity(Activity.STANDING, 0, unit.getDirection());
+    unit.setActivity(Activity.STANDING, 1, unit.getDirection());
 
     for (let j = 0; j < adjacentUnits.length; j++) {
       const activity = j === i ? Activity.BURNED : Activity.STANDING;
-      adjacentUnits[j].setActivity(activity, 0, unit.getDirection());
+      adjacentUnits[j].setActivity(activity, 1, unit.getDirection());
     }
 
     if (i < adjacentUnits.length - 1) {
@@ -37,9 +37,9 @@ export const floorFire = async (
     }
   }
 
-  unit.setActivity(Activity.STANDING, 0, unit.getDirection());
+  unit.setActivity(Activity.STANDING, 1, unit.getDirection());
   for (let i = 0; i < adjacentUnits.length; i++) {
-    adjacentUnits[i].setActivity(Activity.STANDING, 0, unit.getDirection());
+    adjacentUnits[i].setActivity(Activity.STANDING, 1, unit.getDirection());
   }
 
   for (const adjacentUnit of adjacentUnits) {

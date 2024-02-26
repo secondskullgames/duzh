@@ -20,7 +20,6 @@
   "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {
-    "enabled": true,
-    "radius": 2
+    "enabled": false
   }
 }
