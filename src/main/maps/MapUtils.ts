@@ -79,6 +79,10 @@ export const isBlocked = (map: MapInstance, coordinates: Coordinates): boolean =
   );
 };
 
+export const isOccupied = (map: MapInstance, coordinates: Coordinates): boolean => {
+  return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
+};
+
 export const revealMap = (map: MapInstance) => {
   for (const coordinates of getAllCoordinates(map)) {
     map.revealTile(coordinates);
