@@ -19,6 +19,7 @@ export const MinorStunAttack: UnitAbility = {
   name: AbilityName.MINOR_STUN_ATTACK,
   manaCost,
   icon: 'icon2',
+  innate: false,
 
   use: async (
     unit: Unit,

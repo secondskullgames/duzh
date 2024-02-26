@@ -3,7 +3,6 @@ import { getDirection } from '../inputMappers';
 import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
 import { Strafe } from '../../entities/units/abilities/Strafe';
-import { NormalAttack } from '../../entities/units/abilities/NormalAttack';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { playTurn } from '../../actions/playTurn';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
@@ -22,6 +21,7 @@ import { Dash } from '../../entities/units/abilities/Dash';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
 import { MapController } from '../../maps/MapController';
+import { getHotkeyAbility } from '../../entities/units/UnitUtils';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -105,7 +105,10 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (playerUnit.canSpendMana(Dash.manaCost)) {
+      if (
+        playerUnit.hasAbility(AbilityName.DASH) &&
+        playerUnit.canSpendMana(Dash.manaCost)
+      ) {
         order = new AbilityOrder({ coordinates, ability: Dash });
       }
     } else if (
@@ -119,7 +122,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (ability) {
         order = new AbilityOrder({ ability, coordinates });
       } else {
-        order = new AttackMoveOrder({ ability: NormalAttack, coordinates });
+        order = new AttackMoveOrder({ coordinates });
       }
     }
     const playerController = playerUnit.getController() as PlayerUnitController;
@@ -132,12 +135,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   private _handleAbility = async (key: NumberKey) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
-
-    const index = parseInt(key.toString());
-    const innateAbilities = AbilityName.getInnateAbilities();
-    const ability = playerUnit
-      .getAbilities()
-      .filter(ability => !innateAbilities.includes(ability.name))[index - 1];
+    const ability = getHotkeyAbility(playerUnit, key);
     if (ability && playerUnit.canSpendMana(ability.manaCost)) {
       session.setQueuedAbility(ability);
     }

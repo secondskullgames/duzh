@@ -18,6 +18,7 @@ export const MinorKnockback: UnitAbility = {
   name: AbilityName.MINOR_KNOCKBACK,
   manaCost,
   icon: 'icon6',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

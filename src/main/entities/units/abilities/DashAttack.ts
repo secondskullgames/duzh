@@ -3,22 +3,50 @@ import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
-import { sleep } from '../../../utils/promises';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '../../../actions/moveUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
+import Direction from '../../../geometry/Direction';
+import { sleep } from '../../../utils/promises';
 import { getMeleeDamage } from '../UnitUtils';
 import { isBlocked } from '../../../maps/MapUtils';
 
-const manaCost = 8;
+const manaCost = 10;
 const damageCoefficient = 1;
+const stunDuration = 1;
+
+const attack: Attack = {
+  sound: Sounds.SPECIAL_ATTACK,
+  calculateAttackResult: (unit: Unit): AttackResult => {
+    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+    return { damage };
+  },
+  getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
+    const attackerName = attacker.getName();
+    const defenderName = defender.getName();
+    const damage = result.damageTaken;
+    return `${attackerName} hit ${defenderName} for ${damage} damage!`;
+  }
+};
+
+const _doKnockback = async (
+  targetUnit: Unit,
+  { dx, dy }: Direction,
+  session: Session,
+  state: GameState
+) => {
+  const { x, y } = targetUnit.getCoordinates();
+  const targetCoordinates = { x: x + dx, y: y + dy };
+  await moveUnit(targetUnit, targetCoordinates, session, state);
+};
 
 export const DashAttack: UnitAbility = {
   name: AbilityName.DASH_ATTACK,
   manaCost,
-  icon: 'icon5', // TODO
+  icon: 'icon5',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,
@@ -34,46 +62,41 @@ export const DashAttack: UnitAbility = {
     dx = Math.sign(dx);
     dy = Math.sign(dy);
 
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-
-    const { x, y } = unit.getCoordinates();
-    const targetCoordinates = { x: x + dx, y: y + dy };
-    if (map.contains(targetCoordinates)) {
-      const targetUnit = map.getUnit(targetCoordinates);
-      if (targetUnit) {
-        // begin DO_ATTACK
-        unit.spendMana(manaCost);
-
-        const behindCoordinates = { x: x + 2 * dx, y: y + 2 * dy };
-        if (map.contains(behindCoordinates) && !isBlocked(map, behindCoordinates)) {
-          await moveUnit(targetUnit, behindCoordinates, session, state);
-          await moveUnit(unit, targetCoordinates, session, state);
-        }
-
-        const attack: Attack = {
-          sound: Sounds.SPECIAL_ATTACK,
-          calculateAttackResult: (unit: Unit): AttackResult => {
-            const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
-            return { damage };
-          },
-          getDamageLogMessage: (
-            attacker: Unit,
-            defender: Unit,
-            result: DefendResult
-          ): string => {
-            const attackerName = attacker.getName();
-            const defenderName = defender.getName();
-            const damage = result.damageTaken;
-            return `${attackerName} hit ${defenderName} for ${damage} damage!`;
-          }
-        };
-        await attackUnit(unit, targetUnit, attack, session, state);
-        // End DO_ATTACK
-        await sleep(100);
+    // validate
+    {
+      const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+      const isValid = map.contains(targetCoordinates);
+      const blocked = isBlocked(map, targetCoordinates);
+      const hasUnit = map.getUnit(targetCoordinates);
+      if (!isValid || (blocked && !hasUnit)) {
         return;
       }
     }
 
-    state.getSoundPlayer().playSound(Sounds.BLOCKED);
+    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    unit.spendMana(manaCost);
+
+    const numTiles = 2;
+    for (let i = 0; i < 2; i++) {
+      const { x, y } = unit.getCoordinates();
+      const targetCoordinates = { x: x + dx, y: y + dy };
+      if (map.contains(targetCoordinates)) {
+        const targetUnit = map.getUnit(targetCoordinates);
+        if (targetUnit) {
+          const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
+          if (!isBlocked(map, behindCoordinates)) {
+            await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
+            await moveUnit(unit, targetCoordinates, session, state);
+          }
+          if (i === numTiles - 1) {
+            await attackUnit(unit, targetUnit, attack, session, state);
+            targetUnit.setStunned(stunDuration);
+          }
+        } else if (!isBlocked(map, targetCoordinates)) {
+          await moveUnit(unit, targetCoordinates, session, state);
+        }
+        await sleep(100);
+      }
+    }
   }
 };

@@ -23,6 +23,7 @@ export const ShootTurretArrow: UnitAbility = {
   name: AbilityName.SHOOT_TURRET_ARROW,
   icon: null,
   manaCost,
+  innate: false,
 
   use: async (
     unit: Unit,

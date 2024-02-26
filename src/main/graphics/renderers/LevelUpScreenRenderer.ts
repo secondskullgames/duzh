@@ -9,6 +9,8 @@ import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import Unit from '../../entities/units/Unit';
+import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
@@ -27,7 +29,6 @@ export default class LevelUpScreenRenderer implements Renderer {
   render = async (graphics: Graphics) => {
     const { session, imageFactory } = this;
     const playerUnit = session.getPlayerUnit();
-    const selectedAbility = session.getLevelUpScreen().getSelectedAbility();
 
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
@@ -37,11 +38,12 @@ export default class LevelUpScreenRenderer implements Renderer {
       height: SCREEN_HEIGHT
     });
 
-    const availableAbilities = playerUnit.getLearnableAbilities();
+    const listedAbilities = playerUnit
+      .getPlayerUnitClass()!
+      .getAllPossibleLearnableAbilities();
     let top = 10;
-    for (const abilityName of availableAbilities) {
-      const color: Color =
-        abilityName === selectedAbility ? Colors.WHITE : Colors.LIGHT_GRAY;
+    for (const abilityName of listedAbilities) {
+      const color: Color = this._getAbilityColor(playerUnit, abilityName);
       await this._drawText(
         abilityName,
         FontName.APPLE_II,
@@ -63,6 +65,20 @@ export default class LevelUpScreenRenderer implements Renderer {
     );
   };
 
+  private _getAbilityColor = (playerUnit: Unit, abilityName: AbilityName) => {
+    const isUnlocked = this._isUnlocked(abilityName, playerUnit);
+    const selectedAbility = this.session.getLevelUpScreen().getSelectedAbility();
+    const isSelected = abilityName === selectedAbility;
+
+    if (playerUnit.hasAbility(abilityName)) {
+      return Colors.DARK_GRAY;
+    } else if (isUnlocked) {
+      return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
+    } else {
+      return isSelected ? Colors.RED : Colors.DARK_RED;
+    }
+  };
+
   private _drawText = async (
     text: string,
     font: FontName,
@@ -73,5 +89,9 @@ export default class LevelUpScreenRenderer implements Renderer {
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, graphics, pixel, textAlign);
+  };
+
+  private _isUnlocked = (abilityName: AbilityName, playerUnit: Unit): boolean => {
+    return playerUnit.getCurrentlyLearnableAbilities().includes(abilityName);
   };
 }

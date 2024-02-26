@@ -1,15 +1,12 @@
 import PlayerUnitController from './controllers/PlayerUnitController';
 import { UnitController } from './controllers/UnitController';
 import Unit from './Unit';
-import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
-import { UnitAbility } from './abilities/UnitAbility';
 import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
-import { Feature } from '../../utils/features';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
@@ -68,11 +65,8 @@ export default class UnitFactory {
     });
   };
 
-  createPlayerUnit = async (
-    coordinates: Coordinates,
-    map: MapInstance
-  ): Promise<Unit> => {
-    const unit = await this.createUnit({
+  createPlayerUnit = async (coordinates: Coordinates, map: MapInstance): Promise<Unit> =>
+    this.createUnit({
       unitClass: 'player',
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
@@ -81,9 +75,4 @@ export default class UnitFactory {
       map,
       playerUnitClass: PlayerUnitClass.DEFAULT
     });
-    if (!Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      unit.learnAbility(UnitAbility.abilityForName(AbilityName.DASH));
-    }
-    return unit;
-  };
 }

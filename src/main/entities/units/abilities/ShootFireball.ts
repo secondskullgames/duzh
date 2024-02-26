@@ -14,6 +14,7 @@ export const ShootFireball: UnitAbility = {
   name: AbilityName.SHOOT_FIREBALL,
   icon: 'icon6',
   manaCost: MANA_COST,
+  innate: false,
 
   use: async (
     unit: Unit,

@@ -13,7 +13,7 @@ import { getMeleeDamage } from '../UnitUtils';
 import { isBlocked } from '../../../maps/MapUtils';
 
 const manaCost = 6;
-const damageCoefficient = 0.5;
+const damageCoefficient = 1;
 const stunDuration = 1;
 const TWO_TILES = false;
 
@@ -21,6 +21,7 @@ export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,
   manaCost,
   icon: 'icon6',
+  innate: false,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

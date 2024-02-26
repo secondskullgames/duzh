@@ -6,10 +6,8 @@ import { randChoice } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
-import { AbilityName } from '../abilities/AbilityName';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { isBlocked } from '../../../maps/MapUtils';
 
 export default class WanderBehavior implements UnitBehavior {
@@ -27,10 +25,7 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (tiles.length > 0) {
       const coordinates = randChoice(tiles);
-      return new AttackMoveOrder({
-        coordinates,
-        ability: UnitAbility.abilityForName(AbilityName.ATTACK)
-      });
+      return new AttackMoveOrder({ coordinates });
     }
     return new StayOrder();
   };

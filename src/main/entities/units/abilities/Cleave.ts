@@ -7,6 +7,7 @@ import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
+import Direction from '../../../geometry/Direction';
 import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;
@@ -26,10 +27,10 @@ const attack: Attack = {
   }
 };
 
-export const HeavyAttack: UnitAbility = {
-  name: AbilityName.HEAVY_ATTACK,
+export const Cleave: UnitAbility = {
+  name: AbilityName.CLEAVE,
   manaCost,
-  icon: 'icon1',
+  icon: 'icon7',
   innate: false,
   use: async (
     unit: Unit,
@@ -38,17 +39,48 @@ export const HeavyAttack: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('HeavyAttack requires a target!');
+      throw new Error('Cleave requires a target!');
     }
 
-    const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    const targetUnit = map.getUnit(coordinates);
-    if (targetUnit) {
+    const targetUnits = _getTargetUnits(unit, direction);
+    if (targetUnits.length > 0) {
       unit.spendMana(manaCost);
+    }
+
+    // TODO: consider making this simultaneous
+    for (const targetUnit of targetUnits) {
       await attackUnit(unit, targetUnit, attack, session, state);
     }
   }
+};
+
+/**
+ * Returns the units that will be affected by a cleave attack.
+ * Specifically, this means the unit directly ahead of the
+ * attacking unit, plus any units to the left or right of that
+ * unit.
+ */
+const _getTargetUnits = (unit: Unit, direction: Direction): Unit[] => {
+  const map = unit.getMap();
+  const coordinates = unit.getCoordinates();
+  const targetCoordinates = Coordinates.plus(coordinates, direction);
+  const targetUnit = map.getUnit(targetCoordinates);
+  if (!targetUnit) {
+    return [];
+  }
+
+  const leftCoordinates = Coordinates.plus(
+    targetCoordinates,
+    Direction.rotateCounterClockwise(direction)
+  );
+  const rightCoordinates = Coordinates.plus(
+    targetCoordinates,
+    Direction.rotateClockwise(direction)
+  );
+  const leftUnit = map.getUnit(leftCoordinates);
+  const rightUnit = map.getUnit(rightCoordinates);
+  return [leftUnit, targetUnit, rightUnit].filter(Boolean) as Unit[];
 };

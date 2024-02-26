@@ -24,6 +24,7 @@ export const StrafeShot: UnitAbility = {
   name: AbilityName.STRAFE_SHOT,
   manaCost,
   icon: 'icon5', // TODO
+  innate: false,
 
   use: async (
     unit: Unit,

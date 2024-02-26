@@ -362,11 +362,15 @@ export default class Unit implements Entity, Animatable {
     return this.abilityPoints;
   };
 
-  getLearnableAbilities = (): AbilityName[] => {
+  getCurrentlyLearnableAbilities = (): AbilityName[] => {
     if (this.playerUnitClass) {
       return this.playerUnitClass
-        .getLearnableAbilities()
-        .filter(abilityName => !this.hasAbility(abilityName));
+        .getAllPossibleLearnableAbilities()
+        .filter(abilityName => !this.hasAbility(abilityName))
+        .filter(abilityName => {
+          const dependencies = this.playerUnitClass!.getAbilityDependencies(abilityName);
+          return dependencies.every(dep => this.hasAbility(dep));
+        });
     }
     return [];
   };

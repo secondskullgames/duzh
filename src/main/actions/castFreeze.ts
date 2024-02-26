@@ -1,12 +1,7 @@
-import { dealDamage } from './dealDamage';
-import { die } from './die';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { playAnimation } from '../graphics/animations/playAnimation';
-import { sleep } from '../utils/promises';
 import { Session } from '../core/Session';
 import { GameState } from '../core/GameState';
-import direction from '../geometry/Direction';
 
 const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {
   return `${target.getName()} is frozen for ${duration} turns!`;

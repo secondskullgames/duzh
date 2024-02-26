@@ -18,8 +18,8 @@ import { StrafeShot } from './StrafeShot';
 import { StunAttack } from './StunAttack';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
-import { DoubleDashAttack } from './DoubleDashAttack';
 import { Scorpion } from './Scorpion';
+import { Cleave } from './Cleave';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
 import Unit from '../Unit';
@@ -30,6 +30,10 @@ export type UnitAbility = Readonly<{
   name: AbilityName;
   manaCost: number;
   icon: string | null;
+  /**
+   * True if the ability does not show up on the player's action bar
+   */
+  innate: boolean;
 
   use: (
     unit: Unit,
@@ -44,9 +48,9 @@ export namespace UnitAbility {
     [AbilityName.ATTACK]: NormalAttack,
     [AbilityName.BLINK]: Blink,
     [AbilityName.BOLT]: ShootBolt,
+    [AbilityName.CLEAVE]: Cleave,
     [AbilityName.DASH]: Dash,
     [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.DOUBLE_DASH_ATTACK]: DoubleDashAttack,
     [AbilityName.FREE_MOVE]: FreeMove,
     [AbilityName.HEAVY_ATTACK]: HeavyAttack,
     [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
