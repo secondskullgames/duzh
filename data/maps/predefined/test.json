@@ -9,12 +9,14 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "shade"
+    "BLUE": "grunt"
   },
   "itemColors": {
-    "GREEN": "freeze_scroll"
+    "GREEN": "floor_fire_scroll"
   },
-  "equipmentColors": {},
+  "equipmentColors": {
+    "BLUE": "short_bow"
+  },
   "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {

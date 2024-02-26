@@ -23,6 +23,9 @@ export default class MapInstance {
   private readonly tiles: Grid<Tile>;
   private readonly units: Grid<Unit>;
   private readonly objects: MultiGrid<GameObject>;
+  /**
+   * TODO should not expose this
+   */
   readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;

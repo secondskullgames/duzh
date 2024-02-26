@@ -2,7 +2,6 @@ import MapInstance from '../maps/MapInstance';
 import { checkArgument } from '../utils/preconditions';
 import { MapSupplier } from '../maps/MapSupplier';
 import { clear } from '../utils/arrays';
-import AnimationFactory from '../graphics/animations/AnimationFactory';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
@@ -29,7 +28,6 @@ export interface GameState {
 
   // TODO trying to find ways to remove the remainder
 
-  getAnimationFactory: () => AnimationFactory;
   getItemFactory: () => ItemFactory;
   getUnitFactory: () => UnitFactory;
   getObjectFactory: () => ObjectFactory;
@@ -56,8 +54,6 @@ export class GameStateImpl implements GameState {
   constructor(
     @inject(GameState.SYMBOL_MAP_SPECS)
     private readonly mapSpecs: MapSpec[],
-    @inject(AnimationFactory)
-    private readonly animationFactory: AnimationFactory,
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory,
     @inject(UnitFactory)
@@ -110,7 +106,6 @@ export class GameStateImpl implements GameState {
     return this.maps[mapIndex];
   };
 
-  getAnimationFactory = (): AnimationFactory => this.animationFactory;
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;
   getObjectFactory = (): ObjectFactory => this.objectFactory;

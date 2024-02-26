@@ -6,6 +6,9 @@ import { shootFireball } from '../../../actions/shootFireball';
 import { pointAt } from '../../../utils/geometry';
 import { Session } from '../../../core/Session';
 import { GameState } from '../../../core/GameState';
+import Direction from '../../../geometry/Direction';
+import Activity from '../Activity';
+import { sleep } from '../../../utils/promises';
 
 const MANA_COST = 25;
 const DAMAGE = 20;

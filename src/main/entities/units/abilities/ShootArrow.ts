@@ -4,7 +4,6 @@ import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { playAnimation } from '../../../graphics/animations/playAnimation';
 import { dealDamage } from '../../../actions/dealDamage';
 import { sleep } from '../../../utils/promises';
 import { die } from '../../../actions/die';
@@ -13,6 +12,8 @@ import { GameState } from '../../../core/GameState';
 import { getRangedDamage } from '../UnitUtils';
 import { isBlocked } from '../../../maps/MapUtils';
 import { EquipmentScript } from '../../../equipment/EquipmentScript';
+import Direction from '../../../geometry/Direction';
+import Activity from '../Activity';
 
 const manaCost = 5;
 
@@ -51,17 +52,9 @@ export const ShootArrow: UnitAbility = {
     }
 
     const targetUnit = map.getUnit({ x, y });
-    const animationFactory = state.getAnimationFactory();
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      const arrowAnimation = await animationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        targetUnit,
-        map
-      );
-      await playAnimation(arrowAnimation, { map });
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -85,14 +78,48 @@ export const ShootArrow: UnitAbility = {
         }
       }
     } else {
-      const arrowAnimation = await animationFactory.getArrowAnimation(
-        unit,
-        { dx, dy },
-        coordinatesList,
-        null,
-        map
-      );
-      await playAnimation(arrowAnimation, { map });
+      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null, state);
     }
+  }
+};
+
+const playArrowAnimation = async (
+  source: Unit,
+  direction: Direction,
+  coordinatesList: Coordinates[],
+  target: Unit | null,
+  state: GameState
+) => {
+  const map = source.getMap();
+
+  // first frame
+  source.setActivity(Activity.SHOOTING, 0, source.getDirection());
+  if (target) {
+    target.setActivity(Activity.STANDING, 0, target.getDirection());
+  }
+  await sleep(100);
+
+  const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+    map.isTileRevealed(coordinates)
+  );
+
+  // arrow movement frames
+  for (const coordinates of visibleCoordinatesList) {
+    const projectile = await state
+      .getProjectileFactory()
+      .createArrow(coordinates, map, direction);
+    map.projectiles.add(projectile);
+    await sleep(50);
+    map.removeProjectile(projectile);
+  }
+
+  // last frames
+  if (target) {
+    target.setActivity(Activity.DAMAGED, 0, target.getDirection());
+    await sleep(100);
+  }
+  source.setActivity(Activity.STANDING, 0, source.getDirection());
+  if (target) {
+    target.setActivity(Activity.STANDING, 0, target.getDirection());
   }
 };
