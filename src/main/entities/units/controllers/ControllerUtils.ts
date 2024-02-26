@@ -22,13 +22,7 @@ export const canMove = (unit: Unit, session: Session): boolean => {
     'BasicEnemyController requires aiParams!'
   );
   const { speed } = aiParameters;
-
-  if (Feature.isEnabled(Feature.DETERMINISTIC_ENEMY_MOVEMENT)) {
-    const turn = session.getTurn();
-    return Math.floor(speed * turn) > Math.floor(speed * (turn - 1));
-  } else {
-    return Math.random() < speed;
-  }
+  return Math.random() < speed;
 };
 
 export const canSee = (unit: Unit, targetUnit: Unit) => {

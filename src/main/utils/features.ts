@@ -11,8 +11,6 @@ export enum Feature {
   DEBUG_LEVEL = 'DEBUG_LEVEL',
   DEBUG_LOGGING = 'DEBUG_LOGGING',
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
-  DETERMINISTIC_ENEMY_MOVEMENT = 'DETERMINISTIC_ENEMY_MOVEMENT',
-  FAST_MOVE = 'FAST_MOVE',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
   PRODUCTION = 'PRODUCTION',
@@ -50,11 +48,7 @@ export namespace Feature {
         return true;
       case Feature.DEBUG_LOGGING:
         return false;
-      case Feature.DETERMINISTIC_ENEMY_MOVEMENT:
-        return false;
       case Feature.GOD_MODE:
-        return false;
-      case Feature.FAST_MOVE:
         return false;
       case Feature.LEVEL_UP_SCREEN:
         return false;

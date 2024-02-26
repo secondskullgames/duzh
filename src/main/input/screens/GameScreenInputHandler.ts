@@ -16,7 +16,6 @@ import { GameScreen } from '../../core/GameScreen';
 import { AbilityName } from '../../entities/units/abilities/AbilityName';
 import { getItem } from '../../maps/MapUtils';
 import { Feature } from '../../utils/features';
-import { FastMoveOrder } from '../../entities/units/orders/FastMoveOrder';
 import { Dash } from '../../entities/units/abilities/Dash';
 import { GameState } from '../../core/GameState';
 import { Session } from '../../core/Session';
@@ -105,11 +104,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       ) {
         order = new AbilityOrder({ direction, ability: Dash });
       }
-    } else if (
-      modifiers.includes(ModifierKey.CTRL) &&
-      Feature.isEnabled(Feature.FAST_MOVE)
-    ) {
-      order = new FastMoveOrder({ direction });
     } else {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
