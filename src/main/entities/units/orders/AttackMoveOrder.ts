@@ -10,16 +10,17 @@ import { getDoor, getMovableBlock, getSpawner, isBlocked } from '../../../maps/M
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { NormalAttack } from '../abilities/NormalAttack';
+import Direction from '../../../geometry/Direction';
 
 type Props = Readonly<{
-  coordinates: Coordinates;
+  direction: Direction;
 }>;
 
 export class AttackMoveOrder implements UnitOrder {
-  private readonly coordinates: Coordinates;
+  private readonly direction: Direction;
 
-  constructor({ coordinates }: Props) {
-    this.coordinates = coordinates;
+  constructor({ direction }: Props) {
+    this.direction = direction;
   }
 
   /**
@@ -27,9 +28,9 @@ export class AttackMoveOrder implements UnitOrder {
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
     const map = session.getMap();
-    const { coordinates } = this;
-    const direction = pointAt(unit.getCoordinates(), coordinates);
+    const { direction } = this;
     unit.setDirection(direction);
+    const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
 
     if (!map.contains(coordinates)) {
       // do nothing
@@ -39,28 +40,38 @@ export class AttackMoveOrder implements UnitOrder {
         await walk(unit, direction, session, state);
         return;
       } else {
-        const targetUnit = map.getUnit(coordinates);
-        if (targetUnit) {
-          await NormalAttack.use(unit, coordinates, session, state);
-          return;
-        }
-        const door = getDoor(map, coordinates);
-        if (door) {
-          await openDoor(unit, door, state);
-          return;
-        }
-
-        const spawner = getSpawner(map, coordinates);
-        if (spawner && spawner.isBlocking()) {
-          await attackObject(unit, spawner, state);
-        }
-
-        const block = getMovableBlock(map, coordinates);
-        if (block) {
-          await pushBlock(unit, block, session, state);
-          return;
-        }
+        await this._attackTile(unit, coordinates, session, state);
       }
+    }
+  };
+
+  private _attackTile = async (
+    unit: Unit,
+    targetCoordinates: Coordinates,
+    session: Session,
+    state: GameState
+  ) => {
+    const map = unit.getMap();
+    const targetUnit = map.getUnit(targetCoordinates);
+    if (targetUnit) {
+      await NormalAttack.use(unit, targetCoordinates, session, state);
+      return;
+    }
+    const door = getDoor(map, targetCoordinates);
+    if (door) {
+      await openDoor(unit, door, state);
+      return;
+    }
+
+    const spawner = getSpawner(map, targetCoordinates);
+    if (spawner && spawner.isBlocking()) {
+      await attackObject(unit, spawner, state);
+    }
+
+    const block = getMovableBlock(map, targetCoordinates);
+    if (block) {
+      await pushBlock(unit, block, session, state);
+      return;
     }
   };
 }

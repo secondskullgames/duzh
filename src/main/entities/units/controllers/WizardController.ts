@@ -4,26 +4,48 @@ import Unit from '../Unit';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
 import { randChance } from '../../../utils/random';
-import TeleportAwayOrder from '../orders/TeleportAwayOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import { Teleport } from '../abilities/Teleport';
+import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
 import { Summon } from '../abilities/Summon';
 import { AbilityName } from '../abilities/AbilityName';
 import UnitOrder from '../orders/UnitOrder';
-import { AbilityOrder } from '../orders/AbilityOrder';
 import MapInstance from '../../../maps/MapInstance';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import StayOrder from '../orders/StayOrder';
 import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 import { isBlocked } from '../../../maps/MapUtils';
+import { SpellOrder } from '../orders/SpellOrder';
+import { maxBy } from '../../../utils/arrays';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
 const avoidChance = 0.75;
 const teleportChance = 0.5;
 const teleportMinDistance = 3;
+
+const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
+  const closestEnemyUnit = getClosestEnemy(unit);
+  const map = unit.getMap();
+  const tiles: Coordinates[] = [];
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
+          tiles.push({ x, y });
+        }
+      }
+    }
+  }
+
+  if (tiles.length > 0) {
+    return maxBy(tiles, coordinates =>
+      manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
+    );
+  }
+  return null;
+};
 
 export default class WizardController implements UnitController {
   /**
@@ -38,12 +60,15 @@ export default class WizardController implements UnitController {
     if (_canSummon(unit, map) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return new AbilityOrder({ ability: Summon, coordinates });
+        return new SpellOrder({ ability: Summon, coordinates });
       }
     }
 
     if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
-      return new TeleportAwayOrder({ targetUnit: closestEnemyUnit });
+      const coordinates = _getTargetTeleportCoordinates(unit);
+      if (coordinates) {
+        return new SpellOrder({ ability: Teleport, coordinates });
+      }
     }
 
     if (!canMove(unit, session)) {

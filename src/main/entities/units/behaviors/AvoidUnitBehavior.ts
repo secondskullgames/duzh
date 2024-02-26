@@ -13,6 +13,7 @@ import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 import { isBlocked } from '../../../maps/MapUtils';
+import { pointAt } from '../../../utils/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -32,13 +33,15 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     if (_canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
-        return new AbilityOrder({ coordinates: targetCoordinates, ability: Teleport });
+        const direction = pointAt(unit.getCoordinates(), targetCoordinates);
+        return new AbilityOrder({ direction, ability: Teleport });
       }
     }
 
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
-      return new AttackMoveOrder({ coordinates: targetCoordinates });
+      const direction = pointAt(unit.getCoordinates(), targetCoordinates);
+      return new AttackMoveOrder({ direction });
     }
     return new StayOrder();
   };

@@ -35,6 +35,9 @@ export type UnitAbility = Readonly<{
    */
   innate: boolean;
 
+  /**
+   * TODO: should accept a direction, not coordinates
+   */
   use: (
     unit: Unit,
     coordinates: Coordinates | null,

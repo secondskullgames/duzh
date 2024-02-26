@@ -12,6 +12,9 @@ type Props = Readonly<{
   targetUnit: Unit;
 }>;
 
+/**
+ * TODO: Delete, replace with AbilityOrder targeting pre-selected coordinates
+ */
 export default class TeleportAwayOrder implements UnitOrder {
   private readonly targetUnit: Unit;
 
