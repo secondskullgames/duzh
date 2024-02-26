@@ -10,7 +10,6 @@ import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import Coordinates from '../../geometry/Coordinates';
 import Direction from '../../geometry/Direction';
-import Animatable from '../../graphics/animations/Animatable';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import Entity from '../Entity';
@@ -53,7 +52,7 @@ export type DefendResult = Readonly<{
   damageAbsorbed: number;
 }>;
 
-export default class Unit implements Entity, Animatable {
+export default class Unit implements Entity {
   /** integer, starts at 0 */
   private readonly id: number;
   private readonly faction: Faction;
@@ -281,14 +280,6 @@ export default class Unit implements Entity, Animatable {
     this.mana += manaGained;
     return manaGained;
   };
-
-  /**
-   * @override {@link Animatable#getAnimationKey}
-   */
-  getAnimationKey = () =>
-    `${this.activity.toLowerCase()}_${Direction.toString(this.direction)}_${
-      this.frameNumber
-    }`;
 
   canSpendMana = (amount: number) => this.mana >= amount;
 

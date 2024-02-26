@@ -1,6 +1,5 @@
 import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
-import Animatable from '../../graphics/animations/Animatable';
 import DoorDirection from '../../schemas/DoorDirection';
 import Coordinates from '../../geometry/Coordinates';
 import MapInstance from '../../maps/MapInstance';
@@ -22,7 +21,7 @@ type Props = Readonly<{
   sprite: DynamicSprite<Door>;
 }>;
 
-export default class Door extends GameObject implements Animatable {
+export default class Door extends GameObject {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
 
@@ -57,7 +56,8 @@ export default class Door extends GameObject implements Animatable {
     }
   };
 
-  getAnimationKey = () => `${this._direction.toLowerCase()}_${this._state.toLowerCase()}`;
+  getDirection = (): DoorDirection => this._direction;
+  getState = (): DoorState => this._state;
 
   /** @override {@link Entity#update} */
   playTurnAction = async () => {};
