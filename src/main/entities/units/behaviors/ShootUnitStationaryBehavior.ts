@@ -3,7 +3,6 @@ import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import Coordinates from '../../../geometry/Coordinates';
 import StayOrder from '../orders/StayOrder';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import { GameState } from '../../../core/GameState';

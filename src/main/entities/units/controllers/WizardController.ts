@@ -71,7 +71,7 @@ export default class WizardController implements UnitController {
       }
     }
 
-    if (!canMove(unit, session)) {
+    if (!canMove(unit)) {
       return new StayOrder();
     }
 

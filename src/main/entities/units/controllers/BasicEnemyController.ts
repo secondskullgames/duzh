@@ -30,7 +30,7 @@ export default class BasicEnemyController implements UnitController {
     );
     const { aggressiveness } = aiParameters;
 
-    if (!canMove(unit, session)) {
+    if (!canMove(unit)) {
       return new StayOrder();
     } else if (_wantsToFlee(unit)) {
       return new AvoidUnitBehavior({ targetUnit: enemyUnit }).issueOrder(

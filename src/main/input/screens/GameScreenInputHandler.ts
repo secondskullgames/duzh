@@ -1,6 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
-import Coordinates from '../../geometry/Coordinates';
 import { ShootArrow } from '../../entities/units/abilities/ShootArrow';
 import { Strafe } from '../../entities/units/abilities/Strafe';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';

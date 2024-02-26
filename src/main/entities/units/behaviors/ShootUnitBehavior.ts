@@ -5,7 +5,6 @@ import UnitOrder from '../orders/UnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
 import { pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import Coordinates from '../../../geometry/Coordinates';
 import { GameState } from '../../../core/GameState';
 import { Session } from '../../../core/Session';
 import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
