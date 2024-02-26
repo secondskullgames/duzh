@@ -48,7 +48,6 @@ export default class AttackUnitBehavior implements UnitBehavior {
     );
 
     if (pathToTarget.length > 2) {
-      const coordinates = pathToTarget[1]; // first tile is the unit's own tile
       const second = pathToTarget[2];
       const direction = pointAt(unit.getCoordinates(), second);
       if (canDash(unit, second, map)) {
@@ -57,6 +56,10 @@ export default class AttackUnitBehavior implements UnitBehavior {
           direction
         });
       }
+    }
+
+    if (pathToTarget.length > 1) {
+      const coordinates = pathToTarget[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null) {
         return new MoveOrder({ coordinates });
