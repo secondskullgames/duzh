@@ -220,36 +220,4 @@ export default class AnimationFactory {
       frames
     };
   };
-
-  getFloorFireAnimation = async (source: Unit, targets: Unit[]): Promise<Animation> => {
-    const frames: AnimationFrame[] = [];
-    for (let i = 0; i < targets.length; i++) {
-      const unitFrames: UnitAnimationFrame[] = [];
-      unitFrames.push({ unit: source, activity: Activity.STANDING });
-
-      for (let j = 0; j < targets.length; j++) {
-        const activity = j === i ? Activity.BURNED : Activity.STANDING;
-        unitFrames.push({ unit: targets[j], activity });
-      }
-
-      const frame = {
-        units: unitFrames,
-        postDelay: 150
-      };
-      frames.push(frame);
-    }
-
-    // last frame (all standing)
-    const unitFrames: UnitAnimationFrame[] = [];
-    unitFrames.push({ unit: source, activity: Activity.STANDING });
-    for (let i = 0; i < targets.length; i++) {
-      unitFrames.push({ unit: targets[i], activity: Activity.STANDING });
-    }
-    const frame = { units: unitFrames };
-    frames.push(frame);
-
-    return {
-      frames
-    };
-  };
 }

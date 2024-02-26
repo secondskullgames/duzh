@@ -1,7 +1,6 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
 import { walk } from '../../../actions/walk';
 import { openDoor } from '../../../actions/openDoor';
 import { pushBlock } from '../../../actions/pushBlock';
@@ -16,6 +15,10 @@ type Props = Readonly<{
   direction: Direction;
 }>;
 
+/**
+ * An order in which the unit moves in the specified direction,
+ * or attacks a target if one is present.
+ */
 export class AttackMoveOrder implements UnitOrder {
   private readonly direction: Direction;
 
@@ -23,9 +26,6 @@ export class AttackMoveOrder implements UnitOrder {
     this.direction = direction;
   }
 
-  /**
-   * @override {@link UnitOrder#execute}
-   */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
     const map = session.getMap();
     const { direction } = this;
