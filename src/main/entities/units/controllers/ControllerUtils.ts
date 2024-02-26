@@ -3,10 +3,8 @@ import BasicEnemyController from './BasicEnemyController';
 import WizardController from './WizardController';
 import DragonShooterController from './DragonShooterController';
 import { UnitController } from './UnitController';
-import { Session } from '../../../core/Session';
 import Unit from '../Unit';
 import { checkNotNull } from '../../../utils/preconditions';
-import { Feature } from '../../../utils/features';
 import { hypotenuse, isInStraightLine } from '../../../geometry/CoordinatesUtils';
 import MapInstance from '../../../maps/MapInstance';
 import { hasUnblockedStraightLineBetween } from '../../../utils/geometry';
@@ -16,7 +14,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { Dash } from '../abilities/Dash';
 import { isBlocked } from '../../../maps/MapUtils';
 
-export const canMove = (unit: Unit, session: Session): boolean => {
+export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
     unit.getAiParameters(),
     'BasicEnemyController requires aiParams!'

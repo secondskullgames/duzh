@@ -36,7 +36,7 @@ export default class ArcherController implements UnitController {
       playerUnit.getCoordinates()
     );
 
-    if (!canMove(unit, session)) {
+    if (!canMove(unit)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidUnitBehavior({ targetUnit: playerUnit });

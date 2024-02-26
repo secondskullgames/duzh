@@ -21,7 +21,7 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "electron": "cd electron && npm i && npm run make && npx electron .",
-    "lint": "npx eslint '{src,scripts}/**/*.ts' && npx prettier --check '{src,scripts}/**/*.ts'"
+    "lint": "npx eslint '{src,scripts}/**/*.ts' --max-warnings 0 && npx prettier --check '{src,scripts}/**/*.ts'"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
