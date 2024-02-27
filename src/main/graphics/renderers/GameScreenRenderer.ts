@@ -8,7 +8,7 @@ import { Sprite } from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics, PaletteSwaps } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 

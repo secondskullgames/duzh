@@ -11,7 +11,7 @@ import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
 import { randChoice, randInt, weightedRandom } from '@main/utils/random';
-import { GameState } from '@main/core/GameState';
+import { GameState } from '@main/core';
 import Unit from '@main/entities/units/Unit';
 import UnitModel from '@main/schemas/UnitModel';
 import { Feature } from '@main/utils/features';

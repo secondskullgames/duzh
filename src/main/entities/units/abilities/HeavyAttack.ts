@@ -3,8 +3,7 @@ import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
 import type { UnitAbility } from './UnitAbility';
 

@@ -6,10 +6,9 @@ import { getMeleeDamage } from '../UnitUtils';
 import { sleep } from '@main/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
+import { GameState, Session } from '@main/core';
 
 const manaCost = 6;
 const damageCoefficient = 1;

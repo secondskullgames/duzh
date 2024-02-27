@@ -18,9 +18,8 @@ import {
 } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
 import { createCanvas } from '@main/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
+import { GameScreen, Session } from '@main/core';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
 import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 

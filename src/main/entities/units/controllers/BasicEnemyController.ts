@@ -8,8 +8,7 @@ import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import { randBoolean, randChance } from '@main/utils/random';
 import { checkNotNull } from '@main/utils/preconditions';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 
 const _wantsToFlee = (unit: Unit) => {
   const aiParameters = checkNotNull(unit.getAiParameters());

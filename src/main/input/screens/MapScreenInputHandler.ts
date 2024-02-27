@@ -1,8 +1,7 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '@main/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
-import { Session } from '@main/core/Session';
+import { GameScreen, Session } from '@main/core';
 import { inject, injectable } from 'inversify';
 
 @injectable()

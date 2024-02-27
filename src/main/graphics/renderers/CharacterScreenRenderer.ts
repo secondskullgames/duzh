@@ -6,7 +6,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Graphics, Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';

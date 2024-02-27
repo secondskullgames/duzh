@@ -7,7 +7,7 @@ import { Pixel } from '../Pixel';
 import { FontName } from '../Fonts';
 import { Graphics, Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images/ImageFactory';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;

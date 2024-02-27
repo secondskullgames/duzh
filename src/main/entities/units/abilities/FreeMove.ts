@@ -3,8 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
 

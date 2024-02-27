@@ -6,8 +6,7 @@ import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { getDoor, isBlocked } from '@main/maps/MapUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
 
 type Props = Readonly<{

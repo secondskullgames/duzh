@@ -6,8 +6,7 @@ import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { attackObject } from '@main/actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { Coordinates, Direction } from '@main/geometry';
 
 type Props = Readonly<{

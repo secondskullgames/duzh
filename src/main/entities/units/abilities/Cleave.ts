@@ -4,8 +4,7 @@ import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import { Coordinates, Direction, pointAt } from '@main/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;

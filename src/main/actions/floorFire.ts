@@ -5,8 +5,7 @@ import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import Activity from '../entities/units/Activity';
 import { Coordinates } from '@main/geometry';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { sleep } from '@main/utils/promises';
 
 export const floorFire = async (

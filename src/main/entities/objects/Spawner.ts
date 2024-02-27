@@ -2,8 +2,7 @@ import GameObject, { ObjectType } from './GameObject';
 import Unit from '../units/Unit';
 import MapInstance from '../../maps/MapInstance';
 import { Sprite } from '@main/graphics/sprites';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { Coordinates } from '@main/geometry';
 
 export enum SpawnerState {

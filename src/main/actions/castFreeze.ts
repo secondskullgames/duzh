@@ -1,7 +1,6 @@
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 
 const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {
   return `${target.getName()} is frozen for ${duration} turns!`;

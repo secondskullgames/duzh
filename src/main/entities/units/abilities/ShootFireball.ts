@@ -2,8 +2,7 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import { shootFireball } from '@main/actions/shootFireball';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
 
 const MANA_COST = 25;

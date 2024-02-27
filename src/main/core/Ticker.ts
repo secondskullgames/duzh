@@ -12,7 +12,7 @@ type Context = Readonly<{
   turn: number;
 }>;
 
-export default class Ticker {
+export class Ticker {
   private readonly messages: Message[] = [];
 
   log = (message: string, { turn }: Context) => {

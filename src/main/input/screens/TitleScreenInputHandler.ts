@@ -1,9 +1,8 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
 import { toggleFullScreen } from '@main/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
+import { GameScreen, Session } from '@main/core';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { inject, injectable } from 'inversify';
 

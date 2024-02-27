@@ -5,8 +5,7 @@ import Sounds from '../../../sounds/Sounds';
 import MapInstance from '../../../maps/MapInstance';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
 

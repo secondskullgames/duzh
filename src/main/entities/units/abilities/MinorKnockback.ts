@@ -5,8 +5,7 @@ import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
 

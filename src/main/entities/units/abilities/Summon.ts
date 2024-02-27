@@ -4,8 +4,7 @@ import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { checkNotNull } from '@main/utils/preconditions';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { Coordinates } from '@main/geometry';
 
 const manaCost = 25;

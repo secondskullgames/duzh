@@ -8,8 +8,7 @@ import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import MapInstance from '../../../maps/MapInstance';
 import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { hypotenuse, isInStraightLine, pointAt, Direction } from '@main/geometry';
 
 export default class DragonShooterController implements UnitController {

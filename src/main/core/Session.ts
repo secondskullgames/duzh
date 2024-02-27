@@ -1,4 +1,4 @@
-import Ticker from './Ticker';
+import { Ticker } from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';

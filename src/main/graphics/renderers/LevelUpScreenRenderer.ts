@@ -7,7 +7,7 @@ import { Colors } from '../Colors';
 import Unit from '../../entities/units/Unit';
 import { Graphics, TextRenderer, Alignment, drawAligned } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 

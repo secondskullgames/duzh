@@ -4,8 +4,7 @@ import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit

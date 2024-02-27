@@ -1,7 +1,6 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand } from '../inputTypes';
-import { GameScreen } from '@main/core/GameScreen';
-import { Session } from '@main/core/Session';
+import { GameScreen, Session } from '@main/core';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
 

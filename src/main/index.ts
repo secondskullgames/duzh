@@ -1,16 +1,14 @@
 import 'reflect-metadata';
-import { Debug } from './core/Debug';
-import { GameState, GameStateImpl } from './core/GameState';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { Feature } from './utils/features';
-import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import MapSpec from './schemas/MapSpec';
 import { createCanvas } from './utils/dom';
 import { checkNotNull } from './utils/preconditions';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import { Session, GameState, GameStateImpl, Debug } from '@main/core';
 import { GameRenderer } from '@main/graphics/renderers';
 import {
   Graphics,

@@ -20,8 +20,7 @@ import { Teleport } from './Teleport';
 import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
 import Unit from '../Unit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { checkNotNull } from '@main/utils/preconditions';
 import { Coordinates } from '@main/geometry';
 

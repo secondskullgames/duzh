@@ -1,8 +1,7 @@
 import { EntityType } from './EntityType';
 import MapInstance from '../maps/MapInstance';
 import { Coordinates } from '@main/geometry';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { Sprite } from '@main/graphics/sprites';
 
 /**

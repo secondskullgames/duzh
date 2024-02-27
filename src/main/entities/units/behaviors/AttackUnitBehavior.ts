@@ -9,8 +9,7 @@ import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { canDash } from '../controllers/ControllerUtils';
 import { randChoice } from '@main/utils/random';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { findPath } from '@main/maps/MapUtils';
 import { pointAt } from '@main/geometry';
 

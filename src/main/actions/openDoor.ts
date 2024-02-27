@@ -1,7 +1,7 @@
 import Unit from '../entities/units/Unit';
 import Door from '../entities/objects/Door';
 import Sounds from '../sounds/Sounds';
-import { GameState } from '@main/core/GameState';
+import { GameState } from '@main/core';
 
 export const openDoor = async (unit: Unit, door: Door, state: GameState) => {
   const keys = unit.getInventory().get('KEY');

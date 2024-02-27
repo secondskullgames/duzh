@@ -7,11 +7,10 @@ import Activity from '../Activity';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { Coordinates, Direction, pointAt } from '@main/geometry';
+import { GameState, Session } from '@main/core';
 
 const manaCost = 5;
 

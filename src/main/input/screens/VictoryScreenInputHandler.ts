@@ -3,9 +3,7 @@ import { type KeyCommand, ModifierKey } from '../inputTypes';
 import MapFactory from '../../maps/MapFactory';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@main/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { GameScreen, Session, GameState } from '@main/core';
 import { inject, injectable } from 'inversify';
 
 @injectable()

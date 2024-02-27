@@ -15,8 +15,7 @@ import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
 import MapInstance from '../../maps/MapInstance';
 import { DynamicSprite, Sprite } from '@main/graphics/sprites';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { checkArgument } from '@main/utils/preconditions';
 import { Coordinates, Direction } from '@main/geometry';
 

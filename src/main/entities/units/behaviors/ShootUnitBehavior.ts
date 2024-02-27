@@ -6,8 +6,7 @@ import { ShootArrow } from '../abilities/ShootArrow';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { canShoot } from '../controllers/ControllerUtils';
 import { AbilityName } from '../abilities/AbilityName';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { manhattanDistance, pointAt } from '@main/geometry';
 
 type Props = Readonly<{

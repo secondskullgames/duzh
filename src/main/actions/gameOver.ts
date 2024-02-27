@@ -1,7 +1,5 @@
 import Sounds from '../sounds/Sounds';
-import { GameScreen } from '@main/core/GameScreen';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { GameScreen, Session, GameState } from '@main/core';
 
 export const gameOver = async (state: GameState, session: Session) => {
   session.setScreen(GameScreen.GAME_OVER);

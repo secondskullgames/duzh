@@ -5,7 +5,7 @@ import { Graphics } from '@main/graphics';
 import { Coordinates } from '@main/geometry';
 import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@main/utils/preconditions';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');

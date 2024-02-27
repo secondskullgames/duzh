@@ -1,7 +1,6 @@
 import InventoryItem from './InventoryItem';
 import Unit from '../entities/units/Unit';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 
 export type ItemProc = (
   item: InventoryItem,

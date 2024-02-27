@@ -1,6 +1,5 @@
 import Unit from '../Unit';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 
 /**
  * A UnitOrder is a single action that will consume the unit's turn.

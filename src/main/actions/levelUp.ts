@@ -1,7 +1,7 @@
 import Unit from '../entities/units/Unit';
 import { Feature } from '@main/utils/features';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { Faction } from '@main/entities/units/Faction';
 import { checkNotNull } from '@main/utils/preconditions';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';

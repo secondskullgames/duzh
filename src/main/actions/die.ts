@@ -2,8 +2,7 @@ import { gameOver } from './gameOver';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import { random } from '@main/utils/random';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;

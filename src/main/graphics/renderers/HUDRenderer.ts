@@ -14,7 +14,7 @@ import {
   SCREEN_WIDTH
 } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
-import { Session } from '@main/core/Session';
+import { Session } from '@main/core';
 import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
 

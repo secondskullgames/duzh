@@ -7,8 +7,7 @@ import Activity from '../Activity';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, Direction, pointAt } from '@main/geometry';
 

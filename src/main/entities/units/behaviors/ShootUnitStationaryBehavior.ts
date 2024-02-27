@@ -6,8 +6,7 @@ import StayOrder from '../orders/StayOrder';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { pointAt } from '@main/geometry';
 
 type Props = Readonly<{

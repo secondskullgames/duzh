@@ -5,8 +5,7 @@ import Sounds from '../sounds/Sounds';
 import Activity from '../entities/units/Activity';
 import { Coordinates, Direction } from '@main/geometry';
 import { sleep } from '@main/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {

@@ -1,8 +1,7 @@
 import { moveUnit } from './moveUnit';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, Direction } from '@main/geometry';
 

@@ -7,8 +7,7 @@ import { AbilityName } from '../abilities/AbilityName';
 import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { maxBy } from '@main/utils/arrays';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { GameState, Session } from '@main/core';
 import { manhattanDistance, pointAt, Coordinates, Direction } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 

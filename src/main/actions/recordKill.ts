@@ -1,8 +1,7 @@
 import { levelUp } from './levelUp';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 
 export const recordKill = (
   attacker: Unit,

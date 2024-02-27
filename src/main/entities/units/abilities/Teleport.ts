@@ -5,8 +5,7 @@ import Sounds from '../../../sounds/Sounds';
 import Activity from '../Activity';
 import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@main/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Session, GameState } from '@main/core';
 import { manhattanDistance, pointAt, Coordinates } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 
