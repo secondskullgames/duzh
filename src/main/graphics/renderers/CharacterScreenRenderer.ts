@@ -1,13 +1,12 @@
 import { Renderer } from './Renderer';
 import { Color } from '../Color';
-import Colors from '../Colors';
-import { TextRenderer } from '../TextRenderer';
-import { Alignment, drawAligned } from '../RenderingUtils';
+import { Colors } from '../Colors';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import ImageFactory from '../images/ImageFactory';
+import { Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 

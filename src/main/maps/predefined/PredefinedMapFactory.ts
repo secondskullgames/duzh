@@ -1,4 +1,3 @@
-import Colors from '../../graphics/Colors';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
@@ -14,6 +13,7 @@ import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
+import { Colors } from '@main/graphics';
 import { Image } from '@main/graphics/images/Image';
 import { Color } from '@main/graphics/Color';
 import { Faction } from '@main/entities/units/Faction';

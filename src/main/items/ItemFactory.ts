@@ -1,5 +1,4 @@
 import InventoryItem from './InventoryItem';
-import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Sounds from '../sounds/Sounds';
 import Unit from '../entities/units/Unit';
@@ -8,6 +7,7 @@ import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
+import { PaletteSwaps } from '@main/graphics';
 import { Coordinates } from '@main/geometry';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/getEquipmentTooltip';

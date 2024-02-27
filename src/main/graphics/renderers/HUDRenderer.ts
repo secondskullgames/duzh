@@ -1,14 +1,12 @@
 import { Renderer } from './Renderer';
 import { Color } from '../Color';
-import Colors from '../Colors';
+import { Colors } from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { TextRenderer } from '../TextRenderer';
-import PaletteSwaps from '../PaletteSwaps';
-import { Alignment, drawAligned } from '../RenderingUtils';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import ImageFactory from '../images/ImageFactory';
+import { PaletteSwaps, Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';

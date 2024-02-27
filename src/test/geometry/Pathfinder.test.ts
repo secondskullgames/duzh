@@ -1,5 +1,4 @@
-import { Coordinates } from '@main/geometry';
-import { PathFinder_3rdParty } from '@main/geometry/PathFinder_3rdParty';
+import { Coordinates, PathFinder_3rdParty } from '@main/geometry';
 
 describe('Pathfinder', () => {
   describe('example scenario', () => {

@@ -1,7 +1,7 @@
-import PaletteSwaps from '../../graphics/PaletteSwaps';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import Projectile from '../Projectile';
 import MapInstance from '../../maps/MapInstance';
+import { PaletteSwaps } from '@main/graphics';
 import { Coordinates, Direction } from '@main/geometry';
 import { injectable } from 'inversify';
 

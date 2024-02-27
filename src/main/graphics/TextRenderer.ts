@@ -1,7 +1,7 @@
 import { Color } from './Color';
-import Colors from './Colors';
+import { Colors } from './Colors';
 import { replaceColors } from './images/ImageUtils';
-import PaletteSwaps from './PaletteSwaps';
+import { PaletteSwaps } from './PaletteSwaps';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';

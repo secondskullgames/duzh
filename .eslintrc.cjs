@@ -53,6 +53,7 @@ module.exports = {
                     "type"
                 ]
             }
-        ]
+        ],
+        //"import/no-default-export": "warn"
     }
 };

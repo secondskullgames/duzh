@@ -4,17 +4,21 @@ import { GameState, GameStateImpl } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
-import { FontBundle, FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session } from './core/Session';
 import MapFactory from './maps/MapFactory';
 import MapSpec from './schemas/MapSpec';
 import { createCanvas } from './utils/dom';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from './graphics/constants';
 import { checkNotNull } from './utils/preconditions';
-import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import {
+  Graphics,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  FontBundle,
+  FontFactory
+} from '@main/graphics';
 import { Container } from 'inversify';
 
 const setupContainer = async (): Promise<Container> => {

@@ -17,11 +17,9 @@ for (const [name, value] of Object.entries(jsonColors)) {
   colors[name as ColorName] = Color.fromHex(value.toLowerCase());
 }
 
-const Colors: ColorShape = {
+export const Colors: ColorShape = {
   ...colors,
   colorForName: (name: string): Color => {
     return checkNotNull(colors[name as ColorName], `Unknown color: ${name}`);
   }
 };
-
-export default Colors;

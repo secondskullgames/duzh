@@ -1,5 +1,5 @@
 import { Color } from './Color';
-import Colors from './Colors';
+import { Colors } from './Colors';
 
 export interface PaletteSwaps {
   entries: () => [Color, Color][];
@@ -71,5 +71,3 @@ export namespace PaletteSwaps {
   export const builder = () => new Builder();
   export const empty = (): PaletteSwaps => new Builder().build();
 }
-
-export default PaletteSwaps;

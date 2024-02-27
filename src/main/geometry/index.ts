@@ -3,5 +3,6 @@ export * from './CoordinatesUtils';
 export * from './Direction';
 export * from './Offsets';
 export * from './Pathfinder';
+export * from './PathFinder_3rdParty';
 export * from './Rect';
 export * from './RectUtils';
