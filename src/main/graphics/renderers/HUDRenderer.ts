@@ -15,7 +15,7 @@ import {
 } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
 import { Session } from '@main/core';
-import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { type UnitAbility } from '@main/entities/units/abilities';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';

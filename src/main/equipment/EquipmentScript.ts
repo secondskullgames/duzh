@@ -1,7 +1,7 @@
 import Equipment from './Equipment';
 import { GameState, Session } from '@main/core';
 import { checkNotNull } from '@main/utils/preconditions';
-import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
+import { ShootBolt } from '@main/entities/units/abilities';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';
 

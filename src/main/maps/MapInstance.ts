@@ -4,9 +4,8 @@ import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
 import { Unit } from '@main/entities/units';
 import { Projectile } from '@main/entities';
-import { Coordinates } from '@main/geometry';
+import { Coordinates, Rect } from '@main/geometry';
 import type { Figure } from '@main/sounds/types';
-import type { Rect } from '@main/geometry';
 
 type Props = Readonly<{
   width: number;

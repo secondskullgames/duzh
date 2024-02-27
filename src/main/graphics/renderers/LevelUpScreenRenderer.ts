@@ -1,14 +1,20 @@
 import { Renderer } from './Renderer';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
-import { FontName } from '../Fonts';
-import { Pixel } from '../Pixel';
-import { Color } from '../Color';
-import { Colors } from '../Colors';
+import {
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  FontName,
+  Pixel,
+  Color,
+  Colors,
+  Graphics,
+  TextRenderer,
+  Alignment,
+  drawAligned
+} from '@main/graphics';
 import { Unit } from '@main/entities/units/Unit';
-import { Graphics, TextRenderer, Alignment, drawAligned } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
 import { Session } from '@main/core';
-import { AbilityName } from '@main/entities/units/abilities/AbilityName';
+import { AbilityName } from '@main/entities/units/abilities';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
