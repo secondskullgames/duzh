@@ -24,6 +24,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@main/utils/preconditions';
+import { Slash } from '@main/entities/units/abilities/Slash';
 
 export type UnitAbility = Readonly<{
   name: AbilityName;
@@ -63,6 +64,7 @@ export namespace UnitAbility {
     [AbilityName.SHOOT_ARROW]: ShootArrow,
     [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
     [AbilityName.SHOOT_FIREBALL]: ShootFireball,
+    [AbilityName.SLASH]: Slash,
     [AbilityName.STRAFE]: Strafe,
     [AbilityName.STUN_ATTACK]: StunAttack,
     [AbilityName.SUMMON]: Summon,

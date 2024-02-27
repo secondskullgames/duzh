@@ -21,7 +21,8 @@ const learnableAbilities = [
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.PIERCE,
   AbilityName.SCORPION,
-  AbilityName.STUN_ATTACK
+  AbilityName.STUN_ATTACK,
+  AbilityName.SLASH
 ];
 
 const cumulativeKillsToNextLevel = [
