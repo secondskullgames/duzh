@@ -15,13 +15,14 @@
   },
   "scripts": {
     "gen-schema": "node --loader 'ts-node/esm' 'scripts/gen-schema.ts'",
-    "build": "npm run gen-schema && npx webpack",
-    "dev": "npx webpack serve",
-    "clean": "npx rimraf build && npx rimraf electron/build && npx rimraf src/gen-schema",
+    "build": "npm run gen-schema && webpack",
+    "dev": "webpack serve",
+    "clean": "rimraf build && rimraf electron/build && rimraf src/gen-schema",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "electron": "cd electron && npm i && npm run make && npx electron .",
-    "lint": "npx eslint '{src,scripts}/**/*.ts' --max-warnings 0 && npx prettier --check '{src,scripts}/**/*.ts'"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "electron": "cd electron && npm i && npm run make && electron .",
+    "lint": "eslint '{src,scripts}/**/*.ts' --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

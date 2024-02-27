@@ -3,7 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
-import { pointAt } from '@main/utils/geometry';
+import { pointAt } from '@main/geometry/CoordinatesUtils';
 import { sleep } from '@main/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';

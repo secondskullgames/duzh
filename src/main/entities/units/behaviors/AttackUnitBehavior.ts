@@ -12,7 +12,7 @@ import { randChoice } from '@main/utils/random';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { findPath } from '@main/maps/MapUtils';
-import { pointAt } from '@main/utils/geometry';
+import { pointAt } from '@main/geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;
