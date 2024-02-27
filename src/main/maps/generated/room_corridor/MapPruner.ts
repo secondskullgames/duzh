@@ -1,9 +1,9 @@
 import { Connection } from './Connection';
 import EmptyRegionConnection from './EmptyRegionConnection';
 import RoomRegion from './RoomRegion';
-import { replace, subtract } from '../../../utils/arrays';
-import { checkState } from '../../../utils/preconditions';
-import { randInt, shuffle } from '../../../utils/random';
+import { replace, subtract } from '@main/utils/arrays';
+import { checkState } from '@main/utils/preconditions';
+import { randInt, shuffle } from '@main/utils/random';
 
 type Props = Readonly<{
   minRoomFraction: number;

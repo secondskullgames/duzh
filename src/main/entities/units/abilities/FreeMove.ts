@@ -2,12 +2,12 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
-import { moveUnit } from '../../../actions/moveUnit';
 import Sounds from '../../../sounds/Sounds';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
-import { isBlocked } from '../../../maps/MapUtils';
+import { pointAt } from '@main/utils/geometry';
+import { moveUnit } from '@main/actions/moveUnit';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { isBlocked } from '@main/maps/MapUtils';
 
 const manaCost = 4;
 

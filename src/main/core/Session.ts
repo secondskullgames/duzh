@@ -3,9 +3,9 @@ import { GameScreen } from './GameScreen';
 import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
-import { checkNotNull, checkState } from '../utils/preconditions';
 import MapInstance from '../maps/MapInstance';
-import type { UnitAbility } from '../entities/units/abilities/UnitAbility';
+import { checkNotNull, checkState } from '@main/utils/preconditions';
+import type { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 
 export interface Session {
   getScreen: () => GameScreen;

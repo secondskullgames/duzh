@@ -1,10 +1,10 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
-import { Pathfinder } from '../../geometry/Pathfinder';
 import Rect from '../../geometry/Rect';
-import { randInt, shuffle } from '../../utils/random';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { randInt, shuffle } from '@main/utils/random';
+import { Pathfinder } from '@main/geometry/Pathfinder';
 
 class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
   constructor(tileFactory: TileFactory) {

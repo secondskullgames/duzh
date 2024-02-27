@@ -1,8 +1,8 @@
 import Equipment from '../equipment/Equipment';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Session } from '../core/Session';
-import { GameState } from '../core/GameState';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 export const equipItem = async (
   equipment: Equipment,

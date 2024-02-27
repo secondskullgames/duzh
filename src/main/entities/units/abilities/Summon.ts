@@ -2,11 +2,11 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { checkNotNull } from '../../../utils/preconditions';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
+import { checkNotNull } from '@main/utils/preconditions';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 const manaCost = 25;
 

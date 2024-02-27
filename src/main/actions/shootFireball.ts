@@ -3,12 +3,12 @@ import { die } from './die';
 import Unit from '../entities/units/Unit';
 import Coordinates from '../geometry/Coordinates';
 import Sounds from '../sounds/Sounds';
-import { sleep } from '../utils/promises';
 import Direction from '../geometry/Direction';
-import { Session } from '../core/Session';
-import { GameState } from '../core/GameState';
-import { isBlocked } from '../maps/MapUtils';
 import Activity from '../entities/units/Activity';
+import { sleep } from '@main/utils/promises';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { isBlocked } from '@main/maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;

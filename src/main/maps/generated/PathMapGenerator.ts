@@ -1,10 +1,10 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
-import { Pathfinder } from '../../geometry/Pathfinder';
-import { range } from '../../utils/arrays';
-import { randInt } from '../../utils/random';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { Pathfinder } from '@main/geometry/Pathfinder';
+import { range } from '@main/utils/arrays';
+import { randInt } from '@main/utils/random';
 
 class PathMapGenerator extends AbstractMapGenerator {
   constructor(tileFactory: TileFactory) {

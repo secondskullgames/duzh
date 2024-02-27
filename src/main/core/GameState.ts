@@ -1,7 +1,4 @@
 import MapInstance from '../maps/MapInstance';
-import { checkArgument } from '../utils/preconditions';
-import { MapSupplier } from '../maps/MapSupplier';
-import { clear } from '../utils/arrays';
 import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
@@ -9,6 +6,9 @@ import MapSpec from '../schemas/MapSpec';
 import MusicController from '../sounds/MusicController';
 import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
+import { clear } from '@main/utils/arrays';
+import { MapSupplier } from '@main/maps/MapSupplier';
+import { checkArgument } from '@main/utils/preconditions';
 import { inject, injectable } from 'inversify';
 
 /**

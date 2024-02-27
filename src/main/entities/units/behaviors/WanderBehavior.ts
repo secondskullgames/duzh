@@ -2,13 +2,13 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
-import { randChoice } from '../../../utils/random';
 import UnitOrder from '../orders/UnitOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
-import { isBlocked } from '../../../maps/MapUtils';
+import { randChoice } from '@main/utils/random';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */

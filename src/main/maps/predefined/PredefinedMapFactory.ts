@@ -1,6 +1,4 @@
-import { Color } from '../../graphics/Color';
 import Colors from '../../graphics/Colors';
-import { Image } from '../../graphics/images/Image';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
@@ -17,8 +15,10 @@ import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
-import { Faction } from '../../entities/units/Faction';
-import { chooseUnitController } from '../../entities/units/controllers/ControllerUtils';
+import { Image } from '@main/graphics/images/Image';
+import { Color } from '@main/graphics/Color';
+import { Faction } from '@main/entities/units/Faction';
+import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { injectable } from 'inversify';
 
 @injectable()

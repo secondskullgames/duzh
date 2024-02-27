@@ -3,9 +3,9 @@ import Coordinates from '../../geometry/Coordinates';
 import { Color } from '../Color';
 import Colors from '../Colors';
 import { Graphics } from '../Graphics';
-import { getItem } from '../../maps/MapUtils';
-import { checkNotNull } from '../../utils/preconditions';
-import { Session } from '../../core/Session';
+import { getItem } from '@main/maps/MapUtils';
+import { checkNotNull } from '@main/utils/preconditions';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');

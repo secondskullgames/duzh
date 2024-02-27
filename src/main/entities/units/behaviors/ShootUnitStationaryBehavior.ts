@@ -1,14 +1,14 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import { pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
 import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { pointAt } from '@main/utils/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;

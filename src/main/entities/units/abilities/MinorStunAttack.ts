@@ -2,12 +2,12 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
+import { pointAt } from '@main/utils/geometry';
+import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 const manaCost = 15;
 const damageCoefficient = 1;

@@ -1,7 +1,7 @@
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import { GameState } from '../core/GameState';
-import { Session } from '../core/Session';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
 
 export const useItem = async (
   unit: Unit,

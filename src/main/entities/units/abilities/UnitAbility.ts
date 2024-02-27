@@ -19,11 +19,11 @@ import { Summon } from './Summon';
 import { Teleport } from './Teleport';
 import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { checkNotNull } from '../../../utils/preconditions';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { checkNotNull } from '@main/utils/preconditions';
 
 export type UnitAbility = Readonly<{
   name: AbilityName;

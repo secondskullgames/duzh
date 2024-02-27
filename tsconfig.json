@@ -3,6 +3,11 @@
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
     "baseUrl": ".",
+    "paths": {
+      "@main/*": ["src/main/*"],
+      "@data/*": ["data/*"],
+      "@png/*": ["png/*"]
+    },
     "lib": ["dom", "esnext"],
     "target": "esnext",
     "module": "esnext",

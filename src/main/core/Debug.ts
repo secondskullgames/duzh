@@ -1,12 +1,12 @@
 import { GameState } from './GameState';
 import { Session } from './Session';
 import { levelUp as _levelUp } from '../actions/levelUp';
-import { die } from '../actions/die';
 import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
-import { MapController } from '../maps/MapController';
-import { Faction } from '../entities/units/Faction';
+import { die } from '@main/actions/die';
+import { MapController } from '@main/maps/MapController';
+import { Faction } from '@main/entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 @injectable()

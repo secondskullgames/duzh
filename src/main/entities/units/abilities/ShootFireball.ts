@@ -2,10 +2,10 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { shootFireball } from '../../../actions/shootFireball';
-import { pointAt } from '../../../utils/geometry';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
+import { shootFireball } from '@main/actions/shootFireball';
+import { pointAt } from '@main/utils/geometry';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 const MANA_COST = 25;
 const DAMAGE = 20;

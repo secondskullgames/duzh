@@ -3,8 +3,8 @@ import GeneratedMapModel from '../../schemas/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
 import TileType from '../../schemas/TileType';
 import MapInstance from '../MapInstance';
-import { checkNotNull } from '../../utils/preconditions';
-import { Feature } from '../../utils/features';
+import { checkNotNull } from '@main/utils/preconditions';
+import { Feature } from '@main/utils/features';
 
 abstract class AbstractMapGenerator {
   protected constructor(private readonly tileFactory: TileFactory) {}

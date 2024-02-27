@@ -2,9 +2,9 @@ import Entity from '../Entity';
 import Coordinates from '../../geometry/Coordinates';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
-import { GameState } from '../../core/GameState';
-import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
 
 export enum ObjectType {
   SPAWNER = 'spawner',

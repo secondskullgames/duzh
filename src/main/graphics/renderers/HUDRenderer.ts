@@ -1,5 +1,4 @@
 import { Renderer } from './Renderer';
-import { type UnitAbility } from '../../entities/units/abilities/UnitAbility';
 import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -9,8 +8,9 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { Session } from '@main/core/Session';
+import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';

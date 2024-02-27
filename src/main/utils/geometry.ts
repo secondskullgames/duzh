@@ -2,7 +2,7 @@ import { checkState } from './preconditions';
 import Coordinates from '../geometry/Coordinates';
 import Direction from '../geometry/Direction';
 import MapInstance from '../maps/MapInstance';
-import { isBlocked } from '../maps/MapUtils';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));

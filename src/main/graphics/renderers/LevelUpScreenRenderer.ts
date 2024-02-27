@@ -7,10 +7,10 @@ import { Color } from '../Color';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
 import Unit from '../../entities/units/Unit';
-import { AbilityName } from '../../entities/units/abilities/AbilityName';
+import { Session } from '@main/core/Session';
+import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';

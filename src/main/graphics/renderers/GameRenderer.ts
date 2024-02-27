@@ -13,12 +13,12 @@ import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { createCanvas } from '../../utils/dom';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { GameScreen } from '../../core/GameScreen';
-import { Feature } from '../../utils/features';
-import { Session } from '../../core/Session';
+import { createCanvas } from '@main/utils/dom';
+import { GameScreen } from '@main/core/GameScreen';
+import { Feature } from '@main/utils/features';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';

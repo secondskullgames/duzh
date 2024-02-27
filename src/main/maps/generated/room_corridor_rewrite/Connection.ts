@@ -1,4 +1,4 @@
-import Coordinates from 'src/main/geometry/Coordinates';
+import Coordinates from '@main/geometry/Coordinates';
 
 type Connection = {
   connectedCoordinates: Coordinates[];

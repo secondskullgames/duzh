@@ -4,15 +4,15 @@ import WizardController from './WizardController';
 import DragonShooterController from './DragonShooterController';
 import { UnitController } from './UnitController';
 import Unit from '../Unit';
-import { checkNotNull } from '../../../utils/preconditions';
-import { hypotenuse, isInStraightLine } from '../../../geometry/CoordinatesUtils';
 import MapInstance from '../../../maps/MapInstance';
-import { hasUnblockedStraightLineBetween } from '../../../utils/geometry';
 import { AbilityName } from '../abilities/AbilityName';
 import { UnitAbility } from '../abilities/UnitAbility';
 import Coordinates from '../../../geometry/Coordinates';
 import { Dash } from '../abilities/Dash';
-import { isBlocked } from '../../../maps/MapUtils';
+import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
+import { hypotenuse, isInStraightLine } from '@main/geometry/CoordinatesUtils';
+import { checkNotNull } from '@main/utils/preconditions';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(

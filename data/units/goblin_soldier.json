@@ -24,9 +24,9 @@
     "iron_sword"
   ],
   "aiParameters": {
-    "speed": 0.9,
+    "speed": 0.95,
     "visionRange": 8,
-    "aggressiveness": 0.8,
+    "aggressiveness": 0.95,
     "fleeThreshold": 0.1
   },
   "levelParameters": {

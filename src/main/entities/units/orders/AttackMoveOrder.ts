@@ -1,15 +1,15 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { walk } from '../../../actions/walk';
-import { openDoor } from '../../../actions/openDoor';
-import { pushBlock } from '../../../actions/pushBlock';
-import { attackObject } from '../../../actions/attackObject';
-import { getDoor, getMovableBlock, getSpawner, isBlocked } from '../../../maps/MapUtils';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
 import { NormalAttack } from '../abilities/NormalAttack';
 import Direction from '../../../geometry/Direction';
+import { walk } from '@main/actions/walk';
+import { openDoor } from '@main/actions/openDoor';
+import { pushBlock } from '@main/actions/pushBlock';
+import { attackObject } from '@main/actions/attackObject';
+import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
 
 type Props = Readonly<{
   direction: Direction;

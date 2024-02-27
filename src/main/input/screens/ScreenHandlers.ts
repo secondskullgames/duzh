@@ -8,7 +8,7 @@ import LevelUpScreenInputHandler from './LevelUpScreenInputHandler';
 import MapScreenInputHandler from './MapScreenInputHandler';
 import TitleScreenInputHandler from './TitleScreenInputHandler';
 import VictoryScreenInputHandler from './VictoryScreenInputHandler';
-import { GameScreen } from '../../core/GameScreen';
+import { GameScreen } from '@main/core/GameScreen';
 import { injectable } from 'inversify';
 
 @injectable()

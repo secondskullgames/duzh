@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
     "env": {
         "browser": true,
@@ -9,7 +11,11 @@ module.exports = {
         "plugin:import/recommended"
     ],
     "settings": {
-        "import/resolver": "typescript"
+        "import/resolver": {
+            "webpack": {
+                "config": path.resolve(__dirname, "webpack.config.cjs")
+            }
+        }
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {

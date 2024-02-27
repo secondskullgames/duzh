@@ -3,8 +3,8 @@ import Spawner, { SpawnerState } from '../entities/objects/Spawner';
 import Sounds from '../sounds/Sounds';
 import GameObject, { ObjectType } from '../entities/objects/GameObject';
 import Activity from '../entities/units/Activity';
-import { sleep } from '../utils/promises';
-import { GameState } from '../core/GameState';
+import { sleep } from '@main/utils/promises';
+import { GameState } from '@main/core/GameState';
 
 export const attackObject = async (unit: Unit, target: GameObject, state: GameState) => {
   state.getSoundPlayer().playSound(Sounds.SPECIAL_ATTACK);

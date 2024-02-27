@@ -13,14 +13,14 @@ import Direction from '../../geometry/Direction';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import Entity from '../Entity';
-import { checkArgument } from '../../utils/preconditions';
 import UnitModel from '../../schemas/UnitModel';
 import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
-import { GameState } from '../../core/GameState';
-import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { checkArgument } from '@main/utils/preconditions';
 
 /**
  * Regenerate this raw amount of health each turn

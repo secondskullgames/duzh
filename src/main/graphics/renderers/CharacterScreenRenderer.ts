@@ -7,8 +7,8 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
-import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
