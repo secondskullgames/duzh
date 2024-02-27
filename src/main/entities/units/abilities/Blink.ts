@@ -1,6 +1,5 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import MapInstance from '../../../maps/MapInstance';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -8,6 +7,7 @@ import { Feature } from '@main/utils/features';
 import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 const manaCost = 10;
 

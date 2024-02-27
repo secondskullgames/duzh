@@ -1,16 +1,15 @@
-import Door, { DoorState } from '../../entities/objects/Door';
 import Tile from '../../tiles/Tile';
-import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import MapInstance from '../MapInstance';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import ItemFactory from '../../items/ItemFactory';
-import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
+import { Unit, UnitFactory } from '@main/entities/units';
+import Door, { DoorState } from '@main/entities/objects/Door';
 import { ImageFactory } from '@main/graphics/images';
 import { Colors, Color } from '@main/graphics';
 import { Image } from '@main/graphics/images/Image';

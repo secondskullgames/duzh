@@ -1,5 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
@@ -8,6 +7,7 @@ import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
 import { GameState, Session } from '@main/core';
 import { pointAt } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   targetUnit: Unit;

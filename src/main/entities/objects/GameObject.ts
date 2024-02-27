@@ -1,6 +1,5 @@
-import Entity from '../Entity';
-import { EntityType } from '../EntityType';
 import MapInstance from '../../maps/MapInstance';
+import { Entity, EntityType } from '@main/entities';
 import { Sprite } from '@main/graphics/sprites';
 import { Coordinates } from '@main/geometry';
 import { GameState, Session } from '@main/core';

@@ -1,11 +1,11 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
 import { checkNotNull } from '@main/utils/preconditions';
 import { Session, GameState } from '@main/core';
 import { Coordinates } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 const manaCost = 25;
 

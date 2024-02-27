@@ -1,8 +1,7 @@
-import Unit from '../entities/units/Unit';
 import Spawner, { SpawnerState } from '../entities/objects/Spawner';
 import Sounds from '../sounds/Sounds';
 import GameObject, { ObjectType } from '../entities/objects/GameObject';
-import Activity from '../entities/units/Activity';
+import { Unit, Activity } from '@main/entities/units';
 import { sleep } from '@main/utils/promises';
 import { GameState } from '@main/core';
 

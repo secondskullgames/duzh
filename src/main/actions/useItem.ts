@@ -1,5 +1,5 @@
-import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
+import { Unit } from '@main/entities/units';
 import { GameState, Session } from '@main/core';
 
 export const useItem = async (

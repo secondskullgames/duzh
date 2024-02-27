@@ -1,5 +1,4 @@
 import UnitOrder from './UnitOrder';
-import Unit from '../Unit';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
@@ -8,6 +7,7 @@ import { attackObject } from '@main/actions/attackObject';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { GameState, Session } from '@main/core';
 import { Coordinates, Direction } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   direction: Direction;

@@ -1,9 +1,9 @@
 import GameObject, { ObjectType } from './GameObject';
-import Unit from '../units/Unit';
 import MapInstance from '../../maps/MapInstance';
 import { Sprite } from '@main/graphics/sprites';
 import { GameState, Session } from '@main/core';
 import { Coordinates } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   coordinates: Coordinates;

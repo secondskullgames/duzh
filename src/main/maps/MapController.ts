@@ -1,8 +1,8 @@
 import MapFactory from './MapFactory';
-import UnitFactory from '../entities/units/UnitFactory';
 import { Session, GameState, GameScreen } from '@main/core';
 import { checkState } from '@main/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
+import { UnitFactory } from '@main/entities/units';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {

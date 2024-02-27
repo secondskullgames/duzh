@@ -1,5 +1,5 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
-import Unit from '../entities/units/Unit';
+import { Unit } from '@main/entities/units';
 import { sortBy } from '@main/utils/arrays';
 import { GameState, Session } from '@main/core';
 

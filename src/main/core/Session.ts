@@ -2,8 +2,8 @@ import { Ticker } from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
-import Unit from '../entities/units/Unit';
 import MapInstance from '../maps/MapInstance';
+import { Unit } from '@main/entities/units';
 import { checkNotNull, checkState } from '@main/utils/preconditions';
 import type { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 

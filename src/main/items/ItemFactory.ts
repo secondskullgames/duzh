@@ -1,6 +1,5 @@
 import InventoryItem from './InventoryItem';
 import Sounds from '../sounds/Sounds';
-import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../schemas/ConsumableItemModel';
@@ -16,6 +15,7 @@ import { floorFire } from '@main/actions/floorFire';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { SpriteFactory } from '@main/graphics/sprites';
+import { Unit } from '@main/entities/units';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 

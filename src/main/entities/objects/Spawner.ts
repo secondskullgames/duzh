@@ -1,6 +1,6 @@
 import GameObject, { ObjectType } from './GameObject';
-import Unit from '../units/Unit';
 import MapInstance from '../../maps/MapInstance';
+import { Unit } from '@main/entities/units';
 import { Sprite } from '@main/graphics/sprites';
 import { Session, GameState } from '@main/core';
 import { Coordinates } from '@main/geometry';

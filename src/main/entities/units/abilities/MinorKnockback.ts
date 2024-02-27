@@ -1,6 +1,5 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -8,6 +7,7 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
+import { DefendResult, Unit } from '@main/entities/units';
 
 const manaCost = 8;
 const damageCoefficient = 0.5;

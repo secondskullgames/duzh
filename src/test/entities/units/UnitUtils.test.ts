@@ -1,7 +1,6 @@
-import Unit from '@main/entities/units/Unit';
+import { Unit, getMeleeDamage, getRangedDamage } from '@main/entities/units';
 import EquipmentMap from '@main/equipment/EquipmentMap';
 import Equipment from '@main/equipment/Equipment';
-import { getMeleeDamage, getRangedDamage } from '@main/entities/units/UnitUtils';
 
 describe('UnitUtils', () => {
   const sword = {

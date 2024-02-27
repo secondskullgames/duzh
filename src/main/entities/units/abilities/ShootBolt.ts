@@ -1,15 +1,13 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import { getMeleeDamage } from '../UnitUtils';
-import Activity from '../Activity';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';
 import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, Direction, pointAt } from '@main/geometry';
+import { Activity, getMeleeDamage, Unit } from '@main/entities/units';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;

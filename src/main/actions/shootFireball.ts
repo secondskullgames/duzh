@@ -1,12 +1,11 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
-import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import Activity from '../entities/units/Activity';
 import { Coordinates, Direction } from '@main/geometry';
 import { sleep } from '@main/utils/promises';
 import { Session, GameState } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Activity, Unit } from '@main/entities/units';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;

@@ -1,4 +1,4 @@
-import Unit from '../entities/units/Unit';
+import { Unit } from '@main/entities/units';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { getBonus } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';

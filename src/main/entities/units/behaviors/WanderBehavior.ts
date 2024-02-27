@@ -1,5 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
@@ -7,6 +6,7 @@ import { randChoice } from '@main/utils/random';
 import { GameState, Session } from '@main/core';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, Direction } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */

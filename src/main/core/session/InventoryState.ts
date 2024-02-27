@@ -1,7 +1,7 @@
 import InventoryItem from '../../items/InventoryItem';
-import Unit from '../../entities/units/Unit';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
 import Equipment from '../../equipment/Equipment';
+import { Unit } from '@main/entities/units';
 import { checkNotNull } from '@main/utils/preconditions';
 import { sortBy } from '@main/utils/arrays';
 

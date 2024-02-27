@@ -1,6 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
+import { Unit } from '@main/entities/units';
 import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';

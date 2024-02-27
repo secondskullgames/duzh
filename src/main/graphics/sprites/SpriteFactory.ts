@@ -9,12 +9,12 @@ import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import { Image } from '../images/Image';
-import Unit from '../../entities/units/Unit';
 import ModelLoader from '../../utils/ModelLoader';
 import { Colors, PaletteSwaps } from '@main/graphics';
 import { ImageEffect, ImageFactory } from '@main/graphics/images';
 import { fillTemplate } from '@main/utils/templates';
 import { Direction } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 

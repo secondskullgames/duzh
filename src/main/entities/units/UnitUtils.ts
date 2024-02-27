@@ -1,4 +1,4 @@
-import Unit from './Unit';
+import { Unit } from './Unit';
 import { UnitAbility } from './abilities/UnitAbility';
 import { isInStraightLine } from '@main/geometry';
 import { NumberKey } from '@main/input/inputTypes';

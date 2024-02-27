@@ -1,13 +1,12 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import { getMeleeDamage } from '../UnitUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
 import { GameState, Session } from '@main/core';
+import { DefendResult, getMeleeDamage, Unit } from '@main/entities/units';
 
 const damageCoefficient = 1;
 

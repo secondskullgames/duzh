@@ -1,7 +1,7 @@
 import { ItemProc } from './ItemProc';
-import Unit from '../entities/units/Unit';
 import ItemCategory from '../schemas/ItemCategory';
 import { GameState, Session } from '@main/core';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   name: string;

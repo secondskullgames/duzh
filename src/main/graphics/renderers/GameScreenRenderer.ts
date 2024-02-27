@@ -1,12 +1,18 @@
 import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
-import Unit from '../../entities/units/Unit';
-import { Color } from '../Color';
-import { Colors } from '../Colors';
-import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
-import { Sprite } from '../sprites/Sprite';
-import { Pixel } from '../Pixel';
-import { Graphics, PaletteSwaps } from '@main/graphics';
+import {
+  Color,
+  Colors,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  TILE_HEIGHT,
+  TILE_WIDTH,
+  Pixel,
+  Graphics,
+  PaletteSwaps
+} from '@main/graphics';
+import { Sprite } from '@main/graphics/sprites';
+import { Unit } from '@main/entities/units';
 import { ImageFactory } from '@main/graphics/images';
 import { Session } from '@main/core';
 import { Coordinates } from '@main/geometry';

@@ -1,4 +1,4 @@
-import Entity from './Entity';
+import { Entity } from './Entity';
 import { EntityType } from './EntityType';
 import MapInstance from '../maps/MapInstance';
 import { Sprite } from '@main/graphics/sprites';
@@ -11,7 +11,7 @@ type Props = Readonly<{
   sprite: Sprite;
 }>;
 
-export default class Projectile implements Entity {
+export class Projectile implements Entity {
   private coordinates: Coordinates;
   private map: MapInstance;
   private readonly direction: Direction;

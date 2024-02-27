@@ -5,15 +5,14 @@ import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import { calculateTotalIncomingDamage } from './UnitUtils';
-import Activity from './Activity';
+import { Activity } from './Activity';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
 import InventoryMap from '../../items/InventoryMap';
-import Entity from '../Entity';
 import UnitModel from '../../schemas/UnitModel';
-import { EntityType } from '../EntityType';
 import UnitType from '../../schemas/UnitType';
 import MapInstance from '../../maps/MapInstance';
+import { EntityType, Entity } from '@main/entities';
 import { DynamicSprite, Sprite } from '@main/graphics/sprites';
 import { GameState, Session } from '@main/core';
 import { checkArgument } from '@main/utils/preconditions';
@@ -49,7 +48,7 @@ export type DefendResult = Readonly<{
   damageAbsorbed: number;
 }>;
 
-export default class Unit implements Entity {
+export class Unit implements Entity {
   /** integer, starts at 0 */
   private readonly id: number;
   private readonly faction: Faction;

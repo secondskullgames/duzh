@@ -1,7 +1,7 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
+import { Unit } from '@main/entities/units';
 import { sleep } from '@main/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session, GameState } from '@main/core';

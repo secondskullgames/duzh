@@ -1,5 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
@@ -10,6 +9,7 @@ import { maxBy } from '@main/utils/arrays';
 import { GameState, Session } from '@main/core';
 import { manhattanDistance, pointAt, Coordinates, Direction } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   targetUnit: Unit;

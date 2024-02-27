@@ -1,5 +1,5 @@
-import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
+import { Unit } from '@main/entities/units';
 import { Session, GameState } from '@main/core';
 
 const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {

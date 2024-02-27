@@ -1,6 +1,6 @@
 import PlayerUnitController from './controllers/PlayerUnitController';
 import { UnitController } from './controllers/UnitController';
-import Unit from './Unit';
+import { Unit } from './Unit';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import Equipment from '../../equipment/Equipment';
@@ -28,7 +28,7 @@ type CreateUnitParams = Readonly<{
 }>;
 
 @injectable()
-export default class UnitFactory {
+export class UnitFactory {
   constructor(
     @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,

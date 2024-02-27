@@ -1,4 +1,4 @@
-import Unit from '../../entities/units/Unit';
+import { Unit } from '@main/entities/units';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 
 export class LevelUpScreenState {

@@ -4,7 +4,7 @@ import { FontName } from '../Fonts';
 import { Pixel } from '../Pixel';
 import { Color } from '../Color';
 import { Colors } from '../Colors';
-import Unit from '../../entities/units/Unit';
+import { Unit } from '@main/entities/units/Unit';
 import { Graphics, TextRenderer, Alignment, drawAligned } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
 import { Session } from '@main/core';

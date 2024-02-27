@@ -1,5 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { NormalAttack } from '../abilities/NormalAttack';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -12,6 +11,7 @@ import { randChoice } from '@main/utils/random';
 import { GameState, Session } from '@main/core';
 import { findPath } from '@main/maps/MapUtils';
 import { pointAt } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   targetUnit: Unit;

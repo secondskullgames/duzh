@@ -2,10 +2,8 @@ import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
-import Unit from '../units/Unit';
 import Sounds from '../../sounds/Sounds';
 import MapInstance from '../../maps/MapInstance';
-import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../units/Faction';
 import { chooseUnitController } from '../units/controllers/ControllerUtils';
 import { PaletteSwaps } from '@main/graphics';
@@ -13,6 +11,7 @@ import { Session, GameState } from '@main/core';
 import { getBonus } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';
 import { SpriteFactory } from '@main/graphics/sprites';
+import { Unit, UnitFactory } from '@main/entities/units';
 import { inject, injectable } from 'inversify';
 
 export type SpawnerClass = 'mirror';

@@ -1,9 +1,9 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import { shootFireball } from '@main/actions/shootFireball';
 import { Session, GameState } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 const MANA_COST = 25;
 const DAMAGE = 20;

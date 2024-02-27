@@ -3,7 +3,6 @@ import BasicEnemyController from './BasicEnemyController';
 import WizardController from './WizardController';
 import DragonShooterController from './DragonShooterController';
 import { UnitController } from './UnitController';
-import Unit from '../Unit';
 import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
 import { UnitAbility } from '../abilities/UnitAbility';
@@ -12,6 +11,7 @@ import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { hypotenuse, isInStraightLine, Coordinates } from '@main/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Unit } from '@main/entities/units';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(

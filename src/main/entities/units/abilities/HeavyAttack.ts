@@ -1,10 +1,9 @@
 import { AbilityName } from './AbilityName';
-import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import { getMeleeDamage } from '../UnitUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session, GameState } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
+import { DefendResult, getMeleeDamage, Unit } from '@main/entities/units';
 import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;

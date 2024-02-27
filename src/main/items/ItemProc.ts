@@ -1,5 +1,5 @@
 import InventoryItem from './InventoryItem';
-import Unit from '../entities/units/Unit';
+import { Unit } from '@main/entities/units';
 import { GameState, Session } from '@main/core';
 
 export type ItemProc = (

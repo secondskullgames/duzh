@@ -25,5 +25,3 @@ export namespace Activity {
 
   export const toString = (activity: Activity) => activity.toLowerCase();
 }
-
-export default Activity;

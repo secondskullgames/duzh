@@ -1,5 +1,5 @@
-import Unit from '../entities/units/Unit';
 import MapInstance from '../maps/MapInstance';
+import { Unit } from '@main/entities/units';
 
 /**
  * Add any tiles the player can currently see to the map's revealed tiles list.

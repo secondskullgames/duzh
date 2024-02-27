@@ -1,12 +1,11 @@
 import { recordKill } from './recordKill';
 import { die } from './die';
 import { dealDamage } from './dealDamage';
-import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import Activity from '../entities/units/Activity';
 import { Coordinates } from '@main/geometry';
 import { GameState, Session } from '@main/core';
 import { sleep } from '@main/utils/promises';
+import { Activity, Unit } from '@main/entities/units';
 
 export const floorFire = async (
   unit: Unit,

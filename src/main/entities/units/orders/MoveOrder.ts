@@ -1,5 +1,4 @@
 import UnitOrder from './UnitOrder';
-import Unit from '../Unit';
 import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { walk } from '@main/actions/walk';
@@ -8,6 +7,7 @@ import { pushBlock } from '@main/actions/pushBlock';
 import { getDoor, isBlocked } from '@main/maps/MapUtils';
 import { GameState, Session } from '@main/core';
 import { Coordinates, pointAt } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 type Props = Readonly<{
   coordinates: Coordinates;

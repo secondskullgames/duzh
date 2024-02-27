@@ -1,6 +1,6 @@
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { GameState, Session } from '@main/core';
+import { Unit } from '@main/entities/units';
 
 /**
  * A UnitBehavior is a unit's current "mood".  It determines what orders the unit will issue.

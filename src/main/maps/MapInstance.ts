@@ -1,9 +1,9 @@
 import Tile from '../tiles/Tile';
-import Unit from '../entities/units/Unit';
-import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
+import { Unit } from '@main/entities/units';
+import { Projectile } from '@main/entities';
 import { Coordinates } from '@main/geometry';
 import type { Figure } from '@main/sounds/types';
 import type { Rect } from '@main/geometry';

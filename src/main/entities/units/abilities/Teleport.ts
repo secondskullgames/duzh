@@ -1,13 +1,12 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import Activity from '../Activity';
 import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@main/utils/promises';
 import { Session, GameState } from '@main/core';
 import { manhattanDistance, pointAt, Coordinates } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Activity, Unit } from '@main/entities/units';
 
 export const range = 3;
 const manaCost = 20;

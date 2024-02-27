@@ -1,14 +1,14 @@
 import MapInstance from '../maps/MapInstance';
 import ItemFactory from '../items/ItemFactory';
-import UnitFactory from '../entities/units/UnitFactory';
-import ObjectFactory from '../entities/objects/ObjectFactory';
 import MapSpec from '../schemas/MapSpec';
 import MusicController from '../sounds/MusicController';
 import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
+import ObjectFactory from '@main/entities/objects/ObjectFactory';
 import { clear } from '@main/utils/arrays';
 import { MapSupplier } from '@main/maps/MapSupplier';
 import { checkArgument } from '@main/utils/preconditions';
+import { UnitFactory } from '@main/entities/units';
 import { inject, injectable } from 'inversify';
 
 /**

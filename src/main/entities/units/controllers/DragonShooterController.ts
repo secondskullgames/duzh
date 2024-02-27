@@ -1,5 +1,4 @@
 import { UnitController } from './UnitController';
-import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import StayBehavior from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
@@ -10,6 +9,7 @@ import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { GameState, Session } from '@main/core';
 import { hypotenuse, isInStraightLine, pointAt, Direction } from '@main/geometry';
+import { Unit } from '@main/entities/units';
 
 export default class DragonShooterController implements UnitController {
   /**

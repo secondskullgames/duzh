@@ -8,7 +8,7 @@ import { Sprite } from '@main/graphics/sprites';
  * An Entity is basically anything that goes on the game grid.
  * It's typically renderable and must occupy a grid tile.
  */
-export default interface Entity {
+export interface Entity {
   getCoordinates: () => Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
   getMap: () => MapInstance;

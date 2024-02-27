@@ -1,5 +1,5 @@
 import MapInstance from '@main/maps/MapInstance';
-import Unit from '@main/entities/units/Unit';
+import { Unit } from '@main/entities/units';
 
 test('adds and removes a unit', () => {
   const map = _emptyMap();

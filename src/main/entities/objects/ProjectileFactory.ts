@@ -1,5 +1,5 @@
-import Projectile from '../Projectile';
 import MapInstance from '../../maps/MapInstance';
+import { Projectile } from '@main/entities';
 import { SpriteFactory } from '@main/graphics/sprites';
 import { PaletteSwaps } from '@main/graphics';
 import { Coordinates, Direction } from '@main/geometry';

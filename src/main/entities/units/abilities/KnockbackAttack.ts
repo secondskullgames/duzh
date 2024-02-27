@@ -1,14 +1,13 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import { getMeleeDamage } from '../UnitUtils';
 import { sleep } from '@main/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Coordinates, pointAt } from '@main/geometry';
 import { GameState, Session } from '@main/core';
+import { DefendResult, getMeleeDamage, Unit } from '@main/entities/units';
 
 const manaCost = 6;
 const damageCoefficient = 1;
