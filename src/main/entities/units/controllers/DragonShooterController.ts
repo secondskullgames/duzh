@@ -7,11 +7,11 @@ import Direction from '../../../geometry/Direction';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import MapInstance from '../../../maps/MapInstance';
-import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { hypotenuse, isInStraightLine, pointAt } from '@main/geometry/CoordinatesUtils';
+import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 
 export default class DragonShooterController implements UnitController {
   /**
@@ -49,9 +49,9 @@ export default class DragonShooterController implements UnitController {
       distanceToTarget <= visionRange &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
       hasUnblockedStraightLineBetween(
+        map,
         unit.getCoordinates(),
-        targetUnit.getCoordinates(),
-        map
+        targetUnit.getCoordinates()
       )
     ) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
