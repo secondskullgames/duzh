@@ -1,5 +1,5 @@
-import ImageFactory from './images/ImageFactory';
 import { Colors } from './Colors';
+import { ImageFactory } from '@main/graphics/images';
 import { createCanvas, getCanvasContext } from '@main/utils/dom';
 import { injectable } from 'inversify';
 

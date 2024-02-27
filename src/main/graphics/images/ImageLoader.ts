@@ -3,7 +3,7 @@ import { AssetLoader } from '@main/assets/AssetLoader';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class ImageLoader {
+export class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
   private readonly assetLoader: AssetLoader;

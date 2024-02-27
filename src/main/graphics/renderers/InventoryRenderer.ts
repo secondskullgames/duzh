@@ -6,7 +6,7 @@ import EquipmentSlot from '../../schemas/EquipmentSlot';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import ImageFactory from '../images/ImageFactory';
+import { ImageFactory } from '@main/graphics/images/ImageFactory';
 import { Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';

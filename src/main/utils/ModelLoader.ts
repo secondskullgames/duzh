@@ -1,4 +1,4 @@
-import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
+import { SpriteCategory } from '@main/graphics/sprites';
 import { AssetLoader } from '@main/assets/AssetLoader';
 import Ajv from 'ajv';
 import { inject, injectable } from 'inversify';

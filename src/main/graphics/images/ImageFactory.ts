@@ -1,7 +1,7 @@
 import { Image } from './Image';
 import { ImageCache } from './ImageCache';
 import { ImageEffect } from './ImageEffect';
-import ImageLoader from './ImageLoader';
+import { ImageLoader } from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import { Color } from '../Color';
 import { PaletteSwaps } from '@main/graphics';
@@ -16,7 +16,7 @@ type Params = Readonly<{
 }>;
 
 @injectable()
-export default class ImageFactory {
+export class ImageFactory {
   private readonly rawCache: Record<string, ImageData | null> = {};
 
   constructor(

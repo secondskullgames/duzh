@@ -5,7 +5,7 @@ import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import ImageFactory from '../images/ImageFactory';
+import { ImageFactory } from '@main/graphics/images';
 import { PaletteSwaps, Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';

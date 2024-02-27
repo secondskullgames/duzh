@@ -7,7 +7,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constan
 import { Sprite } from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
-import ImageFactory from '../images/ImageFactory';
+import { ImageFactory } from '@main/graphics/images';
 import { PaletteSwaps } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { Coordinates } from '@main/geometry';
