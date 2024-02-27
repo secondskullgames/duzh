@@ -7,7 +7,7 @@
   "life": 60,
   "mana": 15,
   "strength": 12,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 8,

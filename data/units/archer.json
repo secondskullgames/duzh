@@ -27,7 +27,7 @@
   ],
   "aiParameters": {
     "speed": 0.9,
-    "visionRange": 12,
+    "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0.5
   },
