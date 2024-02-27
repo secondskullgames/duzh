@@ -1,14 +1,14 @@
-import Sprite from './Sprite';
 import { Image } from '../images/Image';
 import { Offsets } from '@main/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
+import { Sprite } from '@main/graphics/sprites/Sprite';
 
 type Props = Readonly<{
   offsets: Offsets;
   imageMap: Record<string, Image>;
 }>;
 
-export default abstract class DynamicSprite<T> implements Sprite {
+export abstract class DynamicSprite<T> implements Sprite {
   private target: T | null;
   private readonly imageMap: Record<string, Image>;
   private readonly offsets: Offsets;

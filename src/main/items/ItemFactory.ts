@@ -15,10 +15,9 @@ import { GameScreen } from '@main/core/GameScreen';
 import { floorFire } from '@main/actions/floorFire';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { AssetLoader } from '@main/assets/AssetLoader';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
+import { SpriteFactory } from '@main/graphics/sprites';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -28,9 +27,7 @@ export default class ItemFactory {
     @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
     @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader,
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
+    private readonly modelLoader: ModelLoader
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {

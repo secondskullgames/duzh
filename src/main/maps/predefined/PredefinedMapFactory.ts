@@ -10,7 +10,6 @@ import ImageFactory from '../../graphics/images/ImageFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
 import { Colors, Color } from '@main/graphics';
@@ -18,6 +17,7 @@ import { Image } from '@main/graphics/images/Image';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { Coordinates } from '@main/geometry';
+import { SpriteFactory } from '@main/graphics/sprites';
 import { injectable } from 'inversify';
 
 @injectable()

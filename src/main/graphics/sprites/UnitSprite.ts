@@ -1,4 +1,4 @@
-import DynamicSprite from './DynamicSprite';
+import { DynamicSprite } from './DynamicSprite';
 import { Image } from '../images/Image';
 import Activity from '../../entities/units/Activity';
 import Unit from '../../entities/units/Unit';

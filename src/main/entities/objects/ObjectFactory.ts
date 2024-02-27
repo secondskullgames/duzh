@@ -5,7 +5,6 @@ import Bonus from './Bonus';
 import Unit from '../units/Unit';
 import Sounds from '../../sounds/Sounds';
 import MapInstance from '../../maps/MapInstance';
-import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../units/Faction';
 import { chooseUnitController } from '../units/controllers/ControllerUtils';
@@ -14,6 +13,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';
+import { SpriteFactory } from '@main/graphics/sprites';
 import { inject, injectable } from 'inversify';
 
 export type SpawnerClass = 'mirror';

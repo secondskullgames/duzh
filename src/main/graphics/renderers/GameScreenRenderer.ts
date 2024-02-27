@@ -4,7 +4,7 @@ import Unit from '../../entities/units/Unit';
 import { Color } from '../Color';
 import { Colors } from '../Colors';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
-import Sprite from '../sprites/Sprite';
+import { Sprite } from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import ImageFactory from '../images/ImageFactory';

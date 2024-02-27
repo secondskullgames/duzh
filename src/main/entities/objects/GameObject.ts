@@ -1,7 +1,7 @@
 import Entity from '../Entity';
-import Sprite from '../../graphics/sprites/Sprite';
 import { EntityType } from '../EntityType';
 import MapInstance from '../../maps/MapInstance';
+import { Sprite } from '@main/graphics/sprites';
 import { Coordinates } from '@main/geometry';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

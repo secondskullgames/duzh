@@ -1,7 +1,7 @@
-import DynamicSprite from './DynamicSprite';
-import Sprite from './Sprite';
+import { DynamicSprite } from './DynamicSprite';
+import { Sprite } from './Sprite';
 import { SpriteCategory } from './SpriteCategory';
-import StaticSprite from './StaticSprite';
+import { StaticSprite } from './StaticSprite';
 import { SpawnerSprite } from './SpawnerSprite';
 import { DoorSprite } from './DoorSprite';
 import { EquipmentSprite } from './EquipmentSprite';
@@ -21,7 +21,7 @@ import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
 @injectable()
-export default class SpriteFactory {
+export class SpriteFactory {
   constructor(
     private readonly imageFactory: ImageFactory,
     private readonly modelLoader: ModelLoader

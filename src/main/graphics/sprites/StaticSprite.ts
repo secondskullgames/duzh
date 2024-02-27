@@ -1,8 +1,8 @@
-import Sprite from './Sprite';
+import { Sprite } from './Sprite';
 import { Image } from '../images/Image';
 import { Offsets } from '@main/geometry';
 
-export default class StaticSprite implements Sprite {
+export class StaticSprite implements Sprite {
   private readonly image: Image;
   private readonly offsets: Offsets;
 

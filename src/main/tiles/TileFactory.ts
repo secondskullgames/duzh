@@ -1,8 +1,7 @@
 import TileSet from './TileSet';
 import Tile from './Tile';
 import TileType from '../schemas/TileType';
-import Sprite from '../graphics/sprites/Sprite';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import { Sprite, SpriteFactory } from '../graphics/sprites';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
 import { PaletteSwaps } from '@main/graphics';

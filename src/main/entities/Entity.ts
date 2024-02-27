@@ -1,9 +1,9 @@
 import { EntityType } from './EntityType';
-import Sprite from '../graphics/sprites/Sprite';
 import MapInstance from '../maps/MapInstance';
 import { Coordinates } from '@main/geometry';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
+import { Sprite } from '@main/graphics/sprites';
 
 /**
  * An Entity is basically anything that goes on the game grid.

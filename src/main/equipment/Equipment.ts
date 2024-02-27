@@ -1,10 +1,10 @@
 import { EquipmentScriptName } from './EquipmentScript';
 import { getEquipmentTooltip } from './getEquipmentTooltip';
-import Sprite from '../graphics/sprites/Sprite';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
+import { Sprite } from '@main/graphics/sprites';
 
 const DRAW_BEHIND_PREFIX = '_B';
 

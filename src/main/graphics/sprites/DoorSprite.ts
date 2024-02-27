@@ -1,4 +1,4 @@
-import DynamicSprite from './DynamicSprite';
+import { DynamicSprite } from './DynamicSprite';
 import { Image } from '../images/Image';
 import Door from '../../entities/objects/Door';
 import { Offsets } from '@main/geometry';
