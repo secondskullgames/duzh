@@ -1,12 +1,12 @@
-import Coordinates from '../geometry/Coordinates';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
+import { Coordinates } from '@main/geometry';
 import type { Figure } from '@main/sounds/types';
-import type Rect from '../geometry/Rect';
+import type { Rect } from '@main/geometry';
 
 type Props = Readonly<{
   width: number;

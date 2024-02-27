@@ -1,9 +1,9 @@
 import Unit from '../entities/units/Unit';
-import Coordinates from '../geometry/Coordinates';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
+import { Coordinates } from '@main/geometry';
 
 export const moveUnit = async (
   unit: Unit,

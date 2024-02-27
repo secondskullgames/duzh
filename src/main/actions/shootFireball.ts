@@ -1,10 +1,9 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../entities/units/Unit';
-import Coordinates from '../geometry/Coordinates';
 import Sounds from '../sounds/Sounds';
-import Direction from '../geometry/Direction';
 import Activity from '../entities/units/Activity';
+import { Coordinates, Direction } from '@main/geometry';
 import { sleep } from '@main/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

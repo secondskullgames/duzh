@@ -1,7 +1,7 @@
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
-import Rect from '../../../geometry/Rect';
 import { randInt } from '@main/utils/random';
+import { Rect } from '@main/geometry';
 
 const ROOM_PADDING = [2, 3, 1, 1]; // left, top, right, bottom
 

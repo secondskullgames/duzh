@@ -1,12 +1,11 @@
 import MapInstance from './MapInstance';
-import Coordinates from '../geometry/Coordinates';
 import Spawner from '../entities/objects/Spawner';
 import MapItem from '../entities/objects/MapItem';
 import Door from '../entities/objects/Door';
 import Block from '../entities/objects/Block';
 import Bonus from '../entities/objects/Bonus';
 import { ObjectType } from '@main/entities/objects/GameObject';
-import { Pathfinder } from '@main/geometry/Pathfinder';
+import { Coordinates, Pathfinder } from '@main/geometry';
 
 export const getSpawner = (
   map: MapInstance,

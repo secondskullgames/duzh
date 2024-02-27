@@ -1,8 +1,8 @@
 import { Color } from './Color';
 import { Image } from './images/Image';
 import { Pixel } from './Pixel';
-import Rect from '../geometry/Rect';
 import { getCanvasContext, getOffscreenCanvasContext } from '@main/utils/dom';
+import { Rect } from '@main/geometry';
 
 export interface Graphics {
   clear: () => void;

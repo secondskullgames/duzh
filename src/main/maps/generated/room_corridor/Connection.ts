@@ -1,6 +1,6 @@
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
-import Coordinates from '../../../geometry/Coordinates';
+import { Coordinates } from '@main/geometry';
 
 export type Connection = Readonly<{
   start: RoomRegion;

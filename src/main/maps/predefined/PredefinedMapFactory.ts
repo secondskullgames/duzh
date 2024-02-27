@@ -7,7 +7,6 @@ import MapInstance from '../MapInstance';
 import PredefinedMapModel from '../../schemas/PredefinedMapModel';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import Coordinates from '../../geometry/Coordinates';
 import ImageFactory from '../../graphics/images/ImageFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
@@ -19,6 +18,7 @@ import { Image } from '@main/graphics/images/Image';
 import { Color } from '@main/graphics/Color';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
+import { Coordinates } from '@main/geometry';
 import { injectable } from 'inversify';
 
 @injectable()

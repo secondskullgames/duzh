@@ -4,12 +4,12 @@ import TileType from '../schemas/TileType';
 import Sprite from '../graphics/sprites/Sprite';
 import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Coordinates from '../geometry/Coordinates';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
 import { checkNotNull } from '@main/utils/preconditions';
 import { randChoice } from '@main/utils/random';
 import { Feature } from '@main/utils/features';
+import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{

@@ -1,8 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove, getClosestEnemy } from './ControllerUtils';
 import Unit from '../Unit';
-import Direction from '../../../geometry/Direction';
-import Coordinates from '../../../geometry/Coordinates';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
@@ -18,6 +16,7 @@ import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@main/utils/random';
 import { maxBy } from '@main/utils/arrays';
+import { Coordinates, Direction } from '@main/geometry';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;

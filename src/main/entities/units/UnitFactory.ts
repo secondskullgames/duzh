@@ -3,7 +3,6 @@ import { UnitController } from './controllers/UnitController';
 import Unit from './Unit';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
-import Coordinates from '../../geometry/Coordinates';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Equipment from '../../equipment/Equipment';
 import UnitModel from '../../schemas/UnitModel';
@@ -11,6 +10,7 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
 import ModelLoader from '../../utils/ModelLoader';
+import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{

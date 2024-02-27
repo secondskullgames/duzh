@@ -8,7 +8,6 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
-import Direction from '../../geometry/Direction';
 import Colors from '../Colors';
 import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
@@ -17,6 +16,7 @@ import Unit from '../../entities/units/Unit';
 import ImageFactory from '../images/ImageFactory';
 import ModelLoader from '../../utils/ModelLoader';
 import { fillTemplate } from '@main/utils/templates';
+import { Direction } from '@main/geometry';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 

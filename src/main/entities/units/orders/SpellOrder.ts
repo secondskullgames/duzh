@@ -1,9 +1,9 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import { UnitAbility } from '../abilities/UnitAbility';
-import Coordinates from '../../../geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
+import { Coordinates } from '@main/geometry';
 
 type Props = Readonly<{
   ability: UnitAbility;

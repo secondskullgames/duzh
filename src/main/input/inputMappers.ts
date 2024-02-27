@@ -1,5 +1,5 @@
 import { ArrowKey, KeyCommand, ModifierKey } from './inputTypes';
-import Direction from '../geometry/Direction';
+import { Direction } from '@main/geometry';
 
 export const mapToCommand = (e: KeyboardEvent): KeyCommand | null => {
   const modifiers = [

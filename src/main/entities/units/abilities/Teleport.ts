@@ -1,16 +1,15 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import Activity from '../Activity';
-import { pointAt } from '@main/utils/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@main/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@main/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Coordinates } from '@main/geometry';
 
 export const range = 3;
 const manaCost = 20;

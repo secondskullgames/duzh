@@ -1,11 +1,11 @@
-type Direction = Readonly<{
+export type Direction = Readonly<{
   dx: -1 | 0 | 1;
   dy: -1 | 0 | 1;
 }>;
 
 type DirectionName = 'N' | 'E' | 'S' | 'W';
 
-namespace Direction {
+export namespace Direction {
   export const N: Direction = { dx: 0, dy: -1 };
   export const E: Direction = { dx: 1, dy: 0 };
   export const S: Direction = { dx: 0, dy: 1 };
@@ -77,5 +77,3 @@ namespace Direction {
     throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 }
-
-export default Direction;

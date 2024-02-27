@@ -1,4 +1,4 @@
-import Coordinates from '../geometry/Coordinates';
+import { Coordinates } from '@main/geometry';
 import { checkArgument, checkState } from '@main/utils/preconditions';
 
 type Props = Readonly<{

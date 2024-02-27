@@ -1,6 +1,6 @@
 import Sprite from './Sprite';
-import Offsets from '../../geometry/Offsets';
 import { Image } from '../images/Image';
+import { Offsets } from '@main/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 
 type Props = Readonly<{

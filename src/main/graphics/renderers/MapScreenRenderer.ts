@@ -1,8 +1,8 @@
 import { Renderer } from './Renderer';
-import Coordinates from '../../geometry/Coordinates';
 import { Color } from '../Color';
 import Colors from '../Colors';
 import { Graphics } from '../Graphics';
+import { Coordinates } from '@main/geometry';
 import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@main/utils/preconditions';
 import { Session } from '@main/core/Session';

@@ -1,13 +1,12 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
-import { pointAt } from '@main/utils/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { Coordinates, pointAt } from '@main/geometry';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?

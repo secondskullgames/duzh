@@ -2,9 +2,8 @@ import EmptyRegionConnection from './EmptyRegionConnection';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
-import Coordinates from '../../../geometry/Coordinates';
-import Offsets from '../../../geometry/Offsets';
 import TileType from '../../../schemas/TileType';
+import { Offsets, Coordinates } from '@main/geometry';
 import { shuffle } from '@main/utils/random';
 
 const generateTiles = (

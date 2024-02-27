@@ -1,10 +1,8 @@
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
-import Direction from '../../../geometry/Direction';
-import { pointAt } from '@main/utils/geometry';
+import { Coordinates, Direction, pointAt } from '@main/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

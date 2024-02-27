@@ -6,7 +6,6 @@ import CharacterScreenRenderer from './CharacterScreenRenderer';
 import LevelUpScreenRenderer from './LevelUpScreenRenderer';
 import HelpScreenRenderer from './HelpScreenRenderer';
 import InventoryRenderer from './InventoryRenderer';
-import Coordinates from '../../geometry/Coordinates';
 import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
@@ -19,6 +18,7 @@ import { createCanvas } from '@main/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
+import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';

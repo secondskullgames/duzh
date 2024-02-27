@@ -1,9 +1,8 @@
 import DynamicSprite from './DynamicSprite';
-import Offsets from '../../geometry/Offsets';
 import { Image } from '../images/Image';
 import Activity from '../../entities/units/Activity';
-import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
+import { Offsets, Direction } from '@main/geometry';
 
 type Props = Readonly<{
   offsets: Offsets;

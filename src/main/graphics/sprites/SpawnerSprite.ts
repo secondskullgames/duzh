@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
-import Offsets from '../../geometry/Offsets';
 import { Image } from '../images/Image';
 import Spawner from '../../entities/objects/Spawner';
+import { Offsets } from '@main/geometry';
 
 type Props = Readonly<{
   offsets: Offsets;

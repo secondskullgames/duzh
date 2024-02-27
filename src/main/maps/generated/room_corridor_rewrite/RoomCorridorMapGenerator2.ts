@@ -3,9 +3,9 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
-import Rect from '../../../geometry/Rect';
 import TileType from '../../../schemas/TileType';
 import TileFactory from '../../../tiles/TileFactory';
+import { Rect } from '@main/geometry';
 
 const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;

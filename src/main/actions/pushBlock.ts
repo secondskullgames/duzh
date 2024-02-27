@@ -2,10 +2,10 @@ import { moveUnit } from './moveUnit';
 import { moveObject } from './moveObject';
 import Unit from '../entities/units/Unit';
 import Block from '../entities/objects/Block';
-import Coordinates from '../geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Coordinates } from '@main/geometry';
 
 export const pushBlock = async (
   unit: Unit,

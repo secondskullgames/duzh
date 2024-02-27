@@ -1,6 +1,5 @@
 import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
-import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
 import { Color } from '../Color';
 import Colors from '../Colors';
@@ -11,6 +10,7 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';

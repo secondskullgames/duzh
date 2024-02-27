@@ -8,7 +8,7 @@ import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { pointAt } from '@main/utils/geometry';
+import { pointAt } from '@main/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;

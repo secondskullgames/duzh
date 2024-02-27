@@ -6,10 +6,9 @@ import { ShootArrow } from '../abilities/ShootArrow';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { canShoot } from '../controllers/ControllerUtils';
 import { AbilityName } from '../abilities/AbilityName';
-import { pointAt } from '@main/utils/geometry';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@main/geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

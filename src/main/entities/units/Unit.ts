@@ -8,8 +8,6 @@ import { calculateTotalIncomingDamage } from './UnitUtils';
 import Activity from './Activity';
 import Equipment from '../../equipment/Equipment';
 import EquipmentMap from '../../equipment/EquipmentMap';
-import Coordinates from '../../geometry/Coordinates';
-import Direction from '../../geometry/Direction';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import InventoryMap from '../../items/InventoryMap';
 import Entity from '../Entity';
@@ -21,6 +19,7 @@ import MapInstance from '../../maps/MapInstance';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { checkArgument } from '@main/utils/preconditions';
+import { Coordinates, Direction } from '@main/geometry';
 
 /**
  * Regenerate this raw amount of health each turn

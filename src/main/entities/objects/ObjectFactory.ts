@@ -13,8 +13,8 @@ import { chooseUnitController } from '../units/controllers/ControllerUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
+import { Coordinates } from '@main/geometry';
 import { inject, injectable } from 'inversify';
-import type Coordinates from '../../geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 

@@ -1,12 +1,9 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import { getRangedDamage } from '../UnitUtils';
-import Direction from '../../../geometry/Direction';
 import Activity from '../Activity';
-import { pointAt } from '@main/utils/geometry';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';
@@ -14,6 +11,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { Coordinates, Direction, pointAt } from '@main/geometry';
 
 const manaCost = 5;
 
