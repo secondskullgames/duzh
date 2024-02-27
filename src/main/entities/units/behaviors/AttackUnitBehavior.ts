@@ -1,5 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import { canDash } from '../controllers/ControllerUtils';
 import { randChoice } from '@main/utils/random';
 import { GameState, Session } from '@main/core';
 import { findPath } from '@main/maps/MapUtils';
@@ -12,6 +11,7 @@ import {
   StayOrder,
   UnitOrder
 } from '@main/entities/units/orders';
+import { canDash } from '@main/entities/units/controllers';
 
 type Props = Readonly<{
   targetUnit: Unit;

@@ -1,17 +1,15 @@
-import ArcherController from './ArcherController';
-import BasicEnemyController from './BasicEnemyController';
-import WizardController from './WizardController';
-import DragonShooterController from './DragonShooterController';
+import { ArcherController } from './ArcherController';
+import { BasicEnemyController } from './BasicEnemyController';
+import { WizardController } from './WizardController';
+import { DragonShooterController } from './DragonShooterController';
 import { UnitController } from './UnitController';
-import MapInstance from '../../../maps/MapInstance';
-import { AbilityName } from '../abilities/AbilityName';
-import { UnitAbility } from '../abilities/UnitAbility';
-import { Dash } from '../abilities/Dash';
+import MapInstance from '@main/maps/MapInstance';
 import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { hypotenuse, isInStraightLine, Coordinates } from '@main/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Unit } from '@main/entities/units';
+import { AbilityName, Dash, UnitAbility } from '@main/entities/units/abilities';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(

@@ -13,9 +13,9 @@ import Door, { DoorState } from '@main/entities/objects/Door';
 import { ImageFactory } from '@main/graphics/images';
 import { Colors, Color } from '@main/graphics';
 import { Image } from '@main/graphics/images/Image';
-import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { Coordinates } from '@main/geometry';
 import { SpriteFactory } from '@main/graphics/sprites';
+import { chooseUnitController } from '@main/entities/units/controllers';
 import { injectable } from 'inversify';
 
 @injectable()

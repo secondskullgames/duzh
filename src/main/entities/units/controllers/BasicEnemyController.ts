@@ -17,7 +17,7 @@ const _wantsToFlee = (unit: Unit) => {
   return unit.getLife() / unit.getMaxLife() < fleeThreshold;
 };
 
-export default class BasicEnemyController implements UnitController {
+export class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */

@@ -5,13 +5,13 @@ import Bonus from './Bonus';
 import Sounds from '../../sounds/Sounds';
 import MapInstance from '../../maps/MapInstance';
 import { Faction } from '../units/Faction';
-import { chooseUnitController } from '../units/controllers/ControllerUtils';
 import { PaletteSwaps } from '@main/graphics';
 import { Session, GameState } from '@main/core';
 import { getBonus } from '@main/maps/MapUtils';
 import { Coordinates } from '@main/geometry';
 import { SpriteFactory } from '@main/graphics/sprites';
 import { Unit, UnitFactory } from '@main/entities/units';
+import { chooseUnitController } from '@main/entities/units/controllers';
 import { inject, injectable } from 'inversify';
 
 export type SpawnerClass = 'mirror';

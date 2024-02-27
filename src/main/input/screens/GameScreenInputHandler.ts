@@ -1,6 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
-import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
 import Sounds from '../../sounds/Sounds';
 import { ShootArrow, Strafe, AbilityName, Dash } from '@main/entities/units/abilities';
@@ -13,6 +12,7 @@ import { Feature } from '@main/utils/features';
 import { MapController } from '@main/maps/MapController';
 import { getHotkeyAbility } from '@main/entities/units';
 import { AbilityOrder, AttackMoveOrder, UnitOrder } from '@main/entities/units/orders';
+import { PlayerUnitController } from '@main/entities/units/controllers';
 import { inject, injectable } from 'inversify';
 
 @injectable()

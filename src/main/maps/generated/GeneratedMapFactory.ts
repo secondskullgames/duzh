@@ -18,8 +18,8 @@ import { Feature } from '@main/utils/features';
 import { checkState } from '@main/utils/preconditions';
 import GeneratedMapModel from '@main/schemas/GeneratedMapModel';
 import MapItem from '@main/entities/objects/MapItem';
-import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { Coordinates } from '@main/geometry';
+import { chooseUnitController } from '@main/entities/units/controllers';
 import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{

@@ -1,10 +1,10 @@
 import { UnitBehavior } from './UnitBehavior';
-import { canShoot } from '../controllers/ControllerUtils';
 import { UnitOrder, AbilityOrder, StayOrder } from '@main/entities/units/orders';
 import { ShootTurretArrow, AbilityName } from '@main/entities/units/abilities';
 import { GameState, Session } from '@main/core';
 import { pointAt } from '@main/geometry';
 import { Unit } from '@main/entities/units';
+import { canShoot } from '@main/entities/units/controllers';
 
 type Props = Readonly<{
   targetUnit: Unit;

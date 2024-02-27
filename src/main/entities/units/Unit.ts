@@ -1,7 +1,3 @@
-import AIParameters from './controllers/AIParameters';
-import { UnitController } from './controllers/UnitController';
-import { UnitAbility } from './abilities/UnitAbility';
-import { AbilityName } from './abilities/AbilityName';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import { calculateTotalIncomingDamage } from './UnitUtils';
@@ -17,6 +13,8 @@ import { DynamicSprite, Sprite } from '@main/graphics/sprites';
 import { GameState, Session } from '@main/core';
 import { checkArgument } from '@main/utils/preconditions';
 import { Coordinates, Direction } from '@main/geometry';
+import { AIParameters, UnitController } from '@main/entities/units/controllers';
+import { AbilityName, UnitAbility } from '@main/entities/units/abilities';
 
 /**
  * Regenerate this raw amount of health each turn

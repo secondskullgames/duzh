@@ -45,7 +45,7 @@ const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
   return null;
 };
 
-export default class WizardController implements UnitController {
+export class WizardController implements UnitController {
   /**
    * If we have mana to Summon, and X% chance, cast Summon;
    * if we have mana to Teleport, and player is within X tiles, cast Teleport;

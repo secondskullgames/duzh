@@ -14,7 +14,7 @@ import {
   ShootUnitBehavior
 } from '@main/entities/units/behaviors';
 
-export default class ArcherController implements UnitController {
+export class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */

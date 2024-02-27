@@ -13,7 +13,7 @@ import {
   UnitBehavior
 } from '@main/entities/units/behaviors';
 
-export default class DragonShooterController implements UnitController {
+export class DragonShooterController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */

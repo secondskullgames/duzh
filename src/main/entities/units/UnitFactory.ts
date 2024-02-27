@@ -1,5 +1,3 @@
-import PlayerUnitController from './controllers/PlayerUnitController';
-import { UnitController } from './controllers/UnitController';
 import { Unit } from './Unit';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
@@ -11,6 +9,7 @@ import ModelLoader from '../../utils/ModelLoader';
 import { PaletteSwaps } from '@main/graphics';
 import { Coordinates } from '@main/geometry';
 import { SpriteFactory } from '@main/graphics/sprites';
+import { PlayerUnitController, UnitController } from '@main/entities/units/controllers';
 import { inject, injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{
