@@ -1,6 +1,6 @@
 import GameObject, { ObjectType } from './GameObject';
-import InventoryItem from '../../items/InventoryItem';
-import MapInstance from '../../maps/MapInstance';
+import { InventoryItem } from '@main/items/InventoryItem';
+import MapInstance from '@main/maps/MapInstance';
 import { Sprite } from '@main/graphics/sprites';
 import { Coordinates } from '@main/geometry';
 

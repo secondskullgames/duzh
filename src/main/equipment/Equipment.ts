@@ -1,8 +1,8 @@
 import { EquipmentScriptName } from './EquipmentScript';
 import { getEquipmentTooltip } from './getEquipmentTooltip';
-import InventoryItem from '../items/InventoryItem';
 import EquipmentModel from '../schemas/EquipmentModel';
 import EquipmentSlot from '../schemas/EquipmentSlot';
+import { InventoryItem } from '@main/items';
 import { Sprite } from '@main/graphics/sprites';
 import { Unit } from '@main/entities/units';
 

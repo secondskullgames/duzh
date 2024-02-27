@@ -10,7 +10,7 @@ type Props = Readonly<{
   tooltip?: string;
 }>;
 
-export default class InventoryItem {
+export class InventoryItem {
   readonly name: string;
   readonly category: ItemCategory;
   private readonly tooltip: string | null;

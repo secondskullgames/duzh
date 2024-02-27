@@ -1,4 +1,4 @@
-import InventoryItem from './InventoryItem';
+import { InventoryItem } from './InventoryItem';
 import ItemCategory from '../schemas/ItemCategory';
 
 const itemCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL', 'KEY'];
@@ -8,7 +8,7 @@ const itemCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL', '
  * as well as data about the selected item/category in the inventory menu
  * (although this is only applicable to the player unit)
  */
-export default class InventoryMap {
+export class InventoryMap {
   private readonly _map: Record<ItemCategory, InventoryItem[]>;
 
   constructor() {

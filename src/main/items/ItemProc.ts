@@ -1,4 +1,4 @@
-import InventoryItem from './InventoryItem';
+import { InventoryItem } from './InventoryItem';
 import { Unit } from '@main/entities/units';
 import { GameState, Session } from '@main/core';
 

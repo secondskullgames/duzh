@@ -1,4 +1,4 @@
-import InventoryItem from './InventoryItem';
+import { InventoryItem } from './InventoryItem';
 import Sounds from '../sounds/Sounds';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
@@ -20,7 +20,7 @@ import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
 @injectable()
-export default class ItemFactory {
+export class ItemFactory {
   constructor(
     @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
