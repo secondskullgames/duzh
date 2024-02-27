@@ -31,7 +31,7 @@ export const getRangedDamage = (unit: Unit): number => {
     }
   }
 
-  return Math.round(damage);
+  return damage;
 };
 
 export const calculateTotalIncomingDamage = (

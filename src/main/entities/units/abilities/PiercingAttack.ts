@@ -4,7 +4,7 @@ import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
-import { pointAt } from '@main/utils/geometry';
+import { pointAt } from '@main/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';

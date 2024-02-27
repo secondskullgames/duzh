@@ -6,7 +6,7 @@ import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import Direction from '../../../geometry/Direction';
 import Activity from '../Activity';
-import { pointAt } from '@main/utils/geometry';
+import { pointAt } from '@main/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';

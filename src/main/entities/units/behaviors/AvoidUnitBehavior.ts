@@ -11,9 +11,8 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import { maxBy } from '@main/utils/arrays';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@main/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
-import { pointAt } from '@main/utils/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;
