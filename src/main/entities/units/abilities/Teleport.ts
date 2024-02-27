@@ -8,7 +8,7 @@ import { manhattanDistance, pointAt, Coordinates } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Activity, Unit } from '@main/entities/units';
 
-export const range = 3;
+export const TELEPORT_RANGE = 3;
 const manaCost = 20;
 
 export const Teleport: UnitAbility = {
@@ -27,8 +27,8 @@ export const Teleport: UnitAbility = {
       throw new Error('Teleport requires a target!');
     }
 
-    if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
-      throw new Error(`Can't teleport more than ${range} units`);
+    if (manhattanDistance(unit.getCoordinates(), coordinates) > TELEPORT_RANGE) {
+      throw new Error(`Can't teleport more than ${TELEPORT_RANGE} units`);
     }
 
     const map = session.getMap();

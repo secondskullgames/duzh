@@ -6,7 +6,7 @@ import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
-import { Faction } from '@main/entities/units/Faction';
+import { Faction } from '@main/entities/units';
 import { inject, injectable } from 'inversify';
 
 @injectable()

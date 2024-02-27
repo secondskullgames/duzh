@@ -1,10 +1,7 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import { AbilityOrder } from '../orders/AbilityOrder';
-import StayOrder from '../orders/StayOrder';
-import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
-import { AbilityName } from '../abilities/AbilityName';
 import { canShoot } from '../controllers/ControllerUtils';
+import { UnitOrder, AbilityOrder, StayOrder } from '@main/entities/units/orders';
+import { ShootTurretArrow, AbilityName } from '@main/entities/units/abilities';
 import { GameState, Session } from '@main/core';
 import { pointAt } from '@main/geometry';
 import { Unit } from '@main/entities/units';

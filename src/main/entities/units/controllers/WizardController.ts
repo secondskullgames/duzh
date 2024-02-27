@@ -2,12 +2,7 @@ import { UnitController } from './UnitController';
 import { canMove, getClosestEnemy } from './ControllerUtils';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
-import { Summon } from '../abilities/Summon';
-import { AbilityName } from '../abilities/AbilityName';
-import UnitOrder from '../orders/UnitOrder';
 import MapInstance from '../../../maps/MapInstance';
-import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
 import { GameState, Session } from '@main/core';
 import { manhattanDistance, Coordinates, Direction } from '@main/geometry';
@@ -15,6 +10,13 @@ import { isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@main/utils/random';
 import { maxBy } from '@main/utils/arrays';
 import { Unit } from '@main/entities/units';
+import {
+  AbilityName,
+  Summon,
+  Teleport,
+  TELEPORT_RANGE
+} from '@main/entities/units/abilities';
+import { StayOrder, UnitOrder } from '@main/entities/units/orders';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;

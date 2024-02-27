@@ -1,15 +1,17 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
-import { AttackMoveOrder } from '../orders/AttackMoveOrder';
-import { AbilityName } from '../abilities/AbilityName';
-import { Teleport, range as teleportRange } from '../abilities/Teleport';
-import { AbilityOrder } from '../orders/AbilityOrder';
 import { maxBy } from '@main/utils/arrays';
 import { GameState, Session } from '@main/core';
 import { manhattanDistance, pointAt, Coordinates, Direction } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Unit } from '@main/entities/units';
+import {
+  AbilityOrder,
+  AttackMoveOrder,
+  SpellOrder,
+  StayOrder,
+  UnitOrder
+} from '@main/entities/units/orders';
+import { AbilityName, Teleport, TELEPORT_RANGE } from '@main/entities/units/abilities';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -29,8 +31,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     if (_canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
-        const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        return new AbilityOrder({ direction, ability: Teleport });
+        return new SpellOrder({ coordinates: targetCoordinates, ability: Teleport });
       }
     }
 
@@ -58,7 +59,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       .filter(coordinates => manhattanDistance(unit.getCoordinates(), coordinates) >= 3)
       .filter(
         coordinates =>
-          manhattanDistance(unit.getCoordinates(), coordinates) <= teleportRange
+          manhattanDistance(unit.getCoordinates(), coordinates) <= TELEPORT_RANGE
       );
     if (possibleCoordinates.length > 0) {
       return maxBy(possibleCoordinates, coordinates =>

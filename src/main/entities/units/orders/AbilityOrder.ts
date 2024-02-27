@@ -1,5 +1,5 @@
-import UnitOrder from './UnitOrder';
-import { UnitAbility } from '../abilities/UnitAbility';
+import { UnitOrder } from './UnitOrder';
+import { UnitAbility } from '@main/entities/units/abilities';
 import { Coordinates, Direction } from '@main/geometry';
 import { GameState, Session } from '@main/core';
 import { Unit } from '@main/entities/units';

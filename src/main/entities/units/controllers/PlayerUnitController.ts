@@ -1,6 +1,5 @@
 import { UnitController } from './UnitController';
-import StayOrder from '../orders/StayOrder';
-import UnitOrder from '../orders/UnitOrder';
+import { StayOrder, UnitOrder } from '@main/entities/units/orders';
 
 export default class PlayerUnitController implements UnitController {
   private queuedOrder: UnitOrder | null;

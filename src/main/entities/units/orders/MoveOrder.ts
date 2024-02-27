@@ -1,4 +1,4 @@
-import UnitOrder from './UnitOrder';
+import { UnitOrder } from './UnitOrder';
 import { ObjectType } from '../../objects/GameObject';
 import Block from '../../objects/Block';
 import { walk } from '@main/actions/walk';

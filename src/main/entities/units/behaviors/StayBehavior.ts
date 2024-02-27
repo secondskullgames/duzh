@@ -1,6 +1,5 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
+import { UnitOrder, StayOrder } from '@main/entities/units/orders';
 
 export default class StayBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */

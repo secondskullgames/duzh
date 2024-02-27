@@ -3,18 +3,16 @@ import { getDirection } from '../inputMappers';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
 import Sounds from '../../sounds/Sounds';
-import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { ShootArrow, Strafe, AbilityName, Dash } from '@main/entities/units/abilities';
 import { playTurn } from '@main/actions/playTurn';
 import { toggleFullScreen } from '@main/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
-import { AbilityOrder } from '@main/entities/units/orders/AbilityOrder';
-import { AttackMoveOrder } from '@main/entities/units/orders/AttackMoveOrder';
 import { GameScreen, GameState, Session } from '@main/core';
 import { getItem } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
 import { MapController } from '@main/maps/MapController';
-import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
+import { getHotkeyAbility } from '@main/entities/units';
+import { AbilityOrder, AttackMoveOrder, UnitOrder } from '@main/entities/units/orders';
 import { inject, injectable } from 'inversify';
 
 @injectable()

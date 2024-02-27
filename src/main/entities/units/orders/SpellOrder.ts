@@ -1,4 +1,4 @@
-import UnitOrder from './UnitOrder';
+import { UnitOrder } from './UnitOrder';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { GameState, Session } from '@main/core';
 import { Coordinates } from '@main/geometry';

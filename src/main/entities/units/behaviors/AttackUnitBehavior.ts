@@ -1,17 +1,17 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import { NormalAttack } from '../abilities/NormalAttack';
-import { UnitAbility } from '../abilities/UnitAbility';
-import { AbilityName } from '../abilities/AbilityName';
-import { AbilityOrder } from '../orders/AbilityOrder';
-import StayOrder from '../orders/StayOrder';
-import { MoveOrder } from '../orders/MoveOrder';
 import { canDash } from '../controllers/ControllerUtils';
 import { randChoice } from '@main/utils/random';
 import { GameState, Session } from '@main/core';
 import { findPath } from '@main/maps/MapUtils';
 import { pointAt } from '@main/geometry';
 import { Unit } from '@main/entities/units';
+import { AbilityName, NormalAttack, UnitAbility } from '@main/entities/units/abilities';
+import {
+  AbilityOrder,
+  MoveOrder,
+  StayOrder,
+  UnitOrder
+} from '@main/entities/units/orders';
 
 type Props = Readonly<{
   targetUnit: Unit;

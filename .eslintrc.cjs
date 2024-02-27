@@ -55,5 +55,7 @@ module.exports = {
             }
         ],
         //"import/no-default-export": "warn"
+        //"import/no-relative-parent-imports": "warn"
+        "import/no-relative-packages": "warn"
     }
 };

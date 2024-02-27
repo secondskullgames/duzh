@@ -1,5 +1,5 @@
-import UnitOrder from './UnitOrder';
-import { NormalAttack } from '../abilities/NormalAttack';
+import { UnitOrder } from './UnitOrder';
+import { NormalAttack } from '@main/entities/units/abilities';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
