@@ -39,7 +39,11 @@ export default {
   //   "json",
   //   "node"
   // ],
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '^@main/(.*)$': '<rootDir>/src/main/$1',
+    '^@test/(.*)$': '<rootDir>/src/test/$1',
+    '^@data/(.*)$': '<rootDir>/data/$1'
+  },
   // modulePathIgnorePatterns: [],
   // notify: false,
   // notifyMode: "failure-change",
