@@ -1,8 +1,8 @@
 import { UnitOrder } from './UnitOrder';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { GameState, Session } from '@main/core';
 import { Coordinates } from '@main/geometry';
 import { Unit } from '@main/entities/units';
+import { UnitAbility } from '@main/entities/units/abilities';
 
 type Props = Readonly<{
   ability: UnitAbility;

@@ -1,11 +1,10 @@
 import { UnitBehavior } from './UnitBehavior';
 import { maxBy } from '@main/utils/arrays';
 import { GameState, Session } from '@main/core';
-import { manhattanDistance, pointAt, Coordinates, Direction } from '@main/geometry';
+import { Coordinates, Direction, manhattanDistance, pointAt } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Unit } from '@main/entities/units';
 import {
-  AbilityOrder,
   AttackMoveOrder,
   SpellOrder,
   StayOrder,
@@ -17,7 +16,7 @@ type Props = Readonly<{
   targetUnit: Unit;
 }>;
 
-export default class AvoidUnitBehavior implements UnitBehavior {
+export class AvoidUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {

@@ -6,7 +6,7 @@ import { Coordinates, Direction } from '@main/geometry';
 import { Unit } from '@main/entities/units';
 import { AttackMoveOrder, StayOrder, UnitOrder } from '@main/entities/units/orders';
 
-export default class WanderBehavior implements UnitBehavior {
+export class WanderBehavior implements UnitBehavior {
   /** @override */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const map = session.getMap();

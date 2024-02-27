@@ -1,4 +1,4 @@
-import AttackUnitBehavior from './AttackUnitBehavior';
+import { AttackUnitBehavior } from './AttackUnitBehavior';
 import { UnitBehavior } from './UnitBehavior';
 import { canShoot } from '../controllers/ControllerUtils';
 import { GameState, Session } from '@main/core';
@@ -11,7 +11,7 @@ type Props = Readonly<{
   targetUnit: Unit;
 }>;
 
-export default class ShootUnitBehavior implements UnitBehavior {
+export class ShootUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {

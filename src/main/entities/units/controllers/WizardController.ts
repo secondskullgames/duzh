@@ -1,7 +1,5 @@
 import { UnitController } from './UnitController';
 import { canMove, getClosestEnemy } from './ControllerUtils';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
 import MapInstance from '../../../maps/MapInstance';
 import { SpellOrder } from '../orders/SpellOrder';
 import { GameState, Session } from '@main/core';
@@ -17,6 +15,7 @@ import {
   TELEPORT_RANGE
 } from '@main/entities/units/abilities';
 import { StayOrder, UnitOrder } from '@main/entities/units/orders';
+import { AvoidUnitBehavior, WanderBehavior } from '@main/entities/units/behaviors';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;

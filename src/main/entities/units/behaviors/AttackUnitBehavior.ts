@@ -29,7 +29,7 @@ const allowedSpecialAbilityNames = [
  * A behavior in which the unit attacks a target unit.  The unit will move
  * towards the target unit and use abilities as appropriate.
  */
-export default class AttackUnitBehavior implements UnitBehavior {
+export class AttackUnitBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {

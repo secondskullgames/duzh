@@ -1,13 +1,15 @@
 import { UnitController } from './UnitController';
 import { canMove, canSee } from './ControllerUtils';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
 import { randBoolean, randChance } from '@main/utils/random';
 import { checkNotNull } from '@main/utils/preconditions';
 import { GameState, Session } from '@main/core';
 import { Unit } from '@main/entities/units';
 import { StayOrder, UnitOrder } from '@main/entities/units/orders';
+import {
+  AttackUnitBehavior,
+  AvoidUnitBehavior,
+  WanderBehavior
+} from '@main/entities/units/behaviors';
 
 const _wantsToFlee = (unit: Unit) => {
   const aiParameters = checkNotNull(unit.getAiParameters());

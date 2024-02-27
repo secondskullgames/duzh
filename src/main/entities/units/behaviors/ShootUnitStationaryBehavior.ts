@@ -10,7 +10,7 @@ type Props = Readonly<{
   targetUnit: Unit;
 }>;
 
-export default class ShootUnitStationaryBehavior implements UnitBehavior {
+export class ShootUnitStationaryBehavior implements UnitBehavior {
   private readonly targetUnit: Unit;
 
   constructor({ targetUnit }: Props) {
