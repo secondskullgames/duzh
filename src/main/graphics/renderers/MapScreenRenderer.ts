@@ -1,7 +1,7 @@
 import { Renderer } from './Renderer';
 import { Color } from '../Color';
 import { Colors } from '../Colors';
-import { Graphics } from '../Graphics';
+import { Graphics } from '@main/graphics';
 import { Coordinates } from '@main/geometry';
 import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@main/utils/preconditions';

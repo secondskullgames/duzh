@@ -4,10 +4,9 @@ import { Colors } from '../Colors';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
 import { Pixel } from '../Pixel';
-import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
+import { Graphics, Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images/ImageFactory';
-import { Alignment, drawAligned, TextRenderer } from '@main/graphics';
 import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 

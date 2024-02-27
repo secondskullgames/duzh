@@ -1,9 +1,9 @@
 import TileSet from './TileSet';
 import Tile from './Tile';
 import TileType from '../schemas/TileType';
-import { Sprite, SpriteFactory } from '../graphics/sprites';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '../utils/ModelLoader';
+import { Sprite, SpriteFactory } from '@main/graphics/sprites';
 import { PaletteSwaps } from '@main/graphics';
 import { checkNotNull } from '@main/utils/preconditions';
 import { randChoice } from '@main/utils/random';

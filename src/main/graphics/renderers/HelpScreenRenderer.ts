@@ -1,11 +1,10 @@
 import { Renderer } from './Renderer';
 import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
-import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
 import { Color } from '../Color';
 import { Colors } from '../Colors';
-import { TextRenderer, Alignment, drawAligned } from '@main/graphics';
+import { Graphics, TextRenderer, Alignment, drawAligned } from '@main/graphics';
 import { injectable } from 'inversify';
 
 @injectable()
