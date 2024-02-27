@@ -1,10 +1,9 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import { Coordinates } from '@main/geometry';
+import { Coordinates, isAdjacent } from '@main/geometry';
 import { comparing, range } from '@main/utils/arrays';
 import { randInt } from '@main/utils/random';
-import { isAdjacent } from '@main/geometry/CoordinatesUtils';
 
 class BlobMapGenerator extends AbstractMapGenerator {
   constructor(tileFactory: TileFactory) {

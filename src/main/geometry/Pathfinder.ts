@@ -1,5 +1,5 @@
 import { PathFinder_3rdParty } from './PathFinder_3rdParty';
-import { Coordinates } from '@main/geometry/Coordinates';
+import { Coordinates } from '@main/geometry';
 
 export interface Pathfinder {
   findPath: (

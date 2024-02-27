@@ -9,10 +9,9 @@ import { AbilityName } from '../abilities/AbilityName';
 import { UnitAbility } from '../abilities/UnitAbility';
 import { Dash } from '../abilities/Dash';
 import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
-import { hypotenuse, isInStraightLine } from '@main/geometry/CoordinatesUtils';
+import { hypotenuse, isInStraightLine, Coordinates } from '@main/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
-import { Coordinates } from '@main/geometry';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(

@@ -10,8 +10,7 @@ import { hasUnblockedStraightLineBetween } from '@main/utils/geometry';
 import { checkNotNull } from '@main/utils/preconditions';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { hypotenuse, isInStraightLine, pointAt } from '@main/geometry/CoordinatesUtils';
-import { Direction } from '@main/geometry';
+import { hypotenuse, isInStraightLine, pointAt, Direction } from '@main/geometry';
 
 export default class DragonShooterController implements UnitController {
   /**

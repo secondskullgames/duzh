@@ -1,5 +1,4 @@
-import { Rect } from '@main/geometry/Rect';
-import { Coordinates } from '@main/geometry/Coordinates';
+import { Coordinates, Rect } from '@main/geometry';
 
 export const areAdjacent = (
   first: Rect,

@@ -1,6 +1,6 @@
 import Unit from './Unit';
 import { UnitAbility } from './abilities/UnitAbility';
-import { isInStraightLine } from '@main/geometry/CoordinatesUtils';
+import { isInStraightLine } from '@main/geometry';
 import { NumberKey } from '@main/input/inputTypes';
 
 export const getMeleeDamage = (unit: Unit): number => {

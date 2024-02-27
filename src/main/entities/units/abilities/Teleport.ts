@@ -7,9 +7,8 @@ import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@main/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { manhattanDistance, pointAt } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt, Coordinates } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
-import { Coordinates } from '@main/geometry';
 
 export const range = 3;
 const manaCost = 20;

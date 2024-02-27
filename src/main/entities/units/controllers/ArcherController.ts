@@ -11,7 +11,7 @@ import { randBoolean, randChance } from '@main/utils/random';
 import { checkNotNull } from '@main/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { hypotenuse } from '@main/geometry/CoordinatesUtils';
+import { hypotenuse } from '@main/geometry';
 
 export default class ArcherController implements UnitController {
   /**

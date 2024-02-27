@@ -12,11 +12,10 @@ import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, Coordinates, Direction } from '@main/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@main/utils/random';
 import { maxBy } from '@main/utils/arrays';
-import { Coordinates, Direction } from '@main/geometry';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;

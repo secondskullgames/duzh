@@ -1,5 +1,5 @@
 import { Pathfinder } from './Pathfinder';
-import { Coordinates } from '@main/geometry/Coordinates';
+import { Coordinates } from '@main/geometry';
 import * as PF from 'pathfinding';
 import { DiagonalMovement } from 'pathfinding';
 

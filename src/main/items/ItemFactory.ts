@@ -1,5 +1,4 @@
 import InventoryItem from './InventoryItem';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Sounds from '../sounds/Sounds';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
@@ -19,6 +18,7 @@ import { Session } from '@main/core/Session';
 import { AssetLoader } from '@main/assets/AssetLoader';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
+import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
