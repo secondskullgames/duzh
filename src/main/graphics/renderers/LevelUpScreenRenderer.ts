@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 const BACKGROUND_FILENAME = 'inventory_background';
 
 @injectable()
-export default class LevelUpScreenRenderer implements Renderer {
+export class LevelUpScreenRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,

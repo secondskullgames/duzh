@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { Debug } from './core/Debug';
 import { GameState, GameStateImpl } from './core/GameState';
-import GameRenderer from './graphics/renderers/GameRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { Feature } from './utils/features';
@@ -12,6 +11,7 @@ import { createCanvas } from './utils/dom';
 import { checkNotNull } from './utils/preconditions';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import { GameRenderer } from '@main/graphics/renderers';
 import {
   Graphics,
   SCREEN_HEIGHT,

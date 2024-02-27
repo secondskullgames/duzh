@@ -20,7 +20,7 @@ type Element = Readonly<{
 }>;
 
 @injectable()
-export default class GameScreenRenderer implements Renderer {
+export class GameScreenRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,

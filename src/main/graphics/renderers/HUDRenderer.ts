@@ -25,7 +25,7 @@ const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 @injectable()
-export default class HUDRenderer implements Renderer {
+export class HUDRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,

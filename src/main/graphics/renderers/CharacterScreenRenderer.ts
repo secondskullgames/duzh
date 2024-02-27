@@ -14,7 +14,7 @@ const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
 @injectable()
-export default class CharacterScreenRenderer implements Renderer {
+export class CharacterScreenRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,

@@ -11,7 +11,7 @@ import { inject, injectable } from 'inversify';
 const backgroundColor = Color.fromHex('#404040');
 
 @injectable()
-export default class MapScreenRenderer implements Renderer {
+export class MapScreenRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session

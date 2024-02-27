@@ -9,7 +9,7 @@ import { TextRenderer, Alignment, drawAligned } from '@main/graphics';
 import { injectable } from 'inversify';
 
 @injectable()
-export default class HelpScreenRenderer implements Renderer {
+export class HelpScreenRenderer implements Renderer {
   constructor(private readonly textRenderer: TextRenderer) {}
 
   render = async (graphics: Graphics) => {

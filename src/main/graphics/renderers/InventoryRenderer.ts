@@ -20,7 +20,7 @@ const INVENTORY_MARGIN = 10;
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 @injectable()
-export default class InventoryRenderer implements Renderer {
+export class InventoryRenderer implements Renderer {
   constructor(
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,

@@ -1,16 +1,21 @@
-import GameScreenRenderer from './GameScreenRenderer';
-import HUDRenderer from './HUDRenderer';
-import MapScreenRenderer from './MapScreenRenderer';
 import { Renderer } from './Renderer';
-import CharacterScreenRenderer from './CharacterScreenRenderer';
-import LevelUpScreenRenderer from './LevelUpScreenRenderer';
-import HelpScreenRenderer from './HelpScreenRenderer';
-import InventoryRenderer from './InventoryRenderer';
-import { Color } from '../Color';
-import { Colors } from '../Colors';
+import { GameScreenRenderer } from './GameScreenRenderer';
+import { HUDRenderer } from './HUDRenderer';
+import { InventoryRenderer } from './InventoryRenderer';
+import { MapScreenRenderer } from './MapScreenRenderer';
+import { CharacterScreenRenderer } from './CharacterScreenRenderer';
+import { HelpScreenRenderer } from './HelpScreenRenderer';
+import { LevelUpScreenRenderer } from './LevelUpScreenRenderer';
 import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
-import { Graphics, Alignment, drawAligned, TextRenderer } from '@main/graphics';
+import {
+  Color,
+  Colors,
+  Graphics,
+  Alignment,
+  drawAligned,
+  TextRenderer
+} from '@main/graphics';
 import { ImageFactory } from '@main/graphics/images';
 import { createCanvas } from '@main/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
@@ -24,7 +29,7 @@ const TITLE_FILENAME = 'title2';
 const VICTORY_FILENAME = 'victory';
 
 @injectable()
-export default class GameRenderer implements Renderer {
+export class GameRenderer implements Renderer {
   private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
 
