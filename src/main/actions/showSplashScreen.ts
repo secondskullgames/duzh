@@ -1,6 +1,6 @@
-import { GameScreen } from '../core/GameScreen';
-import { Session } from '../core/Session';
-import { GameState } from '../core/GameState';
+import { GameScreen } from '@main/core/GameScreen';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 export const showSplashScreen = async (state: GameState, session: Session) => {
   session.setScreen(GameScreen.TITLE);

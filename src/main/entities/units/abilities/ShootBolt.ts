@@ -2,17 +2,17 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { dealDamage } from '../../../actions/dealDamage';
-import { sleep } from '../../../utils/promises';
-import { die } from '../../../actions/die';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
-import { isBlocked } from '../../../maps/MapUtils';
 import Direction from '../../../geometry/Direction';
 import Activity from '../Activity';
+import { pointAt } from '@main/utils/geometry';
+import { dealDamage } from '@main/actions/dealDamage';
+import { sleep } from '@main/utils/promises';
+import { die } from '@main/actions/die';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { isBlocked } from '@main/maps/MapUtils';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;

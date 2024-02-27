@@ -3,9 +3,9 @@ import { moveObject } from './moveObject';
 import Unit from '../entities/units/Unit';
 import Block from '../entities/objects/Block';
 import Coordinates from '../geometry/Coordinates';
-import { GameState } from '../core/GameState';
-import { Session } from '../core/Session';
-import { isBlocked } from '../maps/MapUtils';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export const pushBlock = async (
   unit: Unit,

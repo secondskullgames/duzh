@@ -2,9 +2,9 @@ import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import Coordinates from '../../geometry/Coordinates';
-import { Session } from '../../core/Session';
-import { GameState } from '../../core/GameState';
 import MapInstance from '../../maps/MapInstance';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 export enum SpawnerState {
   ALIVE = 'ALIVE',

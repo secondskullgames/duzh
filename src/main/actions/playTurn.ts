@@ -1,8 +1,8 @@
 import { updateRevealedTiles } from './updateRevealedTiles';
 import Unit from '../entities/units/Unit';
-import { sortBy } from '../utils/arrays';
-import { GameState } from '../core/GameState';
-import { Session } from '../core/Session';
+import { sortBy } from '@main/utils/arrays';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
 
 export const playTurn = async (state: GameState, session: Session) => {
   const map = session.getMap();

@@ -2,14 +2,14 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
-import { pointAt } from '../../../utils/geometry';
 import Sounds from '../../../sounds/Sounds';
-import { Attack, AttackResult, attackUnit } from '../../../actions/attackUnit';
-import { attackObject } from '../../../actions/attackObject';
-import { getSpawner } from '../../../maps/MapUtils';
-import { Session } from '../../../core/Session';
-import { GameState } from '../../../core/GameState';
 import { getMeleeDamage } from '../UnitUtils';
+import { pointAt } from '@main/utils/geometry';
+import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
+import { attackObject } from '@main/actions/attackObject';
+import { getSpawner } from '@main/maps/MapUtils';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 
 const damageCoefficient = 1;
 

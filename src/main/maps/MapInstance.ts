@@ -5,7 +5,7 @@ import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
-import type { Figure } from '../sounds/types';
+import type { Figure } from '@main/sounds/types';
 import type Rect from '../geometry/Rect';
 
 type Props = Readonly<{

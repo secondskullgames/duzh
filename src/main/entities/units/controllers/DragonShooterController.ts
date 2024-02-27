@@ -1,17 +1,17 @@
 import { UnitController } from './UnitController';
 import Unit from '../Unit';
-import { checkNotNull } from '../../../utils/preconditions';
 import UnitOrder from '../orders/UnitOrder';
 import StayBehavior from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
-import { hasUnblockedStraightLineBetween, pointAt } from '../../../utils/geometry';
 import Direction from '../../../geometry/Direction';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import MapInstance from '../../../maps/MapInstance';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
-import { hypotenuse, isInStraightLine } from '../../../geometry/CoordinatesUtils';
+import { hasUnblockedStraightLineBetween, pointAt } from '@main/utils/geometry';
+import { checkNotNull } from '@main/utils/preconditions';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { hypotenuse, isInStraightLine } from '@main/geometry/CoordinatesUtils';
 
 export default class DragonShooterController implements UnitController {
   /**

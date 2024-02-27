@@ -4,15 +4,15 @@ import Block from './Block';
 import Bonus from './Bonus';
 import PaletteSwaps from '../../graphics/PaletteSwaps';
 import Unit from '../units/Unit';
-import { getBonus } from '../../maps/MapUtils';
 import Sounds from '../../sounds/Sounds';
-import { GameState } from '../../core/GameState';
-import { Session } from '../../core/Session';
 import MapInstance from '../../maps/MapInstance';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../units/Faction';
 import { chooseUnitController } from '../units/controllers/ControllerUtils';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { getBonus } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 

@@ -1,7 +1,7 @@
 import { mapToCommand } from './inputMappers';
 import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import ScreenHandlers from './screens/ScreenHandlers';
-import { Session } from '../core/Session';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 import type { KeyCommand } from './inputTypes';
 

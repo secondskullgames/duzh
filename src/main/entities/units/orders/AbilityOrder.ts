@@ -1,10 +1,10 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import { UnitAbility } from '../abilities/UnitAbility';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
 import Direction from '../../../geometry/Direction';
 import Coordinates from '../../../geometry/Coordinates';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
 
 type Props = Readonly<{
   ability: UnitAbility;

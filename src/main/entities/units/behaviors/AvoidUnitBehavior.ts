@@ -2,18 +2,18 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
-import { maxBy } from '../../../utils/arrays';
 import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import { AbilityName } from '../abilities/AbilityName';
 import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
-import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
-import { isBlocked } from '../../../maps/MapUtils';
-import { pointAt } from '../../../utils/geometry';
+import { maxBy } from '@main/utils/arrays';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { isBlocked } from '@main/maps/MapUtils';
+import { pointAt } from '@main/utils/geometry';
 
 type Props = Readonly<{
   targetUnit: Unit;

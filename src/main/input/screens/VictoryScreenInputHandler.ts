@@ -1,11 +1,11 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
-import { showSplashScreen } from '../../actions/showSplashScreen';
-import { toggleFullScreen } from '../../utils/dom';
-import { GameScreen } from '../../core/GameScreen';
-import { Session } from '../../core/Session';
-import { GameState } from '../../core/GameState';
 import MapFactory from '../../maps/MapFactory';
+import { showSplashScreen } from '@main/actions/showSplashScreen';
+import { toggleFullScreen } from '@main/utils/dom';
+import { GameScreen } from '@main/core/GameScreen';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
 
 @injectable()

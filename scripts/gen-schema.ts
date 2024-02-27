@@ -1,4 +1,7 @@
 import * as TJS from 'typescript-json-schema';
+// TODO - this is imported in devDependencies, not dependencies
+// so Typescript can't resolve it, but ts-node imports it correctly
+// eslint-disable-next-line import/no-unresolved
 import { glob } from 'glob';
 import { Definition } from 'typescript-json-schema';
 import { writeFile, mkdir, stat, readFile } from 'fs/promises';

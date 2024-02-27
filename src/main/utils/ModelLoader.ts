@@ -1,5 +1,5 @@
-import { SpriteCategory } from '../graphics/sprites/SpriteCategory';
-import { AssetLoader } from '../assets/AssetLoader';
+import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
+import { AssetLoader } from '@main/assets/AssetLoader';
 import Ajv from 'ajv';
 import { inject, injectable } from 'inversify';
 import type UnitModel from '../schemas/UnitModel';

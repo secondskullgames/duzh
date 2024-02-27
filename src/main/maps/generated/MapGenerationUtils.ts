@@ -1,7 +1,7 @@
 import TileType from '../../schemas/TileType';
 import Tile from '../../tiles/Tile';
 import Coordinates from '../../geometry/Coordinates';
-import { shuffle } from '../../utils/random';
+import { shuffle } from '@main/utils/random';
 
 export const getUnoccupiedLocations = (
   tiles: (Tile | TileType)[][],

@@ -1,12 +1,12 @@
 import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../entities/units/Unit';
-import { GameState } from '../core/GameState';
 import Activity from '../entities/units/Activity';
-import { sleep } from '../utils/promises';
-import { EquipmentScript } from '../equipment/EquipmentScript';
-import { SoundEffect } from '../sounds/types';
-import { Session } from '../core/Session';
+import { GameState } from '@main/core/GameState';
+import { sleep } from '@main/utils/promises';
+import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { SoundEffect } from '@main/sounds/types';
+import { Session } from '@main/core/Session';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */

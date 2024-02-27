@@ -14,9 +14,9 @@ import { Image } from '../images/Image';
 import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
-import { fillTemplate } from '../../utils/templates';
 import ImageFactory from '../images/ImageFactory';
 import ModelLoader from '../../utils/ModelLoader';
+import { fillTemplate } from '@main/utils/templates';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 

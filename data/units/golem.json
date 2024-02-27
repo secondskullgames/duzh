@@ -17,9 +17,9 @@
   "life": 100,
   "mana": 15,
   "aiParameters": {
-    "speed": 0.7,
+    "speed": 0.5,
     "visionRange": 6,
-    "aggressiveness": 0.5,
+    "aggressiveness": 0.7,
     "fleeThreshold": 0
   },
   "levelParameters": {

@@ -1,10 +1,10 @@
 import Equipment from './Equipment';
-import { GameState } from '../core/GameState';
 import Coordinates from '../geometry/Coordinates';
-import { checkNotNull } from '../utils/preconditions';
-import { ShootBolt } from '../entities/units/abilities/ShootBolt';
-import { Session } from '../core/Session';
-import { isBlocked } from '../maps/MapUtils';
+import { GameState } from '@main/core/GameState';
+import { checkNotNull } from '@main/utils/preconditions';
+import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
+import { Session } from '@main/core/Session';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export type EquipmentScriptName = 'bolt_sword' | 'bow_of_frost';
 

@@ -4,10 +4,10 @@ import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import Coordinates from '../geometry/Coordinates';
-import { GameState } from '../core/GameState';
-import { Session } from '../core/Session';
 import Activity from '../entities/units/Activity';
-import { sleep } from '../utils/promises';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { sleep } from '@main/utils/promises';
 
 export const floorFire = async (
   unit: Unit,

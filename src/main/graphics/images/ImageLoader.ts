@@ -1,5 +1,5 @@
-import { createCanvas, createImage, getCanvasContext } from '../../utils/dom';
-import { AssetLoader } from '../../assets/AssetLoader';
+import { createCanvas, createImage, getCanvasContext } from '@main/utils/dom';
+import { AssetLoader } from '@main/assets/AssetLoader';
 import { inject, injectable } from 'inversify';
 
 @injectable()

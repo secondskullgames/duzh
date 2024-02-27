@@ -8,8 +8,8 @@ import EquipmentSlot from '../../schemas/EquipmentSlot';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;

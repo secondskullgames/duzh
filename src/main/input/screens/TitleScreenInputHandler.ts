@@ -1,10 +1,10 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
-import { toggleFullScreen } from '../../utils/dom';
-import { GameScreen } from '../../core/GameScreen';
-import { Feature } from '../../utils/features';
-import { Session } from '../../core/Session';
-import { MapController } from '../../maps/MapController';
+import { toggleFullScreen } from '@main/utils/dom';
+import { GameScreen } from '@main/core/GameScreen';
+import { Feature } from '@main/utils/features';
+import { Session } from '@main/core/Session';
+import { MapController } from '@main/maps/MapController';
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -4,8 +4,8 @@ import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
 import Coordinates from '../../../geometry/Coordinates';
 import Offsets from '../../../geometry/Offsets';
-import { shuffle } from '../../../utils/random';
 import TileType from '../../../schemas/TileType';
+import { shuffle } from '@main/utils/random';
 
 const generateTiles = (
   width: number,

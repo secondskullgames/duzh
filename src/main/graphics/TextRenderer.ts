@@ -5,7 +5,7 @@ import PaletteSwaps from './PaletteSwaps';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';
-import { createCanvas, getCanvasContext } from '../utils/dom';
+import { createCanvas, getCanvasContext } from '@main/utils/dom';
 import { inject, injectable } from 'inversify';
 
 @injectable()

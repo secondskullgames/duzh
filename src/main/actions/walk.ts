@@ -2,10 +2,10 @@ import { moveUnit } from './moveUnit';
 import Unit from '../entities/units/Unit';
 import Direction from '../geometry/Direction';
 import Coordinates from '../geometry/Coordinates';
-import { GameState } from '../core/GameState';
 import Sounds from '../sounds/Sounds';
-import { Session } from '../core/Session';
-import { isBlocked } from '../maps/MapUtils';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { isBlocked } from '@main/maps/MapUtils';
 
 export const walk = async (
   unit: Unit,

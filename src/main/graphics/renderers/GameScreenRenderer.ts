@@ -9,8 +9,8 @@ import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
-import { Session } from '../../core/Session';
 import ImageFactory from '../images/ImageFactory';
+import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';

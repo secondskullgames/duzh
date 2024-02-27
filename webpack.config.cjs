@@ -1,10 +1,25 @@
-import path from 'path';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-export default {
+module.exports = {
   entry: './src/main/index.ts',
   devtool: 'source-map',
   mode: 'development',
+  resolve: {
+    extensions: ['.ts', '.js', '.css', '.d.ts'],
+    alias: {
+      '@main': path.resolve('src/main/'),
+      '@data': path.resolve('data/'),
+      '@png': path.resolve('png/')
+    }
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve('build'),
+    publicPath: '',
+    clean: true,
+    globalObject: 'this' // WTF, webpack
+  },
   module: {
     rules: [
       {
@@ -32,16 +47,6 @@ export default {
       },
     })
   ],
-  resolve: {
-    extensions: ['.ts', '.js', '.css'],
-  },
-  output: {
-    filename: '[name].bundle.js',
-    path: path.resolve('build'),
-    publicPath: '',
-    clean: true,
-    globalObject: 'this' // WTF, webpack
-  },
   performance: {
     hints: false,
     maxEntrypointSize: 1024000,

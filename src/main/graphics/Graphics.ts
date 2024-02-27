@@ -2,7 +2,7 @@ import { Color } from './Color';
 import { Image } from './images/Image';
 import { Pixel } from './Pixel';
 import Rect from '../geometry/Rect';
-import { getCanvasContext, getOffscreenCanvasContext } from '../utils/dom';
+import { getCanvasContext, getOffscreenCanvasContext } from '@main/utils/dom';
 
 export interface Graphics {
   clear: () => void;

@@ -3,13 +3,13 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import { ShootArrow } from '../abilities/ShootArrow';
-import { pointAt } from '../../../utils/geometry';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import { GameState } from '../../../core/GameState';
-import { Session } from '../../../core/Session';
-import { manhattanDistance } from '../../../geometry/CoordinatesUtils';
 import { canShoot } from '../controllers/ControllerUtils';
 import { AbilityName } from '../abilities/AbilityName';
+import { pointAt } from '@main/utils/geometry';
+import { GameState } from '@main/core/GameState';
+import { Session } from '@main/core/Session';
+import { manhattanDistance } from '@main/geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;
