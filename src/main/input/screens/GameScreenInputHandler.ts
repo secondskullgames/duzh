@@ -6,7 +6,6 @@ import Sounds from '../../sounds/Sounds';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
 import { ShootArrow } from '@main/entities/units/abilities/ShootArrow';
 import { Strafe } from '@main/entities/units/abilities/Strafe';
-import { playTurn } from '@main/actions/playTurn';
 import { toggleFullScreen } from '@main/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/entities/units/orders/AbilityOrder';
@@ -20,11 +19,14 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
   constructor(
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(Session.SYMBOL)
     private readonly session: Session,
     @inject(GameState.SYMBOL)
@@ -34,7 +36,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   ) {}
 
   handleKeyCommand = async (command: KeyCommand) => {
-    const { state, session } = this;
+    const { state, session, engine } = this;
     const { key, modifiers } = command;
 
     if (this._isArrowKey(key)) {
@@ -43,7 +45,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await this._handleAbility(key as NumberKey);
     } else if (key === 'SPACEBAR') {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
-      await playTurn(state, session);
+      await engine.playTurn();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
       session.setScreen(GameScreen.INVENTORY);
@@ -74,7 +76,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { state, session } = this;
+    const { session, engine } = this;
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
 
@@ -115,7 +117,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const playerController = playerUnit.getController() as PlayerUnitController;
     if (order) {
       playerController.queueOrder(order);
-      await playTurn(state, session);
+      await engine.playTurn();
     }
   };
 
@@ -144,6 +146,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     }
-    await playTurn(state, session);
+    await this.engine.playTurn();
   };
 }

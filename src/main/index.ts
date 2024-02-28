@@ -15,6 +15,7 @@ import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import { Engine, EngineImpl } from '@main/core/Engine';
 import { Container } from 'inversify';
 
 const setupContainer = async (): Promise<Container> => {
@@ -35,6 +36,7 @@ const setupContainer = async (): Promise<Container> => {
     );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
+  container.bind(Engine).to(EngineImpl);
   return container;
 };
 
