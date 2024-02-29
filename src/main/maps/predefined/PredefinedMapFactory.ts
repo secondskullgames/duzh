@@ -44,9 +44,10 @@ export class PredefinedMapFactory {
     const map = new MapInstance({
       width: image.bitmap.width,
       height: image.bitmap.height,
+      levelNumber: model.levelNumber,
       startingCoordinates,
       music: model.music ? await this.musicController.loadMusic(model.music) : null,
-      fogRadius: model.fogOfWar.radius
+      fogParams: model.fogOfWar
     });
 
     const tiles = await this._loadTiles(model, image, map);

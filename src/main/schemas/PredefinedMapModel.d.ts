@@ -1,4 +1,5 @@
 import TileType from './TileType';
+import { FogOfWarParams } from './FogOfWarParams';
 
 type PredefinedMapModel = {
   imageFilename: string;
@@ -22,10 +23,7 @@ type PredefinedMapModel = {
   };
   defaultTile: TileType;
   tileset: string;
-  fogOfWar: {
-    enabled: boolean;
-    radius?: number;
-  };
+  fogOfWar: FogOfWarParams;
 };
 
 export default PredefinedMapModel;

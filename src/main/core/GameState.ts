@@ -9,6 +9,7 @@ import ProjectileFactory from '../entities/objects/ProjectileFactory';
 import { clear } from '@main/utils/arrays';
 import { MapSupplier } from '@main/maps/MapSupplier';
 import { checkArgument } from '@main/utils/preconditions';
+import ModelLoader from '@main/utils/ModelLoader';
 import { inject, injectable } from 'inversify';
 
 /**
@@ -34,6 +35,7 @@ export interface GameState {
   getProjectileFactory: () => ProjectileFactory;
   getSoundPlayer: () => SoundPlayer;
   getMusicController: () => MusicController;
+  getModelLoader: () => ModelLoader;
 }
 
 export namespace GameState {
@@ -63,7 +65,9 @@ export class GameStateImpl implements GameState {
     @inject(MusicController)
     private readonly musicController: MusicController,
     @inject(ProjectileFactory)
-    private readonly projectileFactory: ProjectileFactory
+    private readonly projectileFactory: ProjectileFactory,
+    @inject(ModelLoader)
+    private readonly modelLoader: ModelLoader
   ) {
     this.mapSuppliers = [];
     this.maps = [];
@@ -112,4 +116,5 @@ export class GameStateImpl implements GameState {
   getProjectileFactory = (): ProjectileFactory => this.projectileFactory;
   getSoundPlayer = (): SoundPlayer => this.soundPlayer;
   getMusicController = (): MusicController => this.musicController;
+  getModelLoader = (): ModelLoader => this.modelLoader;
 }
