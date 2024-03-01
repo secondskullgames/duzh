@@ -23,6 +23,10 @@ const _emptyMap = (): MapInstance =>
   new MapInstance({
     width: 10,
     height: 10,
+    levelNumber: 1,
     startingCoordinates: { x: 0, y: 0 },
-    music: null
+    music: null,
+    fogParams: {
+      enabled: false
+    }
   });

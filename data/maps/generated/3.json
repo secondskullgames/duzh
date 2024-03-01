@@ -1,17 +1,20 @@
 {
   "levelNumber": 3,
   "width": 24,
-  "height": 22,
+  "height": 24,
   "enemies": {
     "min": 5,
     "max": 6
   },
   "items": {
-    "min": 3,
-    "max": 4
+    "min": 2,
+    "max": 3
   },
   "fogOfWar": {
     "enabled": true,
-    "radius": 3
+    "radius": 3,
+    "spawnEnemies": true,
+    "spawnedUnitClass": "shade",
+    "spawnRate": 0.03
   }
 }

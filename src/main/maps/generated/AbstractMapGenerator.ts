@@ -44,9 +44,10 @@ abstract class AbstractMapGenerator {
     const map = new MapInstance({
       width,
       height,
+      levelNumber,
       startingCoordinates,
       music: null,
-      fogRadius: mapModel.fogOfWar.radius
+      fogParams: mapModel.fogOfWar
     });
 
     for (let y = 0; y < height; y++) {

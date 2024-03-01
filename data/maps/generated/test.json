@@ -11,6 +11,9 @@
     "max": 2
   },
   "fogOfWar": {
-    "enabled": false
+    "enabled": false,
+    "spawnEnemies": true,
+    "spawnedUnitClass": "shade",
+    "spawnRate": 0.1
   }
 }

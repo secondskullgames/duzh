@@ -99,6 +99,7 @@ export const Scorpion: UnitAbility = {
       });
       if (
         targetUnit &&
+        targetUnit.getLife() >= 0 &&
         Coordinates.equals(targetUnit.getCoordinates(), currentCoordinates)
       ) {
         const previousCoordinates = Coordinates.plus(unit.getCoordinates(), {

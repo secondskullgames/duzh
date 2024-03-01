@@ -5,20 +5,23 @@ import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '../types/MultiGrid';
 import Grid from '../types/Grid';
+import { FogOfWarParams } from '@main/schemas/FogOfWarParams';
 import type { Figure } from '@main/sounds/types';
 import type Rect from '../geometry/Rect';
 
 type Props = Readonly<{
   width: number;
   height: number;
+  levelNumber: number;
   startingCoordinates: Coordinates;
   music?: Figure[] | null;
-  fogRadius?: number | null;
+  fogParams: FogOfWarParams;
 }>;
 
 export default class MapInstance {
   readonly width: number;
   readonly height: number;
+  readonly levelNumber: number;
   readonly startingCoordinates: Coordinates;
   private readonly tiles: Grid<Tile>;
   private readonly units: Grid<Unit>;
@@ -29,20 +32,22 @@ export default class MapInstance {
   readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
-  private readonly fogRadius: number | null;
+  private readonly fogParams: FogOfWarParams;
 
-  constructor({ width, height, startingCoordinates, music, fogRadius }: Props) {
+  constructor(props: Props) {
+    const { width, height } = props;
     this.width = width;
     this.height = height;
-    this.startingCoordinates = startingCoordinates;
+    this.levelNumber = props.levelNumber;
+    this.startingCoordinates = props.startingCoordinates;
     this.units = new Grid({ width, height });
     this.objects = new MultiGrid({ width, height });
     this.projectiles = new Set();
     this.tiles = new Grid({ width, height });
     this.revealedTiles = new Grid({ width, height });
-    this.music = music ?? null;
-    this.fogRadius = fogRadius ?? null;
-    if (this.fogRadius === null) {
+    this.music = props.music ?? null;
+    this.fogParams = props.fogParams;
+    if (!this.fogParams.enabled) {
       for (let y = 0; y < this.height; y++) {
         for (let x = 0; x < this.width; x++) {
           this.revealTile({ x, y });
@@ -133,9 +138,7 @@ export default class MapInstance {
     this.revealedTiles.put(coordinates, true);
   };
 
-  getFogRadius = (): number | null => {
-    return this.fogRadius;
-  };
+  getFogParams = (): FogOfWarParams => this.fogParams;
 
   unitExists = (unit: Unit): boolean => {
     const coordinates = unit.getCoordinates();
