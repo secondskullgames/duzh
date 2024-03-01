@@ -10,6 +10,7 @@ import { Faction } from '@main/entities/units/Faction';
 import Coordinates from '@main/geometry/Coordinates';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Feature } from '@main/utils/features';
 
 export const playTurn = async (state: GameState, session: Session) => {
   const map = session.getMap();
@@ -41,26 +42,28 @@ const _sortUnits = (units: Unit[]): Unit[] =>
   sortBy(units, unit => (unit.getFaction() === 'PLAYER' ? 0 : 1));
 
 const doMapEvents = async (map: MapInstance, state: GameState) => {
-  const fogParams = map.getFogParams();
-  if (fogParams.enabled && fogParams.spawnEnemies) {
-    const spawnRate = checkNotNull(fogParams.spawnRate);
-    const unitFactory = state.getUnitFactory();
-    if (randChance(spawnRate)) {
-      const targetSpawnCoordinates = _getFogSpawnCoordinates(map);
-      if (targetSpawnCoordinates) {
-        // TODO would be nice if this was a one-liner
-        const unitClass = checkNotNull(fogParams.spawnedUnitClass);
-        const unitModel = await state.getModelLoader().loadUnitModel(unitClass);
-        const unit = await unitFactory.createUnit({
-          name: unitModel.name,
-          unitClass,
-          faction: Faction.ENEMY,
-          controller: chooseUnitController(unitClass),
-          level: map.levelNumber,
-          coordinates: targetSpawnCoordinates,
-          map
-        });
-        map.addUnit(unit);
+  if (Feature.isEnabled(Feature.FOG_SHADES)) {
+    const fogParams = map.getFogParams();
+    if (fogParams.enabled && fogParams.spawnEnemies) {
+      const spawnRate = checkNotNull(fogParams.spawnRate);
+      const unitFactory = state.getUnitFactory();
+      if (randChance(spawnRate)) {
+        const targetSpawnCoordinates = _getFogSpawnCoordinates(map);
+        if (targetSpawnCoordinates) {
+          // TODO would be nice if this was a one-liner
+          const unitClass = checkNotNull(fogParams.spawnedUnitClass);
+          const unitModel = await state.getModelLoader().loadUnitModel(unitClass);
+          const unit = await unitFactory.createUnit({
+            name: unitModel.name,
+            unitClass,
+            faction: Faction.ENEMY,
+            controller: chooseUnitController(unitClass),
+            level: map.levelNumber,
+            coordinates: targetSpawnCoordinates,
+            map
+          });
+          map.addUnit(unit);
+        }
       }
     }
   }
