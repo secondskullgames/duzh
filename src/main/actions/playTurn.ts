@@ -7,9 +7,7 @@ import MapInstance from '@main/maps/MapInstance';
 import { checkNotNull } from '@main/utils/preconditions';
 import { randChance, randChoice } from '@main/utils/random';
 import { Faction } from '@main/entities/units/Faction';
-import { UnitController } from '@main/entities/units/controllers/UnitController';
 import Coordinates from '@main/geometry/Coordinates';
-import { PlayerUnitClass } from '@main/entities/units/PlayerUnitClass';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
