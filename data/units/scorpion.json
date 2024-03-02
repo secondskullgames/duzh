@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 60,
+  "life": 40,
   "mana": 15,
   "strength": 12,
   "dexterity": 0,
@@ -19,6 +19,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
+  "abilities": ["ATTACK", "KNOCKBACK_ATTACK"],
   "experience": 1
 }

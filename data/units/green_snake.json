@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "life": 20,
+  "life": 15,
   "mana": 0,
   "strength": 5,
   "dexterity": 0,

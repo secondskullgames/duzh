@@ -15,7 +15,7 @@ import { isBlocked } from '@main/maps/MapUtils';
 const manaCost = 6;
 const damageCoefficient = 1;
 const stunDuration = 1;
-const TWO_TILES = false;
+const TWO_TILES = true;
 
 export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,

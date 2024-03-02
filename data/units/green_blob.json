@@ -4,12 +4,12 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 60,
-  "mana": 0,
+  "life": 40,
+  "mana": 10,
   "strength": 6,
   "dexterity": 0,
   "aiParameters": {
-    "speed": 0.8,
+    "speed": 0.7,
     "visionRange": 8,
     "aggressiveness": 0.6,
     "fleeThreshold": 0
@@ -19,6 +19,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK"],
+  "abilities": ["ATTACK", "STUN_ATTACK"],
   "experience": 1
 }
