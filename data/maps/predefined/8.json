@@ -36,7 +36,8 @@
     "enabled": true,
     "radius": 2,
     "spawnEnemies": true,
-    "spawnedUnitClass": "green_snake",
-    "spawnRate": 0.08
+    "spawnedUnitClass": "black_snake",
+    "spawnRate": 0.08,
+    "maxSpawnedUnits": 5
   }
 }

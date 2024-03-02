@@ -24,6 +24,7 @@ import Coordinates from '../../../geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@main/utils/preconditions';
+import { MinorHeavyAttack } from '@main/entities/units/abilities/MinorHeavyAttack';
 
 export type UnitAbility = Readonly<{
   name: AbilityName;
@@ -56,6 +57,7 @@ export namespace UnitAbility {
     [AbilityName.FREE_MOVE]: FreeMove,
     [AbilityName.HEAVY_ATTACK]: HeavyAttack,
     [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
+    [AbilityName.MINOR_HEAVY_ATTACK]: MinorHeavyAttack,
     [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
     [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
     [AbilityName.PIERCE]: PiercingAttack,

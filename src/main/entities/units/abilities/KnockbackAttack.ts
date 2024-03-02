@@ -15,7 +15,7 @@ import { isBlocked } from '@main/maps/MapUtils';
 const manaCost = 6;
 const damageCoefficient = 1;
 const stunDuration = 1;
-const TWO_TILES = true;
+const TWO_TILES = false;
 
 export const KnockbackAttack: UnitAbility = {
   name: AbilityName.KNOCKBACK_ATTACK,
@@ -30,7 +30,6 @@ export const KnockbackAttack: UnitAbility = {
   ) => {
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
-
     unit.setDirection(direction);
 
     const targetUnit = map.getUnit(coordinates);
