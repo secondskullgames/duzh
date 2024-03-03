@@ -12,7 +12,7 @@
   },
   "fogOfWar": {
     "enabled": true,
-    "radius": 3,
+    "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
     "spawnRate": 0.05,

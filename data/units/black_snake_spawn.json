@@ -8,12 +8,12 @@
     "DARK_GREEN": "GRAY_128",
     "YELLOW": "RED"
   },
-  "life": 10,
+  "life": 20,
   "mana": 0,
-  "strength": 8,
+  "strength": 10,
   "dexterity": 0,
   "aiParameters": {
-    "speed": 1,
+    "speed": 0.9,
     "visionRange": 8,
     "aggressiveness": 0.9,
     "fleeThreshold": 0

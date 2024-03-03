@@ -52,7 +52,7 @@ export namespace Feature {
       case Feature.DEBUG_LOGGING:
         return false;
       case Feature.FOG_SHADES:
-        return false;
+        return true;
       case Feature.GOD_MODE:
         return false;
       case Feature.HUD_BARS:

@@ -9,8 +9,8 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 8;
-const damageCoefficient = 2;
+const manaCost = 6;
+const damageCoefficient = 1.5;
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
