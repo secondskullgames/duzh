@@ -19,6 +19,7 @@ import { Session } from '@main/core/Session';
 import { AssetLoader } from '@main/assets/AssetLoader';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
+import { EventType } from '@main/core/EventLog';
 import { inject, injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -45,7 +46,13 @@ export default class ItemFactory {
       const message = `${unit.getName()} used ${
         item.name
       } and gained ${lifeGained} life.`;
-      state.getEventLog().log(message, session);
+      state.getEventLog().log({
+        type: EventType.ITEM_USED,
+        message,
+        sessionId: session.id,
+        turn: session.getTurn(),
+        timestamp: new Date()
+      });
     };
 
     return new InventoryItem({
@@ -68,7 +75,13 @@ export default class ItemFactory {
       const message = `${unit.getName()} used ${
         item.name
       } and gained ${manaGained} mana.`;
-      state.getEventLog().log(message, session);
+      state.getEventLog().log({
+        type: EventType.ITEM_USED,
+        message,
+        sessionId: session.id,
+        turn: session.getTurn(),
+        timestamp: new Date()
+      });
     };
 
     return new InventoryItem({

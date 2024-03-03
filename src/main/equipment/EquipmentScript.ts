@@ -5,6 +5,7 @@ import { checkNotNull } from '@main/utils/preconditions';
 import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { EventType } from '@main/core/EventLog';
 
 export type EquipmentScriptName = 'bolt_sword' | 'bow_of_frost';
 
@@ -60,7 +61,14 @@ const BowOfFrostScript: EquipmentScript = {
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(2);
-      state.getEventLog().log(`${targetUnit.getName()} is frozen!`, session);
+      state.getEventLog().log({
+        type: EventType.SPELL_USED,
+        message: `${targetUnit.getName()} is frozen!`,
+        sessionId: session.id,
+        turn: session.getTurn(),
+        timestamp: new Date(),
+        coordinates: targetUnit.getCoordinates()
+      });
     }
   }
 };

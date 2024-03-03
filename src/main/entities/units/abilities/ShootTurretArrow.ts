@@ -13,12 +13,9 @@ import { die } from '@main/actions/die';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { EventType } from '@main/core/EventLog';
 
 const manaCost = 5;
-
-const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
-};
 
 export const ShootTurretArrow: UnitAbility = {
   name: AbilityName.SHOOT_TURRET_ARROW,
@@ -55,8 +52,15 @@ export const ShootTurretArrow: UnitAbility = {
         sourceUnit: unit,
         targetUnit
       });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      state.getEventLog().log(message, session);
+      const message = `${unit.getName()}'s arrow hit ${targetUnit.getName()} for ${adjustedDamage} damage!`;
+      state.getEventLog().log({
+        type: EventType.COMBAT_DAMAGE,
+        message,
+        sessionId: session.id,
+        turn: session.getTurn(),
+        timestamp: new Date(),
+        coordinates: targetUnit.getCoordinates()
+      });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);

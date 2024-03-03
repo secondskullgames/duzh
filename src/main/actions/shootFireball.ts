@@ -9,6 +9,7 @@ import { sleep } from '@main/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { EventType } from '@main/core/EventLog';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
@@ -42,7 +43,14 @@ export const shootFireball = async (
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    state.getEventLog().log(message, session);
+    state.getEventLog().log({
+      type: EventType.SPELL_USED, // or COMBAT_DAMAGE?
+      message,
+      sessionId: session.id,
+      turn: session.getTurn(),
+      timestamp: new Date(),
+      coordinates: unit.getCoordinates()
+    });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
       await die(targetUnit, state, session);

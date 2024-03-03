@@ -13,10 +13,7 @@ import { die } from '@main/actions/die';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
-
-const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
-};
+import { EventType } from '@main/core/EventLog';
 
 export const ShootBolt: UnitAbility = {
   name: AbilityName.BOLT,
@@ -51,10 +48,18 @@ export const ShootBolt: UnitAbility = {
         sourceUnit: unit,
         targetUnit
       });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      const message = `${unit.getName()}'s bolt hit ${targetUnit.getName()} for ${adjustedDamage} damage!`;
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      state.getEventLog().log(message, session);
+      state.getEventLog().log({
+        type: EventType.COMBAT_DAMAGE,
+        message,
+        sessionId: session.id,
+        turn: session.getTurn(),
+        timestamp: new Date(),
+        coordinates: targetUnit.getCoordinates(),
+        shortMessage: `${damage}`
+      });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);

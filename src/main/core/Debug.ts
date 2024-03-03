@@ -7,6 +7,7 @@ import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/entities/units/Faction';
+import { EventType } from '@main/core/EventLog';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -48,9 +49,16 @@ export class Debug {
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = session.getPlayerUnit();
+
     playerUnit.getInventory().add(item);
     const message = `Picked up a ${item.name}.`;
-    state.getEventLog().log(message, session);
+    state.getEventLog().log({
+      type: EventType.ITEM_PICKED_UP,
+      message,
+      sessionId: session.id,
+      turn: session.getTurn(),
+      timestamp: new Date()
+    });
     state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
   };
 

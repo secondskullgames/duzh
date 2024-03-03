@@ -7,6 +7,7 @@ import { sleep } from '@main/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@main/sounds/types';
 import { Session } from '@main/core/Session';
+import { EventType } from '@main/core/EventLog';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -50,7 +51,9 @@ export const attackUnit = async (
   attacker.recordDamageDealt(defendResult.damageTaken);
   state.getSoundPlayer().playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  state.getEventLog().log(message, session);
+  state
+    .getEventLog()
+    .logCombatDamage(attacker, defender, defendResult.damageTaken, message, session);
 
   attacker.refreshCombat();
   defender.refreshCombat();

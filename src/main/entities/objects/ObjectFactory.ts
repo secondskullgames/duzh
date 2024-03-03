@@ -13,6 +13,7 @@ import { chooseUnitController } from '../units/controllers/ControllerUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
+import { EventType } from '@main/core/EventLog';
 import { inject, injectable } from 'inversify';
 import type Coordinates from '../../geometry/Coordinates';
 
@@ -94,7 +95,15 @@ export default class ObjectFactory {
           const lifeGained = unit.gainLife(lifeToGain);
           state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
           const message = `${unit.getName()} used a health globe and gained ${lifeGained} life.`;
-          state.getEventLog().log(message, session);
+          state.getEventLog().log({
+            type: EventType.ITEM_USED,
+            message,
+            sessionId: session.id,
+            turn: session.getTurn(),
+            timestamp: new Date(),
+            coordinates: unit.getCoordinates(),
+            shortMessage: `${lifeGained}`
+          });
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -130,7 +139,15 @@ export default class ObjectFactory {
           const manaGained = unit.gainMana(manaToGain);
           state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
           const message = `${unit.getName()} used a mana globe and gained ${manaGained} mana.`;
-          state.getEventLog().log(message, session);
+          state.getEventLog().log({
+            type: EventType.ITEM_USED,
+            message,
+            sessionId: session.id,
+            turn: session.getTurn(),
+            timestamp: new Date(),
+            coordinates: unit.getCoordinates(),
+            shortMessage: `${manaGained}`
+          });
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);

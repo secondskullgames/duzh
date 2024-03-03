@@ -3,6 +3,7 @@ import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { EventType } from '@main/core/EventLog';
 
 export const equipItem = async (
   equipment: Equipment,
@@ -19,6 +20,12 @@ export const equipItem = async (
   }
   unit.getEquipment().add(equipment);
   equipment.attach(unit);
-  state.getEventLog().log(`Equipped ${equipment.getName()}.`, session);
+  state.getEventLog().log({
+    type: EventType.EQUIPMENT_EQUIPPED,
+    message: `Equipped ${equipment.getName()}.`,
+    sessionId: session.id,
+    turn: session.getTurn(),
+    timestamp: new Date()
+  });
   state.getSoundPlayer().playSound(Sounds.BLOCKED);
 };
