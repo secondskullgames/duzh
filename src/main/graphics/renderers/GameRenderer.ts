@@ -39,7 +39,7 @@ export default class GameRenderer implements Renderer {
     private readonly session: Session,
     @inject(GameScreenRenderer)
     private readonly gameScreenRenderer: Renderer,
-    @inject(HUDRenderer)
+    @inject(HUDRenderer.SYMBOL)
     private readonly hudRenderer: Renderer,
     @inject(InventoryRenderer)
     private readonly inventoryRenderer: Renderer,

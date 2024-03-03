@@ -17,7 +17,8 @@ export enum Feature {
   HUD_BARS = 'HUD_BARS',
   PRODUCTION = 'PRODUCTION',
   STAIRS_UP = 'STAIRS_UP',
-  TITLE_MUSIC = 'TITLE_MUSIC'
+  TITLE_MUSIC = 'TITLE_MUSIC',
+  VERTICAL_HUD = 'VERTICAL_HUD'
 }
 
 export namespace Feature {
@@ -63,6 +64,8 @@ export namespace Feature {
         return false;
       case Feature.TITLE_MUSIC:
         return true;
+      case Feature.VERTICAL_HUD:
+        return false;
     }
   };
 }

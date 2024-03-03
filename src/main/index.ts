@@ -15,6 +15,8 @@ import { checkNotNull } from './utils/preconditions';
 import { Graphics } from './graphics/Graphics';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { AssetLoader, AssetLoaderImpl } from './assets/AssetLoader';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import HUDRenderer2 from '@main/graphics/renderers/HUDRenderer2';
 import { Container } from 'inversify';
 
 const setupContainer = async (): Promise<Container> => {
@@ -35,6 +37,9 @@ const setupContainer = async (): Promise<Container> => {
     );
   container.bind(GameState.SYMBOL).to(GameStateImpl);
   container.bind(MapController.SYMBOL).to(MapControllerImpl);
+  container
+    .bind(HUDRenderer.SYMBOL)
+    .to(Feature.isEnabled(Feature.VERTICAL_HUD) ? HUDRenderer2 : HUDRenderer);
   return container;
 };
 

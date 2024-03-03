@@ -4,13 +4,20 @@ import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
+import {
+  LINE_HEIGHT,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  TILE_HEIGHT,
+  TILE_WIDTH
+} from '../constants';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import { Feature } from '@main/utils/features';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -62,11 +69,18 @@ export default class GameScreenRenderer implements Renderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
+    const tickerHeight = LINE_HEIGHT * 2;
+    const playableScreenWidth = Feature.isEnabled(Feature.VERTICAL_HUD)
+      ? SCREEN_WIDTH - 160
+      : SCREEN_WIDTH;
+    const playableScreenHeight = Feature.isEnabled(Feature.VERTICAL_HUD)
+      ? SCREEN_HEIGHT - tickerHeight
+      : SCREEN_HEIGHT - 64 - tickerHeight;
     const playerUnit = this.session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: (y - playerY) * TILE_HEIGHT + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+      x: (x - playerX) * TILE_WIDTH + (playableScreenWidth - TILE_WIDTH) / 2,
+      y: (y - playerY) * TILE_HEIGHT + (playableScreenHeight - TILE_HEIGHT) / 2
     };
   };
 

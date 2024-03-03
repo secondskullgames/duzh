@@ -16,22 +16,18 @@ import Unit from '@main/entities/units/Unit';
 import Rect from '@main/geometry/Rect';
 import { inject, injectable } from 'inversify';
 
-const HUD_FILENAME = 'brick_hud_3';
-
-const HEIGHT = 64;
-const TOP = SCREEN_HEIGHT - HEIGHT;
-const LEFT_PANE_WIDTH = 163;
-const RIGHT_PANE_WIDTH = 163;
-const MIDDLE_PANE_WIDTH = SCREEN_WIDTH - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
-const BORDER_MARGIN = 5;
+const WIDTH = 160;
+const HEIGHT = SCREEN_HEIGHT;
+const PANEL_HEIGHT = 90;
 const BORDER_PADDING = 5;
+const LEFT = SCREEN_WIDTH - WIDTH;
+const TOP = 0;
 
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
 @injectable()
-export default class HUDRenderer implements Renderer {
-  static SYMBOL = Symbol('HUDRenderer');
+export default class HUDRenderer2 implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,
@@ -46,23 +42,22 @@ export default class HUDRenderer implements Renderer {
    */
   render = async (graphics: Graphics) => {
     await this._renderFrame(graphics);
-    await this._renderLeftPanel(graphics);
-    await this._renderMiddlePanel(graphics);
-    await this._renderRightPanel(graphics);
+    await this._renderPlayerStats(graphics);
+    await this._renderAbilities(graphics);
+    await this._renderCountersPanel(graphics);
   };
 
   private _renderFrame = async (graphics: Graphics) => {
-    const image = await this.imageFactory.getImage({
-      filename: HUD_FILENAME,
-      transparentColor: Colors.WHITE
-    });
-    graphics.drawImage(image, { x: 0, y: TOP });
+    graphics.fillRect(
+      { left: LEFT, top: 0, width: WIDTH, height: HEIGHT },
+      Colors.BLUE_128
+    );
   };
 
   /**
-   * Renders the bottom-left area of the screen, showing information about the player
+   * Renders the player stats panel
    */
-  private _renderLeftPanel = async (graphics: Graphics) => {
+  private _renderPlayerStats = async (graphics: Graphics) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
 
@@ -82,8 +77,8 @@ export default class HUDRenderer implements Renderer {
       }
     }
 
-    const left = BORDER_MARGIN + BORDER_PADDING;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const left = LEFT + BORDER_PADDING;
+    const top = TOP + PANEL_HEIGHT + BORDER_PADDING;
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
@@ -129,9 +124,9 @@ export default class HUDRenderer implements Renderer {
     );
   };
 
-  private _renderMiddlePanel = async (graphics: Graphics) => {
+  private _renderAbilities = async (graphics: Graphics) => {
     const { session } = this;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const top = TOP + 2 * PANEL_HEIGHT + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
 
     let keyNumber = 1;
@@ -139,7 +134,7 @@ export default class HUDRenderer implements Renderer {
     for (let i = 0; i < abilities.length; i++) {
       const ability = abilities[i];
       const left =
-        LEFT_PANE_WIDTH +
+        LEFT +
         BORDER_PADDING +
         (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
 
@@ -166,14 +161,17 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async (graphics: Graphics) => {
+  /**
+   * experience, turn number, ...
+   */
+  private _renderCountersPanel = async (graphics: Graphics) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
 
-    const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const left = LEFT + BORDER_PADDING;
+    const top = TOP + 3 * PANEL_HEIGHT + BORDER_PADDING;
 
     const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
 
