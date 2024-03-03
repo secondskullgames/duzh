@@ -4,4 +4,5 @@ export type FogOfWarParams = Readonly<{
   spawnEnemies?: boolean;
   spawnedUnitClass?: string;
   spawnRate?: number;
+  maxSpawnedUnits?: number;
 }>;

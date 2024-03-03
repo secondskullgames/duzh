@@ -14,6 +14,7 @@ export enum Feature {
   FOG_SHADES = 'FOG_SHADES',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
+  HUD_BARS = 'HUD_BARS',
   PRODUCTION = 'PRODUCTION',
   STAIRS_UP = 'STAIRS_UP',
   TITLE_MUSIC = 'TITLE_MUSIC'
@@ -51,8 +52,10 @@ export namespace Feature {
       case Feature.DEBUG_LOGGING:
         return false;
       case Feature.FOG_SHADES:
-        return false;
+        return true;
       case Feature.GOD_MODE:
+        return false;
+      case Feature.HUD_BARS:
         return false;
       case Feature.LEVEL_UP_SCREEN:
         return false;

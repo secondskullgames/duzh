@@ -8,34 +8,18 @@ import { isBlocked } from '@main/maps/MapUtils';
 
 export type EquipmentScriptName = 'bolt_sword' | 'bow_of_frost';
 
+type EquipmentProc = (
+  equipment: Equipment,
+  target: Coordinates,
+  state: GameState,
+  session: Session
+) => Promise<void>;
+
 export type EquipmentScript = Readonly<{
-  beforeAttack?: (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => Promise<void>;
-
-  afterAttack?: (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => Promise<void>;
-
-  afterRangedAttack?: (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => Promise<void>;
-
-  onMove?: (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => Promise<void>;
+  beforeAttack?: EquipmentProc;
+  afterAttack?: EquipmentProc;
+  afterRangedAttack?: EquipmentProc;
+  onMove?: EquipmentProc;
 }>;
 
 const BoltSwordScript: EquipmentScript = {
@@ -68,14 +52,14 @@ const BowOfFrostScript: EquipmentScript = {
   afterRangedAttack: async (
     equipment: Equipment,
     target: Coordinates,
-    state: GameState,
+    _: GameState,
     session: Session
   ) => {
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
-      targetUnit.setFrozen(5);
+      targetUnit.setFrozen(2);
       session
         .getTicker()
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });

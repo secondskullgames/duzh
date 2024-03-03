@@ -12,7 +12,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 6;
+const manaCost = 8;
 const damageCoefficient = 1;
 const stunDuration = 1;
 const TWO_TILES = false;
@@ -30,7 +30,6 @@ export const KnockbackAttack: UnitAbility = {
   ) => {
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
-
     unit.setDirection(direction);
 
     const targetUnit = map.getUnit(coordinates);

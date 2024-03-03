@@ -34,6 +34,6 @@
     "maxLevel": 99,
     "rarity": 2
   },
-  "abilities": ["ATTACK", "MINOR_KNOCKBACK", "HEAVY_ATTACK"],
+  "abilities": ["ATTACK", "MINOR_KNOCKBACK", "MINOR_HEAVY_ATTACK"],
   "experience": 1
 }

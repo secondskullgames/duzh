@@ -11,6 +11,9 @@ import { FontName } from '../Fonts';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
 import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
+import Unit from '@main/entities/units/Unit';
+import Rect from '@main/geometry/Rect';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -62,14 +65,20 @@ export default class HUDRenderer implements Renderer {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
 
-    const lines = [
-      playerUnit.getName(),
-      `Level ${playerUnit.getLevel()}`,
-      `Life: ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`
-    ];
+    const lines = [playerUnit.getName(), `Level ${playerUnit.getLevel()}`];
+
+    if (Feature.isEnabled(Feature.HUD_BARS)) {
+      lines.push(`      ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);
+    } else {
+      lines.push(`Life: ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);
+    }
 
     if (playerUnit.getMana() !== null && playerUnit.getMaxMana() !== null) {
-      lines.push(`Mana: ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
+      if (Feature.isEnabled(Feature.HUD_BARS)) {
+        lines.push(`      ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
+      } else {
+        lines.push(`Mana: ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
+      }
     }
 
     const left = BORDER_MARGIN + BORDER_PADDING;
@@ -86,6 +95,37 @@ export default class HUDRenderer implements Renderer {
         graphics
       );
     }
+
+    if (Feature.isEnabled(Feature.HUD_BARS)) {
+      await this._renderLifeBar(playerUnit, graphics, {
+        left,
+        top: top + LINE_HEIGHT * 2 - 2,
+        width: 50,
+        height: 10
+      });
+      await this._renderManaBar(playerUnit, graphics, {
+        left,
+        top: top + LINE_HEIGHT * 3 - 2,
+        width: 50,
+        height: 10
+      });
+    }
+  };
+
+  private _renderLifeBar = async (unit: Unit, graphics: Graphics, rect: Rect) => {
+    const width = Math.round((unit.getLife() / unit.getMaxLife()) * rect.width);
+    graphics.fillRect(
+      { left: rect.left, top: rect.top, width, height: rect.height },
+      Colors.GREEN_255
+    );
+  };
+
+  private _renderManaBar = async (unit: Unit, graphics: Graphics, rect: Rect) => {
+    const width = Math.round((unit.getMana() / unit.getMaxMana()) * rect.width);
+    graphics.fillRect(
+      { left: rect.left, top: rect.top, width, height: rect.height },
+      Colors.CYAN
+    );
   };
 
   private _renderMiddlePanel = async (graphics: Graphics) => {

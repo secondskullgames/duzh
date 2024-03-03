@@ -9,7 +9,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 6;
+const manaCost = 10;
 const damageCoefficient = 1.5;
 
 const attack: Attack = {
@@ -26,10 +26,10 @@ const attack: Attack = {
   }
 };
 
-export const HeavyAttack: UnitAbility = {
-  name: AbilityName.HEAVY_ATTACK,
+export const MinorHeavyAttack: UnitAbility = {
+  name: AbilityName.MINOR_HEAVY_ATTACK,
   manaCost,
-  icon: 'icon1',
+  icon: null,
   innate: false,
   use: async (
     unit: Unit,

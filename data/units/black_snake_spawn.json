@@ -1,0 +1,23 @@
+{
+  "id": "black_snake_spawn",
+  "name": "Black Snake",
+  "type": "ANIMAL",
+  "sprite": "snake",
+  "paletteSwaps": {
+    "GREEN": "BLACK",
+    "DARK_GREEN": "GRAY_128",
+    "YELLOW": "RED"
+  },
+  "life": 20,
+  "mana": 0,
+  "strength": 10,
+  "dexterity": 0,
+  "aiParameters": {
+    "speed": 0.9,
+    "visionRange": 8,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0
+  },
+  "abilities": ["ATTACK"],
+  "experience": 0
+}

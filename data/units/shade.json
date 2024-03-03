@@ -4,13 +4,13 @@
   "type": "GHOST",
   "sprite": "shade",
   "paletteSwaps": {},
-  "life": 1,
+  "life": 10,
   "mana": 0,
-  "strength": 10,
+  "strength": 8,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.95,
-    "visionRange": 40,
+    "visionRange": 10,
     "aggressiveness": 1,
     "fleeThreshold": 0
   },
