@@ -52,7 +52,7 @@ const BowOfFrostScript: EquipmentScript = {
   afterRangedAttack: async (
     equipment: Equipment,
     target: Coordinates,
-    _: GameState,
+    state: GameState,
     session: Session
   ) => {
     const unit = checkNotNull(equipment.getUnit());
@@ -60,9 +60,7 @@ const BowOfFrostScript: EquipmentScript = {
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(2);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      state.getEventLog().log(`${targetUnit.getName()} is frozen!`, session);
     }
   }
 };

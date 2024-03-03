@@ -19,6 +19,8 @@ import { createCanvas } from '@main/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { tail } from '@main/utils/arrays';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -35,8 +37,6 @@ export default class GameRenderer implements Renderer {
     private readonly imageFactory: ImageFactory,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(Session.SYMBOL)
-    private readonly session: Session,
     @inject(GameScreenRenderer)
     private readonly gameScreenRenderer: Renderer,
     @inject(HUDRenderer)
@@ -50,7 +50,11 @@ export default class GameRenderer implements Renderer {
     @inject(HelpScreenRenderer)
     private readonly helpScreenRenderer: Renderer,
     @inject(LevelUpScreenRenderer)
-    private readonly levelUpScreenRenderer: Renderer
+    private readonly levelUpScreenRenderer: Renderer,
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
+    @inject(Session.SYMBOL)
+    private readonly session: Session
   ) {
     this.buffer = createCanvas({
       width: SCREEN_WIDTH,
@@ -153,8 +157,9 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderTicker = async () => {
-    const { bufferGraphics: graphics, session } = this;
-    const messages = session.getTicker().getRecentMessages(session.getTurn());
+    const { bufferGraphics: graphics } = this;
+
+    const messages = this._getLogMessages();
 
     const left = 0;
     const top = 0;
@@ -221,5 +226,18 @@ export default class GameRenderer implements Renderer {
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, this.bufferGraphics, coordinates, textAlign);
+  };
+
+  private _getLogMessages = (): string[] => {
+    const { state, session } = this;
+    const maxTurnsAgo = 8;
+    const maxMessages = 2;
+    const recentEvents = state
+      .getEventLog()
+      .getAllEvents()
+      .filter(event => event.sessionId === session.id)
+      .filter(event => event.turn >= session.getTurn() - maxTurnsAgo);
+
+    return tail(recentEvents, maxMessages).map(event => event.message);
   };
 }

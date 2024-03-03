@@ -54,7 +54,7 @@ export const ShootBolt: UnitAbility = {
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      state.getEventLog().log(message, session);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);

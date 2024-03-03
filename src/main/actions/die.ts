@@ -20,7 +20,7 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     return;
   } else {
     state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);
-    session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
+    state.getEventLog().log(`${unit.getName()} dies!`, session);
 
     // TODO make this more systematic
     if (unit.getUnitType() === 'WIZARD') {

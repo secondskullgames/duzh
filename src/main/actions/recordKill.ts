@@ -25,7 +25,7 @@ export const recordKill = (
         attacker.getLevel()
       );
       if (killsToNextLevel !== null && attacker.getLifetimeKills() >= killsToNextLevel) {
-        levelUp(attacker, session);
+        levelUp(attacker, state, session);
         state.getSoundPlayer().playSound(Sounds.LEVEL_UP);
       } else {
         break;

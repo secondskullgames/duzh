@@ -39,7 +39,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    _levelUp(playerUnit, this.session);
+    _levelUp(playerUnit, this.state, this.session);
   };
 
   awardEquipment = async () => {
@@ -49,9 +49,8 @@ export class Debug {
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    session
-      .getTicker()
-      .log(`Picked up a ${item.name}.`, { turn: this.session.getTurn() });
+    const message = `Picked up a ${item.name}.`;
+    state.getEventLog().log(message, session);
     state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
   };
 

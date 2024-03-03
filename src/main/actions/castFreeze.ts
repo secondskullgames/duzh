@@ -19,7 +19,7 @@ export const castFreeze = async (
     targetUnit.setFrozen(duration);
     state.getSoundPlayer().playSound(Sounds.SPECIAL_ATTACK); // TODO
     const message = getLogMessage(unit, targetUnit, duration);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    state.getEventLog().log(message, session);
   }
 };
 

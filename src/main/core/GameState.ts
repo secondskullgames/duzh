@@ -10,6 +10,7 @@ import { clear } from '@main/utils/arrays';
 import { MapSupplier } from '@main/maps/MapSupplier';
 import { checkArgument } from '@main/utils/preconditions';
 import ModelLoader from '@main/utils/ModelLoader';
+import EventLog from '@main/core/EventLog';
 import { inject, injectable } from 'inversify';
 
 /**
@@ -26,6 +27,8 @@ export interface GameState {
    * TODO wrong place to put this method
    */
   loadMap: (mapIndex: number) => Promise<MapInstance>;
+
+  getEventLog: () => EventLog;
 
   // TODO trying to find ways to remove the remainder
 
@@ -51,6 +54,7 @@ export class GameStateImpl implements GameState {
   private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
+  private readonly eventLog: EventLog;
   private readonly soundPlayer: SoundPlayer;
 
   constructor(
@@ -72,6 +76,7 @@ export class GameStateImpl implements GameState {
     this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
+    this.eventLog = new EventLog();
     this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
   }
 
@@ -109,6 +114,8 @@ export class GameStateImpl implements GameState {
     }
     return this.maps[mapIndex];
   };
+
+  getEventLog = (): EventLog => this.eventLog;
 
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;

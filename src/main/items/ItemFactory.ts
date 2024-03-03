@@ -42,11 +42,10 @@ export default class ItemFactory {
     ) => {
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-          turn: session.getTurn()
-        });
+      const message = `${unit.getName()} used ${
+        item.name
+      } and gained ${lifeGained} life.`;
+      state.getEventLog().log(message, session);
     };
 
     return new InventoryItem({
@@ -66,11 +65,10 @@ export default class ItemFactory {
     ) => {
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-          turn: session.getTurn()
-        });
+      const message = `${unit.getName()} used ${
+        item.name
+      } and gained ${manaGained} mana.`;
+      state.getEventLog().log(message, session);
     };
 
     return new InventoryItem({

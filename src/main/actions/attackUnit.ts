@@ -50,7 +50,7 @@ export const attackUnit = async (
   attacker.recordDamageDealt(defendResult.damageTaken);
   state.getSoundPlayer().playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  session.getTicker().log(message, { turn: session.getTurn() });
+  state.getEventLog().log(message, session);
 
   attacker.refreshCombat();
   defender.refreshCombat();

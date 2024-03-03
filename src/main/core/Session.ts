@@ -1,4 +1,3 @@
-import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
@@ -8,6 +7,7 @@ import { checkNotNull, checkState } from '@main/utils/preconditions';
 import type { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 
 export interface Session {
+  readonly id: string;
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
@@ -15,7 +15,6 @@ export interface Session {
   getLevelUpScreen: () => LevelUpScreenState;
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
-  getTicker: () => Ticker;
   reset: () => void;
   getPlayerUnit: () => Unit;
   setPlayerUnit: (unit: Unit) => void;
@@ -40,7 +39,7 @@ export namespace Session {
 }
 
 class SessionImpl implements Session {
-  private readonly ticker: Ticker;
+  readonly id: string;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
@@ -53,7 +52,7 @@ class SessionImpl implements Session {
   private queuedAbility: UnitAbility | null;
 
   constructor() {
-    this.ticker = new Ticker();
+    this.id = 'session'; // TODO
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.levelUpScreen = null;
@@ -126,12 +125,10 @@ class SessionImpl implements Session {
   };
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
-  getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
-    this.ticker.clear();
     this.playerUnit = null;
     this.mapIndex = -1;
     this.map = null;

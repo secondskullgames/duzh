@@ -5,9 +5,10 @@ import { Session } from '@main/core/Session';
 import { Faction } from '@main/entities/units/Faction';
 import { checkNotNull } from '@main/utils/preconditions';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { GameState } from '@main/core/GameState';
 
-export const levelUp = (unit: Unit, session: Session) => {
-  const ticker = session.getTicker();
+export const levelUp = (unit: Unit, state: GameState, session: Session) => {
+  const eventLog = state.getEventLog();
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
@@ -16,12 +17,13 @@ export const levelUp = (unit: Unit, session: Session) => {
     unit.increaseStrength(playerUnitClass.strengthPerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {
-        turn: session.getTurn()
-      });
+      eventLog.log(
+        `Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`,
+        session
+      );
       unit.awardAbilityPoint();
     } else {
-      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
+      eventLog.log(`Welcome to level ${unit.getLevel()}!`, session);
       switch (unit.getLevel()) {
         case 2:
           unit.learnAbility(UnitAbility.abilityForName(AbilityName.HEAVY_ATTACK));
