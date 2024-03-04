@@ -23,7 +23,7 @@ export const drawAligned = (
       left = Math.floor(x - image.width / 2);
       break;
     case Alignment.RIGHT:
-      left = x + image.width;
+      left = x - image.width;
       break;
   }
   graphics.drawImage(image, { x: left, y });

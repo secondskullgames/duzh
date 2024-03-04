@@ -11,6 +11,12 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import { Feature } from '@main/utils/features';
+import { GameState } from '@main/core/GameState';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import { FontName } from '@main/graphics/Fonts';
+import { Image } from '@main/graphics/images/Image';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -24,8 +30,12 @@ export default class GameScreenRenderer implements Renderer {
   constructor(
     @inject(Session.SYMBOL)
     private readonly session: Session,
+    @inject(GameState.SYMBOL)
+    private readonly state: GameState,
     @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
+    private readonly imageFactory: ImageFactory,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer
   ) {}
 
   render = async (graphics: Graphics) => {
@@ -33,6 +43,10 @@ export default class GameScreenRenderer implements Renderer {
 
     this._renderTiles(graphics);
     await this._renderEntities(graphics);
+
+    if (Feature.isEnabled(Feature.FLOATING_COMBAT_TEXT)) {
+      this._renderFloatingCombatText(graphics);
+    }
   };
 
   private _renderElement = (
@@ -181,6 +195,35 @@ export default class GameScreenRenderer implements Renderer {
       paletteSwaps
     });
     graphics.drawImage(image, pixel);
+  };
+
+  private _renderFloatingCombatText = async (graphics: Graphics) => {
+    const now = new Date();
+    const minEventTime = now.getTime() - 500;
+    const events = this.state
+      .getEventLog()
+      .getAllEvents()
+      .filter(
+        event =>
+          !!event.shortMessage &&
+          event.timestamp.getTime() > minEventTime &&
+          !!event.coordinates
+      );
+
+    for (const event of events) {
+      const pixel = this._gridToPixel(event.coordinates!);
+      const text = await this.textRenderer.renderText(
+        event.shortMessage!,
+        FontName.APPLE_II,
+        Colors.WHITE
+      );
+      drawAligned(
+        text,
+        graphics,
+        { x: pixel.x + TILE_WIDTH / 2, y: pixel.y + TILE_HEIGHT / 2 },
+        Alignment.CENTER
+      );
+    }
   };
 }
 

@@ -25,25 +25,6 @@ export type Event = Readonly<{
 
 export default class EventLog {
   private readonly events: Event[] = [];
-
-  logCombatDamage = (
-    attacker: Unit,
-    defender: Unit,
-    amount: number,
-    message: string,
-    session: Session
-  ) => {
-    this.log({
-      type: EventType.COMBAT_DAMAGE,
-      message,
-      sessionId: session.id,
-      turn: session.getTurn(),
-      timestamp: new Date(),
-      coordinates: attacker.getCoordinates(),
-      shortMessage: `${amount}`
-    });
-  };
-
   log = (event: Event) => {
     this.events.push(event);
   };

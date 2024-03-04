@@ -51,10 +51,15 @@ export const attackUnit = async (
   attacker.recordDamageDealt(defendResult.damageTaken);
   state.getSoundPlayer().playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  state
-    .getEventLog()
-    .logCombatDamage(attacker, defender, defendResult.damageTaken, message, session);
-
+  state.getEventLog().log({
+    type: EventType.COMBAT_DAMAGE,
+    message,
+    sessionId: session.id,
+    turn: session.getTurn(),
+    timestamp: new Date(),
+    coordinates: defender.getCoordinates(),
+    shortMessage: `${defendResult.damageTaken}`
+  });
   attacker.refreshCombat();
   defender.refreshCombat();
 
