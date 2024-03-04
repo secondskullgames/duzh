@@ -45,7 +45,7 @@ export default class GameScreenRenderer implements Renderer {
     await this._renderEntities(graphics);
 
     if (Feature.isEnabled(Feature.FLOATING_COMBAT_TEXT)) {
-      this._renderFloatingCombatText(graphics);
+      await this._renderFloatingCombatText(graphics);
     }
   };
 
@@ -199,7 +199,7 @@ export default class GameScreenRenderer implements Renderer {
 
   private _renderFloatingCombatText = async (graphics: Graphics) => {
     const now = new Date();
-    const minEventTime = now.getTime() - 500;
+    const minEventTime = now.getTime() - 0.4 * 1000;
     const events = this.state
       .getEventLog()
       .getAllEvents()
@@ -220,7 +220,7 @@ export default class GameScreenRenderer implements Renderer {
       drawAligned(
         text,
         graphics,
-        { x: pixel.x + TILE_WIDTH / 2, y: pixel.y + TILE_HEIGHT / 2 },
+        { x: pixel.x + TILE_WIDTH / 2, y: pixel.y + TILE_HEIGHT / 2 - 24 },
         Alignment.CENTER
       );
     }
