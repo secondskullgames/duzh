@@ -7,6 +7,7 @@ import Direction from '../../geometry/Direction';
 import { checkNotNull } from '@main/utils/preconditions';
 import Unit from '@main/entities/units/Unit';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { maxBy } from '@main/utils/arrays';
 
 type Props = Readonly<{
   offsets: Offsets;
@@ -40,7 +41,8 @@ export class EquipmentSprite extends DynamicSprite<Equipment> {
     const effects = target.getEffects().getEffects();
     if (effects.length > 0) {
       // TODO precedence
-      return effects[0];
+      // super hack to make Damaged take precedence over Stunned
+      return maxBy(effects, effect => (effect === UnitEffect.STUNNED ? 0 : 1));
     }
     return null;
   };

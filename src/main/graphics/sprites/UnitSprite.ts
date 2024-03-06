@@ -5,6 +5,7 @@ import Activity from '../../entities/units/Activity';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { maxBy } from '@main/utils/arrays';
 
 type Props = Readonly<{
   offsets: Offsets;
@@ -34,7 +35,8 @@ export class UnitSprite extends DynamicSprite<Unit> {
     const effects = target.getEffects().getEffects();
     if (effects.length > 0) {
       // TODO precedence
-      return effects[0];
+      // super hack to make Damaged take precedence over Stunned
+      return maxBy(effects, effect => (effect === UnitEffect.STUNNED ? 0 : 1));
     }
     return null;
   };
