@@ -11,13 +11,11 @@ import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import Entity from '@main/entities/Entity';
+import { Debug } from '@main/core/Debug';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
-
-type Element = Readonly<{
-  getSprite: () => Sprite | null;
-}>;
 
 @injectable()
 export default class GameScreenRenderer implements Renderer {
@@ -25,7 +23,9 @@ export default class GameScreenRenderer implements Renderer {
     @inject(Session.SYMBOL)
     private readonly session: Session,
     @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
+    private readonly imageFactory: ImageFactory,
+    @inject(Debug)
+    private readonly debug: Debug
   ) {}
 
   render = async (graphics: Graphics) => {
@@ -36,7 +36,7 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _renderElement = (
-    element: Element,
+    element: Entity | Equipment,
     coordinates: Coordinates,
     graphics: Graphics
   ) => {
@@ -141,9 +141,7 @@ export default class GameScreenRenderer implements Renderer {
 
   private _isTileRevealed = (coordinates: Coordinates): boolean => {
     const map = this.session.getMap();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return window.jwb?.debug?.isMapRevealed() || map.isTileRevealed(coordinates);
+    return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
