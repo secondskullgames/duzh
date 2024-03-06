@@ -24,7 +24,7 @@ export default abstract class DynamicSprite<T> implements Sprite {
    */
   getImage = (): Image | null => {
     const target = checkNotNull(this.target);
-    const frameKey = this.getAnimationKey(target);
+    const frameKey = this.getFrameKey(target);
     return this.imageMap[frameKey] ?? null;
   };
 
@@ -37,5 +37,5 @@ export default abstract class DynamicSprite<T> implements Sprite {
     this.target = target;
   };
 
-  protected abstract getAnimationKey: (target: T) => string;
+  protected abstract getFrameKey: (target: T) => string;
 }

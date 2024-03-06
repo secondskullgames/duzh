@@ -16,7 +16,7 @@ export class EquipmentSprite extends DynamicSprite<Equipment> {
     super({ offsets, imageMap });
   }
 
-  protected getAnimationKey = (target: Equipment): string => {
+  protected getFrameKey = (target: Equipment): string => {
     const unit = checkNotNull(target.getUnit());
     const activity = Activity.toString(unit.getActivity());
     const direction = Direction.toString(unit.getDirection());

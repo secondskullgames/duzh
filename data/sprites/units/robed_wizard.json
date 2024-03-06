@@ -27,6 +27,34 @@
         "number": "3"
       }]
     },
+    "damaged": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [{
+        "activity": "stunned",
+        "number": "1"
+      }]
+    },
+    "stunned": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [{
+        "activity": "stunned",
+        "number": "1"
+      }]
+    },
+    "burned": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "frozen": {
+      "pattern": "${sprite}_${direction}_${number}",
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
     "vanishing": {
       "pattern": "${sprite}_${activity}_SE_${number}",
       "frames": [

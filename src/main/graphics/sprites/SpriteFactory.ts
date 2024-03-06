@@ -8,14 +8,15 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
-import Direction from '../../geometry/Direction';
-import Colors from '../Colors';
 import { Image } from '../images/Image';
-import PaletteSwaps from '../PaletteSwaps';
-import Unit from '../../entities/units/Unit';
-import ImageFactory from '../images/ImageFactory';
 import ModelLoader from '../../utils/ModelLoader';
+import ImageFactory from '@main/graphics/images/ImageFactory';
+import PaletteSwaps from '@main/graphics/PaletteSwaps';
+import Colors from '@main/graphics/Colors';
+import Unit from '@main/entities/units/Unit';
+import Direction from '@main/geometry/Direction';
 import { fillTemplate } from '@main/utils/templates';
+import { ImageEffect } from '@main/graphics/images/ImageEffect';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
@@ -208,11 +209,26 @@ export default class SpriteFactory {
             .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
             .map(pattern => fillTemplate(pattern, variables));
 
+          // TODO - can we get this into the sprite model?
+          const effects: ImageEffect[] = [];
+          switch (animationName) {
+            case 'damaged':
+              effects.push(ImageEffect.DAMAGED);
+              break;
+            case 'burned':
+              effects.push(ImageEffect.BURNED);
+              break;
+            case 'frozen':
+              effects.push(ImageEffect.FROZEN);
+              break;
+          }
+
           const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
           const image = await this.imageFactory.getImage({
             filenames,
             transparentColor: Colors.WHITE,
-            paletteSwaps
+            paletteSwaps,
+            effects
           });
           imageMap[frameKey] = image;
         }
