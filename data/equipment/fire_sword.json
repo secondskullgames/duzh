@@ -13,6 +13,7 @@
   "rarity": 5,
   "level": 6,
   "stats": {
-    "damage": 10
-  }
+    "damage": 8
+  },
+  "script": "fire_sword"
 }

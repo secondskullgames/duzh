@@ -61,14 +61,6 @@ export const attackUnit = async (
     recordKill(attacker, defender, session, state);
   }
 
-  await sleep(150);
-
-  attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
-  defender.setActivity(Activity.STANDING, 1, defender.getDirection());
-  defender.getEffects().removeEffect(UnitEffect.DAMAGED);
-
-  await sleep(50);
-
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).afterAttack?.(
@@ -79,4 +71,10 @@ export const attackUnit = async (
       );
     }
   }
+
+  await sleep(150);
+
+  attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
+  defender.setActivity(Activity.STANDING, 1, defender.getDirection());
+  defender.getEffects().removeEffect(UnitEffect.DAMAGED);
 };

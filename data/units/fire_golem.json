@@ -12,7 +12,7 @@
     "DARK_RED": "DARK_RED",
     "TEAL": "YELLOW"
   },
-  "strength": 15,
+  "strength": 12,
   "dexterity": 0,
   "life": 50,
   "mana": 0,
@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK"],
+  "abilities": ["ATTACK", "BURNING_ATTACK"],
   "experience": 1
 }

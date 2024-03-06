@@ -6,7 +6,11 @@ import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 
-export type EquipmentScriptName = 'bolt_sword' | 'bow_of_fire' | 'bow_of_frost';
+export type EquipmentScriptName =
+  | 'bolt_sword'
+  | 'bow_of_fire'
+  | 'bow_of_frost'
+  | 'fire_sword';
 
 type EquipmentProc = (
   equipment: Equipment,
@@ -86,6 +90,25 @@ const BowOfFireScript: EquipmentScript = {
   }
 };
 
+const FireSwordScript: EquipmentScript = {
+  afterAttack: async (
+    equipment: Equipment,
+    target: Coordinates,
+    _: GameState,
+    session: Session
+  ) => {
+    const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
+    const targetUnit = map.getUnit(target);
+    if (targetUnit) {
+      targetUnit.setBurning(5);
+      session
+        .getTicker()
+        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+    }
+  }
+};
+
 export namespace EquipmentScript {
   export const forName = (name: EquipmentScriptName): EquipmentScript => {
     switch (name) {
@@ -95,6 +118,8 @@ export namespace EquipmentScript {
         return BowOfFireScript;
       case 'bow_of_frost':
         return BowOfFrostScript;
+      case 'fire_sword':
+        return FireSwordScript;
       default:
         throw new Error(`Unknown equipment script ${name}`);
     }
