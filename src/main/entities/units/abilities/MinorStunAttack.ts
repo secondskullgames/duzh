@@ -9,7 +9,7 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
-const manaCost = 15;
+const manaCost = 10;
 const damageCoefficient = 1;
 
 /**
@@ -28,12 +28,11 @@ export const MinorStunAttack: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    const { x, y } = coordinates;
 
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(manaCost);
 
