@@ -19,11 +19,11 @@ type Props = Readonly<{
 }>;
 
 const allowedSpecialAbilityNames = [
+  AbilityName.BURNING_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.MINOR_STUN_ATTACK,
-  AbilityName.PIERCE,
-  AbilityName.STUN_ATTACK
+  AbilityName.PIERCE
 ];
 
 /**
