@@ -215,8 +215,8 @@ export default class SpriteFactory {
             case 'damaged':
               effects.push(ImageEffect.DAMAGED);
               break;
-            case 'burned':
-              effects.push(ImageEffect.BURNED);
+            case 'burning':
+              effects.push(ImageEffect.BURNING);
               break;
             case 'frozen':
               effects.push(ImageEffect.FROZEN);

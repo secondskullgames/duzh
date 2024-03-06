@@ -24,6 +24,7 @@ import { checkArgument } from '@main/utils/preconditions';
 import { die } from '@main/actions/die';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 import { UnitEffects } from '@main/entities/units/effects/UnitEffects';
+import { dealDamage } from '@main/actions/dealDamage';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -214,7 +215,7 @@ export default class Unit implements Entity {
       const order = this.controller.issueOrder(this, state, session);
       await order.execute(this, state, session);
     }
-    this._endOfTurn();
+    await this._endOfTurn(state, session);
   };
 
   /** @override */
@@ -317,6 +318,10 @@ export default class Unit implements Entity {
     this.effects.addEffect(UnitEffect.FROZEN, duration);
   };
 
+  setBurning = (duration: number) => {
+    this.effects.addEffect(UnitEffect.BURNING, duration);
+  };
+
   /**
    * @override {@link Entity#getType}
    */
@@ -395,7 +400,19 @@ export default class Unit implements Entity {
     }
   };
 
-  private _endOfTurn = () => {
+  private _endOfTurn = async (state: GameState, session: Session) => {
+    for (const effect of this.effects.getEffects()) {
+      switch (effect) {
+        case UnitEffect.BURNING:
+          await dealDamage(2, { targetUnit: this });
+          if (this.life <= 0) {
+            await die(this, state, session);
+          }
+          break;
+        default:
+          break;
+      }
+    }
     this.effects.decrement();
   };
 

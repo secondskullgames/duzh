@@ -41,7 +41,7 @@
         "number": "1"
       }]
     },
-    "burned": {
+    "burning": {
       "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "standing",

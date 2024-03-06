@@ -1,0 +1,19 @@
+{
+  "id": "bow_of_fire",
+  "name": "Bow of Fire",
+  "sprite": "bow",
+  "mapIcon": "map_bow",
+  "itemCategory": "WEAPON",
+  "slot": "RANGED_WEAPON",
+  "paletteSwaps": {
+    "DARK_GREEN": "DARK_RED",
+    "GREEN": "RED"
+  },
+  "rarity": 5,
+  "level": 5,
+  "stats": {
+    "damage": 8
+  },
+  "script": "bow_of_fire",
+  "tooltip": "Burns enemies"
+}
