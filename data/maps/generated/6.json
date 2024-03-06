@@ -12,10 +12,10 @@
   },
   "fogOfWar": {
     "enabled": true,
-    "radius": 3,
+    "radius": 2,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
-    "spawnRate": 0.1,
-    "maxSpawnedUnits": 7
+    "spawnRate": 0.04,
+    "maxSpawnedUnits": 8
   }
 }

@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "HEAVY_ATTACK", "STUN_ATTACK"],
+  "abilities": ["ATTACK", "HEAVY_ATTACK", "MINOR_STUN_ATTACK"],
   "experience": 1
 }

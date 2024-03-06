@@ -21,13 +21,16 @@ import MapInstance from '../../maps/MapInstance';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { checkArgument } from '@main/utils/preconditions';
+import { die } from '@main/actions/die';
 
 /**
  * Regenerate this raw amount of health each turn
+ * (can be decimal)
  */
-const LIFE_PER_TURN = 0.5;
+const LIFE_PER_TURN = 0.75;
 /**
  * Regenerate this raw amount of mana each turn
+ * (can be decimal)
  */
 const MANA_PER_TURN = 1;
 
@@ -206,7 +209,10 @@ export default class Unit implements Entity {
 
   /** @override */
   playTurnAction = async (state: GameState, session: Session) => {
-    this._upkeep();
+    await this._upkeep(state, session);
+    if (this.life <= 0) {
+      return;
+    }
     if (this.stunnedDuration === 0 && this.frozenDuration === 0) {
       const order = this.controller.issueOrder(this, state, session);
       await order.execute(this, state, session);
@@ -368,12 +374,18 @@ export default class Unit implements Entity {
 
   getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
-  private _upkeep = () => {
+  private _upkeep = async (state: GameState, session: Session) => {
     // life regeneration
     this.lifeRemainder += LIFE_PER_TURN;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
-    this.life = Math.min(this.life + deltaLife, this.maxLife);
+    this.life = this.life + deltaLife;
+    if (this.life > this.getMaxLife()) {
+      this.life = this.getMaxLife();
+    }
+    if (this.life <= 0) {
+      await die(this, state, session);
+    }
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {

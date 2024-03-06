@@ -20,7 +20,6 @@ export const playTurn = async (state: GameState, session: Session) => {
   }
 
   updateRevealedTiles(map, session.getPlayerUnit());
-
   await doMapEvents(state, session);
 
   session.nextTurn();
