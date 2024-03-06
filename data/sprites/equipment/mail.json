@@ -32,24 +32,6 @@
         "activity": "attacking",
         "number": "2"
       }]
-    },
-    "damaged": {
-      "frames": [{
-        "activity": "standing",
-        "number": "1"
-      }]
-    },
-    "burned": {
-      "frames": [{
-        "activity": "standing",
-        "number": "1"
-      }]
-    },
-    "frozen": {
-      "frames": [{
-        "activity": "standing",
-        "number": "1"
-      }]
     }
   }
 }

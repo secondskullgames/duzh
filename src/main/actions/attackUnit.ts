@@ -7,6 +7,7 @@ import { sleep } from '@main/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@main/sounds/types';
 import { Session } from '@main/core/Session';
+import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -43,7 +44,7 @@ export const attackUnit = async (
   await sleep(50);
 
   // damaged frame
-  defender.setActivity(Activity.DAMAGED, 1, defender.getDirection());
+  defender.getEffects().addEffect(UnitEffect.DAMAGED, 1);
 
   const attackResult = attack.calculateAttackResult(attacker);
   const defendResult = defender.takeDamage(attackResult.damage, attacker);
@@ -64,6 +65,7 @@ export const attackUnit = async (
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
+  defender.getEffects().removeEffect(UnitEffect.DAMAGED);
 
   await sleep(50);
 

@@ -22,6 +22,8 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { checkArgument } from '@main/utils/preconditions';
 import { die } from '@main/actions/die';
+import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { UnitEffects } from '@main/entities/units/effects/UnitEffects';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -89,8 +91,7 @@ export default class Unit implements Entity {
   private frameNumber: number;
   private readonly abilities: UnitAbility[];
 
-  private stunnedDuration: number;
-  private frozenDuration: number;
+  private readonly effects: UnitEffects;
 
   /**
    * Used by AI to make certain decisions
@@ -142,8 +143,6 @@ export default class Unit implements Entity {
     this.abilities = model.abilities.map(abilityName =>
       UnitAbility.abilityForName(abilityName as AbilityName)
     );
-    this.stunnedDuration = 0;
-    this.frozenDuration = 0;
     this.turnsSinceCombatAction = null;
 
     this.aiParameters = model.aiParameters ?? null;
@@ -155,9 +154,7 @@ export default class Unit implements Entity {
       eq.attach(this);
     }
 
-    /*while (this.level < props.level) {
-      levelUp(this, { state });
-    }*/
+    this.effects = new UnitEffects();
   }
 
   getId = (): number => this.id;
@@ -213,7 +210,7 @@ export default class Unit implements Entity {
     if (this.life <= 0) {
       return;
     }
-    if (this.stunnedDuration === 0 && this.frozenDuration === 0) {
+    if (this._canMove()) {
       const order = this.controller.issueOrder(this, state, session);
       await order.execute(this, state, session);
     }
@@ -260,7 +257,6 @@ export default class Unit implements Entity {
     const damageAbsorbed = incomingDamage - damageTaken;
     this.life -= damageTaken;
     this.lifetimeDamageTaken += damageTaken;
-    this.frozenDuration = 0;
 
     return {
       incomingDamage,
@@ -314,12 +310,11 @@ export default class Unit implements Entity {
   };
 
   setStunned = (duration: number) => {
-    this.stunnedDuration = Math.max(this.stunnedDuration, duration);
+    this.effects.addEffect(UnitEffect.STUNNED, duration);
   };
 
   setFrozen = (duration: number) => {
-    this.frozenDuration = Math.max(this.frozenDuration, duration);
-    this.activity = Activity.FROZEN;
+    this.effects.addEffect(UnitEffect.FROZEN, duration);
   };
 
   /**
@@ -401,17 +396,18 @@ export default class Unit implements Entity {
   };
 
   private _endOfTurn = () => {
-    // decrement stun duration
-    this.stunnedDuration = Math.max(this.stunnedDuration - 1, 0);
-    // decrement freeze duration
-    if (this.frozenDuration > 0) {
-      this.frozenDuration -= 1;
-      if (this.frozenDuration === 0) {
-        this.activity = Activity.STANDING;
-      }
-    }
+    this.effects.decrement();
   };
 
   getStrength = (): number => this.strength;
   getDexterity = (): number => this.dexterity;
+
+  getEffects = (): UnitEffects => this.effects;
+
+  private _canMove = (): boolean => {
+    return (
+      !this.effects.hasEffect(UnitEffect.FROZEN) &&
+      !this.effects.hasEffect(UnitEffect.STUNNED)
+    );
+  };
 }

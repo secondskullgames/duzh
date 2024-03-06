@@ -11,7 +11,6 @@ import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import Direction from '../../geometry/Direction';
 import Colors from '../Colors';
 import { Image } from '../images/Image';
-import { ImageEffect } from '../images/ImageEffect';
 import PaletteSwaps from '../PaletteSwaps';
 import Unit from '../../entities/units/Unit';
 import ImageFactory from '../images/ImageFactory';
@@ -209,26 +208,11 @@ export default class SpriteFactory {
             .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
             .map(pattern => fillTemplate(pattern, variables));
 
-          // TODO - can we get this into the sprite model?
-          const effects: ImageEffect[] = [];
-          switch (animationName) {
-            case 'damaged':
-              effects.push(ImageEffect.DAMAGED);
-              break;
-            case 'burned':
-              effects.push(ImageEffect.BURNED);
-              break;
-            case 'frozen':
-              effects.push(ImageEffect.FROZEN);
-              break;
-          }
-
           const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
           const image = await this.imageFactory.getImage({
             filenames,
             transparentColor: Colors.WHITE,
-            paletteSwaps,
-            effects
+            paletteSwaps
           });
           imageMap[frameKey] = image;
         }
