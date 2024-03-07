@@ -1,6 +1,5 @@
 import { Renderer } from './Renderer';
 import { Graphics } from '../Graphics';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import { Pixel } from '../Pixel';
 import { Color } from '../Color';
@@ -11,6 +10,7 @@ import ImageFactory from '../images/ImageFactory';
 import Unit from '../../entities/units/Unit';
 import { Session } from '@main/core/Session';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
@@ -18,7 +18,9 @@ const BACKGROUND_FILENAME = 'inventory_background';
 @injectable()
 export default class LevelUpScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig,
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
@@ -34,8 +36,8 @@ export default class LevelUpScreenRenderer implements Renderer {
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT
+      width: this.gameConfig.screenWidth,
+      height: this.gameConfig.screenHeight
     });
 
     const listedAbilities = playerUnit

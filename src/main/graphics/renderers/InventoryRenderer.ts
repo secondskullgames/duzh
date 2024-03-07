@@ -1,7 +1,7 @@
 import { Renderer } from './Renderer';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import EquipmentSlot from '../../schemas/EquipmentSlot';
@@ -10,26 +10,32 @@ import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
-const INVENTORY_WIDTH = SCREEN_WIDTH;
-const INVENTORY_HEIGHT = SCREEN_HEIGHT;
 const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 @injectable()
 export default class InventoryRenderer implements Renderer {
+  private readonly inventoryWidth: number;
+  private readonly inventoryHeight: number;
   constructor(
+    @inject(GameConfig)
+    gameConfig: GameConfig,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session
-  ) {}
+  ) {
+    this.inventoryWidth = gameConfig.screenWidth;
+    this.inventoryHeight = gameConfig.screenHeight;
+  }
 
   /**
    * @override {@link Renderer#render}
@@ -64,8 +70,8 @@ export default class InventoryRenderer implements Renderer {
     graphics.drawScaledImage(image, {
       left: INVENTORY_LEFT,
       top: INVENTORY_TOP,
-      width: INVENTORY_WIDTH,
-      height: INVENTORY_HEIGHT
+      width: this.inventoryWidth,
+      height: this.inventoryHeight
     });
   };
 
@@ -77,7 +83,7 @@ export default class InventoryRenderer implements Renderer {
     await this._drawText(
       'EQUIPMENT',
       FontName.APPLE_II,
-      { x: INVENTORY_WIDTH / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      { x: this.inventoryWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       inventory.getSelectedCategory() === 'EQUIPMENT' ? Colors.YELLOW : Colors.WHITE,
       Alignment.CENTER,
       graphics
@@ -85,7 +91,7 @@ export default class InventoryRenderer implements Renderer {
     await this._drawText(
       'INVENTORY',
       FontName.APPLE_II,
-      { x: (INVENTORY_WIDTH * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       inventory.getSelectedCategory() === 'ITEMS' ? Colors.YELLOW : Colors.WHITE,
       Alignment.CENTER,
       graphics
@@ -115,7 +121,7 @@ export default class InventoryRenderer implements Renderer {
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
-    const itemsLeft = (INVENTORY_WIDTH + INVENTORY_MARGIN) / 2;
+    const itemsLeft = (this.inventoryWidth + INVENTORY_MARGIN) / 2;
 
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;

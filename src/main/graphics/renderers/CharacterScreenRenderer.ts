@@ -5,10 +5,10 @@ import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { Pixel } from '../Pixel';
 import { Graphics } from '../Graphics';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
 import { FontName } from '../Fonts';
 import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';
@@ -17,7 +17,9 @@ const LINE_HEIGHT = 15;
 @injectable()
 export default class CharacterScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig,
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
@@ -34,8 +36,8 @@ export default class CharacterScreenRenderer implements Renderer {
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT
+      width: this.gameConfig.screenWidth,
+      height: this.gameConfig.screenHeight
     });
 
     await this._renderStatistics(graphics);

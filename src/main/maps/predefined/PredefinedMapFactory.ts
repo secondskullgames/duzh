@@ -42,6 +42,7 @@ export class PredefinedMapFactory {
 
     const startingCoordinates = await this._loadStartingCoordinates(image, model);
     const map = new MapInstance({
+      id: model.id,
       width: image.bitmap.width,
       height: image.bitmap.height,
       levelNumber: model.levelNumber,

@@ -1,5 +1,5 @@
 import { Renderer } from './Renderer';
-import { LINE_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { LINE_HEIGHT } from '../constants';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
@@ -7,11 +7,17 @@ import { Graphics } from '../Graphics';
 import { Pixel } from '../Pixel';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { injectable } from 'inversify';
+import { GameConfig } from '@main/core/GameConfig';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export default class HelpScreenRenderer implements Renderer {
-  constructor(private readonly textRenderer: TextRenderer) {}
+  constructor(
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer
+  ) {}
 
   render = async (graphics: Graphics) => {
     graphics.fill(Colors.BLACK);
@@ -52,7 +58,7 @@ export default class HelpScreenRenderer implements Renderer {
     for (let i = 0; i < keys.length; i++) {
       const y = top + LINE_HEIGHT * (i + intro.length + 2);
       graphics.fillRect(
-        { left, top: y, width: SCREEN_WIDTH, height: LINE_HEIGHT },
+        { left, top: y, width: this.gameConfig.screenWidth, height: LINE_HEIGHT },
         Colors.BLACK
       );
       const [key, description] = keys[i];

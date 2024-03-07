@@ -8,7 +8,7 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export default class CharacterScreenInputHandler implements ScreenInputHandler {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session
   ) {}
 

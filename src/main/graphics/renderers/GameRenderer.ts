@@ -1,15 +1,8 @@
-import GameScreenRenderer from './GameScreenRenderer';
-import HUDRenderer from './HUDRenderer';
-import MapScreenRenderer from './MapScreenRenderer';
 import { Renderer } from './Renderer';
-import CharacterScreenRenderer from './CharacterScreenRenderer';
-import LevelUpScreenRenderer from './LevelUpScreenRenderer';
-import HelpScreenRenderer from './HelpScreenRenderer';
-import InventoryRenderer from './InventoryRenderer';
 import Coordinates from '../../geometry/Coordinates';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
@@ -19,6 +12,14 @@ import { createCanvas } from '@main/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
+import { GameConfig } from '@main/core/GameConfig';
+import GameScreenRenderer from '@main/graphics/renderers/GameScreenRenderer';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import InventoryRenderer from '@main/graphics/renderers/InventoryRenderer';
+import MapScreenRenderer from '@main/graphics/renderers/MapScreenRenderer';
+import CharacterScreenRenderer from '@main/graphics/renderers/CharacterScreenRenderer';
+import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
+import LevelUpScreenRenderer from '@main/graphics/renderers/LevelUpScreenRenderer';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -30,13 +31,20 @@ export default class GameRenderer implements Renderer {
   private readonly buffer: HTMLCanvasElement;
   private readonly bufferGraphics: Graphics;
 
+  /**
+   * This constructor actually needs @inject annotations
+   * because we are injecting specific Renderer impls but
+   * only typing them as the parent type
+   */
   constructor(
+    @inject(GameConfig)
+    gameConfig: GameConfig,
+    @inject(Session)
+    private readonly session: Session,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(Session.SYMBOL)
-    private readonly session: Session,
     @inject(GameScreenRenderer)
     private readonly gameScreenRenderer: Renderer,
     @inject(HUDRenderer)
@@ -53,8 +61,8 @@ export default class GameRenderer implements Renderer {
     private readonly levelUpScreenRenderer: Renderer
   ) {
     this.buffer = createCanvas({
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT,
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight,
       offscreen: true
     });
     this.bufferGraphics = Graphics.forCanvas(this.buffer);

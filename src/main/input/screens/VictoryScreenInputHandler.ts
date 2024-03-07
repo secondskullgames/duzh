@@ -1,6 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '../inputTypes';
-import MapFactory from '../../maps/MapFactory';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@main/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
@@ -11,12 +10,10 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export default class VictoryScreenInputHandler implements ScreenInputHandler {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
-    @inject(GameState.SYMBOL)
-    private readonly state: GameState,
-    @inject(MapFactory)
-    private readonly mapFactory: MapFactory
+    @inject(GameState)
+    private readonly state: GameState
   ) {}
 
   handleKeyCommand = async (command: KeyCommand) => {
@@ -30,8 +27,6 @@ export default class VictoryScreenInputHandler implements ScreenInputHandler {
           await showSplashScreen(state, session);
           state.reset();
           session.reset();
-          const maps = await this.mapFactory.loadMapSuppliers(state.getMapSpecs());
-          state.addMaps(maps);
         }
         break;
       case 'ESCAPE':

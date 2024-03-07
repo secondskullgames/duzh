@@ -1,7 +1,7 @@
 import { Renderer } from './Renderer';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { LINE_HEIGHT, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constants';
+import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
@@ -14,15 +14,14 @@ import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/entities/units/Unit';
 import Rect from '@main/geometry/Rect';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
 
 const HEIGHT = 64;
-const TOP = SCREEN_HEIGHT - HEIGHT;
 const LEFT_PANE_WIDTH = 163;
 const RIGHT_PANE_WIDTH = 163;
-const MIDDLE_PANE_WIDTH = SCREEN_WIDTH - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
 const BORDER_MARGIN = 5;
 const BORDER_PADDING = 5;
 
@@ -31,14 +30,22 @@ const ABILITY_ICON_WIDTH = 20;
 
 @injectable()
 export default class HUDRenderer implements Renderer {
+  private readonly TOP: number;
+  private readonly MIDDLE_PANE_WIDTH: number;
+
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(GameConfig)
+    gameConfig: GameConfig,
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
-  ) {}
+  ) {
+    this.TOP = gameConfig.screenHeight - HEIGHT;
+    this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
+  }
 
   /**
    * @override {@link Renderer#render}
@@ -55,7 +62,7 @@ export default class HUDRenderer implements Renderer {
       filename: HUD_FILENAME,
       transparentColor: Colors.WHITE
     });
-    graphics.drawImage(image, { x: 0, y: TOP });
+    graphics.drawImage(image, { x: 0, y: this.TOP });
   };
 
   /**
@@ -82,7 +89,7 @@ export default class HUDRenderer implements Renderer {
     }
 
     const left = BORDER_MARGIN + BORDER_PADDING;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
@@ -130,7 +137,7 @@ export default class HUDRenderer implements Renderer {
 
   private _renderMiddlePanel = async (graphics: Graphics) => {
     const { session } = this;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
 
     let keyNumber = 1;
@@ -171,8 +178,9 @@ export default class HUDRenderer implements Renderer {
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
 
-    const left = LEFT_PANE_WIDTH + MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
-    const top = TOP + BORDER_MARGIN + BORDER_PADDING;
+    const left =
+      LEFT_PANE_WIDTH + this.MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
+    const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
 
     const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
 

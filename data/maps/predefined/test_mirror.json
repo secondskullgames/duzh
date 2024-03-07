@@ -1,4 +1,5 @@
 {
+  "id": "test_mirror",
   "imageFilename": "test_mirror",
   "tileset": "dungeon",
   "levelNumber": 1,

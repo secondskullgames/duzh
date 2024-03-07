@@ -1,6 +1,7 @@
 import { FogOfWarParams } from './FogOfWarParams';
 
 type GeneratedMapModel = {
+  id: string;
   levelNumber: number;
   width: number;
   height: number;

@@ -6,6 +6,7 @@ import GameObject from '@main/entities/objects/GameObject';
 
 const _emptyMap = (): MapInstance => {
   return new MapInstance({
+    id: 'test',
     width: 10,
     height: 10,
     levelNumber: 1,

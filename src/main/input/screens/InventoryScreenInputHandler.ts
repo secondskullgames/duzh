@@ -10,9 +10,9 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export default class InventoryScreenInputHandler implements ScreenInputHandler {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
-    @inject(GameState.SYMBOL)
+    @inject(GameState)
     private readonly state: GameState
   ) {}
 

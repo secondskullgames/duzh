@@ -2,10 +2,10 @@ import { Color } from './Color';
 import Colors from './Colors';
 import { replaceColors } from './images/ImageUtils';
 import PaletteSwaps from './PaletteSwaps';
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from './constants';
 import { FontBundle, FontInstance, FontName } from './Fonts';
 import { Image } from './images/Image';
 import { createCanvas, getCanvasContext } from '@main/utils/dom';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -15,12 +15,14 @@ export class TextRenderer {
   private readonly imageCache: Record<string, Image> = {};
 
   constructor(
+    @inject(GameConfig)
+    gameConfig: GameConfig,
     @inject(FontBundle)
     private readonly fonts: FontBundle
   ) {
     this.canvas = createCanvas({
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT,
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight,
       offscreen: true
     });
     this.context = getCanvasContext(this.canvas);

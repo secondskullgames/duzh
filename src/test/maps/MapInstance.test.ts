@@ -21,6 +21,7 @@ test('adds and removes a unit', () => {
 
 const _emptyMap = (): MapInstance =>
   new MapInstance({
+    id: 'test',
     width: 10,
     height: 10,
     levelNumber: 1,
