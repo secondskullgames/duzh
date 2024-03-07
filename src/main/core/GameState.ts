@@ -6,10 +6,7 @@ import MusicController from '../sounds/MusicController';
 import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
 import { clear } from '@main/utils/arrays';
-import { checkArgument } from '@main/utils/preconditions';
 import ModelLoader from '@main/utils/ModelLoader';
-import { GameConfig } from '@main/core/GameConfig';
-import MapFactory from '@main/maps/MapFactory';
 import { inject, injectable } from 'inversify';
 
 /**
