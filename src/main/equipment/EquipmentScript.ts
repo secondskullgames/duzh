@@ -63,7 +63,7 @@ const BowOfFrostScript: EquipmentScript = {
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
-      targetUnit.setFrozen(2);
+      targetUnit.setFrozen(3);
       session
         .getTicker()
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
