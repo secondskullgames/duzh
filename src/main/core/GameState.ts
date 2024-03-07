@@ -16,7 +16,10 @@ export interface GameState {
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
-  isMapLoaded: (index: number) => boolean;
+
+  getMap: (mapIndex: number) => MapInstance;
+  setMap: (mapIndex: number, map: MapInstance) => void;
+  isMapLoaded: (mapIndex: number) => boolean;
 
   // TODO trying to find ways to remove the remainder
 
@@ -27,9 +30,6 @@ export interface GameState {
   getSoundPlayer: () => SoundPlayer;
   getMusicController: () => MusicController;
   getModelLoader: () => ModelLoader;
-
-  setMap: (mapIndex: number, map: MapInstance) => void;
-  getMap: (mapIndex: number) => MapInstance;
 }
 
 export const GameState = Symbol('GameState');

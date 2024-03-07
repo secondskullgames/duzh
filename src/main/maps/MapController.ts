@@ -7,6 +7,7 @@ import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { GameScreen } from '@main/core/GameScreen';
 import MapInstance from '@main/maps/MapInstance';
 import { GameConfig } from '@main/core/GameConfig';
+import MusicController from '@main/sounds/MusicController';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {
@@ -30,11 +31,13 @@ export class MapControllerImpl implements MapController {
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
     @inject(GameConfig)
-    private readonly gameConfig: GameConfig
+    private readonly gameConfig: GameConfig,
+    @inject(MusicController)
+    private readonly musicController: MusicController
   ) {}
 
   loadFirstMap = async () => {
-    const { state, session, unitFactory } = this;
+    const { session, unitFactory, musicController } = this;
     checkState(session.getMapIndex() === -1);
     session.setMapIndex(0);
     const map = await this._loadMap(0);
@@ -46,19 +49,19 @@ export class MapControllerImpl implements MapController {
     map.addUnit(playerUnit);
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
-    state.getMusicController().stop();
+    musicController.stop();
     if (map.music) {
-      state.getMusicController().playMusic(map.music);
+      musicController.playMusic(map.music);
     }
   };
 
   loadNextMap = async () => {
-    const { state, session } = this;
-    state.getMusicController().stop();
-    if (!this._hasMap(session.getMapIndex() + 1)) {
+    const { session, musicController } = this;
+    musicController.stop();
+    const nextMapIndex = session.getMapIndex() + 1;
+    if (!this._hasMap(nextMapIndex)) {
       session.setScreen(GameScreen.VICTORY);
     } else {
-      const nextMapIndex = session.getMapIndex() + 1;
       session.setMapIndex(nextMapIndex);
       const map = await this._loadMap(nextMapIndex);
       session.setMap(map);
@@ -70,13 +73,13 @@ export class MapControllerImpl implements MapController {
       map.addUnit(playerUnit);
       updateRevealedTiles(map, playerUnit);
       if (map.music) {
-        state.getMusicController().playMusic(map.music);
+        musicController.playMusic(map.music);
       }
     }
   };
 
   loadPreviousMap = async () => {
-    const { state, session } = this;
+    const { musicController, session } = this;
     checkState(session.getMapIndex() > 0);
     const previousMapIndex = session.getMapIndex() - 1;
     session.setMapIndex(previousMapIndex);
@@ -89,16 +92,14 @@ export class MapControllerImpl implements MapController {
     playerUnit.setCoordinates(map.getStartingCoordinates());
     updateRevealedTiles(map, playerUnit);
     if (map.music) {
-      state.getMusicController().playMusic(map.music);
+      musicController.playMusic(map.music);
     }
   };
 
   loadDebugMap = async () => {
-    const { session, state, mapFactory, unitFactory } = this;
+    const { session, musicController, mapFactory, unitFactory } = this;
 
     const map = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
-    // eslint-disable-next-line no-console
-    console.log('debug mode');
     session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
@@ -107,21 +108,20 @@ export class MapControllerImpl implements MapController {
     map.addUnit(playerUnit);
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
-    state.getMusicController().stop();
-    // state.getMusicController().playFigure(TITLE_THEME);
-    // state.getMusicController().playSuite(randChoice([SUITE_1, SUITE_2, SUITE_3]));
+    musicController.stop();
     updateRevealedTiles(session.getMap(), session.getPlayerUnit());
   };
 
   private _loadMap = async (mapIndex: number): Promise<MapInstance> => {
-    const mapSpecs = this.gameConfig.mapSpecs;
+    const { state, gameConfig, mapFactory } = this;
+    const mapSpecs = gameConfig.mapSpecs;
     check(this._hasMap(mapIndex));
-    if (!this.state.isMapLoaded(mapIndex)) {
+    if (!state.isMapLoaded(mapIndex)) {
       const mapSpec = mapSpecs[mapIndex];
-      const map = await this.mapFactory.loadMap(mapSpec);
-      this.state.setMap(mapIndex, map);
+      const map = await mapFactory.loadMap(mapSpec);
+      state.setMap(mapIndex, map);
     }
-    return this.state.getMap(mapIndex);
+    return state.getMap(mapIndex);
   };
 
   private _hasMap = (mapIndex: number): boolean => {
