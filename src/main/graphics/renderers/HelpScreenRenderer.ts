@@ -20,8 +20,8 @@ export default class HelpScreenRenderer implements Renderer {
     const top = 4;
 
     const intro = [
-      'Welcome to the Dungeon of Duzh! To escape, you must brave untold',
-      'terrors on seven floors. Make use of every weapon available, hone',
+      'Welcome to the Dungeons of Duzh! To escape, you must brave untold',
+      'terrors on eight floors. Make use of every weapon available, hone',
       'your skills through combat, and beware the Horned Wizard.'
     ];
 

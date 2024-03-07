@@ -9,6 +9,17 @@ export interface Pathfinder {
   ) => Coordinates[];
 }
 
+export enum Heuristic {
+  MANHATTAN = 'MANHATTAN',
+  EUCLIDEAN = 'EUCLIDEAN',
+  CHEBYSHEV = 'CHEBYSHEV'
+}
+
+type Props = Readonly<{
+  heuristic: Heuristic;
+}>;
+
 export namespace Pathfinder {
-  export const create = (): Pathfinder => new PathFinder_3rdParty();
+  export const create = (props?: Props): Pathfinder =>
+    new PathFinder_3rdParty(props?.heuristic ?? Heuristic.MANHATTAN);
 }

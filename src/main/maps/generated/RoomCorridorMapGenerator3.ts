@@ -4,7 +4,7 @@ import Rect from '../../geometry/Rect';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import { randInt, shuffle } from '@main/utils/random';
-import { Pathfinder } from '@main/geometry/Pathfinder';
+import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 
 class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
   constructor(tileFactory: TileFactory) {
@@ -34,7 +34,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
       height: height - 3
     });
 
-    const pathfinder = Pathfinder.create();
+    const pathfinder = Pathfinder.create({ heuristic: Heuristic.CHEBYSHEV });
 
     for (let i = 1; i < rooms.length; i++) {
       const firstTiles = _coordinatesInRect(rooms[i - 1]);
