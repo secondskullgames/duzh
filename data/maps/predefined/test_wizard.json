@@ -1,4 +1,5 @@
 {
+  "id": "test_wizard",
   "imageFilename": "test_wizard",
   "tileset": "dungeon",
   "levelNumber": 1,

@@ -13,7 +13,7 @@ export default class InputHandler {
   private _onKeyUp: ((e: KeyboardEvent) => Promise<void>) | null = null;
 
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(ScreenHandlers)
     private readonly screenHandlers: ScreenHandlers

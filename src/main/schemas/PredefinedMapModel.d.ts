@@ -2,6 +2,7 @@ import TileType from './TileType';
 import { FogOfWarParams } from './FogOfWarParams';
 
 type PredefinedMapModel = {
+  id: string;
   imageFilename: string;
   levelNumber: number;
   music?: string;

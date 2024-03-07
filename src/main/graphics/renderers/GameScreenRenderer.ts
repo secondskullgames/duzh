@@ -21,7 +21,7 @@ const SHADOW_FILENAME = 'shadow';
 @injectable()
 export default class GameScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,

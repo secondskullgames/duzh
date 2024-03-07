@@ -35,7 +35,7 @@ export default class GameRenderer implements Renderer {
     private readonly imageFactory: ImageFactory,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(GameScreenRenderer)
     private readonly gameScreenRenderer: Renderer,

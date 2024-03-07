@@ -18,7 +18,7 @@ const BACKGROUND_FILENAME = 'inventory_background';
 @injectable()
 export default class LevelUpScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,

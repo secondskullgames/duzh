@@ -17,7 +17,7 @@ const LINE_HEIGHT = 15;
 @injectable()
 export default class CharacterScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,

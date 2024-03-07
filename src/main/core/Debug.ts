@@ -14,11 +14,11 @@ export class Debug {
   private _isMapRevealed: boolean;
 
   constructor(
-    @inject(GameState.SYMBOL)
+    @inject(GameState)
     private readonly state: GameState,
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
-    @inject(MapController.SYMBOL)
+    @inject(MapController)
     private readonly mapController: MapController,
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory

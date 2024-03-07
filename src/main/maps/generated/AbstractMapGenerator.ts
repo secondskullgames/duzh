@@ -6,15 +6,15 @@ import MapInstance from '../MapInstance';
 import { checkNotNull } from '@main/utils/preconditions';
 import { Feature } from '@main/utils/features';
 
-abstract class AbstractMapGenerator {
+export default abstract class AbstractMapGenerator {
   protected constructor(private readonly tileFactory: TileFactory) {}
 
   generateMap = async (
-    mapModel: GeneratedMapModel,
+    model: GeneratedMapModel,
     tileSetId: string
   ): Promise<MapInstance> => {
     const { tileFactory } = this;
-    const { width, height, levelNumber } = mapModel;
+    const { id, width, height, levelNumber } = model;
 
     const tileTypes = this._generateTiles(width, height, levelNumber);
     const tileSet = await tileFactory.getTileSet(tileSetId);
@@ -42,12 +42,13 @@ abstract class AbstractMapGenerator {
     }
 
     const map = new MapInstance({
+      id,
       width,
       height,
       levelNumber,
       startingCoordinates,
       music: null,
-      fogParams: mapModel.fogOfWar
+      fogParams: model.fogOfWar
     });
 
     for (let y = 0; y < height; y++) {
@@ -147,5 +148,3 @@ abstract class AbstractMapGenerator {
     return true;
   };
 }
-
-export default AbstractMapGenerator;

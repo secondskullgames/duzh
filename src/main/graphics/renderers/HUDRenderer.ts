@@ -32,7 +32,7 @@ const ABILITY_ICON_WIDTH = 20;
 @injectable()
 export default class HUDRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,

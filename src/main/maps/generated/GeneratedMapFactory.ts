@@ -54,7 +54,7 @@ export class GeneratedMapFactory {
     private readonly itemFactory: ItemFactory,
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
-    @inject(GameState.SYMBOL)
+    @inject(GameState)
     private readonly state: GameState
   ) {}
 

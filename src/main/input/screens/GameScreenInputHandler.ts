@@ -25,11 +25,11 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
-    @inject(GameState.SYMBOL)
+    @inject(GameState)
     private readonly state: GameState,
-    @inject(MapController.SYMBOL)
+    @inject(MapController)
     private readonly mapController: MapController
   ) {}
 

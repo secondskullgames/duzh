@@ -27,7 +27,7 @@ export default class InventoryRenderer implements Renderer {
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session
   ) {}
 

@@ -1,7 +1,8 @@
 import MapType from './MapType';
 
-type MapSpec = {
+type MapSpec = Readonly<{
   id: string;
   type: MapType;
-};
+}>;
+
 export default MapSpec;

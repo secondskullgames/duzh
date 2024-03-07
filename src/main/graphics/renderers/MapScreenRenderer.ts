@@ -13,7 +13,7 @@ const backgroundColor = Color.fromHex('#404040');
 @injectable()
 export default class MapScreenRenderer implements Renderer {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session
   ) {}
 

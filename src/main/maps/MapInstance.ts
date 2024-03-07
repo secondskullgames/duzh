@@ -10,6 +10,7 @@ import type { Figure } from '@main/sounds/types';
 import type Rect from '../geometry/Rect';
 
 type Props = Readonly<{
+  id: string;
   width: number;
   height: number;
   levelNumber: number;
@@ -19,6 +20,7 @@ type Props = Readonly<{
 }>;
 
 export default class MapInstance {
+  readonly id: string;
   readonly width: number;
   readonly height: number;
   readonly levelNumber: number;
@@ -35,6 +37,7 @@ export default class MapInstance {
   private readonly fogParams: FogOfWarParams;
 
   constructor(props: Props) {
+    this.id = props.id;
     const { width, height } = props;
     this.width = width;
     this.height = height;

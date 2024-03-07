@@ -14,16 +14,14 @@ export interface MapController {
   loadDebugMap: () => Promise<void>;
 }
 
-export const MapController = {
-  SYMBOL: Symbol('MapController')
-};
+export const MapController = Symbol('MapController');
 
 @injectable()
 export class MapControllerImpl implements MapController {
   constructor(
-    @inject(Session.SYMBOL)
+    @inject(Session)
     private readonly session: Session,
-    @inject(GameState.SYMBOL)
+    @inject(GameState)
     private readonly state: GameState,
     @inject(MapFactory)
     private readonly mapFactory: MapFactory,

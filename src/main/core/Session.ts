@@ -34,12 +34,9 @@ export interface Session {
   setQueuedAbility: (ability: UnitAbility | null) => void;
 }
 
-export namespace Session {
-  export const SYMBOL = Symbol('Session');
-  export const create = (): Session => new SessionImpl();
-}
+export const Session = Symbol('Session');
 
-class SessionImpl implements Session {
+export class SessionImpl implements Session {
   private readonly ticker: Ticker;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
