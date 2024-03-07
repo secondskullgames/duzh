@@ -36,7 +36,13 @@
         "number": "1"
       }]
     },
-    "burned": {
+    "stunned": {
+      "frames": [{
+        "activity": "standing",
+        "number": "1"
+      }]
+    },
+    "burning": {
       "frames": [{
         "activity": "standing",
         "number": "1"

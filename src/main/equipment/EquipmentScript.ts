@@ -6,7 +6,11 @@ import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 
-export type EquipmentScriptName = 'bolt_sword' | 'bow_of_frost';
+export type EquipmentScriptName =
+  | 'bolt_sword'
+  | 'bow_of_fire'
+  | 'bow_of_frost'
+  | 'fire_sword';
 
 type EquipmentProc = (
   equipment: Equipment,
@@ -59,10 +63,48 @@ const BowOfFrostScript: EquipmentScript = {
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
-      targetUnit.setFrozen(2);
+      targetUnit.setFrozen(3);
       session
         .getTicker()
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+    }
+  }
+};
+
+const BowOfFireScript: EquipmentScript = {
+  afterRangedAttack: async (
+    equipment: Equipment,
+    target: Coordinates,
+    _: GameState,
+    session: Session
+  ) => {
+    const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
+    const targetUnit = map.getUnit(target);
+    if (targetUnit) {
+      targetUnit.setBurning(5);
+      session
+        .getTicker()
+        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+    }
+  }
+};
+
+const FireSwordScript: EquipmentScript = {
+  afterAttack: async (
+    equipment: Equipment,
+    target: Coordinates,
+    _: GameState,
+    session: Session
+  ) => {
+    const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
+    const targetUnit = map.getUnit(target);
+    if (targetUnit) {
+      targetUnit.setBurning(5);
+      session
+        .getTicker()
+        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
     }
   }
 };
@@ -72,8 +114,12 @@ export namespace EquipmentScript {
     switch (name) {
       case 'bolt_sword':
         return BoltSwordScript;
+      case 'bow_of_fire':
+        return BowOfFireScript;
       case 'bow_of_frost':
         return BowOfFrostScript;
+      case 'fire_sword':
+        return FireSwordScript;
       default:
         throw new Error(`Unknown equipment script ${name}`);
     }

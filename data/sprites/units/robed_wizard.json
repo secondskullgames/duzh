@@ -34,7 +34,14 @@
         "number": "1"
       }]
     },
-    "burned": {
+    "stunned": {
+      "pattern": "${sprite}_${activity}_SE_${number}",
+      "frames": [{
+        "activity": "stunned",
+        "number": "1"
+      }]
+    },
+    "burning": {
       "pattern": "${sprite}_${direction}_${number}",
       "frames": [{
         "activity": "standing",

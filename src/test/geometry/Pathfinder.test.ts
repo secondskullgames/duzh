@@ -1,5 +1,6 @@
 import Coordinates from '@main/geometry/Coordinates';
 import { PathFinder_3rdParty } from '@main/geometry/PathFinder_3rdParty';
+import { Heuristic } from '@main/geometry/Pathfinder';
 
 describe('Pathfinder', () => {
   describe('example scenario', () => {
@@ -19,7 +20,7 @@ describe('Pathfinder', () => {
     }
 
     test('new implementation', () => {
-      const pathfinder = new PathFinder_3rdParty();
+      const pathfinder = new PathFinder_3rdParty(Heuristic.MANHATTAN);
       const path = pathfinder.findPath(start, goal, tiles);
       expect(path.length >= 2).toBe(true);
       expect(path[0]).toEqual(start);

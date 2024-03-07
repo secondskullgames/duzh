@@ -8,6 +8,7 @@ import Activity from '../entities/units/Activity';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { sleep } from '@main/utils/promises';
+import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 
 export const floorFire = async (
   unit: Unit,
@@ -26,10 +27,15 @@ export const floorFire = async (
 
   for (let i = 0; i < adjacentUnits.length; i++) {
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-
     for (let j = 0; j < adjacentUnits.length; j++) {
-      const activity = j === i ? Activity.BURNED : Activity.STANDING;
-      adjacentUnits[j].setActivity(activity, 1, unit.getDirection());
+      adjacentUnits[j].setActivity(Activity.STANDING, 1, unit.getDirection());
+      if (j === i) {
+        adjacentUnits[j].getEffects().addEffect(UnitEffect.DAMAGED, 1);
+        adjacentUnits[j].getEffects().addEffect(UnitEffect.BURNING, 1);
+      } else {
+        adjacentUnits[j].getEffects().removeEffect(UnitEffect.DAMAGED);
+        adjacentUnits[j].getEffects().removeEffect(UnitEffect.BURNING);
+      }
     }
 
     if (i < adjacentUnits.length - 1) {
@@ -40,6 +46,8 @@ export const floorFire = async (
   unit.setActivity(Activity.STANDING, 1, unit.getDirection());
   for (let i = 0; i < adjacentUnits.length; i++) {
     adjacentUnits[i].setActivity(Activity.STANDING, 1, unit.getDirection());
+    adjacentUnits[i].getEffects().removeEffect(UnitEffect.DAMAGED);
+    adjacentUnits[i].getEffects().removeEffect(UnitEffect.BURNING);
   }
 
   for (const adjacentUnit of adjacentUnits) {

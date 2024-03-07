@@ -13,7 +13,7 @@ export class DoorSprite extends DynamicSprite<Door> {
     super({ offsets, imageMap });
   }
 
-  protected getAnimationKey = (target: Door): string => {
+  protected getFrameKey = (target: Door): string => {
     const direction = target.getDirection().toLowerCase();
     const state = target.getState().toLowerCase();
     return `${direction}_${state}`;

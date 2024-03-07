@@ -8,15 +8,15 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
-import Direction from '../../geometry/Direction';
-import Colors from '../Colors';
 import { Image } from '../images/Image';
-import { ImageEffect } from '../images/ImageEffect';
-import PaletteSwaps from '../PaletteSwaps';
-import Unit from '../../entities/units/Unit';
-import ImageFactory from '../images/ImageFactory';
 import ModelLoader from '../../utils/ModelLoader';
+import ImageFactory from '@main/graphics/images/ImageFactory';
+import PaletteSwaps from '@main/graphics/PaletteSwaps';
+import Colors from '@main/graphics/Colors';
+import Unit from '@main/entities/units/Unit';
+import Direction from '@main/geometry/Direction';
 import { fillTemplate } from '@main/utils/templates';
+import { ImageEffect } from '@main/graphics/images/ImageEffect';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
 
@@ -215,8 +215,8 @@ export default class SpriteFactory {
             case 'damaged':
               effects.push(ImageEffect.DAMAGED);
               break;
-            case 'burned':
-              effects.push(ImageEffect.BURNED);
+            case 'burning':
+              effects.push(ImageEffect.BURNING);
               break;
             case 'frozen':
               effects.push(ImageEffect.FROZEN);

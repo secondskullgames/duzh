@@ -14,6 +14,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 
 const manaCost = 5;
 
@@ -115,11 +116,12 @@ const playArrowAnimation = async (
 
   // last frames
   if (target) {
-    target.setActivity(Activity.DAMAGED, 1, target.getDirection());
+    target.getEffects().addEffect(UnitEffect.DAMAGED, 1);
     await sleep(100);
   }
   source.setActivity(Activity.STANDING, 1, source.getDirection());
   if (target) {
     target.setActivity(Activity.STANDING, 1, target.getDirection());
+    target.getEffects().removeEffect(UnitEffect.DAMAGED);
   }
 };

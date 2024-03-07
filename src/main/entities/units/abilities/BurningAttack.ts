@@ -9,8 +9,9 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 10;
-const damageCoefficient = 1.5;
+const manaCost = 6;
+const damageCoefficient = 1;
+const burnDuration = 5;
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -22,12 +23,12 @@ const attack: Attack = {
     const attackerName = attacker.getName();
     const defenderName = defender.getName();
     const damage = result.damageTaken;
-    return `${attackerName} hit ${defenderName} with a heavy attack for ${damage} damage!`;
+    return `${attackerName} hit ${defenderName} with a burning attack for ${damage} damage!`;
   }
 };
 
-export const MinorHeavyAttack: UnitAbility = {
-  name: AbilityName.MINOR_HEAVY_ATTACK,
+export const BurningAttack: UnitAbility = {
+  name: AbilityName.BURNING_ATTACK,
   manaCost,
   icon: null,
   innate: false,
@@ -45,6 +46,7 @@ export const MinorHeavyAttack: UnitAbility = {
     if (targetUnit) {
       unit.spendMana(manaCost);
       await attackUnit(unit, targetUnit, attack, session, state);
+      targetUnit.setBurning(burnDuration);
     }
   }
 };

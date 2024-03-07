@@ -10,8 +10,8 @@
     "LIGHT_GRAY": "CYAN"
   },
   "script": "bolt_sword",
-  "rarity": 5,
-  "level": 5,
+  "rarity":  null,
+  "level": null,
   "stats": {
     "damage": 8
   },

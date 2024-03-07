@@ -2,7 +2,7 @@ import AbstractMapGenerator from './AbstractMapGenerator';
 import Coordinates from '../../geometry/Coordinates';
 import TileType from '../../schemas/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import { Pathfinder } from '@main/geometry/Pathfinder';
+import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@main/utils/arrays';
 import { randInt } from '@main/utils/random';
 
@@ -27,7 +27,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     const firstPoint = _randomEmptyTile(tiles);
     tiles[firstPoint.y][firstPoint.x] = 'NONE';
 
-    const pathfinder = Pathfinder.create();
+    const pathfinder = Pathfinder.create({ heuristic: Heuristic.CHEBYSHEV });
 
     let lastPoint = firstPoint;
     for (let i = 1; i < numPoints; i++) {

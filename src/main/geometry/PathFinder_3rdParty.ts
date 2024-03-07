@@ -1,9 +1,23 @@
 import Coordinates from './Coordinates';
-import { Pathfinder } from './Pathfinder';
+import { Heuristic, Pathfinder } from './Pathfinder';
 import * as PF from 'pathfinding';
 import { DiagonalMovement } from 'pathfinding';
 
 export class PathFinder_3rdParty implements Pathfinder {
+  private readonly heuristic: (dx: number, dy: number) => number;
+  constructor(heuristic: Heuristic) {
+    this.heuristic = (() => {
+      switch (heuristic) {
+        case Heuristic.MANHATTAN:
+          return PF.Heuristic.manhattan;
+        case Heuristic.EUCLIDEAN:
+          return PF.Heuristic.euclidean;
+        case Heuristic.CHEBYSHEV:
+          return PF.Heuristic.chebyshev;
+      }
+    })();
+  }
+
   findPath = (
     start: Coordinates,
     goal: Coordinates,
@@ -12,7 +26,7 @@ export class PathFinder_3rdParty implements Pathfinder {
     const grid = this._buildPfGrid(tiles);
     const finder = new PF.AStarFinder({
       diagonalMovement: DiagonalMovement.Never,
-      heuristic: PF.Heuristic.manhattan
+      heuristic: this.heuristic
     });
     const path = finder.findPath(start.x, start.y, goal.x, goal.y, grid);
     if (path.length === 0) {

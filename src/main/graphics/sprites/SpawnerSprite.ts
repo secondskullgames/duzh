@@ -13,7 +13,7 @@ export class SpawnerSprite extends DynamicSprite<Spawner> {
     super({ offsets, imageMap });
   }
 
-  protected getAnimationKey = (target: Spawner): string => {
+  protected getFrameKey = (target: Spawner): string => {
     return target.getState().toLowerCase();
   };
 }
