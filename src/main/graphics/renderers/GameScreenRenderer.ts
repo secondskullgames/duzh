@@ -4,7 +4,7 @@ import Coordinates from '../../geometry/Coordinates';
 import Unit from '../../entities/units/Unit';
 import { Color } from '../Color';
 import Colors from '../Colors';
-import { SCREEN_HEIGHT, SCREEN_WIDTH, TILE_HEIGHT, TILE_WIDTH } from '../constants';
+import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import PaletteSwaps from '../PaletteSwaps';
 import Sprite from '../sprites/Sprite';
 import { Pixel } from '../Pixel';
@@ -14,6 +14,7 @@ import { Session } from '@main/core/Session';
 import Entity from '@main/entities/Entity';
 import { Debug } from '@main/core/Debug';
 import { ObjectType } from '@main/entities/objects/GameObject';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -21,6 +22,8 @@ const SHADOW_FILENAME = 'shadow';
 @injectable()
 export default class GameScreenRenderer implements Renderer {
   constructor(
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig,
     @inject(Session)
     private readonly session: Session,
     @inject(ImageFactory)
@@ -43,7 +46,7 @@ export default class GameScreenRenderer implements Renderer {
   ) => {
     const pixel = this._gridToPixel(coordinates);
 
-    if (_isPixelOnScreen(pixel)) {
+    if (this._isPixelOnScreen(pixel)) {
       const sprite = element.getSprite();
       if (sprite) {
         this._drawSprite(sprite, pixel, graphics);
@@ -66,8 +69,8 @@ export default class GameScreenRenderer implements Renderer {
     const playerUnit = this.session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: (x - playerX) * TILE_WIDTH + (SCREEN_WIDTH - TILE_WIDTH) / 2,
-      y: (y - playerY) * TILE_HEIGHT + (SCREEN_HEIGHT - TILE_HEIGHT) / 2
+      x: (x - playerX) * TILE_WIDTH + (this.gameConfig.screenWidth - TILE_WIDTH) / 2,
+      y: (y - playerY) * TILE_HEIGHT + (this.gameConfig.screenHeight - TILE_HEIGHT) / 2
     };
   };
 
@@ -183,13 +186,13 @@ export default class GameScreenRenderer implements Renderer {
     });
     graphics.drawImage(image, pixel);
   };
-}
 
-/**
- * Allow for a one-tile buffer in each direction
- */
-const _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
-  x >= -TILE_WIDTH &&
-  x <= SCREEN_WIDTH + TILE_WIDTH &&
-  y >= -TILE_HEIGHT &&
-  y <= SCREEN_HEIGHT + TILE_HEIGHT;
+  /**
+   * Allow for a one-tile buffer in each direction
+   */
+  private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
+    x >= -TILE_WIDTH &&
+    x <= this.gameConfig.screenWidth + TILE_WIDTH &&
+    y >= -TILE_HEIGHT &&
+    y <= this.gameConfig.screenHeight + TILE_HEIGHT;
+}

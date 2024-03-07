@@ -16,21 +16,16 @@ import { GameScreen } from '@main/core/GameScreen';
 import { floorFire } from '@main/actions/floorFire';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { AssetLoader } from '@main/assets/AssetLoader';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
 @injectable()
 export default class ItemFactory {
   constructor(
-    @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
-    @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader,
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
+    private readonly modelLoader: ModelLoader
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {

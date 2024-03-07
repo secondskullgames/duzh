@@ -5,6 +5,7 @@ import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../entities/units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@main/utils/preconditions';
+import { injectable } from 'inversify';
 import type { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 
 export interface Session {
@@ -36,6 +37,7 @@ export interface Session {
 
 export const Session = Symbol('Session');
 
+@injectable()
 export class SessionImpl implements Session {
   private readonly ticker: Ticker;
   private screen: GameScreen;
