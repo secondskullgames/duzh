@@ -6,24 +6,20 @@ import MusicController from '../sounds/MusicController';
 import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
 import { clear } from '@main/utils/arrays';
-import { MapSupplier } from '@main/maps/MapSupplier';
 import { checkArgument } from '@main/utils/preconditions';
 import ModelLoader from '@main/utils/ModelLoader';
+import { GameConfig } from '@main/core/GameConfig';
+import MapFactory from '@main/maps/MapFactory';
 import { inject, injectable } from 'inversify';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
  */
 export interface GameState {
-  addMaps: (suppliers: MapSupplier[]) => void;
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
-  hasNextMap: (currentIndex: number) => boolean;
-  /**
-   * TODO wrong place to put this method
-   */
-  loadMap: (mapIndex: number) => Promise<MapInstance>;
+  isMapLoaded: (index: number) => boolean;
 
   // TODO trying to find ways to remove the remainder
 
@@ -34,6 +30,9 @@ export interface GameState {
   getSoundPlayer: () => SoundPlayer;
   getMusicController: () => MusicController;
   getModelLoader: () => ModelLoader;
+
+  setMap: (mapIndex: number, map: MapInstance) => void;
+  getMap: (mapIndex: number) => MapInstance;
 }
 
 export const GameState = Symbol('GameState');
@@ -43,7 +42,6 @@ export const GameState = Symbol('GameState');
  */
 @injectable()
 export class GameStateImpl implements GameState {
-  private readonly mapSuppliers: MapSupplier[];
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
   private readonly soundPlayer: SoundPlayer;
@@ -62,15 +60,10 @@ export class GameStateImpl implements GameState {
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader
   ) {
-    this.mapSuppliers = [];
     this.maps = [];
     this.generatedEquipmentIds = [];
     this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
   }
-
-  addMaps = (suppliers: MapSupplier[]) => {
-    this.mapSuppliers.push(...suppliers);
-  };
 
   getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;
 
@@ -79,27 +72,20 @@ export class GameStateImpl implements GameState {
   };
 
   reset = () => {
-    clear(this.mapSuppliers);
     Object.keys(this.maps).forEach(key => {
       delete this.maps[parseInt(key)];
     });
     clear(this.generatedEquipmentIds);
   };
 
-  hasNextMap = (currentIndex: number) => currentIndex < this.mapSuppliers.length - 1;
-
-  loadMap = async (mapIndex: number): Promise<MapInstance> => {
-    checkArgument(
-      mapIndex >= 0 && mapIndex < this.mapSuppliers.length,
-      'Invalid map index: ' + mapIndex
-    );
-    if (!this.maps[mapIndex]) {
-      const mapSupplier = this.mapSuppliers[mapIndex];
-      const map = await mapSupplier();
-      this.maps[mapIndex] = map;
-    }
-    return this.maps[mapIndex];
+  isMapLoaded = (index: number): boolean => {
+    return this.maps[index] !== undefined;
   };
+
+  setMap = (mapIndex: number, map: MapInstance) => {
+    this.maps[mapIndex] = map;
+  };
+  getMap = (mapIndex: number) => this.maps[mapIndex];
 
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;

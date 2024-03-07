@@ -1,6 +1,5 @@
 import MapInstance from './MapInstance';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
-import { MapSupplier } from './MapSupplier';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import MapSpec from '../schemas/MapSpec';
 import { injectable } from 'inversify';
@@ -21,15 +20,5 @@ export default class MapFactory {
         return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id);
       }
     }
-  };
-
-  loadMapSuppliers = async (mapSpecs: MapSpec[]): Promise<MapSupplier[]> => {
-    const mapSuppliers: MapSupplier[] = [];
-    for (const spec of mapSpecs) {
-      mapSuppliers.push(async () => {
-        return this.loadMap(spec);
-      });
-    }
-    return mapSuppliers;
   };
 }

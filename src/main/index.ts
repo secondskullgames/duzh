@@ -7,7 +7,6 @@ import { showSplashScreen } from './actions/showSplashScreen';
 import { FontBundle, FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session, SessionImpl } from './core/Session';
-import MapFactory from './maps/MapFactory';
 import MapSpec from './schemas/MapSpec';
 import { createCanvas } from './utils/dom';
 import { checkNotNull } from './utils/preconditions';
@@ -42,10 +41,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const mapFactory = container.get(MapFactory);
   const state = await container.getAsync<GameState>(GameState);
-  const maps = await mapFactory.loadMapSuppliers(gameConfig.mapSpecs);
-  state.addMaps(maps);
   const session = await container.getAsync<Session>(Session);
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
