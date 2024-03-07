@@ -4,13 +4,13 @@
   "type": "ANIMAL",
   "sprite": "beetle",
   "paletteSwaps": {},
-  "life": 25,
+  "life": 30,
   "mana": 4,
   "strength": 8,
   "dexterity": 0,
   "aiParameters": {
-    "speed": 0.8,
-    "visionRange": 8,
+    "speed": 0.7,
+    "visionRange": 6,
     "aggressiveness": 0.8,
     "fleeThreshold": 0
   },

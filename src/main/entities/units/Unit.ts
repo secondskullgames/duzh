@@ -30,7 +30,7 @@ import { dealDamage } from '@main/actions/dealDamage';
  * Regenerate this raw amount of health each turn
  * (can be decimal)
  */
-const LIFE_PER_TURN = 0.75;
+const LIFE_PER_TURN = 0.5;
 /**
  * Regenerate this raw amount of mana each turn
  * (can be decimal)

@@ -13,6 +13,7 @@ import ImageFactory from '../images/ImageFactory';
 import { Session } from '@main/core/Session';
 import Entity from '@main/entities/Entity';
 import { Debug } from '@main/core/Debug';
+import { ObjectType } from '@main/entities/objects/GameObject';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -159,7 +160,9 @@ export default class GameScreenRenderer implements Renderer {
     }
     if (
       objects.find(
-        object => object.getObjectType() === 'item' || object.getObjectType() === 'block'
+        object =>
+          object.getObjectType() === ObjectType.ITEM ||
+          object.getObjectType() === ObjectType.BLOCK
       )
     ) {
       return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);

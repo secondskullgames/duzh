@@ -22,6 +22,7 @@ const allowedSpecialAbilityNames = [
   AbilityName.BURNING_ATTACK,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
+  AbilityName.MINOR_KNOCKBACK,
   AbilityName.MINOR_STUN_ATTACK,
   AbilityName.PIERCE
 ];

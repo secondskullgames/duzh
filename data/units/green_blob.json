@@ -4,18 +4,18 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 40,
+  "life": 50,
   "mana": 10,
-  "strength": 6,
+  "strength": 8,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.7,
-    "visionRange": 8,
+    "visionRange": 6,
     "aggressiveness": 0.6,
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 3,
+    "minLevel": 4,
     "maxLevel": 99,
     "rarity": 3
   },
