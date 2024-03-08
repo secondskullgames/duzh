@@ -25,7 +25,11 @@ export default abstract class DynamicSprite<T> implements Sprite {
   getImage = (): Image | null => {
     const target = checkNotNull(this.target);
     const frameKey = this.getFrameKey(target);
-    return this.imageMap[frameKey] ?? null;
+    const image = this.imageMap[frameKey];
+    if (!image) {
+      console.debug(`No image found for key: ${frameKey}`);
+    }
+    return image ?? null;
   };
 
   /**

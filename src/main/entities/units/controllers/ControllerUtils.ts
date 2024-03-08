@@ -52,24 +52,6 @@ export const chooseUnitController = (unitClass: string): UnitController => {
   }
 };
 
-export const canShoot = (
-  unit: Unit,
-  targetUnit: Unit,
-  abilityName: AbilityName
-): boolean => {
-  const ability = UnitAbility.abilityForName(abilityName);
-  return (
-    unit.getEquipment().getBySlot('RANGED_WEAPON') !== null &&
-    unit.getMana() >= ability.manaCost &&
-    isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-    hasUnblockedStraightLineBetween(
-      unit.getMap(),
-      unit.getCoordinates(),
-      targetUnit.getCoordinates()
-    )
-  );
-};
-
 export const canDash = (
   unit: Unit,
   coordinates: Coordinates | undefined,

@@ -71,3 +71,5 @@ export const head = <T>(array: T[], count: number): T[] => array.slice(0, count)
 export const tail = <T>(array: T[], count: number): T[] => array.slice(-count);
 
 export const sum = (array: number[]) => array.reduce((a, b) => a + b);
+
+export const isEmpty = (array: unknown[]): boolean => array.length === 0;

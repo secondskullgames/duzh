@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "grunt"
+    "BLUE": "dragon_shooter"
   },
   "itemColors": {
     "GREEN": "floor_fire_scroll"
