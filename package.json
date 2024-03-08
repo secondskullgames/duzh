@@ -21,7 +21,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "electron": "cd electron && npm i && npm run make && electron .",
+    "electron": "cd electron && npm i && npm run make && npx electron .",
     "lint": "eslint '{src,scripts}/**/*.ts' --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'",
     "lint:fix": "eslint '{src,scripts}/**/*.ts' --fix --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'"
   },
