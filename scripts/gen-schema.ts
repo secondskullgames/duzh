@@ -9,12 +9,12 @@ import { createHash } from 'crypto';
 
 /* eslint-disable no-console */
 
-const schemaDir = 'src/main/schemas';
+const modelsDir = 'src/main/models';
 const outDir = 'src/gen-schema';
 const hashFilename = `${outDir}/HASH`;
 
 const generateSchemas = async () => {
-  const filenames = (await glob(`${schemaDir}/**/*.ts`)).sort();
+  const filenames = (await glob(`${modelsDir}/**/*.ts`)).sort();
   const updated = await checkForFileUpdates(filenames);
   if (!updated) {
     return;
