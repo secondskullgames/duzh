@@ -12,8 +12,8 @@ A graphical Roguelike in the browser written in Typescript.
   - `main/` - Main game code
   - `models/` - Typescript definitions for game data
   - `test/` - Unit tests
+- `build/` - Compiled Typescript
 - `data/` - Game data in JSON format
-- `dist/` - Compiled Typescript
 - `electron/` - Electron-specific code
 - `public/` - Static files for the game
 - `scripts/` - Utility scripts, including for json-schema generation
