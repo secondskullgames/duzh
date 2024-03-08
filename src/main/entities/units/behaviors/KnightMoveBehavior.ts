@@ -5,7 +5,6 @@ import { isBlocked } from '@main/maps/MapUtils';
 import { isEmpty } from '@lib/utils/arrays';
 import { randChoice } from '@lib/utils/random';
 import { SpellOrder } from '@main/entities/units/orders/SpellOrder';
-import { Teleport } from '@main/entities/units/abilities/Teleport';
 import { UnitBehavior } from '@main/entities/units/behaviors/UnitBehavior';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

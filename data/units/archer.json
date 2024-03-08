@@ -16,7 +16,7 @@
   },
   "strength": 2,
   "dexterity": 2,
-  "life": 30,
+  "life": 40,
   "mana": 5,
   "equipment": [
     "bronze_sword",

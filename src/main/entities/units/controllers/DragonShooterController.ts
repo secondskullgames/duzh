@@ -14,7 +14,7 @@ import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/entities/units/behaviors/KnightMoveBehavior';
 
 const teleportChance = 0.25;
-const shootChance = 0.75;
+const shootChance = 0.9;
 
 export default class DragonShooterController implements UnitController {
   /**

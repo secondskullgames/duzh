@@ -6,13 +6,18 @@
   "paletteSwaps": {},
   "strength": 0,
   "dexterity": 15,
-  "life": 20,
-  "mana": 20,
+  "life": 50,
+  "mana": 10,
   "abilities": ["SHOOT_TURRET_ARROW", "TELEPORT"],
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 4,
+    "maxLevel": 99,
+    "rarity": 4
   }
 }
