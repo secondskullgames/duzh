@@ -8,6 +8,9 @@ on:
 
 env:
   NODE_VERSION: 16
+  
+permissions:
+  write-all
 
 jobs:
   ##########
