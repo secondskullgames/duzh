@@ -1,5 +1,5 @@
 import Equipment from './Equipment';
-import EquipmentSlot from '../../schemas/EquipmentSlot';
+import EquipmentSlot from '../../models/EquipmentSlot';
 
 /**
  * Represents a unit's equipment, mapped by slot.

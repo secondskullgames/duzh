@@ -6,7 +6,7 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
-import TileType from '../../../../schemas/TileType';
+import TileType from '../../../../models/TileType';
 import TileFactory from '../../../tiles/TileFactory';
 
 type Props = Readonly<{

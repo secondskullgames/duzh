@@ -3,7 +3,7 @@ import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import EquipmentSlot from '../../../schemas/EquipmentSlot';
+import EquipmentSlot from '../../../models/EquipmentSlot';
 import { FontName } from '../Fonts';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';

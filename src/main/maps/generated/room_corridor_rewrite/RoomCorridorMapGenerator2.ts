@@ -3,7 +3,7 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
-import TileType from '../../../../schemas/TileType';
+import TileType from '../../../../models/TileType';
 import TileFactory from '../../../tiles/TileFactory';
 import Rect from '@lib/geometry/Rect';
 

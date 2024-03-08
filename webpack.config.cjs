@@ -12,7 +12,7 @@ module.exports = {
       '@lib': path.resolve('src/lib/'),
       '@main': path.resolve('src/main/'),
       '@png': path.resolve('png/'),
-      '@schemas': path.resolve('schemas/'),
+      '@models': path.resolve('models/'),
     }
   },
   output: {

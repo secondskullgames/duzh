@@ -1,7 +1,7 @@
 import { getUnoccupiedLocations } from './MapGenerationUtils';
-import GeneratedMapModel from '../../../schemas/GeneratedMapModel';
+import GeneratedMapModel from '../../../models/GeneratedMapModel';
 import TileFactory from '../../tiles/TileFactory';
-import TileType from '../../../schemas/TileType';
+import TileType from '../../../models/TileType';
 import MapInstance from '../MapInstance';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';

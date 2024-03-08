@@ -3,6 +3,7 @@ import Ajv, { AnySchema } from 'ajv';
 import { test } from '@jest/globals';
 import * as fs from 'fs/promises';
 
+// TODO replace with glob
 const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   const allFilenames: string[] = [];
   const filenames = await fs.readdir(baseDir);
@@ -64,5 +65,3 @@ test('test validity of JSON data', async () => {
   await validate('TileSetModel', await getFilenamesRecursive('data/tilesets'));
   await validate('ConsumableItemModel', await getFilenamesRecursive('data/items'));
 });
-
-export {};

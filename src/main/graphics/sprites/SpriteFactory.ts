@@ -18,7 +18,7 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { injectable } from 'inversify';
-import type DynamicSpriteModel from '../../../schemas/DynamicSpriteModel';
+import type DynamicSpriteModel from '../../../models/DynamicSpriteModel';
 
 @injectable()
 export default class SpriteFactory {

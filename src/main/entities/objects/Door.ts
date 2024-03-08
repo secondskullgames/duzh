@@ -1,6 +1,6 @@
 import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
-import DoorDirection from '../../../schemas/DoorDirection';
+import DoorDirection from '../../../models/DoorDirection';
 import MapInstance from '../../maps/MapInstance';
 import Coordinates from '@lib/geometry/Coordinates';
 

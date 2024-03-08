@@ -1,6 +1,6 @@
 import TileSet from './TileSet';
 import Tile from './Tile';
-import TileType from '../../schemas/TileType';
+import TileType from '../../models/TileType';
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';

@@ -1,4 +1,4 @@
-import TileType from '../../../schemas/TileType';
+import TileType from '../../../models/TileType';
 import Tile from '../../tiles/Tile';
 import Coordinates from '@lib/geometry/Coordinates';
 import { shuffle } from '@lib/utils/random';

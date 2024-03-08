@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import TileType from '../../schemas/TileType';
+import TileType from '../../models/TileType';
 import Entity from '../entities/Entity';
 import MapInstance from '../maps/MapInstance';
 import Coordinates from '@lib/geometry/Coordinates';

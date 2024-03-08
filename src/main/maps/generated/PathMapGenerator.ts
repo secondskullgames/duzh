@@ -1,5 +1,5 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import TileType from '../../../schemas/TileType';
+import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import Coordinates from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';

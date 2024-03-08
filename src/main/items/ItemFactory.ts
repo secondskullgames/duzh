@@ -4,7 +4,7 @@ import Sounds from '../sounds/Sounds';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
-import ConsumableItemModel from '../../schemas/ConsumableItemModel';
+import ConsumableItemModel from '../../models/ConsumableItemModel';
 import MapInstance from '../maps/MapInstance';
 import Coordinates from '@lib/geometry/Coordinates';
 import PaletteSwaps from '@lib/graphics/PaletteSwaps';
