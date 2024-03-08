@@ -1,11 +1,11 @@
 import { Renderer } from './Renderer';
-import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '../Fonts';
-import { Pixel } from '@lib/geometry/Pixel';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import Unit from '../../entities/units/Unit';
+import { Pixel } from '@lib/geometry/Pixel';
+import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { GameConfig } from '@main/core/GameConfig';
