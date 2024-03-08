@@ -1,4 +1,4 @@
-import { RGB } from './RGB';
+import { RGB } from '@lib/graphics/RGB';
 
 export type Color = Readonly<{
   hex: string;

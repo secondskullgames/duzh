@@ -4,21 +4,21 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import MapInstance from '../MapInstance';
-import PredefinedMapModel from '../../schemas/PredefinedMapModel';
-import TileType from '../../schemas/TileType';
+import PredefinedMapModel from '../../../models/PredefinedMapModel';
+import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
-import Coordinates from '../../geometry/Coordinates';
-import ImageFactory from '../../graphics/images/ImageFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import ModelLoader from '../../utils/ModelLoader';
 import MusicController from '../../sounds/MusicController';
-import { Image } from '@main/graphics/images/Image';
-import { Color } from '@main/graphics/Color';
+import ModelLoader from '@main/assets/ModelLoader';
+import Coordinates from '@lib/geometry/Coordinates';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
+import { Image } from '@lib/graphics/images/Image';
+import { Color } from '@lib/graphics/Color';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { injectable } from 'inversify';
 
 @injectable()

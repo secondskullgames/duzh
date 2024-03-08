@@ -4,9 +4,11 @@
     "alwaysStrict": true,
     "baseUrl": ".",
     "paths": {
-      "@main/*": ["src/main/*"],
       "@data/*": ["data/*"],
-      "@png/*": ["png/*"]
+      "@main/*": ["src/main/*"],
+      "@lib/*": ["src/lib/*"],
+      "@png/*": ["png/*"],
+      "@schemas/*": ["src/models/*"]
     },
     "lib": ["dom", "esnext"],
     "target": "esnext",

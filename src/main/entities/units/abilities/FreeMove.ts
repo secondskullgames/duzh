@@ -1,13 +1,13 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
+import Coordinates from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
-import { pointAt } from '@main/geometry/CoordinatesUtils';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 
 const manaCost = 4;
 

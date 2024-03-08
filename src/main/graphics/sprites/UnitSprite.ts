@@ -1,11 +1,11 @@
 import DynamicSprite from './DynamicSprite';
-import Offsets from '../../geometry/Offsets';
-import { Image } from '../images/Image';
 import Activity from '../../entities/units/Activity';
 import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
+import Offsets from '@lib/geometry/Offsets';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
-import { maxBy } from '@main/utils/arrays';
+import { maxBy } from '@lib/utils/arrays';
+import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{
   offsets: Offsets;

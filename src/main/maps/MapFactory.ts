@@ -1,7 +1,7 @@
 import MapInstance from './MapInstance';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
-import MapSpec from '../schemas/MapSpec';
+import MapSpec from '../../models/MapSpec';
 import { injectable } from 'inversify';
 
 @injectable()

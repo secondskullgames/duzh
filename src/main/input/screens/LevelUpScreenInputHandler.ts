@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand } from '../inputTypes';
+import { type KeyCommand } from '@lib/input/inputTypes';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';

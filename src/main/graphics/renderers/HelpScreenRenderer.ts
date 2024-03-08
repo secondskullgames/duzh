@@ -3,11 +3,11 @@ import { LINE_HEIGHT } from '../constants';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
-import { Graphics } from '../Graphics';
-import { Pixel } from '../Pixel';
-import { Color } from '../Color';
 import Colors from '../Colors';
+import { Graphics } from '@lib/graphics/Graphics';
+import { Pixel } from '@lib/geometry/Pixel';
 import { GameConfig } from '@main/core/GameConfig';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 @injectable()

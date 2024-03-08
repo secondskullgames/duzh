@@ -1,13 +1,13 @@
-import Coordinates from '../geometry/Coordinates';
 import Tile from '../tiles/Tile';
 import Unit from '../entities/units/Unit';
 import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
-import MultiGrid from '../types/MultiGrid';
-import Grid from '../types/Grid';
-import { FogOfWarParams } from '@main/schemas/FogOfWarParams';
-import type { Figure } from '@main/sounds/types';
-import type Rect from '../geometry/Rect';
+import { FogOfWarParams } from '../../models/FogOfWarParams';
+import MultiGrid from '@lib/geometry/MultiGrid';
+import Grid from '@lib/geometry/Grid';
+import Coordinates from '@lib/geometry/Coordinates';
+import type { Figure } from '@lib/audio/types';
+import type Rect from '@lib/geometry/Rect';
 
 type Props = Readonly<{
   id: string;

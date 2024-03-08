@@ -1,5 +1,5 @@
 import Sprite from '../graphics/sprites/Sprite';
-import TileType from '../schemas/TileType';
+import TileType from '../../models/TileType';
 
 type TileSet = Readonly<{
   [key in TileType]?: (Sprite | null)[];

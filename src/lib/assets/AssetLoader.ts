@@ -25,7 +25,7 @@ export class AssetLoaderImpl implements AssetLoader {
       await import(
         /* webpackInclude: /\.schema\.json$/ */
         /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "schemas" */
+        /* webpackChunkName: "gen-schema" */
         `/src/gen-schema/${filename}`
       )
     ).default;
@@ -36,7 +36,7 @@ export class AssetLoaderImpl implements AssetLoader {
       await import(
         /* webpackInclude: /\.json$/ */
         /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "models" */
+        /* webpackChunkName: "data" */
         `/data/${filename}`
       )
     ).default;
@@ -48,7 +48,7 @@ export class AssetLoaderImpl implements AssetLoader {
         await import(
           /* webpackInclude: /\.png$/ */
           /* webpackMode: "lazy-once" */
-          /* webpackChunkName: "images" */
+          /* webpackChunkName: "png" */
           `/png/${filename}`
         )
       ).default;

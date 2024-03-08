@@ -1,14 +1,14 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
 import Direction from '../../../geometry/Direction';
 import Activity from '../Activity';
-import { pointAt } from '@main/geometry/CoordinatesUtils';
+import Coordinates from '@lib/geometry/Coordinates';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
-import { sleep } from '@main/utils/promises';
+import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

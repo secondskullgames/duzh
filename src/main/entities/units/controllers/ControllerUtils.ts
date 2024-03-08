@@ -7,10 +7,10 @@ import Unit from '../Unit';
 import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
 import { UnitAbility } from '../abilities/UnitAbility';
-import Coordinates from '../../../geometry/Coordinates';
 import { Dash } from '../abilities/Dash';
-import { hypotenuse, isInStraightLine } from '@main/geometry/CoordinatesUtils';
-import { checkNotNull } from '@main/utils/preconditions';
+import Coordinates from '@lib/geometry/Coordinates';
+import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { hasUnblockedStraightLineBetween, isBlocked } from '@main/maps/MapUtils';
 
 export const canMove = (unit: Unit): boolean => {

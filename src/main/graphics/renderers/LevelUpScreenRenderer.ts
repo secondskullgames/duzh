@@ -1,16 +1,16 @@
 import { Renderer } from './Renderer';
-import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { Pixel } from '../Pixel';
-import { Color } from '../Color';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import ImageFactory from '../images/ImageFactory';
 import Unit from '../../entities/units/Unit';
+import { Pixel } from '@lib/geometry/Pixel';
+import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { GameConfig } from '@main/core/GameConfig';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';

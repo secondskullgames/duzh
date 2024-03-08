@@ -1,6 +1,6 @@
 import Section from './Section';
 import SplitDirection from './SplitDirection';
-import { randChoice, randInt } from '@main/utils/random';
+import { randChoice, randInt } from '@lib/utils/random';
 
 type Props = Readonly<{
   minRoomWidth: number;

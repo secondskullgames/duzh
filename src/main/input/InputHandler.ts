@@ -3,7 +3,7 @@ import { ScreenInputHandler } from './screens/ScreenInputHandler';
 import ScreenHandlers from './screens/ScreenHandlers';
 import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
-import type { KeyCommand } from './inputTypes';
+import type { KeyCommand } from '@lib/input/inputTypes';
 
 @injectable()
 export default class InputHandler {

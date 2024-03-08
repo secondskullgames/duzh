@@ -1,8 +1,8 @@
-import { Color } from './Color';
-import { Image } from './images/Image';
-import { Pixel } from './Pixel';
-import Rect from '../geometry/Rect';
-import { getCanvasContext, getOffscreenCanvasContext } from '@main/utils/dom';
+import { Pixel } from '@lib/geometry/Pixel';
+import Rect from '@lib/geometry/Rect';
+import { getCanvasContext, getOffscreenCanvasContext } from '@lib/utils/dom';
+import { Image } from '@lib/graphics/images/Image';
+import { Color } from '@lib/graphics/Color';
 
 export interface Graphics {
   clear: () => void;

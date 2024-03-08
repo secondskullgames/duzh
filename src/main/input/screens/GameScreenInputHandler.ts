@@ -1,13 +1,13 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
 import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
-import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '../inputTypes';
 import Sounds from '../../sounds/Sounds';
 import UnitOrder from '../../entities/units/orders/UnitOrder';
+import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '@lib/input/inputTypes';
 import { ShootArrow } from '@main/entities/units/abilities/ShootArrow';
 import { Strafe } from '@main/entities/units/abilities/Strafe';
 import { playTurn } from '@main/actions/playTurn';
-import { toggleFullScreen } from '@main/utils/dom';
+import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/entities/units/orders/AbilityOrder';
 import { AttackMoveOrder } from '@main/entities/units/orders/AttackMoveOrder';

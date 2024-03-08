@@ -1,6 +1,6 @@
-import { ImageCache } from '@main/graphics/images/ImageCache';
-import { Color } from '@main/graphics/Color';
-import { Image } from '@main/graphics/images/Image';
+import { ImageCache } from '@lib/graphics/images/ImageCache';
+import { Color } from '@lib/graphics/Color';
+import { Image } from '@lib/graphics/images/Image';
 
 test('caches and retrieves an image', () => {
   const cache = new ImageCache();

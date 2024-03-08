@@ -1,4 +1,4 @@
-import { checkState } from './preconditions';
+import { checkState } from '@lib/utils/preconditions';
 
 type KeyFunction<T> = (t: T) => number;
 

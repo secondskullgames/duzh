@@ -1,4 +1,4 @@
-import memoize from './memoize';
+import memoize from '@lib/utils/memoize';
 
 type TemplateParams = Readonly<{
   template: string;

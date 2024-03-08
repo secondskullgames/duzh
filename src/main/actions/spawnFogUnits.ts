@@ -1,10 +1,10 @@
 import MapInstance from '@main/maps/MapInstance';
 import { GameState } from '@main/core/GameState';
-import { checkNotNull } from '@main/utils/preconditions';
-import { randChance, randChoice } from '@main/utils/random';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { randChance, randChoice } from '@lib/utils/random';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
-import Coordinates from '@main/geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
 

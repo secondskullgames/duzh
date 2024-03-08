@@ -1,6 +1,6 @@
-import ImageFactory from './images/ImageFactory';
 import Colors from './Colors';
-import { createCanvas, getCanvasContext } from '@main/utils/dom';
+import { createCanvas, getCanvasContext } from '@lib/utils/dom';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { injectable } from 'inversify';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.

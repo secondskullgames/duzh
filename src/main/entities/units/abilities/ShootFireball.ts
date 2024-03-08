@@ -1,9 +1,9 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { shootFireball } from '@main/actions/shootFireball';
-import { pointAt } from '@main/geometry/CoordinatesUtils';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 

@@ -1,14 +1,14 @@
 import TileSet from './TileSet';
 import Tile from './Tile';
-import TileType from '../schemas/TileType';
+import TileType from '../../models/TileType';
 import Sprite from '../graphics/sprites/Sprite';
-import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Coordinates from '../geometry/Coordinates';
 import MapInstance from '../maps/MapInstance';
-import ModelLoader from '../utils/ModelLoader';
-import { checkNotNull } from '@main/utils/preconditions';
-import { randChoice } from '@main/utils/random';
+import ModelLoader from '@main/assets/ModelLoader';
+import Coordinates from '@lib/geometry/Coordinates';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { randChoice } from '@lib/utils/random';
 import { Feature } from '@main/utils/features';
 import { inject, injectable } from 'inversify';
 

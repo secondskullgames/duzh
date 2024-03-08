@@ -3,7 +3,7 @@ import { Session } from '@main/core/Session';
 import { doMapEvents } from '@main/actions/doMapEvents';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/entities/units/Unit';
-import { sortBy } from '@main/utils/arrays';
+import { sortBy } from '@lib/utils/arrays';
 import { inject, injectable } from 'inversify';
 
 export interface Engine {

@@ -1,8 +1,8 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import { NormalAttack } from '../abilities/NormalAttack';
 import Direction from '../../../geometry/Direction';
+import Coordinates from '@lib/geometry/Coordinates';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';

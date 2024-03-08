@@ -3,11 +3,11 @@ import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../geometry/Coordinates';
 import Activity from '../entities/units/Activity';
+import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { sleep } from '@main/utils/promises';
+import { sleep } from '@lib/utils/promises';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 
 export const floorFire = async (

@@ -1,5 +1,5 @@
 import { replaceAll } from './ImageUtils';
-import Colors from '../Colors';
+import Colors from '@main/graphics/Colors';
 
 export type ImageEffect = {
   name: string;

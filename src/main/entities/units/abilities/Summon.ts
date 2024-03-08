@@ -1,10 +1,10 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
-import { checkNotNull } from '@main/utils/preconditions';
+import Coordinates from '@lib/geometry/Coordinates';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 

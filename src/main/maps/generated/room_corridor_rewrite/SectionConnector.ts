@@ -1,10 +1,10 @@
 import Connection from './Connection';
 import Section from './Section';
-import Coordinates from '../../../geometry/Coordinates';
-import Rect from '../../../geometry/Rect';
-import { max, min } from '@main/utils/arrays';
-import { checkNotNull } from '@main/utils/preconditions';
-import { randInt } from '@main/utils/random';
+import Coordinates from '@lib/geometry/Coordinates';
+import Rect from '@lib/geometry/Rect';
+import { max, min } from '@lib/utils/arrays';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { randInt } from '@lib/utils/random';
 
 type Room = Rect & {
   exits: Coordinates[];

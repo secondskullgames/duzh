@@ -1,7 +1,7 @@
 export default {
   clearMocks: true,
   // collectCoverage: false,
-  collectCoverageFrom: ['src/main/**/*.ts'],
+  collectCoverageFrom: ['src/{lib,main,models}/**/*.ts'],
   // coverageDirectory: undefined,
   // coveragePathIgnorePatterns: [
   //   "/node_modules/"
@@ -40,9 +40,11 @@ export default {
   //   "node"
   // ],
   moduleNameMapper: {
+    '^@data/(.*)$': '<rootDir>/data/$1',
+    '^@lib/(.*)$': '<rootDir>/src/lib/$1',
     '^@main/(.*)$': '<rootDir>/src/main/$1',
-    '^@test/(.*)$': '<rootDir>/src/test/$1',
-    '^@data/(.*)$': '<rootDir>/data/$1'
+    '^@models/(.*)$': '<rootDir>/src/models/$1',
+    '^@test/(.*)$': '<rootDir>/src/test/$1'
   },
   // modulePathIgnorePatterns: [],
   // notify: false,

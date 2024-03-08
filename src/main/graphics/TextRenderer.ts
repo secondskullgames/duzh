@@ -1,11 +1,11 @@
-import { Color } from './Color';
 import Colors from './Colors';
-import { replaceColors } from './images/ImageUtils';
-import PaletteSwaps from './PaletteSwaps';
 import { FontBundle, FontInstance, FontName } from './Fonts';
-import { Image } from './images/Image';
-import { createCanvas, getCanvasContext } from '@main/utils/dom';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { createCanvas, getCanvasContext } from '@lib/utils/dom';
 import { GameConfig } from '@main/core/GameConfig';
+import { Image } from '@lib/graphics/images/Image';
+import { replaceColors } from '@lib/graphics/images/ImageUtils';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 @injectable()

@@ -1,4 +1,4 @@
-import Offsets from './Offsets';
+import Offsets from '@lib/geometry/Offsets';
 
 type Coordinates = Readonly<{
   x: number;

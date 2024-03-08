@@ -3,8 +3,8 @@ import { ImageCache } from './ImageCache';
 import { ImageEffect } from './ImageEffect';
 import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
-import PaletteSwaps from '../PaletteSwaps';
-import { Color } from '../Color';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 type Params = Readonly<{

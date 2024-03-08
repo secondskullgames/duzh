@@ -1,6 +1,6 @@
-import { Color } from './Color';
 import jsonColors from '@data/colors.json';
-import { checkNotNull } from '@main/utils/preconditions';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { Color } from '@lib/graphics/Color';
 
 export type ColorName = keyof typeof jsonColors;
 

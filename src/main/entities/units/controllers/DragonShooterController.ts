@@ -7,10 +7,10 @@ import Direction from '../../../geometry/Direction';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
 import MapInstance from '../../../maps/MapInstance';
-import { checkNotNull } from '@main/utils/preconditions';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { hypotenuse, isInStraightLine, pointAt } from '@main/geometry/CoordinatesUtils';
+import { hypotenuse, isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 
 export default class DragonShooterController implements UnitController {

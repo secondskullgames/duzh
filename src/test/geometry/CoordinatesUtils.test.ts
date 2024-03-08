@@ -4,7 +4,7 @@ import {
   isInStraightLine,
   manhattanDistance,
   pointAt
-} from '@main/geometry/CoordinatesUtils';
+} from '@lib/geometry/CoordinatesUtils';
 import Direction from '@main/geometry/Direction';
 
 describe('CoordinatesUtils', () => {

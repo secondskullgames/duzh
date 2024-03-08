@@ -1,8 +1,8 @@
 import Sprite from '../graphics/sprites/Sprite';
-import TileType from '../schemas/TileType';
+import TileType from '../../models/TileType';
 import Entity from '../entities/Entity';
-import Coordinates from '../geometry/Coordinates';
 import MapInstance from '../maps/MapInstance';
+import Coordinates from '@lib/geometry/Coordinates';
 import { EntityType } from '@main/entities/EntityType';
 
 type Props = Readonly<{

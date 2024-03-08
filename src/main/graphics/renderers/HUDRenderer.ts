@@ -1,20 +1,20 @@
 import { Renderer } from './Renderer';
-import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
-import PaletteSwaps from '../PaletteSwaps';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { Pixel } from '../Pixel';
-import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import ImageFactory from '../images/ImageFactory';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { Pixel } from '@lib/geometry/Pixel';
+import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/entities/units/Unit';
-import Rect from '@main/geometry/Rect';
+import Rect from '@lib/geometry/Rect';
 import { GameConfig } from '@main/core/GameConfig';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';

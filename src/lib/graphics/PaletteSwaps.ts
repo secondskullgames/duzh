@@ -1,5 +1,5 @@
-import { Color } from './Color';
-import Colors from './Colors';
+import Colors from '@main/graphics/Colors';
+import { Color } from '@lib/graphics/Color';
 
 export interface PaletteSwaps {
   entries: () => [Color, Color][];
