@@ -1,7 +1,7 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import { UnitAbility } from '../abilities/UnitAbility';
-import Coordinates from '../../../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 

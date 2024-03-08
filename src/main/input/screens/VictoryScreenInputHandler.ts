@@ -1,7 +1,7 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey } from '../inputTypes';
+import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
-import { toggleFullScreen } from '@main/utils/dom';
+import { toggleFullScreen } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

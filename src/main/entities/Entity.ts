@@ -1,5 +1,5 @@
 import { EntityType } from './EntityType';
-import Coordinates from '../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import Sprite from '../graphics/sprites/Sprite';
 import MapInstance from '../maps/MapInstance';
 import { GameState } from '@main/core/GameState';

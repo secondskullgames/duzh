@@ -1,4 +1,4 @@
-import { schemaNames } from '@main/utils/ModelLoader';
+import { schemaNames } from '@main/assets/ModelLoader';
 import Ajv, { AnySchema } from 'ajv';
 import { test } from '@jest/globals';
 import * as fs from 'fs/promises';

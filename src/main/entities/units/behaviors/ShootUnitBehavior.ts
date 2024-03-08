@@ -6,7 +6,7 @@ import { ShootArrow } from '../abilities/ShootArrow';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { canShoot } from '../controllers/ControllerUtils';
 import { AbilityName } from '../abilities/AbilityName';
-import { pointAt, manhattanDistance } from '@main/geometry/CoordinatesUtils';
+import { pointAt, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 

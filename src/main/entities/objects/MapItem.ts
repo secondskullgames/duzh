@@ -1,7 +1,7 @@
 import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import InventoryItem from '../../items/InventoryItem';
-import Coordinates from '../../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import MapInstance from '../../maps/MapInstance';
 
 type Props = Readonly<{

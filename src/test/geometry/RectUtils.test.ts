@@ -1,5 +1,5 @@
-import Rect from '@main/geometry/Rect';
-import { areAdjacent } from '@main/geometry/RectUtils';
+import Rect from '@lib/geometry/Rect';
+import { areAdjacent } from '@lib/geometry/RectUtils';
 import { expect, test } from '@jest/globals';
 
 test('areAdjacent', () => {

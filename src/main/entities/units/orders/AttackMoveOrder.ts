@@ -1,6 +1,6 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { NormalAttack } from '../abilities/NormalAttack';
 import Direction from '../../../geometry/Direction';
 import { walk } from '@main/actions/walk';

@@ -8,11 +8,11 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { canDash } from '../controllers/ControllerUtils';
-import { randChoice } from '@main/utils/random';
+import { randChoice } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { findPath } from '@main/maps/MapUtils';
-import { pointAt } from '@main/geometry/CoordinatesUtils';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 
 type Props = Readonly<{
   targetUnit: Unit;

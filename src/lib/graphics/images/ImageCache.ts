@@ -1,8 +1,8 @@
 import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
-import { Color } from '../Color';
-import PaletteSwaps from '../PaletteSwaps';
-import { comparing } from '@main/utils/arrays';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { comparing } from '@lib/utils/arrays';
+import { Color } from '@lib/graphics/Color';
 import { injectable } from 'inversify';
 
 type CacheKey = Readonly<{

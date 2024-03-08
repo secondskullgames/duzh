@@ -1,4 +1,4 @@
-import Coordinates from './Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from './Pathfinder';
 import * as PF from 'pathfinding';
 import { DiagonalMovement } from 'pathfinding';

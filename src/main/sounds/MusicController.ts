@@ -1,8 +1,8 @@
-import { transpose8vb } from './AudioUtils';
-import SoundPlayer from './SoundPlayer';
-import { Figure, Suite } from './types';
-import { randChoice } from '@main/utils/random';
-import { AssetLoader } from '@main/assets/AssetLoader';
+import { transpose8vb } from '@lib/audio/AudioUtils';
+import SoundPlayer from '@lib/audio/SoundPlayer';
+import { Figure, Suite } from '@lib/audio/types';
+import { randChoice } from '@lib/utils/random';
+import { AssetLoader } from '@lib/assets/AssetLoader';
 import { inject, injectable } from 'inversify';
 
 @injectable()

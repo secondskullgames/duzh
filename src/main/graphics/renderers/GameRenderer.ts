@@ -1,14 +1,12 @@
 import { Renderer } from './Renderer';
-import Coordinates from '../../geometry/Coordinates';
-import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
-import ImageFactory from '../images/ImageFactory';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { Graphics } from '../Graphics';
 import { FontName } from '../Fonts';
-import { createCanvas } from '@main/utils/dom';
+import { Graphics } from '@lib/graphics/Graphics';
+import Coordinates from '@lib/geometry/Coordinates';
+import { createCanvas } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
@@ -20,6 +18,8 @@ import MapScreenRenderer from '@main/graphics/renderers/MapScreenRenderer';
 import CharacterScreenRenderer from '@main/graphics/renderers/CharacterScreenRenderer';
 import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
 import LevelUpScreenRenderer from '@main/graphics/renderers/LevelUpScreenRenderer';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';

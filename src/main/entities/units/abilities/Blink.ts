@@ -1,10 +1,10 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import MapInstance from '../../../maps/MapInstance';
-import { pointAt } from '@main/geometry/CoordinatesUtils';
+import Coordinates from '@lib/geometry/Coordinates';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';

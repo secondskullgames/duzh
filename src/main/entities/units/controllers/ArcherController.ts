@@ -7,11 +7,11 @@ import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
 import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
-import { randBoolean, randChance } from '@main/utils/random';
-import { checkNotNull } from '@main/utils/preconditions';
+import { randBoolean, randChance } from '@lib/utils/random';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { hypotenuse } from '@main/geometry/CoordinatesUtils';
+import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 
 export default class ArcherController implements UnitController {
   /**

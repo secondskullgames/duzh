@@ -1,14 +1,14 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Sounds from '../../../sounds/Sounds';
 import Activity from '../Activity';
+import Coordinates from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { sleep } from '@main/utils/promises';
+import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { manhattanDistance, pointAt } from '@main/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
 export const range = 3;

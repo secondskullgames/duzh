@@ -1,4 +1,4 @@
-import { clear, tail } from '@main/utils/arrays';
+import { clear, tail } from '@lib/utils/arrays';
 
 const maxTurnsAgo = 8;
 const maxMessages = 2;

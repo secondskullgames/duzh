@@ -1,5 +1,5 @@
-import { RGB } from '../RGB';
-import { Pixel } from '../Pixel';
+import { RGB } from '@lib/graphics/RGB';
+import { Pixel } from '@lib/geometry/Pixel';
 
 export type Image = Readonly<{
   bitmap: ImageBitmap;

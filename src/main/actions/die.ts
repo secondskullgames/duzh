@@ -1,7 +1,7 @@
 import { gameOver } from './gameOver';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import { random } from '@main/utils/random';
+import { random } from '@lib/utils/random';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 

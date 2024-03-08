@@ -1,5 +1,5 @@
-import Coordinates from '../geometry/Coordinates';
-import { checkArgument, checkState } from '@main/utils/preconditions';
+import Coordinates from '@lib/geometry/Coordinates';
+import { checkArgument, checkState } from '@lib/utils/preconditions';
 
 type Props = Readonly<{
   width: number;

@@ -1,11 +1,11 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
 import Direction from '../../../geometry/Direction';
 import UnitOrder from '../orders/UnitOrder';
 import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
-import { randChoice } from '@main/utils/random';
+import Coordinates from '@lib/geometry/Coordinates';
+import { randChoice } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';

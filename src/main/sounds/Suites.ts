@@ -1,5 +1,5 @@
-import { transpose8va } from './AudioUtils';
-import { Figure, Sample, Suite } from './types';
+import { transpose8va } from '@lib/audio/AudioUtils';
+import { Figure, Sample, Suite } from '@lib/audio/types';
 
 const _duplicate = (samples: Sample[]): Sample[] => [...samples, ...samples];
 

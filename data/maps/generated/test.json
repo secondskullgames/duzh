@@ -15,6 +15,7 @@
     "enabled": false,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
-    "spawnRate": 0.1
+    "spawnRate": 0.01,
+    "maxSpawnedUnits": 4
   }
 }

@@ -1,4 +1,4 @@
-import Coordinates from '../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import GameObject from '../entities/objects/GameObject';
 import MapInstance from '../maps/MapInstance';
 

@@ -3,10 +3,10 @@ import ItemFactory from '../items/ItemFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import ObjectFactory from '../entities/objects/ObjectFactory';
 import MusicController from '../sounds/MusicController';
-import SoundPlayer from '../sounds/SoundPlayer';
 import ProjectileFactory from '../entities/objects/ProjectileFactory';
-import { clear } from '@main/utils/arrays';
-import ModelLoader from '@main/utils/ModelLoader';
+import SoundPlayer from '@lib/audio/SoundPlayer';
+import { clear } from '@lib/utils/arrays';
+import ModelLoader from '@main/assets/ModelLoader';
 import { inject, injectable } from 'inversify';
 
 /**

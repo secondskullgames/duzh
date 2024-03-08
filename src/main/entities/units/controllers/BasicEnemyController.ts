@@ -6,8 +6,8 @@ import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import { randBoolean, randChance } from '@main/utils/random';
-import { checkNotNull } from '@main/utils/preconditions';
+import { randBoolean, randChance } from '@lib/utils/random';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 

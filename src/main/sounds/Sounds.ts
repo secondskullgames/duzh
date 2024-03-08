@@ -1,4 +1,4 @@
-import { SoundEffect } from './types';
+import { SoundEffect } from '@lib/audio/types';
 import BLOCKED from '@data/sounds/blocked.json';
 import DEFLECTED_HIT from '@data/sounds/deflected_hit.json';
 import DESCEND_STAIRS from '@data/sounds/descend_stairs.json';

@@ -20,10 +20,10 @@ import { Teleport } from './Teleport';
 import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
 import Unit from '../Unit';
-import Coordinates from '../../../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { checkNotNull } from '@main/utils/preconditions';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/entities/units/abilities/BurningAttack';
 
 export type UnitAbility = Readonly<{

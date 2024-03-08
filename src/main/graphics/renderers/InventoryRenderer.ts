@@ -1,16 +1,16 @@
 import { Renderer } from './Renderer';
-import { Color } from '../Color';
 import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import EquipmentSlot from '../../schemas/EquipmentSlot';
-import { Pixel } from '../Pixel';
-import { Graphics } from '../Graphics';
+import EquipmentSlot from '../../../schemas/EquipmentSlot';
 import { FontName } from '../Fonts';
-import ImageFactory from '../images/ImageFactory';
+import { Pixel } from '@lib/geometry/Pixel';
+import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;

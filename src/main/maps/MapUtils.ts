@@ -1,5 +1,5 @@
 import MapInstance from './MapInstance';
-import Coordinates from '../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import Spawner from '../entities/objects/Spawner';
 import MapItem from '../entities/objects/MapItem';
 import Door from '../entities/objects/Door';

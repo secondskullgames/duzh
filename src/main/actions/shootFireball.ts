@@ -1,11 +1,11 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../entities/units/Unit';
-import Coordinates from '../geometry/Coordinates';
 import Sounds from '../sounds/Sounds';
 import Direction from '../geometry/Direction';
 import Activity from '../entities/units/Activity';
-import { sleep } from '@main/utils/promises';
+import Coordinates from '@lib/geometry/Coordinates';
+import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';

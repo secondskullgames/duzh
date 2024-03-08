@@ -1,11 +1,11 @@
 import { Renderer } from './Renderer';
-import Coordinates from '../../geometry/Coordinates';
-import { Color } from '../Color';
 import Colors from '../Colors';
-import { Graphics } from '../Graphics';
+import Coordinates from '@lib/geometry/Coordinates';
+import { Graphics } from '@lib/graphics/Graphics';
 import { getItem } from '@main/maps/MapUtils';
-import { checkNotNull } from '@main/utils/preconditions';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');

@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
-import Offsets from '../../geometry/Offsets';
-import { Image } from '../images/Image';
+import Offsets from '@lib/geometry/Offsets';
 import Door from '../../entities/objects/Door';
+import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{
   offsets: Offsets;

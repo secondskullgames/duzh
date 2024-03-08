@@ -1,4 +1,4 @@
-import MapSpec from '@main/schemas/MapSpec';
+import MapSpec from '../../schemas/MapSpec';
 
 export interface GameConfig {
   readonly mapSpecs: MapSpec[];

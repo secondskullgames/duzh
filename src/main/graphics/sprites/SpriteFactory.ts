@@ -8,17 +8,17 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
-import { Image } from '../images/Image';
-import ModelLoader from '../../utils/ModelLoader';
-import ImageFactory from '@main/graphics/images/ImageFactory';
-import PaletteSwaps from '@main/graphics/PaletteSwaps';
+import ModelLoader from '@main/assets/ModelLoader';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/entities/units/Unit';
 import Direction from '@main/geometry/Direction';
-import { fillTemplate } from '@main/utils/templates';
-import { ImageEffect } from '@main/graphics/images/ImageEffect';
+import { fillTemplate } from '@lib/utils/templates';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Image } from '@lib/graphics/images/Image';
+import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { injectable } from 'inversify';
-import type DynamicSpriteModel from '../../schemas/DynamicSpriteModel';
+import type DynamicSpriteModel from '../../../schemas/DynamicSpriteModel';
 
 @injectable()
 export default class SpriteFactory {

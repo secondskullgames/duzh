@@ -1,4 +1,4 @@
-import Coordinates from './Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { PathFinder_3rdParty } from './PathFinder_3rdParty';
 
 export interface Pathfinder {

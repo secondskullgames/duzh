@@ -1,14 +1,14 @@
 import InventoryItem from './InventoryItem';
-import PaletteSwaps from '../graphics/PaletteSwaps';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Sounds from '../sounds/Sounds';
-import Coordinates from '../geometry/Coordinates';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
-import ConsumableItemModel from '../schemas/ConsumableItemModel';
+import ConsumableItemModel from '../../schemas/ConsumableItemModel';
 import MapInstance from '../maps/MapInstance';
-import ModelLoader from '../utils/ModelLoader';
+import Coordinates from '@lib/geometry/Coordinates';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/getEquipmentTooltip';
 import { shootFireball } from '@main/actions/shootFireball';

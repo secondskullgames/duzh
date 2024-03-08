@@ -1,5 +1,5 @@
 import InventoryItem from './InventoryItem';
-import ItemCategory from '../schemas/ItemCategory';
+import ItemCategory from '../../schemas/ItemCategory';
 
 const itemCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL', 'KEY'];
 

@@ -1,5 +1,5 @@
 import Unit from '../entities/units/Unit';
-import Coordinates from '../geometry/Coordinates';
+import Coordinates from '@lib/geometry/Coordinates';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';

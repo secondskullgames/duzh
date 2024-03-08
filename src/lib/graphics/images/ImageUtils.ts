@@ -1,6 +1,6 @@
-import { Color } from '../Color';
-import PaletteSwaps from '../PaletteSwaps';
-import { RGB } from '../RGB';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { RGB } from '@lib/graphics/RGB';
+import { Color } from '@lib/graphics/Color';
 
 export const applyTransparentColor = (
   imageData: ImageData,

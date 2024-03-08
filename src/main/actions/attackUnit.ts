@@ -3,9 +3,9 @@ import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../entities/units/Unit';
 import Activity from '../entities/units/Activity';
 import { GameState } from '@main/core/GameState';
-import { sleep } from '@main/utils/promises';
+import { sleep } from '@lib/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
-import { SoundEffect } from '@main/sounds/types';
+import { SoundEffect } from '@lib/audio/types';
 import { Session } from '@main/core/Session';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 

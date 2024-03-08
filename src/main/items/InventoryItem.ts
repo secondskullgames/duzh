@@ -1,6 +1,6 @@
 import { ItemProc } from './ItemProc';
 import Unit from '../entities/units/Unit';
-import ItemCategory from '../schemas/ItemCategory';
+import ItemCategory from '../../schemas/ItemCategory';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 

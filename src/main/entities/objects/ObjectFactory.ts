@@ -2,7 +2,7 @@ import Spawner from './Spawner';
 import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
-import PaletteSwaps from '../../graphics/PaletteSwaps';
+import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import Unit from '../units/Unit';
 import Sounds from '../../sounds/Sounds';
 import MapInstance from '../../maps/MapInstance';
@@ -14,7 +14,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
-import type Coordinates from '../../geometry/Coordinates';
+import type Coordinates from '@lib/geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 

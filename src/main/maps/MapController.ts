@@ -2,7 +2,7 @@ import MapFactory from './MapFactory';
 import UnitFactory from '../entities/units/UnitFactory';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { check, checkState } from '@main/utils/preconditions';
+import { check, checkState } from '@lib/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { GameScreen } from '@main/core/GameScreen';
 import MapInstance from '@main/maps/MapInstance';
