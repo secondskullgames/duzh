@@ -9,7 +9,7 @@ import { createHash } from 'crypto';
 
 /* eslint-disable no-console */
 
-const modelsDir = 'src/main/models';
+const modelsDir = 'src/models';
 const outDir = 'src/gen-schema';
 const hashFilename = `${outDir}/HASH`;
 
