@@ -1,7 +1,7 @@
 export default {
   clearMocks: true,
   // collectCoverage: false,
-  collectCoverageFrom: ['src/main/**/*.ts'],
+  collectCoverageFrom: ['src/{lib,main,models}/**/*.ts'],
   // coverageDirectory: undefined,
   // coveragePathIgnorePatterns: [
   //   "/node_modules/"
