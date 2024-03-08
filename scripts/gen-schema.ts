@@ -21,7 +21,7 @@ const generateSchemas = async () => {
   }
 
   const modelNames = filenames.map(filename => {
-    const splitParts = filename.split('/');
+    const splitParts = filename.split(/[\\/]/);
     const lastPart = splitParts[splitParts.length - 1];
     return lastPart.substring(0, lastPart.indexOf('.d.ts'));
   });
