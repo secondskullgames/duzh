@@ -1,11 +1,10 @@
 # Github Actions configuration that uses the  to build a native executable for various platforms.
-# Adapted from https://dev.to/sualeh/how-to-create-platform-specific-installers-for-your-java-applications-from-github-actions-2c15
 
 name: Build Electron Forge executables
 
 on:
   push:
-    branches: [ master ]
+#    branches: [ master ]
 
 env:
   NODE_VERSION: 16

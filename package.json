@@ -14,7 +14,7 @@
     "node": ">=16.0.0 <19.0.0"
   },
   "scripts": {
-    "gen-schema": "node --loader 'ts-node/esm' 'scripts/gen-schema.ts'",
+    "gen-schema": "node --loader ts-node/esm 'scripts/gen-schema.ts'",
     "build": "npm run gen-schema && webpack",
     "dev": "webpack serve",
     "clean": "rimraf build && rimraf electron/build && rimraf src/gen-schema",
