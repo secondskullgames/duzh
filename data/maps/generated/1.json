@@ -16,7 +16,7 @@
     "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
-    "spawnRate": 0.02,
+    "spawnRate": 0.03,
     "maxSpawnedUnits": 6
   }
 }

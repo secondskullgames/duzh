@@ -6,12 +6,11 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-zip',
-      platforms: ['darwin', 'win32'],
+      platforms: ['darwin', 'win32']
     }
   ],
   hooks: {
     prePackage: async () => {
-      console.log('omgwtf');
       await cp('../build', './build', { recursive: true });
     }
   }
