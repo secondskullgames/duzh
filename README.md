@@ -7,15 +7,15 @@ A graphical Roguelike in the browser written in Typescript.
 ## Package Structure
 
 - `src/` - Typescript source code
+- - `lib/` - Library code that is (mostly) not specific to the game
   - `main/` - Main game code
-  - `lib/` - Library code that is (mostly) not specific to the game
+  - `schemas/` - JSON-Schema schemas for game data
+  - `test/` - Unit tests
 - `data/` - Game data in JSON format
 - `dist/` - Compiled Typescript
 - `electron/` - Electron-specific code
-- `schemas/` - JSON-Schema schemas for game data
 - `public/` - Static files for the game
 - `scripts/` - Utility scripts
-- `test/` - Unit tests
 
 ## Usage
 Run the game in dev:
