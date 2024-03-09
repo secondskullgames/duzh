@@ -14,10 +14,5 @@
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
-  },
-  "levelParameters": {
-    "minLevel": 4,
-    "maxLevel": 99,
-    "rarity": 4
   }
 }

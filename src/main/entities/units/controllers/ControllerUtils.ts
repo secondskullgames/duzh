@@ -12,6 +12,7 @@ import Coordinates from '@lib/geometry/Coordinates';
 import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { hasUnblockedStraightLineBetween, isBlocked } from '@main/maps/MapUtils';
+import SorceressController from '@main/entities/units/controllers/SorceressController';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
@@ -47,6 +48,8 @@ export const chooseUnitController = (unitClass: string): UnitController => {
       return new WizardController();
     case 'dragon_shooter':
       return new DragonShooterController();
+    case 'sorceress':
+      return new SorceressController();
     default:
       return new BasicEnemyController();
   }

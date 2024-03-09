@@ -24,6 +24,12 @@
         "number": "2"
       }]
     },
+    "shooting": {
+      "frames": [{
+        "activity": "attacking",
+        "number": "2"
+      }]
+    },
     "damaged": {
       "frames": [{
         "activity": "standing",

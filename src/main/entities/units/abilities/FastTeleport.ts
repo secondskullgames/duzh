@@ -12,8 +12,8 @@ import { isBlocked } from '@main/maps/MapUtils';
 
 const manaCost = 4;
 
-export const DragonTeleport: UnitAbility = {
-  name: AbilityName.DRAGON_TELEPORT,
+export const FastTeleport: UnitAbility = {
+  name: AbilityName.FAST_TELEPORT,
   icon: null,
   manaCost,
   innate: false,
@@ -25,7 +25,7 @@ export const DragonTeleport: UnitAbility = {
     state: GameState
   ) => {
     if (!coordinates) {
-      throw new Error('Teleport requires a target!');
+      throw new Error('FastTeleport requires a target!');
     }
 
     const map = unit.getMap();

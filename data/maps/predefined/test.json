@@ -1,7 +1,7 @@
 {
   "id": "test",
-  "imageFilename": "test_maze",
-  "tileset": "dungeon",
+  "imageFilename": "test",
+  "tileset": "catacomb",
   "levelNumber": 1,
   "tileColors": {
     "BLACK": "NONE",
@@ -10,13 +10,11 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "dragon_shooter"
+    "BLUE": "sorceress"
   },
-  "itemColors": {
-    "GREEN": "floor_fire_scroll"
-  },
+  "itemColors": {},
   "equipmentColors": {
-    "BLUE": "short_bow"
+    "GREEN": "bronze_sword"
   },
   "objectColors": {},
   "startingPointColor": "RED",

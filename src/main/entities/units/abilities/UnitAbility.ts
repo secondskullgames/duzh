@@ -25,7 +25,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/entities/units/abilities/BurningAttack';
-import { DragonTeleport } from '@main/entities/units/abilities/DragonTeleport';
+import { FastTeleport } from '@main/entities/units/abilities/FastTeleport';
 
 export type UnitAbility = Readonly<{
   name: AbilityName;
@@ -56,7 +56,7 @@ export namespace UnitAbility {
     [AbilityName.CLEAVE]: Cleave,
     [AbilityName.DASH]: Dash,
     [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.DRAGON_TELEPORT]: DragonTeleport,
+    [AbilityName.FAST_TELEPORT]: FastTeleport,
     [AbilityName.FREE_MOVE]: FreeMove,
     [AbilityName.HEAVY_ATTACK]: HeavyAttack,
     [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,

@@ -10,20 +10,20 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import UnitOrder from '@main/entities/units/orders/UnitOrder';
 import StayOrder from '@main/entities/units/orders/StayOrder';
-import { DragonTeleport } from '@main/entities/units/abilities/DragonTeleport';
+import { FastTeleport } from '@main/entities/units/abilities/FastTeleport';
 
 export default class KnightMoveBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const canTeleport = unit.getMana() >= DragonTeleport.manaCost;
+    const canTeleport = unit.getMana() >= FastTeleport.manaCost;
     if (canTeleport) {
       const targets = _getKnightMoveTargets(unit);
       if (!isEmpty(targets)) {
         const target = randChoice(targets);
         return new SpellOrder({
           coordinates: target,
-          ability: DragonTeleport
+          ability: FastTeleport
         });
       }
     }
