@@ -8,13 +8,14 @@ import { maxBy } from '@lib/utils/arrays';
 import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{
+  spriteName: string;
   offsets: Offsets;
   imageMap: Record<string, Image>;
 }>;
 
 export class UnitSprite extends DynamicSprite<Unit> {
-  constructor({ offsets, imageMap }: Props) {
-    super({ offsets, imageMap });
+  constructor({ spriteName, offsets, imageMap }: Props) {
+    super({ spriteName, offsets, imageMap });
   }
 
   protected getFrameKey = (target: Unit): string => {

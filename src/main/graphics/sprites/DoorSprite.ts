@@ -4,13 +4,14 @@ import Offsets from '@lib/geometry/Offsets';
 import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{
+  spriteName: string;
   offsets: Offsets;
   imageMap: Record<string, Image>;
 }>;
 
 export class DoorSprite extends DynamicSprite<Door> {
-  constructor({ offsets, imageMap }: Props) {
-    super({ offsets, imageMap });
+  constructor({ spriteName, offsets, imageMap }: Props) {
+    super({ spriteName, offsets, imageMap });
   }
 
   protected getFrameKey = (target: Door): string => {

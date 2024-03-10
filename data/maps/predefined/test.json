@@ -10,7 +10,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "sorceress"
+    "BLUE": "robed_wizard"
   },
   "itemColors": {},
   "equipmentColors": {

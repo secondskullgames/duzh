@@ -4,16 +4,19 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{
+  spriteName: string;
   offsets: Offsets;
   imageMap: Record<string, Image>;
 }>;
 
 export default abstract class DynamicSprite<T> implements Sprite {
+  private readonly spriteName: string;
   private target: T | null;
   private readonly imageMap: Record<string, Image>;
   private readonly offsets: Offsets;
 
-  protected constructor({ offsets, imageMap }: Props) {
+  protected constructor({ spriteName, offsets, imageMap }: Props) {
+    this.spriteName = spriteName;
     this.offsets = offsets;
     this.target = null;
     this.imageMap = imageMap;
@@ -27,7 +30,7 @@ export default abstract class DynamicSprite<T> implements Sprite {
     const frameKey = this.getFrameKey(target);
     const image = this.imageMap[frameKey];
     if (!image) {
-      console.debug(`No image found for key: ${frameKey}`);
+      console.debug(`No image found for ${this.spriteName} key: ${frameKey}`);
     }
     return image ?? null;
   };
