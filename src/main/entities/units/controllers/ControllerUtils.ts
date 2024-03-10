@@ -6,12 +6,11 @@ import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { Dash } from '../abilities/Dash';
 import Coordinates from '@lib/geometry/Coordinates';
-import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { hasUnblockedStraightLineBetween, isBlocked } from '@main/maps/MapUtils';
+import { isBlocked } from '@main/maps/MapUtils';
 import SorceressController from '@main/entities/units/controllers/SorceressController';
 
 export const canMove = (unit: Unit): boolean => {

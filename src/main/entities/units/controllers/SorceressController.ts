@@ -40,18 +40,13 @@ export default class SorceressController implements UnitController {
     const canShoot = this._canShoot(unit, nearestEnemyUnit);
     const wantsToShoot = randChance(shootChance);
 
-    console.log(`${unit.getMana()} ${canShoot}`);
     if (canShoot && wantsToShoot) {
-      console.log('shoot');
       return new ShootUnitStationaryBehavior({ targetUnit: nearestEnemyUnit });
     } else if (canTeleport && wantsToTeleport) {
-      console.log('tp');
       return new KnightMoveBehavior();
     } else if (distanceToNearestEnemy <= aiParameters.visionRange) {
-      console.log('avoid');
       return new AvoidUnitBehavior({ targetUnit: nearestEnemyUnit });
     } else {
-      console.log('wander');
       return new WanderBehavior();
     }
   };
