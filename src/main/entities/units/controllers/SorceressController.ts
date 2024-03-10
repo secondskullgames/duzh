@@ -1,7 +1,6 @@
 import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
-import StayBehavior from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '../abilities/ShootTurretArrow';
@@ -12,11 +11,14 @@ import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/entities/units/behaviors/KnightMoveBehavior';
+import AvoidUnitBehavior from '@main/entities/units/behaviors/AvoidUnitBehavior';
+import WanderBehavior from '@main/entities/units/behaviors/WanderBehavior';
+import { FastTeleport } from '@main/entities/units/abilities/FastTeleport';
 
-const teleportChance = 0.25;
-const shootChance = 0.9;
+const teleportChance = 0.2;
+const shootChance = 0.5;
 
-export default class DragonShooterController implements UnitController {
+export default class SorceressController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
@@ -26,29 +28,31 @@ export default class DragonShooterController implements UnitController {
   };
 
   private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
+    const aiParameters = checkNotNull(unit.getAiParameters());
     const nearestEnemyUnit = session.getPlayerUnit();
     const distanceToNearestEnemy = hypotenuse(
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()
     );
-    const wantsToTeleport = distanceToNearestEnemy <= 2 || randChance(teleportChance);
+    const canTeleport = unit.getMana() >= FastTeleport.manaCost;
+    const wantsToTeleport =
+      distanceToNearestEnemy <= aiParameters.visionRange && randChance(teleportChance);
     const canShoot = this._canShoot(unit, nearestEnemyUnit);
     const wantsToShoot = randChance(shootChance);
 
-    if (wantsToTeleport) {
-      return new KnightMoveBehavior();
-    } else if (canShoot && wantsToShoot) {
+    if (canShoot && wantsToShoot) {
       return new ShootUnitStationaryBehavior({ targetUnit: nearestEnemyUnit });
+    } else if (canTeleport && wantsToTeleport) {
+      return new KnightMoveBehavior();
+    } else if (distanceToNearestEnemy <= aiParameters.visionRange) {
+      return new AvoidUnitBehavior({ targetUnit: nearestEnemyUnit });
     } else {
-      return new StayBehavior();
+      return new WanderBehavior();
     }
   };
 
   private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-    const aiParameters = checkNotNull(
-      unit.getAiParameters(),
-      'DragonShooterController requires aiParams!'
-    );
+    const aiParameters = checkNotNull(unit.getAiParameters());
 
     const { visionRange } = aiParameters;
 

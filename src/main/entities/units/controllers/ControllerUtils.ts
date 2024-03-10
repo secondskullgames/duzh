@@ -6,12 +6,12 @@ import { UnitController } from './UnitController';
 import Unit from '../Unit';
 import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
-import { UnitAbility } from '../abilities/UnitAbility';
 import { Dash } from '../abilities/Dash';
 import Coordinates from '@lib/geometry/Coordinates';
-import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { hasUnblockedStraightLineBetween, isBlocked } from '@main/maps/MapUtils';
+import { isBlocked } from '@main/maps/MapUtils';
+import SorceressController from '@main/entities/units/controllers/SorceressController';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
@@ -47,27 +47,11 @@ export const chooseUnitController = (unitClass: string): UnitController => {
       return new WizardController();
     case 'dragon_shooter':
       return new DragonShooterController();
+    case 'sorceress':
+      return new SorceressController();
     default:
       return new BasicEnemyController();
   }
-};
-
-export const canShoot = (
-  unit: Unit,
-  targetUnit: Unit,
-  abilityName: AbilityName
-): boolean => {
-  const ability = UnitAbility.abilityForName(abilityName);
-  return (
-    unit.getEquipment().getBySlot('RANGED_WEAPON') !== null &&
-    unit.getMana() >= ability.manaCost &&
-    isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-    hasUnblockedStraightLineBetween(
-      unit.getMap(),
-      unit.getCoordinates(),
-      targetUnit.getCoordinates()
-    )
-  );
 };
 
 export const canDash = (

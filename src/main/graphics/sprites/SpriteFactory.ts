@@ -77,6 +77,7 @@ export default class SpriteFactory {
     );
 
     return new UnitSprite({
+      spriteName,
       imageMap,
       offsets: model.offsets
     });
@@ -94,6 +95,7 @@ export default class SpriteFactory {
     );
 
     return new EquipmentSprite({
+      spriteName,
       imageMap,
       offsets: model.offsets
     });
@@ -129,6 +131,7 @@ export default class SpriteFactory {
    * TODO - hardcoded
    */
   createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
+    const spriteName = 'door';
     const offsets = { dx: 0, dy: -24 };
     // TODO hardcoded
     const paletteSwaps = PaletteSwaps.builder()
@@ -140,7 +143,7 @@ export default class SpriteFactory {
     for (const direction of ['horizontal', 'vertical']) {
       for (const state of DoorState.values()) {
         const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
-        const filename = `door_${direction.toLowerCase()}_${state.toLowerCase()}`;
+        const filename = `${spriteName}_${direction.toLowerCase()}_${state.toLowerCase()}`;
         const image = await this.imageFactory.getImage({
           filename,
           paletteSwaps,
@@ -149,7 +152,7 @@ export default class SpriteFactory {
         imageMap[key] = image;
       }
     }
-    return new DoorSprite({ offsets, imageMap });
+    return new DoorSprite({ spriteName, offsets, imageMap });
   };
 
   createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
@@ -175,7 +178,7 @@ export default class SpriteFactory {
     }
 
     const offsets = { dx: -4, dy: -20 };
-    return new SpawnerSprite({ offsets, imageMap });
+    return new SpawnerSprite({ spriteName: 'mirror', offsets, imageMap });
   };
 
   private _loadAnimations = async (

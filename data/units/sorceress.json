@@ -21,15 +21,15 @@
     "black_skirt"
   ],
   "life": 100,
-  "mana": 15,
+  "mana": 10,
   "strength": 6,
-  "dexterity": 2,
+  "dexterity": 10,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
-  "abilities": ["ATTACK"],
+  "abilities": ["ATTACK", "TELEPORT", "SHOOT_TURRET_ARROW"],
   "experience": 1
 }
