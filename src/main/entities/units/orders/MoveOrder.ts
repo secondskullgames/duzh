@@ -1,12 +1,10 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
-import { ObjectType } from '../../objects/GameObject';
-import Block from '../../objects/Block';
 import Coordinates from '@lib/geometry/Coordinates';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
-import { getDoor, isBlocked } from '@main/maps/MapUtils';
+import { getDoor, getMovableBlock, isBlocked } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
@@ -43,12 +41,7 @@ export class MoveOrder implements UnitOrder {
         return;
       }
 
-      const block = map
-        .getObjects(coordinates)
-        .filter(object => object.getObjectType() === ObjectType.BLOCK)
-        .map(object => object as Block)
-        .find(block => block.isMovable());
-
+      const block = getMovableBlock(map, coordinates);
       if (block) {
         await pushBlock(unit, block, session, state);
         return;

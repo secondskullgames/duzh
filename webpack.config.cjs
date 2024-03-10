@@ -11,8 +11,8 @@ module.exports = {
       '@data': path.resolve('data/'),
       '@lib': path.resolve('src/lib/'),
       '@main': path.resolve('src/main/'),
-      '@png': path.resolve('png/'),
-      '@models': path.resolve('models/'),
+      '@models': path.resolve('src/models/'),
+      '@png': path.resolve('png/')
     }
   },
   output: {
