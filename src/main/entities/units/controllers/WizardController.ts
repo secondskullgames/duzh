@@ -25,28 +25,6 @@ const avoidChance = 0.75;
 const teleportChance = 0.5;
 const teleportMinDistance = 3;
 
-const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
-  const closestEnemyUnit = getClosestEnemy(unit);
-  const map = unit.getMap();
-  const tiles: Coordinates[] = [];
-  for (let y = 0; y < map.height; y++) {
-    for (let x = 0; x < map.width; x++) {
-      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
-          tiles.push({ x, y });
-        }
-      }
-    }
-  }
-
-  if (tiles.length > 0) {
-    return maxBy(tiles, coordinates =>
-      manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
-    );
-  }
-  return null;
-};
-
 export default class WizardController implements UnitController {
   /**
    * If we have mana to Summon, and X% chance, cast Summon;
@@ -116,4 +94,26 @@ const _canTeleport = (unit: Unit) => {
 
 const _wantsToSummon = () => {
   return randChance(summonChance);
+};
+
+const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
+  const closestEnemyUnit = getClosestEnemy(unit);
+  const map = unit.getMap();
+  const tiles: Coordinates[] = [];
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
+          tiles.push({ x, y });
+        }
+      }
+    }
+  }
+
+  if (tiles.length > 0) {
+    return maxBy(tiles, coordinates =>
+      manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
+    );
+  }
+  return null;
 };
