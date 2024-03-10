@@ -15,9 +15,10 @@ import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { manhattanDistance } from '@lib/geometry/CoordinatesUtils';
-import { isBlocked } from '@main/maps/MapUtils';
+import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -61,15 +62,12 @@ export default class WizardController implements UnitController {
 }
 
 const _canSummon = (unit: Unit, map: MapInstance): boolean => {
+  const summonedUnitClass = checkNotNull(unit.getSummonedUnitClass());
   return (
     unit.hasAbility(AbilityName.SUMMON) &&
     unit.getMana() >= Summon.manaCost &&
-    _countUnits(map, unit.getSummonedUnitClass()!) <= maxSummonedUnits
+    getUnitsOfClass(map, summonedUnitClass).length <= maxSummonedUnits
   );
-};
-
-const _countUnits = (map: MapInstance, unitClass: string): number => {
-  return map.getAllUnits().filter(unit => unit.getUnitClass() === unitClass).length;
 };
 
 const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {

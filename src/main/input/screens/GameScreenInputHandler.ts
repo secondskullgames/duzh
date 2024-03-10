@@ -10,7 +10,6 @@ import { playTurn } from '@main/actions/playTurn';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/entities/units/orders/AbilityOrder';
-import { AttackMoveOrder } from '@main/entities/units/orders/AttackMoveOrder';
 import { GameScreen } from '@main/core/GameScreen';
 import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { getItem } from '@main/maps/MapUtils';
@@ -20,6 +19,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
+import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -109,11 +109,17 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (ability) {
         order = new AbilityOrder({ ability, direction });
       } else {
-        order = new AttackMoveOrder({ direction });
+        order = new AttackMoveBehavior({ direction }).issueOrder(
+          playerUnit,
+          state,
+          session
+        );
+        //order = new AttackMoveOrder({ direction });
       }
     }
-    const playerController = playerUnit.getController() as PlayerUnitController;
+
     if (order) {
+      const playerController = playerUnit.getController() as PlayerUnitController;
       playerController.queueOrder(order);
       await playTurn(state, session);
     }

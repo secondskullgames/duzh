@@ -10,6 +10,7 @@ import { getDoor, isBlocked } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { check } from '@lib/utils/preconditions';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -31,10 +32,8 @@ export class MoveOrder implements UnitOrder {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    if (!map.contains(coordinates)) {
-      // do nothing
-      return;
-    } else if (!isBlocked(map, coordinates)) {
+    check(map.contains(coordinates));
+    if (!isBlocked(map, coordinates)) {
       await walk(unit, direction, session, state);
       return;
     } else {
