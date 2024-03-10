@@ -4,9 +4,9 @@
   "type": "ANIMAL",
   "sprite": "snake",
   "paletteSwaps": {},
-  "life": 15,
+  "life": 20,
   "mana": 0,
-  "strength": 5,
+  "strength": 4,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.7,

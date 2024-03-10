@@ -46,8 +46,9 @@ export namespace Feature {
       case Feature.DARK_DUNGEON:
         return false;
       case Feature.DEBUG_BUTTONS:
-      case Feature.DEBUG_LEVEL:
         return !Feature.isEnabled(Feature.PRODUCTION);
+      case Feature.DEBUG_LEVEL:
+        return false;
       case Feature.DEDUPLICATE_EQUIPMENT:
         return true;
       case Feature.DEBUG_LOGGING:

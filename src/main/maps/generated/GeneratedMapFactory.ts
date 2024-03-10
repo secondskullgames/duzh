@@ -106,7 +106,7 @@ export class GeneratedMapFactory {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const layout = randChoice([
-        'ROOMS_AND_CORRIDORS',
+        //'ROOMS_AND_CORRIDORS',
         'ROOMS_AND_CORRIDORS_3',
         'PATH',
         'BLOB'
