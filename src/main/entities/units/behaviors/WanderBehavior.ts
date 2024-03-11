@@ -2,13 +2,13 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
 import Direction from '../../../geometry/Direction';
 import UnitOrder from '../orders/UnitOrder';
-import { AttackMoveOrder } from '../orders/AttackMoveOrder';
 import StayOrder from '../orders/StayOrder';
 import Coordinates from '@lib/geometry/Coordinates';
 import { randChoice } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
@@ -25,7 +25,7 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (possibleDirections.length > 0) {
       const direction = randChoice(possibleDirections);
-      return new AttackMoveOrder({ direction });
+      return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
     }
     return new StayOrder();
   };

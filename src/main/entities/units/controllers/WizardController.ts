@@ -15,37 +15,16 @@ import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { manhattanDistance } from '@lib/geometry/CoordinatesUtils';
-import { isBlocked } from '@main/maps/MapUtils';
+import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
 const avoidChance = 0.75;
 const teleportChance = 0.5;
 const teleportMinDistance = 3;
-
-const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
-  const closestEnemyUnit = getClosestEnemy(unit);
-  const map = unit.getMap();
-  const tiles: Coordinates[] = [];
-  for (let y = 0; y < map.height; y++) {
-    for (let x = 0; x < map.width; x++) {
-      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
-          tiles.push({ x, y });
-        }
-      }
-    }
-  }
-
-  if (tiles.length > 0) {
-    return maxBy(tiles, coordinates =>
-      manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
-    );
-  }
-  return null;
-};
 
 export default class WizardController implements UnitController {
   /**
@@ -83,15 +62,12 @@ export default class WizardController implements UnitController {
 }
 
 const _canSummon = (unit: Unit, map: MapInstance): boolean => {
+  const summonedUnitClass = checkNotNull(unit.getSummonedUnitClass());
   return (
     unit.hasAbility(AbilityName.SUMMON) &&
     unit.getMana() >= Summon.manaCost &&
-    _countUnits(map, unit.getSummonedUnitClass()!) <= maxSummonedUnits
+    getUnitsOfClass(map, summonedUnitClass).length <= maxSummonedUnits
   );
-};
-
-const _countUnits = (map: MapInstance, unitClass: string): number => {
-  return map.getAllUnits().filter(unit => unit.getUnitClass() === unitClass).length;
 };
 
 const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
@@ -116,4 +92,26 @@ const _canTeleport = (unit: Unit) => {
 
 const _wantsToSummon = () => {
   return randChance(summonChance);
+};
+
+const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
+  const closestEnemyUnit = getClosestEnemy(unit);
+  const map = unit.getMap();
+  const tiles: Coordinates[] = [];
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
+          tiles.push({ x, y });
+        }
+      }
+    }
+  }
+
+  if (tiles.length > 0) {
+    return maxBy(tiles, coordinates =>
+      manhattanDistance(coordinates, closestEnemyUnit.getCoordinates())
+    );
+  }
+  return null;
 };

@@ -14,7 +14,7 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 35,
+  "life": 40,
   "mana": 10,
   "strength": 4,
   "dexterity": 0,

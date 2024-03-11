@@ -25,10 +25,7 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          if (
-            Feature.isEnabled(Feature.DEBUG_LEVEL) &&
-            modifiers.includes(ModifierKey.SHIFT)
-          ) {
+          if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
             await mapController.loadDebugMap();
           } else {
             await mapController.loadFirstMap();

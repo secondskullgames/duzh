@@ -15,6 +15,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';
+import { Engine, EngineImpl } from '@main/core/Engine';
 import { Container } from 'inversify';
 
 type Props = Readonly<{
@@ -36,6 +37,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(GameState).to(GameStateImpl);
   container.bind(MapController).to(MapControllerImpl);
+  container.bind(Engine).to(EngineImpl);
   return container;
 };
 
