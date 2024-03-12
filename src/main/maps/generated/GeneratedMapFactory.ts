@@ -24,27 +24,21 @@ import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { inject, injectable } from 'inversify';
 
-type MapStyle = Readonly<{
-  tileSet: string;
-  algorithm: Algorithm;
-}>;
-
-namespace MapStyle {
-  export const equals = (first: MapStyle, second: MapStyle) => {
-    return first.tileSet === second.tileSet && first.algorithm === second.algorithm;
-  };
-}
-
 type ItemType = 'equipment' | 'consumable';
 type ItemSpec = Readonly<{
   type: ItemType;
   id: string;
 }>;
 
+const algorithms: Algorithm[] = [
+  //'ROOMS_AND_CORRIDORS',
+  'ROOMS_AND_CORRIDORS_3',
+  'PATH',
+  'BLOB'
+];
+
 @injectable()
 export class GeneratedMapFactory {
-  private readonly usedMapStyles: MapStyle[] = [];
-
   constructor(
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader,
@@ -60,10 +54,10 @@ export class GeneratedMapFactory {
 
   loadMap = async (mapId: string): Promise<MapInstance> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
-    const style = this._chooseMapStyle(model);
-    const dungeonGenerator = this._getDungeonGenerator(style.algorithm);
-    console.debug(`Generating map: ${JSON.stringify(style)}`);
-    const map = await dungeonGenerator.generateMap(model, style.tileSet);
+    const algorithm: Algorithm = model.algorithm ?? randChoice(algorithms);
+    const tileSet = model.tileSet ?? randChoice(this.tileFactory.getTileSetNames());
+    const dungeonGenerator = this._getDungeonGenerator(algorithm);
+    const map = await dungeonGenerator.generateMap(model, tileSet);
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
       map.addUnit(unit);
@@ -99,26 +93,6 @@ export class GeneratedMapFactory {
         return new PathMapGenerator(tileFactory);
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
-    }
-  };
-
-  private _chooseMapStyle = (model: GeneratedMapModel): MapStyle => {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const algorithm: Algorithm =
-        model.algorithm ??
-        randChoice([
-          //'ROOMS_AND_CORRIDORS',
-          'ROOMS_AND_CORRIDORS_3',
-          'PATH',
-          'BLOB'
-        ]);
-      const tileSet = model.tileSet ?? randChoice(this.tileFactory.getTileSetNames());
-      const chosenStyle = { algorithm, tileSet };
-      if (!this.usedMapStyles.some(style => MapStyle.equals(style, chosenStyle))) {
-        this.usedMapStyles.push(chosenStyle);
-        return chosenStyle;
-      }
     }
   };
 
