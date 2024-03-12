@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 80,
+  "life": 100,
   "mana": 15,
   "strength": 20,
   "dexterity": 0,
@@ -15,7 +15,7 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 6,
+    "minLevel": 7,
     "maxLevel": 99,
     "rarity": 3
   },

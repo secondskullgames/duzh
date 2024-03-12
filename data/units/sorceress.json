@@ -23,13 +23,18 @@
   "life": 100,
   "mana": 10,
   "strength": 6,
-  "dexterity": 10,
+  "dexterity": 20,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
-  "abilities": ["ATTACK", "TELEPORT", "SHOOT_TURRET_ARROW"],
+  "levelParameters": {
+    "minLevel": 7,
+    "maxLevel": 99,
+    "rarity": 3
+  },
+  "abilities": ["ATTACK", "FAST_TELEPORT", "SHOOT_TURRET_ARROW"],
   "experience": 1
 }

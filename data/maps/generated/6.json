@@ -1,6 +1,8 @@
 {
   "id": "6",
   "levelNumber": 6,
+  "algorithm": "PATH",
+  "tileSet": "zzt",
   "width": 30,
   "height": 30,
   "enemies": {

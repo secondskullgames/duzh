@@ -14,6 +14,7 @@ import KnightMoveBehavior from '@main/entities/units/behaviors/KnightMoveBehavio
 import AvoidUnitBehavior from '@main/entities/units/behaviors/AvoidUnitBehavior';
 import WanderBehavior from '@main/entities/units/behaviors/WanderBehavior';
 import { FastTeleport } from '@main/entities/units/abilities/FastTeleport';
+import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 
 const teleportChance = 0.2;
 const shootChance = 0.5;
@@ -34,7 +35,9 @@ export default class SorceressController implements UnitController {
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()
     );
-    const canTeleport = unit.getMana() >= FastTeleport.manaCost;
+    const canTeleport =
+      unit.hasAbility(AbilityName.FAST_TELEPORT) &&
+      unit.getMana() >= FastTeleport.manaCost;
     const wantsToTeleport =
       distanceToNearestEnemy <= aiParameters.visionRange && randChance(teleportChance);
     const canShoot = this._canShoot(unit, nearestEnemyUnit);

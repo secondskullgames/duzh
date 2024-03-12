@@ -1,8 +1,10 @@
 {
   "id": "1",
   "levelNumber": 1,
-  "width": 20,
-  "height": 20,
+  "algorithm": "ROOMS_AND_CORRIDORS",
+  "tileSet": "dungeon",
+  "width": 24,
+  "height": 24,
   "enemies": {
     "min": 4,
     "max": 5
@@ -16,7 +18,7 @@
     "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
-    "spawnRate": 0.03,
+    "spawnRate": 0.04,
     "maxSpawnedUnits": 6
   }
 }

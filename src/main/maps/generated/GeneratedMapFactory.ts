@@ -9,8 +9,8 @@ import MapInstance from '../MapInstance';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
-import UnitModel from '../../../models/UnitModel';
-import GeneratedMapModel from '../../../models/GeneratedMapModel';
+import UnitModel from '@models/UnitModel';
+import { GeneratedMapModel, Algorithm } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';
 import { randChoice, randInt, weightedRandom } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
@@ -26,12 +26,12 @@ import { inject, injectable } from 'inversify';
 
 type MapStyle = Readonly<{
   tileSet: string;
-  layout: string;
+  algorithm: Algorithm;
 }>;
 
 namespace MapStyle {
   export const equals = (first: MapStyle, second: MapStyle) => {
-    return first.tileSet === second.tileSet && first.layout === second.layout;
+    return first.tileSet === second.tileSet && first.algorithm === second.algorithm;
   };
 }
 
@@ -60,8 +60,8 @@ export class GeneratedMapFactory {
 
   loadMap = async (mapId: string): Promise<MapInstance> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
-    const style = this._chooseMapStyle();
-    const dungeonGenerator = this._getDungeonGenerator(style.layout);
+    const style = this._chooseMapStyle(model);
+    const dungeonGenerator = this._getDungeonGenerator(style.algorithm);
     console.debug(`Generating map: ${JSON.stringify(style)}`);
     const map = await dungeonGenerator.generateMap(model, style.tileSet);
     const units = await this._generateUnits(map, model);
@@ -102,17 +102,19 @@ export class GeneratedMapFactory {
     }
   };
 
-  private _chooseMapStyle = (): MapStyle => {
+  private _chooseMapStyle = (model: GeneratedMapModel): MapStyle => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const layout = randChoice([
-        //'ROOMS_AND_CORRIDORS',
-        'ROOMS_AND_CORRIDORS_3',
-        'PATH',
-        'BLOB'
-      ]);
-      const tileSet = randChoice(this.tileFactory.getTileSetNames());
-      const chosenStyle = { layout, tileSet };
+      const algorithm: Algorithm =
+        model.algorithm ??
+        randChoice([
+          //'ROOMS_AND_CORRIDORS',
+          'ROOMS_AND_CORRIDORS_3',
+          'PATH',
+          'BLOB'
+        ]);
+      const tileSet = model.tileSet ?? randChoice(this.tileFactory.getTileSetNames());
+      const chosenStyle = { algorithm, tileSet };
       if (!this.usedMapStyles.some(style => MapStyle.equals(style, chosenStyle))) {
         this.usedMapStyles.push(chosenStyle);
         return chosenStyle;

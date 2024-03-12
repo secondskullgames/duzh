@@ -1,15 +1,15 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
 import { AssetLoader } from '@lib/assets/AssetLoader';
+import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import Ajv from 'ajv';
 import { inject, injectable } from 'inversify';
-import type UnitModel from '../../models/UnitModel';
-import type EquipmentModel from '../../models/EquipmentModel';
-import type GeneratedMapModel from '../../models/GeneratedMapModel';
-import type PredefinedMapModel from '../../models/PredefinedMapModel';
-import type ConsumableItemModel from '../../models/ConsumableItemModel';
-import type TileSetModel from '../../models/TileSetModel';
-import type StaticSpriteModel from '../../models/StaticSpriteModel';
-import type DynamicSpriteModel from '../../models/DynamicSpriteModel';
+import type UnitModel from '@models/UnitModel';
+import type EquipmentModel from '@models/EquipmentModel';
+import type PredefinedMapModel from '@models/PredefinedMapModel';
+import type ConsumableItemModel from '@models/ConsumableItemModel';
+import type TileSetModel from '@models/TileSetModel';
+import type StaticSpriteModel from '@models/StaticSpriteModel';
+import type DynamicSpriteModel from '@models/DynamicSpriteModel';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)

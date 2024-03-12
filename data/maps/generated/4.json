@@ -1,6 +1,8 @@
 {
   "id": "4",
   "levelNumber": 4,
+  "algorithm": "BLOB",
+  "tileSet": "cave",
   "width": 26,
   "height": 26,
   "enemies": {

@@ -27,7 +27,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     const firstPoint = _randomEmptyTile(tiles);
     tiles[firstPoint.y][firstPoint.x] = 'NONE';
 
-    const pathfinder = Pathfinder.create({ heuristic: Heuristic.CHEBYSHEV });
+    const pathfinder = Pathfinder.create({ heuristic: Heuristic.MANHATTAN });
 
     let lastPoint = firstPoint;
     for (let i = 1; i < numPoints; i++) {
