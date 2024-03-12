@@ -1,0 +1,24 @@
+{
+  "id": "8",
+  "levelNumber": 8,
+  "algorithm": "ROOMS_AND_CORRIDORS_3",
+  "tileSet": "dungeon",
+  "width": 34,
+  "height": 34,
+  "enemies": {
+    "min": 6,
+    "max": 8
+  },
+  "items": {
+    "min": 3,
+    "max": 4
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 3,
+    "spawnEnemies": true,
+    "spawnedUnitClass": "black_snake_spawn",
+    "spawnRate": 0.03,
+    "maxSpawnedUnits": 8
+  }
+}

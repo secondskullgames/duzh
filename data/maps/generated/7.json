@@ -1,0 +1,24 @@
+{
+  "id": "7",
+  "levelNumber": 7,
+  "algorithm": "BLOB",
+  "tileSet": "catacomb_red",
+  "width": 32,
+  "height": 32,
+  "enemies": {
+    "min": 6,
+    "max": 8
+  },
+  "items": {
+    "min": 3,
+    "max": 4
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 3,
+    "spawnEnemies": true,
+    "spawnedUnitClass": "black_snake_spawn",
+    "spawnRate": 0.03,
+    "maxSpawnedUnits": 8
+  }
+}

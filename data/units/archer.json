@@ -33,7 +33,7 @@
   },
   "levelParameters": {
     "minLevel": 4,
-    "maxLevel": 99,
+    "maxLevel": 7,
     "rarity": 4
   },
   "abilities": ["ATTACK", "SHOOT_ARROW"],

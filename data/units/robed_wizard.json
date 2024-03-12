@@ -7,12 +7,17 @@
   "life": 120,
   "mana": 30,
   "strength": 8,
-  "dexterity": 2,
+  "dexterity": 0,
   "aiParameters": {
     "speed": 0.7,
     "visionRange": 10,
     "aggressiveness": 0.9,
     "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 9,
+    "maxLevel": 99,
+    "rarity": 4
   },
   "abilities": ["ATTACK", "TELEPORT", "SUMMON"],
   "summonedUnitClass": "golem_spawn",

@@ -31,7 +31,7 @@
   },
   "levelParameters": {
     "minLevel": 3,
-    "maxLevel": 99,
+    "maxLevel": 6,
     "rarity": 2
   },
   "abilities": ["ATTACK", "MINOR_KNOCKBACK", "HEAVY_ATTACK"],

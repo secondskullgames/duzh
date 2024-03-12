@@ -1,0 +1,24 @@
+{
+  "id": "9",
+  "levelNumber": 9,
+  "algorithm": "BLOB",
+  "tileSet": "cave_blue",
+  "width": 36,
+  "height": 36,
+  "enemies": {
+    "min": 7,
+    "max": 9
+  },
+  "items": {
+    "min": 3,
+    "max": 4
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 2,
+    "spawnEnemies": true,
+    "spawnedUnitClass": "black_snake_spawn",
+    "spawnRate": 0.05,
+    "maxSpawnedUnits": 10
+  }
+}
