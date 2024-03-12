@@ -32,10 +32,15 @@ export const shuffle = <T>(list: T[]) => {
   }
 };
 
-export const weightedRandom = <T>(
-  probabilities: Record<string, number>,
-  mappedObjects: Record<string, T>
-): T => {
+export type WeightedRandomChoice<T> = Readonly<{ key: string; weight: number; value: T }>;
+
+export const weightedRandom = <T>(choices: WeightedRandomChoice<T>[]): T => {
+  const probabilities: Record<string, number> = {};
+  const mappedObjects: Record<string, T> = {};
+  for (const choice of choices) {
+    probabilities[choice.key] = choice.weight;
+    mappedObjects[choice.key] = choice.value;
+  }
   const total = Object.values(probabilities).reduce((a, b) => a + b);
   const rand = Math.random() * total;
   let counter = 0;

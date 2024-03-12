@@ -133,3 +133,7 @@ export const hasUnblockedStraightLineBetween = (
 export const getUnitsOfClass = (map: MapInstance, unitClass: string) => {
   return map.getAllUnits().filter(unit => unit.getUnitClass() === unitClass);
 };
+
+export const isOccupied = (map: MapInstance, coordinates: Coordinates) => {
+  return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
+};

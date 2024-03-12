@@ -12,7 +12,12 @@ import GameObject from '../../entities/objects/GameObject';
 import UnitModel from '@models/UnitModel';
 import { GeneratedMapModel, Algorithm } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';
-import { randChoice, randInt, weightedRandom } from '@lib/utils/random';
+import {
+  randChoice,
+  randInt,
+  weightedRandom,
+  WeightedRandomChoice
+} from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import Unit from '@main/entities/units/Unit';
 import { Feature } from '@main/utils/features';
@@ -22,6 +27,7 @@ import Coordinates from '@lib/geometry/Coordinates';
 import MapItem from '@main/entities/objects/MapItem';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
+import { isOccupied } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
 
 type ItemType = 'equipment' | 'consumable';
@@ -107,22 +113,22 @@ export class GeneratedMapFactory {
       map.getTiles(),
       ['FLOOR'],
       []
-    ).filter(coordinates => !this._isOccupied(coordinates, map));
+    ).filter(coordinates => !isOccupied(map, coordinates));
     let unitsRemaining = randInt(model.enemies.min, model.enemies.max);
 
     const possibleUnitModels = await this._getPossibleUnitModels(model);
+    const choices: WeightedRandomChoice<UnitModel>[] = [];
     while (unitsRemaining > 0) {
       // weighted random, favoring higher-level units
-      const probabilities: Record<string, number> = {};
-      const mappedUnitModels: Record<string, UnitModel> = {};
       for (const model of possibleUnitModels) {
         const key = model.id;
         // Each rarity is 2x less common than the previous rarity.
         // So P[rarity] = 2 ^ -rarity
-        probabilities[key] = 1 / 2 ** (model?.levelParameters!.rarity ?? 0);
-        mappedUnitModels[key] = model;
+        const rarity = model?.levelParameters!.rarity ?? 0;
+        const weight = 0.5 ** rarity;
+        choices.push({ key, weight, value: model });
       }
-      const unitModel = weightedRandom(probabilities, mappedUnitModels);
+      const unitModel = weightedRandom(choices);
       const coordinates = randChoice(candidateLocations);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       const controller = chooseUnitController(unitModel.id);
@@ -168,7 +174,7 @@ export class GeneratedMapFactory {
       map.getTiles(),
       ['FLOOR'],
       []
-    ).filter(coordinates => !this._isOccupied(coordinates, map));
+    ).filter(coordinates => !isOccupied(map, coordinates));
 
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
@@ -222,8 +228,7 @@ export class GeneratedMapFactory {
       checkState(possibleItemSpecs.length > 0);
 
       // weighted random
-      const probabilities: Record<string, number> = {};
-      const mappedObjects: Record<string, ItemSpec> = {};
+      const choices: WeightedRandomChoice<ItemSpec>[] = [];
 
       for (const itemSpec of possibleItemSpecs) {
         const key = `${itemSpec.type}_${itemSpec.id}`;
@@ -240,10 +245,10 @@ export class GeneratedMapFactory {
 
         // Each rarity is 2x less common than the previous rarity.
         // So P[rarity] = 2 ^ -rarity
-        probabilities[key] = 1 / 2 ** (model?.rarity ?? 0);
-        mappedObjects[key] = itemSpec;
+        const weight = 0.5 ** (model?.rarity ?? 0);
+        choices.push({ weight, key, value: itemSpec });
       }
-      const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
+      const chosenItemSpec = weightedRandom(choices);
       itemSpecs.push(chosenItemSpec);
       if (chosenItemSpec.type === 'equipment') {
         this.state.recordEquipmentGenerated(chosenItemSpec.id);
@@ -260,10 +265,6 @@ export class GeneratedMapFactory {
     }
 
     return objects;
-  };
-
-  private _isOccupied = (coordinates: Coordinates, map: MapInstance) => {
-    return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
   };
 
   private _generateMapItem = async (
