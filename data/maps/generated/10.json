@@ -1,7 +1,7 @@
 {
   "id": "9",
   "levelNumber": 9,
-  "algorithm": "ROOMS_AND_CORRIDORS_3",
+  "algorithm": "PATH",
   "tileSet": "dungeon_green",
   "width": 38,
   "height": 38,
@@ -11,7 +11,7 @@
   },
   "items": {
     "min": 3,
-    "max": 4
+    "max": 5
   },
   "fogOfWar": {
     "enabled": true,
