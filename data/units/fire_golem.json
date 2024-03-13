@@ -12,9 +12,9 @@
     "DARK_RED": "DARK_RED",
     "TEAL": "YELLOW"
   },
-  "strength": 12,
+  "strength": 15,
   "dexterity": 0,
-  "life": 50,
+  "life": 80,
   "mana": 10,
   "aiParameters": {
     "speed": 0.7,
@@ -23,7 +23,7 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 5,
+    "minLevel": 7,
     "maxLevel": 99,
     "rarity": 3
   },
