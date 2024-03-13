@@ -30,11 +30,6 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0.1
   },
-  "levelParameters": {
-    "minLevel": 7,
-    "maxLevel": 99,
-    "rarity": 3
-  },
   "abilities": ["ATTACK", "FAST_TELEPORT", "SHOOT_TURRET_ARROW"],
   "experience": 1
 }
