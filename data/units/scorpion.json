@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 60,
+  "life": 50,
   "mana": 10,
   "strength": 12,
   "dexterity": 0,
