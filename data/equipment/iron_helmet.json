@@ -6,7 +6,9 @@
   "itemCategory": "ARMOR",
   "slot": "HEAD",
   "paletteSwaps": {},
-  "rarity": null,
-  "level": null,
-  "stats": {}
+  "rarity": 3,
+  "level": 4,
+  "stats": {
+    "absorbAmount": 0.1
+  }
 }

@@ -6,6 +6,13 @@ import { Faction } from '@main/entities/units/Faction';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 
+export const abilitiesLearnedAtLevel: Record<number, AbilityName> = {
+  2: AbilityName.HEAVY_ATTACK,
+  3: AbilityName.KNOCKBACK_ATTACK,
+  4: AbilityName.STUN_ATTACK,
+  5: AbilityName.DASH_ATTACK
+};
+
 export const levelUp = (unit: Unit, session: Session) => {
   const ticker = session.getTicker();
   unit.incrementLevel();
@@ -22,19 +29,9 @@ export const levelUp = (unit: Unit, session: Session) => {
       unit.awardAbilityPoint();
     } else {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
-      switch (unit.getLevel()) {
-        case 2:
-          unit.learnAbility(UnitAbility.abilityForName(AbilityName.HEAVY_ATTACK));
-          break;
-        case 3:
-          unit.learnAbility(UnitAbility.abilityForName(AbilityName.KNOCKBACK_ATTACK));
-          break;
-        case 4:
-          unit.learnAbility(UnitAbility.abilityForName(AbilityName.STUN_ATTACK));
-          break;
-        case 5:
-          unit.learnAbility(UnitAbility.abilityForName(AbilityName.BLINK));
-          break;
+      const abilityToLearn = abilitiesLearnedAtLevel[unit.getLevel()] ?? null;
+      if (abilityToLearn) {
+        unit.learnAbility(UnitAbility.abilityForName(abilityToLearn));
       }
     }
   }
