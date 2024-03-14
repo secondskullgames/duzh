@@ -1,5 +1,5 @@
 import { UnitController } from './UnitController';
-import { canMove, getClosestEnemy } from './ControllerUtils';
+import { canMove, getNearestEnemyUnit } from './ControllerUtils';
 import Unit from '../Unit';
 import Direction from '../../../geometry/Direction';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
@@ -33,7 +33,10 @@ export default class WizardController implements UnitController {
    * @override {@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const closestEnemyUnit = getClosestEnemy(unit);
+    const closestEnemyUnit = getNearestEnemyUnit(unit);
+    if (!closestEnemyUnit) {
+      return new StayOrder();
+    }
     const map = session.getMap();
 
     if (_canSummon(unit, map) && _wantsToSummon()) {
@@ -95,7 +98,10 @@ const _wantsToSummon = () => {
 };
 
 const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
-  const closestEnemyUnit = getClosestEnemy(unit);
+  const closestEnemyUnit = getNearestEnemyUnit(unit);
+  if (!closestEnemyUnit) {
+    return null;
+  }
   const map = unit.getMap();
   const tiles: Coordinates[] = [];
   for (let y = 0; y < map.height; y++) {

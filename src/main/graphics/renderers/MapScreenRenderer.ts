@@ -6,6 +6,7 @@ import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { Color } from '@lib/graphics/Color';
+import { isHostile } from '@main/entities/units/UnitUtils';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
@@ -62,7 +63,7 @@ export default class MapScreenRenderer implements Renderer {
         case 'FLOOR':
         case 'FLOOR_HALL': {
           const unit = map.getUnit(coordinates);
-          if (unit && unit?.getFaction() !== playerUnit.getFaction()) {
+          if (unit && isHostile(unit, playerUnit)) {
             return Colors.RED;
           } else if (getItem(map, coordinates)) {
             return Colors.YELLOW;

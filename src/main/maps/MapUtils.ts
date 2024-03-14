@@ -140,13 +140,3 @@ export const getUnitsOfClass = (map: MapInstance, unitClass: string) => {
 export const isOccupied = (map: MapInstance, coordinates: Coordinates) => {
   return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
 };
-
-export const getNearestEnemyUnit = (map: MapInstance, unit: Unit): Unit | null => {
-  const enemyUnits = map
-    .getAllUnits()
-    .filter(otherUnit => otherUnit.getFaction() !== unit.getFaction()); // TODO UnitUtils.isHostile()?
-
-  return minBy(enemyUnits, enemyUnit =>
-    manhattanDistance(unit.getCoordinates(), enemyUnit.getCoordinates())
-  );
-};

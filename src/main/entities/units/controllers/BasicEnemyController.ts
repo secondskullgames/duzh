@@ -1,5 +1,5 @@
 import { UnitController } from './UnitController';
-import { canMove, canSee } from './ControllerUtils';
+import { canMove, canSee, getNearestEnemyUnit } from './ControllerUtils';
 import Unit from '../Unit';
 import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
@@ -11,7 +11,6 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/entities/units/behaviors/UnitBehavior';
 import StayBehavior from '@main/entities/units/behaviors/StayBehavior';
-import { getNearestEnemyUnit } from '@main/maps/MapUtils';
 
 const _wantsToFlee = (unit: Unit) => {
   const aiParameters = checkNotNull(unit.getAiParameters());
@@ -37,11 +36,12 @@ export default class BasicEnemyController implements UnitController {
 
   private _getBehavior = (unit: Unit): UnitBehavior => {
     const action = this._getAction(unit);
+    const nearestEnemyUnit = getNearestEnemyUnit(unit);
     switch (action) {
       case Action.ATTACK:
-        return new AttackUnitBehavior({ targetUnit: this._getNearestEnemyUnit(unit) });
+        return new AttackUnitBehavior({ targetUnit: checkNotNull(nearestEnemyUnit) });
       case Action.FLEE:
-        return new AvoidUnitBehavior({ targetUnit: this._getNearestEnemyUnit(unit) });
+        return new AvoidUnitBehavior({ targetUnit: checkNotNull(nearestEnemyUnit) });
       case Action.STAY:
         return new StayBehavior();
       case Action.WANDER:
@@ -55,13 +55,13 @@ export default class BasicEnemyController implements UnitController {
       'BasicEnemyController requires aiParams!'
     );
     const { aggressiveness } = aiParameters;
-    const enemyUnit = this._getNearestEnemyUnit(unit);
+    const enemyUnit = getNearestEnemyUnit(unit);
 
     if (!canMove(unit)) {
       return Action.STAY;
     } else if (_wantsToFlee(unit)) {
       return Action.FLEE;
-    } else if (canSee(unit, enemyUnit)) {
+    } else if (enemyUnit && canSee(unit, enemyUnit)) {
       if (unit.isInCombat()) {
         return Action.ATTACK;
       } else if (randChance(aggressiveness)) {
@@ -77,7 +77,4 @@ export default class BasicEnemyController implements UnitController {
       }
     }
   };
-
-  private _getNearestEnemyUnit = (unit: Unit): Unit =>
-    checkNotNull(getNearestEnemyUnit(unit.getMap(), unit));
 }
