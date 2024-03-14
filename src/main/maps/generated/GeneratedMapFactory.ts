@@ -9,10 +9,15 @@ import MapInstance from '../MapInstance';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
-import UnitModel from '../../../models/UnitModel';
-import GeneratedMapModel from '../../../models/GeneratedMapModel';
+import UnitModel from '@models/UnitModel';
+import { GeneratedMapModel, Algorithm } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';
-import { randChoice, randInt, weightedRandom } from '@lib/utils/random';
+import {
+  randChoice,
+  randInt,
+  weightedRandom,
+  WeightedRandomChoice
+} from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import Unit from '@main/entities/units/Unit';
 import { Feature } from '@main/utils/features';
@@ -22,18 +27,8 @@ import Coordinates from '@lib/geometry/Coordinates';
 import MapItem from '@main/entities/objects/MapItem';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
+import { isOccupied } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
-
-type MapStyle = Readonly<{
-  tileSet: string;
-  layout: string;
-}>;
-
-namespace MapStyle {
-  export const equals = (first: MapStyle, second: MapStyle) => {
-    return first.tileSet === second.tileSet && first.layout === second.layout;
-  };
-}
 
 type ItemType = 'equipment' | 'consumable';
 type ItemSpec = Readonly<{
@@ -41,10 +36,15 @@ type ItemSpec = Readonly<{
   id: string;
 }>;
 
+const algorithms: Algorithm[] = [
+  //'ROOMS_AND_CORRIDORS',
+  'ROOMS_AND_CORRIDORS_3',
+  'PATH',
+  'BLOB'
+];
+
 @injectable()
 export class GeneratedMapFactory {
-  private readonly usedMapStyles: MapStyle[] = [];
-
   constructor(
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader,
@@ -60,10 +60,10 @@ export class GeneratedMapFactory {
 
   loadMap = async (mapId: string): Promise<MapInstance> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
-    const style = this._chooseMapStyle();
-    const dungeonGenerator = this._getDungeonGenerator(style.layout);
-    console.debug(`Generating map: ${JSON.stringify(style)}`);
-    const map = await dungeonGenerator.generateMap(model, style.tileSet);
+    const algorithm: Algorithm = model.algorithm ?? randChoice(algorithms);
+    const tileSet = model.tileSet ?? randChoice(this.tileFactory.getTileSetNames());
+    const dungeonGenerator = this._getDungeonGenerator(algorithm);
+    const map = await dungeonGenerator.generateMap(model, tileSet);
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
       map.addUnit(unit);
@@ -102,24 +102,6 @@ export class GeneratedMapFactory {
     }
   };
 
-  private _chooseMapStyle = (): MapStyle => {
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const layout = randChoice([
-        //'ROOMS_AND_CORRIDORS',
-        'ROOMS_AND_CORRIDORS_3',
-        'PATH',
-        'BLOB'
-      ]);
-      const tileSet = randChoice(this.tileFactory.getTileSetNames());
-      const chosenStyle = { layout, tileSet };
-      if (!this.usedMapStyles.some(style => MapStyle.equals(style, chosenStyle))) {
-        this.usedMapStyles.push(chosenStyle);
-        return chosenStyle;
-      }
-    }
-  };
-
   private _generateUnits = async (
     map: MapInstance,
     model: GeneratedMapModel
@@ -131,22 +113,22 @@ export class GeneratedMapFactory {
       map.getTiles(),
       ['FLOOR'],
       []
-    ).filter(coordinates => !this._isOccupied(coordinates, map));
+    ).filter(coordinates => !isOccupied(map, coordinates));
     let unitsRemaining = randInt(model.enemies.min, model.enemies.max);
 
     const possibleUnitModels = await this._getPossibleUnitModels(model);
+    const choices: WeightedRandomChoice<UnitModel>[] = [];
     while (unitsRemaining > 0) {
       // weighted random, favoring higher-level units
-      const probabilities: Record<string, number> = {};
-      const mappedUnitModels: Record<string, UnitModel> = {};
       for (const model of possibleUnitModels) {
         const key = model.id;
         // Each rarity is 2x less common than the previous rarity.
         // So P[rarity] = 2 ^ -rarity
-        probabilities[key] = 1 / 2 ** (model?.levelParameters!.rarity ?? 0);
-        mappedUnitModels[key] = model;
+        const rarity = model?.levelParameters!.rarity ?? 0;
+        const weight = 0.5 ** rarity;
+        choices.push({ key, weight, value: model });
       }
-      const unitModel = weightedRandom(probabilities, mappedUnitModels);
+      const unitModel = weightedRandom(choices);
       const coordinates = randChoice(candidateLocations);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       const controller = chooseUnitController(unitModel.id);
@@ -192,7 +174,7 @@ export class GeneratedMapFactory {
       map.getTiles(),
       ['FLOOR'],
       []
-    ).filter(coordinates => !this._isOccupied(coordinates, map));
+    ).filter(coordinates => !isOccupied(map, coordinates));
 
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
@@ -246,8 +228,7 @@ export class GeneratedMapFactory {
       checkState(possibleItemSpecs.length > 0);
 
       // weighted random
-      const probabilities: Record<string, number> = {};
-      const mappedObjects: Record<string, ItemSpec> = {};
+      const choices: WeightedRandomChoice<ItemSpec>[] = [];
 
       for (const itemSpec of possibleItemSpecs) {
         const key = `${itemSpec.type}_${itemSpec.id}`;
@@ -264,10 +245,10 @@ export class GeneratedMapFactory {
 
         // Each rarity is 2x less common than the previous rarity.
         // So P[rarity] = 2 ^ -rarity
-        probabilities[key] = 1 / 2 ** (model?.rarity ?? 0);
-        mappedObjects[key] = itemSpec;
+        const weight = 0.5 ** (model?.rarity ?? 0);
+        choices.push({ weight, key, value: itemSpec });
       }
-      const chosenItemSpec = weightedRandom(probabilities, mappedObjects);
+      const chosenItemSpec = weightedRandom(choices);
       itemSpecs.push(chosenItemSpec);
       if (chosenItemSpec.type === 'equipment') {
         this.state.recordEquipmentGenerated(chosenItemSpec.id);
@@ -284,10 +265,6 @@ export class GeneratedMapFactory {
     }
 
     return objects;
-  };
-
-  private _isOccupied = (coordinates: Coordinates, map: MapInstance) => {
-    return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
   };
 
   private _generateMapItem = async (

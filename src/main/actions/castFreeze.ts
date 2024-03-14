@@ -2,6 +2,7 @@ import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { isHostile } from '@main/entities/units/UnitUtils';
 
 const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {
   return `${target.getName()} is frozen for ${duration} turns!`;
@@ -31,7 +32,8 @@ const _getTargetUnits = (unit: Unit, radius: number): Unit[] => {
     for (let y = coordinates.y - radius; y <= coordinates.y + radius; y++) {
       if (map.contains({ x, y })) {
         const targetUnit = map.getUnit({ x, y });
-        if (targetUnit && targetUnit.getFaction() !== unit.getFaction()) {
+        // Maybe this should hit friendlies.  Not like we have any
+        if (targetUnit && isHostile(unit, targetUnit)) {
           targetUnits.push(targetUnit);
         }
       }

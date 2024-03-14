@@ -65,3 +65,6 @@ export const getHotkeyAbility = (
   const index = parseInt(hotkey.toString());
   return playerUnit.getAbilities().filter(ability => !ability.innate)[index - 1];
 };
+
+export const isHostile = (first: Unit, second: Unit): boolean =>
+  first.getFaction() !== second.getFaction();

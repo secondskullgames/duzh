@@ -23,10 +23,10 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 4,
+    "minLevel": 7,
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "BURNING_ATTACK"],
+  "abilities": ["ATTACK", "BURNING_ATTACK", "HEAVY_ATTACK"],
   "experience": 1
 }

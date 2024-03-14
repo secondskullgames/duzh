@@ -16,7 +16,7 @@
   },
   "levelParameters": {
     "minLevel": 3,
-    "maxLevel": 99,
+    "maxLevel": 5,
     "rarity": 3
   },
   "abilities": ["ATTACK", "DASH"],

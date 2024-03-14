@@ -20,7 +20,7 @@
   },
   "strength": 4,
   "dexterity": 2,
-  "life": 60,
+  "life": 50,
   "mana": 10,
   "abilities": ["ATTACK", "SHOOT_ARROW", "DASH"]
 }

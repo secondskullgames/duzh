@@ -4,9 +4,9 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 80,
-  "mana": 15,
-  "strength": 20,
+  "life": 50,
+  "mana": 10,
+  "strength": 12,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,
@@ -15,10 +15,10 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 6,
+    "minLevel": 7,
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "KNOCKBACK_ATTACK"],
+  "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],
   "experience": 1
 }

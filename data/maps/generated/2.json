@@ -1,6 +1,8 @@
 {
   "id": "2",
   "levelNumber": 2,
+  "algorithm": "PATH",
+  "tileSet": "kroz",
   "width": 22,
   "height": 22,
   "enemies": {
@@ -16,7 +18,7 @@
     "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
-    "spawnRate": 0.03,
+    "spawnRate": 0.05,
     "maxSpawnedUnits": 7
   }
 }

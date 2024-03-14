@@ -8,10 +8,12 @@ import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
 import { Dash } from '../abilities/Dash';
 import Coordinates from '@lib/geometry/Coordinates';
-import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
 import SorceressController from '@main/entities/units/controllers/SorceressController';
+import { minBy } from '@lib/utils/arrays';
+import { isHostile } from '@main/entities/units/UnitUtils';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
@@ -28,15 +30,19 @@ export const canSee = (unit: Unit, targetUnit: Unit) => {
   return distanceToPlayer <= aiParameters.visionRange;
 };
 
-/**
- * Assumes player unit exists
- */
-export const getClosestEnemy = (unit: Unit): Unit => {
-  const enemyUnit = unit
+export const getNearestEnemyUnit = (unit: Unit): Unit | null => {
+  const enemyUnits = unit
     .getMap()
     .getAllUnits()
-    .find(u => u.getFaction() !== unit.getFaction());
-  return checkNotNull(enemyUnit);
+    .filter(otherUnit => isHostile(unit, otherUnit));
+
+  if (enemyUnits.length === 0) {
+    return null;
+  }
+
+  return minBy(enemyUnits, enemyUnit =>
+    manhattanDistance(unit.getCoordinates(), enemyUnit.getCoordinates())
+  );
 };
 
 export const chooseUnitController = (unitClass: string): UnitController => {

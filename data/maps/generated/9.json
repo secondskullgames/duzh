@@ -1,13 +1,13 @@
 {
-  "id": "6",
-  "levelNumber": 6,
-  "algorithm": "PATH",
-  "tileSet": "zzt",
-  "width": 30,
-  "height": 30,
+  "id": "9",
+  "levelNumber": 9,
+  "algorithm": "BLOB",
+  "tileSet": "cave_blue",
+  "width": 36,
+  "height": 36,
   "enemies": {
-    "min": 6,
-    "max": 7
+    "min": 7,
+    "max": 9
   },
   "items": {
     "min": 3,
@@ -18,7 +18,7 @@
     "radius": 2,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
-    "spawnRate": 0.02,
-    "maxSpawnedUnits": 8
+    "spawnRate": 0.05,
+    "maxSpawnedUnits": 10
   }
 }

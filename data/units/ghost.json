@@ -1,0 +1,20 @@
+{
+  "id": "ghost",
+  "name": "Ghost",
+  "type": "GHOST",
+  "sprite": "ghost",
+  "paletteSwaps": {},
+  "equipment": [],
+  "life": 100,
+  "mana": 10,
+  "strength": 6,
+  "dexterity": 20,
+  "aiParameters": {
+    "speed": 0.8,
+    "visionRange": 10,
+    "aggressiveness": 0.9,
+    "fleeThreshold": 0.1
+  },
+  "abilities": ["ATTACK", "FAST_TELEPORT", "SHOOT_TURRET_ARROW"],
+  "experience": 1
+}

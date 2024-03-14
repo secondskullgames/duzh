@@ -1,24 +1,24 @@
 {
-  "id": "4",
-  "levelNumber": 4,
+  "id": "7",
+  "levelNumber": 7,
   "algorithm": "BLOB",
-  "tileSet": "cave",
-  "width": 26,
-  "height": 26,
+  "tileSet": "catacomb_red",
+  "width": 32,
+  "height": 32,
   "enemies": {
-    "min": 5,
-    "max": 6
+    "min": 6,
+    "max": 8
   },
   "items": {
     "min": 3,
-    "max": 3
+    "max": 5
   },
   "fogOfWar": {
     "enabled": true,
     "radius": 3,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
-    "spawnRate": 0.02,
-    "maxSpawnedUnits": 6
+    "spawnRate": 0.03,
+    "maxSpawnedUnits": 8
   }
 }

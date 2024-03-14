@@ -2,7 +2,7 @@
   "id": "floor_fire_scroll",
   "name": "Scroll of Floor Fire",
   "level": 2,
-  "rarity": 3,
+  "rarity": 2,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {

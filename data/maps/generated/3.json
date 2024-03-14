@@ -1,6 +1,8 @@
 {
   "id": "3",
   "levelNumber": 3,
+  "algorithm": "ROOMS_AND_CORRIDORS_3",
+  "tileSet": "catacomb",
   "width": 24,
   "height": 24,
   "enemies": {
@@ -16,7 +18,7 @@
     "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
-    "spawnRate": 0.04,
+    "spawnRate": 0.06,
     "maxSpawnedUnits": 8
   }
 }

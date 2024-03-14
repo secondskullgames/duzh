@@ -95,8 +95,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
     }
 
     // change these ratios to adjust the "snakiness"
-    const minIndex = Math.floor((candidates.length - 1) * 0.1);
-    const maxIndex = Math.floor((candidates.length - 1) * 0.9);
+    const minIndex = Math.floor((candidates.length - 1) * 0.3);
+    const maxIndex = Math.floor((candidates.length - 1) * 0.8);
     const index = randInt(minIndex, maxIndex);
 
     const { x, y } = candidates[index];

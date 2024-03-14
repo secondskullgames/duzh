@@ -4,7 +4,7 @@
   "type": "GHOST",
   "sprite": "shade",
   "paletteSwaps": {},
-  "life": 8,
+  "life": 6,
   "mana": 0,
   "strength": 8,
   "dexterity": 0,
