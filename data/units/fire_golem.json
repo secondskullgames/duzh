@@ -14,7 +14,7 @@
   },
   "strength": 15,
   "dexterity": 0,
-  "life": 80,
+  "life": 60,
   "mana": 10,
   "aiParameters": {
     "speed": 0.7,
@@ -27,6 +27,6 @@
     "maxLevel": 99,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "BURNING_ATTACK"],
+  "abilities": ["ATTACK", "BURNING_ATTACK", "HEAVY_ATTACK"],
   "experience": 1
 }

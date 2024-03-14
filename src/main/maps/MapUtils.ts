@@ -7,6 +7,9 @@ import Bonus from '../entities/objects/Bonus';
 import Coordinates from '@lib/geometry/Coordinates';
 import { ObjectType } from '@main/entities/objects/GameObject';
 import { Pathfinder } from '@main/geometry/Pathfinder';
+import Unit from '@main/entities/units/Unit';
+import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
+import { minBy } from '@lib/utils/arrays';
 
 export const getSpawner = (
   map: MapInstance,
@@ -136,4 +139,14 @@ export const getUnitsOfClass = (map: MapInstance, unitClass: string) => {
 
 export const isOccupied = (map: MapInstance, coordinates: Coordinates) => {
   return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
+};
+
+export const getNearestEnemyUnit = (map: MapInstance, unit: Unit): Unit | null => {
+  const enemyUnits = map
+    .getAllUnits()
+    .filter(otherUnit => otherUnit.getFaction() !== unit.getFaction()); // TODO UnitUtils.isHostile()?
+
+  return minBy(enemyUnits, enemyUnit =>
+    manhattanDistance(unit.getCoordinates(), enemyUnit.getCoordinates())
+  );
 };

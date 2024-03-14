@@ -11,6 +11,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/entities/units/behaviors/UnitBehavior';
 import StayBehavior from '@main/entities/units/behaviors/StayBehavior';
+import { getNearestEnemyUnit } from '@main/maps/MapUtils';
 
 const _wantsToFlee = (unit: Unit) => {
   const aiParameters = checkNotNull(unit.getAiParameters());
@@ -18,45 +19,65 @@ const _wantsToFlee = (unit: Unit) => {
   return unit.getLife() / unit.getMaxLife() < fleeThreshold;
 };
 
+enum Action {
+  ATTACK = 'ATTACK',
+  FLEE = 'FLEE',
+  STAY = 'STAY',
+  WANDER = 'WANDER'
+}
+
 export default class BasicEnemyController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, state, session);
+    const behavior = this._getBehavior(unit);
     return behavior.issueOrder(unit, state, session);
   };
 
-  private _getBehavior = (
-    unit: Unit,
-    state: GameState,
-    session: Session
-  ): UnitBehavior => {
+  private _getBehavior = (unit: Unit): UnitBehavior => {
+    const action = this._getAction(unit);
+    switch (action) {
+      case Action.ATTACK:
+        return new AttackUnitBehavior({ targetUnit: this._getNearestEnemyUnit(unit) });
+      case Action.FLEE:
+        return new AvoidUnitBehavior({ targetUnit: this._getNearestEnemyUnit(unit) });
+      case Action.STAY:
+        return new StayBehavior();
+      case Action.WANDER:
+        return new WanderBehavior();
+    }
+  };
+
+  private _getAction = (unit: Unit): Action => {
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
       'BasicEnemyController requires aiParams!'
     );
     const { aggressiveness } = aiParameters;
-    const enemyUnit = session.getPlayerUnit();
+    const enemyUnit = this._getNearestEnemyUnit(unit);
 
     if (!canMove(unit)) {
-      return new StayBehavior();
+      return Action.STAY;
     } else if (_wantsToFlee(unit)) {
-      return new AvoidUnitBehavior({ targetUnit: enemyUnit });
+      return Action.FLEE;
     } else if (canSee(unit, enemyUnit)) {
       if (unit.isInCombat()) {
-        return new AttackUnitBehavior({ targetUnit: enemyUnit });
+        return Action.ATTACK;
       } else if (randChance(aggressiveness)) {
-        return new AttackUnitBehavior({ targetUnit: enemyUnit });
+        return Action.ATTACK;
       } else {
-        return new WanderBehavior();
+        return Action.WANDER;
       }
     } else {
       if (randBoolean()) {
-        return new StayBehavior();
+        return Action.STAY;
       } else {
-        return new WanderBehavior();
+        return Action.WANDER;
       }
     }
   };
+
+  private _getNearestEnemyUnit = (unit: Unit): Unit =>
+    checkNotNull(getNearestEnemyUnit(unit.getMap(), unit));
 }
