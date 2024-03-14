@@ -2,11 +2,14 @@
   "id": "fireball_scroll",
   "name": "Scroll of Fireball",
   "level": 2,
-  "rarity": 3,
+  "rarity": 2,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {
     "spell": "fireball",
     "damage": "50"
+  },
+  "paletteSwaps": {
+    "DARK_RED": "RED"
   }
 }

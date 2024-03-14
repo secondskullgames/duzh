@@ -1,7 +1,7 @@
 {
   "id": "freeze_scroll",
   "name": "Scroll of Freeze",
-  "level": 3,
+  "level": 4,
   "rarity": 3,
   "mapSprite": "map_scroll",
   "type": "scroll",
