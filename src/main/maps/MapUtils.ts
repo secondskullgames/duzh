@@ -7,9 +7,6 @@ import Bonus from '../entities/objects/Bonus';
 import Coordinates from '@lib/geometry/Coordinates';
 import { ObjectType } from '@main/entities/objects/GameObject';
 import { Pathfinder } from '@main/geometry/Pathfinder';
-import Unit from '@main/entities/units/Unit';
-import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
-import { minBy } from '@lib/utils/arrays';
 
 export const getSpawner = (
   map: MapInstance,
