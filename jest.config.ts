@@ -10,10 +10,10 @@ export default {
   coverageReporters: ['json', 'text', 'lcov', 'clover'],
   coverageThreshold: {
     global: {
-      statements: 5.5,
-      branches: 29.0,
-      functions: 15.0,
-      lines: 5.5
+      statements: 14.0,
+      branches: 38.0,
+      functions: 14.0,
+      lines: 14.0
     }
   },
   // dependencyExtractor: undefined,
