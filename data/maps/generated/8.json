@@ -2,7 +2,7 @@
   "id": "8",
   "levelNumber": 8,
   "algorithm": "ROOMS_AND_CORRIDORS_3",
-  "tileSet": "dungeon",
+  "tileSet": "cave_red",
   "width": 34,
   "height": 34,
   "enemies": {

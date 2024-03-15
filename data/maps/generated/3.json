@@ -2,9 +2,9 @@
   "id": "3",
   "levelNumber": 3,
   "algorithm": "ROOMS_AND_CORRIDORS_3",
-  "tileSet": "catacomb",
-  "width": 24,
-  "height": 24,
+  "tileSet": "catacomb_red",
+  "width": 26,
+  "height": 26,
   "enemies": {
     "min": 5,
     "max": 6
