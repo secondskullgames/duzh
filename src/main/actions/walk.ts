@@ -1,7 +1,7 @@
 import { moveUnit } from './moveUnit';
 import Unit from '../entities/units/Unit';
-import Direction from '../geometry/Direction';
 import Sounds from '../sounds/Sounds';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

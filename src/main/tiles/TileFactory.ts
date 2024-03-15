@@ -6,10 +6,10 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
 import ModelLoader from '@main/assets/ModelLoader';
 import Coordinates from '@lib/geometry/Coordinates';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
 import { Feature } from '@main/utils/features';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { inject, injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{
@@ -47,7 +47,7 @@ export default class TileFactory {
       for (let index = 0; index < filenames.length; index++) {
         const filename = filenames[index];
         if (filename) {
-          const paletteSwaps = PaletteSwaps.create(model.paletteSwaps ?? {});
+          const paletteSwaps = loadPaletteSwaps(model.paletteSwaps ?? {});
           const tileSprite = await this.spriteFactory.createTileSprite(
             `${model.path}/${filename}`,
             paletteSwaps

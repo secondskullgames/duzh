@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
 import Equipment from '../../equipment/Equipment';
 import Activity from '../../entities/units/Activity';
-import Direction from '../../geometry/Direction';
+import Direction from '@lib/geometry/Direction';
 import Offsets from '@lib/geometry/Offsets';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Unit from '@main/entities/units/Unit';

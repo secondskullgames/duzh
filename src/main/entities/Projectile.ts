@@ -1,8 +1,8 @@
 import Entity from './Entity';
 import { EntityType } from './EntityType';
-import Direction from '../geometry/Direction';
 import Sprite from '../graphics/sprites/Sprite';
 import MapInstance from '../maps/MapInstance';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 
 type Props = Readonly<{

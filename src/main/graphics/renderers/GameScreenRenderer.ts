@@ -4,7 +4,7 @@ import Unit from '../../entities/units/Unit';
 import Colors from '../Colors';
 import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import Sprite from '../sprites/Sprite';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Coordinates from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';

@@ -7,7 +7,6 @@ import MapItem from '../entities/objects/MapItem';
 import ConsumableItemModel from '../../models/ConsumableItemModel';
 import MapInstance from '../maps/MapInstance';
 import Coordinates from '@lib/geometry/Coordinates';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/getEquipmentTooltip';
@@ -18,6 +17,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -197,7 +197,7 @@ export default class ItemFactory {
     const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
-      PaletteSwaps.create(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps)
     );
     const inventoryItem: InventoryItem =
       await this.createInventoryEquipment(equipmentClass);
@@ -209,7 +209,7 @@ export default class ItemFactory {
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
-      PaletteSwaps.create(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps)
     );
 
     // TODO wtf is this
@@ -264,7 +264,7 @@ export default class ItemFactory {
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,
-      PaletteSwaps.create(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps)
     );
     return new MapItem({ coordinates, map, sprite, inventoryItem });
   };

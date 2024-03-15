@@ -1,11 +1,11 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '../Unit';
-import Direction from '../../../geometry/Direction';
 import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
 import { AbilityName } from '../abilities/AbilityName';
 import { Teleport, range as teleportRange } from '../abilities/Teleport';
 import { AbilityOrder } from '../orders/AbilityOrder';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { maxBy } from '@lib/utils/arrays';
 import { GameState } from '@main/core/GameState';

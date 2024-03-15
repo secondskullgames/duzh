@@ -1,4 +1,3 @@
-import Colors from '@main/graphics/Colors';
 import { Color } from '@lib/graphics/Color';
 
 export interface PaletteSwaps {
@@ -53,23 +52,6 @@ class Builder {
 }
 
 export namespace PaletteSwaps {
-  /**
-   * @param paletteSwaps Contains a map of color names, to be converted to hex format
-   */
-  export const create = (paletteSwaps?: Record<string, string>): PaletteSwaps => {
-    const builder = new Builder();
-    if (paletteSwaps) {
-      for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-        const srcColor = Colors.colorForName(srcName);
-        const destColor = Colors.colorForName(destName);
-        builder.addMapping(srcColor, destColor);
-      }
-    }
-    return builder.build();
-  };
-
   export const builder = () => new Builder();
   export const empty = (): PaletteSwaps => new Builder().build();
 }
-
-export default PaletteSwaps;
