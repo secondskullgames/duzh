@@ -45,4 +45,18 @@ export default class ProjectileFactory {
       sprite
     });
   };
+
+  createFireball = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    direction: Direction
+  ): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createStaticSprite('fireball');
+    return new Projectile({
+      coordinates,
+      map,
+      direction,
+      sprite
+    });
+  };
 }

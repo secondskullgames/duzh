@@ -32,7 +32,7 @@
     "fleeThreshold": 0.4
   },
   "levelParameters": {
-    "minLevel": 4,
+    "minLevel": 5,
     "maxLevel": 9,
     "rarity": 3
   },

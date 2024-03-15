@@ -78,12 +78,12 @@ const playFireballAnimation = async (
     map.isTileRevealed(coordinates)
   );
 
-  // arrow movement frames
+  // fireball movement frames
   for (const coordinates of visibleCoordinatesList) {
     const projectile = await state
       .getProjectileFactory()
-      .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+      .createFireball(coordinates, map, direction);
+    map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);
   }

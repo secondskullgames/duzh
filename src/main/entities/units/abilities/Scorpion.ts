@@ -71,7 +71,7 @@ export const Scorpion: UnitAbility = {
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+    map.addProjectile(projectile);
 
     for (let i = 1; i < range; i++) {
       const currentCoordinates = Coordinates.plus(unit.getCoordinates(), {

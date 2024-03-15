@@ -96,7 +96,7 @@ const playBoltAnimation = async (
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+    map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);
   }
