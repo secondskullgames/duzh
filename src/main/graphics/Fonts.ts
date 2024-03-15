@@ -1,6 +1,7 @@
 import Colors from './Colors';
 import { createCanvas, getCanvasContext } from '@lib/utils/dom';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { FontBundle, FontDefinition, FontInstance } from '@lib/graphics/Fonts';
 import { injectable } from 'inversify';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
@@ -22,12 +23,6 @@ export enum FontName {
   APPLE_II = 'APPLE_II'
 }
 
-export type FontBundle = Readonly<{
-  getFont(fontName: FontName): FontInstance;
-}>;
-
-export const FontBundle = Symbol('FontBundle');
-
 const fontDefinitions: Record<FontName, FontDefinition> = {
   [FontName.PERFECT_DOS_VGA]: {
     name: 'PERFECT_DOS_VGA',
@@ -48,20 +43,6 @@ const fontDefinitions: Record<FontName, FontDefinition> = {
     letterHeight: 9
   }
 };
-
-export type FontDefinition = Readonly<{
-  name: string;
-  src: string;
-  letterWidth: number;
-  letterHeight: number;
-}>;
-
-export type FontInstance = Readonly<{
-  name: string;
-  letterWidth: number;
-  letterHeight: number;
-  renderCharacter: (char: string) => ImageData;
-}>;
 
 @injectable()
 export class FontFactory {
