@@ -1,5 +1,5 @@
 import Section from './Section';
-import TileType from '../../../../models/TileType';
+import { TileType } from '@models/TileType';
 
 interface TileGenerator {
   generateTiles: (section: Section) => TileType[][];
@@ -12,7 +12,7 @@ const createTileGenerator = (): TileGenerator => {
       const row: TileType[] = [];
       tiles.push(row);
       for (let x = 0; x < section.getWidth(); x++) {
-        row.push('NONE');
+        row.push(TileType.NONE);
       }
     }
 
@@ -23,14 +23,14 @@ const createTileGenerator = (): TileGenerator => {
         const { left, top, width, height } = s.room;
         for (let y = top; y < top + height; y++) {
           for (let x = left; x < left + width; x++) {
-            tiles[y][x] = 'FLOOR';
+            tiles[y][x] = TileType.FLOOR;
           }
         }
       }
 
       if (s.connection !== null) {
         for (const { x, y } of s.connection.connectedCoordinates) {
-          tiles[y][x] = 'FLOOR_HALL';
+          tiles[y][x] = TileType.FLOOR_HALL;
         }
       }
     }
@@ -44,15 +44,16 @@ const createTileGenerator = (): TileGenerator => {
       for (let x = 0; x < width; x++) {
         const tileType = tiles[y][x];
         switch (tileType) {
-          case 'FLOOR':
-          case 'FLOOR_HALL':
+          case TileType.FLOOR:
+          case TileType.FLOOR_HALL:
             if (y >= 1) {
-              if (tiles[y - 1][x] === 'NONE') {
-                tiles[y - 1][x] = tileType === 'FLOOR_HALL' ? 'WALL_HALL' : 'WALL';
+              if (tiles[y - 1][x] === TileType.NONE) {
+                tiles[y - 1][x] =
+                  tileType === TileType.FLOOR_HALL ? TileType.WALL_HALL : TileType.WALL;
               }
               if (y >= 2) {
-                if (tiles[y - 2][x] === 'NONE') {
-                  tiles[y - 2][x] = 'WALL_TOP';
+                if (tiles[y - 2][x] === TileType.NONE) {
+                  tiles[y - 2][x] = TileType.WALL_TOP;
                 }
               }
             }

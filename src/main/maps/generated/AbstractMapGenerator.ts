@@ -1,7 +1,7 @@
 import { getUnoccupiedLocations } from './MapGenerationUtils';
 import TileFactory from '../../tiles/TileFactory';
-import TileType from '../../../models/TileType';
 import MapInstance from '../MapInstance';
+import { TileType } from '@models/TileType';
 import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
@@ -19,9 +19,9 @@ export default abstract class AbstractMapGenerator {
     const tileTypes = this._generateTiles(width, height, levelNumber);
     const tileSet = await tileFactory.getTileSet(tileSetId);
 
-    const unoccupiedLocations = getUnoccupiedLocations(tileTypes, ['FLOOR'], []);
+    const unoccupiedLocations = getUnoccupiedLocations(tileTypes, [TileType.FLOOR], []);
     const stairsLocation = unoccupiedLocations.shift()!;
-    tileTypes[stairsLocation.y][stairsLocation.x] = 'STAIRS_DOWN';
+    tileTypes[stairsLocation.y][stairsLocation.x] = TileType.STAIRS_DOWN;
 
     const tiles: TileType[][] = [];
     for (let y = 0; y < tileTypes.length; y++) {
@@ -34,11 +34,11 @@ export default abstract class AbstractMapGenerator {
       tiles.push(row);
     }
 
-    const candidateLocations = getUnoccupiedLocations(tiles, ['FLOOR'], []);
+    const candidateLocations = getUnoccupiedLocations(tiles, [TileType.FLOOR], []);
     const startingCoordinates = checkNotNull(candidateLocations.shift());
 
     if (Feature.isEnabled(Feature.STAIRS_UP)) {
-      tiles[startingCoordinates.y][startingCoordinates.x] = 'STAIRS_UP';
+      tiles[startingCoordinates.y][startingCoordinates.x] = TileType.STAIRS_UP;
     }
 
     const map = new MapInstance({
@@ -136,7 +136,7 @@ export default abstract class AbstractMapGenerator {
             // continue, can't place a wall directly below a floor
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
-            if (twoUp !== 'WALL_TOP' && twoUp !== 'NONE') {
+            if (twoUp !== TileType.WALL_TOP && twoUp !== TileType.NONE) {
               // eslint-disable-next-line no-console
               console.warn("Invalid map: can't show a wall without a tile for its top");
               return false;

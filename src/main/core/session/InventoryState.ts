@@ -1,24 +1,34 @@
 import InventoryItem from '../../items/InventoryItem';
 import Unit from '../../entities/units/Unit';
-import EquipmentSlot from '../../../models/EquipmentSlot';
 import Equipment from '../../equipment/Equipment';
+import { EquipmentSlot } from '@models/EquipmentSlot';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { sortBy } from '@lib/utils/arrays';
+import { ItemCategory } from '@models/ItemCategory';
 
-type DisplayCategory = 'WEAPON' | 'ARMOR' | 'POTION' | 'SCROLL';
+type DisplayCategory =
+  | ItemCategory.WEAPON
+  | ItemCategory.ARMOR
+  | ItemCategory.POTION
+  | ItemCategory.SCROLL;
 /**
  * Display these in a particular order and don't show keys
  */
-const displayCategories: DisplayCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL'];
+const displayCategories: DisplayCategory[] = [
+  ItemCategory.WEAPON,
+  ItemCategory.ARMOR,
+  ItemCategory.POTION,
+  ItemCategory.SCROLL
+];
 
 const orderedEquipmentSlots: EquipmentSlot[] = [
-  'MELEE_WEAPON',
-  'RANGED_WEAPON',
-  'CHEST',
-  'HEAD',
-  'SHIELD',
-  'LEGS',
-  'CLOAK'
+  EquipmentSlot.MELEE_WEAPON,
+  EquipmentSlot.RANGED_WEAPON,
+  EquipmentSlot.CHEST,
+  EquipmentSlot.HEAD,
+  EquipmentSlot.SHIELD,
+  EquipmentSlot.LEGS,
+  EquipmentSlot.CLOAK
 ];
 
 type InventoryCategory = 'EQUIPMENT' | 'ITEMS';

@@ -4,6 +4,7 @@ import Sounds from '../sounds/Sounds';
 import { random } from '@lib/utils/random';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { UnitType } from '@models/UnitType';
 
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.25;
@@ -23,7 +24,7 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     // TODO make this more systematic
-    if (unit.getUnitType() === 'WIZARD') {
+    if (unit.getUnitType() === UnitType.WIZARD) {
       const key = await state.getItemFactory().createMapItem('key', coordinates, map);
       map.addObject(key);
     } else {

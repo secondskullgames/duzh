@@ -8,6 +8,7 @@ import { GameScreen } from '@main/core/GameScreen';
 import MapInstance from '@main/maps/MapInstance';
 import { GameConfig } from '@main/core/GameConfig';
 import MusicController from '@main/sounds/MusicController';
+import { MapType } from '@models/MapType';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {
@@ -99,7 +100,7 @@ export class MapControllerImpl implements MapController {
   loadDebugMap = async () => {
     const { session, musicController, mapFactory, unitFactory } = this;
 
-    const map = await mapFactory.loadMap({ type: 'predefined', id: 'test' });
+    const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' });
     session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),

@@ -1,9 +1,9 @@
-import TileSet from './TileSet';
+import { TileSet } from './TileSet';
 import Tile from './Tile';
-import TileType from '../../models/TileType';
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
+import { TileType } from '@models/TileType';
 import ModelLoader from '@main/assets/ModelLoader';
 import Coordinates from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';

@@ -1,6 +1,7 @@
-import UnitType from './UnitType';
+import { UnitType } from './UnitType';
+import { AIParameters } from './AIParameters';
 
-type UnitModel = {
+export type UnitModel = Readonly<{
   /**
    * Expected to match the filename
    */
@@ -10,24 +11,7 @@ type UnitModel = {
    */
   name: string;
   abilities: string[];
-  aiParameters?: {
-    /**
-     * currently unused
-     */
-    aggressiveness: number;
-    /**
-     * ratio of (current life / max life)
-     */
-    fleeThreshold: number;
-    /**
-     * between 0 and 1
-     */
-    speed: number;
-    /**
-     * whole number of tiles
-     */
-    visionRange: number;
-  };
+  aiParameters?: AIParameters;
   equipment?: string[];
   strength: number;
   dexterity: number;
@@ -51,6 +35,4 @@ type UnitModel = {
    * experience rewarded on death
    */
   experience?: number;
-};
-
-export default UnitModel;
+}>;

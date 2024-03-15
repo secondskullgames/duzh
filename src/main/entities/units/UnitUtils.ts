@@ -2,12 +2,13 @@ import Unit from './Unit';
 import { UnitAbility } from './abilities/UnitAbility';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { NumberKey } from '@lib/input/inputTypes';
+import { EquipmentSlot } from '@models/EquipmentSlot';
 
 export const getMeleeDamage = (unit: Unit): number => {
   let damage = unit.getStrength();
 
   for (const equipment of unit.getEquipment().getAll()) {
-    if (equipment.slot !== 'RANGED_WEAPON') {
+    if (equipment.slot !== EquipmentSlot.RANGED_WEAPON) {
       damage += equipment.damage ?? 0;
     }
   }
@@ -20,10 +21,10 @@ export const getRangedDamage = (unit: Unit): number => {
 
   for (const equipment of unit.getEquipment().getAll()) {
     switch (equipment.slot) {
-      case 'RANGED_WEAPON':
+      case EquipmentSlot.RANGED_WEAPON:
         damage += equipment.damage ?? 0;
         break;
-      case 'MELEE_WEAPON':
+      case EquipmentSlot.MELEE_WEAPON:
         // do nothing
         break;
       default:

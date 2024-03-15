@@ -19,8 +19,9 @@ import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { ImageEffects } from '@main/graphics/ImageEffects';
+import { DoorDirection } from '@models/DoorDirection';
+import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
 import { injectable } from 'inversify';
-import type DynamicSpriteModel from '../../../models/DynamicSpriteModel';
 
 @injectable()
 export default class SpriteFactory {
@@ -142,7 +143,7 @@ export default class SpriteFactory {
       .addMapping(Colors.BLACK, Colors.BLACK_CGA)
       .build();
     const imageMap: Record<string, Image> = {};
-    for (const direction of ['horizontal', 'vertical']) {
+    for (const direction of [DoorDirection.HORIZONTAL, DoorDirection.VERTICAL]) {
       for (const state of DoorState.values()) {
         const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
         const filename = `${spriteName}_${direction.toLowerCase()}_${state.toLowerCase()}`;
@@ -163,9 +164,9 @@ export default class SpriteFactory {
       const key = `${state.toLowerCase()}`;
       const filename: string = (() => {
         switch (state) {
-          case 'ALIVE':
+          case SpawnerState.ALIVE:
             return 'mirror';
-          case 'DEAD':
+          case SpawnerState.DEAD:
             return 'mirror_broken';
           default:
             throw new Error(`Unknown mirror state ${state}`);

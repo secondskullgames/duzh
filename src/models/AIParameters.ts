@@ -1,4 +1,4 @@
-type AIParameters = Readonly<{
+export type AIParameters = Readonly<{
   /**
    * between 0 and 1
    */
@@ -18,5 +18,3 @@ type AIParameters = Readonly<{
    */
   fleeThreshold: number;
 }>;
-
-export default AIParameters;

@@ -4,6 +4,7 @@ import { doMapEvents } from '@main/actions/doMapEvents';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/entities/units/Unit';
 import { sortBy } from '@lib/utils/arrays';
+import { Faction } from '@main/entities/units/Faction';
 import { inject, injectable } from 'inversify';
 
 export interface Engine {
@@ -49,4 +50,4 @@ export class EngineImpl implements Engine {
  * and other units appear in unspecified order
  */
 const _sortUnits = (units: Unit[]): Unit[] =>
-  sortBy(units, unit => (unit.getFaction() === 'PLAYER' ? 0 : 1));
+  sortBy(units, unit => (unit.getFaction() === Faction.PLAYER ? 0 : 1));

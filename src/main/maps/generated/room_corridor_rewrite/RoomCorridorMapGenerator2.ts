@@ -3,8 +3,8 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
-import TileType from '../../../../models/TileType';
 import TileFactory from '../../../tiles/TileFactory';
+import { TileType } from '@models/TileType';
 import Rect from '@lib/geometry/Rect';
 
 const MIN_ROOM_WIDTH = 4;

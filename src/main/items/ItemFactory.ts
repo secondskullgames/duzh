@@ -4,8 +4,8 @@ import Sounds from '../sounds/Sounds';
 import Unit from '../entities/units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
-import ConsumableItemModel from '../../models/ConsumableItemModel';
 import MapInstance from '../maps/MapInstance';
+import { ConsumableItemModel } from '@models/ConsumableItemModel';
 import Coordinates from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
@@ -18,6 +18,8 @@ import { Session } from '@main/core/Session';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { ConsumableType } from '@models/ConsumableType';
+import { ItemCategory } from '@models/ItemCategory';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -46,7 +48,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name: 'Life Potion',
-      category: 'POTION',
+      category: ItemCategory.POTION,
       onUse,
       tooltip: `Restores ${lifeRestored} life`
     });
@@ -70,7 +72,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'POTION',
+      category: ItemCategory.POTION,
       onUse,
       tooltip: `Restores ${manaRestored} mana`
     });
@@ -81,7 +83,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'KEY',
+      category: ItemCategory.KEY,
       onUse
     });
   };
@@ -102,7 +104,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'SCROLL',
+      category: ItemCategory.SCROLL,
       onUse,
       tooltip: [
         'Unleashes a wave of fire',
@@ -119,7 +121,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'SCROLL',
+      category: ItemCategory.SCROLL,
       onUse,
       tooltip: ['Reveals the entire map'].join('\n')
     });
@@ -141,7 +143,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'SCROLL',
+      category: ItemCategory.SCROLL,
       onUse,
       tooltip: ['Shoots a fireball that deals', `${damage} damage`].join('\n')
     });
@@ -163,7 +165,7 @@ export default class ItemFactory {
 
     return new InventoryItem({
       name,
-      category: 'SCROLL',
+      category: ItemCategory.SCROLL,
       onUse,
       tooltip: `Freezes nearby enemies for ${duration} turns`
     });
@@ -221,18 +223,18 @@ export default class ItemFactory {
 
   createInventoryItem = async (model: ConsumableItemModel): Promise<InventoryItem> => {
     switch (model.type) {
-      case 'life_potion': {
+      case ConsumableType.LIFE_POTION: {
         const amount = parseInt(model.params?.amount ?? '0');
         return this.createLifePotion(amount);
       }
-      case 'mana_potion': {
+      case ConsumableType.MANA_POTION: {
         const amount = parseInt(model.params?.amount ?? '0');
         return this.createManaPotion(model.name, amount);
       }
-      case 'key': {
+      case ConsumableType.KEY: {
         return this.createKey(model.name);
       }
-      case 'scroll': {
+      case ConsumableType.SCROLL: {
         const spell = model.params?.spell;
         switch (spell) {
           case 'floor_fire': {

@@ -1,4 +1,4 @@
-type EquipmentStats = {
+export type EquipmentStats = Readonly<{
   /**
    * The ratio of damage blocked by this item
    */
@@ -9,6 +9,4 @@ type EquipmentStats = {
    */
   blockAmount?: number;
   damage?: number;
-};
-
-export default EquipmentStats;
+}>;

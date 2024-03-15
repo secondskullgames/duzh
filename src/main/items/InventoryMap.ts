@@ -1,7 +1,13 @@
 import InventoryItem from './InventoryItem';
-import ItemCategory from '../../models/ItemCategory';
+import { ItemCategory } from '@models/ItemCategory';
 
-const itemCategories: ItemCategory[] = ['WEAPON', 'ARMOR', 'POTION', 'SCROLL', 'KEY'];
+const itemCategories: ItemCategory[] = [
+  ItemCategory.WEAPON,
+  ItemCategory.ARMOR,
+  ItemCategory.POTION,
+  ItemCategory.SCROLL,
+  ItemCategory.KEY
+];
 
 /**
  * Contains information about all items held by a particular unit, grouped by category,

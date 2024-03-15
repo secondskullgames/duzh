@@ -1,8 +1,8 @@
-import ItemCategory from './ItemCategory';
-import EquipmentSlot from './EquipmentSlot';
-import EquipmentStats from './EquipmentStats';
+import { ItemCategory } from './ItemCategory';
+import { EquipmentSlot } from './EquipmentSlot';
+import { EquipmentStats } from './EquipmentStats';
 
-type EquipmentModel = {
+export type EquipmentModel = Readonly<{
   id: string;
   name: string;
   itemCategory: ItemCategory;
@@ -20,6 +20,4 @@ type EquipmentModel = {
   sprite: string;
   stats: EquipmentStats;
   tooltip?: string;
-};
-
-export default EquipmentModel;
+}>;

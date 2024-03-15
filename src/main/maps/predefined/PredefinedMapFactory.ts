@@ -4,14 +4,14 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../entities/units/Unit';
 import GameObject from '../../entities/objects/GameObject';
 import MapInstance from '../MapInstance';
-import PredefinedMapModel from '../../../models/PredefinedMapModel';
-import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
 import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../entities/units/UnitFactory';
 import ObjectFactory from '../../entities/objects/ObjectFactory';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import MusicController from '../../sounds/MusicController';
+import { PredefinedMapModel } from '@models/PredefinedMapModel';
+import { TileType } from '@models/TileType';
 import ModelLoader from '@main/assets/ModelLoader';
 import Coordinates from '@lib/geometry/Coordinates';
 import { Faction } from '@main/entities/units/Faction';
@@ -19,6 +19,7 @@ import { chooseUnitController } from '@main/entities/units/controllers/Controlle
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { DoorDirection } from '@models/DoorDirection';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -188,7 +189,9 @@ export class PredefinedMapFactory {
         const objectName = objectColors?.[color.hex] ?? null;
         if (objectName?.startsWith('door_')) {
           const doorDirection =
-            objectName === 'door_horizontal' ? 'horizontal' : 'vertical';
+            objectName === 'door_horizontal'
+              ? DoorDirection.HORIZONTAL
+              : DoorDirection.VERTICAL;
           const sprite = await this.spriteFactory.createDoorSprite();
 
           const door = new Door({

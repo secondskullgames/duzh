@@ -20,7 +20,8 @@ module.exports = {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
-        "sourceType": "module"
+        "sourceType": "module",
+        "project": "./tsconfig.json"
     },
     "plugins": [
         "@typescript-eslint",
@@ -28,10 +29,11 @@ module.exports = {
     ],
     "rules": {
         "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/no-unsafe-enum-comparison": "warn",
         "@typescript-eslint/no-unused-vars": "warn",
         "no-alert": "warn",
         "no-console": ["warn", { "allow": ["debug", "warn", "error"] }],
-        "no-throw-literal": ["warn"],
+        "no-throw-literal": "warn",
         "prefer-arrow/prefer-arrow-functions": [
             "warn",
             {

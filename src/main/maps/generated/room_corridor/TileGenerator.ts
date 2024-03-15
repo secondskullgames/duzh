@@ -2,7 +2,7 @@ import EmptyRegionConnection from './EmptyRegionConnection';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
-import TileType from '../../../../models/TileType';
+import { TileType } from '@models/TileType';
 import Coordinates from '@lib/geometry/Coordinates';
 import Offsets from '@lib/geometry/Offsets';
 import { shuffle } from '@lib/utils/random';
@@ -18,7 +18,7 @@ const generateTiles = (
   for (let y = 0; y < height; y++) {
     const row: TileType[] = [];
     for (let x = 0; x < width; x++) {
-      row.push('NONE');
+      row.push(TileType.NONE);
     }
     tiles.push(row);
   }
@@ -32,7 +32,7 @@ const generateTiles = (
       const bottom = top + height;
       for (let y = top; y < bottom; y++) {
         for (let x = left; x < right; x++) {
-          tiles[y][x] = 'FLOOR';
+          tiles[y][x] = TileType.FLOOR;
         }
       }
     }
@@ -45,11 +45,11 @@ const generateTiles = (
 
     let { x, y } = startCoordinates;
     while (!Coordinates.equals({ x, y }, endCoordinates)) {
-      tiles[y][x] = 'FLOOR_HALL';
+      tiles[y][x] = TileType.FLOOR_HALL;
       x += dx;
       y += dy;
     }
-    tiles[y][x] = 'FLOOR_HALL';
+    tiles[y][x] = TileType.FLOOR_HALL;
   }
 
   _addTilesForEmptyRegionConnections(tiles, emptyRegionConnections, connections);
@@ -67,12 +67,12 @@ const _addWallTiles = (tiles: TileType[][]) => {
       const oneDown = tiles[y + 1][x];
       const twoDown = tiles[y + 2][x];
       if (
-        tile === 'NONE' &&
-        oneDown === 'NONE' &&
-        (twoDown === 'FLOOR_HALL' || twoDown === 'FLOOR')
+        tile === TileType.NONE &&
+        oneDown === TileType.NONE &&
+        (twoDown === TileType.FLOOR_HALL || twoDown === TileType.FLOOR)
       ) {
-        tiles[y][x] = 'WALL_TOP';
-        tiles[y + 1][x] = twoDown === 'FLOOR' ? 'WALL' : 'WALL_HALL';
+        tiles[y][x] = TileType.WALL_TOP;
+        tiles[y + 1][x] = twoDown === TileType.FLOOR ? TileType.WALL : TileType.WALL_HALL;
       }
     }
   }
@@ -138,14 +138,14 @@ const _joinPerpendicularly = (
 
   let { x, y } = start;
   while (!Coordinates.equals({ x, y }, middle)) {
-    tiles[y][x] = 'FLOOR_HALL';
+    tiles[y][x] = TileType.FLOOR_HALL;
     x += offsets.dx;
     y += offsets.dy;
   }
 
   offsets = _pointAt(middle, end);
   while (!Coordinates.equals({ x, y }, end)) {
-    tiles[y][x] = 'FLOOR_HALL';
+    tiles[y][x] = TileType.FLOOR_HALL;
     x += offsets.dx;
     y += offsets.dy;
   }
@@ -175,29 +175,29 @@ const _joinParallelConnections = (
   switch (majorDirection) {
     case 'HORIZONTAL':
       while (x !== middle.x) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         x += dx;
       }
       while (y !== end.y) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         y += dy;
       }
       while (x !== end.x) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         x += dx;
       }
       break;
     case 'VERTICAL':
       while (y !== middle.y) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         y += dy;
       }
       while (x !== end.x) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         x += dx;
       }
       while (y !== end.y) {
-        tiles[y][x] = 'FLOOR_HALL';
+        tiles[y][x] = TileType.FLOOR_HALL;
         y += dy;
       }
       break;

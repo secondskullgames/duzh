@@ -20,6 +20,8 @@ import { MapController } from '@main/maps/MapController';
 import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
 import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 import { Engine } from '@main/core/Engine';
+import { EquipmentSlot } from '@models/EquipmentSlot';
+import { TileType } from '@models/TileType';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -83,7 +85,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
       if (
-        playerUnit.getEquipment().getBySlot('RANGED_WEAPON') &&
+        playerUnit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) &&
         playerUnit.canSpendMana(ShootArrow.manaCost)
       ) {
         order = new AbilityOrder({ direction, ability: ShootArrow });
@@ -145,10 +147,10 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
-    } else if (map.getTile(coordinates).getTileType() === 'STAIRS_DOWN') {
+    } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();
-    } else if (map.getTile(coordinates).getTileType() === 'STAIRS_UP') {
+    } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     }

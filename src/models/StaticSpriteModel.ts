@@ -1,4 +1,4 @@
-type StaticSpriteModel = {
+export type StaticSpriteModel = Readonly<{
   name: string;
   filename: string;
   offsets: {
@@ -7,6 +7,4 @@ type StaticSpriteModel = {
   };
   transparentColor: string;
   paletteSwaps?: Record<string, string>;
-};
-
-export default StaticSpriteModel;
+}>;

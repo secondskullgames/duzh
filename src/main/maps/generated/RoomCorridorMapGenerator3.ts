@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { TileType } from '@models/TileType';
 import Coordinates from '@lib/geometry/Coordinates';
 import Rect from '@lib/geometry/Rect';
 import { randInt, shuffle } from '@lib/utils/random';
@@ -16,7 +16,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
       for (let x = 0; x < width; x++) {
-        row.push('NONE');
+        row.push(TileType.NONE);
       }
       tiles.push(row);
     }
@@ -49,7 +49,7 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
 
           if (path.length > 0) {
             for (const { x, y } of path) {
-              tiles[y][x] = 'FLOOR';
+              tiles[y][x] = TileType.FLOOR;
             }
             done = true;
             break;
@@ -79,7 +79,7 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
   const emptyTiles: Coordinates[] = [];
   for (let y = 2; y < tiles.length - 1; y++) {
     for (let x = 1; x < tiles[0].length - 1; x++) {
-      if (tiles[y][x] === 'NONE') {
+      if (tiles[y][x] === TileType.NONE) {
         emptyTiles.push({ x, y });
       }
     }
@@ -106,19 +106,19 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
       ({ x, y }) => x >= 1 && x < tiles[0].length - 1 && y >= 2 && y < tiles.length - 1
     );
 
-    if (bigRectCoordinates.some(({ x, y }) => tiles[y][x] === 'FLOOR')) {
+    if (bigRectCoordinates.some(({ x, y }) => tiles[y][x] === TileType.FLOOR)) {
       continue;
     }
 
     const roomRect = { left, top, width, height };
     const roomCoordinates: Coordinates[] = _coordinatesInRect(roomRect);
 
-    if (roomCoordinates.some(({ x, y }) => tiles[y][x] === 'FLOOR')) {
+    if (roomCoordinates.some(({ x, y }) => tiles[y][x] === TileType.FLOOR)) {
       continue;
     }
 
     for (const { x, y } of roomCoordinates) {
-      tiles[y][x] = 'FLOOR';
+      tiles[y][x] = TileType.FLOOR;
     }
     return roomRect;
   }
@@ -139,7 +139,7 @@ const _countFloorTiles = (tiles: TileType[][]): number => {
   let count = 0;
   for (let y = 0; y < tiles.length; y++) {
     for (let x = 0; x < tiles[0].length; x++) {
-      if (tiles[y][x] === 'FLOOR') {
+      if (tiles[y][x] === TileType.FLOOR) {
         count++;
       }
     }
@@ -157,8 +157,8 @@ const _addWalls = (tiles: TileType[][]) => {
       const tile = tiles[y][x];
       const oneDown = y < bottom ? tiles[y + 1][x] : null;
       const oneUp = y > 0 ? tiles[y - 1][x] : null;
-      if (tile === 'NONE' && oneDown === 'FLOOR') {
-        tiles[y][x] = oneUp === 'FLOOR' ? 'FLOOR' : 'WALL';
+      if (tile === TileType.NONE && oneDown === TileType.FLOOR) {
+        tiles[y][x] = oneUp === TileType.FLOOR ? TileType.FLOOR : TileType.WALL;
       }
     }
   }

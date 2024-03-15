@@ -1,4 +1,4 @@
-type TileSetModel = {
+export type TileSetModel = Readonly<{
   path: string;
   tiles: {
     [key: string]: (string | null)[];
@@ -6,6 +6,4 @@ type TileSetModel = {
   paletteSwaps?: {
     [key: string]: string;
   };
-};
-
-export default TileSetModel;
+}>;
