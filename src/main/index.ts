@@ -7,7 +7,7 @@ import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session, SessionImpl } from './core/Session';
 import { MapController, MapControllerImpl } from './maps/MapController';
-import MapSpec from '../models/MapSpec';
+import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
 import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas } from '@lib/utils/dom';

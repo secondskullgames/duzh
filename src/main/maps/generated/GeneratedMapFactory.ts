@@ -9,7 +9,7 @@ import MapInstance from '../MapInstance';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../entities/objects/GameObject';
-import UnitModel from '@models/UnitModel';
+import { UnitModel } from '@models/UnitModel';
 import { GeneratedMapModel, Algorithm } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';
 import {
@@ -28,6 +28,7 @@ import MapItem from '@main/entities/objects/MapItem';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { isOccupied } from '@main/maps/MapUtils';
+import { TileType } from '@models/TileType';
 import { inject, injectable } from 'inversify';
 
 type ItemType = 'equipment' | 'consumable';
@@ -37,10 +38,10 @@ type ItemSpec = Readonly<{
 }>;
 
 const algorithms: Algorithm[] = [
-  //'ROOMS_AND_CORRIDORS',
-  'ROOMS_AND_CORRIDORS_3',
-  'PATH',
-  'BLOB'
+  Algorithm.ROOMS_AND_CORRIDORS,
+  Algorithm.DEFAULT,
+  Algorithm.PATH,
+  Algorithm.BLOB
 ];
 
 @injectable()
@@ -75,10 +76,10 @@ export class GeneratedMapFactory {
     return map;
   };
 
-  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
+  private _getDungeonGenerator = (mapLayout: Algorithm): AbstractMapGenerator => {
     const { tileFactory } = this;
     switch (mapLayout) {
-      case 'ROOMS_AND_CORRIDORS': {
+      case Algorithm.ROOMS_AND_CORRIDORS: {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
           return new RoomCorridorMapGenerator2(tileFactory);
@@ -91,11 +92,11 @@ export class GeneratedMapFactory {
           tileFactory
         });
       }
-      case 'ROOMS_AND_CORRIDORS_3':
+      case Algorithm.DEFAULT:
         return new RoomCorridorMapGenerator3(tileFactory);
-      case 'BLOB':
+      case Algorithm.BLOB:
         return new BlobMapGenerator(tileFactory);
-      case 'PATH':
+      case Algorithm.PATH:
         return new PathMapGenerator(tileFactory);
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
@@ -111,7 +112,7 @@ export class GeneratedMapFactory {
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(
       map.getTiles(),
-      ['FLOOR'],
+      [TileType.FLOOR],
       []
     ).filter(coordinates => !isOccupied(map, coordinates));
     let unitsRemaining = randInt(model.enemies.min, model.enemies.max);
@@ -172,7 +173,7 @@ export class GeneratedMapFactory {
     const objects: GameObject[] = [];
     const candidateLocations = getUnoccupiedLocations(
       map.getTiles(),
-      ['FLOOR'],
+      [TileType.FLOOR],
       []
     ).filter(coordinates => !isOccupied(map, coordinates));
 

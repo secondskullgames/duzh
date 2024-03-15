@@ -1,6 +1,6 @@
-import ConsumableType from './ConsumableType';
+import { ConsumableType } from './ConsumableType';
 
-type ConsumableItemModel = {
+export type ConsumableItemModel = Readonly<{
   id: string;
   name: string;
   level: number | null;
@@ -17,6 +17,4 @@ type ConsumableItemModel = {
     [key: string]: string;
   };
   tooltip?: string;
-};
-
-export default ConsumableItemModel;
+}>;

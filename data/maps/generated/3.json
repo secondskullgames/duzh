@@ -1,7 +1,7 @@
 {
   "id": "3",
   "levelNumber": 3,
-  "algorithm": "ROOMS_AND_CORRIDORS_3",
+  "algorithm": "DEFAULT",
   "tileSet": "catacomb_red",
   "width": 26,
   "height": 26,

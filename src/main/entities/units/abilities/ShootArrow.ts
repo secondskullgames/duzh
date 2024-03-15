@@ -15,6 +15,7 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { EquipmentSlot } from '@models/EquipmentSlot';
 
 const manaCost = 5;
 
@@ -34,7 +35,7 @@ export const ShootArrow: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    if (!unit.getEquipment().getBySlot('RANGED_WEAPON')) {
+    if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 

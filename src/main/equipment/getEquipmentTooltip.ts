@@ -1,4 +1,4 @@
-import EquipmentModel from '../../models/EquipmentModel';
+import { EquipmentModel } from '@models/EquipmentModel';
 
 export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   const lines = [];

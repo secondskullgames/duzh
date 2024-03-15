@@ -61,7 +61,7 @@ export default class Spawner extends GameObject {
   }
 
   playTurnAction = async (state: GameState, session: Session) => {
-    if (this._state === 'DEAD') {
+    if (this._state === SpawnerState.DEAD) {
       return;
     }
 

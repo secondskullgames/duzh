@@ -1,7 +1,7 @@
 import Sprite from '../graphics/sprites/Sprite';
-import TileType from '../../models/TileType';
 import Entity from '../entities/Entity';
 import MapInstance from '../maps/MapInstance';
+import { TileType } from '@models/TileType';
 import Coordinates from '@lib/geometry/Coordinates';
 import { EntityType } from '@main/entities/EntityType';
 
@@ -45,10 +45,10 @@ export default class Tile implements Entity {
   /** @override */
   isBlocking = (): boolean => {
     switch (this.tileType) {
-      case 'WALL_HALL':
-      case 'WALL_TOP':
-      case 'WALL':
-      case 'NONE':
+      case TileType.WALL_HALL:
+      case TileType.WALL_TOP:
+      case TileType.WALL:
+      case TileType.NONE:
         return true;
       default:
         return false;

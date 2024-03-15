@@ -6,8 +6,8 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
-import TileType from '../../../../models/TileType';
 import TileFactory from '../../../tiles/TileFactory';
+import { TileType } from '@models/TileType';
 
 type Props = Readonly<{
   minRoomDimension: number;

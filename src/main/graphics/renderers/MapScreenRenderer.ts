@@ -7,6 +7,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { Color } from '@lib/graphics/Color';
 import { isHostile } from '@main/entities/units/UnitUtils';
+import { TileType } from '@models/TileType';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
@@ -58,10 +59,10 @@ export default class MapScreenRenderer implements Renderer {
     if (map.isTileRevealed(coordinates)) {
       const tileType = map.getTile(coordinates).getTileType();
       switch (tileType) {
-        case 'STAIRS_DOWN':
+        case TileType.STAIRS_DOWN:
           return Colors.BLUE;
-        case 'FLOOR':
-        case 'FLOOR_HALL': {
+        case TileType.FLOOR:
+        case TileType.FLOOR_HALL: {
           const unit = map.getUnit(coordinates);
           if (unit && isHostile(unit, playerUnit)) {
             return Colors.RED;
@@ -70,11 +71,11 @@ export default class MapScreenRenderer implements Renderer {
           }
           return Colors.LIGHT_GRAY;
         }
-        case 'WALL':
-        case 'WALL_HALL':
+        case TileType.WALL:
+        case TileType.WALL_HALL:
           return Colors.DARK_GRAY;
-        case 'NONE':
-        case 'WALL_TOP':
+        case TileType.NONE:
+        case TileType.WALL_TOP:
         default:
           return Colors.BLACK;
       }

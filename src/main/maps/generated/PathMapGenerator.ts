@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { TileType } from '@models/TileType';
 import Coordinates from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@lib/utils/arrays';
@@ -17,7 +17,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
       for (let x = 0; x < width; x++) {
-        row.push('NONE');
+        row.push(TileType.NONE);
       }
       tiles.push(row);
     }
@@ -25,7 +25,7 @@ class PathMapGenerator extends AbstractMapGenerator {
     const numPoints = 20;
 
     const firstPoint = _randomEmptyTile(tiles);
-    tiles[firstPoint.y][firstPoint.x] = 'NONE';
+    tiles[firstPoint.y][firstPoint.x] = TileType.NONE;
 
     const pathfinder = Pathfinder.create({ heuristic: Heuristic.MANHATTAN });
 
@@ -51,7 +51,7 @@ class PathMapGenerator extends AbstractMapGenerator {
           continue;
         }
         for (const { x, y } of path) {
-          tiles[y][x] = 'FLOOR';
+          tiles[y][x] = TileType.FLOOR;
         }
         lastPoint = nextPoint;
         break;
@@ -75,7 +75,7 @@ const _randomEmptyTile = (tiles: TileType[][]): Coordinates => {
     const x = randInt(1, right - 1);
     const y = randInt(2, bottom - 1);
 
-    if (tiles[y][x] === 'NONE') {
+    if (tiles[y][x] === TileType.NONE) {
       return { x, y };
     }
   }
@@ -91,8 +91,8 @@ const _addWalls = (tiles: TileType[][]) => {
       const tile = tiles[y][x];
       const oneDown = y < bottom ? tiles[y + 1][x] : null;
       const oneUp = y > 0 ? tiles[y - 1][x] : null;
-      if (tile === 'NONE' && oneDown === 'FLOOR') {
-        tiles[y][x] = oneUp === 'FLOOR' ? 'FLOOR' : 'WALL';
+      if (tile === TileType.NONE && oneDown === TileType.FLOOR) {
+        tiles[y][x] = oneUp === TileType.FLOOR ? TileType.FLOOR : TileType.WALL;
       }
     }
   }

@@ -14,6 +14,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
+import { EquipmentSlot } from '@models/EquipmentSlot';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -45,7 +46,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
 const canShoot = (unit: Unit, targetUnit: Unit): boolean => {
   const ability = UnitAbility.abilityForName(AbilityName.SHOOT_ARROW);
   return (
-    unit.getEquipment().getBySlot('RANGED_WEAPON') !== null &&
+    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null &&
     unit.getMana() >= ability.manaCost &&
     isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
     hasUnblockedStraightLineBetween(

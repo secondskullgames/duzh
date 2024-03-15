@@ -3,8 +3,8 @@ import { getEquipmentTooltip } from './getEquipmentTooltip';
 import Sprite from '../graphics/sprites/Sprite';
 import Unit from '../entities/units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import EquipmentModel from '../../models/EquipmentModel';
-import EquipmentSlot from '../../models/EquipmentSlot';
+import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentModel } from '@models/EquipmentModel';
 
 const DRAW_BEHIND_PREFIX = '_B';
 

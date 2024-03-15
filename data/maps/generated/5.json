@@ -2,7 +2,7 @@
   "id": "5",
   "levelNumber": 5,
   "algorithm": "PATH",
-  "tileSet": "catacomb",
+  "tileSet": "dungeon",
   "width": 28,
   "height": 28,
   "enemies": {

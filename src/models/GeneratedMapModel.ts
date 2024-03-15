@@ -1,6 +1,6 @@
 import { FogOfWarParams } from './FogOfWarParams';
 
-export type GeneratedMapModel = {
+export type GeneratedMapModel = Readonly<{
   id: string;
   levelNumber: number;
   algorithm?: Algorithm;
@@ -10,11 +10,16 @@ export type GeneratedMapModel = {
   enemies: Range;
   items: Range;
   fogOfWar: FogOfWarParams;
-};
+}>;
 
-export type Algorithm = 'ROOMS_AND_CORRIDORS' | 'ROOMS_AND_CORRIDORS_3' | 'PATH' | 'BLOB';
+export enum Algorithm {
+  ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
+  DEFAULT = 'DEFAULT',
+  PATH = 'PATH',
+  BLOB = 'BLOB'
+}
 
-export type Range = {
+export type Range = Readonly<{
   min: number;
   max: number;
-};
+}>;

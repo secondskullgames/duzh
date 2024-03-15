@@ -1,6 +1,6 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
-import TileType from '../../../models/TileType';
 import TileFactory from '../../tiles/TileFactory';
+import { TileType } from '@models/TileType';
 import Coordinates from '@lib/geometry/Coordinates';
 import { comparing, range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';
@@ -38,7 +38,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
       for (let x = 0; x < width; x++) {
-        row.push('NONE');
+        row.push(TileType.NONE);
       }
       tiles.push(row);
     }
@@ -48,7 +48,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
   private _placeInitialTile = (width: number, height: number, tiles: TileType[][]) => {
     const x = randInt((width * 3) / 8, (width * 5) / 8);
     const y = randInt((height * 3) / 8, (height * 5) / 8);
-    tiles[y][x] = 'FLOOR';
+    tiles[y][x] = TileType.FLOOR;
   };
 
   private _getTargetNumFloorTiles = (max: number) => {
@@ -61,7 +61,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     const floorTiles: Coordinates[] = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === 'FLOOR') {
+        if (tiles[y][x] === TileType.FLOOR) {
           floorTiles.push({ x, y });
         }
       }
@@ -73,7 +73,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     const floorTiles: Coordinates[] = [];
     for (let y = 0; y < tiles.length; y++) {
       for (let x = 0; x < tiles[y].length; x++) {
-        if (tiles[y][x] === 'NONE') {
+        if (tiles[y][x] === TileType.NONE) {
           floorTiles.push({ x, y });
         }
       }
@@ -100,7 +100,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     const index = randInt(minIndex, maxIndex);
 
     const { x, y } = candidates[index];
-    tiles[y][x] = 'FLOOR';
+    tiles[y][x] = TileType.FLOOR;
     return true;
   };
 
@@ -126,8 +126,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
     for (let n = 2; n <= m; n++) {
       if (y >= n) {
         if (
-          range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === 'NONE') &&
-          tiles[y - n][x] === 'FLOOR'
+          range(y - (n - 1), y - 1).every(y2 => tiles[y2][x] === TileType.NONE) &&
+          tiles[y - n][x] === TileType.FLOOR
         ) {
           return false;
         }
@@ -135,8 +135,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
       // 2. can't add a floor tile if there's a wall right below it, AND a floor tile right below that
       if (y <= height - 1 - n) {
         if (
-          range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === 'NONE') &&
-          tiles[y + n][x] === 'FLOOR'
+          range(y + 1, y + (n - 1)).every(y2 => tiles[y2][x] === TileType.NONE) &&
+          tiles[y + n][x] === TileType.FLOOR
         ) {
           return false;
         }
@@ -162,8 +162,8 @@ class BlobMapGenerator extends AbstractMapGenerator {
       const [x2, y2] = [x + dx, y + dy];
       if (x2 < 0 || x2 >= width || y2 < 0 || y2 >= height) {
         // out of bounds
-      } else if (tiles[y2][x2] === 'FLOOR') {
-        if (tiles[y2][x] === 'NONE' && tiles[y][x2] === 'NONE') {
+      } else if (tiles[y2][x2] === TileType.FLOOR) {
+        if (tiles[y2][x] === TileType.NONE && tiles[y][x2] === TileType.NONE) {
           return true;
         }
       }
@@ -190,10 +190,10 @@ class BlobMapGenerator extends AbstractMapGenerator {
         // out of bounds
       } else {
         if (
-          tiles[b.y][b.x] === 'NONE' &&
-          tiles[c.y][c.x] === 'NONE' &&
-          tiles[d.y][d.x] === 'NONE' &&
-          tiles[f.y][f.x] === 'FLOOR'
+          tiles[b.y][b.x] === TileType.NONE &&
+          tiles[c.y][c.x] === TileType.NONE &&
+          tiles[d.y][d.x] === TileType.NONE &&
+          tiles[f.y][f.x] === TileType.FLOOR
         ) {
           return true;
         }
@@ -210,13 +210,13 @@ class BlobMapGenerator extends AbstractMapGenerator {
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         if (y < bottom - 1) {
-          if (tiles[y][x] === 'NONE' && tiles[y + 1][x] === 'FLOOR') {
-            tiles[y][x] = 'WALL';
+          if (tiles[y][x] === TileType.NONE && tiles[y + 1][x] === TileType.FLOOR) {
+            tiles[y][x] = TileType.WALL;
           }
         }
         if (y < bottom - 2) {
-          if (tiles[y + 1][x] === 'NONE' && tiles[y + 2][x] === 'FLOOR') {
-            tiles[y][x] = 'WALL_TOP';
+          if (tiles[y + 1][x] === TileType.NONE && tiles[y + 2][x] === TileType.FLOOR) {
+            tiles[y][x] = TileType.WALL_TOP;
           }
         }
       }
@@ -240,7 +240,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
         if (Coordinates.equals(tile, { x, y })) {
           continue;
         }
-        if (tiles[y][x] === 'FLOOR') {
+        if (tiles[y][x] === TileType.FLOOR) {
           score++;
         }
       }

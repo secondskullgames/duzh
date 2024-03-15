@@ -1,4 +1,4 @@
-type DynamicSpriteModel = {
+export type DynamicSpriteModel = Readonly<{
   animations: {
     [key: string]: DynamicSprite_Animation;
   };
@@ -7,20 +7,17 @@ type DynamicSpriteModel = {
   pattern?: string;
   patterns?: string[];
   transparentColor?: string;
-};
+}>;
 
-type DynamicSprite_Animation = {
+export type DynamicSprite_Animation = Readonly<{
   frames: {
     activity: string;
     number: string;
   }[];
   pattern?: string;
-};
+}>;
 
-type DynamicSprite_Offsets = {
+export type DynamicSprite_Offsets = Readonly<{
   dx: number;
   dy: number;
-};
-
-export default DynamicSpriteModel;
-export type { DynamicSprite_Animation, DynamicSprite_Offsets };
+}>;

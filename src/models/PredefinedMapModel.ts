@@ -1,7 +1,7 @@
-import TileType from './TileType';
+import { TileType } from './TileType';
 import { FogOfWarParams } from './FogOfWarParams';
 
-type PredefinedMapModel = {
+export type PredefinedMapModel = Readonly<{
   id: string;
   imageFilename: string;
   levelNumber: number;
@@ -25,6 +25,4 @@ type PredefinedMapModel = {
   defaultTile: TileType;
   tileset: string;
   fogOfWar: FogOfWarParams;
-};
-
-export default PredefinedMapModel;
+}>;
