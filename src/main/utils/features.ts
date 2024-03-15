@@ -86,5 +86,5 @@ const getQueryParam = (param: string): string | null => {
 };
 
 const _isProduction = (): boolean => {
-  return document.location.href === 'https://duzh.netlify.app';
+  return document.location.origin === 'https://duzh.netlify.app';
 };
