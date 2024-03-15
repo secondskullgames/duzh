@@ -1,6 +1,6 @@
 import Unit from '@main/entities/units/Unit';
 import Coordinates from '@lib/geometry/Coordinates';
-import Direction from '@main/geometry/Direction';
+import Direction from '@lib/geometry/Direction';
 import { isBlocked } from '@main/maps/MapUtils';
 import { isEmpty } from '@lib/utils/arrays';
 import { randChoice } from '@lib/utils/random';

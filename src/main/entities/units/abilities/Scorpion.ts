@@ -2,8 +2,8 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import Direction from '../../../geometry/Direction';
 import { getMeleeDamage } from '../UnitUtils';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -71,7 +71,7 @@ export const Scorpion: UnitAbility = {
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+    map.addProjectile(projectile);
 
     for (let i = 1; i < range; i++) {
       const currentCoordinates = Coordinates.plus(unit.getCoordinates(), {

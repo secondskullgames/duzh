@@ -9,14 +9,16 @@ import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../entities/objects/Door';
 import Spawner, { SpawnerState } from '../../entities/objects/Spawner';
 import ModelLoader from '@main/assets/ModelLoader';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/entities/units/Unit';
-import Direction from '@main/geometry/Direction';
+import Direction from '@lib/geometry/Direction';
 import { fillTemplate } from '@lib/utils/templates';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { ImageEffects } from '@main/graphics/ImageEffects';
 import { injectable } from 'inversify';
 import type DynamicSpriteModel from '../../../models/DynamicSpriteModel';
 
@@ -52,7 +54,7 @@ export default class SpriteFactory {
     const model = await this.modelLoader.loadStaticSpriteModel(spriteName);
     const { filename, offsets, transparentColor } = model;
     if (!paletteSwaps) {
-      paletteSwaps = PaletteSwaps.create(model.paletteSwaps);
+      paletteSwaps = loadPaletteSwaps(model.paletteSwaps);
     }
     const image = await this.imageFactory.getImage({
       filename,
@@ -216,13 +218,13 @@ export default class SpriteFactory {
           const effects: ImageEffect[] = [];
           switch (animationName) {
             case 'damaged':
-              effects.push(ImageEffect.DAMAGED);
+              effects.push(ImageEffects.DAMAGED);
               break;
             case 'burning':
-              effects.push(ImageEffect.BURNING);
+              effects.push(ImageEffects.BURNING);
               break;
             case 'frozen':
-              effects.push(ImageEffect.FROZEN);
+              effects.push(ImageEffects.FROZEN);
               break;
           }
 

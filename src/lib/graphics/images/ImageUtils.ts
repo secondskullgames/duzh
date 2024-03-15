@@ -1,4 +1,4 @@
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { RGB } from '@lib/graphics/RGB';
 import { Color } from '@lib/graphics/Color';
 

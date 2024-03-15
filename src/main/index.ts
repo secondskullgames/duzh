@@ -4,7 +4,7 @@ import { GameState, GameStateImpl } from './core/GameState';
 import GameRenderer from './graphics/renderers/GameRenderer';
 import InputHandler from './input/InputHandler';
 import { showSplashScreen } from './actions/showSplashScreen';
-import { FontBundle, FontFactory } from './graphics/Fonts';
+import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { Session, SessionImpl } from './core/Session';
 import { MapController, MapControllerImpl } from './maps/MapController';
@@ -16,6 +16,7 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';
 import { Engine, EngineImpl } from '@main/core/Engine';
+import { FontBundle } from '@lib/graphics/Fonts';
 import { Container } from 'inversify';
 
 type Props = Readonly<{

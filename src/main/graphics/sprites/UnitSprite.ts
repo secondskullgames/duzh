@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
 import Activity from '../../entities/units/Activity';
-import Direction from '../../geometry/Direction';
 import Unit from '../../entities/units/Unit';
+import Direction from '@lib/geometry/Direction';
 import Offsets from '@lib/geometry/Offsets';
 import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
 import { maxBy } from '@lib/utils/arrays';

@@ -1,19 +1,19 @@
 export default {
   clearMocks: true,
   // collectCoverage: false,
-  collectCoverageFrom: ['src/{lib,main,models}/**/*.ts'],
+  collectCoverageFrom: ['src/{lib,main}/**/*.ts'],
   // coverageDirectory: undefined,
   // coveragePathIgnorePatterns: [
   //   "/node_modules/"
   // ],
   coverageProvider: 'v8',
-  coverageReporters: ['json', 'text', 'lcov', 'clover'],
+  coverageReporters: ['json', 'text-summary', 'lcov', 'clover'],
   coverageThreshold: {
     global: {
-      statements: 14.0,
-      branches: 38.0,
+      statements: 15.0,
+      branches: 40.0,
       functions: 14.0,
-      lines: 14.0
+      lines: 15.0
     }
   },
   // dependencyExtractor: undefined,

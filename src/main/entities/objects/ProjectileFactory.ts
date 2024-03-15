@@ -1,9 +1,9 @@
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
-import Direction from '../../geometry/Direction';
 import Projectile from '../Projectile';
 import MapInstance from '../../maps/MapInstance';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -38,6 +38,20 @@ export default class ProjectileFactory {
       direction,
       PaletteSwaps.empty()
     );
+    return new Projectile({
+      coordinates,
+      map,
+      direction,
+      sprite
+    });
+  };
+
+  createFireball = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    direction: Direction
+  ): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createStaticSprite('fireball');
     return new Projectile({
       coordinates,
       map,

@@ -1,7 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit } from './ControllerUtils';
 import Unit from '../Unit';
-import Direction from '../../../geometry/Direction';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import { range as TELEPORT_RANGE, Teleport } from '../abilities/Teleport';
@@ -11,6 +10,7 @@ import UnitOrder from '../orders/UnitOrder';
 import MapInstance from '../../../maps/MapInstance';
 import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

@@ -1,6 +1,6 @@
 import UnitOrder from '../orders/UnitOrder';
 import Unit from '../Unit';
-import Direction from '../../../geometry/Direction';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { isBlocked } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';

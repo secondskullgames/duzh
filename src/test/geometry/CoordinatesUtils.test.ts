@@ -5,7 +5,7 @@ import {
   manhattanDistance,
   pointAt
 } from '@lib/geometry/CoordinatesUtils';
-import Direction from '@main/geometry/Direction';
+import Direction from '@lib/geometry/Direction';
 
 describe('CoordinatesUtils', () => {
   test('manhattanDistance', () => {

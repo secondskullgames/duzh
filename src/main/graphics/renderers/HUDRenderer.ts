@@ -4,7 +4,7 @@ import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';

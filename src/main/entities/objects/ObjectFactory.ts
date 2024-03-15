@@ -9,10 +9,10 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Faction } from '../units/Faction';
 import { chooseUnitController } from '../units/controllers/ControllerUtils';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { inject, injectable } from 'inversify';
 import type Coordinates from '@lib/geometry/Coordinates';
 
@@ -119,7 +119,7 @@ export default class ObjectFactory {
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createStaticSprite(
       'map_health_globe',
-      PaletteSwaps.create({
+      loadPaletteSwaps({
         DARK_RED: 'DARK_BLUE',
         RED: 'BLUE'
       })

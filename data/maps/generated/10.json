@@ -2,7 +2,7 @@
   "id": "9",
   "levelNumber": 9,
   "algorithm": "PATH",
-  "tileSet": "dungeon_green",
+  "tileSet": "dungeon_cga",
   "width": 38,
   "height": 38,
   "enemies": {

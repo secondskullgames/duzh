@@ -1,8 +1,8 @@
 {
   "id": "5",
   "levelNumber": 5,
-  "algorithm": "ROOMS_AND_CORRIDORS_3",
-  "tileSet": "dungeon_cga",
+  "algorithm": "PATH",
+  "tileSet": "catacomb",
   "width": 28,
   "height": 28,
   "enemies": {

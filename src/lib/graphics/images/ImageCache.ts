@@ -1,6 +1,6 @@
 import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { comparing } from '@lib/utils/arrays';
 import { Color } from '@lib/graphics/Color';
 import { injectable } from 'inversify';

@@ -2,8 +2,8 @@ import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
-import Direction from '../geometry/Direction';
 import Activity from '../entities/units/Activity';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
@@ -78,12 +78,12 @@ const playFireballAnimation = async (
     map.isTileRevealed(coordinates)
   );
 
-  // arrow movement frames
+  // fireball movement frames
   for (const coordinates of visibleCoordinatesList) {
     const projectile = await state
       .getProjectileFactory()
-      .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+      .createFireball(coordinates, map, direction);
+    map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);
   }

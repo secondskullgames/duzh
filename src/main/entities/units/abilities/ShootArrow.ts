@@ -3,8 +3,8 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { getRangedDamage } from '../UnitUtils';
-import Direction from '../../../geometry/Direction';
 import Activity from '../Activity';
+import Direction from '@lib/geometry/Direction';
 import Coordinates from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
@@ -109,7 +109,7 @@ const playArrowAnimation = async (
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
-    map.projectiles.add(projectile);
+    map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);
   }

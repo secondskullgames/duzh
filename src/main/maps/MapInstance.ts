@@ -28,10 +28,7 @@ export default class MapInstance {
   private readonly tiles: Grid<Tile>;
   private readonly units: Grid<Unit>;
   private readonly objects: MultiGrid<GameObject>;
-  /**
-   * TODO should not expose this
-   */
-  readonly projectiles: Set<Projectile>;
+  private readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Grid<boolean>;
   readonly music: Figure[] | null;
   private readonly fogParams: FogOfWarParams;
@@ -117,6 +114,10 @@ export default class MapInstance {
 
   removeObject = (object: GameObject) => {
     this.objects.remove(object.getCoordinates(), object);
+  };
+
+  addProjectile = (projectile: Projectile) => {
+    this.projectiles.add(projectile);
   };
 
   removeProjectile = (projectile: Projectile) => {

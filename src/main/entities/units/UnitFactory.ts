@@ -8,9 +8,9 @@ import UnitModel from '../../../models/UnitModel';
 import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
-import PaletteSwaps from '@lib/graphics/PaletteSwaps';
 import Coordinates from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { inject, injectable } from 'inversify';
 
 type CreateUnitParams = Readonly<{
@@ -43,7 +43,7 @@ export default class UnitFactory {
     const model: UnitModel = await this.modelLoader.loadUnitModel(params.unitClass);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
-      PaletteSwaps.create(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps)
     );
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of model.equipment ?? []) {

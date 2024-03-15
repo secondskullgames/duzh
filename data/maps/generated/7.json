@@ -2,7 +2,7 @@
   "id": "7",
   "levelNumber": 7,
   "algorithm": "BLOB",
-  "tileSet": "catacomb_red",
+  "tileSet": "zzt",
   "width": 32,
   "height": 32,
   "enemies": {
