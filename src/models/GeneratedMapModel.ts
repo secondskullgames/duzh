@@ -12,7 +12,12 @@ export type GeneratedMapModel = Readonly<{
   fogOfWar: FogOfWarParams;
 }>;
 
-export type Algorithm = 'ROOMS_AND_CORRIDORS' | 'DEFAULT' | 'PATH' | 'BLOB';
+export enum Algorithm {
+  ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
+  DEFAULT = 'DEFAULT',
+  PATH = 'PATH',
+  BLOB = 'BLOB'
+}
 
 export type Range = Readonly<{
   min: number;

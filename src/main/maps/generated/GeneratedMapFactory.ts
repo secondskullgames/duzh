@@ -37,7 +37,12 @@ type ItemSpec = Readonly<{
   id: string;
 }>;
 
-const algorithms: Algorithm[] = ['ROOMS_AND_CORRIDORS', 'DEFAULT', 'PATH', 'BLOB'];
+const algorithms: Algorithm[] = [
+  Algorithm.ROOMS_AND_CORRIDORS,
+  Algorithm.DEFAULT,
+  Algorithm.PATH,
+  Algorithm.BLOB
+];
 
 @injectable()
 export class GeneratedMapFactory {
@@ -71,10 +76,10 @@ export class GeneratedMapFactory {
     return map;
   };
 
-  private _getDungeonGenerator = (mapLayout: string): AbstractMapGenerator => {
+  private _getDungeonGenerator = (mapLayout: Algorithm): AbstractMapGenerator => {
     const { tileFactory } = this;
     switch (mapLayout) {
-      case 'ROOMS_AND_CORRIDORS': {
+      case Algorithm.ROOMS_AND_CORRIDORS: {
         const useNewMapGenerator = true;
         if (useNewMapGenerator) {
           return new RoomCorridorMapGenerator2(tileFactory);
@@ -87,11 +92,11 @@ export class GeneratedMapFactory {
           tileFactory
         });
       }
-      case 'ROOMS_AND_CORRIDORS_3':
+      case Algorithm.DEFAULT:
         return new RoomCorridorMapGenerator3(tileFactory);
-      case 'BLOB':
+      case Algorithm.BLOB:
         return new BlobMapGenerator(tileFactory);
-      case 'PATH':
+      case Algorithm.PATH:
         return new PathMapGenerator(tileFactory);
       default:
         throw new Error(`Unknown map layout ${mapLayout}`);
