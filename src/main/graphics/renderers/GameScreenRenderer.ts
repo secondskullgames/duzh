@@ -15,6 +15,7 @@ import { ObjectType } from '@main/entities/objects/GameObject';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import Block from '@main/entities/objects/Block';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -161,11 +162,12 @@ export default class GameScreenRenderer implements Renderer {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
       }
     }
+    // TODO think about rules for blocks
     if (
       objects.find(
         object =>
           object.getObjectType() === ObjectType.ITEM ||
-          object.getObjectType() === ObjectType.BLOCK
+          (object.getObjectType() === ObjectType.BLOCK && (object as Block).isMovable())
       )
     ) {
       return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);

@@ -15,7 +15,7 @@
   },
   "fogOfWar": {
     "enabled": true,
-    "radius": 3,
+    "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
     "spawnRate": 0.02,

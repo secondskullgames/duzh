@@ -1,0 +1,9 @@
+{
+  "name": "block",
+  "filename": "vines",
+  "offsets": {
+    "dx": 0,
+    "dy": 0
+  },
+  "transparentColor": "WHITE"
+}

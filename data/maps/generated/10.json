@@ -6,8 +6,8 @@
   "width": 38,
   "height": 38,
   "enemies": {
-    "min": 8,
-    "max": 10
+    "min": 9,
+    "max": 11
   },
   "items": {
     "min": 3,

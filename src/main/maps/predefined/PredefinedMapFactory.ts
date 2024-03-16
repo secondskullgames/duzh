@@ -209,6 +209,9 @@ export class PredefinedMapFactory {
           } else if (objectName === 'movable_block') {
             const block = await this.objectFactory.createMovableBlock({ x, y }, map);
             objects.push(block);
+          } else if (objectName === 'vines') {
+            const vines = await this.objectFactory.createVines({ x, y }, map);
+            objects.push(vines);
           } else if (objectName) {
             throw new Error(`Unrecognized object name: ${objectName}`);
           }

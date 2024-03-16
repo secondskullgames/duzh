@@ -1,22 +1,22 @@
 {
   "id": "test",
   "imageFilename": "test",
-  "tileset": "catacomb",
+  "tileset": "forest",
   "levelNumber": 1,
   "tileColors": {
-    "BLACK": "NONE",
+    "BLACK": "WALL_TOP",
     "LIGHT_GRAY": "FLOOR",
-    "DARK_GRAY": "NONE"
+    "DARK_GRAY": "WALL"
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "robed_wizard"
+    "BLUE": "green_snake"
   },
   "itemColors": {},
-  "equipmentColors": {
-    "GREEN": "bronze_sword"
+  "equipmentColors": {},
+  "objectColors": {
+    "GREEN": "vines"
   },
-  "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {
     "enabled": false
