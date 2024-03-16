@@ -80,6 +80,20 @@ export default class ObjectFactory {
     });
   };
 
+  createVines = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<GameObject> => {
+    const sprite = await this.spriteFactory.createStaticSprite('vines');
+
+    return new Block({
+      coordinates,
+      map,
+      sprite,
+      movable: false
+    });
+  };
+
   createHealthGlobe = async (
     coordinates: Coordinates,
     map: MapInstance

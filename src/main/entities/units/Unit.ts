@@ -258,6 +258,7 @@ export default class Unit implements Entity {
     const damageAbsorbed = incomingDamage - damageTaken;
     this.life -= damageTaken;
     this.lifetimeDamageTaken += damageTaken;
+    this.effects.removeEffect(UnitEffect.FROZEN);
 
     return {
       incomingDamage,
