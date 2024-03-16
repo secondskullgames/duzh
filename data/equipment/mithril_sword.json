@@ -1,0 +1,17 @@
+{
+  "id": "mithril_sword",
+  "name": "Mithril Sword",
+  "sprite": "sword",
+  "mapIcon": "map_sword",
+  "itemCategory": "WEAPON",
+  "slot": "MELEE_WEAPON",
+  "paletteSwaps": {
+    "GRAY_128": "CYAN",
+    "GRAY_192": "GRAY_192"
+  },
+  "rarity": 5,
+  "level": 8,
+  "stats": {
+    "damage": 12
+  }
+}
