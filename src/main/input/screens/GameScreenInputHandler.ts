@@ -22,7 +22,7 @@ import { Engine } from '@main/core/Engine';
 import { TileType } from '@models/TileType';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
-import { isArrowKey, isNumberKey } from '@lib/input/InputUtils';
+import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
 
@@ -47,7 +47,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await this._handleArrowKey(key as ArrowKey, modifiers);
     } else if (isNumberKey(key)) {
       await this._handleAbility(key);
-    } else if (this._isModifierKey(key)) {
+    } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
@@ -75,7 +75,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
   handleKeyUp = async (command: KeyCommand) => {
     const { key } = command;
-    if (this._isModifierKey(key)) {
+    if (isModifierKey(key)) {
       await this._handleModifierKeyUp(key as ModifierKey);
     }
   };
@@ -152,10 +152,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await mapController.loadPreviousMap();
     }
     await engine.playTurn();
-  };
-
-  private _isModifierKey = (key: Key) => {
-    return ['SHIFT', 'ALT', 'CTRL'].includes(key);
   };
 
   private _handleModifierKeyDown = async (key: ModifierKey) => {
