@@ -65,7 +65,7 @@ export const canDash = (
   coordinates: Coordinates | undefined,
   map: MapInstance
 ) => {
-  if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
+  if (!unit.hasAbility(AbilityName.DASH) || Dash.isEnabled(unit)) {
     return false;
   }
 
