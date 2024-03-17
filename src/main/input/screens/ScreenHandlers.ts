@@ -27,7 +27,10 @@ export default class ScreenHandlers {
     victoryScreenInputHandler: VictoryScreenInputHandler
   ) {
     this.screenHandlers = {
-      [GameScreen.NONE]: { handleKeyCommand: async () => {} },
+      [GameScreen.NONE]: {
+        handleKeyDown: async () => {},
+        handleKeyUp: async () => {}
+      },
       [GameScreen.CHARACTER]: characterScreenInputHandler,
       [GameScreen.GAME]: gameScreenInputHandler,
       [GameScreen.GAME_OVER]: gameOverScreenInputHandler,

@@ -20,6 +20,9 @@ export type Key =
   | ArrowKey
   | NumberKey
   | FunctionKey
+  | 'ALT'
+  | 'CTRL'
+  | 'SHIFT'
   | 'TAB'
   | 'ENTER'
   | 'SPACEBAR'
@@ -27,8 +30,6 @@ export type Key =
   | 'C'
   | 'L'
   | 'M'
-  | 'Q'
-  | 'E'
   | 'OTHER';
 
 export enum ModifierKey {

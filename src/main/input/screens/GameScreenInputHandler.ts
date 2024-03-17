@@ -22,7 +22,9 @@ import { Engine } from '@main/core/Engine';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { TileType } from '@models/TileType';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
+import abilityForName = UnitAbility.abilityForName;
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -37,14 +39,16 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     private readonly mapController: MapController
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { state, session, engine } = this;
     const { key, modifiers } = command;
 
     if (this._isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
-    } else if (this._isAbilityHotkey(key)) {
+    } else if (this._isNumberKey(key)) {
       await this._handleAbility(key);
+    } else if (this._isModifierKey(key)) {
+      await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
@@ -69,25 +73,19 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
+  handleKeyUp = async (command: KeyCommand) => {
+    const { key } = command;
+    if (this._isModifierKey(key)) {
+      await this._handleModifierKeyUp(key as ModifierKey);
+    }
+  };
+
   private _isArrowKey = (key: Key) => {
     return ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
   };
 
-  private _isAbilityHotkey = (key: Key) => {
-    const abilityKeys: Key[] = [
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '0',
-      'Q',
-      'E'
-    ];
+  private _isNumberKey = (key: Key) => {
+    const abilityKeys: Key[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
     return abilityKeys.includes(key);
   };
 
@@ -132,7 +130,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           state,
           session
         );
-        //order = new AttackMoveOrder({ direction });
       }
     }
 
@@ -170,5 +167,48 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await mapController.loadPreviousMap();
     }
     await engine.playTurn();
+  };
+
+  private _isModifierKey = (key: Key) => {
+    return ['SHIFT', 'ALT', 'CTRL'].includes(key);
+  };
+
+  private _handleModifierKeyDown = async (key: ModifierKey) => {
+    const { session } = this;
+    const playerUnit = session.getPlayerUnit();
+    switch (key) {
+      case ModifierKey.SHIFT: {
+        const ability = abilityForName(AbilityName.SHOOT_ARROW);
+        if (ability?.isEnabled(playerUnit)) {
+          session.setQueuedAbility(ability);
+        }
+        break;
+      }
+      case ModifierKey.ALT: {
+        const ability = abilityForName(AbilityName.DASH);
+        if (ability?.isEnabled(playerUnit)) {
+          session.setQueuedAbility(ability);
+        }
+        break;
+      }
+    }
+  };
+
+  private _handleModifierKeyUp = async (key: ModifierKey) => {
+    const { session } = this;
+    switch (key) {
+      case ModifierKey.SHIFT: {
+        if (session.getQueuedAbility()?.name === AbilityName.SHOOT_ARROW) {
+          session.setQueuedAbility(null);
+        }
+        break;
+      }
+      case ModifierKey.ALT: {
+        if (session.getQueuedAbility()?.name === AbilityName.DASH) {
+          session.setQueuedAbility(null);
+        }
+        break;
+      }
+    }
   };
 }

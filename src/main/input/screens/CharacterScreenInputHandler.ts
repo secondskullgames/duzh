@@ -12,7 +12,7 @@ export default class CharacterScreenInputHandler implements ScreenInputHandler {
     private readonly session: Session
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { session } = this;
 
     switch (command.key) {
@@ -31,4 +31,6 @@ export default class CharacterScreenInputHandler implements ScreenInputHandler {
         session.setScreen(GameScreen.GAME);
     }
   };
+
+  handleKeyUp = async () => {};
 }

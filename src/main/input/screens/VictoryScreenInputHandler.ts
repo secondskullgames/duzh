@@ -16,7 +16,7 @@ export default class VictoryScreenInputHandler implements ScreenInputHandler {
     private readonly state: GameState
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { state, session } = this;
     const { key, modifiers } = command;
     switch (key) {
@@ -33,4 +33,6 @@ export default class VictoryScreenInputHandler implements ScreenInputHandler {
         session.setScreen(GameScreen.GAME);
     }
   };
+
+  handleKeyUp = async () => {};
 }

@@ -16,7 +16,7 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
     private readonly mapController: MapController
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { session, mapController } = this;
     const { key, modifiers } = command;
 
@@ -37,4 +37,6 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
         session.setScreen(GameScreen.GAME);
     }
   };
+
+  handleKeyUp = async () => {};
 }
