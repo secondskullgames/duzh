@@ -16,7 +16,6 @@ export enum Feature {
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
   HUD_BARS = 'HUD_BARS',
-  PRODUCTION = 'PRODUCTION',
   STAIRS_UP = 'STAIRS_UP',
   TITLE_MUSIC = 'TITLE_MUSIC'
 }
@@ -31,8 +30,6 @@ export namespace Feature {
       return false;
     }
     switch (feature) {
-      case Feature.PRODUCTION:
-        return _isProduction();
       case Feature.ALT_DASH:
         return true;
       case Feature.ALT_STRAFE:
@@ -46,7 +43,7 @@ export namespace Feature {
       case Feature.DARK_DUNGEON:
         return false;
       case Feature.DEBUG_BUTTONS:
-        return !Feature.isEnabled(Feature.PRODUCTION);
+        return false;
       case Feature.DEBUG_LEVEL:
         return false;
       case Feature.DEDUPLICATE_EQUIPMENT:
@@ -60,7 +57,7 @@ export namespace Feature {
       case Feature.GOD_MODE:
         return false;
       case Feature.HUD_BARS:
-        return false;
+        return true;
       case Feature.LEVEL_UP_SCREEN:
         return false;
       case Feature.STAIRS_UP:
@@ -83,8 +80,4 @@ const getQueryParam = (param: string): string | null => {
     }
   }
   return null;
-};
-
-const _isProduction = (): boolean => {
-  return document.location.origin === 'https://duzh.netlify.app';
 };
