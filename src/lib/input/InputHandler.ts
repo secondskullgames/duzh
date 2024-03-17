@@ -43,7 +43,7 @@ export default class InputHandler {
 
   addEventListener = (target: HTMLElement) => {
     this._onKeyDown = this._wrapKeyHandler(this.keyDownHandler);
-    this._onKeyUp = this._wrapKeyHandler(this.keyUpHandler);
+    this._onKeyUp = this.keyUpHandler;
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);
