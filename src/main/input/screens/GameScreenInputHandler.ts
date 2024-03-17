@@ -19,10 +19,10 @@ import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 import { Engine } from '@main/core/Engine';
-import { EquipmentSlot } from '@models/EquipmentSlot';
 import { TileType } from '@models/TileType';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { isArrowKey, isNumberKey } from '@lib/input/InputUtils';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
 
@@ -43,9 +43,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { state, session, engine } = this;
     const { key, modifiers } = command;
 
-    if (this._isArrowKey(key)) {
+    if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
-    } else if (this._isNumberKey(key)) {
+    } else if (isNumberKey(key)) {
       await this._handleAbility(key);
     } else if (this._isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
@@ -80,15 +80,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _isArrowKey = (key: Key) => {
-    return ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
-  };
-
-  private _isNumberKey = (key: Key) => {
-    const abilityKeys: Key[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-    return abilityKeys.includes(key);
-  };
-
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { state, session, engine } = this;
     const direction = getDirection(key);
@@ -96,27 +87,21 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
-      if (
-        playerUnit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) &&
-        playerUnit.canSpendMana(ShootArrow.manaCost)
-      ) {
+      if (ShootArrow.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: ShootArrow });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
-      if (playerUnit.canSpendMana(Strafe.manaCost)) {
+      if (Strafe.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (
-        playerUnit.hasAbility(AbilityName.DASH) &&
-        playerUnit.canSpendMana(Dash.manaCost)
-      ) {
+      if (Dash.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: Dash });
       }
     } else {
