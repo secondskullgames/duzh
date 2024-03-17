@@ -22,6 +22,7 @@ export const KnockbackAttack: UnitAbility = {
   manaCost,
   icon: 'icon6',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

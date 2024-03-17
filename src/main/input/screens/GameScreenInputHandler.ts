@@ -1,9 +1,9 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
-import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import Sounds from '../../sounds/Sounds';
-import UnitOrder from '../../entities/units/orders/UnitOrder';
-import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '@lib/input/inputTypes';
+import PlayerUnitController from '@main/entities/units/controllers/PlayerUnitController';
+import UnitOrder from '@main/entities/units/orders/UnitOrder';
+import { ArrowKey, Key, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { ShootArrow } from '@main/entities/units/abilities/ShootArrow';
 import { Strafe } from '@main/entities/units/abilities/Strafe';
 import { toggleFullScreen } from '@lib/utils/dom';
@@ -17,11 +17,11 @@ import { Dash } from '@main/entities/units/abilities/Dash';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
-import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
 import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 import { Engine } from '@main/core/Engine';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { TileType } from '@models/TileType';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -43,8 +43,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     if (this._isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
-    } else if (this._isNumberKey(key)) {
-      await this._handleAbility(key as NumberKey);
+    } else if (this._isAbilityHotkey(key)) {
+      await this._handleAbility(key);
     } else if (key === 'SPACEBAR') {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
@@ -73,8 +73,22 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     return ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
   };
 
-  private _isNumberKey = (key: Key) => {
-    return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(key);
+  private _isAbilityHotkey = (key: Key) => {
+    const abilityKeys: Key[] = [
+      '1',
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '0',
+      'Q',
+      'E'
+    ];
+    return abilityKeys.includes(key);
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
@@ -129,11 +143,12 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _handleAbility = async (key: NumberKey) => {
+  private _handleAbility = async (hotkey: Key) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
-    const ability = getHotkeyAbility(playerUnit, key);
-    if (ability && playerUnit.canSpendMana(ability.manaCost)) {
+    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
+    const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
+    if (ability?.isEnabled(playerUnit)) {
       session.setQueuedAbility(ability);
     }
   };

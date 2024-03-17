@@ -25,10 +25,12 @@ const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): str
 
 export const ShootArrow: UnitAbility = {
   name: AbilityName.SHOOT_ARROW,
-  icon: null,
+  icon: 'harpoon_icon',
   manaCost,
   innate: true,
-
+  isEnabled: unit =>
+    unit.getMana() >= manaCost &&
+    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

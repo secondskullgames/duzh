@@ -12,7 +12,7 @@ export const Strafe: UnitAbility = {
   manaCost: 0,
   icon: null,
   innate: true,
-
+  isEnabled: () => true,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

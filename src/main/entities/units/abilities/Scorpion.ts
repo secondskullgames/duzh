@@ -56,6 +56,7 @@ export const Scorpion: UnitAbility = {
   manaCost,
   icon: 'scorpion_icon',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

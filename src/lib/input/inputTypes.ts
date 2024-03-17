@@ -27,6 +27,8 @@ export type Key =
   | 'C'
   | 'L'
   | 'M'
+  | 'Q'
+  | 'E'
   | 'OTHER';
 
 export enum ModifierKey {

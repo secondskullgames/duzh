@@ -20,7 +20,7 @@ export const MinorStunAttack: UnitAbility = {
   manaCost,
   icon: 'icon2',
   innate: false,
-
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

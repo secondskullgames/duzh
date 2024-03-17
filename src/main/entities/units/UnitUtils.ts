@@ -59,13 +59,5 @@ export const calculateTotalIncomingDamage = (
   return Math.round(baseDamage * (1 - absorbRatio));
 };
 
-export const getHotkeyAbility = (
-  playerUnit: Unit,
-  hotkey: NumberKey
-): UnitAbility | undefined => {
-  const index = parseInt(hotkey.toString());
-  return playerUnit.getAbilities().filter(ability => !ability.innate)[index - 1];
-};
-
 export const isHostile = (first: Unit, second: Unit): boolean =>
   first.getFaction() !== second.getFaction();

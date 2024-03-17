@@ -31,6 +31,7 @@ export const NormalAttack: UnitAbility = {
   icon: null,
   manaCost: 0,
   innate: true,
+  isEnabled: () => true,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

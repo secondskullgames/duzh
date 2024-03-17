@@ -15,7 +15,7 @@ export const Summon: UnitAbility = {
   manaCost,
   icon: null,
   innate: false,
-
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates | null,

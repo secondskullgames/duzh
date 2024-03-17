@@ -32,6 +32,7 @@ export const Cleave: UnitAbility = {
   manaCost,
   icon: 'icon7',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,
