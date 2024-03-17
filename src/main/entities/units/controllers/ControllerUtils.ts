@@ -47,7 +47,7 @@ export const getNearestEnemyUnit = (unit: Unit): Unit | null => {
 
 export const chooseUnitController = (unitClass: string): UnitController => {
   switch (unitClass) {
-    case 'archer':
+    case 'goblin_archer':
       return new ArcherController();
     case 'robed_wizard':
       return new WizardController();
