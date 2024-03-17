@@ -11,14 +11,15 @@ import { getSpawner } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
+const manaCost = 0;
 const damageCoefficient = 1;
 
 export const PiercingAttack: UnitAbility = {
   name: AbilityName.PIERCE,
-  manaCost: 0,
+  manaCost,
   icon: null,
   innate: false,
-
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

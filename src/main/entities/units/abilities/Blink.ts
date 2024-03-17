@@ -18,6 +18,7 @@ export const Blink: UnitAbility = {
   manaCost,
   icon: 'blink_icon',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

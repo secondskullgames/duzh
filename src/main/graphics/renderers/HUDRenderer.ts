@@ -15,6 +15,8 @@ import Rect from '@lib/geometry/Rect';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import { AbilityName } from '@main/entities/units/abilities/AbilityName';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -139,20 +141,24 @@ export default class HUDRenderer implements Renderer {
     const { session } = this;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
-
-    let keyNumber = 1;
-    const abilities = playerUnit.getAbilities();
-    for (let i = 0; i < abilities.length; i++) {
-      const ability = abilities[i];
+    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
+    const isNumberedAbility = (ability: UnitAbility) =>
+      ability.name !== AbilityName.ATTACK &&
+      ability.name !== AbilityName.DASH &&
+      ability.name !== AbilityName.SHOOT_ARROW;
+    const numberedAbilities = playerUnit.getAbilities().filter(isNumberedAbility);
+    for (let i = 0; i < numberedAbilities.length; i++) {
+      const ability = numberedAbilities[i];
+      const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);
       const left =
         LEFT_PANE_WIDTH +
         BORDER_PADDING +
-        (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * (keyNumber - 1);
+        (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
 
-      if (!ability.innate) {
+      if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top }, graphics);
         await this._drawText(
-          `${keyNumber}`,
+          `${hotkey}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 },
           Colors.WHITE,
@@ -167,7 +173,40 @@ export default class HUDRenderer implements Renderer {
           Alignment.CENTER,
           graphics
         );
-        keyNumber++;
+      }
+    }
+    const nonNumberedAbilities = playerUnit
+      .getAbilities()
+      .filter(ability => !isNumberedAbility(ability));
+    // TODO massive code duplication
+    for (let i = 0; i < nonNumberedAbilities.length; i++) {
+      const ability = nonNumberedAbilities[i];
+      const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);
+      const left =
+        LEFT_PANE_WIDTH +
+        BORDER_PADDING +
+        this.MIDDLE_PANE_WIDTH +
+        ABILITIES_INNER_MARGIN * (-4 + i) +
+        ABILITY_ICON_WIDTH * (-3 + i);
+
+      if (ability.icon) {
+        await this._renderAbility(ability, { x: left, y: top }, graphics);
+        await this._drawText(
+          `${hotkey}`,
+          FontName.APPLE_II,
+          { x: left + 10, y: top + 24 },
+          Colors.WHITE,
+          Alignment.CENTER,
+          graphics
+        );
+        await this._drawText(
+          `${ability.manaCost}`,
+          FontName.APPLE_II,
+          { x: left + 10, y: top + 24 + LINE_HEIGHT },
+          Colors.LIGHT_GRAY,
+          Alignment.CENTER,
+          graphics
+        );
       }
     }
   };
@@ -217,7 +256,7 @@ export default class HUDRenderer implements Renderer {
 
     if (queuedAbility === ability) {
       borderColor = Colors.GREEN;
-    } else if (playerUnit.canSpendMana(ability.manaCost)) {
+    } else if (ability.isEnabled(playerUnit)) {
       borderColor = Colors.WHITE;
     } else {
       borderColor = Colors.DARK_GRAY;

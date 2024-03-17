@@ -31,6 +31,7 @@ export const HeavyAttack: UnitAbility = {
   manaCost,
   icon: 'icon1',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

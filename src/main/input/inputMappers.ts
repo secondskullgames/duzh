@@ -60,10 +60,13 @@ export const mapToCommand = (e: KeyboardEvent): KeyCommand | null => {
       return { key: 'F1', modifiers };
     case 'AltLeft':
     case 'AltRight':
+      return { key: 'ALT', modifiers };
     case 'ShiftLeft':
     case 'ShiftRight':
+      return { key: 'SHIFT', modifiers };
     case 'ControlLeft':
     case 'ControlRight':
+      return { key: 'CTRL', modifiers };
     case 'OSLeft':
     case 'OSRight':
       return { key: 'OTHER', modifiers };

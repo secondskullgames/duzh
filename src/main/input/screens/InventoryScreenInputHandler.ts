@@ -16,7 +16,7 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
     private readonly state: GameState
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { session } = this;
     const { key, modifiers } = command;
     const playerUnit = session.getPlayerUnit();
@@ -55,6 +55,8 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
         session.setScreen(GameScreen.GAME);
     }
   };
+
+  handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
     const { state, session } = this;

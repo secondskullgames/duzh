@@ -1,7 +1,5 @@
 import Unit from './Unit';
-import { UnitAbility } from './abilities/UnitAbility';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
-import { NumberKey } from '@lib/input/inputTypes';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 
 export const getMeleeDamage = (unit: Unit): number => {
@@ -57,14 +55,6 @@ export const calculateTotalIncomingDamage = (
   }
 
   return Math.round(baseDamage * (1 - absorbRatio));
-};
-
-export const getHotkeyAbility = (
-  playerUnit: Unit,
-  hotkey: NumberKey
-): UnitAbility | undefined => {
-  const index = parseInt(hotkey.toString());
-  return playerUnit.getAbilities().filter(ability => !ability.innate)[index - 1];
 };
 
 export const isHostile = (first: Unit, second: Unit): boolean =>

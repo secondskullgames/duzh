@@ -1,4 +1,7 @@
 import { AbilityName } from './abilities/AbilityName';
+import Unit from '@main/entities/units/Unit';
+import { Key, NumberKey } from '@lib/input/inputTypes';
+import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -8,10 +11,22 @@ export interface PlayerUnitClass {
   readonly manaPerLevel: number;
   readonly strengthPerLevel: number;
   readonly maxLevel: number;
+  getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
+  getHotkeyForAbility: (ability: UnitAbility, unit: Unit) => string | null;
+  getAbilityForHotkey: (hotkey: Key, unit: Unit) => UnitAbility | null;
+  // if LEVEL_UP_SCREEN=false...
+  getAbilitiesLearnedAtLevel: (levelNumber: number) => AbilityName[];
+  // if LEVEL_UP_SCREEN=true...
   getAllPossibleLearnableAbilities: () => AbilityName[];
   getAbilityDependencies: (ability: AbilityName) => AbilityName[];
-  getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
 }
+
+const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
+  2: [AbilityName.HEAVY_ATTACK],
+  3: [AbilityName.KNOCKBACK_ATTACK],
+  4: [AbilityName.STUN_ATTACK],
+  5: [AbilityName.DASH_ATTACK]
+};
 
 const learnableAbilities = [
   AbilityName.BLINK,
@@ -42,6 +57,35 @@ class DefaultClass implements PlayerUnitClass {
   readonly manaPerLevel = 2;
   readonly strengthPerLevel = 0;
   readonly maxLevel = 10;
+  getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {
+    switch (ability.name) {
+      case AbilityName.DASH:
+        return ' ';
+      case AbilityName.SHOOT_ARROW:
+        return ' ';
+      default: {
+        const index = unit
+          .getAbilities()
+          .filter(ability => !ability.innate)
+          .indexOf(ability);
+        if (index === -1) {
+          return null;
+        }
+        return (index + 1).toString() as NumberKey;
+      }
+    }
+  };
+  getAbilityForHotkey = (hotkey: Key, unit: Unit): UnitAbility | null => {
+    if (hotkey.match(/^\d$/)) {
+      const index = parseInt(hotkey);
+      return unit.getAbilities().filter(ability => !ability.innate)[index - 1];
+    } else {
+      return null;
+    }
+  };
+  getAbilitiesLearnedAtLevel = (levelNumber: number): AbilityName[] => {
+    return abilitiesLearnedAtLevel[levelNumber] ?? [];
+  };
   getAllPossibleLearnableAbilities = (): AbilityName[] => learnableAbilities;
   getAbilityDependencies = (ability: AbilityName): AbilityName[] => {
     switch (ability) {

@@ -16,6 +16,7 @@ export const FreeMove: UnitAbility = {
   manaCost,
   icon: 'icon5',
   innate: false,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

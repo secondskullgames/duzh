@@ -26,7 +26,7 @@ export const ShootTurretArrow: UnitAbility = {
   icon: null,
   manaCost,
   innate: false,
-
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,

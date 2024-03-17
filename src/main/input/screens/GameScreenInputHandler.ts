@@ -1,9 +1,9 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { getDirection } from '../inputMappers';
-import PlayerUnitController from '../../entities/units/controllers/PlayerUnitController';
 import Sounds from '../../sounds/Sounds';
-import UnitOrder from '../../entities/units/orders/UnitOrder';
-import { ArrowKey, Key, KeyCommand, ModifierKey, NumberKey } from '@lib/input/inputTypes';
+import PlayerUnitController from '@main/entities/units/controllers/PlayerUnitController';
+import UnitOrder from '@main/entities/units/orders/UnitOrder';
+import { ArrowKey, Key, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { ShootArrow } from '@main/entities/units/abilities/ShootArrow';
 import { Strafe } from '@main/entities/units/abilities/Strafe';
 import { toggleFullScreen } from '@lib/utils/dom';
@@ -17,12 +17,14 @@ import { Dash } from '@main/entities/units/abilities/Dash';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
-import { getHotkeyAbility } from '@main/entities/units/UnitUtils';
 import { AttackMoveBehavior } from '@main/entities/units/behaviors/AttackMoveBehavior';
 import { Engine } from '@main/core/Engine';
-import { EquipmentSlot } from '@models/EquipmentSlot';
 import { TileType } from '@models/TileType';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
 import { inject, injectable } from 'inversify';
+import abilityForName = UnitAbility.abilityForName;
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -37,14 +39,16 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     private readonly mapController: MapController
   ) {}
 
-  handleKeyCommand = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand) => {
     const { state, session, engine } = this;
     const { key, modifiers } = command;
 
-    if (this._isArrowKey(key)) {
+    if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
-    } else if (this._isNumberKey(key)) {
-      await this._handleAbility(key as NumberKey);
+    } else if (isNumberKey(key)) {
+      await this._handleAbility(key);
+    } else if (isModifierKey(key)) {
+      await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
@@ -69,12 +73,11 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _isArrowKey = (key: Key) => {
-    return ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
-  };
-
-  private _isNumberKey = (key: Key) => {
-    return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].includes(key);
+  handleKeyUp = async (command: KeyCommand) => {
+    const { key } = command;
+    if (isModifierKey(key)) {
+      await this._handleModifierKeyUp(key as ModifierKey);
+    }
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
@@ -84,27 +87,21 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
-      if (
-        playerUnit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) &&
-        playerUnit.canSpendMana(ShootArrow.manaCost)
-      ) {
+      if (ShootArrow.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: ShootArrow });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
-      if (playerUnit.canSpendMana(Strafe.manaCost)) {
+      if (Strafe.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (
-        playerUnit.hasAbility(AbilityName.DASH) &&
-        playerUnit.canSpendMana(Dash.manaCost)
-      ) {
+      if (Dash.isEnabled(playerUnit)) {
         order = new AbilityOrder({ direction, ability: Dash });
       }
     } else {
@@ -118,7 +115,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           state,
           session
         );
-        //order = new AttackMoveOrder({ direction });
       }
     }
 
@@ -129,11 +125,12 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _handleAbility = async (key: NumberKey) => {
+  private _handleAbility = async (hotkey: Key) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
-    const ability = getHotkeyAbility(playerUnit, key);
-    if (ability && playerUnit.canSpendMana(ability.manaCost)) {
+    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
+    const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
+    if (ability?.isEnabled(playerUnit)) {
       session.setQueuedAbility(ability);
     }
   };
@@ -155,5 +152,44 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await mapController.loadPreviousMap();
     }
     await engine.playTurn();
+  };
+
+  private _handleModifierKeyDown = async (key: ModifierKey) => {
+    const { session } = this;
+    const playerUnit = session.getPlayerUnit();
+    switch (key) {
+      case ModifierKey.SHIFT: {
+        const ability = abilityForName(AbilityName.SHOOT_ARROW);
+        if (ability?.isEnabled(playerUnit)) {
+          session.setQueuedAbility(ability);
+        }
+        break;
+      }
+      case ModifierKey.ALT: {
+        const ability = abilityForName(AbilityName.DASH);
+        if (ability?.isEnabled(playerUnit)) {
+          session.setQueuedAbility(ability);
+        }
+        break;
+      }
+    }
+  };
+
+  private _handleModifierKeyUp = async (key: ModifierKey) => {
+    const { session } = this;
+    switch (key) {
+      case ModifierKey.SHIFT: {
+        if (session.getQueuedAbility()?.name === AbilityName.SHOOT_ARROW) {
+          session.setQueuedAbility(null);
+        }
+        break;
+      }
+      case ModifierKey.ALT: {
+        if (session.getQueuedAbility()?.name === AbilityName.DASH) {
+          session.setQueuedAbility(null);
+        }
+        break;
+      }
+    }
   };
 }

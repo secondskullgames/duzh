@@ -47,7 +47,7 @@ export const getNearestEnemyUnit = (unit: Unit): Unit | null => {
 
 export const chooseUnitController = (unitClass: string): UnitController => {
   switch (unitClass) {
-    case 'archer':
+    case 'goblin_archer':
       return new ArcherController();
     case 'robed_wizard':
       return new WizardController();
@@ -65,7 +65,7 @@ export const canDash = (
   coordinates: Coordinates | undefined,
   map: MapInstance
 ) => {
-  if (!unit.hasAbility(AbilityName.DASH) || unit.getMana() < Dash.manaCost) {
+  if (!unit.hasAbility(AbilityName.DASH) || Dash.isEnabled(unit)) {
     return false;
   }
 

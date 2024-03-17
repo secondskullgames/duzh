@@ -1,5 +1,6 @@
 import { KeyCommand } from '@lib/input/inputTypes';
 
 export interface ScreenInputHandler {
-  handleKeyCommand: (command: KeyCommand) => Promise<void>;
+  handleKeyDown: (command: KeyCommand) => Promise<void>;
+  handleKeyUp: (command: KeyCommand) => Promise<void>;
 }

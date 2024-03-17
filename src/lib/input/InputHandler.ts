@@ -3,42 +3,47 @@ import { injectable } from 'inversify';
 type KeyHandler = (event: KeyboardEvent) => Promise<void>;
 
 type Props = Readonly<{
-  keyHandler: KeyHandler;
+  onKeyDown: KeyHandler;
+  onKeyUp: KeyHandler;
 }>;
 
 @injectable()
 export default class InputHandler {
-  private readonly keyHandler: KeyHandler;
+  private readonly keyDownHandler: KeyHandler;
+  private readonly keyUpHandler: KeyHandler;
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: KeyHandler | null = null;
   private _onKeyUp: KeyHandler | null = null;
 
-  constructor({ keyHandler }: Props) {
-    this.keyHandler = keyHandler;
+  constructor({ onKeyDown, onKeyUp }: Props) {
+    this.keyDownHandler = onKeyDown;
+    this.keyUpHandler = onKeyUp;
     this.busy = false;
     this.eventTarget = null;
   }
 
-  keyHandlerWrapper = async (event: KeyboardEvent) => {
-    event.preventDefault();
-    if (!this.busy) {
-      this.busy = true;
-      try {
-        await this.keyHandler(event);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e);
-        // eslint-disable-next-line no-alert
-        alert(e);
+  private _wrapKeyHandler = (handler: KeyHandler): KeyHandler => {
+    return async (event: KeyboardEvent) => {
+      event.preventDefault();
+      if (!this.busy) {
+        this.busy = true;
+        try {
+          await handler(event);
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(e);
+          // eslint-disable-next-line no-alert
+          alert(e);
+        }
+        this.busy = false;
       }
-      this.busy = false;
-    }
+    };
   };
 
   addEventListener = (target: HTMLElement) => {
-    this._onKeyDown = (e: KeyboardEvent) => this.keyHandlerWrapper(e);
-    this._onKeyUp = async () => {};
+    this._onKeyDown = this._wrapKeyHandler(this.keyDownHandler);
+    this._onKeyUp = this.keyUpHandler;
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);
