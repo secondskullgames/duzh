@@ -4,7 +4,7 @@ import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import Activity from '../entities/units/Activity';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { sleep } from '@lib/utils/promises';
@@ -30,17 +30,24 @@ export const floorFire = async (
     for (let j = 0; j < adjacentUnits.length; j++) {
       adjacentUnits[j].setActivity(Activity.STANDING, 1, unit.getDirection());
       if (j === i) {
-        adjacentUnits[j].getEffects().addEffect(UnitEffect.DAMAGED, 1);
-        adjacentUnits[j].getEffects().addEffect(UnitEffect.BURNING, 1);
+        const targetUnit = adjacentUnits[j];
+        targetUnit.getEffects().addEffect(UnitEffect.DAMAGED, 1);
+        targetUnit.getEffects().addEffect(UnitEffect.BURNING, 1);
+        await dealDamage(damage, {
+          sourceUnit: unit,
+          targetUnit: targetUnit
+        });
+
+        if (targetUnit.getLife() <= 0) {
+          await die(targetUnit, state, session);
+          recordKill(unit, targetUnit, session, state);
+        }
       } else {
         adjacentUnits[j].getEffects().removeEffect(UnitEffect.DAMAGED);
         adjacentUnits[j].getEffects().removeEffect(UnitEffect.BURNING);
       }
     }
-
-    if (i < adjacentUnits.length - 1) {
-      await sleep(150);
-    }
+    await sleep(150);
   }
 
   unit.setActivity(Activity.STANDING, 1, unit.getDirection());
@@ -48,17 +55,5 @@ export const floorFire = async (
     adjacentUnits[i].setActivity(Activity.STANDING, 1, unit.getDirection());
     adjacentUnits[i].getEffects().removeEffect(UnitEffect.DAMAGED);
     adjacentUnits[i].getEffects().removeEffect(UnitEffect.BURNING);
-  }
-
-  for (const adjacentUnit of adjacentUnits) {
-    await dealDamage(damage, {
-      sourceUnit: unit,
-      targetUnit: adjacentUnit
-    });
-
-    if (adjacentUnit.getLife() <= 0) {
-      await die(adjacentUnit, state, session);
-      recordKill(unit, adjacentUnit, session, state);
-    }
   }
 };

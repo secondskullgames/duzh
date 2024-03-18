@@ -18,7 +18,7 @@
     "radius": 4,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
-    "spawnRate": 0.03,
+    "spawnRate": 0.07,
     "maxSpawnedUnits": 8
   }
 }

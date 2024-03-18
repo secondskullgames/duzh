@@ -3,8 +3,8 @@ import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
 import { TileType } from '@models/TileType';
-import Coordinates from '@lib/geometry/Coordinates';
-import Offsets from '@lib/geometry/Offsets';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import { Offsets } from '@lib/geometry/Offsets';
 import { shuffle } from '@lib/utils/random';
 
 const generateTiles = (

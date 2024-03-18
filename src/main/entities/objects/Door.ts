@@ -2,7 +2,7 @@ import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '../../graphics/sprites/DynamicSprite';
 import MapInstance from '../../maps/MapInstance';
 import { DoorDirection } from '@models/DoorDirection';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 
 export enum DoorState {
   OPEN = 'OPEN',

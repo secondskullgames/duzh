@@ -1,5 +1,5 @@
 import Equipment from './Equipment';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';

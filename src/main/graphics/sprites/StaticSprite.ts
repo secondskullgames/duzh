@@ -1,5 +1,5 @@
 import Sprite from './Sprite';
-import Offsets from '@lib/geometry/Offsets';
+import { Offsets } from '@lib/geometry/Offsets';
 import { Image } from '@lib/graphics/images/Image';
 
 export default class StaticSprite implements Sprite {

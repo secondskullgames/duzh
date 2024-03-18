@@ -2,7 +2,7 @@ import Unit from '@main/entities/units/Unit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import MapInstance from '@main/maps/MapInstance';
-import Direction from '@lib/geometry/Direction';
+import { Direction } from '@lib/geometry/Direction';
 
 describe('NormalAttack', () => {
   test('successful attack', async () => {

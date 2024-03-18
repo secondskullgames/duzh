@@ -1,5 +1,5 @@
 import Sprite from './Sprite';
-import Offsets from '@lib/geometry/Offsets';
+import { Offsets } from '@lib/geometry/Offsets';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Image } from '@lib/graphics/images/Image';
 

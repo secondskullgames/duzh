@@ -1,6 +1,6 @@
 import { Renderer } from './Renderer';
 import Colors from '../Colors';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { Graphics } from '@lib/graphics/Graphics';
 import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@lib/utils/preconditions';

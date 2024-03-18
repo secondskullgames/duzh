@@ -1,7 +1,7 @@
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 
-type Connection = {
+type Connection = Readonly<{
   connectedCoordinates: Coordinates[];
-};
+}>;
 
 export default Connection;

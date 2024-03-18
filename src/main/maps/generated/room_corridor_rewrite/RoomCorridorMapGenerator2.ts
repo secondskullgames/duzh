@@ -5,7 +5,7 @@ import TileGenerator from './TileGenerator';
 import AbstractMapGenerator from '../AbstractMapGenerator';
 import TileFactory from '../../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
-import Rect from '@lib/geometry/Rect';
+import { Rect } from '@lib/geometry/Rect';
 
 const MIN_ROOM_WIDTH = 4;
 const MIN_ROOM_HEIGHT = 4;

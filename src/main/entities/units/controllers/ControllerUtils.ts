@@ -7,7 +7,7 @@ import Unit from '../Unit';
 import MapInstance from '../../../maps/MapInstance';
 import { AbilityName } from '../abilities/AbilityName';
 import { Dash } from '../abilities/Dash';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';

@@ -10,11 +10,11 @@ import UnitOrder from '../orders/UnitOrder';
 import MapInstance from '../../../maps/MapInstance';
 import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
-import Direction from '@lib/geometry/Direction';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Direction } from '@lib/geometry/Direction';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { manhattanDistance } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
@@ -107,7 +107,7 @@ const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
   for (let y = 0; y < map.height; y++) {
     for (let x = 0; x < map.width; x++) {
       if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-        if (manhattanDistance(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
+        if (hypotenuse(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
           tiles.push({ x, y });
         }
       }

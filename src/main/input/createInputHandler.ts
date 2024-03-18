@@ -12,12 +12,11 @@ type Props = Readonly<{
 
 export const createInputHandler = ({ session, screenHandlers }: Props): InputHandler => {
   const onKeyDown = async (event: KeyboardEvent) => {
-    event.preventDefault();
-
     const command: KeyCommand | null = mapToCommand(event);
     if (!command) {
       return;
     }
+    event.preventDefault();
     const handler: ScreenInputHandler = screenHandlers.getHandler(session.getScreen());
     await handler.handleKeyDown(command);
   };

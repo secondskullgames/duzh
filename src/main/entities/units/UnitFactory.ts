@@ -8,7 +8,7 @@ import SpriteFactory from '../../graphics/sprites/SpriteFactory';
 import ItemFactory from '../../items/ItemFactory';
 import MapInstance from '../../maps/MapInstance';
 import { UnitModel } from '@models/UnitModel';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { inject, injectable } from 'inversify';

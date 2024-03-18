@@ -12,6 +12,7 @@ export enum Feature {
   DEBUG_LOGGING = 'DEBUG_LOGGING',
   DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
   FOG_SHADES = 'FOG_SHADES',
+  FOG_SHADES_EVERYWHERE = 'FOG_SHADES_EVERYWHERE',
   FORCE_BRONZE_SWORD = 'FORCE_BRONZE_SWORD',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
@@ -52,6 +53,8 @@ export namespace Feature {
         return false;
       case Feature.FOG_SHADES:
         return true;
+      case Feature.FOG_SHADES_EVERYWHERE:
+        return false;
       case Feature.FORCE_BRONZE_SWORD:
         return true;
       case Feature.GOD_MODE:

@@ -10,13 +10,13 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "BLUE": "green_snake"
+    "GREEN": "green_snake"
   },
-  "itemColors": {},
+  "itemColors": {
+    "RED": "floor_fire_scroll"
+  },
   "equipmentColors": {},
-  "objectColors": {
-    "GREEN": "vines"
-  },
+  "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {
     "enabled": false

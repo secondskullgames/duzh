@@ -1,7 +1,7 @@
 import AbstractMapGenerator from './AbstractMapGenerator';
 import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';

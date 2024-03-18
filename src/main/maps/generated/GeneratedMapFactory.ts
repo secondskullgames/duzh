@@ -23,7 +23,7 @@ import Unit from '@main/entities/units/Unit';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
 import UnitFactory from '@main/entities/units/UnitFactory';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import MapItem from '@main/entities/objects/MapItem';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';

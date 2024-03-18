@@ -1,6 +1,6 @@
 import Tile from '../../tiles/Tile';
 import { TileType } from '@models/TileType';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { shuffle } from '@lib/utils/random';
 
 export const getUnoccupiedLocations = (

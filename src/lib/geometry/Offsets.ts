@@ -1,6 +1,4 @@
-type Offsets = {
+export type Offsets = Readonly<{
   dx: number;
   dy: number;
-};
-
-export default Offsets;
+}>;

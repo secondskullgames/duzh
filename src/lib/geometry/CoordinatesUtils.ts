@@ -1,5 +1,5 @@
-import Coordinates from '@lib/geometry/Coordinates';
-import Direction from '@lib/geometry/Direction';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import { Direction } from '@lib/geometry/Direction';
 import { checkState } from '@lib/utils/preconditions';
 
 export const manhattanDistance = (first: Coordinates, second: Coordinates): number =>

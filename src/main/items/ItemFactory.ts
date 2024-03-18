@@ -6,7 +6,7 @@ import Equipment from '../equipment/Equipment';
 import MapItem from '../entities/objects/MapItem';
 import MapInstance from '../maps/MapInstance';
 import { ConsumableItemModel } from '@models/ConsumableItemModel';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/getEquipmentTooltip';
