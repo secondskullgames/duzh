@@ -3,7 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import BasicEnemyController from '../controllers/BasicEnemyController';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

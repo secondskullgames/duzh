@@ -13,7 +13,7 @@ import MusicController from '../../sounds/MusicController';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileType } from '@models/TileType';
 import ModelLoader from '@main/assets/ModelLoader';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { Faction } from '@main/entities/units/Faction';
 import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
 import { Image } from '@lib/graphics/images/Image';

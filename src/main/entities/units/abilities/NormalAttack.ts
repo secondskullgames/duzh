@@ -1,7 +1,7 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Sounds from '../../../sounds/Sounds';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import Unit, { DefendResult } from '@main/entities/units/Unit';
 import { getMeleeDamage } from '@main/entities/units/UnitUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';

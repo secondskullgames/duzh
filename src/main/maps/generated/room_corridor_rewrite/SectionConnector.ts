@@ -1,6 +1,6 @@
 import Connection from './Connection';
 import Section from './Section';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import Rect from '@lib/geometry/Rect';
 import { max, min } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';

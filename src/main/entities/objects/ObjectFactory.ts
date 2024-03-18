@@ -13,8 +13,8 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { inject, injectable } from 'inversify';
-import type Coordinates from '@lib/geometry/Coordinates';
 
 export type SpawnerClass = 'mirror';
 

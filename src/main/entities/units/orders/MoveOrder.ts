@@ -1,6 +1,6 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';

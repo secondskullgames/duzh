@@ -1,7 +1,7 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
 import RoomRegion from './RoomRegion';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { randChoice, randInt, shuffle } from '@lib/utils/random';
 import { areAdjacent } from '@lib/geometry/RectUtils';
 

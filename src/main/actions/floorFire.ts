@@ -4,7 +4,7 @@ import { dealDamage } from './dealDamage';
 import Unit from '../entities/units/Unit';
 import Sounds from '../sounds/Sounds';
 import Activity from '../entities/units/Activity';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { sleep } from '@lib/utils/promises';

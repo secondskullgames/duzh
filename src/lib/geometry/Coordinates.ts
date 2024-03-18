@@ -1,11 +1,11 @@
-import Offsets from '@lib/geometry/Offsets';
+import { Offsets } from '@lib/geometry/Offsets';
 
-type Coordinates = Readonly<{
+export type Coordinates = Readonly<{
   x: number;
   y: number;
 }>;
 
-namespace Coordinates {
+export namespace Coordinates {
   export const equals = (first: Coordinates, second: Coordinates): boolean =>
     first.x === second.x && first.y === second.y;
 
@@ -19,5 +19,3 @@ namespace Coordinates {
     dy: second.y - first.y
   });
 }
-
-export default Coordinates;

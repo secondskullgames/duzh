@@ -2,7 +2,7 @@ import { moveUnit } from './moveUnit';
 import { moveObject } from './moveObject';
 import Unit from '../entities/units/Unit';
 import Block from '../entities/objects/Block';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';

@@ -12,7 +12,7 @@ import ModelLoader from '@main/assets/ModelLoader';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/entities/units/Unit';
-import Direction from '@lib/geometry/Direction';
+import { Direction } from '@lib/geometry/Direction';
 import { fillTemplate } from '@lib/utils/templates';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';

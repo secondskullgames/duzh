@@ -2,7 +2,7 @@ import GameObject, { ObjectType } from './GameObject';
 import Sprite from '../../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import MapInstance from '../../maps/MapInstance';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 

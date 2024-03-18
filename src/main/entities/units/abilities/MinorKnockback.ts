@@ -3,7 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '../Unit';
 import Sounds from '../../../sounds/Sounds';
 import { getMeleeDamage } from '../UnitUtils';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';

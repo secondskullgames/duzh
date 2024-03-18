@@ -1,8 +1,8 @@
 import UnitOrder from './UnitOrder';
 import Unit from '../Unit';
 import { NormalAttack } from '../abilities/NormalAttack';
-import Direction from '@lib/geometry/Direction';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Direction } from '@lib/geometry/Direction';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';

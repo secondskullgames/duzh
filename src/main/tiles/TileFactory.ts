@@ -5,7 +5,7 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
 import { TileType } from '@models/TileType';
 import ModelLoader from '@main/assets/ModelLoader';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
 import { Feature } from '@main/utils/features';

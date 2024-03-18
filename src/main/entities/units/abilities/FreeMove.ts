@@ -2,7 +2,7 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../Unit';
 import Sounds from '../../../sounds/Sounds';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

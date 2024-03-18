@@ -4,7 +4,7 @@ import Projectile from '../entities/Projectile';
 import GameObject from '../entities/objects/GameObject';
 import MultiGrid from '@lib/geometry/MultiGrid';
 import Grid from '@lib/geometry/Grid';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { FogOfWarParams } from '@models/FogOfWarParams';
 import type { Figure } from '@lib/audio/types';
 import type Rect from '@lib/geometry/Rect';

@@ -5,7 +5,7 @@ import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
-import Coordinates from '@lib/geometry/Coordinates';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { createCanvas } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
