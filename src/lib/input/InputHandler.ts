@@ -25,7 +25,6 @@ export default class InputHandler {
 
   private _wrapKeyHandler = (handler: KeyHandler): KeyHandler => {
     return async (event: KeyboardEvent) => {
-      event.preventDefault();
       if (!this.busy) {
         this.busy = true;
         try {
