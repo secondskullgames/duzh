@@ -7,6 +7,8 @@ import { chooseUnitController } from '@main/entities/units/controllers/Controlle
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
+import { Feature } from '@main/utils/features';
+import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 
 export const spawnFogUnits = async (state: GameState, session: Session) => {
   const map = session.getMap();
@@ -24,7 +26,7 @@ export const spawnFogUnits = async (state: GameState, session: Session) => {
     }
     const unitFactory = state.getUnitFactory();
     if (randChance(spawnRate)) {
-      const targetSpawnCoordinates = _getFogSpawnCoordinates(map);
+      const targetSpawnCoordinates = _getFogSpawnCoordinates(map, session);
       if (targetSpawnCoordinates) {
         // TODO would be nice if this was a one-liner
         const unitModel = await state.getModelLoader().loadUnitModel(unitClass);
@@ -43,12 +45,29 @@ export const spawnFogUnits = async (state: GameState, session: Session) => {
   }
 };
 
-const _getFogSpawnCoordinates = (map: MapInstance): Coordinates | null => {
+const _getFogSpawnCoordinates = (
+  map: MapInstance,
+  session: Session
+): Coordinates | null => {
   const allTiles = map.getTiles().flat();
-  const candidateCoordinates = allTiles
-    .map(tile => tile.getCoordinates())
-    .filter(
-      coordinates => !map.isTileRevealed(coordinates) && !isBlocked(map, coordinates)
-    );
+  const candidateCoordinates = (() => {
+    if (Feature.isEnabled(Feature.FOG_SHADES_EVERYWHERE)) {
+      const playerUnit = session.getPlayerUnit();
+      const minDistanceWaway = 10;
+      return allTiles
+        .map(tile => tile.getCoordinates())
+        .filter(
+          coordinates =>
+            hypotenuse(coordinates, playerUnit.getCoordinates()) >= minDistanceWaway &&
+            !isBlocked(map, coordinates)
+        );
+    } else {
+      return allTiles
+        .map(tile => tile.getCoordinates())
+        .filter(
+          coordinates => !map.isTileRevealed(coordinates) && !isBlocked(map, coordinates)
+        );
+    }
+  })();
   return candidateCoordinates.length > 0 ? randChoice(candidateCoordinates) : null;
 };

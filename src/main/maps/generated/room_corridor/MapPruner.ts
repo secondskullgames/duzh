@@ -71,7 +71,10 @@ export default class MapPruner {
     const shuffledRegions = [...regions];
     shuffle(shuffledRegions);
     for (let i = numRooms; i < shuffledRegions.length; i++) {
-      shuffledRegions[i].roomRect = null;
+      shuffledRegions[i] = {
+        ...shuffledRegions[i],
+        roomRect: null
+      };
     }
   };
 

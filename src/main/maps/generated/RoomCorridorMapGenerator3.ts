@@ -2,7 +2,7 @@ import AbstractMapGenerator from './AbstractMapGenerator';
 import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import Rect from '@lib/geometry/Rect';
+import { Rect } from '@lib/geometry/Rect';
 import { randInt, shuffle } from '@lib/utils/random';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 

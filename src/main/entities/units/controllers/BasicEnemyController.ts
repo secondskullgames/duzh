@@ -12,12 +12,6 @@ import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/entities/units/behaviors/UnitBehavior';
 import StayBehavior from '@main/entities/units/behaviors/StayBehavior';
 
-const _wantsToFlee = (unit: Unit) => {
-  const aiParameters = checkNotNull(unit.getAiParameters());
-  const { fleeThreshold } = aiParameters;
-  return unit.getLife() / unit.getMaxLife() < fleeThreshold;
-};
-
 enum Action {
   ATTACK = 'ATTACK',
   FLEE = 'FLEE',
@@ -26,9 +20,6 @@ enum Action {
 }
 
 export default class BasicEnemyController implements UnitController {
-  /**
-   * @override {@link UnitController#issueOrder}
-   */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const behavior = this._getBehavior(unit);
     return behavior.issueOrder(unit, state, session);
@@ -78,3 +69,9 @@ export default class BasicEnemyController implements UnitController {
     }
   };
 }
+
+const _wantsToFlee = (unit: Unit) => {
+  const aiParameters = checkNotNull(unit.getAiParameters());
+  const { fleeThreshold } = aiParameters;
+  return unit.getLife() / unit.getMaxLife() < fleeThreshold;
+};

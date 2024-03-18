@@ -1,4 +1,4 @@
-import Rect from '@lib/geometry/Rect';
+import { Rect } from '@lib/geometry/Rect';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
 export const areAdjacent = (
