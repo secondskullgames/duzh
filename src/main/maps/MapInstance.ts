@@ -1,7 +1,7 @@
 import Tile from '../tiles/Tile';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Projectile from '../entities/Projectile';
-import GameObject from '../entities/objects/GameObject';
+import GameObject from '../objects/GameObject';
 import MultiGrid from '@lib/geometry/MultiGrid';
 import Grid from '@lib/geometry/Grid';
 import { Coordinates } from '@lib/geometry/Coordinates';

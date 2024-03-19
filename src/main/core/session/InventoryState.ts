@@ -1,5 +1,5 @@
 import InventoryItem from '../../items/InventoryItem';
-import Unit from '../../entities/units/Unit';
+import Unit from '../../units/Unit';
 import Equipment from '../../equipment/Equipment';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { checkNotNull } from '@lib/utils/preconditions';

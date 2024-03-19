@@ -1,15 +1,15 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import Activity from '../entities/units/Activity';
+import Activity from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
-import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
@@ -90,13 +90,13 @@ const playFireballAnimation = async (
 
   // last frames
   if (target) {
-    target.getEffects().addEffect(UnitEffect.DAMAGED, 1);
+    target.getEffects().addEffect(StatusEffect.DAMAGED, 1);
     await sleep(100);
   }
 
   source.setActivity(Activity.STANDING, 1, source.getDirection());
   if (target) {
-    target.getEffects().removeEffect(UnitEffect.DAMAGED);
+    target.getEffects().removeEffect(StatusEffect.DAMAGED);
     target.setActivity(Activity.STANDING, 1, target.getDirection());
   }
 };

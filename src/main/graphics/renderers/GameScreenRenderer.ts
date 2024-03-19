@@ -1,6 +1,6 @@
 import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
-import Unit from '../../entities/units/Unit';
+import Unit from '../../units/Unit';
 import Colors from '../Colors';
 import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import Sprite from '../sprites/Sprite';
@@ -11,11 +11,11 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import Entity from '@main/entities/Entity';
 import { Debug } from '@main/core/Debug';
-import { ObjectType } from '@main/entities/objects/GameObject';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
-import Block from '@main/entities/objects/Block';
+import { ObjectType } from '@main/objects/GameObject';
+import Block from '@main/objects/Block';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';

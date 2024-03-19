@@ -1,5 +1,5 @@
 import DynamicSprite from './DynamicSprite';
-import Spawner from '../../entities/objects/Spawner';
+import Spawner from '../../objects/Spawner';
 import { Offsets } from '@lib/geometry/Offsets';
 import { Image } from '@lib/graphics/images/Image';
 

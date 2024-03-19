@@ -1,13 +1,13 @@
 import { die } from './die';
 import { recordKill } from './recordKill';
-import Unit, { DefendResult } from '../entities/units/Unit';
-import Activity from '../entities/units/Activity';
+import Unit, { DefendResult } from '../units/Unit';
+import Activity from '../units/Activity';
 import { GameState } from '@main/core/GameState';
 import { sleep } from '@lib/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
 import { Session } from '@main/core/Session';
-import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -44,7 +44,7 @@ export const attackUnit = async (
   await sleep(50);
 
   // damaged frame
-  defender.getEffects().addEffect(UnitEffect.DAMAGED, 1);
+  defender.getEffects().addEffect(StatusEffect.DAMAGED, 1);
 
   const attackResult = attack.calculateAttackResult(attacker);
   const defendResult = defender.takeDamage(attackResult.damage, attacker);
@@ -76,5 +76,5 @@ export const attackUnit = async (
 
   attacker.setActivity(Activity.STANDING, 1, attacker.getDirection());
   defender.setActivity(Activity.STANDING, 1, defender.getDirection());
-  defender.getEffects().removeEffect(UnitEffect.DAMAGED);
+  defender.getEffects().removeEffect(StatusEffect.DAMAGED);
 };

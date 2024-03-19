@@ -8,15 +8,15 @@ import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
-import { type UnitAbility } from '@main/entities/units/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
-import Unit from '@main/entities/units/Unit';
+import Unit from '@main/units/Unit';
 import { Rect } from '@lib/geometry/Rect';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
-import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { AbilityName } from '@main/abilities/AbilityName';
+import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';

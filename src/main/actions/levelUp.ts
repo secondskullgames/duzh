@@ -1,9 +1,9 @@
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
-import { Faction } from '@main/entities/units/Faction';
+import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import { UnitAbility } from '@main/abilities/UnitAbility';
 
 export const levelUp = (unit: Unit, session: Session) => {
   const ticker = session.getTicker();

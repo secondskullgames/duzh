@@ -8,7 +8,7 @@ import { getUnoccupiedLocations } from './MapGenerationUtils';
 import MapInstance from '../MapInstance';
 import ItemFactory from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
-import GameObject from '../../entities/objects/GameObject';
+import GameObject from '../../objects/GameObject';
 import { UnitModel } from '@models/UnitModel';
 import { GeneratedMapModel, Algorithm } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';
@@ -19,16 +19,16 @@ import {
   WeightedRandomChoice
 } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
-import Unit from '@main/entities/units/Unit';
+import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
-import UnitFactory from '@main/entities/units/UnitFactory';
+import UnitFactory from '@main/units/UnitFactory';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import MapItem from '@main/entities/objects/MapItem';
-import { Faction } from '@main/entities/units/Faction';
-import { chooseUnitController } from '@main/entities/units/controllers/ControllerUtils';
+import { Faction } from '@main/units/Faction';
+import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { isOccupied } from '@main/maps/MapUtils';
 import { TileType } from '@models/TileType';
+import MapItem from '@main/objects/MapItem';
 import { inject, injectable } from 'inversify';
 
 type ItemType = 'equipment' | 'consumable';

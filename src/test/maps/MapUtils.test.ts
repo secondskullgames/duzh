@@ -1,8 +1,8 @@
 import { isBlocked } from '@main/maps/MapUtils';
 import MapInstance from '@main/maps/MapInstance';
 import Tile from '@main/tiles/Tile';
-import Unit from '@main/entities/units/Unit';
-import GameObject from '@main/entities/objects/GameObject';
+import Unit from '@main/units/Unit';
+import GameObject from '@main/objects/GameObject';
 
 const _emptyMap = (): MapInstance => {
   return new MapInstance({
