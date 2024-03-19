@@ -27,6 +27,15 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 
+/**
+ * Currently, a UnitAbility can really be one of three things:
+ * 1. A player ability that shows up on the action bar like Heavy Attack
+ *    (or an NPC-only ability like Teleport)
+ * 2. An effect from a scroll (like Floor Fire)
+ * 3. An effect from an item (like the Bolt Sword effect)
+ *
+ * Arguably we should decouple these
+ */
 export type UnitAbility = Readonly<{
   name: AbilityName;
   manaCost: number;
@@ -38,9 +47,6 @@ export type UnitAbility = Readonly<{
 
   isEnabled: (unit: Unit) => boolean;
 
-  /**
-   * TODO: should accept a direction, not coordinates
-   */
   use: (
     unit: Unit,
     coordinates: Coordinates,
