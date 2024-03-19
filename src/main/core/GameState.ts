@@ -1,9 +1,9 @@
 import MapInstance from '../maps/MapInstance';
 import ItemFactory from '../items/ItemFactory';
-import UnitFactory from '../entities/units/UnitFactory';
-import ObjectFactory from '../entities/objects/ObjectFactory';
+import UnitFactory from '../units/UnitFactory';
+import ObjectFactory from '../objects/ObjectFactory';
 import MusicController from '../sounds/MusicController';
-import ProjectileFactory from '../entities/objects/ProjectileFactory';
+import ProjectileFactory from '../objects/ProjectileFactory';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { clear } from '@lib/utils/arrays';
 import ModelLoader from '@main/assets/ModelLoader';

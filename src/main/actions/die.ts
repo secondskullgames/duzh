@@ -1,5 +1,5 @@
 import { gameOver } from './gameOver';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { random } from '@lib/utils/random';
 import { Session } from '@main/core/Session';

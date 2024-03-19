@@ -1,7 +1,7 @@
 import { EquipmentScriptName } from './EquipmentScript';
 import { getEquipmentTooltip } from './getEquipmentTooltip';
 import Sprite from '../graphics/sprites/Sprite';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { EquipmentModel } from '@models/EquipmentModel';

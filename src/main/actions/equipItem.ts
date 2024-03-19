@@ -1,5 +1,5 @@
 import Equipment from '../equipment/Equipment';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

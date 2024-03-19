@@ -2,9 +2,9 @@ import Equipment from './Equipment';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { ShootBolt } from '@main/entities/units/abilities/ShootBolt';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { ShootBolt } from '@main/abilities/ShootBolt';
 
 export type EquipmentScriptName =
   | 'bolt_sword'

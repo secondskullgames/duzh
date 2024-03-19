@@ -1,5 +1,5 @@
-import Unit from '../entities/units/Unit';
-import MapItem from '../entities/objects/MapItem';
+import Unit from '../units/Unit';
+import MapItem from '../objects/MapItem';
 import Sounds from '../sounds/Sounds';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';

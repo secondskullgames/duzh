@@ -1,9 +1,9 @@
 import InventoryItem from './InventoryItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Sounds from '../sounds/Sounds';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
-import MapItem from '../entities/objects/MapItem';
+import MapItem from '../objects/MapItem';
 import MapInstance from '../maps/MapInstance';
 import { ConsumableItemModel } from '@models/ConsumableItemModel';
 import { Coordinates } from '@lib/geometry/Coordinates';

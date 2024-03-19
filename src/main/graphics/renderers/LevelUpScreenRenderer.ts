@@ -3,14 +3,14 @@ import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import Unit from '../../entities/units/Unit';
+import Unit from '@main/units/Unit';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
-import { AbilityName } from '@main/entities/units/abilities/AbilityName';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'inventory_background';

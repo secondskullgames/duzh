@@ -2,9 +2,9 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { doMapEvents } from '@main/actions/doMapEvents';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
-import Unit from '@main/entities/units/Unit';
+import Unit from '@main/units/Unit';
 import { sortBy } from '@lib/utils/arrays';
-import { Faction } from '@main/entities/units/Faction';
+import { Faction } from '@main/units/Faction';
 import { inject, injectable } from 'inversify';
 
 export interface Engine {

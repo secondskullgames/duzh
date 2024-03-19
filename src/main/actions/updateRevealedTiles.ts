@@ -1,4 +1,4 @@
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 
 /**

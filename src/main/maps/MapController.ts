@@ -1,5 +1,5 @@
 import MapFactory from './MapFactory';
-import UnitFactory from '../entities/units/UnitFactory';
+import UnitFactory from '../units/UnitFactory';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { check, checkState } from '@lib/utils/preconditions';

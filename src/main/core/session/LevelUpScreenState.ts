@@ -1,5 +1,5 @@
-import Unit from '../../entities/units/Unit';
-import { AbilityName } from '@main/entities/units/abilities/AbilityName';
+import Unit from '@main/units/Unit';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 export class LevelUpScreenState {
   private selectedAbility: AbilityName | null;

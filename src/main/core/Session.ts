@@ -2,11 +2,11 @@ import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { injectable } from 'inversify';
-import type { UnitAbility } from '@main/entities/units/abilities/UnitAbility';
+import type { UnitAbility } from '@main/abilities/UnitAbility';
 
 export interface Session {
   getScreen: () => GameScreen;

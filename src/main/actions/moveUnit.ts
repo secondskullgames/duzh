@@ -1,4 +1,4 @@
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { GameState } from '@main/core/GameState';

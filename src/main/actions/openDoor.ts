@@ -1,5 +1,5 @@
-import Unit from '../entities/units/Unit';
-import Door from '../entities/objects/Door';
+import Unit from '../units/Unit';
+import Door from '../objects/Door';
 import Sounds from '../sounds/Sounds';
 import { GameState } from '@main/core/GameState';
 import { ItemCategory } from '@models/ItemCategory';

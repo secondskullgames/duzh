@@ -1,9 +1,9 @@
 import DynamicSprite from './DynamicSprite';
-import Activity from '../../entities/units/Activity';
-import Unit from '../../entities/units/Unit';
+import Activity from '../../units/Activity';
+import Unit from '../../units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Offsets } from '@lib/geometry/Offsets';
-import { UnitEffect } from '@main/entities/units/effects/UnitEffect';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { maxBy } from '@lib/utils/arrays';
 import { Image } from '@lib/graphics/images/Image';
 
@@ -32,12 +32,12 @@ export class UnitSprite extends DynamicSprite<Unit> {
     return `${animationName}_${direction}_${frameNumber}`;
   };
 
-  private _getEffect = (target: Unit): UnitEffect | null => {
+  private _getEffect = (target: Unit): StatusEffect | null => {
     const effects = target.getEffects().getEffects();
     if (effects.length > 0) {
       // TODO precedence
       // super hack to make Damaged take precedence over Stunned
-      return maxBy(effects, effect => (effect === UnitEffect.STUNNED ? 0 : 1));
+      return maxBy(effects, effect => (effect === StatusEffect.STUNNED ? 0 : 1));
     }
     return null;
   };

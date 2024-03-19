@@ -1,5 +1,5 @@
 import { moveUnit } from './moveUnit';
-import Unit from '../entities/units/Unit';
+import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';

@@ -6,7 +6,7 @@ import { getItem } from '@main/maps/MapUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { Color } from '@lib/graphics/Color';
-import { isHostile } from '@main/entities/units/UnitUtils';
+import { isHostile } from '@main/units/UnitUtils';
 import { TileType } from '@models/TileType';
 import { inject, injectable } from 'inversify';
 
