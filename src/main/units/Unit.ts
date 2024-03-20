@@ -25,7 +25,6 @@ import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
-import { Feature } from '@main/utils/features';
 
 /**
  * Regenerate this raw amount of health each turn

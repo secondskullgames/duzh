@@ -1,5 +1,4 @@
 import Unit from './Unit';
-import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
