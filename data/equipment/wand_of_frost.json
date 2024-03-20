@@ -1,0 +1,19 @@
+{
+  "id": "wand_of_frost",
+  "name": "Wand of Frost",
+  "sprite": "wand",
+  "mapIcon": "map_club",
+  "itemCategory": "WEAPON",
+  "slot": "RANGED_WEAPON",
+  "paletteSwaps": {
+    "DARK_GREEN": "DARK_GRAY",
+    "GREEN": "CYAN"
+  },
+  "rarity": 5,
+  "level": 7,
+  "stats": {
+    "damage": 8
+  },
+  "script": "bow_of_frost",
+  "tooltip": "Freezes enemies"
+}
