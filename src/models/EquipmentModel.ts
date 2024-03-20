@@ -15,6 +15,7 @@ export type EquipmentModel = Readonly<{
    * between 1 and 5, where 5 is most rare, or null if this should never be randomly generated
    */
   rarity: number | null;
+  ability?: string;
   script?: string;
   slot: EquipmentSlot;
   sprite: string;

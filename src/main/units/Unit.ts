@@ -20,11 +20,12 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { checkArgument } from '@lib/utils/preconditions';
+import { check, checkArgument } from '@lib/utils/preconditions';
 import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
+import { Feature } from '@main/utils/features';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -349,11 +350,19 @@ export default class Unit implements Entity {
 
   learnAbility = (ability: UnitAbility) => {
     this.abilities.push(ability);
-    this.abilityPoints--;
+  };
+
+  unlearnAbility = (ability: UnitAbility) => {
+    this.abilities.push(ability);
   };
 
   awardAbilityPoint = () => {
     this.abilityPoints++;
+  };
+
+  spendAbilityPoint = () => {
+    check(this.abilityPoints > 0);
+    this.abilityPoints--;
   };
 
   getAbilityPoints = (): number => {
