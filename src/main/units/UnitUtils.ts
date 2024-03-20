@@ -1,6 +1,7 @@
 import Unit from './Unit';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
+import { Coordinates } from '@lib/geometry/Coordinates';
 
 export const getMeleeDamage = (unit: Unit): number => {
   let damage = unit.getStrength();
@@ -42,10 +43,7 @@ export const calculateTotalIncomingDamage = (
   for (const equipment of unit.getEquipment().getAll()) {
     absorbRatio += equipment.absorbAmount ?? 0;
     if (equipment.blockAmount !== null) {
-      if (
-        sourceUnit !== null &&
-        isInStraightLine(unit.getCoordinates(), sourceUnit.getCoordinates())
-      ) {
+      if (sourceUnit !== null && isFrontalAttack(unit, sourceUnit)) {
         absorbRatio += equipment.blockAmount ?? 0;
       }
     }
@@ -59,3 +57,11 @@ export const calculateTotalIncomingDamage = (
 
 export const isHostile = (first: Unit, second: Unit): boolean =>
   first.getFaction() !== second.getFaction();
+
+const isFrontalAttack = (defender: Unit, attacker: Unit) => {
+  const aheadCoordinates = Coordinates.plus(
+    defender.getCoordinates(),
+    defender.getDirection()
+  );
+  return Coordinates.equals(aheadCoordinates, attacker.getCoordinates());
+};
