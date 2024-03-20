@@ -14,7 +14,6 @@
   "stats": {
     "damage": 8
   },
-  "ability": "SHOOT_ARROW",
-  "script": "bow_of_frost",
+  "ability": "SHOOT_FROSTBOLT",
   "tooltip": "Freezes enemies"
 }

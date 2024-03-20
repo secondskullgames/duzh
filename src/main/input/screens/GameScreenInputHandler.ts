@@ -25,6 +25,7 @@ import { Strafe } from '@main/abilities/Strafe';
 import { ShootArrow } from '@main/abilities/ShootArrow';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
+import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -87,8 +88,16 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
-      if (ShootArrow.isEnabled(playerUnit)) {
+      if (
+        playerUnit.hasAbility(AbilityName.SHOOT_ARROW) &&
+        ShootArrow.isEnabled(playerUnit)
+      ) {
         order = new AbilityOrder({ direction, ability: ShootArrow });
+      } else if (
+        playerUnit.hasAbility(AbilityName.SHOOT_FROSTBOLT) &&
+        ShootFrostbolt.isEnabled(playerUnit)
+      ) {
+        order = new AbilityOrder({ direction, ability: ShootFrostbolt });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
@@ -159,9 +168,14 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const playerUnit = session.getPlayerUnit();
     switch (key) {
       case ModifierKey.SHIFT: {
-        const ability = abilityForName(AbilityName.SHOOT_ARROW);
-        if (ability?.isEnabled(playerUnit)) {
-          session.setQueuedAbility(ability);
+        for (const abilityName of [
+          AbilityName.SHOOT_ARROW,
+          AbilityName.SHOOT_FROSTBOLT
+        ]) {
+          const ability = abilityForName(abilityName);
+          if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
+            session.setQueuedAbility(ability);
+          }
         }
         break;
       }
@@ -180,6 +194,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     switch (key) {
       case ModifierKey.SHIFT: {
         if (session.getQueuedAbility()?.name === AbilityName.SHOOT_ARROW) {
+          session.setQueuedAbility(null);
+        } else if (session.getQueuedAbility()?.name === AbilityName.SHOOT_FROSTBOLT) {
           session.setQueuedAbility(null);
         }
         break;

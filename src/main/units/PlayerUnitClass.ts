@@ -60,8 +60,8 @@ class DefaultClass implements PlayerUnitClass {
   getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {
     switch (ability.name) {
       case AbilityName.DASH:
-        return ' ';
       case AbilityName.SHOOT_ARROW:
+      case AbilityName.SHOOT_FROSTBOLT:
         return ' ';
       default: {
         const index = unit
