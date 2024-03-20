@@ -13,7 +13,7 @@ const freezeDuration = 5;
 
 export const ShootFrostbolt: UnitAbility = {
   name: AbilityName.SHOOT_FROSTBOLT,
-  icon: 'icon6',
+  icon: 'harpoon_icon',
   manaCost: manaCost,
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,

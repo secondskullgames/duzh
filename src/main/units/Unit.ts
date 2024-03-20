@@ -353,7 +353,9 @@ export default class Unit implements Entity {
   };
 
   unlearnAbility = (ability: UnitAbility) => {
-    this.abilities.push(ability);
+    const index = this.abilities.indexOf(ability);
+    check(index >= 0);
+    this.abilities.splice(index, 1);
   };
 
   awardAbilityPoint = () => {
