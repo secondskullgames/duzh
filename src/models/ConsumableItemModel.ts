@@ -3,11 +3,11 @@ import { ConsumableType } from './ConsumableType';
 export type ConsumableItemModel = Readonly<{
   id: string;
   name: string;
-  level: number | null;
+  level?: number | null;
   /**
    * between 1 and 5, where 5 is most rare, or null if this should never be randomly generated
    */
-  rarity: number | null;
+  rarity?: number | null;
   mapSprite: string;
   paletteSwaps?: {
     [key: string]: string;

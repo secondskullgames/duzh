@@ -11,9 +11,7 @@
   },
   "rarity": 5,
   "level": 7,
-  "stats": {
-    "damage": 8
-  },
+  "stats": {},
   "ability": "SHOOT_FROSTBOLT",
   "tooltip": "Freezes enemies"
 }

@@ -208,11 +208,11 @@ export class GeneratedMapFactory {
         })
         .filter(
           equipmentModel =>
-            equipmentModel.level !== null && equipmentModel.level <= mapModel.levelNumber
+            equipmentModel.level && equipmentModel.level <= mapModel.levelNumber
         );
 
       const possibleItemModels = allConsumableModels.filter(
-        itemClass => itemClass.level !== null && itemClass.level <= mapModel.levelNumber
+        itemModel => itemModel.level && itemModel.level <= mapModel.levelNumber
       );
 
       const possibleItemSpecs: ItemSpec[] = [

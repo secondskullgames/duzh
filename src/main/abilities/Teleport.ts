@@ -8,7 +8,7 @@ import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
 export const range = 3;
@@ -30,7 +30,7 @@ export const Teleport: UnitAbility = {
       throw new Error('Teleport requires a target!');
     }
 
-    if (manhattanDistance(unit.getCoordinates(), coordinates) > range) {
+    if (hypotenuse(unit.getCoordinates(), coordinates) > range) {
       throw new Error(`Can't teleport more than ${range} units`);
     }
 
@@ -59,10 +59,8 @@ export const Teleport: UnitAbility = {
       await moveUnit(unit, coordinates, session, state);
       await maybeSleep();
 
+      state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
       for (let i = 1; i <= 4; i++) {
-        if (i === 1) {
-          state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
-        }
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
         await maybeSleep();
       }
