@@ -146,6 +146,7 @@ export default class HUDRenderer implements Renderer {
       ability.name !== AbilityName.ATTACK &&
       ability.name !== AbilityName.DASH &&
       ability.name !== AbilityName.SHOOT_ARROW &&
+      ability.name !== AbilityName.SHOOT_FIREBOLT &&
       ability.name !== AbilityName.SHOOT_FROSTBOLT;
     const numberedAbilities = playerUnit.getAbilities().filter(isNumberedAbility);
     for (let i = 0; i < numberedAbilities.length; i++) {

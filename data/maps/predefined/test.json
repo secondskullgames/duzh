@@ -12,10 +12,10 @@
   "enemyColors": {
     "GREEN": "green_snake"
   },
-  "itemColors": {
-    "RED": "floor_fire_scroll"
+  "itemColors": {},
+  "equipmentColors": {
+    "RED": "wand_of_fire"
   },
-  "equipmentColors": {},
   "objectColors": {},
   "startingPointColor": "RED",
   "fogOfWar": {

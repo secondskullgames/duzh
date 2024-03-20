@@ -22,10 +22,8 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
-import { ShootArrow } from '@main/abilities/ShootArrow';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
-import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -88,16 +86,19 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
-      if (
-        playerUnit.hasAbility(AbilityName.SHOOT_ARROW) &&
-        ShootArrow.isEnabled(playerUnit)
-      ) {
-        order = new AbilityOrder({ direction, ability: ShootArrow });
-      } else if (
-        playerUnit.hasAbility(AbilityName.SHOOT_FROSTBOLT) &&
-        ShootFrostbolt.isEnabled(playerUnit)
-      ) {
-        order = new AbilityOrder({ direction, ability: ShootFrostbolt });
+      // TODO need to centralize this logic
+      const possibleAbilities = [
+        AbilityName.SHOOT_ARROW,
+        AbilityName.SHOOT_FIREBOLT,
+        AbilityName.SHOOT_FROSTBOLT
+      ];
+      for (const abilityName of possibleAbilities) {
+        if (playerUnit.hasAbility(abilityName)) {
+          const ability = UnitAbility.abilityForName(abilityName);
+          if (ability.isEnabled(playerUnit)) {
+            order = new AbilityOrder({ direction, ability });
+          }
+        }
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
@@ -193,10 +194,17 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { session } = this;
     switch (key) {
       case ModifierKey.SHIFT: {
-        if (session.getQueuedAbility()?.name === AbilityName.SHOOT_ARROW) {
-          session.setQueuedAbility(null);
-        } else if (session.getQueuedAbility()?.name === AbilityName.SHOOT_FROSTBOLT) {
-          session.setQueuedAbility(null);
+        const queuedAbility = session.getQueuedAbility();
+        if (queuedAbility) {
+          // TODO need to centralize this logic
+          const possibleAbilities = [
+            AbilityName.SHOOT_ARROW,
+            AbilityName.SHOOT_FIREBOLT,
+            AbilityName.SHOOT_FROSTBOLT
+          ];
+          if (possibleAbilities.includes(queuedAbility.name)) {
+            session.setQueuedAbility(null);
+          }
         }
         break;
       }

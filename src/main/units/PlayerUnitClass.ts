@@ -61,6 +61,7 @@ class DefaultClass implements PlayerUnitClass {
     switch (ability.name) {
       case AbilityName.DASH:
       case AbilityName.SHOOT_ARROW:
+      case AbilityName.SHOOT_FIREBOLT:
       case AbilityName.SHOOT_FROSTBOLT:
         return ' ';
       default: {

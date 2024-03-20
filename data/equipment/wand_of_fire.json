@@ -1,16 +1,16 @@
 {
-  "id": "wand_of_frost",
-  "name": "Wand of Frost",
+  "id": "wand_of_fire",
+  "name": "Wand of Fire",
   "sprite": "wand",
   "mapIcon": "map_wand",
   "itemCategory": "WEAPON",
   "slot": "RANGED_WEAPON",
   "paletteSwaps": {
-    "DARK_GRAY": "CYAN"
+    "DARK_GRAY": "RED"
   },
   "rarity": 5,
   "level": 7,
   "stats": {},
-  "ability": "SHOOT_FROSTBOLT",
-  "tooltip": "Freezes enemies"
+  "ability": "SHOOT_FIREBOLT",
+  "tooltip": "Burns enemies"
 }
