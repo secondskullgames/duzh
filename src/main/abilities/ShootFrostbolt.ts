@@ -2,20 +2,21 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { shootFireball } from '@main/actions/shootFireball';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { shootFrostbolt } from '@main/actions/shootFrostbolt';
 
-const manaCost = 25;
-const damage = 20;
+const manaCost = 10;
+const damage = 10;
+const freezeDuration = 5;
 
-export const ShootFireball: UnitAbility = {
-  name: AbilityName.SHOOT_FIREBALL,
-  icon: 'icon6',
-  manaCost,
+export const ShootFrostbolt: UnitAbility = {
+  name: AbilityName.SHOOT_FROSTBOLT,
+  icon: 'harpoon_icon',
+  manaCost: manaCost,
   innate: false,
-  isEnabled: () => true,
+  isEnabled: unit => unit.getMana() >= manaCost,
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -24,6 +25,6 @@ export const ShootFireball: UnitAbility = {
   ) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.spendMana(manaCost);
-    await shootFireball(unit, direction, damage, session, state);
+    await shootFrostbolt(unit, direction, damage, freezeDuration, session, state);
   }
 };

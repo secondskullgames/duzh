@@ -12,15 +12,26 @@ export const equipItem = async (
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
-    const inventoryItem = currentEquipment.inventoryItem;
-    if (inventoryItem) {
-      unit.getInventory().add(inventoryItem);
-    }
+    _unequipItem(currentEquipment, unit);
   }
   unit.getEquipment().add(equipment);
+  if (equipment.ability) {
+    unit.learnAbility(equipment.ability);
+  }
   equipment.attach(unit);
   session
     .getTicker()
     .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
   state.getSoundPlayer().playSound(Sounds.BLOCKED);
+};
+
+const _unequipItem = (equipment: Equipment, unit: Unit) => {
+  const inventoryItem = equipment.inventoryItem;
+  if (inventoryItem) {
+    unit.getInventory().add(inventoryItem);
+  }
+  if (equipment.ability) {
+    unit.unlearnAbility(equipment.ability);
+  }
+  equipment.unattach(unit);
 };

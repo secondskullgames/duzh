@@ -7,14 +7,18 @@ export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
     lines.push(`Damage: ${equipment.stats.damage}`);
   }
   if (equipment.stats.absorbAmount) {
-    lines.push(`Absorb: ${equipment.stats.absorbAmount}`);
+    const absorb = floatToPercent(equipment.stats.absorbAmount);
+    lines.push(`Absorb: ${absorb}`);
   }
   if (equipment.stats.blockAmount) {
-    lines.push(`Block: ${equipment.stats.blockAmount}`);
+    const block = floatToPercent(equipment.stats.blockAmount);
+    lines.push(`Block: ${block}`);
   }
   if (equipment.tooltip) {
     lines.push('');
-    lines.push(equipment.tooltip.split('\n'));
+    lines.push(...equipment.tooltip.split('\n'));
   }
   return lines.join('\n');
 };
+
+const floatToPercent = (value: number): string => `${(value * 100).toFixed(0)}%`;

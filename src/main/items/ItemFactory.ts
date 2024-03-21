@@ -171,18 +171,18 @@ export default class ItemFactory {
     });
   };
 
-  createInventoryEquipment = async (equipmentClass: string): Promise<InventoryItem> => {
+  createInventoryEquipment = async (modelName: string): Promise<InventoryItem> => {
     const onUse: ItemProc = async (
       _: InventoryItem,
       unit: Unit,
       state: GameState,
       session: Session
     ) => {
-      const equipment = await this.createEquipment(equipmentClass);
+      const equipment = await this.createEquipment(modelName);
       return equipItem(equipment, unit, session, state);
     };
 
-    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
+    const model = await this.modelLoader.loadEquipmentModel(modelName);
     return new InventoryItem({
       name: model.name,
       category: model.itemCategory,
@@ -192,22 +192,21 @@ export default class ItemFactory {
   };
 
   createMapEquipment = async (
-    equipmentClass: string,
+    modelName: string,
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
-    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
+    const model = await this.modelLoader.loadEquipmentModel(modelName);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
       loadPaletteSwaps(model.paletteSwaps)
     );
-    const inventoryItem: InventoryItem =
-      await this.createInventoryEquipment(equipmentClass);
+    const inventoryItem: InventoryItem = await this.createInventoryEquipment(modelName);
     return new MapItem({ coordinates, map, sprite, inventoryItem });
   };
 
-  createEquipment = async (equipmentClass: string): Promise<Equipment> => {
-    const model = await this.modelLoader.loadEquipmentModel(equipmentClass);
+  createEquipment = async (modelName: string): Promise<Equipment> => {
+    const model = await this.modelLoader.loadEquipmentModel(modelName);
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
@@ -215,7 +214,7 @@ export default class ItemFactory {
     );
 
     // TODO wtf is this
-    const inventoryItem = await this.createInventoryEquipment(equipmentClass);
+    const inventoryItem = await this.createInventoryEquipment(modelName);
     const equipment = new Equipment({ model, sprite, inventoryItem });
     sprite.bind(equipment);
     return equipment;

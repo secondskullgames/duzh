@@ -9,11 +9,10 @@
     "DARK_GREEN": "DARK_GRAY",
     "GREEN": "CYAN"
   },
-  "rarity": 5,
-  "level": 7,
   "stats": {
     "damage": 8
   },
+  "ability": "SHOOT_ARROW",
   "script": "bow_of_frost",
   "tooltip": "Freezes enemies"
 }

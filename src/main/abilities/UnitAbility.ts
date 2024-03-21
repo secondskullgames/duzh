@@ -26,6 +26,8 @@ import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
+import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
+import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
 
 /**
  * Currently, a UnitAbility can really be one of three things:
@@ -73,8 +75,10 @@ export namespace UnitAbility {
     [AbilityName.PIERCE]: PiercingAttack,
     [AbilityName.SCORPION]: Scorpion,
     [AbilityName.SHOOT_ARROW]: ShootArrow,
-    [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
     [AbilityName.SHOOT_FIREBALL]: ShootFireball,
+    [AbilityName.SHOOT_FIREBOLT]: ShootFirebolt,
+    [AbilityName.SHOOT_FROSTBOLT]: ShootFrostbolt,
+    [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
     [AbilityName.STRAFE]: Strafe,
     [AbilityName.STUN_ATTACK]: StunAttack,
     [AbilityName.SUMMON]: Summon,

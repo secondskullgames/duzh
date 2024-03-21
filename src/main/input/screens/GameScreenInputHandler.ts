@@ -22,7 +22,6 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
-import { ShootArrow } from '@main/abilities/ShootArrow';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
 
@@ -87,8 +86,19 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
-      if (ShootArrow.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: ShootArrow });
+      // TODO need to centralize this logic
+      const possibleAbilities = [
+        AbilityName.SHOOT_ARROW,
+        AbilityName.SHOOT_FIREBOLT,
+        AbilityName.SHOOT_FROSTBOLT
+      ];
+      for (const abilityName of possibleAbilities) {
+        if (playerUnit.hasAbility(abilityName)) {
+          const ability = UnitAbility.abilityForName(abilityName);
+          if (ability.isEnabled(playerUnit)) {
+            order = new AbilityOrder({ direction, ability });
+          }
+        }
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
@@ -159,9 +169,14 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const playerUnit = session.getPlayerUnit();
     switch (key) {
       case ModifierKey.SHIFT: {
-        const ability = abilityForName(AbilityName.SHOOT_ARROW);
-        if (ability?.isEnabled(playerUnit)) {
-          session.setQueuedAbility(ability);
+        for (const abilityName of [
+          AbilityName.SHOOT_ARROW,
+          AbilityName.SHOOT_FROSTBOLT
+        ]) {
+          const ability = abilityForName(abilityName);
+          if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
+            session.setQueuedAbility(ability);
+          }
         }
         break;
       }
@@ -179,8 +194,17 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { session } = this;
     switch (key) {
       case ModifierKey.SHIFT: {
-        if (session.getQueuedAbility()?.name === AbilityName.SHOOT_ARROW) {
-          session.setQueuedAbility(null);
+        const queuedAbility = session.getQueuedAbility();
+        if (queuedAbility) {
+          // TODO need to centralize this logic
+          const possibleAbilities = [
+            AbilityName.SHOOT_ARROW,
+            AbilityName.SHOOT_FIREBOLT,
+            AbilityName.SHOOT_FROSTBOLT
+          ];
+          if (possibleAbilities.includes(queuedAbility.name)) {
+            session.setQueuedAbility(null);
+          }
         }
         break;
       }

@@ -6,7 +6,7 @@ export type EquipmentModel = Readonly<{
   id: string;
   name: string;
   itemCategory: ItemCategory;
-  level: number | null;
+  level?: number | null;
   mapIcon: string;
   paletteSwaps: {
     [key: string]: string;
@@ -14,7 +14,8 @@ export type EquipmentModel = Readonly<{
   /**
    * between 1 and 5, where 5 is most rare, or null if this should never be randomly generated
    */
-  rarity: number | null;
+  rarity?: number | null;
+  ability?: string;
   script?: string;
   slot: EquipmentSlot;
   sprite: string;

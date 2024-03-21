@@ -6,7 +6,7 @@ import Block from '../objects/Block';
 import Bonus from '../objects/Bonus';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { ObjectType } from '@main/objects/GameObject';
-import { Pathfinder } from '@main/geometry/Pathfinder';
+import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 
 export const getSpawner = (
   map: MapInstance,
@@ -105,7 +105,8 @@ export const findPath = (
     }
   }
 
-  return Pathfinder.create().findPath(start, end, unblockedCoordinatesList);
+  const pathfinder = Pathfinder.create({ heuristic: Heuristic.EUCLIDEAN });
+  return pathfinder.findPath(start, end, unblockedCoordinatesList);
 };
 
 export const hasUnblockedStraightLineBetween = (

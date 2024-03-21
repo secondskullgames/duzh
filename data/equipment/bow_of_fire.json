@@ -14,6 +14,7 @@
   "stats": {
     "damage": 8
   },
+  "ability": "SHOOT_ARROW",
   "script": "bow_of_fire",
   "tooltip": "Burns enemies"
 }

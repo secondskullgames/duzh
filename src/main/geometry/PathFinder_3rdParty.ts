@@ -23,20 +23,12 @@ export class PathFinder_3rdParty implements Pathfinder {
     goal: Coordinates,
     tiles: Coordinates[]
   ): Coordinates[] => {
-    const grid = this._buildPfGrid(tiles);
+    const grid = this._buildPfGrid([...tiles, start, goal]);
     const finder = new PF.AStarFinder({
       diagonalMovement: DiagonalMovement.Never,
       heuristic: this.heuristic
     });
     const path = finder.findPath(start.x, start.y, goal.x, goal.y, grid);
-    if (path.length === 0) {
-      // eslint-disable-next-line no-console
-      console.log(
-        `Pathfinder_3rdParty: No path from ${JSON.stringify(start)} to ${JSON.stringify(
-          goal
-        )}`
-      );
-    }
     return path.map(([x, y]) => ({ x, y }));
   };
 

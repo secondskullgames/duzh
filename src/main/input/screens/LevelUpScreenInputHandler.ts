@@ -3,6 +3,7 @@ import { type KeyCommand } from '@lib/input/inputTypes';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -35,6 +36,9 @@ export default class HelpScreenInputHandler implements ScreenInputHandler {
         if (playerUnit.getAbilityPoints() > 0 && selectedAbility) {
           levelUpState.selectNextAbility(playerUnit);
           playerUnit.learnAbility(UnitAbility.abilityForName(selectedAbility));
+          if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+            playerUnit.spendAbilityPoint();
+          }
         }
       }
     }

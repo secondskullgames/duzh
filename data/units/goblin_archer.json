@@ -36,6 +36,6 @@
     "maxLevel": 9,
     "rarity": 3
   },
-  "abilities": ["ATTACK", "SHOOT_ARROW"],
+  "abilities": ["ATTACK"],
   "experience": 1
 }

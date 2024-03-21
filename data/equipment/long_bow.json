@@ -13,5 +13,6 @@
   "level": 5,
   "stats": {
     "damage": 10
-  }
+  },
+  "ability": "SHOOT_ARROW"
 }

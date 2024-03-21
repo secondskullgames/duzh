@@ -1,0 +1,17 @@
+{
+  "id": "bronze_shield",
+  "name": "Bronze Shield",
+  "sprite": "shield2",
+  "mapIcon": "map_shield2",
+  "itemCategory": "ARMOR",
+  "slot": "SHIELD",
+  "paletteSwaps": {
+    "GRAY_128": "DARK_BROWN",
+    "GRAY_192": "LIGHT_BROWN"
+  },
+  "rarity": 3,
+  "level": 2,
+  "stats": {
+    "blockAmount": 0.2
+  }
+}

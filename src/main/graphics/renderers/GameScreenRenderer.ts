@@ -14,8 +14,7 @@ import { Debug } from '@main/core/Debug';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
-import { ObjectType } from '@main/objects/GameObject';
-import Block from '@main/objects/Block';
+import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -121,7 +120,7 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   /**
-   * Render the unit, all of its equipment, and the ceorresponding overlay.
+   * Render the unit, all of its equipment, and the corresponding overlay.
    */
   private _renderUnit = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
     const behindEquipment: Equipment[] = [];
@@ -153,7 +152,6 @@ export default class GameScreenRenderer implements Renderer {
     const { session } = this;
     const map = session.getMap();
     const unit = map.getUnit(coordinates);
-    const objects = map.getObjects(coordinates);
 
     if (unit) {
       if (unit === session.getPlayerUnit()) {
@@ -162,14 +160,8 @@ export default class GameScreenRenderer implements Renderer {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
       }
     }
-    // TODO think about rules for blocks
-    if (
-      objects.find(
-        object =>
-          object.getObjectType() === ObjectType.ITEM ||
-          (object.getObjectType() === ObjectType.BLOCK && (object as Block).isMovable())
-      )
-    ) {
+
+    if (getItem(map, coordinates) || getMovableBlock(map, coordinates)) {
       return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
     }
   };
