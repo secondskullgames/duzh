@@ -31,7 +31,10 @@ const orderedEquipmentSlots: EquipmentSlot[] = [
   EquipmentSlot.CLOAK
 ];
 
-type InventoryCategory = 'EQUIPMENT' | 'ITEMS';
+enum InventoryCategory {
+  EQUIPMENT = 'EQUIPMENT',
+  ITEMS = 'ITEMS'
+}
 type InventorySubcategory = DisplayCategory;
 
 export class InventoryState {
@@ -41,7 +44,7 @@ export class InventoryState {
   private selectedEquipment: Equipment | null;
 
   constructor() {
-    this.selectedCategory = 'EQUIPMENT';
+    this.selectedCategory = InventoryCategory.EQUIPMENT;
     this.selectedItemCategory = null;
     this.selectedItem = null;
     this.selectedEquipment = null;
@@ -49,14 +52,14 @@ export class InventoryState {
 
   nextCategory = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
-      case 'EQUIPMENT':
-        this.selectedCategory = 'ITEMS';
+      case InventoryCategory.EQUIPMENT:
+        this.selectedCategory = InventoryCategory.ITEMS;
         this.selectedItemCategory = displayCategories[0];
         this.selectedEquipment = null;
         this.selectedItem =
           playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         break;
-      case 'ITEMS': {
+      case InventoryCategory.ITEMS: {
         const index =
           this.selectedItemCategory !== null
             ? displayCategories.indexOf(this.selectedItemCategory)
@@ -68,7 +71,7 @@ export class InventoryState {
         } else {
           this.selectedItemCategory = null;
           this.selectedItem = null;
-          this.selectedCategory = 'EQUIPMENT';
+          this.selectedCategory = InventoryCategory.EQUIPMENT;
           this.selectedEquipment =
             this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
         }
@@ -79,12 +82,12 @@ export class InventoryState {
 
   previousCategory = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
-      case 'EQUIPMENT':
-        this.selectedCategory = 'ITEMS';
+      case InventoryCategory.EQUIPMENT:
+        this.selectedCategory = InventoryCategory.ITEMS;
         this.selectedItemCategory = displayCategories[displayCategories.length - 1];
         this.selectedEquipment = null;
         break;
-      case 'ITEMS': {
+      case InventoryCategory.ITEMS: {
         const index =
           this.selectedItemCategory !== null
             ? displayCategories.indexOf(this.selectedItemCategory)
@@ -96,7 +99,7 @@ export class InventoryState {
         } else {
           this.selectedItemCategory = null;
           this.selectedItem = null;
-          this.selectedCategory = 'EQUIPMENT';
+          this.selectedCategory = InventoryCategory.EQUIPMENT;
           this.selectedEquipment =
             this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
         }
@@ -107,7 +110,7 @@ export class InventoryState {
 
   nextItem = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
-      case 'EQUIPMENT': {
+      case InventoryCategory.EQUIPMENT: {
         const equipment = this._sortBySlot(playerUnit.getEquipment().getAll());
         if (this.selectedEquipment) {
           const index = equipment.indexOf(this.selectedEquipment);
@@ -117,7 +120,7 @@ export class InventoryState {
         }
         break;
       }
-      case 'ITEMS': {
+      case InventoryCategory.ITEMS: {
         const selectedItemCategory = checkNotNull(this.selectedItemCategory);
         const items = playerUnit.getInventory().get(selectedItemCategory);
         if (items.length > 0) {
@@ -131,7 +134,7 @@ export class InventoryState {
 
   previousItem = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
-      case 'EQUIPMENT': {
+      case InventoryCategory.EQUIPMENT: {
         const equipment = this._sortBySlot(playerUnit.getEquipment().getAll());
         if (this.selectedEquipment) {
           const index = equipment.indexOf(this.selectedEquipment);
@@ -142,7 +145,7 @@ export class InventoryState {
         }
         break;
       }
-      case 'ITEMS': {
+      case InventoryCategory.ITEMS: {
         const selectedItemCategory = checkNotNull(this.selectedItemCategory);
         const items = playerUnit.getInventory().get(selectedItemCategory);
         if (items.length > 0 && this.selectedItem !== null) {
