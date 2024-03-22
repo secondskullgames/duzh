@@ -5,7 +5,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { shootFrostbolt } from '@main/actions/shootFrostbolt';
+import { shootFirebolt } from '@main/actions/shootFirebolt';
 
 const manaCost = 10;
 const damage = 10;
@@ -25,6 +25,6 @@ export const ShootFirebolt: UnitAbility = {
   ) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.spendMana(manaCost);
-    await shootFrostbolt(unit, direction, damage, burnDuration, session, state);
+    await shootFirebolt(unit, direction, damage, burnDuration, session, state);
   }
 };
