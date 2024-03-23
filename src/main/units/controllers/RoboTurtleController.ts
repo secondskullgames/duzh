@@ -7,7 +7,6 @@ import { UnitController } from '@main/units/controllers/UnitController';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 import { MoveOrder } from '@main/units/orders/MoveOrder';
 import { isHostile } from '@main/units/UnitUtils';
 import { AttackOrder } from '@main/units/orders/AttackOrder';

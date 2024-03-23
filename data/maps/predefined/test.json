@@ -11,7 +11,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "GREEN": "green_snake"
+    "GREEN": "green_blob"
   },
   "itemColors": {},
   "equipmentColors": {

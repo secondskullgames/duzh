@@ -1,5 +1,5 @@
 import { EquipmentScriptName } from './EquipmentScript';
-import { getEquipmentTooltip } from './getEquipmentTooltip';
+import { getEquipmentTooltip } from './EquipmentUtils';
 import Sprite from '../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';

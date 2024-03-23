@@ -258,7 +258,7 @@ export class GeneratedMapFactory {
       }
       const chosenItemSpec = weightedRandom(choices);
       itemSpecs.push(chosenItemSpec);
-      if (chosenItemSpec.type === 'equipment') {
+      if (chosenItemSpec.type === ItemType.EQUIPMENT) {
         this.state.recordEquipmentGenerated(chosenItemSpec.id);
       }
       itemsRemaining--;

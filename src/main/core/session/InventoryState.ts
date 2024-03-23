@@ -31,7 +31,7 @@ const orderedEquipmentSlots: EquipmentSlot[] = [
   EquipmentSlot.CLOAK
 ];
 
-enum InventoryCategory {
+export enum InventoryCategory {
   EQUIPMENT = 'EQUIPMENT',
   ITEMS = 'ITEMS'
 }
