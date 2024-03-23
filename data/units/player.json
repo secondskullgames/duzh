@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/UnitModel.schema.json",
   "id": "player",
   "name": "Player",
   "type": "HUMAN",

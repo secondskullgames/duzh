@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "bow_of_frost",
   "name": "Bow of Frost",
   "sprite": "bow",

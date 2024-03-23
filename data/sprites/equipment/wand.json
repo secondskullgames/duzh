@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/DynamicSpriteModel.schema.json",
   "name": "club",
   "offsets": {
     "dx": -4,

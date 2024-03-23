@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/DynamicSpriteModel.schema.json",
   "name": "robed_wizard",
   "offsets": {
     "dx": -4,

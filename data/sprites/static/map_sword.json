@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_sword",
   "filename": "equipment/sword/sword_icon_small",
   "offsets": {

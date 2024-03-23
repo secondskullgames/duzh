@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "fire_sword",
   "name": "Fire Sword",
   "sprite": "sword",

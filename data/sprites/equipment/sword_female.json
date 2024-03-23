@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/DynamicSpriteModel.schema.json",
   "name": "sword_female",
   "offsets": {
     "dx": -4,

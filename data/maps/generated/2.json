@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/GeneratedMapModel.schema.json",
   "id": "2",
   "levelNumber": 2,
   "algorithm": "PATH",
