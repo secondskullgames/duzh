@@ -3,7 +3,7 @@ import { EquipmentSlot } from '@models/EquipmentSlot';
 
 export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   const lines = [];
-  lines.push(`Slot: ${equipment.slot}`);
+  lines.push(getSlotName(equipment.slot));
   if (equipment.stats.damage) {
     lines.push(`Damage: ${equipment.stats.damage}`);
   }
