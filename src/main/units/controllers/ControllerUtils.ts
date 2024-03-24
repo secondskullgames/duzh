@@ -14,6 +14,7 @@ import { isBlocked } from '@main/maps/MapUtils';
 import SorceressController from '@main/units/controllers/SorceressController';
 import { minBy } from '@lib/utils/arrays';
 import { isHostile } from '@main/units/UnitUtils';
+import { RoboTurtleController } from '@main/units/controllers/RoboTurtleController';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
@@ -55,6 +56,8 @@ export const chooseUnitController = (unitClass: string): UnitController => {
       return new DragonShooterController();
     case 'sorceress':
       return new SorceressController();
+    case 'robo_turtle':
+      return new RoboTurtleController();
     default:
       return new BasicEnemyController();
   }

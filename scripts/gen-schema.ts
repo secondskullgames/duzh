@@ -40,9 +40,13 @@ const generateSchemas = async () => {
       id: modelName,
       required: true,
       noExtraProps: true
-    });
+    }) as Definition;
+    schema.properties ??= {};
+    schema.properties['$schema'] = { type: 'string' };
+    schema.required ??= [];
+    schema.required.push('$schema');
     const outFilename = `${outDir}/${modelName}.schema.json`;
-    await writeFile(outFilename, prettyPrint(schema!));
+    await writeFile(outFilename, prettyPrint(schema));
   }
 };
 

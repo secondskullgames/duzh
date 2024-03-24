@@ -47,18 +47,21 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   generateTiles = (width: number, height: number): TileType[][] => {
     const rect: Rect = { left: 0, top: 0, width, height };
     let section: Section = new Section({ rect });
-    const splitter = SectionSplitter.create({
-      minRoomWidth: MIN_ROOM_WIDTH,
-      minRoomHeight: MIN_ROOM_HEIGHT,
-      horizontalSectionPadding: HORIZONTAL_SECTION_PADDING,
-      verticalSectionPadding: VERTICAL_SECTION_PADDING
-    });
+    const splitter = this._createSplitter();
     section = splitter.splitRecursively(section);
     const connector = SectionConnector.create();
     section = connector.connectRecursively(section);
     const tileGenerator = TileGenerator.create();
     return tileGenerator.generateTiles(section);
   };
+
+  private _createSplitter = (): SectionSplitter =>
+    SectionSplitter.create({
+      minRoomWidth: MIN_ROOM_WIDTH,
+      minRoomHeight: MIN_ROOM_HEIGHT,
+      horizontalSectionPadding: HORIZONTAL_SECTION_PADDING,
+      verticalSectionPadding: VERTICAL_SECTION_PADDING
+    });
 }
 
 export default RoomCorridorMapGenerator2;

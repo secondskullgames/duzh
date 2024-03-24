@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_shield2",
   "filename": "shield2_icon",
   "offsets": {

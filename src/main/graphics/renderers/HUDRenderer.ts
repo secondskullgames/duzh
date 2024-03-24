@@ -17,6 +17,7 @@ import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -33,6 +34,7 @@ const ABILITY_ICON_WIDTH = 20;
 @injectable()
 export default class HUDRenderer implements Renderer {
   private readonly TOP: number;
+  private readonly WIDTH: number;
   private readonly MIDDLE_PANE_WIDTH: number;
 
   constructor(
@@ -46,6 +48,7 @@ export default class HUDRenderer implements Renderer {
     private readonly imageFactory: ImageFactory
   ) {
     this.TOP = gameConfig.screenHeight - HEIGHT;
+    this.WIDTH = gameConfig.screenWidth;
     this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
   }
 
@@ -60,9 +63,21 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderFrame = async (graphics: Graphics) => {
+    const fillColor = (() => {
+      const playerUnit = this.session.getPlayerUnit();
+      if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
+        return Colors.GRAY_128;
+      } else {
+        return Colors.BLACK;
+      }
+    })();
+    graphics.fillRect(
+      { left: 0, top: this.TOP, width: this.WIDTH, height: HEIGHT },
+      fillColor
+    );
     const image = await this.imageFactory.getImage({
       filename: HUD_FILENAME,
-      transparentColor: Colors.WHITE
+      transparentColor: Colors.BLACK
     });
     graphics.drawImage(image, { x: 0, y: this.TOP });
   };
@@ -74,7 +89,13 @@ export default class HUDRenderer implements Renderer {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
 
-    const lines = [playerUnit.getName(), `Level ${playerUnit.getLevel()}`];
+    const lines = [];
+    if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
+      lines.push('STUNNED');
+    } else {
+      lines.push(playerUnit.getName());
+    }
+    lines.push(`Level ${playerUnit.getLevel()}`);
 
     if (Feature.isEnabled(Feature.HUD_BARS)) {
       lines.push(`      ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);

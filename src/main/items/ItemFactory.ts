@@ -9,7 +9,7 @@ import { ConsumableItemModel } from '@models/ConsumableItemModel';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
-import { getEquipmentTooltip } from '@main/equipment/getEquipmentTooltip';
+import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
 import { GameScreen } from '@main/core/GameScreen';
 import { floorFire } from '@main/actions/floorFire';

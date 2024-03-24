@@ -1,0 +1,33 @@
+{
+  "$schema": "../../src/gen-schema/UnitModel.schema.json",
+  "id": "robo_turtle",
+  "name": "Robo-Turtle",
+  "type": "MECHANICAL",
+  "sprite": "turtle",
+  "paletteSwaps": {
+    "TEAL_64": "GRAY_64",
+    "PURPLE_128": "BLACK",
+    "DARK_BROWN": "BLACK",
+    "DARK_YELLOW": "GRAY_128",
+    "GREEN_128": "GRAY_128",
+    "GREEN_255": "GRAY_192",
+    "YELLOW": "GRAY_192"
+  },
+  "life": 30,
+  "mana": 0,
+  "strength": 20,
+  "dexterity": 0,
+  "aiParameters": {
+    "speed": 1,
+    "visionRange": 6,
+    "aggressiveness": 1,
+    "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 2,
+    "maxLevel": 4,
+    "rarity": 3
+  },
+  "abilities": ["ATTACK"],
+  "experience": 1
+}

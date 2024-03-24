@@ -4,13 +4,14 @@ import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
-import { EquipmentSlot } from '@models/EquipmentSlot';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import { getSlotName } from '@main/equipment/EquipmentUtils';
+import { InventoryCategory } from '@main/core/session/InventoryState';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;
@@ -84,7 +85,9 @@ export default class InventoryRenderer implements Renderer {
       'EQUIPMENT',
       FontName.APPLE_II,
       { x: this.inventoryWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
-      inventory.getSelectedCategory() === 'EQUIPMENT' ? Colors.YELLOW : Colors.WHITE,
+      inventory.getSelectedCategory() === InventoryCategory.EQUIPMENT
+        ? Colors.YELLOW
+        : Colors.WHITE,
       Alignment.CENTER,
       graphics
     );
@@ -92,7 +95,9 @@ export default class InventoryRenderer implements Renderer {
       'INVENTORY',
       FontName.APPLE_II,
       { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
-      inventory.getSelectedCategory() === 'ITEMS' ? Colors.YELLOW : Colors.WHITE,
+      inventory.getSelectedCategory() === InventoryCategory.ITEMS
+        ? Colors.YELLOW
+        : Colors.WHITE,
       Alignment.CENTER,
       graphics
     );
@@ -103,7 +108,7 @@ export default class InventoryRenderer implements Renderer {
     let y = INVENTORY_TOP + 64;
     const playerUnit = session.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
-      const text = `${_equipmentSlotToString(equipment.slot)} - ${equipment.getName()}`;
+      const text = `${getSlotName(equipment.slot)} - ${equipment.getName()}`;
       await this._drawText(
         text,
         FontName.APPLE_II,
@@ -231,6 +236,3 @@ export default class InventoryRenderer implements Renderer {
     }
   };
 }
-
-const _equipmentSlotToString = (slot: EquipmentSlot) =>
-  slot.toUpperCase().replaceAll('_', ' ');

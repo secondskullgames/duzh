@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/ConsumableItemModel.schema.json",
   "id": "freeze_scroll",
   "name": "Scroll of Freeze",
   "level": 4,

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "green_cone_hat",
   "name": "Green Cone Hat",
   "sprite": "hat",

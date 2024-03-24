@@ -1,4 +1,5 @@
 {
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "black_skirt",
   "name": "Black Skirt",
   "sprite": "skirt",

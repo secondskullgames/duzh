@@ -1,6 +1,6 @@
 import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
-import { InventoryState } from './session/InventoryState';
+import { InventoryCategory, InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
@@ -101,7 +101,7 @@ export class SessionImpl implements Session {
       this.inventoryState = new InventoryState();
     }
     switch (this.inventoryState.getSelectedCategory()) {
-      case 'EQUIPMENT': {
+      case InventoryCategory.EQUIPMENT: {
         const equipment = this.inventoryState.getSelectedEquipment();
         if (equipment !== null && !playerUnit.getEquipment().includes(equipment)) {
           this.inventoryState.clearSelectedItem();
@@ -111,7 +111,7 @@ export class SessionImpl implements Session {
         }
         break;
       }
-      case 'ITEMS': {
+      case InventoryCategory.ITEMS: {
         const selectedItem = this.inventoryState.getSelectedItem();
         if (selectedItem && !playerUnit.getInventory().includes(selectedItem)) {
           this.inventoryState.clearSelectedItem();

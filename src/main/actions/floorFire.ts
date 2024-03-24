@@ -33,11 +33,13 @@ export const floorFire = async (
         const targetUnit = adjacentUnits[j];
         targetUnit.getEffects().addEffect(StatusEffect.DAMAGED, 1);
         targetUnit.getEffects().addEffect(StatusEffect.BURNING, 1);
-        await dealDamage(damage, {
+        const damageTaken = await dealDamage(damage, {
           sourceUnit: unit,
           targetUnit: targetUnit
         });
 
+        const message = getDamageLogMessage(unit, targetUnit, damageTaken);
+        session.getTicker().log(message, { turn: session.getTurn() });
         if (targetUnit.getLife() <= 0) {
           await die(targetUnit, state, session);
           recordKill(unit, targetUnit, session, state);
@@ -56,4 +58,8 @@ export const floorFire = async (
     adjacentUnits[i].getEffects().removeEffect(StatusEffect.DAMAGED);
     adjacentUnits[i].getEffects().removeEffect(StatusEffect.BURNING);
   }
+};
+
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()}'s floor fire hit ${target.getName()} for ${damageTaken} damage!`;
 };
