@@ -2,7 +2,6 @@ import { GameScreen } from './GameScreen';
 import { InventoryCategory, InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../units/Unit';
-import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { injectable } from 'inversify';
 import type { UnitAbility } from '@main/abilities/UnitAbility';

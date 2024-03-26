@@ -28,7 +28,7 @@ export default class WizardController implements UnitController {
   /**
    * If we have mana to Summon, and X% chance, cast Summon;
    * if we have mana to Teleport, and player is within X tiles, cast Teleport;
-   * @override {@link UnitController#issueOrder}
+   * @override [UnitController#issueOrder]{@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit): UnitOrder => {
     const closestEnemyUnit = getNearestEnemyUnit(unit);
