@@ -5,15 +5,13 @@ import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { randChoice } from '@lib/utils/random';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const map = session.getMap();
+  issueOrder = (unit: Unit): UnitOrder => {
+    const map = unit.getMap();
     const possibleDirections: Direction[] = [];
 
     for (const direction of Direction.values()) {
@@ -25,7 +23,8 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (possibleDirections.length > 0) {
       const direction = randChoice(possibleDirections);
-      return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
+      const behavior = new AttackMoveBehavior({ direction });
+      behavior.issueOrder(unit);
     }
     return new StayOrder();
   };

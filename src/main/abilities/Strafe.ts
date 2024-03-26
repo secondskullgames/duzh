@@ -19,7 +19,7 @@ export const Strafe: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const map = session.getMap();
+    const map = unit.getMap();
     if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       await moveUnit(unit, coordinates, session, state);
     }

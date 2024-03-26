@@ -18,6 +18,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -40,6 +41,8 @@ export default class HUDRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     gameConfig: GameConfig,
+    @inject(GameState)
+    private readonly state: GameState,
     @inject(Session)
     private readonly session: Session,
     @inject(TextRenderer)
@@ -235,16 +238,16 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderRightPanel = async (graphics: Graphics) => {
-    const { session } = this;
+    const { state, session } = this;
     const playerUnit = session.getPlayerUnit();
-    const turn = session.getTurn();
-    const mapIndex = session.getMapIndex();
+    const turn = state.getTurn();
+    const map = playerUnit.getMap();
 
     const left =
       LEFT_PANE_WIDTH + this.MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
 
-    const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
+    const lines = [`Turn: ${turn}`, `Floor: ${map.levelNumber}`];
 
     const killsToNextLevel = playerUnit.getKillsToNextLevel();
     if (killsToNextLevel !== null) {

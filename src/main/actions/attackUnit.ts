@@ -51,14 +51,14 @@ export const attackUnit = async (
   attacker.recordDamageDealt(defendResult.damageTaken);
   state.getSoundPlayer().playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  session.getTicker().log(message, { turn: session.getTurn() });
+  state.ticker.log(message, state);
 
   attacker.refreshCombat();
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
     await die(defender, state, session);
-    recordKill(attacker, defender, session, state);
+    recordKill(attacker, defender, state);
   }
 
   for (const equipment of attacker.getEquipment().getAll()) {

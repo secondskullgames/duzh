@@ -1,4 +1,3 @@
-import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryCategory, InventoryState } from './session/InventoryState';
 import { LevelUpScreenState } from './session/LevelUpScreenState';
@@ -16,20 +15,9 @@ export interface Session {
   getLevelUpScreen: () => LevelUpScreenState;
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
-  getTicker: () => Ticker;
   reset: () => void;
   getPlayerUnit: () => Unit;
   setPlayerUnit: (unit: Unit) => void;
-  setTurnInProgress: (val: boolean) => void;
-  isTurnInProgress: () => boolean;
-  getMapIndex: () => number;
-
-  setMapIndex: (mapIndex: number) => void;
-  setMap: (map: MapInstance) => void;
-  getMap: () => MapInstance;
-
-  getTurn: () => number;
-  nextTurn: () => void;
 
   getQueuedAbility: () => UnitAbility | null;
   setQueuedAbility: (ability: UnitAbility | null) => void;
@@ -39,29 +27,19 @@ export const Session = Symbol('Session');
 
 @injectable()
 export class SessionImpl implements Session {
-  private readonly ticker: Ticker;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
   private inventoryState: InventoryState | null;
   private playerUnit: Unit | null;
-  private _isTurnInProgress: boolean;
-  private mapIndex: number;
-  private map: MapInstance | null;
-  private turn: number;
   private queuedAbility: UnitAbility | null;
 
   constructor() {
-    this.ticker = new Ticker();
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
     this.levelUpScreen = null;
     this.inventoryState = null;
-    this._isTurnInProgress = false;
     this.playerUnit = null;
-    this.mapIndex = -1;
-    this.map = null;
-    this.turn = 1;
     this.queuedAbility = null;
   }
 
@@ -125,44 +103,12 @@ export class SessionImpl implements Session {
   };
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
-  getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {
     this.screen = GameScreen.TITLE;
     this.prevScreen = null;
-    this.ticker.clear();
     this.playerUnit = null;
-    this.mapIndex = -1;
-    this.map = null;
-    this.turn = 1;
     this.queuedAbility = null;
-  };
-
-  setTurnInProgress = (val: boolean) => {
-    this._isTurnInProgress = val;
-  };
-
-  /**
-   * Used for showing the "busy" indicator in the UI
-   */
-  isTurnInProgress = (): boolean => this._isTurnInProgress;
-
-  getMapIndex = () => this.mapIndex;
-
-  setMapIndex = (mapIndex: number): void => {
-    this.mapIndex = mapIndex;
-  };
-
-  getMap = (): MapInstance =>
-    checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
-
-  setMap = (map: MapInstance): void => {
-    this.map = map;
-  };
-
-  getTurn = () => this.turn;
-  nextTurn = () => {
-    this.turn++;
   };
 
   getQueuedAbility = (): UnitAbility | null => this.queuedAbility;

@@ -14,6 +14,7 @@ import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import { isPlayerUnit } from '@main/units/UnitUtils';
 import { inject, injectable } from 'inversify';
 
 export type SpawnerClass = 'mirror';
@@ -102,16 +103,15 @@ export default class ObjectFactory {
 
     const lifeToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
-      if (unit === session.getPlayerUnit()) {
+    const onUse = async (unit: Unit, state: GameState) => {
+      if (isPlayerUnit(unit)) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
           state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
-              turn: session.getTurn()
-            });
+          state.ticker.log(
+            `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
+            state
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -146,11 +146,10 @@ export default class ObjectFactory {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
           state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
-              turn: session.getTurn()
-            });
+          state.ticker.log(
+            `${unit.getName()} used a mana globe and gained ${manaGained} mana.`,
+            state
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);

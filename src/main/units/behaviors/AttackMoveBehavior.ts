@@ -3,8 +3,6 @@ import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { isBlocked } from '@main/maps/MapUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import StayOrder from '@main/units/orders/StayOrder';
 import { MoveOrder } from '@main/units/orders/MoveOrder';
@@ -24,8 +22,8 @@ export class AttackMoveBehavior implements UnitBehavior {
     this.direction = direction;
   }
 
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const map = session.getMap();
+  issueOrder = (unit: Unit): UnitOrder => {
+    const map = unit.getMap();
     const { direction } = this;
     unit.setDirection(direction);
     const coordinates = Coordinates.plus(unit.getCoordinates(), direction);

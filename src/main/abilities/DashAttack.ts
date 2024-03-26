@@ -54,7 +54,7 @@ export const DashAttack: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const map = session.getMap();
+    const map = unit.getMap();
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);
     dy = Math.sign(dy);

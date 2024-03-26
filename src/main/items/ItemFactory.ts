@@ -31,19 +31,13 @@ export default class ItemFactory {
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, state: GameState) => {
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-          turn: session.getTurn()
-        });
+      state.ticker.log(
+        `${unit.getName()} used ${item.name} and gained ${lifeGained} life.`,
+        state
+      );
     };
 
     return new InventoryItem({
@@ -55,19 +49,13 @@ export default class ItemFactory {
   };
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, state: GameState) => {
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-          turn: session.getTurn()
-        });
+      state.ticker.log(
+        `${unit.getName()} used ${item.name} and gained ${manaGained} mana.`,
+        state
+      );
     };
 
     return new InventoryItem({
@@ -160,7 +148,7 @@ export default class ItemFactory {
       session: Session
     ) => {
       session.setScreen(GameScreen.GAME);
-      await castFreeze(unit, 5, duration, session, state);
+      await castFreeze(unit, 5, duration, state);
     };
 
     return new InventoryItem({

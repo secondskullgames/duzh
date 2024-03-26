@@ -39,10 +39,10 @@ export const floorFire = async (
         });
 
         const message = getDamageLogMessage(unit, targetUnit, damageTaken);
-        session.getTicker().log(message, { turn: session.getTurn() });
+        state.ticker.log(message, state);
         if (targetUnit.getLife() <= 0) {
           await die(targetUnit, state, session);
-          recordKill(unit, targetUnit, session, state);
+          recordKill(unit, targetUnit, state);
         }
       } else {
         adjacentUnits[j].getEffects().removeEffect(StatusEffect.DAMAGED);

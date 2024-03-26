@@ -34,7 +34,7 @@ export const Teleport: UnitAbility = {
       throw new Error(`Can't teleport more than ${range} units`);
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
 
     const maybeSleep = async () => {
       if (map.isTileRevealed(coordinates)) {

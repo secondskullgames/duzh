@@ -6,12 +6,10 @@ import { ShootArrow } from '@main/abilities/ShootArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
 import {
-  pointAt,
+  isInStraightLine,
   manhattanDistance,
-  isInStraightLine
+  pointAt
 } from '@lib/geometry/CoordinatesUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { UnitAbility } from '@main/abilities/UnitAbility';
@@ -28,7 +26,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const { targetUnit } = this;
 
     const atLeastOneTileAway =
@@ -38,8 +36,8 @@ export default class ShootUnitBehavior implements UnitBehavior {
       return new AbilityOrder({ direction, ability: ShootArrow });
     }
 
-    // TODO - instantiating this here is a hack
-    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, state, session);
+    const behavior = new AttackUnitBehavior({ targetUnit });
+    return behavior.issueOrder(unit);
   };
 }
 

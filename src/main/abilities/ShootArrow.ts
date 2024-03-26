@@ -41,7 +41,7 @@ export const ShootArrow: UnitAbility = {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
@@ -65,7 +65,7 @@ export const ShootArrow: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      state.ticker.log(message, state);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);

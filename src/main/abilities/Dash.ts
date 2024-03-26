@@ -2,8 +2,8 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Coordinates } from '../../lib/geometry/Coordinates';
-import { pointAt } from '../../lib/geometry/CoordinatesUtils';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
@@ -24,7 +24,7 @@ export const Dash: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const map = session.getMap();
+    const map = unit.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 

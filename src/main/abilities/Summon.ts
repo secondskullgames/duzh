@@ -26,7 +26,7 @@ export const Summon: UnitAbility = {
       throw new Error('Summon requires a target!');
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
     // TODO pick a sound

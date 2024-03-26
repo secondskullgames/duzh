@@ -24,8 +24,9 @@ export class EngineImpl implements Engine {
 
   playTurn = async () => {
     const { state, session } = this;
-    const map = session.getMap();
-    session.setTurnInProgress(true);
+    const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
+    state.setTurnInProgress(true);
     const sortedUnits = _sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
@@ -37,15 +38,15 @@ export class EngineImpl implements Engine {
       await object.playTurnAction(state, session);
     }
 
-    updateRevealedTiles(map, session.getPlayerUnit());
-    await doMapEvents(state, session);
+    updateRevealedTiles(map, playerUnit);
+    await doMapEvents(map, state, session);
     // TODO weird place to jam this logic
-    if (!session.getQueuedAbility()?.isEnabled(session.getPlayerUnit())) {
+    if (!session.getQueuedAbility()?.isEnabled(playerUnit)) {
       session.setQueuedAbility(null);
     }
 
-    session.nextTurn();
-    session.setTurnInProgress(false);
+    state.nextTurn();
+    state.setTurnInProgress(false);
   };
 }
 

@@ -3,13 +3,11 @@ import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Teleport, range as teleportRange } from '@main/abilities/Teleport';
+import { range as teleportRange, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { maxBy } from '@lib/utils/arrays';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
@@ -26,7 +24,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   }
 
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const { targetUnit } = this;
     if (_canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
@@ -39,7 +37,8 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
       const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-      return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
+      const behavior = new AttackMoveBehavior({ direction });
+      return behavior.issueOrder(unit);
     }
     return new StayOrder();
   };

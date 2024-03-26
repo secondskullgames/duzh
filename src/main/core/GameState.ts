@@ -7,6 +7,7 @@ import ProjectileFactory from '../objects/ProjectileFactory';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { clear } from '@lib/utils/arrays';
 import ModelLoader from '@main/assets/ModelLoader';
+import Ticker from '@main/core/Ticker';
 import { inject, injectable } from 'inversify';
 
 /**
@@ -20,6 +21,16 @@ export interface GameState {
   getMap: (mapIndex: number) => MapInstance;
   setMap: (mapIndex: number, map: MapInstance) => void;
   isMapLoaded: (mapIndex: number) => boolean;
+
+  readonly ticker: Ticker;
+
+  getTurn: () => number;
+  nextTurn: () => void;
+  setTurnInProgress: (val: boolean) => void;
+  /**
+   * Used for showing the "busy" indicator in the UI
+   */
+  isTurnInProgress: () => boolean;
 
   // TODO trying to find ways to remove the remainder
 
@@ -39,9 +50,12 @@ export const GameState = Symbol('GameState');
  */
 @injectable()
 export class GameStateImpl implements GameState {
+  readonly ticker: Ticker;
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
   private readonly soundPlayer: SoundPlayer;
+  private turn: number;
+  private _isTurnInProgress: boolean;
 
   constructor(
     @inject(ItemFactory)
@@ -57,9 +71,12 @@ export class GameStateImpl implements GameState {
     @inject(ModelLoader)
     private readonly modelLoader: ModelLoader
   ) {
+    this.ticker = new Ticker();
     this.maps = [];
     this.generatedEquipmentIds = [];
     this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
+    this.turn = 1;
+    this._isTurnInProgress = false;
   }
 
   getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;
@@ -73,6 +90,8 @@ export class GameStateImpl implements GameState {
       delete this.maps[parseInt(key)];
     });
     clear(this.generatedEquipmentIds);
+    this.turn = 1;
+    this._isTurnInProgress = false;
   };
 
   isMapLoaded = (index: number): boolean => {
@@ -83,6 +102,17 @@ export class GameStateImpl implements GameState {
     this.maps[mapIndex] = map;
   };
   getMap = (mapIndex: number) => this.maps[mapIndex];
+
+  getTurn = () => this.turn;
+  nextTurn = () => {
+    this.turn++;
+  };
+
+  setTurnInProgress = (val: boolean) => {
+    this._isTurnInProgress = val;
+  };
+
+  isTurnInProgress = (): boolean => this._isTurnInProgress;
 
   getItemFactory = (): ItemFactory => this.itemFactory;
   getUnitFactory = (): UnitFactory => this.unitFactory;

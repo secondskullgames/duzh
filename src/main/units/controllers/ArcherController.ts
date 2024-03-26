@@ -1,5 +1,5 @@
 import { UnitController } from './UnitController';
-import { canMove } from './ControllerUtils';
+import { canMove, getNearestEnemyUnit } from './ControllerUtils';
 import UnitOrder from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
@@ -9,21 +9,22 @@ import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 
 export default class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, session);
-    return behavior.issueOrder(unit, state, session);
+  issueOrder = (unit: Unit): UnitOrder => {
+    const behavior = this._getBehavior(unit);
+    return behavior.issueOrder(unit);
   };
 
-  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
-    const playerUnit = session.getPlayerUnit();
+  private _getBehavior = (unit: Unit): UnitBehavior => {
+    const nearestEnemyUnit = getNearestEnemyUnit(unit);
+    if (!nearestEnemyUnit) {
+      return new StayBehavior();
+    }
 
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
@@ -33,18 +34,18 @@ export default class ArcherController implements UnitController {
 
     const distanceToPlayer = hypotenuse(
       unit.getCoordinates(),
-      playerUnit.getCoordinates()
+      nearestEnemyUnit.getCoordinates()
     );
 
     if (!canMove(unit)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
-      return new AvoidUnitBehavior({ targetUnit: playerUnit });
+      return new AvoidUnitBehavior({ targetUnit: nearestEnemyUnit });
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootUnitBehavior({ targetUnit: nearestEnemyUnit });
       } else if (randChance(aggressiveness)) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootUnitBehavior({ targetUnit: nearestEnemyUnit });
       } else {
         return new WanderBehavior();
       }

@@ -9,8 +9,6 @@ import { NormalAttack } from '@main/abilities/NormalAttack';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@lib/utils/random';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { findPath } from '@main/maps/MapUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 
@@ -39,9 +37,9 @@ export default class AttackUnitBehavior implements UnitBehavior {
   }
 
   /** @override */
-  issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const { targetUnit } = this;
-    const map = session.getMap();
+    const map = unit.getMap();
     const pathToTarget = findPath(
       unit.getCoordinates(),
       targetUnit.getCoordinates(),

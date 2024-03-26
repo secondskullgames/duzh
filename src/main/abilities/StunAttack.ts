@@ -29,7 +29,7 @@ export const StunAttack: UnitAbility = {
       throw new Error('StunAttack requires a target!');
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

@@ -25,7 +25,7 @@ export class MoveOrder implements UnitOrder {
    * @override {@link UnitOrder#execute}
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    const map = session.getMap();
+    const map = unit.getMap();
     const { coordinates } = this;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

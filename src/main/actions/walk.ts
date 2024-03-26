@@ -6,6 +6,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { isPlayerUnit } from '@main/units/UnitUtils';
 
 export const walk = async (
   unit: Unit,
@@ -20,8 +21,7 @@ export const walk = async (
     // do nothing
   } else {
     await moveUnit(unit, coordinates, session, state);
-    const playerUnit = session.getPlayerUnit();
-    if (unit === playerUnit) {
+    if (isPlayerUnit(unit)) {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
     }
     unit.recordStepTaken();

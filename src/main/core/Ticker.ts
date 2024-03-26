@@ -1,4 +1,5 @@
 import { clear, tail } from '@lib/utils/arrays';
+import { GameState } from '@main/core/GameState';
 
 const maxTurnsAgo = 8;
 const maxMessages = 2;
@@ -8,21 +9,19 @@ type Message = Readonly<{
   turn: number;
 }>;
 
-type Context = Readonly<{
-  turn: number;
-}>;
-
 export default class Ticker {
   private readonly messages: Message[] = [];
 
-  log = (message: string, { turn }: Context) => {
-    this.messages.push({ message, turn });
+  log = (message: string, state: GameState) => {
+    this.messages.push({ message, turn: state.getTurn() });
   };
 
   getAllMessages = () => this.messages.map(m => m.message);
-  getRecentMessages = (turn: number): string[] => {
+  getRecentMessages = (state: GameState): string[] => {
     return tail(
-      this.messages.filter(m => m.turn >= turn - maxTurnsAgo).map(m => m.message),
+      this.messages
+        .filter(m => m.turn >= state.getTurn() - maxTurnsAgo)
+        .map(m => m.message),
       maxMessages
     );
   };

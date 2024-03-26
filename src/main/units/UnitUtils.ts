@@ -1,6 +1,7 @@
 import Unit from './Unit';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import { Faction } from '@main/units/Faction';
 
 export const getMeleeDamage = (unit: Unit): number => {
   let damage = unit.getStrength();
@@ -64,3 +65,5 @@ const isFrontalAttack = (defender: Unit, attacker: Unit) => {
   );
   return Coordinates.equals(aheadCoordinates, attacker.getCoordinates());
 };
+
+export const isPlayerUnit = (unit: Unit): boolean => unit.getFaction() === Faction.PLAYER;

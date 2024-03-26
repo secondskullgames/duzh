@@ -31,7 +31,7 @@ export const ShootBolt: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const map = session.getMap();
+    const map = unit.getMap();
     const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection({ dx, dy });
 
@@ -55,7 +55,7 @@ export const ShootBolt: UnitAbility = {
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      state.ticker.log(message, state);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, state, session);

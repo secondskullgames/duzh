@@ -26,7 +26,7 @@ export const PiercingAttack: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const map = session.getMap();
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

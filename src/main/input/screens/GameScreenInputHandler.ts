@@ -23,7 +23,6 @@ import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
 import { inject, injectable } from 'inversify';
-import abilityForName = UnitAbility.abilityForName;
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -80,7 +79,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { state, session, engine } = this;
+    const { session, engine } = this;
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
 
@@ -120,11 +119,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (ability) {
         order = new AbilityOrder({ ability, direction });
       } else {
-        order = new AttackMoveBehavior({ direction }).issueOrder(
-          playerUnit,
-          state,
-          session
-        );
+        const behavior = new AttackMoveBehavior({ direction });
+        order = behavior.issueOrder(playerUnit);
       }
     }
 
@@ -147,12 +143,12 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
   private _handleEnter = async () => {
     const { state, session, engine, mapController } = this;
-    const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
     const coordinates = playerUnit.getCoordinates();
     const item = getItem(map, coordinates);
     if (item) {
-      pickupItem(playerUnit, item, session, state);
+      pickupItem(playerUnit, item, state);
       map.removeObject(item);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS);
@@ -173,7 +169,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           AbilityName.SHOOT_ARROW,
           AbilityName.SHOOT_FROSTBOLT
         ]) {
-          const ability = abilityForName(abilityName);
+          const ability = UnitAbility.abilityForName(abilityName);
           if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
             session.setQueuedAbility(ability);
           }
@@ -181,7 +177,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         break;
       }
       case ModifierKey.ALT: {
-        const ability = abilityForName(AbilityName.DASH);
+        const ability = UnitAbility.abilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
           session.setQueuedAbility(ability);
         }

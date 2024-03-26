@@ -3,7 +3,6 @@ import Colors from '../Colors';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Graphics } from '@lib/graphics/Graphics';
 import { getItem } from '@main/maps/MapUtils';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { Color } from '@lib/graphics/Color';
 import { isHostile } from '@main/units/UnitUtils';
@@ -24,7 +23,8 @@ export default class MapScreenRenderer implements Renderer {
    */
   render = async (graphics: Graphics) => {
     const { session } = this;
-    const map = checkNotNull(session.getMap());
+    const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
 
     graphics.fill(backgroundColor);
     const cellDimension = Math.floor(
@@ -49,8 +49,8 @@ export default class MapScreenRenderer implements Renderer {
   };
 
   private _getColor = (coordinates: Coordinates, session: Session): Color => {
-    const map = checkNotNull(session.getMap());
     const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
 
     if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {
       return Colors.GREEN;

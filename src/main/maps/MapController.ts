@@ -2,7 +2,7 @@ import MapFactory from './MapFactory';
 import UnitFactory from '../units/UnitFactory';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { check, checkState } from '@lib/utils/preconditions';
+import { check } from '@lib/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { GameScreen } from '@main/core/GameScreen';
 import MapInstance from '@main/maps/MapInstance';
@@ -39,10 +39,7 @@ export class MapControllerImpl implements MapController {
 
   loadFirstMap = async () => {
     const { session, unitFactory, musicController } = this;
-    checkState(session.getMapIndex() === -1);
-    session.setMapIndex(0);
     const map = await this._loadMap(0);
-    session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -59,15 +56,16 @@ export class MapControllerImpl implements MapController {
   loadNextMap = async () => {
     const { session, musicController } = this;
     musicController.stop();
-    const nextMapIndex = session.getMapIndex() + 1;
+    const playerUnit = session.getPlayerUnit();
+    const currentMap = playerUnit.getMap();
+    // TODO big assumption
+    const mapIndex = currentMap.levelNumber - 1;
+    const nextMapIndex = mapIndex + 1;
     if (!this._hasMap(nextMapIndex)) {
       session.setScreen(GameScreen.VICTORY);
     } else {
-      session.setMapIndex(nextMapIndex);
       const map = await this._loadMap(nextMapIndex);
-      session.setMap(map);
       // TODO really need some bidirectional magic
-      const playerUnit = session.getPlayerUnit();
       playerUnit.getMap().removeUnit(playerUnit);
       playerUnit.setCoordinates(map.getStartingCoordinates());
       playerUnit.setMap(map);
@@ -81,12 +79,12 @@ export class MapControllerImpl implements MapController {
 
   loadPreviousMap = async () => {
     const { musicController, session } = this;
-    checkState(session.getMapIndex() > 0);
-    const previousMapIndex = session.getMapIndex() - 1;
-    session.setMapIndex(previousMapIndex);
-    const map = await this._loadMap(previousMapIndex);
-    session.setMap(map);
     const playerUnit = session.getPlayerUnit();
+    const currentMap = playerUnit.getMap();
+    // TODO big assumption
+    const mapIndex = currentMap.levelNumber - 1;
+    const previousMapIndex = mapIndex - 1;
+    const map = await this._loadMap(previousMapIndex);
     playerUnit.getMap().removeUnit(playerUnit);
     playerUnit.setMap(map);
     map.addUnit(playerUnit);
@@ -101,7 +99,6 @@ export class MapControllerImpl implements MapController {
     const { session, musicController, mapFactory, unitFactory } = this;
 
     const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' });
-    session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -110,7 +107,7 @@ export class MapControllerImpl implements MapController {
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
     musicController.stop();
-    updateRevealedTiles(session.getMap(), session.getPlayerUnit());
+    updateRevealedTiles(map, session.getPlayerUnit());
   };
 
   private _loadMap = async (mapIndex: number): Promise<MapInstance> => {

@@ -33,8 +33,8 @@ const BoltSwordScript: EquipmentScript = {
     state: GameState,
     session: Session
   ) => {
-    const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
 
     const direction = unit.getDirection();
     let coordinates = Coordinates.plus(unit.getCoordinates(), direction);
@@ -56,17 +56,14 @@ const BowOfFrostScript: EquipmentScript = {
   afterRangedAttack: async (
     equipment: Equipment,
     target: Coordinates,
-    _: GameState,
-    session: Session
+    state: GameState
   ) => {
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(3);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      state.ticker.log(`${targetUnit.getName()} is frozen!`, state);
     }
   }
 };
@@ -75,36 +72,26 @@ const BowOfFireScript: EquipmentScript = {
   afterRangedAttack: async (
     equipment: Equipment,
     target: Coordinates,
-    _: GameState,
-    session: Session
+    state: GameState
   ) => {
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      state.ticker.log(`${targetUnit.getName()} is burned!`, state);
     }
   }
 };
 
 const FireSwordScript: EquipmentScript = {
-  afterAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterAttack: async (equipment: Equipment, target: Coordinates, state: GameState) => {
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      state.ticker.log(`${targetUnit.getName()} is burned!`, state);
     }
   }
 };

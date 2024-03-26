@@ -15,6 +15,8 @@ import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
+import MapInstance from '@main/maps/MapInstance';
+import { Faction } from '@main/units/Faction';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -75,7 +77,7 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _renderTiles = (graphics: Graphics) => {
-    const map = this.session.getMap();
+    const map = this._getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -90,11 +92,15 @@ export default class GameScreenRenderer implements Renderer {
     }
   };
 
+  private _getMap = (): MapInstance => {
+    return this.session.getPlayerUnit().getMap();
+  };
+
   /**
    * Render all entities, one row at a time.
    */
   private _renderEntities = async (graphics: Graphics) => {
-    const map = this.session.getMap();
+    const map = this._getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -144,20 +150,20 @@ export default class GameScreenRenderer implements Renderer {
   };
 
   private _isTileRevealed = (coordinates: Coordinates): boolean => {
-    const map = this.session.getMap();
+    const map = this._getMap();
     return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
-    const { session } = this;
-    const map = session.getMap();
+    const map = this._getMap();
     const unit = map.getUnit(coordinates);
 
     if (unit) {
-      if (unit === session.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, graphics);
-      } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+      switch (unit.getFaction()) {
+        case Faction.PLAYER:
+          return this._drawEllipse(coordinates, Colors.GREEN, graphics);
+        default:
+          return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
       }
     }
 

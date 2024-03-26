@@ -3,7 +3,6 @@ import { Session } from './Session';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
-import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/units/Faction';
@@ -39,7 +38,7 @@ export class Debug {
 
   levelUp = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    _levelUp(playerUnit, this.session);
+    _levelUp(playerUnit, this.state);
   };
 
   awardEquipment = async () => {
@@ -49,14 +48,12 @@ export class Debug {
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    session
-      .getTicker()
-      .log(`Picked up a ${item.name}.`, { turn: this.session.getTurn() });
+    state.ticker.log(`Picked up a ${item.name}.`, state);
     state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {
-    const { session, mapController } = this;
+    const { mapController } = this;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb = window.jwb ?? {};
@@ -64,14 +61,16 @@ export class Debug {
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies: () => this.killEnemies(session.getMap()),
+      killEnemies: this.killEnemies,
       nextLevel: async () => {
         await mapController.loadNextMap();
       }
     };
   };
 
-  private killEnemies = async (map: MapInstance) => {
+  private killEnemies = async () => {
+    const playerUnit = this.session.getPlayerUnit();
+    const map = playerUnit.getMap();
     for (const unit of map.getAllUnits()) {
       if (unit.getFaction() === Faction.ENEMY) {
         map.removeUnit(unit);

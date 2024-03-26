@@ -20,6 +20,7 @@ import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
 import LevelUpScreenRenderer from '@main/graphics/renderers/LevelUpScreenRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -39,6 +40,8 @@ export default class GameRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     gameConfig: GameConfig,
+    @inject(GameState)
+    private readonly state: GameState,
     @inject(Session)
     private readonly session: Session,
     @inject(ImageFactory)
@@ -133,7 +136,7 @@ export default class GameRenderer implements Renderer {
     await this._renderTicker();
 
     if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
-      if (this.session.isTurnInProgress()) {
+      if (this.state.isTurnInProgress()) {
         this._drawTurnProgressIndicator();
       }
     }
@@ -152,8 +155,8 @@ export default class GameRenderer implements Renderer {
   };
 
   private _renderTicker = async () => {
-    const { bufferGraphics: graphics, session } = this;
-    const messages = session.getTicker().getRecentMessages(session.getTurn());
+    const { bufferGraphics: graphics, state } = this;
+    const messages = state.ticker.getRecentMessages(state);
 
     const left = 0;
     const top = 0;
@@ -176,7 +179,7 @@ export default class GameRenderer implements Renderer {
 
   private _drawTurnProgressIndicator = () => {
     const graphics = this.bufferGraphics;
-    if (this.session.isTurnInProgress()) {
+    if (this.state.isTurnInProgress()) {
       const width = 20;
       const height = 20;
       const left = graphics.getWidth() - width;

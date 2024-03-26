@@ -19,9 +19,7 @@ export const equipItem = async (
     unit.learnAbility(equipment.ability);
   }
   equipment.attach(unit);
-  session
-    .getTicker()
-    .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
+  state.ticker.log(`Equipped ${equipment.getName()}.`, state);
   state.getSoundPlayer().playSound(Sounds.BLOCKED);
 };
 
