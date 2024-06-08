@@ -2,7 +2,7 @@
   "$schema": "../../../src/gen-schema/GeneratedMapModel.schema.json",
   "id": "1",
   "levelNumber": 1,
-  "algorithm": "ROOMS_AND_CORRIDORS",
+  "algorithm": "BLOB",
   "tileSet": "dungeon",
   "width": 24,
   "height": 24,
@@ -17,9 +17,6 @@
   "fogOfWar": {
     "enabled": true,
     "radius": 4,
-    "spawnEnemies": true,
-    "spawnedUnitClass": "shade",
-    "spawnRate": 0.06,
-    "maxSpawnedUnits": 6
+    "spawnEnemies": false
   }
 }

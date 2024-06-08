@@ -15,7 +15,7 @@
   },
   "strength": 10,
   "dexterity": 0,
-  "life": 60,
+  "life": 40,
   "mana": 0,
   "aiParameters": {
     "speed": 0.8,
@@ -24,5 +24,5 @@
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK"],
-  "experience":0
+  "experience": 0
 }

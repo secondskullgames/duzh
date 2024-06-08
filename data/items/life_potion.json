@@ -3,7 +3,7 @@
   "id": "life_potion",
   "name": "Life Potion",
   "level": 1,
-  "rarity": 1,
+  "rarity": 3,
   "mapSprite": "map_potion",
   "type": "life_potion",
   "params": {
