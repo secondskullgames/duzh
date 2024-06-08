@@ -2,8 +2,8 @@
   "$schema": "../../src/gen-schema/ConsumableItemModel.schema.json",
   "id": "fireball_scroll",
   "name": "Scroll of Fireball",
-  "level": 2,
-  "rarity": 2,
+  "level": null,
+  "rarity": null,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {

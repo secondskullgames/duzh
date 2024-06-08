@@ -5,9 +5,9 @@
   "type": "GHOST",
   "sprite": "shade",
   "paletteSwaps": {},
-  "life": 6,
+  "life": 5,
   "mana": 0,
-  "strength": 8,
+  "strength": 5,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.8,

@@ -9,9 +9,9 @@
     "DARK_GREEN": "GRAY_128",
     "YELLOW": "RED"
   },
-  "life": 20,
+  "life": 16,
   "mana": 0,
-  "strength": 10,
+  "strength": 8,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.9,

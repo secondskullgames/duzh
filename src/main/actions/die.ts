@@ -1,6 +1,6 @@
 import { gameOver } from './gameOver';
-import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
+import Unit from '@main/units/Unit';
+import Sounds from '@main/sounds/Sounds';
 import { random } from '@lib/utils/random';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
