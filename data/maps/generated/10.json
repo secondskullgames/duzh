@@ -7,12 +7,12 @@
   "width": 38,
   "height": 38,
   "enemies": {
-    "min": 9,
-    "max": 11
+    "min": 13,
+    "max": 14
   },
   "items": {
     "min": 3,
-    "max": 5
+    "max": 3
   },
   "fogOfWar": {
     "enabled": true,
