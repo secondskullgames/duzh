@@ -252,6 +252,7 @@ export default class HUDRenderer implements Renderer {
     } else {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
     }
+    lines.push(`Time: ${this._formatTimestamp(session.getElapsedTimeSeconds())}`);
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
@@ -264,6 +265,13 @@ export default class HUDRenderer implements Renderer {
         graphics
       );
     }
+  };
+
+  private _formatTimestamp = (elapsedTimeSeconds: number): string => {
+    const minutes = Math.round(elapsedTimeSeconds / 60);
+    const seconds = elapsedTimeSeconds % 60;
+    const zeroPad = (val: number) => val.toFixed().padStart(2, '0');
+    return `${zeroPad(minutes)}:${zeroPad(seconds)}`;
   };
 
   private _renderAbility = async (

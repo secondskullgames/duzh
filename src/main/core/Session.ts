@@ -9,6 +9,7 @@ import { injectable } from 'inversify';
 import type { UnitAbility } from '@main/abilities/UnitAbility';
 
 export interface Session {
+  startGame: () => void;
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
@@ -22,8 +23,9 @@ export interface Session {
   setPlayerUnit: (unit: Unit) => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
-  getMapIndex: () => number;
+  getElapsedTimeSeconds: () => number;
 
+  getMapIndex: () => number;
   setMapIndex: (mapIndex: number) => void;
   setMap: (map: MapInstance) => void;
   getMap: () => MapInstance;
@@ -40,6 +42,8 @@ export const Session = Symbol('Session');
 @injectable()
 export class SessionImpl implements Session {
   private readonly ticker: Ticker;
+  /** TODO I don't like this being mutable, can we define session lifecycle more clearly? */
+  private startTime: Date | null = null;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
@@ -63,7 +67,12 @@ export class SessionImpl implements Session {
     this.map = null;
     this.turn = 1;
     this.queuedAbility = null;
+    this.startTime = null;
   }
+
+  startGame = (): void => {
+    this.startTime = new Date();
+  };
 
   getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
   setPlayerUnit = (unit: Unit): void => {
@@ -168,5 +177,11 @@ export class SessionImpl implements Session {
   getQueuedAbility = (): UnitAbility | null => this.queuedAbility;
   setQueuedAbility = (ability: UnitAbility | null) => {
     this.queuedAbility = ability;
+  };
+
+  getElapsedTimeSeconds = (): number => {
+    const startTime = checkNotNull(this.startTime);
+    const milliseconds = new Date().getTime() - startTime.getTime();
+    return milliseconds / 1000;
   };
 }
