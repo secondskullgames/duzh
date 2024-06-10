@@ -3,7 +3,7 @@
   "id": "5",
   "levelNumber": 5,
   "algorithm": "PATH",
-  "tileSet": "dungeon",
+  "tileSet": "dungeon_brown",
   "width": 28,
   "height": 28,
   "enemies": {
