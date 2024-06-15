@@ -5,11 +5,13 @@ import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
+import { Seconds } from '@lib/utils/time';
 import { injectable } from 'inversify';
 import type { UnitAbility } from '@main/abilities/UnitAbility';
 
 export interface Session {
-  startGame: () => void;
+  startGameTimer: () => void;
+  endGameTimer: () => void;
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
@@ -23,7 +25,7 @@ export interface Session {
   setPlayerUnit: (unit: Unit) => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
-  getElapsedTimeSeconds: () => number;
+  getElapsedTime: () => Seconds;
 
   getMapIndex: () => number;
   setMapIndex: (mapIndex: number) => void;
@@ -42,8 +44,8 @@ export const Session = Symbol('Session');
 @injectable()
 export class SessionImpl implements Session {
   private readonly ticker: Ticker;
-  /** TODO I don't like this being mutable, can we define session lifecycle more clearly? */
-  private startTime: Date | null = null;
+  private startTime: Date | null;
+  private endTime: Date | null;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
@@ -68,10 +70,15 @@ export class SessionImpl implements Session {
     this.turn = 1;
     this.queuedAbility = null;
     this.startTime = null;
+    this.endTime = null;
   }
 
-  startGame = (): void => {
+  startGameTimer = (): void => {
     this.startTime = new Date();
+  };
+
+  endGameTimer = (): void => {
+    this.endTime = new Date();
   };
 
   getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
@@ -179,9 +186,10 @@ export class SessionImpl implements Session {
     this.queuedAbility = ability;
   };
 
-  getElapsedTimeSeconds = (): number => {
+  getElapsedTime = (): number => {
     const startTime = checkNotNull(this.startTime);
-    const milliseconds = new Date().getTime() - startTime.getTime();
+    const endTime = this.endTime ?? new Date();
+    const milliseconds = endTime.getTime() - startTime.getTime();
     return milliseconds / 1000;
   };
 }

@@ -20,6 +20,7 @@ import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
 import LevelUpScreenRenderer from '@main/graphics/renderers/LevelUpScreenRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
+import { formatTimestamp } from '@lib/utils/time';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -79,9 +80,20 @@ export default class GameRenderer implements Renderer {
     const screen = session.getScreen();
 
     switch (screen) {
-      case GameScreen.TITLE:
-        await this._renderSplashScreen(TITLE_FILENAME, 'PRESS ENTER TO BEGIN');
+      case GameScreen.TITLE: {
+        await this._renderSplashScreen(TITLE_FILENAME);
+        const halfSeconds = Math.floor(new Date().getTime() / 500);
+        if (halfSeconds % 2 === 0) {
+          await this._drawText(
+            'PRESS ENTER TO BEGIN',
+            FontName.APPLE_II,
+            { x: 320, y: 300 },
+            Colors.WHITE,
+            Alignment.CENTER
+          );
+        }
         break;
+      }
       case GameScreen.GAME:
         await this._renderGameScreen();
         break;
@@ -91,11 +103,36 @@ export default class GameRenderer implements Renderer {
       case GameScreen.CHARACTER:
         await this._renderCharacterScreen();
         break;
-      case GameScreen.VICTORY:
-        await this._renderSplashScreen(VICTORY_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+      case GameScreen.VICTORY: {
+        await this._renderSplashScreen(VICTORY_FILENAME);
+        const lines = [
+          'YOU WIN!',
+          ' ', // TODO
+          `Finished in ${formatTimestamp(session.getElapsedTime())}`,
+          'PRESS ENTER TO PLAY AGAIN'
+        ];
+        let y = 100;
+        for (const line of lines) {
+          await this._drawText(
+            line,
+            FontName.APPLE_II,
+            { x: 320, y },
+            Colors.WHITE,
+            Alignment.CENTER
+          );
+          y += 20;
+        }
         break;
+      }
       case GameScreen.GAME_OVER:
-        await this._renderSplashScreen(GAME_OVER_FILENAME, 'PRESS ENTER TO PLAY AGAIN');
+        await this._renderSplashScreen(GAME_OVER_FILENAME);
+        await this._drawText(
+          'PRESS ENTER TO PLAY AGAIN',
+          FontName.APPLE_II,
+          { x: 320, y: 300 },
+          Colors.WHITE,
+          Alignment.CENTER
+        );
         break;
       case GameScreen.MAP:
         await this._renderMapScreen();
@@ -186,7 +223,7 @@ export default class GameRenderer implements Renderer {
     }
   };
 
-  private _renderSplashScreen = async (filename: string, text: string) => {
+  private _renderSplashScreen = async (filename: string) => {
     const image = await this.imageFactory.getImage({ filename });
     this.bufferGraphics.drawScaledImage(image, {
       left: 0,
@@ -194,13 +231,6 @@ export default class GameRenderer implements Renderer {
       width: this.bufferGraphics.getWidth(),
       height: this.bufferGraphics.getHeight()
     });
-    await this._drawText(
-      text,
-      FontName.APPLE_II,
-      { x: 320, y: 300 },
-      Colors.WHITE,
-      Alignment.CENTER
-    );
   };
 
   private _renderHelpScreen = async () => {

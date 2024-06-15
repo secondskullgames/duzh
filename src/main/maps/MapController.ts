@@ -61,6 +61,7 @@ export class MapControllerImpl implements MapController {
     musicController.stop();
     const nextMapIndex = session.getMapIndex() + 1;
     if (!this._hasMap(nextMapIndex)) {
+      session.endGameTimer();
       session.setScreen(GameScreen.VICTORY);
     } else {
       session.setMapIndex(nextMapIndex);
