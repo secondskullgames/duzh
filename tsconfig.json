@@ -16,6 +16,7 @@
     "moduleResolution": "bundler",
     "outDir": "./build",
     "resolveJsonModule": true,
+    "esModuleInterop": true,
     "sourceMap": true,
     "strict": true,
     "plugins": [],
