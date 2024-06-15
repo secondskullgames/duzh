@@ -21,7 +21,6 @@ import {
 import { GameState } from '@main/core/GameState';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
-import { checkState } from '@lib/utils/preconditions';
 import UnitFactory from '@main/units/UnitFactory';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Faction } from '@main/units/Faction';
