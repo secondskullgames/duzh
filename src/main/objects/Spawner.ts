@@ -18,6 +18,7 @@ export namespace SpawnerState {
 type SpawnFunction = (coordinates: Coordinates) => Promise<Unit>;
 
 type Props = Readonly<{
+  name: string;
   spawnFunction: SpawnFunction;
   sprite: Sprite;
   coordinates: Coordinates;
@@ -37,6 +38,7 @@ export default class Spawner extends GameObject {
   private readonly _isBlocking: boolean;
 
   constructor({
+    name,
     spawnFunction,
     coordinates,
     map,
@@ -46,6 +48,7 @@ export default class Spawner extends GameObject {
     isBlocking
   }: Props) {
     super({
+      name,
       coordinates,
       map,
       objectType: ObjectType.SPAWNER,

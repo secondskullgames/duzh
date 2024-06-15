@@ -15,6 +15,7 @@ export enum ObjectType {
 }
 
 type Props = Readonly<{
+  name: string;
   coordinates: Coordinates;
   map: MapInstance;
   objectType: ObjectType;
@@ -24,15 +25,20 @@ type Props = Readonly<{
 export default abstract class GameObject implements Entity {
   private coordinates: Coordinates;
   private map: MapInstance;
+  private readonly name: string;
   private readonly objectType: ObjectType;
   private readonly sprite: Sprite | null;
 
-  protected constructor({ coordinates, map, objectType, sprite }: Props) {
+  protected constructor({ name, coordinates, map, objectType, sprite }: Props) {
+    this.name = name;
     this.coordinates = coordinates;
     this.map = map;
     this.objectType = objectType;
     this.sprite = sprite;
   }
+
+  /** @override */
+  getName = (): string => this.name;
 
   /** @override */
   getCoordinates = (): Coordinates => this.coordinates;

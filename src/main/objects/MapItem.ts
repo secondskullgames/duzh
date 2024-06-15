@@ -5,6 +5,7 @@ import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
 type Props = Readonly<{
+  name: string;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: Sprite;
@@ -14,8 +15,9 @@ type Props = Readonly<{
 export default class MapItem extends GameObject {
   readonly inventoryItem: InventoryItem;
 
-  constructor({ coordinates, map, sprite, inventoryItem }: Props) {
+  constructor({ name, coordinates, map, sprite, inventoryItem }: Props) {
     super({
+      name,
       coordinates,
       map,
       objectType: ObjectType.ITEM,

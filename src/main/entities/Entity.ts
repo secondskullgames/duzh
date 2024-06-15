@@ -10,6 +10,8 @@ import { Session } from '@main/core/Session';
  * It's typically renderable and must occupy a grid tile.
  */
 export default interface Entity {
+  /** TODO not really needed for all entity types */
+  getName: () => string;
   getCoordinates: () => Coordinates;
   setCoordinates: (coordinates: Coordinates) => void;
   getMap: () => MapInstance;

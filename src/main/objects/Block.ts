@@ -4,6 +4,7 @@ import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
 type Props = Readonly<{
+  name: string;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: Sprite;
@@ -13,8 +14,9 @@ type Props = Readonly<{
 export default class Block extends GameObject {
   private readonly movable: boolean;
 
-  constructor({ coordinates, map, sprite, movable }: Props) {
+  constructor({ name, coordinates, map, sprite, movable }: Props) {
     super({
+      name,
       coordinates,
       map,
       objectType: ObjectType.BLOCK,

@@ -7,6 +7,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 
 type Props = Readonly<{
+  name: string;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: Sprite;
@@ -16,8 +17,9 @@ type Props = Readonly<{
 export default class Bonus extends GameObject {
   readonly onUse: (unit: Unit, state: GameState, session: Session) => Promise<void>;
 
-  constructor({ coordinates, map, sprite, onUse }: Props) {
+  constructor({ name, coordinates, map, sprite, onUse }: Props) {
     super({
+      name,
       coordinates,
       objectType: ObjectType.BONUS,
       sprite,

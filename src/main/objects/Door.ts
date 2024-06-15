@@ -14,6 +14,7 @@ export namespace DoorState {
 }
 
 type Props = Readonly<{
+  name: string;
   direction: DoorDirection;
   state: DoorState;
   coordinates: Coordinates;
@@ -25,8 +26,9 @@ export default class Door extends GameObject {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
 
-  constructor({ direction, state, coordinates, map, sprite }: Props) {
+  constructor({ name, direction, state, coordinates, map, sprite }: Props) {
     super({
+      name,
       coordinates,
       map,
       objectType: ObjectType.DOOR,

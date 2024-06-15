@@ -21,6 +21,7 @@ export default class ProjectileFactory {
       PaletteSwaps.empty()
     );
     return new Projectile({
+      name: 'Arrow',
       coordinates,
       map,
       direction,
@@ -39,6 +40,7 @@ export default class ProjectileFactory {
       PaletteSwaps.empty()
     );
     return new Projectile({
+      name: 'Bolt',
       coordinates,
       map,
       direction,
@@ -53,6 +55,7 @@ export default class ProjectileFactory {
   ): Promise<Projectile> => {
     const sprite = await this.spriteFactory.createStaticSprite('fireball');
     return new Projectile({
+      name: 'Fireball',
       coordinates,
       map,
       direction,
