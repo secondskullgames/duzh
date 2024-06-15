@@ -25,7 +25,7 @@ import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
 const TITLE_FILENAME = 'title2';
-const VICTORY_FILENAME = 'victory';
+const VICTORY_FILENAME = 'victory2';
 
 @injectable()
 export default class GameRenderer implements Renderer {
@@ -106,12 +106,10 @@ export default class GameRenderer implements Renderer {
       case GameScreen.VICTORY: {
         await this._renderSplashScreen(VICTORY_FILENAME);
         const lines = [
-          'YOU WIN!',
-          ' ', // TODO
           `Finished in ${formatTimestamp(session.getElapsedTime())}`,
           'PRESS ENTER TO PLAY AGAIN'
         ];
-        let y = 100;
+        let y = 300;
         for (const line of lines) {
           await this._drawText(
             line,
