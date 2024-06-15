@@ -30,7 +30,7 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
           } else {
             await mapController.loadFirstMap();
           }
-          session.startGame();
+          session.startGameTimer();
           session.setScreen(GameScreen.GAME);
         }
         break;

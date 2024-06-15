@@ -6,7 +6,7 @@ import BlobMapGenerator from './BlobMapGenerator';
 import PathMapGenerator from './PathMapGenerator';
 import { getUnoccupiedLocations } from './MapGenerationUtils';
 import MapInstance from '../MapInstance';
-import ItemFactory from '../../items/ItemFactory';
+import ItemFactory, { ItemSpec, ItemType } from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../objects/GameObject';
 import { UnitModel } from '@models/UnitModel';
@@ -21,7 +21,6 @@ import {
 import { GameState } from '@main/core/GameState';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
-import { checkState } from '@lib/utils/preconditions';
 import UnitFactory from '@main/units/UnitFactory';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Faction } from '@main/units/Faction';
@@ -30,16 +29,6 @@ import { isOccupied } from '@main/maps/MapUtils';
 import { TileType } from '@models/TileType';
 import MapItem from '@main/objects/MapItem';
 import { inject, injectable } from 'inversify';
-
-enum ItemType {
-  EQUIPMENT = 'equipment',
-  CONSUMABLE = 'consumable'
-}
-
-type ItemSpec = Readonly<{
-  type: ItemType;
-  id: string;
-}>;
 
 const algorithms: Algorithm[] = [
   Algorithm.ROOMS_AND_CORRIDORS,
@@ -184,8 +173,6 @@ export class GeneratedMapFactory {
       []
     ).filter(coordinates => !isOccupied(map, coordinates));
 
-    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
 
     const itemSpecs: ItemSpec[] = [];
@@ -205,61 +192,15 @@ export class GeneratedMapFactory {
           this.state.recordEquipmentGenerated('bronze_sword');
           continue;
         }
-      }
-      const possibleEquipmentModels = allEquipmentModels
-        .filter(equipmentModel => {
-          if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-            return !this.state.getGeneratedEquipmentIds().includes(equipmentModel.id);
-          }
-          return true;
-        })
-        .filter(
-          equipmentModel =>
-            equipmentModel.level && equipmentModel.level <= mapModel.levelNumber
+      } else {
+        const chosenItemSpec = await this.itemFactory.chooseRandomMapItemForLevel(
+          mapModel.levelNumber,
+          this.state
         );
-
-      const possibleItemModels = allConsumableModels.filter(
-        itemModel => itemModel.level && itemModel.level <= mapModel.levelNumber
-      );
-
-      const possibleItemSpecs: ItemSpec[] = [
-        ...possibleEquipmentModels.map(model => ({
-          type: ItemType.EQUIPMENT,
-          id: model.id
-        })),
-        ...possibleItemModels.map(model => ({
-          type: ItemType.CONSUMABLE,
-          id: model.id
-        }))
-      ];
-
-      checkState(possibleItemSpecs.length > 0);
-
-      // weighted random
-      const choices: WeightedRandomChoice<ItemSpec>[] = [];
-
-      for (const itemSpec of possibleItemSpecs) {
-        const key = `${itemSpec.type}_${itemSpec.id}`;
-        const model = (() => {
-          switch (itemSpec.type) {
-            case ItemType.EQUIPMENT:
-              return possibleEquipmentModels.find(
-                equipmentModel => equipmentModel.id === itemSpec.id
-              );
-            case ItemType.CONSUMABLE:
-              return possibleItemModels.find(itemClass => itemClass.id === itemSpec.id);
-          }
-        })();
-
-        // Each rarity is 2x less common than the previous rarity.
-        // So P[rarity] = 2 ^ -rarity
-        const weight = 0.5 ** (model?.rarity ?? 0);
-        choices.push({ weight, key, value: itemSpec });
-      }
-      const chosenItemSpec = weightedRandom(choices);
-      itemSpecs.push(chosenItemSpec);
-      if (chosenItemSpec.type === ItemType.EQUIPMENT) {
-        this.state.recordEquipmentGenerated(chosenItemSpec.id);
+        itemSpecs.push(chosenItemSpec);
+        if (chosenItemSpec.type === ItemType.EQUIPMENT) {
+          this.state.recordEquipmentGenerated(chosenItemSpec.id);
+        }
       }
       itemsRemaining--;
     }

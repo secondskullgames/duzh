@@ -16,8 +16,6 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { inject, injectable } from 'inversify';
 
-export type SpawnerClass = 'mirror';
-
 @injectable()
 export default class ObjectFactory {
   constructor(
@@ -41,6 +39,7 @@ export default class ObjectFactory {
         faction: Faction.ENEMY
       });
     const spawner = new Spawner({
+      name: 'Mirror',
       spawnFunction,
       sprite,
       maxUnits: 10,
@@ -53,19 +52,6 @@ export default class ObjectFactory {
     return spawner;
   };
 
-  createSpawner = async (
-    coordinates: Coordinates,
-    map: MapInstance,
-    type: SpawnerClass
-  ): Promise<Spawner> => {
-    switch (type) {
-      case 'mirror':
-        return this.createMirror(coordinates, map);
-      default:
-        throw new Error(`Unknown spawner type: ${type}`);
-    }
-  };
-
   createMovableBlock = async (
     coordinates: Coordinates,
     map: MapInstance
@@ -73,6 +59,7 @@ export default class ObjectFactory {
     const sprite = await this.spriteFactory.createStaticSprite('block');
 
     return new Block({
+      name: 'Movable Block',
       coordinates,
       map,
       sprite,
@@ -87,6 +74,7 @@ export default class ObjectFactory {
     const sprite = await this.spriteFactory.createStaticSprite('vines');
 
     return new Block({
+      name: 'Vines',
       coordinates,
       map,
       sprite,
@@ -120,6 +108,7 @@ export default class ObjectFactory {
     };
 
     return new Bonus({
+      name: 'Health Globe',
       coordinates,
       map,
       sprite,
@@ -159,6 +148,55 @@ export default class ObjectFactory {
     };
 
     return new Bonus({
+      name: 'Mana Globe',
+      coordinates,
+      map,
+      sprite,
+      onUse
+    });
+  };
+
+  createVisionGlobe = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<GameObject> => {
+    // TODO same colors as mana globe
+    const sprite = await this.spriteFactory.createStaticSprite(
+      'map_health_globe',
+      loadPaletteSwaps({
+        DARK_RED: 'DARK_BLUE',
+        RED: 'BLUE'
+      })
+    );
+
+    const radius = 7;
+
+    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+      if (unit === session.getPlayerUnit()) {
+        const playerX = unit.getCoordinates().x;
+        const playerY = unit.getCoordinates().y;
+
+        // TODO circle?
+        for (let y = playerY - radius; y <= playerY + radius; y++) {
+          for (let x = playerX - radius; x <= playerX + radius; x++) {
+            if (map.contains({ x, y })) {
+              map.revealTile({ x, y });
+            }
+          }
+        }
+        state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
+        session
+          .getTicker()
+          .log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
+            turn: session.getTurn()
+          });
+        const _this = getBonus(map, unit.getCoordinates())!;
+        map.removeObject(_this);
+      }
+    };
+
+    return new Bonus({
+      name: 'Vision Globe',
       coordinates,
       map,
       sprite,

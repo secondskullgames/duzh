@@ -25,6 +25,12 @@ export default class Tile implements Entity {
     this.sprite = sprite;
   }
 
+  /**
+   * @override
+   * TODO this is pretty useless
+   */
+  getName = (): string => this.tileType;
+
   /** @override */
   getCoordinates = (): Coordinates => this.coordinates;
   /** @override {@link Entity#setCoordinates} */

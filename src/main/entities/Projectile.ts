@@ -6,6 +6,7 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
 type Props = Readonly<{
+  name: string;
   coordinates: Coordinates;
   map: MapInstance;
   direction: Direction;
@@ -13,17 +14,22 @@ type Props = Readonly<{
 }>;
 
 export default class Projectile implements Entity {
+  private readonly name: string;
   private coordinates: Coordinates;
   private map: MapInstance;
   private readonly direction: Direction;
   private readonly sprite: Sprite;
 
-  constructor({ coordinates, map, direction, sprite }: Props) {
+  constructor({ name, coordinates, map, direction, sprite }: Props) {
+    this.name = name;
     this.coordinates = coordinates;
     this.map = map;
     this.direction = direction;
     this.sprite = sprite;
   }
+
+  /** @override */
+  getName = (): string => this.name;
 
   /** @override {@link Entity#getCoordinates} */
   getCoordinates = (): Coordinates => this.coordinates;

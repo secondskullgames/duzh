@@ -195,6 +195,7 @@ export class PredefinedMapFactory {
           const sprite = await this.spriteFactory.createDoorSprite();
 
           const door = new Door({
+            name: 'Door',
             direction: doorDirection,
             state: DoorState.CLOSED,
             coordinates: { x, y },
