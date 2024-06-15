@@ -105,8 +105,10 @@ export default class GameRenderer implements Renderer {
         break;
       case GameScreen.VICTORY: {
         await this._renderSplashScreen(VICTORY_FILENAME);
+        const elapsedTurns = session.getTurn();
+        const elapsedTime = formatTimestamp(session.getElapsedTime());
         const lines = [
-          `Finished in ${formatTimestamp(session.getElapsedTime())}`,
+          `Finished in ${elapsedTurns} turns (${elapsedTime})`,
           'PRESS ENTER TO PLAY AGAIN'
         ];
         let y = 300;
