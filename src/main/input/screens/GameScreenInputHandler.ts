@@ -8,7 +8,7 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { GameScreen } from '@main/core/GameScreen';
-import { getItem } from '@main/maps/MapUtils';
+import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
@@ -150,7 +150,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
+    const oneNorth = { x: coordinates.x, y: coordinates.y - 1 };
     const item = getItem(map, coordinates);
+    const shrine = map.contains(oneNorth) ? getShrine(map, oneNorth) : null;
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
@@ -160,6 +162,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
+    } else if (shrine) {
+      shrine.use(state, session);
     }
     await engine.playTurn();
   };

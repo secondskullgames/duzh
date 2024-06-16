@@ -213,6 +213,9 @@ export class PredefinedMapFactory {
           } else if (objectName === 'vines') {
             const vines = await this.objectFactory.createVines({ x, y }, map);
             objects.push(vines);
+          } else if (objectName === 'shrine') {
+            const shrine = await this.objectFactory.createShrine({ x, y }, map);
+            objects.push(shrine);
           } else if (objectName) {
             throw new Error(`Unrecognized object name: ${objectName}`);
           }

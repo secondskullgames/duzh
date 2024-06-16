@@ -37,6 +37,9 @@ export default abstract class DynamicSprite<T> implements Sprite {
    */
   getOffsets = (): Offsets => this.offsets;
 
+  /**
+   * This is expected to be called in the target's constructor
+   */
   bind = (target: T) => {
     this.target = target;
   };

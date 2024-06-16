@@ -25,7 +25,7 @@ export default class Block extends GameObject {
     this.movable = movable;
   }
 
-  /** @override {@link Entity#update} */
+  /** @override {@link Entity#playTurnAction} */
   playTurnAction = async () => {};
 
   /** @override {@link Entity#isBlocking} */

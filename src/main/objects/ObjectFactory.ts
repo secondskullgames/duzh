@@ -14,6 +14,7 @@ import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import Shrine from '@main/objects/Shrine';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -197,6 +198,24 @@ export default class ObjectFactory {
 
     return new Bonus({
       name: 'Vision Globe',
+      coordinates,
+      map,
+      sprite,
+      onUse
+    });
+  };
+
+  createShrine = async (
+    coordinates: Coordinates,
+    map: MapInstance
+  ): Promise<GameObject> => {
+    const sprite = await this.spriteFactory.createShrineSprite();
+    const onUse = (state: GameState, session: Session) => {
+      session.getTicker().log('Shrine testing', { turn: session.getTurn() });
+    };
+
+    return new Shrine({
+      name: 'Shrine',
       coordinates,
       map,
       sprite,

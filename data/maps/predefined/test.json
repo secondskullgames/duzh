@@ -10,14 +10,14 @@
     "DARK_GRAY": "WALL"
   },
   "defaultTile": "FLOOR",
-  "enemyColors": {
-    "GREEN": "green_blob"
-  },
+  "enemyColors": {},
   "itemColors": {},
   "equipmentColors": {
     "RED": "wand_of_fire"
   },
-  "objectColors": {},
+  "objectColors": {
+    "GREEN": "shrine"
+  },
   "startingPointColor": "RED",
   "fogOfWar": {
     "enabled": false
