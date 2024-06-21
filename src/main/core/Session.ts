@@ -6,6 +6,8 @@ import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
+import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
+import { randChoiceOrNull } from '@lib/utils/random';
 import { injectable } from 'inversify';
 import type { UnitAbility } from '@main/abilities/UnitAbility';
 
@@ -17,6 +19,10 @@ export interface Session {
   showPrevScreen: () => void;
   initLevelUpScreen: (playerUnit: Unit) => void;
   getLevelUpScreen: () => LevelUpScreenState;
+  initShrineMenu: () => void;
+  getShrineMenuState: () => ShrineMenuState;
+  isShowingShrineMenu: () => boolean;
+  closeShrineMenu: () => void;
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
   getTicker: () => Ticker;
@@ -50,6 +56,7 @@ export class SessionImpl implements Session {
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
   private inventoryState: InventoryState | null;
+  private shrineMenuState: ShrineMenuState | null;
   private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
   private mapIndex: number;
@@ -63,6 +70,7 @@ export class SessionImpl implements Session {
     this.prevScreen = null;
     this.levelUpScreen = null;
     this.inventoryState = null;
+    this.shrineMenuState = null;
     this._isTurnInProgress = false;
     this.playerUnit = null;
     this.mapIndex = -1;
@@ -141,6 +149,26 @@ export class SessionImpl implements Session {
   };
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
+
+  initShrineMenu = () => {
+    const options = [];
+    const playerUnit = checkNotNull(this.playerUnit);
+    const ability = randChoiceOrNull(playerUnit.getCurrentlyLearnableAbilities());
+    if (ability) {
+      options.push({ label: ability }); // TODO localize
+    }
+    this.shrineMenuState = new ShrineMenuState({
+      options
+    });
+  };
+
+  getShrineMenuState = (): ShrineMenuState => checkNotNull(this.shrineMenuState);
+
+  isShowingShrineMenu = (): boolean => this.shrineMenuState !== null;
+  closeShrineMenu = (): void => {
+    this.shrineMenuState = null;
+  };
+
   getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {
