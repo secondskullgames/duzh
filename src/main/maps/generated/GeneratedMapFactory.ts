@@ -170,11 +170,7 @@ export class GeneratedMapFactory {
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
-    const candidateLocations = getUnoccupiedLocations(
-      map.getTiles(),
-      [TileType.FLOOR],
-      []
-    ).filter(coordinates => !isOccupied(map, coordinates));
+    const candidateLocations = this._getCandidateObjectLocations(map);
 
     let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
 
@@ -225,6 +221,29 @@ export class GeneratedMapFactory {
     }
 
     return objects;
+  };
+
+  private _getCandidateObjectLocations = (map: MapInstance): Coordinates[] => {
+    return getUnoccupiedLocations(map.getTiles(), [TileType.FLOOR], [])
+      .filter(coordinates => !isOccupied(map, coordinates))
+      .filter(coordinates => {
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const adjacentCoordinates = Coordinates.plus(coordinates, { dx, dy });
+            if (!map.contains(adjacentCoordinates)) {
+              return false;
+            }
+            const tile = map.getTile(adjacentCoordinates);
+            if (tile.isBlocking()) {
+              return false;
+            }
+            if (isOccupied(map, adjacentCoordinates)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      });
   };
 
   private _generateMapItem = async (
