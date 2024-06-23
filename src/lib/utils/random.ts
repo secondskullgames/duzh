@@ -13,6 +13,9 @@ export const randChance = (chance: number) => Math.random() <= chance;
 export const randChoice = <T>(list: T[]): T =>
   checkNotNull(list[randInt(0, list.length - 1)]);
 
+export const randChoiceOrNull = <T>(list: T[]): T | null =>
+  list[randInt(0, list.length - 1)] ?? null;
+
 /**
  * Fisher-Yates.  Stolen from https://bost.ocks.org/mike/shuffle/
  */

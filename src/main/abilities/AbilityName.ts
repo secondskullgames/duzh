@@ -47,4 +47,15 @@ export namespace AbilityName {
     AbilityName.SUMMON,
     AbilityName.TELEPORT
   ];
+
+  /** @return a human-readable version of the ability name.
+   * For example, HEAVY_ATTACK -> "Heavy Attack"
+   */
+  export const localize = (name: AbilityName): string => {
+    const words = name.toLowerCase().split('_');
+    const capitalizedWords = words.map(word => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    });
+    return capitalizedWords.join(' ');
+  };
 }

@@ -7,6 +7,7 @@ import Bonus from '../objects/Bonus';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { ObjectType } from '@main/objects/GameObject';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
+import Shrine from '@main/objects/Shrine';
 
 export const getSpawner = (
   map: MapInstance,
@@ -48,6 +49,15 @@ export const getMovableBlock = (
       .filter(object => object.getObjectType() === ObjectType.BLOCK)
       .map(object => object as Block)
       .find(block => block.isMovable()) ?? null
+  );
+};
+
+export const getShrine = (map: MapInstance, coordinates: Coordinates): Shrine | null => {
+  return (
+    map
+      .getObjects(coordinates)
+      .filter(object => object.getObjectType() === ObjectType.SHRINE)
+      .map(object => object as Shrine)[0] ?? null
   );
 };
 

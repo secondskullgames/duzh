@@ -96,7 +96,11 @@ export default class HUDRenderer implements Renderer {
     } else {
       lines.push(playerUnit.getName());
     }
-    lines.push(`Level ${playerUnit.getLevel()}`);
+    if (Feature.isEnabled(Feature.SHRINES)) {
+      lines.push(' ');
+    } else {
+      lines.push(`Level ${playerUnit.getLevel()}`);
+    }
 
     if (Feature.isEnabled(Feature.HUD_BARS)) {
       lines.push(`      ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);
@@ -247,11 +251,15 @@ export default class HUDRenderer implements Renderer {
 
     const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
 
-    const killsToNextLevel = playerUnit.getKillsToNextLevel();
-    if (killsToNextLevel !== null) {
-      lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);
-    } else {
+    if (Feature.isEnabled(Feature.SHRINES)) {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
+    } else {
+      const killsToNextLevel = playerUnit.getKillsToNextLevel();
+      if (killsToNextLevel !== null) {
+        lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);
+      } else {
+        lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
+      }
     }
     lines.push(`Time: ${formatTimestamp(session.getElapsedTime())}`);
 

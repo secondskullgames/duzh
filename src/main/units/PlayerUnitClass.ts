@@ -2,6 +2,7 @@ import Unit from './Unit';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Key, NumberKey } from '@lib/input/inputTypes';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -32,7 +33,7 @@ const learnableAbilities = [
   AbilityName.BLINK,
   AbilityName.CLEAVE,
   AbilityName.DASH_ATTACK,
-  AbilityName.SHOOT_FIREBALL,
+  //AbilityName.SHOOT_FIREBALL,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.PIERCE,
@@ -101,6 +102,9 @@ class DefaultClass implements PlayerUnitClass {
     }
   };
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
+    if (Feature.isEnabled(Feature.SHRINES)) {
+      return null;
+    }
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };
 }

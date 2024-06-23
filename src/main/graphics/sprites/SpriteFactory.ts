@@ -21,6 +21,8 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { ImageEffects } from '@main/graphics/ImageEffects';
 import { DoorDirection } from '@models/DoorDirection';
 import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
+import Shrine from '@main/objects/Shrine';
+import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -182,6 +184,25 @@ export default class SpriteFactory {
 
     const offsets = { dx: -4, dy: -20 };
     return new SpawnerSprite({ spriteName: 'mirror', offsets, imageMap });
+  };
+
+  createShrineSprite = async (): Promise<DynamicSprite<Shrine>> => {
+    const imageMap: Record<string, Image> = {};
+    const image = await this.imageFactory.getImage({
+      filename: 'shrine',
+      transparentColor: Colors.WHITE
+    });
+    imageMap['shrine'] = image;
+    const depletedImage = await this.imageFactory.getImage({
+      filename: 'shrine',
+      transparentColor: Colors.WHITE,
+      paletteSwaps: PaletteSwaps.builder()
+        .addMapping(Colors.RED, Colors.GRAY_192)
+        .addMapping(Colors.DARK_RED, Colors.GRAY_128)
+        .build()
+    });
+    imageMap['shrine_depleted'] = depletedImage;
+    return new ShrineSprite({ imageMap });
   };
 
   private _loadAnimations = async (

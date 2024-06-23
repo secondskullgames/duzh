@@ -4,6 +4,7 @@ import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -32,13 +33,19 @@ export default class HelpScreenInputHandler implements ScreenInputHandler {
         levelUpState.selectNextAbility(playerUnit);
         break;
       case 'ENTER': {
-        const selectedAbility = levelUpState.getSelectedAbility();
-        if (playerUnit.getAbilityPoints() > 0 && selectedAbility) {
+        const selectedAbilityName = levelUpState.getSelectedAbility();
+        if (playerUnit.getAbilityPoints() > 0 && selectedAbilityName) {
           levelUpState.selectNextAbility(playerUnit);
-          playerUnit.learnAbility(UnitAbility.abilityForName(selectedAbility));
+          // TODO - centralize this logic, it's copy-pasted
+          playerUnit.learnAbility(UnitAbility.abilityForName(selectedAbilityName));
           if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
             playerUnit.spendAbilityPoint();
           }
+          session
+            .getTicker()
+            .log(`Learned ${AbilityName.localize(selectedAbilityName)}.`, {
+              turn: session.getTurn()
+            });
         }
       }
     }

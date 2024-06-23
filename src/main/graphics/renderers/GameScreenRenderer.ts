@@ -15,6 +15,7 @@ import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
+import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -28,6 +29,8 @@ export default class GameScreenRenderer implements Renderer {
     private readonly session: Session,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
+    @inject(ShrineMenuRenderer)
+    private readonly shrineMenuRenderer: ShrineMenuRenderer,
     @inject(Debug)
     private readonly debug: Debug
   ) {}
@@ -37,6 +40,11 @@ export default class GameScreenRenderer implements Renderer {
 
     this._renderTiles(graphics);
     await this._renderEntities(graphics);
+
+    // TODO: consider a generic menu system
+    if (this.session.isShowingShrineMenu()) {
+      this._renderShrineMenu(graphics);
+    }
   };
 
   private _renderElement = (
@@ -189,4 +197,8 @@ export default class GameScreenRenderer implements Renderer {
     x <= this.gameConfig.screenWidth + TILE_WIDTH &&
     y >= -TILE_HEIGHT &&
     y <= this.gameConfig.screenHeight + TILE_HEIGHT;
+
+  private _renderShrineMenu = (graphics: Graphics) => {
+    this.shrineMenuRenderer.render(graphics);
+  };
 }

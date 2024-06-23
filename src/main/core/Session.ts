@@ -6,8 +6,14 @@ import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
+import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
+import { AbilityName } from '@main/abilities/AbilityName';
+import { GameState } from '@main/core/GameState';
+import Sounds from '@main/sounds/Sounds';
+import { randChoice, randInt, sample } from '@lib/utils/random';
 import { injectable } from 'inversify';
-import type { UnitAbility } from '@main/abilities/UnitAbility';
 
 export interface Session {
   startGameTimer: () => void;
@@ -17,6 +23,10 @@ export interface Session {
   showPrevScreen: () => void;
   initLevelUpScreen: (playerUnit: Unit) => void;
   getLevelUpScreen: () => LevelUpScreenState;
+  initShrineMenu: () => void;
+  getShrineMenuState: () => ShrineMenuState;
+  isShowingShrineMenu: () => boolean;
+  closeShrineMenu: () => void;
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
   getTicker: () => Ticker;
@@ -50,6 +60,7 @@ export class SessionImpl implements Session {
   private prevScreen: GameScreen | null;
   private levelUpScreen: LevelUpScreenState | null;
   private inventoryState: InventoryState | null;
+  private shrineMenuState: ShrineMenuState | null;
   private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
   private mapIndex: number;
@@ -63,6 +74,7 @@ export class SessionImpl implements Session {
     this.prevScreen = null;
     this.levelUpScreen = null;
     this.inventoryState = null;
+    this.shrineMenuState = null;
     this._isTurnInProgress = false;
     this.playerUnit = null;
     this.mapIndex = -1;
@@ -141,6 +153,70 @@ export class SessionImpl implements Session {
   };
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
+
+  /** TODO put the logic somewhere else */
+  initShrineMenu = () => {
+    const options = [];
+    const playerUnit = checkNotNull(this.playerUnit);
+    const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
+    const numAbilities = randInt(1, Math.min(learnableAbilityNames.length, 2));
+    const selectedAbilityNames = sample(learnableAbilityNames, numAbilities);
+
+    for (const abilityName of selectedAbilityNames) {
+      const onUse = async (state: GameState) => {
+        // TODO - centralize this logic, it's copy-pasted
+        playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
+        if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+          playerUnit.spendAbilityPoint();
+        }
+        this.getTicker().log(`Learned ${AbilityName.localize(abilityName)}.`, {
+          turn: this.getTurn()
+        });
+        // TODO
+        state.getSoundPlayer().playSound(Sounds.USE_POTION);
+      };
+      options.push({
+        label: AbilityName.localize(abilityName),
+        onUse
+      });
+    }
+
+    const possibleStatOptions = [
+      {
+        label: '+5 Mana',
+        onUse: async (state: GameState) => {
+          playerUnit.increaseMaxMana(5);
+          // TODO
+          state.getSoundPlayer().playSound(Sounds.USE_POTION);
+        }
+      },
+      {
+        label: '+10 Life',
+        onUse: async (state: GameState) => {
+          playerUnit.increaseMaxLife(10);
+          // TODO
+          state.getSoundPlayer().playSound(Sounds.USE_POTION);
+        }
+      }
+    ];
+    if (numAbilities === 2) {
+      options.push(randChoice(possibleStatOptions));
+    } else {
+      options.push(...possibleStatOptions);
+    }
+
+    this.shrineMenuState = new ShrineMenuState({
+      options
+    });
+  };
+
+  getShrineMenuState = (): ShrineMenuState => checkNotNull(this.shrineMenuState);
+
+  isShowingShrineMenu = (): boolean => this.shrineMenuState !== null;
+  closeShrineMenu = (): void => {
+    this.shrineMenuState = null;
+  };
+
   getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {

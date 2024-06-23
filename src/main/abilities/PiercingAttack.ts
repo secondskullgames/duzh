@@ -17,7 +17,7 @@ const damageCoefficient = 1;
 export const PiercingAttack: UnitAbility = {
   name: AbilityName.PIERCE,
   manaCost,
-  icon: null,
+  icon: 'icon1', // TODO
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
   use: async (

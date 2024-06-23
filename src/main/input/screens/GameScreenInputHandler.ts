@@ -8,7 +8,7 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { GameScreen } from '@main/core/GameScreen';
-import { getItem } from '@main/maps/MapUtils';
+import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
@@ -22,6 +22,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
 
@@ -41,6 +42,11 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   handleKeyDown = async (command: KeyCommand) => {
     const { state, session, engine } = this;
     const { key, modifiers } = command;
+
+    if (session.isShowingShrineMenu()) {
+      await this._handleKeyDownInShrineMenu(command);
+      return;
+    }
 
     if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
@@ -150,7 +156,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
+    const nextCoordinates = Coordinates.plus(coordinates, playerUnit.getDirection());
     const item = getItem(map, coordinates);
+    const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
@@ -160,6 +168,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
+    } else if (shrine) {
+      shrine.use(state, session);
     }
     await engine.playTurn();
   };
@@ -214,6 +224,26 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         }
         break;
       }
+    }
+  };
+
+  private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
+    const shrineMenuState = checkNotNull(this.session.getShrineMenuState());
+    switch (command.key) {
+      case 'UP':
+        shrineMenuState.selectPreviousOption();
+        break;
+      case 'DOWN':
+        shrineMenuState.selectNextOption();
+        break;
+      case 'ENTER':
+        if (command.modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        } else {
+          const selectedOption = shrineMenuState.getSelectedOption();
+          await selectedOption.onUse(this.state);
+          this.session.closeShrineMenu();
+        }
     }
   };
 }

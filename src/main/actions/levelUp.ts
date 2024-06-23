@@ -19,6 +19,8 @@ export const levelUp = (unit: Unit, session: Session) => {
         turn: session.getTurn()
       });
       unit.awardAbilityPoint();
+    } else if (Feature.isEnabled(Feature.SHRINES)) {
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
     } else {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(

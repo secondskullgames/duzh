@@ -28,6 +28,7 @@ import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { isOccupied } from '@main/maps/MapUtils';
 import { TileType } from '@models/TileType';
 import MapItem from '@main/objects/MapItem';
+import ObjectFactory from '@main/objects/ObjectFactory';
 import { inject, injectable } from 'inversify';
 
 const algorithms: Algorithm[] = [
@@ -48,6 +49,8 @@ export class GeneratedMapFactory {
     private readonly itemFactory: ItemFactory,
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
+    @inject(ObjectFactory)
+    private readonly objectFactory: ObjectFactory,
     @inject(GameState)
     private readonly state: GameState
   ) {}
@@ -167,11 +170,7 @@ export class GeneratedMapFactory {
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
     const objects: GameObject[] = [];
-    const candidateLocations = getUnoccupiedLocations(
-      map.getTiles(),
-      [TileType.FLOOR],
-      []
-    ).filter(coordinates => !isOccupied(map, coordinates));
+    const candidateLocations = this._getCandidateObjectLocations(map);
 
     let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
 
@@ -213,7 +212,46 @@ export class GeneratedMapFactory {
       itemsRemaining--;
     }
 
+    // TODO this is a simple "1 per level", need to fine-tune
+    if (Feature.isEnabled(Feature.SHRINES)) {
+      const numShrines = randInt(1, 2);
+      for (let i = 0; i < numShrines; i++) {
+        const coordinates = randChoice(candidateLocations);
+        const shrine = await this.objectFactory.createShrine(coordinates, map);
+        objects.push(shrine);
+        candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
+      }
+    }
+
     return objects;
+  };
+
+  /**
+   * Return a list of coordinates that are unblocked on all sides.
+   * This is overkill, but it's to ensure that we never block the path
+   * to the exit.
+   */
+  private _getCandidateObjectLocations = (map: MapInstance): Coordinates[] => {
+    return getUnoccupiedLocations(map.getTiles(), [TileType.FLOOR], [])
+      .filter(coordinates => !isOccupied(map, coordinates))
+      .filter(coordinates => {
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            const adjacentCoordinates = Coordinates.plus(coordinates, { dx, dy });
+            if (!map.contains(adjacentCoordinates)) {
+              return false;
+            }
+            const tile = map.getTile(adjacentCoordinates);
+            if (tile.isBlocking()) {
+              return false;
+            }
+            if (isOccupied(map, adjacentCoordinates)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      });
   };
 
   private _generateMapItem = async (
