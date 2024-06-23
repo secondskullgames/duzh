@@ -12,7 +12,7 @@ import { Feature } from '@main/utils/features';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { GameState } from '@main/core/GameState';
 import Sounds from '@main/sounds/Sounds';
-import { sample } from '@lib/utils/random';
+import { randChoice, randInt, sample } from '@lib/utils/random';
 import { injectable } from 'inversify';
 
 export interface Session {
@@ -159,10 +159,8 @@ export class SessionImpl implements Session {
     const options = [];
     const playerUnit = checkNotNull(this.playerUnit);
     const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
-    const selectedAbilityNames = sample(
-      learnableAbilityNames,
-      Math.min(learnableAbilityNames.length, 1)
-    );
+    const numAbilities = randInt(1, Math.min(learnableAbilityNames.length, 2));
+    const selectedAbilityNames = sample(learnableAbilityNames, numAbilities);
 
     for (const abilityName of selectedAbilityNames) {
       const onUse = async (state: GameState) => {
@@ -178,26 +176,34 @@ export class SessionImpl implements Session {
         state.getSoundPlayer().playSound(Sounds.USE_POTION);
       };
       options.push({
-        label: abilityName,
+        label: AbilityName.localize(abilityName),
         onUse
-      }); // TODO localize
+      });
     }
-    options.push({
-      label: '+2 Mana',
-      onUse: async (state: GameState) => {
-        playerUnit.increaseMaxMana(2);
-        // TODO
-        state.getSoundPlayer().playSound(Sounds.USE_POTION);
+
+    const possibleStatOptions = [
+      {
+        label: '+5 Mana',
+        onUse: async (state: GameState) => {
+          playerUnit.increaseMaxMana(5);
+          // TODO
+          state.getSoundPlayer().playSound(Sounds.USE_POTION);
+        }
+      },
+      {
+        label: '+10 Life',
+        onUse: async (state: GameState) => {
+          playerUnit.increaseMaxLife(10);
+          // TODO
+          state.getSoundPlayer().playSound(Sounds.USE_POTION);
+        }
       }
-    });
-    options.push({
-      label: '+5 Life',
-      onUse: async (state: GameState) => {
-        playerUnit.increaseMaxLife(5);
-        // TODO
-        state.getSoundPlayer().playSound(Sounds.USE_POTION);
-      }
-    });
+    ];
+    if (numAbilities === 2) {
+      options.push(randChoice(possibleStatOptions));
+    } else {
+      options.push(...possibleStatOptions);
+    }
 
     this.shrineMenuState = new ShrineMenuState({
       options
