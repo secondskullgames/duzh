@@ -24,6 +24,7 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
+import { Coordinates } from '@lib/geometry/Coordinates';
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -155,9 +156,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
-    const oneNorth = { x: coordinates.x, y: coordinates.y - 1 };
+    const nextCoordinates = Coordinates.plus(coordinates, playerUnit.getDirection());
     const item = getItem(map, coordinates);
-    const shrine = map.contains(oneNorth) ? getShrine(map, oneNorth) : null;
+    const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
@@ -239,7 +240,8 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         if (command.modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await shrineMenuState.getSelectedOption().onUse();
+          const selectedOption = shrineMenuState.getSelectedOption();
+          await selectedOption.onUse(this.state);
           this.session.closeShrineMenu();
         }
     }

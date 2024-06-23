@@ -1,6 +1,10 @@
+import { GameState } from '@main/core/GameState';
+
+type OnUseFunc = (state: GameState) => Promise<void>;
+
 export type ShrineOption = Readonly<{
   label: string;
-  onUse: () => Promise<void>;
+  onUse: OnUseFunc;
 }>;
 
 type Props = Readonly<{

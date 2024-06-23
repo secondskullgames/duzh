@@ -32,7 +32,7 @@ const learnableAbilities = [
   AbilityName.BLINK,
   AbilityName.CLEAVE,
   AbilityName.DASH_ATTACK,
-  AbilityName.SHOOT_FIREBALL,
+  //AbilityName.SHOOT_FIREBALL,
   AbilityName.HEAVY_ATTACK,
   AbilityName.KNOCKBACK_ATTACK,
   AbilityName.PIERCE,

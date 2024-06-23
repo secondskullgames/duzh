@@ -28,6 +28,7 @@ import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { isOccupied } from '@main/maps/MapUtils';
 import { TileType } from '@models/TileType';
 import MapItem from '@main/objects/MapItem';
+import ObjectFactory from '@main/objects/ObjectFactory';
 import { inject, injectable } from 'inversify';
 
 const algorithms: Algorithm[] = [
@@ -48,6 +49,8 @@ export class GeneratedMapFactory {
     private readonly itemFactory: ItemFactory,
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
+    @inject(ObjectFactory)
+    private readonly objectFactory: ObjectFactory,
     @inject(GameState)
     private readonly state: GameState
   ) {}
@@ -211,6 +214,14 @@ export class GeneratedMapFactory {
       objects.push(item);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       itemsRemaining--;
+    }
+
+    // TODO this is a simple "1 per level", need to fine-tune
+    if (Feature.isEnabled(Feature.SHRINES)) {
+      const coordinates = randChoice(candidateLocations);
+      const shrine = await this.objectFactory.createShrine(coordinates, map);
+      objects.push(shrine);
+      candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
     }
 
     return objects;

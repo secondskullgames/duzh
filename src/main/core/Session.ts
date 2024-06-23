@@ -7,10 +7,11 @@ import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
-import { randChoiceOrNull } from '@lib/utils/random';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
 import { AbilityName } from '@main/abilities/AbilityName';
+import { GameState } from '@main/core/GameState';
+import Sounds from '@main/sounds/Sounds';
 import { injectable } from 'inversify';
 
 export interface Session {
@@ -157,9 +158,7 @@ export class SessionImpl implements Session {
     const playerUnit = checkNotNull(this.playerUnit);
     const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
     for (const abilityName of learnableAbilityNames) {
-      const onUse = async () => {
-        const ability = UnitAbility.abilityForName(abilityName);
-        playerUnit.learnAbility(ability);
+      const onUse = async (state: GameState) => {
         // TODO - centralize this logic, it's copy-pasted
         playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
         if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
@@ -168,6 +167,8 @@ export class SessionImpl implements Session {
         this.getTicker().log(`Learned ${AbilityName.localize(abilityName)}.`, {
           turn: this.getTurn()
         });
+        // TODO
+        state.getSoundPlayer().playSound(Sounds.USE_POTION);
       };
       options.push({
         label: abilityName,

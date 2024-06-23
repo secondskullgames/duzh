@@ -17,11 +17,33 @@ export enum Feature {
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
   HUD_BARS = 'HUD_BARS',
+  SHRINES = 'SHRINES',
   STAIRS_UP = 'STAIRS_UP',
   TITLE_MUSIC = 'TITLE_MUSIC'
 }
 
 export namespace Feature {
+  const ENABLED_FEATURES: Record<Feature, boolean> = {
+    [Feature.ALT_DASH]: true,
+    [Feature.ALT_STRAFE]: false,
+    [Feature.ALT_TURN]: false,
+    [Feature.BLINK_THROUGH_WALLS]: false,
+    [Feature.BUSY_INDICATOR]: true,
+    [Feature.DARK_DUNGEON]: false,
+    [Feature.DEBUG_BUTTONS]: false,
+    [Feature.DEBUG_LEVEL]: false,
+    [Feature.DEDUPLICATE_EQUIPMENT]: true,
+    [Feature.DEBUG_LOGGING]: false,
+    [Feature.FOG_SHADES]: true,
+    [Feature.FOG_SHADES_EVERYWHERE]: false,
+    [Feature.FORCE_BRONZE_SWORD]: true,
+    [Feature.GOD_MODE]: false,
+    [Feature.HUD_BARS]: true,
+    [Feature.LEVEL_UP_SCREEN]: false,
+    [Feature.SHRINES]: false,
+    [Feature.STAIRS_UP]: false,
+    [Feature.TITLE_MUSIC]: true
+  };
   export const isEnabled = (feature: Feature): boolean => {
     const queryParam = getQueryParam(feature);
     if (queryParam === 'true') {
@@ -30,44 +52,7 @@ export namespace Feature {
     if (queryParam === 'false') {
       return false;
     }
-    switch (feature) {
-      case Feature.ALT_DASH:
-        return true;
-      case Feature.ALT_STRAFE:
-        return false;
-      case Feature.ALT_TURN:
-        return false;
-      case Feature.BLINK_THROUGH_WALLS:
-        return false;
-      case Feature.BUSY_INDICATOR:
-        return true;
-      case Feature.DARK_DUNGEON:
-        return false;
-      case Feature.DEBUG_BUTTONS:
-        return false;
-      case Feature.DEBUG_LEVEL:
-        return false;
-      case Feature.DEDUPLICATE_EQUIPMENT:
-        return true;
-      case Feature.DEBUG_LOGGING:
-        return false;
-      case Feature.FOG_SHADES:
-        return true;
-      case Feature.FOG_SHADES_EVERYWHERE:
-        return false;
-      case Feature.FORCE_BRONZE_SWORD:
-        return true;
-      case Feature.GOD_MODE:
-        return false;
-      case Feature.HUD_BARS:
-        return true;
-      case Feature.LEVEL_UP_SCREEN:
-        return false;
-      case Feature.STAIRS_UP:
-        return false;
-      case Feature.TITLE_MUSIC:
-        return true;
-    }
+    return ENABLED_FEATURES[feature];
   };
 }
 
