@@ -42,6 +42,11 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const { state, session, engine } = this;
     const { key, modifiers } = command;
 
+    if (session.isShowingShrineMenu()) {
+      await this._handleKeyDownInShrineMenu(command);
+      return;
+    }
+
     if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
     } else if (isNumberKey(key)) {
@@ -218,6 +223,25 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         }
         break;
       }
+    }
+  };
+
+  private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
+    const shrineMenuState = checkNotNull(this.session.getShrineMenuState());
+    switch (command.key) {
+      case 'UP':
+        shrineMenuState.selectPreviousOption();
+        break;
+      case 'DOWN':
+        shrineMenuState.selectNextOption();
+        break;
+      case 'ENTER':
+        if (command.modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        } else {
+          await shrineMenuState.getSelectedOption().onUse();
+          this.session.closeShrineMenu();
+        }
     }
   };
 }

@@ -8,8 +8,10 @@ import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { randChoiceOrNull } from '@lib/utils/random';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { injectable } from 'inversify';
-import type { UnitAbility } from '@main/abilities/UnitAbility';
 
 export interface Session {
   startGameTimer: () => void;
@@ -153,9 +155,24 @@ export class SessionImpl implements Session {
   initShrineMenu = () => {
     const options = [];
     const playerUnit = checkNotNull(this.playerUnit);
-    const ability = randChoiceOrNull(playerUnit.getCurrentlyLearnableAbilities());
-    if (ability) {
-      options.push({ label: ability }); // TODO localize
+    const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
+    for (const abilityName of learnableAbilityNames) {
+      const onUse = async () => {
+        const ability = UnitAbility.abilityForName(abilityName);
+        playerUnit.learnAbility(ability);
+        // TODO - centralize this logic, it's copy-pasted
+        playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
+        if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+          playerUnit.spendAbilityPoint();
+        }
+        this.getTicker().log(`Learned ${AbilityName.localize(abilityName)}.`, {
+          turn: this.getTurn()
+        });
+      };
+      options.push({
+        label: abilityName,
+        onUse
+      }); // TODO localize
     }
     this.shrineMenuState = new ShrineMenuState({
       options

@@ -1,5 +1,6 @@
 export type ShrineOption = Readonly<{
   label: string;
+  onUse: () => Promise<void>;
 }>;
 
 type Props = Readonly<{

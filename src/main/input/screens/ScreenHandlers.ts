@@ -44,6 +44,6 @@ export default class ScreenHandlers {
   }
 
   getHandler = (screen: GameScreen): ScreenInputHandler => {
-    return this.screenHandlers[screen] as ScreenInputHandler;
+    return this.screenHandlers[screen];
   };
 }

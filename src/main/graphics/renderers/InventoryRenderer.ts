@@ -18,6 +18,7 @@ const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
 const INVENTORY_MARGIN = 10;
 
+// TODO correctly sized background
 const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
 
 @injectable()

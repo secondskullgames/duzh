@@ -3,21 +3,21 @@ import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import Unit from '@main/units/Unit';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
-import { AbilityName } from '@main/abilities/AbilityName';
-import { randChoice } from '@lib/utils/random';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { ShrineOption } from '@main/core/session/ShrineMenuState';
 import { inject, injectable } from 'inversify';
 
+// TODO correctly sized background
 const BACKGROUND_FILENAME = 'inventory_background';
 
 @injectable()
-export default class LevelUpScreenRenderer implements Renderer {
+export class ShrineMenuRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
@@ -30,64 +30,43 @@ export default class LevelUpScreenRenderer implements Renderer {
   ) {}
 
   render = async (graphics: Graphics) => {
-    const { session, imageFactory } = this;
-    const playerUnit = session.getPlayerUnit();
-
+    const { imageFactory, gameConfig, session } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
-    const { screenWidth, screenHeight } = this.gameConfig;
+    const { screenWidth, screenHeight } = gameConfig;
+    const left = screenWidth / 4;
+    const top = screenHeight / 4;
     graphics.drawScaledImage(image, {
-      left: screenWidth / 4,
-      top: screenHeight / 4,
+      left,
+      top,
       width: screenWidth / 2,
       height: screenHeight / 2
     });
 
-    const choices = [];
-    const learnableAbilities = playerUnit
-      .getPlayerUnitClass()!
-      .getAllPossibleLearnableAbilities();
+    const options = checkNotNull(session.getShrineMenuState()).options;
 
-    const abilityName =
-      learnableAbilities.length > 0 ? randChoice(learnableAbilities) : null;
-    if (abilityName) {
-      choices.push(abilityName);
-    }
+    let y = top + 10;
+    const x = left + 20;
 
-    let top = 10;
-
-    for (const choice of choices) {
+    for (const option of options) {
+      const color = this._getOptionColor(option);
       await this._drawText(
-        choice,
+        option.label,
         FontName.APPLE_II,
-        { x: 20, y: top },
-        Colors.WHITE,
+        { x, y },
+        color,
         Alignment.LEFT,
         graphics
       );
+      y += 20;
     }
-    top += 10;
-    await this._drawText(
-      `Ability points remaining: ${playerUnit.getAbilityPoints()}`,
-      FontName.APPLE_II,
-      { x: 20, y: top },
-      Colors.WHITE,
-      Alignment.LEFT,
-      graphics
-    );
   };
 
-  private _getAbilityColor = (playerUnit: Unit, abilityName: AbilityName) => {
-    const isUnlocked = this._isUnlocked(abilityName, playerUnit);
-    const selectedAbility = this.session.getLevelUpScreen().getSelectedAbility();
-    const isSelected = abilityName === selectedAbility;
-
-    if (playerUnit.hasAbility(abilityName)) {
-      return Colors.DARK_GRAY;
-    } else if (isUnlocked) {
-      return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
-    } else {
-      return isSelected ? Colors.RED : Colors.DARK_RED;
-    }
+  private _getOptionColor = (option: ShrineOption): Color => {
+    const selectedOption = checkNotNull(
+      this.session.getShrineMenuState()
+    ).getSelectedOption();
+    const isSelected = selectedOption.label === option.label;
+    return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
   };
 
   private _drawText = async (
@@ -100,9 +79,5 @@ export default class LevelUpScreenRenderer implements Renderer {
   ) => {
     const image = await this.textRenderer.renderText(text, font, color);
     drawAligned(image, graphics, pixel, textAlign);
-  };
-
-  private _isUnlocked = (abilityName: AbilityName, playerUnit: Unit): boolean => {
-    return playerUnit.getCurrentlyLearnableAbilities().includes(abilityName);
   };
 }
