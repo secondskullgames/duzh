@@ -4,7 +4,6 @@ import GameScreenInputHandler from './GameScreenInputHandler';
 import GameOverScreenInputHandler from './GameOverScreenInputHandler';
 import HelpScreenInputHandler from './HelpScreenInputHandler';
 import InventoryScreenInputHandler from './InventoryScreenInputHandler';
-import LevelUpScreenInputHandler from './LevelUpScreenInputHandler';
 import MapScreenInputHandler from './MapScreenInputHandler';
 import TitleScreenInputHandler from './TitleScreenInputHandler';
 import VictoryScreenInputHandler from './VictoryScreenInputHandler';
@@ -21,7 +20,6 @@ export default class ScreenHandlers {
     gameOverScreenInputHandler: GameOverScreenInputHandler,
     helpScreenInputHandler: HelpScreenInputHandler,
     inventoryInputHandler: InventoryScreenInputHandler,
-    levelUpScreenInputHandler: LevelUpScreenInputHandler,
     mapScreenInputHandler: MapScreenInputHandler,
     titleScreenInputHandler: TitleScreenInputHandler,
     victoryScreenInputHandler: VictoryScreenInputHandler
@@ -36,7 +34,6 @@ export default class ScreenHandlers {
       [GameScreen.GAME_OVER]: gameOverScreenInputHandler,
       [GameScreen.HELP]: helpScreenInputHandler,
       [GameScreen.INVENTORY]: inventoryInputHandler,
-      [GameScreen.LEVEL_UP]: levelUpScreenInputHandler,
       [GameScreen.MAP]: mapScreenInputHandler,
       [GameScreen.TITLE]: titleScreenInputHandler,
       [GameScreen.VICTORY]: victoryScreenInputHandler

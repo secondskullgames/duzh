@@ -43,7 +43,7 @@ export default class GameScreenRenderer implements Renderer {
 
     // TODO: consider a generic menu system
     if (this.session.isShowingShrineMenu()) {
-      this._renderShrineMenu(graphics);
+      await this._renderShrineMenu(graphics);
     }
   };
 
@@ -198,7 +198,7 @@ export default class GameScreenRenderer implements Renderer {
     y >= -TILE_HEIGHT &&
     y <= this.gameConfig.screenHeight + TILE_HEIGHT;
 
-  private _renderShrineMenu = (graphics: Graphics) => {
-    this.shrineMenuRenderer.render(graphics);
+  private _renderShrineMenu = async (graphics: Graphics) => {
+    await this.shrineMenuRenderer.render(graphics);
   };
 }

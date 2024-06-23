@@ -17,7 +17,6 @@ import InventoryRenderer from '@main/graphics/renderers/InventoryRenderer';
 import MapScreenRenderer from '@main/graphics/renderers/MapScreenRenderer';
 import CharacterScreenRenderer from '@main/graphics/renderers/CharacterScreenRenderer';
 import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
-import LevelUpScreenRenderer from '@main/graphics/renderers/LevelUpScreenRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { formatTimestamp } from '@lib/utils/time';
@@ -57,9 +56,7 @@ export default class GameRenderer implements Renderer {
     @inject(CharacterScreenRenderer)
     private readonly characterScreenRenderer: Renderer,
     @inject(HelpScreenRenderer)
-    private readonly helpScreenRenderer: Renderer,
-    @inject(LevelUpScreenRenderer)
-    private readonly levelUpScreenRenderer: Renderer
+    private readonly helpScreenRenderer: Renderer
   ) {
     this.buffer = createCanvas({
       width: gameConfig.screenWidth,
@@ -139,9 +136,6 @@ export default class GameRenderer implements Renderer {
         break;
       case GameScreen.HELP:
         await this._renderHelpScreen();
-        break;
-      case GameScreen.LEVEL_UP:
-        await this._renderLevelUpScreen();
         break;
       default:
         // unreachable
@@ -235,10 +229,6 @@ export default class GameRenderer implements Renderer {
 
   private _renderHelpScreen = async () => {
     await this.helpScreenRenderer.render(this.bufferGraphics);
-  };
-
-  private _renderLevelUpScreen = async () => {
-    await this.levelUpScreenRenderer.render(this.bufferGraphics);
   };
 
   private _drawText = async (

@@ -5,7 +5,6 @@ export enum GameScreen {
   GAME_OVER = 'GAME_OVER',
   HELP = 'HELP',
   INVENTORY = 'INVENTORY',
-  LEVEL_UP = 'LEVEL_UP',
   MAP = 'MAP',
   TITLE = 'TITLE',
   VICTORY = 'VICTORY'
