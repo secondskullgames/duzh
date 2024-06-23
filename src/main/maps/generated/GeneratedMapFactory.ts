@@ -214,15 +214,23 @@ export class GeneratedMapFactory {
 
     // TODO this is a simple "1 per level", need to fine-tune
     if (Feature.isEnabled(Feature.SHRINES)) {
-      const coordinates = randChoice(candidateLocations);
-      const shrine = await this.objectFactory.createShrine(coordinates, map);
-      objects.push(shrine);
-      candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
+      const numShrines = randInt(1, 2);
+      for (let i = 0; i < numShrines; i++) {
+        const coordinates = randChoice(candidateLocations);
+        const shrine = await this.objectFactory.createShrine(coordinates, map);
+        objects.push(shrine);
+        candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
+      }
     }
 
     return objects;
   };
 
+  /**
+   * Return a list of coordinates that are unblocked on all sides.
+   * This is overkill, but it's to ensure that we never block the path
+   * to the exit.
+   */
   private _getCandidateObjectLocations = (map: MapInstance): Coordinates[] => {
     return getUnoccupiedLocations(map.getTiles(), [TileType.FLOOR], [])
       .filter(coordinates => !isOccupied(map, coordinates))

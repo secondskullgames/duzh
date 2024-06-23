@@ -10,7 +10,7 @@ import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
 
-const ITEM_DROP_CHANCE = 0.25;
+const ITEM_DROP_CHANCE = 0.5;
 const GLOBE_DROP_CHANCE = 0.25;
 // TODO this should be enemy-specific? add loot tables
 const HEALTH_GLOBE_DROP_CHANCE = 0.8;

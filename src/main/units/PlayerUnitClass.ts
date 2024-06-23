@@ -2,6 +2,7 @@ import Unit from './Unit';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Key, NumberKey } from '@lib/input/inputTypes';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -101,6 +102,9 @@ class DefaultClass implements PlayerUnitClass {
     }
   };
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
+    if (Feature.isEnabled(Feature.SHRINES)) {
+      return null;
+    }
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };
 }

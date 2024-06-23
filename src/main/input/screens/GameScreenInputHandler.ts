@@ -22,9 +22,9 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
+import { Coordinates } from '@lib/geometry/Coordinates';
 import { inject, injectable } from 'inversify';
 import abilityForName = UnitAbility.abilityForName;
-import { Coordinates } from '@lib/geometry/Coordinates';
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {

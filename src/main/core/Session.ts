@@ -12,6 +12,7 @@ import { Feature } from '@main/utils/features';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { GameState } from '@main/core/GameState';
 import Sounds from '@main/sounds/Sounds';
+import { sample } from '@lib/utils/random';
 import { injectable } from 'inversify';
 
 export interface Session {
@@ -153,11 +154,17 @@ export class SessionImpl implements Session {
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
 
+  /** TODO put the logic somewhere else */
   initShrineMenu = () => {
     const options = [];
     const playerUnit = checkNotNull(this.playerUnit);
     const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
-    for (const abilityName of learnableAbilityNames) {
+    const selectedAbilityNames = sample(
+      learnableAbilityNames,
+      Math.min(learnableAbilityNames.length, 1)
+    );
+
+    for (const abilityName of selectedAbilityNames) {
       const onUse = async (state: GameState) => {
         // TODO - centralize this logic, it's copy-pasted
         playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
@@ -175,6 +182,23 @@ export class SessionImpl implements Session {
         onUse
       }); // TODO localize
     }
+    options.push({
+      label: '+2 Mana',
+      onUse: async (state: GameState) => {
+        playerUnit.increaseMaxMana(2);
+        // TODO
+        state.getSoundPlayer().playSound(Sounds.USE_POTION);
+      }
+    });
+    options.push({
+      label: '+5 Life',
+      onUse: async (state: GameState) => {
+        playerUnit.increaseMaxLife(5);
+        // TODO
+        state.getSoundPlayer().playSound(Sounds.USE_POTION);
+      }
+    });
+
     this.shrineMenuState = new ShrineMenuState({
       options
     });
