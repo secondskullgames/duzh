@@ -1,7 +1,6 @@
 import Ticker from './Ticker';
 import { GameScreen } from './GameScreen';
 import { InventoryCategory, InventoryState } from './session/InventoryState';
-import { LevelUpScreenState } from './session/LevelUpScreenState';
 import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
@@ -21,8 +20,6 @@ export interface Session {
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
-  initLevelUpScreen: (playerUnit: Unit) => void;
-  getLevelUpScreen: () => LevelUpScreenState;
   initShrineMenu: () => void;
   getShrineMenuState: () => ShrineMenuState;
   isShowingShrineMenu: () => boolean;
@@ -58,7 +55,6 @@ export class SessionImpl implements Session {
   private endTime: Date | null;
   private screen: GameScreen;
   private prevScreen: GameScreen | null;
-  private levelUpScreen: LevelUpScreenState | null;
   private inventoryState: InventoryState | null;
   private shrineMenuState: ShrineMenuState | null;
   private playerUnit: Unit | null;
@@ -72,7 +68,6 @@ export class SessionImpl implements Session {
     this.ticker = new Ticker();
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
-    this.levelUpScreen = null;
     this.inventoryState = null;
     this.shrineMenuState = null;
     this._isTurnInProgress = false;
@@ -116,13 +111,6 @@ export class SessionImpl implements Session {
       this.screen = GameScreen.GAME;
     }
   };
-
-  initLevelUpScreen = (playerUnit: Unit): void => {
-    this.levelUpScreen = new LevelUpScreenState();
-    this.levelUpScreen.selectNextAbility(playerUnit);
-  };
-
-  getLevelUpScreen = (): LevelUpScreenState => checkNotNull(this.levelUpScreen);
 
   prepareInventoryScreen = (playerUnit: Unit): void => {
     if (this.inventoryState === null) {

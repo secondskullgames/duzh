@@ -60,9 +60,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
       session.setScreen(GameScreen.INVENTORY);
-    } else if (key === 'L' && Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      session.initLevelUpScreen(session.getPlayerUnit());
-      session.setScreen(GameScreen.LEVEL_UP);
     } else if (key === 'M') {
       session.setScreen(GameScreen.MAP);
     } else if (key === 'C') {
