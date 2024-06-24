@@ -23,6 +23,7 @@ import { ItemCategory } from '@models/ItemCategory';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
+import GameObject from '@main/objects/GameObject';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -345,5 +346,20 @@ export default class ItemFactory {
       choices.push({ weight, key, value: itemSpec });
     }
     return weightedRandom(choices);
+  };
+
+  createRandomItem = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    state: GameState
+  ): Promise<GameObject> => {
+    const itemSpec = await this.chooseRandomMapItemForLevel(map.levelNumber, state);
+    state.recordEquipmentGenerated(itemSpec.id);
+    switch (itemSpec.type) {
+      case ItemType.CONSUMABLE:
+        return this.createMapItem(itemSpec.id, coordinates, map);
+      case ItemType.EQUIPMENT:
+        return this.createMapEquipment(itemSpec.id, coordinates, map);
+    }
   };
 }

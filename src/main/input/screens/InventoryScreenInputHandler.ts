@@ -1,10 +1,10 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
 import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { useItem } from '@main/actions/useItem';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { UnitApi } from '@main/units/UnitApi';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -65,7 +65,7 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
-      await useItem(playerUnit, selectedItem, state, session);
+      await UnitApi.useItem(playerUnit, selectedItem, state, session);
       session.prepareInventoryScreen(playerUnit);
     }
   };

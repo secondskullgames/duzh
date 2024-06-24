@@ -9,7 +9,6 @@ import { random, weightedRandom } from '@lib/utils/random';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
-import { ItemType } from '@main/items/ItemFactory';
 import {
   GLOBE_DROP_CHANCE,
   HEALTH_GLOBE_DROP_CHANCE,
@@ -17,12 +16,14 @@ import {
   MANA_GLOBE_DROP_CHANCE,
   VISION_GLOBE_DROP_CHANCE
 } from '@main/units/UnitConstants';
-import { getBonus } from '@main/maps/MapUtils';
+import { getBonus, isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Direction } from '@lib/geometry/Direction';
+import InventoryItem from '@main/items/InventoryItem';
 
 export type DealDamageParams = Readonly<{
   sourceUnit?: Unit;
@@ -39,8 +40,32 @@ interface UnitApiShape {
     session: Session,
     state: GameState
   ) => Promise<void>;
+  walk: (
+    unit: Unit,
+    direction: Direction,
+    session: Session,
+    state: GameState
+  ) => Promise<void>;
   dealDamage: (baseDamage: number, params: DealDamageParams) => Promise<number>;
   levelUp: (unit: Unit, session: Session) => Promise<void>;
+  useItem: (
+    unit: Unit,
+    item: InventoryItem,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
+  beforeAttack: (
+    attacker: Unit,
+    defender: Unit,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
+  afterAttack: (
+    attacker: Unit,
+    defender: Unit,
+    state: GameState,
+    session: Session
+  ) => Promise<void>;
 }
 
 /**
@@ -97,7 +122,9 @@ const die = async (unit: Unit, state: GameState, session: Session) => {
           const globe = await _createGlobe(coordinates, map, state);
           map.addObject(globe);
         } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-          const item = await _createItem(coordinates, map, state);
+          const item = await state
+            .getItemFactory()
+            .createRandomItem(coordinates, map, state);
           map.addObject(item);
           session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
             turn: session.getTurn()
@@ -155,6 +182,27 @@ const moveUnit = async (
   }
 };
 
+const walk = async (
+  unit: Unit,
+  direction: Direction,
+  session: Session,
+  state: GameState
+) => {
+  const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+
+  const map = unit.getMap();
+  if (!map.contains(coordinates) || isBlocked(map, coordinates)) {
+    // do nothing
+  } else {
+    await UnitApi.moveUnit(unit, coordinates, session, state);
+    const playerUnit = session.getPlayerUnit();
+    if (unit === playerUnit) {
+      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+    }
+    unit.recordStepTaken();
+  }
+};
+
 const levelUp = async (unit: Unit, session: Session) => {
   const ticker = session.getTicker();
   unit.incrementLevel();
@@ -179,6 +227,52 @@ const levelUp = async (unit: Unit, session: Session) => {
       for (const abilityName of abilitiesToLearn) {
         unit.learnAbility(UnitAbility.abilityForName(abilityName));
       }
+    }
+  }
+};
+
+const useItem = async (
+  unit: Unit,
+  item: InventoryItem,
+  state: GameState,
+  session: Session
+) => {
+  await item.use(unit, state, session);
+  unit.getInventory().remove(item);
+};
+
+const beforeAttack = async (
+  attacker: Unit,
+  defender: Unit,
+  state: GameState,
+  session: Session
+) => {
+  for (const equipment of attacker.getEquipment().getAll()) {
+    if (equipment.script) {
+      await EquipmentScript.forName(equipment.script).beforeAttack?.(
+        equipment,
+        defender.getCoordinates(),
+        state,
+        session
+      );
+    }
+  }
+};
+
+const afterAttack = async (
+  attacker: Unit,
+  defender: Unit,
+  state: GameState,
+  session: Session
+) => {
+  for (const equipment of attacker.getEquipment().getAll()) {
+    if (equipment.script) {
+      await EquipmentScript.forName(equipment.script).afterAttack?.(
+        equipment,
+        defender.getCoordinates(),
+        state,
+        session
+      );
     }
   }
 };
@@ -212,27 +306,15 @@ const _createGlobe = async (
   ])();
 };
 
-const _createItem = async (
-  coordinates: Coordinates,
-  map: MapInstance,
-  state: GameState
-): Promise<GameObject> => {
-  const itemFactory = state.getItemFactory();
-  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, state);
-  state.recordEquipmentGenerated(itemSpec.id);
-  switch (itemSpec.type) {
-    case ItemType.CONSUMABLE:
-      return itemFactory.createMapItem(itemSpec.id, coordinates, map);
-    case ItemType.EQUIPMENT:
-      return itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
-  }
-};
-
 export const UnitApi: UnitApiShape = {
   upkeep,
   die,
   endOfTurn,
   moveUnit,
+  walk,
   dealDamage,
-  levelUp
+  levelUp,
+  useItem,
+  beforeAttack,
+  afterAttack
 };

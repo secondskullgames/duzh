@@ -3,7 +3,6 @@ import Unit, { DefendResult } from '../units/Unit';
 import Activity from '../units/Activity';
 import { GameState } from '@main/core/GameState';
 import { sleep } from '@lib/utils/promises';
-import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
 import { Session } from '@main/core/Session';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
@@ -27,17 +26,6 @@ export const attackUnit = async (
   session: Session,
   state: GameState
 ) => {
-  for (const equipment of attacker.getEquipment().getAll()) {
-    if (equipment.script) {
-      await EquipmentScript.forName(equipment.script).beforeAttack?.(
-        equipment,
-        defender.getCoordinates(),
-        state,
-        session
-      );
-    }
-  }
-
   // attacking frame
   attacker.setActivity(Activity.ATTACKING, 1, attacker.getDirection());
 
@@ -59,17 +47,6 @@ export const attackUnit = async (
   if (defender.getLife() <= 0) {
     await UnitApi.die(defender, state, session);
     await recordKill(attacker, defender, session, state);
-  }
-
-  for (const equipment of attacker.getEquipment().getAll()) {
-    if (equipment.script) {
-      await EquipmentScript.forName(equipment.script).afterAttack?.(
-        equipment,
-        defender.getCoordinates(),
-        state,
-        session
-      );
-    }
   }
 
   await sleep(150);

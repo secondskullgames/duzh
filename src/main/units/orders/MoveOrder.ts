@@ -1,7 +1,6 @@
 import UnitOrder from './UnitOrder';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { getDoor, getMovableBlock, isBlocked } from '@main/maps/MapUtils';
@@ -9,6 +8,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { check } from '@lib/utils/preconditions';
+import { UnitApi } from '@main/units/UnitApi';
 
 type Props = Readonly<{
   coordinates: Coordinates;
@@ -32,7 +32,7 @@ export class MoveOrder implements UnitOrder {
 
     check(map.contains(coordinates));
     if (!isBlocked(map, coordinates)) {
-      await walk(unit, direction, session, state);
+      await UnitApi.walk(unit, direction, session, state);
       return;
     } else {
       const door = getDoor(map, coordinates);
