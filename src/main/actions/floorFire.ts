@@ -1,6 +1,4 @@
 import { recordKill } from './recordKill';
-import { die } from './die';
-import { dealDamage } from './dealDamage';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import Activity from '../units/Activity';
@@ -9,6 +7,7 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { sleep } from '@lib/utils/promises';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitApi } from '@main/units/UnitApi';
 
 export const floorFire = async (
   unit: Unit,
@@ -33,7 +32,7 @@ export const floorFire = async (
         const targetUnit = adjacentUnits[j];
         targetUnit.getEffects().addEffect(StatusEffect.DAMAGED, 1);
         targetUnit.getEffects().addEffect(StatusEffect.BURNING, 1);
-        const damageTaken = await dealDamage(damage, {
+        const damageTaken = await UnitApi.dealDamage(damage, {
           sourceUnit: unit,
           targetUnit: targetUnit
         });
@@ -41,8 +40,8 @@ export const floorFire = async (
         const message = getDamageLogMessage(unit, targetUnit, damageTaken);
         session.getTicker().log(message, { turn: session.getTurn() });
         if (targetUnit.getLife() <= 0) {
-          await die(targetUnit, state, session);
-          recordKill(unit, targetUnit, session, state);
+          await UnitApi.die(targetUnit, state, session);
+          await recordKill(unit, targetUnit, session, state);
         }
       } else {
         adjacentUnits[j].getEffects().removeEffect(StatusEffect.DAMAGED);

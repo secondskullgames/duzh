@@ -21,21 +21,10 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { check, checkArgument } from '@lib/utils/preconditions';
-import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
-import { dealDamage } from '@main/actions/dealDamage';
-
-/**
- * Regenerate this raw amount of health each turn
- * (can be decimal)
- */
-const LIFE_PER_TURN = 0.5;
-/**
- * Regenerate this raw amount of mana each turn
- * (can be decimal)
- */
-const MANA_PER_TURN = 1;
+import { UnitApi } from '@main/units/UnitApi';
+import { LIFE_PER_TURN, MANA_PER_TURN } from '@main/units/UnitConstants';
 
 let nextId: number = 0;
 
@@ -207,7 +196,7 @@ export default class Unit implements Entity {
 
   /** @override */
   playTurnAction = async (state: GameState, session: Session) => {
-    await this._upkeep(state, session);
+    await UnitApi.upkeep(this, state, session);
     if (this.life <= 0) {
       return;
     }
@@ -215,7 +204,7 @@ export default class Unit implements Entity {
       const order = this.controller.issueOrder(this, state, session);
       await order.execute(this, state, session);
     }
-    await this._endOfTurn(state, session);
+    await UnitApi.endOfTurn(this, state, session);
   };
 
   /** @override */
@@ -385,48 +374,6 @@ export default class Unit implements Entity {
 
   getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
-  private _upkeep = async (state: GameState, session: Session) => {
-    // life regeneration
-    this.lifeRemainder += LIFE_PER_TURN;
-    const deltaLife = Math.floor(this.lifeRemainder);
-    this.lifeRemainder -= deltaLife;
-    this.life = this.life + deltaLife;
-    if (this.life > this.getMaxLife()) {
-      this.life = this.getMaxLife();
-    }
-    if (this.life <= 0) {
-      await die(this, state, session);
-    }
-
-    // mana regeneration
-    if (this.mana !== null && this.maxMana !== null) {
-      this.manaRemainder += MANA_PER_TURN;
-      const deltaMana = Math.floor(this.manaRemainder);
-      this.manaRemainder -= deltaMana;
-      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
-    }
-
-    if (this.turnsSinceCombatAction !== null) {
-      this.turnsSinceCombatAction++;
-    }
-  };
-
-  private _endOfTurn = async (state: GameState, session: Session) => {
-    for (const effect of this.effects.getEffects()) {
-      switch (effect) {
-        case StatusEffect.BURNING:
-          await dealDamage(2, { targetUnit: this });
-          if (this.life <= 0) {
-            await die(this, state, session);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-    this.effects.decrement();
-  };
-
   getStrength = (): number => this.strength;
   getDexterity = (): number => this.dexterity;
 
@@ -437,5 +384,30 @@ export default class Unit implements Entity {
       !this.effects.hasEffect(StatusEffect.FROZEN) &&
       !this.effects.hasEffect(StatusEffect.STUNNED)
     );
+  };
+
+  incrementTurnsSinceCombatAction = () => {
+    if (this.turnsSinceCombatAction !== null) {
+      this.turnsSinceCombatAction++;
+    }
+  };
+
+  doLifeRegeneration = () => {
+    this.lifeRemainder += LIFE_PER_TURN;
+    const deltaLife = Math.floor(this.lifeRemainder);
+    this.lifeRemainder -= deltaLife;
+    this.life = this.life + deltaLife;
+    if (this.life > this.getMaxLife()) {
+      this.life = this.getMaxLife();
+    }
+  };
+
+  doManaRegeneration = () => {
+    if (this.mana !== null && this.maxMana !== null) {
+      this.manaRemainder += MANA_PER_TURN;
+      const deltaMana = Math.floor(this.manaRemainder);
+      this.manaRemainder -= deltaMana;
+      this.mana = Math.min(this.mana + deltaMana, this.maxMana);
+    }
   };
 }

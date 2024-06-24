@@ -5,11 +5,11 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 8;
 const damageCoefficient = 0.5;
@@ -57,7 +57,7 @@ export const MinorKnockback: UnitAbility = {
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(map, first)) {
-          await moveUnit(targetUnit, first, session, state);
+          await UnitApi.moveUnit(targetUnit, first, session, state);
         }
       }
     }

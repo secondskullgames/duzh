@@ -6,12 +6,12 @@ import Sounds from '@main/sounds/Sounds';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -39,7 +39,7 @@ const _doKnockback = async (
 ) => {
   const { x, y } = targetUnit.getCoordinates();
   const targetCoordinates = { x: x + dx, y: y + dy };
-  await moveUnit(targetUnit, targetCoordinates, session, state);
+  await UnitApi.moveUnit(targetUnit, targetCoordinates, session, state);
 };
 
 export const DashAttack: UnitAbility = {
@@ -83,14 +83,14 @@ export const DashAttack: UnitAbility = {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
           if (!isBlocked(map, behindCoordinates)) {
             await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
-            await moveUnit(unit, targetCoordinates, session, state);
+            await UnitApi.moveUnit(unit, targetCoordinates, session, state);
           }
           if (i === numTiles - 1) {
             await attackUnit(unit, targetUnit, attack, session, state);
             targetUnit.setStunned(stunDuration);
           }
         } else if (!isBlocked(map, targetCoordinates)) {
-          await moveUnit(unit, targetCoordinates, session, state);
+          await UnitApi.moveUnit(unit, targetCoordinates, session, state);
         }
         await sleep(100);
       }

@@ -7,13 +7,12 @@ import Activity from '@main/units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
-import { die } from '@main/actions/die';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 5;
 
@@ -52,7 +51,7 @@ export const ShootTurretArrow: UnitAbility = {
       const damage = getRangedDamage(unit);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
-      const adjustedDamage = await dealDamage(damage, {
+      const adjustedDamage = await UnitApi.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
@@ -60,7 +59,7 @@ export const ShootTurretArrow: UnitAbility = {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, state, session);
+        await UnitApi.die(targetUnit, state, session);
       }
     } else {
       await playArrowAnimation(unit, { dx, dy }, coordinatesList, null, state);

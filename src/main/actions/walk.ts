@@ -1,4 +1,3 @@
-import { moveUnit } from './moveUnit';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Direction } from '@lib/geometry/Direction';
@@ -6,6 +5,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 export const walk = async (
   unit: Unit,
@@ -19,7 +19,7 @@ export const walk = async (
   if (!map.contains(coordinates) || isBlocked(map, coordinates)) {
     // do nothing
   } else {
-    await moveUnit(unit, coordinates, session, state);
+    await UnitApi.moveUnit(unit, coordinates, session, state);
     const playerUnit = session.getPlayerUnit();
     if (unit === playerUnit) {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);

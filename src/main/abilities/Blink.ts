@@ -5,11 +5,11 @@ import Sounds from '@main/sounds/Sounds';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 10;
 
@@ -46,7 +46,7 @@ export const Blink: UnitAbility = {
     if (blocked) {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     } else {
-      await moveUnit(unit, targetCoordinates, session, state);
+      await UnitApi.moveUnit(unit, targetCoordinates, session, state);
       unit.spendMana(manaCost);
     }
   }

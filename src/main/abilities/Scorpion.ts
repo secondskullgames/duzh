@@ -6,12 +6,12 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -107,7 +107,7 @@ export const Scorpion: UnitAbility = {
           dx: dx * (i - 1),
           dy: dy * (i - 1)
         });
-        await moveUnit(targetUnit, previousCoordinates, session, state);
+        await UnitApi.moveUnit(targetUnit, previousCoordinates, session, state);
         await sleep(sleepDuration);
       }
     }

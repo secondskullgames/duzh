@@ -4,12 +4,12 @@ import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import Activity from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@lib/utils/promises';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 export const range = 3;
 const manaCost = 20;
@@ -56,7 +56,7 @@ export const Teleport: UnitAbility = {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await maybeSleep();
 
-      await moveUnit(unit, coordinates, session, state);
+      await UnitApi.moveUnit(unit, coordinates, session, state);
       await maybeSleep();
 
       state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);

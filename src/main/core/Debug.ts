@@ -1,12 +1,11 @@
 import { GameState } from './GameState';
 import { Session } from './Session';
-import { levelUp as _levelUp } from '../actions/levelUp';
 import Sounds from '../sounds/Sounds';
 import ItemFactory from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
-import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/units/Faction';
+import { UnitApi } from '@main/units/UnitApi';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -34,12 +33,12 @@ export class Debug {
 
   killPlayer = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    await die(playerUnit, this.state, this.session);
+    await UnitApi.die(playerUnit, this.state, this.session);
   };
 
   levelUp = async () => {
     const playerUnit = this.session.getPlayerUnit();
-    _levelUp(playerUnit, this.session);
+    await UnitApi.levelUp(playerUnit, this.session);
   };
 
   awardEquipment = async () => {

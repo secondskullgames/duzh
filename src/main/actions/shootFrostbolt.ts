@@ -1,5 +1,3 @@
-import { dealDamage } from './dealDamage';
-import { die } from './die';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import Activity from '../units/Activity';
@@ -10,6 +8,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitApi } from '@main/units/UnitApi';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s frostbolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -39,7 +38,7 @@ export const shootFrostbolt = async (
   if (targetUnit) {
     state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
     await playFireballAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
-    const adjustedDamage = await dealDamage(damage, {
+    const adjustedDamage = await UnitApi.dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
     });
@@ -47,7 +46,7 @@ export const shootFrostbolt = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await UnitApi.die(targetUnit, state, session);
     } else {
       targetUnit.setFrozen(freezeDuration);
       session

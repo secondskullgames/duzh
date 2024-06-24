@@ -7,13 +7,12 @@ import Activity from '@main/units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
-import { die } from '@main/actions/die';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitApi } from '@main/units/UnitApi';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -48,7 +47,7 @@ export const ShootBolt: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       const damage = getMeleeDamage(unit);
-      const adjustedDamage = await dealDamage(damage, {
+      const adjustedDamage = await UnitApi.dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
@@ -58,7 +57,7 @@ export const ShootBolt: UnitAbility = {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, state, session);
+        await UnitApi.die(targetUnit, state, session);
       }
     } else {
       await playBoltAnimation(unit, { dx, dy }, coordinatesList, null, state);

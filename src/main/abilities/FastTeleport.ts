@@ -4,11 +4,11 @@ import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import Activity from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 4;
 
@@ -34,7 +34,7 @@ export const FastTeleport: UnitAbility = {
 
     if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
       unit.spendMana(manaCost);
-      await moveUnit(unit, coordinates, session, state);
+      await UnitApi.moveUnit(unit, coordinates, session, state);
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
     } else {

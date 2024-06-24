@@ -5,10 +5,10 @@ import Sounds from '../sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { UnitApi } from '@main/units/UnitApi';
 
 const manaCost = 4;
 
@@ -35,7 +35,7 @@ export const Dash: UnitAbility = {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-        await moveUnit(unit, { x, y }, session, state);
+        await UnitApi.moveUnit(unit, { x, y }, session, state);
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);

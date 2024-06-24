@@ -1,4 +1,3 @@
-import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../units/Unit';
 import Activity from '../units/Activity';
@@ -8,6 +7,7 @@ import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
 import { Session } from '@main/core/Session';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitApi } from '@main/units/UnitApi';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -57,8 +57,8 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, state, session);
-    recordKill(attacker, defender, session, state);
+    await UnitApi.die(defender, state, session);
+    await recordKill(attacker, defender, session, state);
   }
 
   for (const equipment of attacker.getEquipment().getAll()) {
