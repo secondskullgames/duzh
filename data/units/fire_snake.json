@@ -7,7 +7,7 @@
   "paletteSwaps": {
     "GREEN": "ORANGE",
     "DARK_GREEN": "RED",
-    "YELLOW": "RED"
+    "YELLOW": "YELLOW"
   },
   "life": 10,
   "mana": 20,

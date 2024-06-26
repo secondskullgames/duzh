@@ -25,17 +25,7 @@ import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
-
-/**
- * Regenerate this raw amount of health each turn
- * (can be decimal)
- */
-const LIFE_PER_TURN = 0.5;
-/**
- * Regenerate this raw amount of mana each turn
- * (can be decimal)
- */
-const MANA_PER_TURN = 1;
+import { LIFE_PER_TURN, MANA_PER_TURN } from '@main/units/UnitConstants';
 
 let nextId: number = 0;
 

@@ -9,9 +9,9 @@
     "DARK_GREEN": "DARK_RED",
     "YELLOW": "DARK_RED"
   },
-  "life": 10,
+  "life": 12,
   "mana": 0,
-  "strength": 7,
+  "strength": 8,
   "dexterity": 0,
   "aiParameters": {
     "speed": 0.9,
@@ -21,7 +21,7 @@
   },
   "levelParameters": {
     "minLevel": 1,
-    "maxLevel": 2,
+    "maxLevel": 3,
     "rarity": 3
   },
   "abilities": ["ATTACK"],
