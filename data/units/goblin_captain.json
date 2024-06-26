@@ -17,7 +17,7 @@
   },
   "life": 40,
   "mana": 10,
-  "strength": 3,
+  "strength": 4,
   "dexterity": 0,
   "equipment": [
     "blue_chain_mail",
@@ -34,7 +34,7 @@
   "levelParameters": {
     "minLevel": 6,
     "maxLevel": 8,
-    "rarity": 3
+    "rarity": 4
   },
   "abilities": ["ATTACK", "MINOR_KNOCKBACK", "HEAVY_ATTACK"],
   "experience": 1

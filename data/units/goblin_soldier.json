@@ -15,9 +15,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 25,
+  "life": 30,
   "mana": 8,
-  "strength": 2,
+  "strength": 4,
   "dexterity": 0,
   "equipment": [
     "green_chain_mail",

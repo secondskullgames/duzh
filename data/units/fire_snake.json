@@ -1,0 +1,29 @@
+{
+  "$schema": "../../src/gen-schema/UnitModel.schema.json",
+  "id": "fire_snake",
+  "name": "Fire Snake",
+  "type": "ANIMAL",
+  "sprite": "snake",
+  "paletteSwaps": {
+    "GREEN": "ORANGE",
+    "DARK_GREEN": "RED",
+    "YELLOW": "RED"
+  },
+  "life": 10,
+  "mana": 20,
+  "strength": 15,
+  "dexterity": 0,
+  "aiParameters": {
+    "speed": 1,
+    "visionRange": 8,
+    "aggressiveness": 1,
+    "fleeThreshold": 0
+  },
+  "levelParameters": {
+    "minLevel": 7,
+    "maxLevel": 10,
+    "rarity": 5
+  },
+  "abilities": ["ATTACK", "BURNING_ATTACK"],
+  "experience": 1
+}
