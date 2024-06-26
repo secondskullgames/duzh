@@ -169,6 +169,7 @@ export class GeneratedMapFactory {
     map: MapInstance,
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
+    const { objectFactory, itemFactory } = this;
     const objects: GameObject[] = [];
     const candidateLocations = this._getCandidateObjectLocations(map);
 
@@ -192,7 +193,7 @@ export class GeneratedMapFactory {
           continue;
         }
       } else {
-        const chosenItemSpec = await this.itemFactory.chooseRandomMapItemForLevel(
+        const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,
           this.state
         );
@@ -212,12 +213,11 @@ export class GeneratedMapFactory {
       itemsRemaining--;
     }
 
-    // TODO this is a simple "1 per level", need to fine-tune
     if (Feature.isEnabled(Feature.SHRINES)) {
-      const numShrines = randInt(1, 2);
+      const numShrines = randInt(0, 1);
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
-        const shrine = await this.objectFactory.createShrine(coordinates, map);
+        const shrine = await objectFactory.createShrine(coordinates, map);
         objects.push(shrine);
         candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       }

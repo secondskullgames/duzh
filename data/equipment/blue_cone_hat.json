@@ -1,0 +1,16 @@
+{
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
+  "id": "blue_cone_hat",
+  "name": "Blue Cone Hat",
+  "sprite": "hat",
+  "mapIcon": "map_helmet",
+  "itemCategory": "ARMOR",
+  "slot": "HEAD",
+  "paletteSwaps": {
+    "DARK_BLUE": "BLACK",
+    "BLUE": "DARK_BLUE"
+  },
+  "rarity": null,
+  "level": null,
+  "stats": {}
+}

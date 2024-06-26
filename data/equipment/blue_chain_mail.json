@@ -1,0 +1,17 @@
+{
+  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
+  "id": "blue_chain_mail",
+  "name": "Blue Chain Mail",
+  "sprite": "mail",
+  "mapIcon": "map_mail",
+  "itemCategory": "ARMOR",
+  "slot": "CHEST",
+  "paletteSwaps": {
+    "DARK_GRAY": "DARK_BLUE"
+  },
+  "rarity": null,
+  "level": null,
+  "stats": {
+    "absorbAmount": 0.1
+  }
+}

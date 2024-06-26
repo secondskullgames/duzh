@@ -1,7 +1,7 @@
 {
   "$schema": "../../src/gen-schema/UnitModel.schema.json",
-  "id": "goblin_soldier",
-  "name": "Goblin Soldier",
+  "id": "goblin_captain",
+  "name": "Goblin Captain",
   "type": "HUMAN",
   "sprite": "player",
   "paletteSwaps": {
@@ -15,26 +15,27 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 25,
-  "mana": 8,
-  "strength": 2,
+  "life": 40,
+  "mana": 10,
+  "strength": 3,
   "dexterity": 0,
   "equipment": [
-    "green_chain_mail",
-    "green_cone_hat",
-    "iron_sword"
+    "blue_chain_mail",
+    "blue_cone_hat",
+    "steel_sword",
+    "bronze_shield"
   ],
   "aiParameters": {
-    "speed": 0.9,
+    "speed": 0.95,
     "visionRange": 8,
     "aggressiveness": 0.95,
     "fleeThreshold": 0.1
   },
   "levelParameters": {
-    "minLevel": 4,
-    "maxLevel": 6,
-    "rarity": 2
+    "minLevel": 6,
+    "maxLevel": 8,
+    "rarity": 3
   },
-  "abilities": ["ATTACK", "MINOR_KNOCKBACK"],
+  "abilities": ["ATTACK", "MINOR_KNOCKBACK", "HEAVY_ATTACK"],
   "experience": 1
 }

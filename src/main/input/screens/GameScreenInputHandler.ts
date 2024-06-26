@@ -166,7 +166,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     } else if (shrine) {
-      shrine.use(state, session);
+      shrine.onActivate(state, session);
     }
     await engine.playTurn();
   };
@@ -240,6 +240,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           const selectedOption = shrineMenuState.getSelectedOption();
           await selectedOption.onUse(this.state);
           this.session.closeShrineMenu();
+          shrineMenuState.getShrine().deplete();
         }
     }
   };

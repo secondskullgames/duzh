@@ -10,7 +10,7 @@
     "DARK_GRAY": "BLACK",
     "LIGHT_GRAY": "DARK_GRAY"
   },
-  "rarity": 3,
+  "rarity": 2,
   "level": 3,
   "stats": {
     "damage": 5

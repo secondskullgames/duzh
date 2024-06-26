@@ -15,5 +15,6 @@
   "level": 69,
   "stats": {
     "damage": 99999
-  }
+  },
+  "tooltip": "You are a god!\nUse your power wisely."
 }

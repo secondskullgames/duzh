@@ -1,4 +1,5 @@
 import { GameState } from '@main/core/GameState';
+import Shrine from '@main/objects/Shrine';
 
 type OnUseFunc = (state: GameState) => Promise<void>;
 
@@ -8,14 +9,17 @@ export type ShrineOption = Readonly<{
 }>;
 
 type Props = Readonly<{
+  shrine: Shrine;
   options: ShrineOption[];
 }>;
 
 export class ShrineMenuState {
+  readonly shrine: Shrine;
   readonly options: ShrineOption[];
   private selectedOptionIndex: number;
 
-  constructor({ options }: Props) {
+  constructor({ shrine, options }: Props) {
+    this.shrine = shrine;
     this.options = options;
     this.selectedOptionIndex = 0;
   }
@@ -30,4 +34,6 @@ export class ShrineMenuState {
   };
 
   getSelectedOption = (): ShrineOption => this.options[this.selectedOptionIndex];
+
+  getShrine = (): Shrine => this.shrine;
 }

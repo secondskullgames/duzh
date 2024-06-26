@@ -15,6 +15,12 @@ import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Shrine from '@main/objects/Shrine';
+import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { randChoice, randInt, sample } from '@lib/utils/random';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Feature } from '@main/utils/features';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -210,18 +216,61 @@ export default class ObjectFactory {
     map: MapInstance
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createShrineSprite();
-    const onUse = (state: GameState, session: Session) => {
-      session.initShrineMenu();
-      /*
-      
-      const playerUnit = session.getPlayerUnit();
-      playerUnit.increaseMaxLife(5);
-      session
-        .getTicker()
-        .log('Used a shrine! The power of the demon increases your maximum life by 5!', {
-          turn: session.getTurn()
+    const onUse = (shrine: Shrine, state: GameState, session: Session) => {
+      const options = [];
+      const playerUnit = checkNotNull(session.getPlayerUnit());
+      const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
+      const numAbilities = randInt(1, Math.min(learnableAbilityNames.length, 2));
+      const selectedAbilityNames = sample(learnableAbilityNames, numAbilities);
+
+      for (const abilityName of selectedAbilityNames) {
+        const onUse = async (state: GameState) => {
+          // TODO - centralize this logic, it's copy-pasted
+          playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
+          if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+            playerUnit.spendAbilityPoint();
+          }
+          session.getTicker().log(`Learned ${AbilityName.localize(abilityName)}.`, {
+            turn: session.getTurn()
+          });
+          // TODO
+          state.getSoundPlayer().playSound(Sounds.USE_POTION);
+        };
+        options.push({
+          label: AbilityName.localize(abilityName),
+          onUse
         });
-       */
+      }
+
+      const possibleStatOptions = [
+        {
+          label: '+5 Mana',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseMaxMana(5);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        },
+        {
+          label: '+10 Life',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseMaxLife(10);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ];
+      if (numAbilities === 2) {
+        options.push(randChoice(possibleStatOptions));
+      } else {
+        options.push(...possibleStatOptions);
+      }
+
+      const shrineMenuState = new ShrineMenuState({
+        shrine,
+        options
+      });
+      session.setShrineMenuState(shrineMenuState);
     };
 
     return new Shrine({
@@ -229,7 +278,7 @@ export default class ObjectFactory {
       coordinates,
       map,
       sprite,
-      onUse
+      onActivate: onUse
     });
   };
 }

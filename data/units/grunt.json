@@ -17,7 +17,7 @@
   },
   "strength": 3,
   "dexterity": 0,
-  "life": 30,
+  "life": 20,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
@@ -32,7 +32,7 @@
   },
   "levelParameters": {
     "minLevel": 2,
-    "maxLevel": 5,
+    "maxLevel": 4,
     "rarity": 2
   },
   "abilities": ["ATTACK"],
