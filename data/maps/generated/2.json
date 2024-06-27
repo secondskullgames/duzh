@@ -7,7 +7,7 @@
   "width": 24,
   "height": 24,
   "enemies": {
-    "types": ["green_snake", "red_snake", "grunt", "robo_turtle"],
+    "types": ["green_snake", "red_snake", "grunt"],
     "min": 5,
     "max": 7
   },

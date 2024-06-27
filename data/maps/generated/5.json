@@ -7,7 +7,7 @@
   "width": 28,
   "height": 28,
   "enemies": {
-    "types": ["grunt", "red_beetle", "goblin_soldier", "green_blob", "goblin_archer"],
+    "types": ["grunt", "goblin_soldier", "green_blob"],
     "min": 8,
     "max": 9
   },

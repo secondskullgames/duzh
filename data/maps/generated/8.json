@@ -7,9 +7,9 @@
   "width": 34,
   "height": 34,
   "enemies": {
-    "types": ["green_blob", "goblin_archer", "golem", "fire_golem", "scorpion"],
+    "types": ["goblin_soldier", "golem", "fire_golem", "scorpion"],
     "min": 11,
-    "max": 11
+    "max": 12
   },
   "items": {
     "min": 2,
