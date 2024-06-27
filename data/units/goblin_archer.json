@@ -33,8 +33,6 @@
     "fleeThreshold": 0.3
   },
   "levelParameters": {
-    "minLevel": 5,
-    "maxLevel": 9,
     "rarity": 3
   },
   "abilities": ["ATTACK"],

@@ -7,7 +7,11 @@ export type GeneratedMapModel = Readonly<{
   tileSet?: string;
   width: number;
   height: number;
-  enemies: Range;
+  enemies: {
+    types: string[];
+    min: number;
+    max: number;
+  };
   items: Range;
   fogOfWar: FogOfWarParams;
 }>;

@@ -16,8 +16,6 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 9,
-    "maxLevel": 99,
     "rarity": 4
   },
   "abilities": ["ATTACK", "TELEPORT", "SUMMON"],

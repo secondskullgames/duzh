@@ -16,8 +16,6 @@
     "fleeThreshold": 0
   },
   "levelParameters": {
-    "minLevel": 7,
-    "maxLevel": 99,
     "rarity": 3
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],

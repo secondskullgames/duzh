@@ -7,6 +7,7 @@
   "width": 30,
   "height": 30,
   "enemies": {
+    "types": ["goblin_soldier", "green_blob", "goblin_archer", "golem"],
     "min": 9,
     "max": 10
   },
