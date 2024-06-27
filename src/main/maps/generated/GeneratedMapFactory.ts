@@ -146,23 +146,10 @@ export class GeneratedMapFactory {
     return units;
   };
 
-  private _getPossibleUnitModels = async (model: GeneratedMapModel) => {
-    const allUnitModels = await this.modelLoader.loadAllUnitModels();
-    const possibleUnitModels = allUnitModels.filter(unitModel => {
-      const { levelParameters } = unitModel;
-      if (levelParameters) {
-        return (
-          levelParameters.minLevel <= model.levelNumber &&
-          levelParameters.maxLevel >= model.levelNumber
-        );
-      }
-      return false;
-    });
-
-    if (possibleUnitModels.length === 0) {
-      throw new Error('no matching unit models');
-    }
-    return possibleUnitModels;
+  private _getPossibleUnitModels = async (
+    model: GeneratedMapModel
+  ): Promise<UnitModel[]> => {
+    return Promise.all(model.enemies.types.map(this.modelLoader.loadUnitModel));
   };
 
   private _generateObjects = async (

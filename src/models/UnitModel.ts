@@ -19,8 +19,6 @@ export type UnitModel = Readonly<{
    * undefined if this should not be randomly placed as an enemy
    */
   levelParameters?: {
-    minLevel: number;
-    maxLevel: number;
     rarity: number;
   };
   life: number;

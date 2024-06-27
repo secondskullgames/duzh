@@ -7,6 +7,7 @@
   "width": 24,
   "height": 24,
   "enemies": {
+    "types": ["green_snake", "red_snake"],
     "min": 4,
     "max": 5
   },
