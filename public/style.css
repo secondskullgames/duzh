@@ -4,6 +4,7 @@
 
 body {
   margin: 0;
+  overflow: hidden;
 }
 
 #container {
@@ -23,22 +24,12 @@ body {
   outline: none;
 }
 
-/*
- * Render the canvas at 2x (4x) size if the browser window is big enough,
- * Leave some room for margins, etc. (most browsers have 8px margins)
- */
-@media all and (min-width: 1300px) {
-  #container canvas {
-    width: 1280px;
-    height: 720px;
-  }
+#container canvas {
+  width: 1280px;
+  height: 720px;
 }
 
-body.fullscreen {
-  overflow: hidden;
-}
-
-body.fullscreen #container {
+#container {
   width: 100vw;
   height: 100vh;
   align-items: center;
