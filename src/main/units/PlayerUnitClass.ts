@@ -2,7 +2,6 @@ import Unit from './Unit';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Key, NumberKey } from '@lib/input/inputTypes';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { Feature } from '@main/utils/features';
 
 /**
  * "Class" in the sense of, like, a D&D class

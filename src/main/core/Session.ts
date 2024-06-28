@@ -7,11 +7,9 @@ import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { Feature } from '@main/utils/features';
-import { AbilityName } from '@main/abilities/AbilityName';
 import { GameState } from '@main/core/GameState';
 import Sounds from '@main/sounds/Sounds';
-import { randChoice, randInt, sample } from '@lib/utils/random';
+import { randChoice, sample } from '@lib/utils/random';
 import { injectable } from 'inversify';
 
 export interface Session {
