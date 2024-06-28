@@ -5,7 +5,7 @@ import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
-import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
+import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Feature } from '@main/utils/features';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -146,53 +146,76 @@ export class SessionImpl implements Session {
   initShrineMenu = () => {
     const options = [];
     const playerUnit = checkNotNull(this.playerUnit);
-    const learnableAbilityNames = playerUnit.getCurrentlyLearnableAbilities();
-    const numAbilities = randInt(1, Math.min(learnableAbilityNames.length, 2));
-    const selectedAbilityNames = sample(learnableAbilityNames, numAbilities);
 
-    for (const abilityName of selectedAbilityNames) {
-      const onUse = async (state: GameState) => {
-        // TODO - centralize this logic, it's copy-pasted
-        playerUnit.learnAbility(UnitAbility.abilityForName(abilityName));
-        if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-          playerUnit.spendAbilityPoint();
+    // grouped by key so we do not present redundant options for the same stat
+    const possibleStatOptions: Record<string, ShrineOption[]> = {
+      mana: [
+        {
+          label: '+5 Mana',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseMaxMana(5);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
         }
-        this.getTicker().log(`Learned ${AbilityName.localize(abilityName)}.`, {
-          turn: this.getTurn()
-        });
-        // TODO
-        state.getSoundPlayer().playSound(Sounds.USE_POTION);
-      };
-      options.push({
-        label: AbilityName.localize(abilityName),
-        onUse
-      });
-    }
+      ],
+      life: [
+        {
+          label: '+10 Life',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseMaxLife(10);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ],
+      lifePerTurn: [
+        {
+          label: '+0.5 Life Per Turn',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseLifePerTurn(0.5);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ],
+      manaPerTurn: [
+        {
+          label: '+0.5 Mana Per Turn',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseManaPerTurn(0.5);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ],
+      meleeDamage: [
+        {
+          label: '+1 Melee Damage',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseStrength(1);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ],
+      missileDamage: [
+        {
+          label: '+1 Missile Damage',
+          onUse: async (state: GameState) => {
+            playerUnit.increaseDexterity(1);
+            // TODO
+            state.getSoundPlayer().playSound(Sounds.USE_POTION);
+          }
+        }
+      ]
+    };
 
-    const possibleStatOptions = [
-      {
-        label: '+5 Mana',
-        onUse: async (state: GameState) => {
-          playerUnit.increaseMaxMana(5);
-          // TODO
-          state.getSoundPlayer().playSound(Sounds.USE_POTION);
-        }
-      },
-      {
-        label: '+10 Life',
-        onUse: async (state: GameState) => {
-          playerUnit.increaseMaxLife(10);
-          // TODO
-          state.getSoundPlayer().playSound(Sounds.USE_POTION);
-        }
-      }
-    ];
-    if (numAbilities === 2) {
-      options.push(randChoice(possibleStatOptions));
-    } else {
-      options.push(...possibleStatOptions);
-    }
+    const selectedOptions = sample(Object.values(possibleStatOptions), 3).map(options =>
+      randChoice(options)
+    );
 
+    options.push(...selectedOptions);
     this.shrineMenuState = new ShrineMenuState({
       options
     });

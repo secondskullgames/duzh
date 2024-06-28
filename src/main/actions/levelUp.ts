@@ -10,18 +10,27 @@ export const levelUp = (unit: Unit, session: Session) => {
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
-    unit.increaseMaxLife(playerUnitClass.lifePerLevel);
-    unit.increaseMaxMana(playerUnitClass.manaPerLevel);
-    unit.increaseStrength(playerUnitClass.strengthPerLevel);
 
     if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
+      unit.increaseMaxLife(playerUnitClass.lifePerLevel);
+      unit.increaseMaxMana(playerUnitClass.manaPerLevel);
+      unit.increaseStrength(playerUnitClass.strengthPerLevel);
       ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {
         turn: session.getTurn()
       });
       unit.awardAbilityPoint();
     } else if (Feature.isEnabled(Feature.SHRINES)) {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
+      const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
+        unit.getLevel()
+      );
+      for (const abilityName of abilitiesToLearn) {
+        unit.learnAbility(UnitAbility.abilityForName(abilityName));
+      }
     } else {
+      unit.increaseMaxLife(playerUnitClass.lifePerLevel);
+      unit.increaseMaxMana(playerUnitClass.manaPerLevel);
+      unit.increaseStrength(playerUnitClass.strengthPerLevel);
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()

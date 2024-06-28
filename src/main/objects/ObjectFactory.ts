@@ -212,16 +212,6 @@ export default class ObjectFactory {
     const sprite = await this.spriteFactory.createShrineSprite();
     const onUse = (state: GameState, session: Session) => {
       session.initShrineMenu();
-      /*
-      
-      const playerUnit = session.getPlayerUnit();
-      playerUnit.increaseMaxLife(5);
-      session
-        .getTicker()
-        .log('Used a shrine! The power of the demon increases your maximum life by 5!', {
-          turn: session.getTurn()
-        });
-       */
     };
 
     return new Shrine({

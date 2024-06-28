@@ -2,7 +2,7 @@ import { Renderer } from './Renderer';
 import Colors from '../Colors';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Graphics } from '@lib/graphics/Graphics';
-import { getItem } from '@main/maps/MapUtils';
+import { getItem, getShrine } from '@main/maps/MapUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { Color } from '@lib/graphics/Color';
@@ -68,6 +68,8 @@ export default class MapScreenRenderer implements Renderer {
             return Colors.RED;
           } else if (getItem(map, coordinates)) {
             return Colors.YELLOW;
+          } else if (getShrine(map, coordinates)) {
+            return Colors.DARK_RED;
           }
           return Colors.LIGHT_GRAY;
         }

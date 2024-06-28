@@ -102,9 +102,6 @@ class DefaultClass implements PlayerUnitClass {
     }
   };
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
-    if (Feature.isEnabled(Feature.SHRINES)) {
-      return null;
-    }
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };
 }
