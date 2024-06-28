@@ -44,6 +44,12 @@ body.fullscreen #container canvas {
   cursor: none;
 }
 
+#debug {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
 #debug.production {
   display: none;
 }

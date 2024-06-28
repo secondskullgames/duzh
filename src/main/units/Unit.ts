@@ -30,12 +30,12 @@ import { dealDamage } from '@main/actions/dealDamage';
  * Regenerate this raw amount of health each turn
  * (can be decimal)
  */
-const LIFE_PER_TURN = 0.5;
+const STARTING_LIFE_PER_TURN = 0.5;
 /**
  * Regenerate this raw amount of mana each turn
  * (can be decimal)
  */
-const MANA_PER_TURN = 1;
+const STARTING_MANA_PER_TURN = 1;
 
 let nextId: number = 0;
 
@@ -79,6 +79,8 @@ export default class Unit implements Entity {
   private maxMana: number;
   private lifeRemainder: number;
   private manaRemainder: number;
+  private lifePerTurn: number;
+  private manaPerTurn: number;
   private strength: number;
   private dexterity: number;
   private readonly unitClass: string;
@@ -132,6 +134,8 @@ export default class Unit implements Entity {
     this.maxMana = model.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
+    this.lifePerTurn = STARTING_LIFE_PER_TURN; // TODO move to model?
+    this.manaPerTurn = STARTING_MANA_PER_TURN; // TODO move to model?
     this.strength = model.strength;
     this.dexterity = model.dexterity;
     this.unitClass = model.id;
@@ -343,8 +347,20 @@ export default class Unit implements Entity {
     this.maxMana += amount;
   };
 
+  increaseLifePerTurn = (amount: number) => {
+    this.lifePerTurn += amount;
+  };
+
+  increaseManaPerTurn = (amount: number) => {
+    this.manaPerTurn += amount;
+  };
+
   increaseStrength = (amount: number) => {
     this.strength += amount;
+  };
+
+  increaseDexterity = (amount: number) => {
+    this.dexterity += amount;
   };
 
   learnAbility = (ability: UnitAbility) => {
@@ -387,7 +403,7 @@ export default class Unit implements Entity {
 
   private _upkeep = async (state: GameState, session: Session) => {
     // life regeneration
-    this.lifeRemainder += LIFE_PER_TURN;
+    this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
     this.lifeRemainder -= deltaLife;
     this.life = this.life + deltaLife;
@@ -400,7 +416,7 @@ export default class Unit implements Entity {
 
     // mana regeneration
     if (this.mana !== null && this.maxMana !== null) {
-      this.manaRemainder += MANA_PER_TURN;
+      this.manaRemainder += this.manaPerTurn;
       const deltaMana = Math.floor(this.manaRemainder);
       this.manaRemainder -= deltaMana;
       this.mana = Math.min(this.mana + deltaMana, this.maxMana);

@@ -178,6 +178,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       case ModifierKey.SHIFT: {
         for (const abilityName of [
           AbilityName.SHOOT_ARROW,
+          // TODO why not SHOOT_FIREBOLT?
           AbilityName.SHOOT_FROSTBOLT
         ]) {
           const ability = abilityForName(abilityName);
