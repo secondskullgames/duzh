@@ -15,6 +15,9 @@ import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Shrine from '@main/objects/Shrine';
+import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
+import { randChoice, sample } from '@lib/utils/random';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -211,7 +214,82 @@ export default class ObjectFactory {
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createShrineSprite();
     const onUse = (state: GameState, session: Session) => {
-      session.initShrineMenu();
+      const options = [];
+      const playerUnit = checkNotNull(session.getPlayerUnit());
+
+      // grouped by key so we do not present redundant options for the same stat
+      const possibleStatOptions: Record<string, ShrineOption[]> = {
+        mana: [
+          {
+            label: '+5 Mana',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseMaxMana(5);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ],
+        life: [
+          {
+            label: '+10 Life',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseMaxLife(10);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ],
+        lifePerTurn: [
+          {
+            label: '+0.5 Life Per Turn',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseLifePerTurn(0.5);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ],
+        manaPerTurn: [
+          {
+            label: '+0.5 Mana Per Turn',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseManaPerTurn(0.5);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ],
+        meleeDamage: [
+          {
+            label: '+1 Melee Damage',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseStrength(1);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ],
+        missileDamage: [
+          {
+            label: '+2 Missile Damage',
+            onUse: async (state: GameState) => {
+              playerUnit.increaseDexterity(2);
+              // TODO
+              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+            }
+          }
+        ]
+      };
+
+      const selectedOptions = sample(Object.values(possibleStatOptions), 3).map(options =>
+        randChoice(options)
+      );
+
+      options.push(...selectedOptions);
+      const shrineMenuState = new ShrineMenuState({
+        options
+      });
+      session.setShrineMenuState(shrineMenuState);
     };
 
     return new Shrine({
