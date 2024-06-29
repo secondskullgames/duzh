@@ -5,11 +5,8 @@ import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
-import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
+import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { GameState } from '@main/core/GameState';
-import Sounds from '@main/sounds/Sounds';
-import { randChoice, sample } from '@lib/utils/random';
 import { injectable } from 'inversify';
 
 export interface Session {
@@ -18,7 +15,7 @@ export interface Session {
   getScreen: () => GameScreen;
   setScreen: (screen: GameScreen) => void;
   showPrevScreen: () => void;
-  initShrineMenu: () => void;
+  setShrineMenuState: (shrineMenuState: ShrineMenuState) => void;
   getShrineMenuState: () => ShrineMenuState;
   isShowingShrineMenu: () => boolean;
   closeShrineMenu: () => void;
@@ -140,83 +137,8 @@ export class SessionImpl implements Session {
 
   getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
 
-  /** TODO put the logic somewhere else */
-  initShrineMenu = () => {
-    const options = [];
-    const playerUnit = checkNotNull(this.playerUnit);
-
-    // grouped by key so we do not present redundant options for the same stat
-    const possibleStatOptions: Record<string, ShrineOption[]> = {
-      mana: [
-        {
-          label: '+5 Mana',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseMaxMana(5);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ],
-      life: [
-        {
-          label: '+10 Life',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseMaxLife(10);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ],
-      lifePerTurn: [
-        {
-          label: '+0.5 Life Per Turn',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseLifePerTurn(0.5);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ],
-      manaPerTurn: [
-        {
-          label: '+0.5 Mana Per Turn',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseManaPerTurn(0.5);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ],
-      meleeDamage: [
-        {
-          label: '+1 Melee Damage',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseStrength(1);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ],
-      missileDamage: [
-        {
-          label: '+1 Missile Damage',
-          onUse: async (state: GameState) => {
-            playerUnit.increaseDexterity(1);
-            // TODO
-            state.getSoundPlayer().playSound(Sounds.USE_POTION);
-          }
-        }
-      ]
-    };
-
-    const selectedOptions = sample(Object.values(possibleStatOptions), 3).map(options =>
-      randChoice(options)
-    );
-
-    options.push(...selectedOptions);
-    this.shrineMenuState = new ShrineMenuState({
-      options
-    });
+  setShrineMenuState = (shrineMenuState: ShrineMenuState) => {
+    this.shrineMenuState = shrineMenuState;
   };
 
   getShrineMenuState = (): ShrineMenuState => checkNotNull(this.shrineMenuState);
