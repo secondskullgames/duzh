@@ -1,3 +1,5 @@
+import { Pixel } from '@lib/geometry/Pixel';
+
 export type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 export type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0';
 export type FunctionKey =
@@ -41,4 +43,8 @@ export enum ModifierKey {
 export type KeyCommand = Readonly<{
   key: Key;
   modifiers: ModifierKey[];
+}>;
+
+export type TouchCommand = Readonly<{
+  pixel: Pixel;
 }>;

@@ -1,8 +1,9 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
+import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -34,4 +35,10 @@ export default class MapScreenInputHandler implements ScreenInputHandler {
   };
 
   handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleTouchDown = async (_: TouchCommand) => {
+    const { session } = this;
+    session.setScreen(GameScreen.GAME);
+  };
 }

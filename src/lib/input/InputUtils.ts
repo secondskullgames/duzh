@@ -1,7 +1,7 @@
 import { Key } from '@lib/input/inputTypes';
 
-export const isArrowKey = (key: Key): boolean => {
-  return ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
+export const isArrowKey = (key: Key | null | undefined): boolean => {
+  return !!key && ['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(key);
 };
 
 export const isNumberKey = (key: Key): boolean => {

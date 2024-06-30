@@ -1,30 +1,36 @@
 import { injectable } from 'inversify';
 
+type Handler<E> = (event: E) => Promise<void>;
 type KeyHandler = (event: KeyboardEvent) => Promise<void>;
+type TouchHandler = (event: TouchEvent) => Promise<void>;
 
 type Props = Readonly<{
   onKeyDown: KeyHandler;
   onKeyUp: KeyHandler;
+  onTouchDown: TouchHandler;
 }>;
 
 @injectable()
 export default class InputHandler {
   private readonly keyDownHandler: KeyHandler;
   private readonly keyUpHandler: KeyHandler;
+  private readonly touchDownHandler: TouchHandler;
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: KeyHandler | null = null;
   private _onKeyUp: KeyHandler | null = null;
+  private _onTouchDown: TouchHandler | null = null;
 
-  constructor({ onKeyDown, onKeyUp }: Props) {
+  constructor({ onKeyDown, onKeyUp, onTouchDown }: Props) {
     this.keyDownHandler = onKeyDown;
     this.keyUpHandler = onKeyUp;
+    this.touchDownHandler = onTouchDown;
     this.busy = false;
     this.eventTarget = null;
   }
 
-  private _wrapKeyHandler = (handler: KeyHandler): KeyHandler => {
-    return async (event: KeyboardEvent) => {
+  private _wrapHandler = <E>(handler: Handler<E>): Handler<E> => {
+    return async (event: E) => {
       if (!this.busy) {
         this.busy = true;
         try {
@@ -41,11 +47,13 @@ export default class InputHandler {
   };
 
   addEventListener = (target: HTMLElement) => {
-    this._onKeyDown = this._wrapKeyHandler(this.keyDownHandler);
+    this._onKeyDown = this._wrapHandler(this.keyDownHandler);
     this._onKeyUp = this.keyUpHandler;
+    this._onTouchDown = this._wrapHandler(this.touchDownHandler);
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);
+    target.addEventListener('touchstart', this._onTouchDown);
     this.eventTarget = target;
   };
 

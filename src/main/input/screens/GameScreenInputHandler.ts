@@ -3,7 +3,13 @@ import { getDirection } from '../inputMappers';
 import Sounds from '../../sounds/Sounds';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import UnitOrder from '@main/units/orders/UnitOrder';
-import { ArrowKey, Key, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import {
+  ArrowKey,
+  Key,
+  KeyCommand,
+  ModifierKey,
+  TouchCommand
+} from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
@@ -23,8 +29,10 @@ import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import { Pixel } from '@lib/geometry/Pixel';
+import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
-import abilityForName = UnitAbility.abilityForName;
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -36,7 +44,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     @inject(GameState)
     private readonly state: GameState,
     @inject(MapController)
-    private readonly mapController: MapController
+    private readonly mapController: MapController,
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -181,7 +191,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           // TODO why not SHOOT_FIREBOLT?
           AbilityName.SHOOT_FROSTBOLT
         ]) {
-          const ability = abilityForName(abilityName);
+          const ability = UnitAbility.abilityForName(abilityName);
           if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
             session.setQueuedAbility(ability);
           }
@@ -189,7 +199,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         break;
       }
       case ModifierKey.ALT: {
-        const ability = abilityForName(AbilityName.DASH);
+        const ability = UnitAbility.abilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
           session.setQueuedAbility(ability);
         }
@@ -243,5 +253,45 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           this.session.closeShrineMenu();
         }
     }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleTouchDown = async ({ pixel }: TouchCommand) => {
+    const coordinates = this._pixelToGrid(pixel);
+    const playerCoordinates = this.session.getPlayerUnit().getCoordinates();
+    const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
+    const key = (() => {
+      if (dx === 0 && dy === 0) {
+        return 'ENTER';
+      }
+      if (dy === -1 && dx === 0) {
+        return 'UP';
+      }
+      if (dy === 1 && dx === 0) {
+        return 'DOWN';
+      }
+      if (dx === -1 && dy === 0) {
+        return 'LEFT';
+      }
+      if (dx === 1 && dy === 0) {
+        return 'RIGHT';
+      }
+      return null;
+    })();
+    if (key === 'ENTER') {
+      await this._handleEnter();
+    } else if (isArrowKey(key)) {
+      await this._handleArrowKey(key as ArrowKey, []);
+    }
+  };
+
+  private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel): Coordinates => {
+    const playerUnit = this.session.getPlayerUnit();
+    const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+    const { screenWidth, screenHeight } = this.gameConfig;
+    return {
+      x: Math.floor((pixelX - (screenWidth - TILE_WIDTH) / 2) / TILE_WIDTH + playerX),
+      y: Math.floor((pixelY - (screenHeight - TILE_HEIGHT) / 2) / TILE_HEIGHT + playerY)
+    };
   };
 }

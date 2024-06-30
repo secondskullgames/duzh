@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
 import { GameScreen } from '@main/core/GameScreen';
@@ -68,5 +68,10 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
       await useItem(playerUnit, selectedItem, state, session);
       session.prepareInventoryScreen(playerUnit);
     }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleTouchDown = async (_: TouchCommand) => {
+    // TODO
   };
 }

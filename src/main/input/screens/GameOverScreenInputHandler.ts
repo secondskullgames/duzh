@@ -1,8 +1,7 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
@@ -30,10 +29,16 @@ export default class GameOverScreenInputHandler implements ScreenInputHandler {
           session.reset();
         }
         break;
-      case 'ESCAPE':
-        session.setScreen(GameScreen.GAME);
     }
   };
 
   handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleTouchDown = async (_: TouchCommand) => {
+    const { state, session } = this;
+    await showSplashScreen(state, session);
+    state.reset();
+    session.reset();
+  };
 }

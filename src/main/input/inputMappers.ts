@@ -1,7 +1,7 @@
 import { Direction } from '@lib/geometry/Direction';
-import { ArrowKey, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { ArrowKey, KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
 
-export const mapToCommand = (e: KeyboardEvent): KeyCommand | null => {
+export const mapToKeyCommand = (e: KeyboardEvent): KeyCommand | null => {
   const modifiers = [
     e.altKey && 'ALT',
     e.shiftKey && 'SHIFT',
@@ -86,4 +86,14 @@ export const getDirection = (key: ArrowKey): Direction => {
     case 'RIGHT':
       return Direction.E;
   }
+};
+
+export const mapToTouchCommand = (event: TouchEvent): TouchCommand => {
+  const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
+  const touch = event.touches[0];
+  const pixel = {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top
+  };
+  return { pixel };
 };
