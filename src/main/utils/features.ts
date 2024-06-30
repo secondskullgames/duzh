@@ -16,6 +16,7 @@ export enum Feature {
   FORCE_BRONZE_SWORD = 'FORCE_BRONZE_SWORD',
   GOD_MODE = 'GOD_MODE',
   LEVEL_UP_SCREEN = 'LEVEL_UP_SCREEN',
+  MOBILE_WEB = 'MOBILE_WEB',
   HUD_BARS = 'HUD_BARS',
   SHRINES = 'SHRINES',
   STAIRS_UP = 'STAIRS_UP',
@@ -40,6 +41,7 @@ export namespace Feature {
     [Feature.GOD_MODE]: false,
     [Feature.HUD_BARS]: true,
     [Feature.LEVEL_UP_SCREEN]: false,
+    [Feature.MOBILE_WEB]: true,
     [Feature.SHRINES]: false,
     [Feature.STAIRS_UP]: false,
     [Feature.TITLE_MUSIC]: true

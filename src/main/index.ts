@@ -10,7 +10,7 @@ import { MapController, MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
 import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
-import { createCanvas } from '@lib/utils/dom';
+import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
@@ -65,6 +65,10 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   const renderer = await container.getAsync(GameRenderer);
   const inputHandler = await container.getAsync(InputHandler);
   inputHandler.addEventListener(canvas);
+
+  if (isMobileDevice()) {
+    await enterFullScreen();
+  }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = container.get(Debug);
     debug.attachToWindow();

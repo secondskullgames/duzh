@@ -1,3 +1,4 @@
+import { Feature } from '@main/utils/features';
 import { injectable } from 'inversify';
 
 type Handler<E> = (event: E) => Promise<void>;
@@ -53,7 +54,9 @@ export default class InputHandler {
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);
-    target.addEventListener('touchstart', this._onTouchDown);
+    if (Feature.isEnabled(Feature.MOBILE_WEB)) {
+      target.addEventListener('touchstart', this._onTouchDown);
+    }
     this.eventTarget = target;
   };
 

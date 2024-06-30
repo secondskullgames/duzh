@@ -89,11 +89,14 @@ export const getDirection = (key: ArrowKey): Direction => {
 };
 
 export const mapToTouchCommand = (event: TouchEvent): TouchCommand => {
-  const rect = (event.target as HTMLCanvasElement).getBoundingClientRect();
+  const { left, top, width, height } = (
+    event.target as HTMLCanvasElement
+  ).getBoundingClientRect();
+  const { width: canvasWidth, height: canvasHeight } = event.target as HTMLCanvasElement;
   const touch = event.touches[0];
   const pixel = {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
+    x: Math.round((touch.clientX - left) * (canvasWidth / width)),
+    y: Math.round((touch.clientY - top) * (canvasHeight / height))
   };
   return { pixel };
 };
