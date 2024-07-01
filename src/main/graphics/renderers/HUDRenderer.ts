@@ -282,7 +282,7 @@ export default class HUDRenderer implements Renderer {
     for (let i = 0; i < filenames.length; i++) {
       const rect = {
         left: 5 + 25 * i,
-        top: 20,
+        top: 5,
         width: 20,
         height: 20
       };

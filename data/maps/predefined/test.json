@@ -11,9 +11,12 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {},
-  "itemColors": {},
+  "itemColors": {
+    "RED": "life_potion",
+    "MAGENTA": "life_potion",
+    "BLUE": "life_potion"
+  },
   "equipmentColors": {
-    "RED": "wand_of_fire"
   },
   "objectColors": {
     "GREEN": "shrine"

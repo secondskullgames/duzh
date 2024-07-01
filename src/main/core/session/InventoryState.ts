@@ -6,15 +6,15 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { sortBy } from '@lib/utils/arrays';
 import { ItemCategory } from '@models/ItemCategory';
 
-type DisplayCategory =
-  | ItemCategory.WEAPON
-  | ItemCategory.ARMOR
-  | ItemCategory.POTION
-  | ItemCategory.SCROLL;
+export enum InventoryCategory {
+  EQUIPMENT = 'EQUIPMENT',
+  ITEMS = 'ITEMS'
+}
+
 /**
  * Display these in a particular order and don't show keys
  */
-const displayCategories: DisplayCategory[] = [
+export const displayableItemCategories: ItemCategory[] = [
   ItemCategory.WEAPON,
   ItemCategory.ARMOR,
   ItemCategory.POTION,
@@ -31,15 +31,9 @@ const orderedEquipmentSlots: EquipmentSlot[] = [
   EquipmentSlot.CLOAK
 ];
 
-export enum InventoryCategory {
-  EQUIPMENT = 'EQUIPMENT',
-  ITEMS = 'ITEMS'
-}
-type InventorySubcategory = DisplayCategory;
-
 export class InventoryState {
   private selectedCategory: InventoryCategory;
-  private selectedItemCategory: InventorySubcategory | null;
+  private selectedItemCategory: ItemCategory | null;
   private selectedItem: InventoryItem | null;
   private selectedEquipment: Equipment | null;
 
@@ -54,7 +48,7 @@ export class InventoryState {
     switch (this.selectedCategory) {
       case InventoryCategory.EQUIPMENT:
         this.selectedCategory = InventoryCategory.ITEMS;
-        this.selectedItemCategory = displayCategories[0];
+        this.selectedItemCategory = displayableItemCategories[0];
         this.selectedEquipment = null;
         this.selectedItem =
           playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
@@ -62,10 +56,10 @@ export class InventoryState {
       case InventoryCategory.ITEMS: {
         const index =
           this.selectedItemCategory !== null
-            ? displayCategories.indexOf(this.selectedItemCategory)
+            ? displayableItemCategories.indexOf(this.selectedItemCategory)
             : -1;
-        if (index < displayCategories.length - 1) {
-          this.selectedItemCategory = displayCategories[index + 1];
+        if (index < displayableItemCategories.length - 1) {
+          this.selectedItemCategory = displayableItemCategories[index + 1];
           this.selectedItem =
             playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         } else {
@@ -84,16 +78,17 @@ export class InventoryState {
     switch (this.selectedCategory) {
       case InventoryCategory.EQUIPMENT:
         this.selectedCategory = InventoryCategory.ITEMS;
-        this.selectedItemCategory = displayCategories[displayCategories.length - 1];
+        this.selectedItemCategory =
+          displayableItemCategories[displayableItemCategories.length - 1];
         this.selectedEquipment = null;
         break;
       case InventoryCategory.ITEMS: {
         const index =
           this.selectedItemCategory !== null
-            ? displayCategories.indexOf(this.selectedItemCategory)
+            ? displayableItemCategories.indexOf(this.selectedItemCategory)
             : -1;
         if (index > 0) {
-          this.selectedItemCategory = displayCategories[index - 1];
+          this.selectedItemCategory = displayableItemCategories[index - 1];
           this.selectedItem =
             playerUnit.getInventory().get(this.selectedItemCategory)[0] ?? null;
         } else {
@@ -106,6 +101,10 @@ export class InventoryState {
         break;
       }
     }
+  };
+
+  selectItemCategory = (itemCategory: ItemCategory) => {
+    this.selectedItemCategory = itemCategory;
   };
 
   nextItem = (playerUnit: Unit) => {
@@ -156,15 +155,37 @@ export class InventoryState {
     }
   };
 
+  selectItem = (playerUnit: Unit, itemOrEquipment: InventoryItem | Equipment) => {
+    const isEquipment = Object.prototype.hasOwnProperty.call(itemOrEquipment, 'slot');
+    if (isEquipment) {
+      this.selectedEquipment = itemOrEquipment as Equipment;
+      this.selectedCategory = InventoryCategory.EQUIPMENT;
+    } else {
+      const item = itemOrEquipment as InventoryItem;
+      this.selectedItem = item;
+      switch (item.category) {
+        case ItemCategory.WEAPON:
+        case ItemCategory.ARMOR:
+        case ItemCategory.POTION:
+        case ItemCategory.SCROLL:
+          this.selectedItemCategory = item.category;
+          this.selectedCategory = InventoryCategory.ITEMS;
+          break;
+        default: // KEY
+          throw new Error('Cannot select key');
+      }
+    }
+  };
+
   clearSelectedItem = (): void => {
     this.selectedItem = null;
   };
 
   getSelectedCategory = (): InventoryCategory => this.selectedCategory;
-  getItemCategories = (): InventorySubcategory[] => displayCategories;
-  getSelectedItemCategory = (): InventorySubcategory | null => this.selectedItemCategory;
+  getItemCategories = (): ItemCategory[] => displayableItemCategories;
+  getSelectedItemCategory = (): ItemCategory | null => this.selectedItemCategory;
   getSelectedItem = (): InventoryItem | null => this.selectedItem;
-  getItems = (playerUnit: Unit, category: DisplayCategory): InventoryItem[] => {
+  getItems = (playerUnit: Unit, category: ItemCategory): InventoryItem[] => {
     return playerUnit.getInventory().get(category);
   };
   getSelectedEquipment = (): Equipment | null => this.selectedEquipment;
