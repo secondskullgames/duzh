@@ -36,6 +36,7 @@ export default class CharacterScreenInputHandler implements ScreenInputHandler {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleTouchDown = async (_: TouchCommand) => {
-    // TODO
+    const { session } = this;
+    session.setScreen(GameScreen.GAME);
   };
 }

@@ -61,6 +61,7 @@ export default class HUDRenderer implements Renderer {
     await this._renderLeftPanel(graphics);
     await this._renderMiddlePanel(graphics);
     await this._renderRightPanel(graphics);
+    await this._renderTopIcons(graphics);
   };
 
   private _renderFrame = async (graphics: Graphics) => {
@@ -199,13 +200,12 @@ export default class HUDRenderer implements Renderer {
         );
       }
     }
-    const nonNumberedAbilities = playerUnit
-      .getAbilities()
-      .filter(ability => !isNumberedAbility(ability));
+    const nonNumberedAbilities = playerUnitClass.getRightAlignedAbilities(playerUnit);
     // TODO massive code duplication
     for (let i = 0; i < nonNumberedAbilities.length; i++) {
       const ability = nonNumberedAbilities[i];
       const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);
+      // 163 + 5 + (640-163-163) - 20 - 60 + (25*i)
       const left =
         LEFT_PANE_WIDTH +
         BORDER_PADDING +
@@ -213,25 +213,23 @@ export default class HUDRenderer implements Renderer {
         ABILITIES_INNER_MARGIN * (-4 + i) +
         ABILITY_ICON_WIDTH * (-3 + i);
 
-      if (ability.icon) {
-        await this._renderAbility(ability, { x: left, y: top }, graphics);
-        await this._drawText(
-          `${hotkey}`,
-          FontName.APPLE_II,
-          { x: left + 10, y: top + 24 },
-          Colors.WHITE,
-          Alignment.CENTER,
-          graphics
-        );
-        await this._drawText(
-          `${ability.manaCost}`,
-          FontName.APPLE_II,
-          { x: left + 10, y: top + 24 + LINE_HEIGHT },
-          Colors.LIGHT_GRAY,
-          Alignment.CENTER,
-          graphics
-        );
-      }
+      await this._renderAbility(ability, { x: left, y: top }, graphics);
+      await this._drawText(
+        `${hotkey}`,
+        FontName.APPLE_II,
+        { x: left + 10, y: top + 24 },
+        Colors.WHITE,
+        Alignment.CENTER,
+        graphics
+      );
+      await this._drawText(
+        `${ability.manaCost}`,
+        FontName.APPLE_II,
+        { x: left + 10, y: top + 24 + LINE_HEIGHT },
+        Colors.LIGHT_GRAY,
+        Alignment.CENTER,
+        graphics
+      );
     }
   };
 
@@ -265,6 +263,32 @@ export default class HUDRenderer implements Renderer {
         graphics
       );
     }
+  };
+
+  private _renderTopIcons = async (graphics: Graphics) => {
+    const icons = HUDRenderer.getTopIcons();
+    for (let i = 0; i < icons.length; i++) {
+      const [filename, rect] = icons[i];
+      const icon = await this.imageFactory.getImage({
+        filename
+      });
+      graphics.drawImage(icon, Rect.getTopLeft(rect));
+    }
+  };
+
+  static getTopIcons = (): [string, Rect][] => {
+    const filenames = ['menu/map_icon', 'menu/inv_icon', 'menu/char_icon'];
+    const filenameRectPairs: [string, Rect][] = [];
+    for (let i = 0; i < filenames.length; i++) {
+      const rect = {
+        left: 5 + 25 * i,
+        top: 20,
+        width: 20,
+        height: 20
+      };
+      filenameRectPairs.push([filenames[i], rect]);
+    }
+    return filenameRectPairs;
   };
 
   private _renderAbility = async (

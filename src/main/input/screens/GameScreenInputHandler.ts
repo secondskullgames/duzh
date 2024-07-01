@@ -32,6 +32,9 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import { GameConfig } from '@main/core/GameConfig';
+import { Rect } from '@lib/geometry/Rect';
+import Unit from '@main/units/Unit';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -61,7 +64,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
     } else if (isNumberKey(key)) {
-      await this._handleAbility(key);
+      await this._handleAbilityKey(key);
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
@@ -148,12 +151,21 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _handleAbility = async (hotkey: Key) => {
+  private _handleAbilityKey = async (hotkey: Key) => {
+    console.log(hotkey);
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
-    if (ability?.isEnabled(playerUnit)) {
+    if (ability) {
+      await this._handleAbility(ability);
+    }
+  };
+
+  private _handleAbility = async (ability: UnitAbility) => {
+    const { session } = this;
+    const playerUnit = session.getPlayerUnit();
+    if (ability.isEnabled(playerUnit)) {
       session.setQueuedAbility(ability);
     }
   };
@@ -257,8 +269,39 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleTouchDown = async ({ pixel }: TouchCommand) => {
+    // TODO I wish we had a widget library...
+    const playerUnit = this.session.getPlayerUnit();
+    const abilityRects = this._getAbilityRects(playerUnit);
+    for (const [abilityName, rect] of abilityRects) {
+      if (Rect.containsPoint(rect, pixel)) {
+        const ability = UnitAbility.abilityForName(abilityName);
+        await this._handleAbility(ability);
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const topIcons = HUDRenderer.getTopIcons();
+    for (const [filename, rect] of topIcons) {
+      if (Rect.containsPoint(rect, pixel)) {
+        // TODO ugly hardcoding
+        switch (filename) {
+          case 'menu/map_icon':
+            this.session.setScreen(GameScreen.MAP);
+            return;
+          case 'menu/inv_icon':
+            this.session.prepareInventoryScreen(this.session.getPlayerUnit());
+            this.session.setScreen(GameScreen.INVENTORY);
+            return;
+          case 'menu/char_icon':
+            this.session.setScreen(GameScreen.CHARACTER);
+            return;
+        }
+      }
+    }
+
     const coordinates = this._pixelToGrid(pixel);
-    const playerCoordinates = this.session.getPlayerUnit().getCoordinates();
+
+    const playerCoordinates = playerUnit.getCoordinates();
     const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
     const key = (() => {
       if (dx === 0 && dy === 0) {
@@ -293,5 +336,40 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       x: Math.floor((pixelX - (screenWidth - TILE_WIDTH) / 2) / TILE_WIDTH + playerX),
       y: Math.floor((pixelY - (screenHeight - TILE_HEIGHT) / 2) / TILE_HEIGHT + playerY)
     };
+  };
+
+  /**
+   * TODO this is where I wish we had a widget library...
+   */
+  private _getAbilityRects = (playerUnit: Unit): [AbilityName, Rect][] => {
+    const numberedAbilities =
+      playerUnit.getPlayerUnitClass()?.getNumberedAbilities(playerUnit) ?? [];
+    const rightAlignedAbilities =
+      playerUnit.getPlayerUnitClass()?.getRightAlignedAbilities(playerUnit) ?? [];
+    const abilityRects: [AbilityName, Rect][] = [];
+
+    for (let i = 0; i < numberedAbilities.length; i++) {
+      // TODO muy hardcoding, duplicates logic in HUDRenderer
+      const rect = {
+        left: 173 + 25 * i,
+        top: 306,
+        width: 20,
+        height: 20
+      };
+      abilityRects.push([numberedAbilities[i].name, rect]);
+    }
+
+    for (let i = 0; i < rightAlignedAbilities.length; i++) {
+      // TODO muy hardcoding, duplicates logic in HUDRenderer
+      const rect = {
+        left: 402 - (rightAlignedAbilities.length - 1 + i) * 25,
+        top: 306,
+        width: 20,
+        height: 20
+      };
+      abilityRects.push([rightAlignedAbilities[i].name, rect]);
+    }
+
+    return abilityRects;
   };
 }

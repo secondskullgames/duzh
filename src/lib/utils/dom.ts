@@ -7,12 +7,20 @@ export const toggleFullScreen = async () => {
 };
 
 export const enterFullScreen = async () => {
-  await document.documentElement.requestFullscreen?.();
+  try {
+    await document.documentElement.requestFullscreen?.();
+  } catch (e) {
+    // ignored
+  }
   document.body.classList.add('fullscreen');
 };
 
 export const exitFullScreen = async () => {
-  await document.exitFullscreen?.();
+  try {
+    await document.exitFullscreen?.();
+  } catch (e) {
+    // ignored
+  }
   document.body.classList.remove('fullscreen');
 };
 

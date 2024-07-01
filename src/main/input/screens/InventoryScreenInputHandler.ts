@@ -70,8 +70,10 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
     }
   };
 
+  // TODO
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleTouchDown = async (_: TouchCommand) => {
-    // TODO
+    const { session } = this;
+    session.setScreen(GameScreen.GAME);
   };
 }
