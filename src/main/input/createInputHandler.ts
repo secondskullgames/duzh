@@ -3,6 +3,7 @@ import { mapToKeyCommand, mapToClickCommand } from '@main/input/inputMappers';
 import { ScreenInputHandler } from '@main/input/screens/ScreenInputHandler';
 import ScreenHandlers from '@main/input/screens/ScreenHandlers';
 import { Session } from '@main/core/Session';
+import { isMobileDevice } from '@lib/utils/dom';
 import type { KeyCommand, ClickCommand } from '@lib/input/inputTypes';
 
 type Props = Readonly<{
@@ -32,6 +33,9 @@ export const createInputHandler = ({ session, screenHandlers }: Props): InputHan
   };
 
   const onClick = async (event: MouseEvent) => {
+    if (!isMobileDevice()) {
+      return;
+    }
     event.preventDefault();
     const command: ClickCommand | null = mapToClickCommand(event);
     if (!command) {
@@ -42,6 +46,9 @@ export const createInputHandler = ({ session, screenHandlers }: Props): InputHan
   };
 
   const onTouchDown = async (event: TouchEvent) => {
+    if (!isMobileDevice()) {
+      return;
+    }
     event.preventDefault();
     const command: ClickCommand | null = mapToClickCommand(event);
     if (!command) {
