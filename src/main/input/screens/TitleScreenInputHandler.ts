@@ -42,7 +42,6 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     const { session, mapController } = this;
-    console.log('ok');
 
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap();

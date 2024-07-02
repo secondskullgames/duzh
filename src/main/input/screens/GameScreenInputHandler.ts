@@ -154,7 +154,6 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   };
 
   private _handleAbilityKey = async (hotkey: Key) => {
-    console.log(hotkey);
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());

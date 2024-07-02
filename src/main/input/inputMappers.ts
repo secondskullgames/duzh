@@ -1,12 +1,5 @@
 import { Direction } from '@lib/geometry/Direction';
-import {
-  ArrowKey,
-  KeyCommand,
-  ModifierKey,
-  ClickCommand,
-  TouchHandler,
-  ClickHandler
-} from '@lib/input/inputTypes';
+import { ArrowKey, ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 
 export const mapToKeyCommand = (e: KeyboardEvent): KeyCommand | null => {
   const modifiers = [
