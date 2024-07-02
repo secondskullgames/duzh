@@ -42,7 +42,7 @@ export namespace Feature {
     [Feature.HUD_BARS]: true,
     [Feature.LEVEL_UP_SCREEN]: false,
     [Feature.MOBILE_WEB]: true,
-    [Feature.SHRINES]: false,
+    [Feature.SHRINES]: true,
     [Feature.STAIRS_UP]: false,
     [Feature.TITLE_MUSIC]: true
   };
