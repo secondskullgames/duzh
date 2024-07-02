@@ -36,6 +36,7 @@ import { Rect } from '@lib/geometry/Rect';
 import Unit from '@main/units/Unit';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { ShrineOption } from '@main/core/session/ShrineMenuState';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -270,8 +271,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async ({ pixel }: ClickCommand) => {
+    const { session, state } = this;
     // TODO I wish we had a widget library...
-    const playerUnit = this.session.getPlayerUnit();
+    const playerUnit = session.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
@@ -287,15 +289,25 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         // TODO ugly hardcoding
         switch (filename) {
           case 'menu/map_icon':
-            this.session.setScreen(GameScreen.MAP);
+            session.setScreen(GameScreen.MAP);
             return;
           case 'menu/inv_icon':
-            this.session.prepareInventoryScreen(this.session.getPlayerUnit());
-            this.session.setScreen(GameScreen.INVENTORY);
+            session.prepareInventoryScreen(session.getPlayerUnit());
+            session.setScreen(GameScreen.INVENTORY);
             return;
           case 'menu/char_icon':
-            this.session.setScreen(GameScreen.CHARACTER);
+            session.setScreen(GameScreen.CHARACTER);
             return;
+        }
+      }
+    }
+
+    if (session.isShowingShrineMenu()) {
+      const shrineOptionRects = this._getShrineOptionRects();
+      for (const [option, rect] of shrineOptionRects) {
+        if (Rect.containsPoint(rect, pixel)) {
+          await option.onUse(state);
+          session.closeShrineMenu();
         }
       }
     }
@@ -383,5 +395,22 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
 
     return abilityRects;
+  };
+
+  private _getShrineOptionRects = (): [ShrineOption, Rect][] => {
+    const shrineMenuState = this.session.getShrineMenuState();
+    const shrineOptionRects: [ShrineOption, Rect][] = [];
+    const { screenWidth, screenHeight } = this.gameConfig;
+    for (let i = 0; i < shrineMenuState.options.length; i++) {
+      const option = shrineMenuState.options[i];
+      const rect = {
+        left: screenWidth / 4 + 10,
+        top: screenHeight / 4 + 10 + 20 * i,
+        width: screenWidth / 2 - 20,
+        height: 20
+      };
+      shrineOptionRects.push([option, rect]);
+    }
+    return shrineOptionRects;
   };
 }
