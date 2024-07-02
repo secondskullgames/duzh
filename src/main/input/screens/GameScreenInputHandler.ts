@@ -384,7 +384,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     for (let i = 0; i < rightAlignedAbilities.length; i++) {
       // TODO muy hardcoding, duplicates logic in HUDRenderer
       const rect = {
-        left: 402 - (rightAlignedAbilities.length - 1 + i) * 25,
+        left: 402 + i * 25,
         top: 306,
         width: 20,
         height: 20
