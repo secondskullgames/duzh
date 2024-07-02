@@ -72,7 +72,8 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = container.get(Debug);
     debug.attachToWindow();
-    document.getElementById('debug')?.classList.remove('production');
+  } else {
+    document.getElementById('debug')?.remove();
   }
   await showSplashScreen(state, session);
   setInterval(async () => {
