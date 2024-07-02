@@ -61,7 +61,6 @@ export default class HUDRenderer implements Renderer {
     await this._renderLeftPanel(graphics);
     await this._renderMiddlePanel(graphics);
     await this._renderRightPanel(graphics);
-    await this._renderTopIcons(graphics);
   };
 
   private _renderFrame = async (graphics: Graphics) => {
@@ -263,32 +262,6 @@ export default class HUDRenderer implements Renderer {
         graphics
       );
     }
-  };
-
-  private _renderTopIcons = async (graphics: Graphics) => {
-    const icons = HUDRenderer.getTopIcons();
-    for (let i = 0; i < icons.length; i++) {
-      const [filename, rect] = icons[i];
-      const icon = await this.imageFactory.getImage({
-        filename
-      });
-      graphics.drawImage(icon, Rect.getTopLeft(rect));
-    }
-  };
-
-  static getTopIcons = (): [string, Rect][] => {
-    const filenames = ['menu/map_icon', 'menu/inv_icon', 'menu/char_icon'];
-    const filenameRectPairs: [string, Rect][] = [];
-    for (let i = 0; i < filenames.length; i++) {
-      const rect = {
-        left: 5 + 25 * i,
-        top: 5,
-        width: 20,
-        height: 20
-      };
-      filenameRectPairs.push([filenames[i], rect]);
-    }
-    return filenameRectPairs;
   };
 
   private _renderAbility = async (

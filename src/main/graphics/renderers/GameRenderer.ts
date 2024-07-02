@@ -6,7 +6,7 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { createCanvas } from '@lib/utils/dom';
+import { createCanvas, isMobileDevice } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
@@ -20,6 +20,7 @@ import HelpScreenRenderer from '@main/graphics/renderers/HelpScreenRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { formatTimestamp } from '@lib/utils/time';
+import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -49,6 +50,8 @@ export default class GameRenderer implements Renderer {
     private readonly gameScreenRenderer: Renderer,
     @inject(HUDRenderer)
     private readonly hudRenderer: Renderer,
+    @inject(TopMenuRenderer)
+    private readonly topMenuRenderer: Renderer,
     @inject(InventoryRenderer)
     private readonly inventoryRenderer: Renderer,
     @inject(MapScreenRenderer)
@@ -162,6 +165,10 @@ export default class GameRenderer implements Renderer {
     await this.gameScreenRenderer.render(bufferGraphics);
     await this.hudRenderer.render(bufferGraphics);
     await this._renderTicker();
+
+    if (isMobileDevice()) {
+      await this.topMenuRenderer.render(bufferGraphics);
+    }
 
     if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
       if (this.session.isTurnInProgress()) {

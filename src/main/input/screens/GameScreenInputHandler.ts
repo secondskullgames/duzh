@@ -5,10 +5,10 @@ import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import UnitOrder from '@main/units/orders/UnitOrder';
 import {
   ArrowKey,
+  ClickCommand,
   Key,
   KeyCommand,
-  ModifierKey,
-  ClickCommand
+  ModifierKey
 } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
@@ -34,9 +34,9 @@ import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import { GameConfig } from '@main/core/GameConfig';
 import { Rect } from '@lib/geometry/Rect';
 import Unit from '@main/units/Unit';
-import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -282,20 +282,18 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const topIcons = HUDRenderer.getTopIcons();
-    for (const [filename, rect] of topIcons) {
+    const topIcons = TopMenuRenderer.getIconRects();
+    for (const { icon, rect } of topIcons) {
       if (Rect.containsPoint(rect, pixel)) {
-        // TODO ugly hardcoding
-        switch (filename) {
-          case 'menu/map_icon':
+        switch (icon) {
+          case TopMenuIcon.MAP:
             session.setScreen(GameScreen.MAP);
             return;
-          case 'menu/inv_icon':
+          case TopMenuIcon.INVENTORY:
             session.prepareInventoryScreen(session.getPlayerUnit());
             session.setScreen(GameScreen.INVENTORY);
             return;
-          case 'menu/char_icon':
+          case TopMenuIcon.CHARACTER:
             session.setScreen(GameScreen.CHARACTER);
             return;
         }
