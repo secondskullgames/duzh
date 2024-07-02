@@ -14,6 +14,8 @@ export interface PlayerUnitClass {
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
   getHotkeyForAbility: (ability: UnitAbility, unit: Unit) => string | null;
   getAbilityForHotkey: (hotkey: Key, unit: Unit) => UnitAbility | null;
+  getNumberedAbilities: (unit: Unit) => UnitAbility[];
+  getRightAlignedAbilities: (unit: Unit) => UnitAbility[];
   // if LEVEL_UP_SCREEN=false...
   getAbilitiesLearnedAtLevel: (levelNumber: number) => AbilityName[];
   // if LEVEL_UP_SCREEN=true...
@@ -57,6 +59,7 @@ class DefaultClass implements PlayerUnitClass {
   readonly manaPerLevel = 2;
   readonly strengthPerLevel = 0;
   readonly maxLevel = 10;
+
   getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {
     switch (ability.name) {
       case AbilityName.DASH:
@@ -76,18 +79,34 @@ class DefaultClass implements PlayerUnitClass {
       }
     }
   };
+
   getAbilityForHotkey = (hotkey: Key, unit: Unit): UnitAbility | null => {
     if (hotkey.match(/^\d$/)) {
       const index = parseInt(hotkey);
       return unit.getAbilities().filter(ability => !ability.innate)[index - 1];
+    } else if (hotkey === 'ALT') {
+      return (
+        unit.getAbilities().find(ability => ability.name === AbilityName.DASH) ?? null
+      );
     } else {
       return null;
     }
   };
+
+  getNumberedAbilities = (unit: Unit): UnitAbility[] => {
+    return unit.getAbilities().filter(ability => !ability.innate);
+  };
+
+  getRightAlignedAbilities = (unit: Unit): UnitAbility[] => {
+    return unit.getAbilities().filter(ability => ability.innate && ability.icon);
+  };
+
   getAbilitiesLearnedAtLevel = (levelNumber: number): AbilityName[] => {
     return abilitiesLearnedAtLevel[levelNumber] ?? [];
   };
+
   getAllPossibleLearnableAbilities = (): AbilityName[] => learnableAbilities;
+
   getAbilityDependencies = (ability: AbilityName): AbilityName[] => {
     switch (ability) {
       case AbilityName.CLEAVE:
@@ -100,6 +119,7 @@ class DefaultClass implements PlayerUnitClass {
         return [];
     }
   };
+
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };

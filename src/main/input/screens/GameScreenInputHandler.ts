@@ -3,7 +3,13 @@ import { getDirection } from '../inputMappers';
 import Sounds from '../../sounds/Sounds';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import UnitOrder from '@main/units/orders/UnitOrder';
-import { ArrowKey, Key, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import {
+  ArrowKey,
+  ClickCommand,
+  Key,
+  KeyCommand,
+  ModifierKey
+} from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
@@ -23,8 +29,15 @@ import { Dash } from '@main/abilities/Dash';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Strafe } from '@main/abilities/Strafe';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import { Pixel } from '@lib/geometry/Pixel';
+import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import { GameConfig } from '@main/core/GameConfig';
+import { Rect } from '@lib/geometry/Rect';
+import Unit from '@main/units/Unit';
+import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
 import { inject, injectable } from 'inversify';
-import abilityForName = UnitAbility.abilityForName;
 
 @injectable()
 export default class GameScreenInputHandler implements ScreenInputHandler {
@@ -36,7 +49,9 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     @inject(GameState)
     private readonly state: GameState,
     @inject(MapController)
-    private readonly mapController: MapController
+    private readonly mapController: MapController,
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -51,7 +66,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     if (isArrowKey(key)) {
       await this._handleArrowKey(key as ArrowKey, modifiers);
     } else if (isNumberKey(key)) {
-      await this._handleAbility(key);
+      await this._handleAbilityKey(key);
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
@@ -138,12 +153,20 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     }
   };
 
-  private _handleAbility = async (hotkey: Key) => {
+  private _handleAbilityKey = async (hotkey: Key) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
-    if (ability?.isEnabled(playerUnit)) {
+    if (ability) {
+      await this._handleAbility(ability);
+    }
+  };
+
+  private _handleAbility = async (ability: UnitAbility) => {
+    const { session } = this;
+    const playerUnit = session.getPlayerUnit();
+    if (ability.isEnabled(playerUnit)) {
       session.setQueuedAbility(ability);
     }
   };
@@ -181,7 +204,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           // TODO why not SHOOT_FIREBOLT?
           AbilityName.SHOOT_FROSTBOLT
         ]) {
-          const ability = abilityForName(abilityName);
+          const ability = UnitAbility.abilityForName(abilityName);
           if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
             session.setQueuedAbility(ability);
           }
@@ -189,7 +212,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         break;
       }
       case ModifierKey.ALT: {
-        const ability = abilityForName(AbilityName.DASH);
+        const ability = UnitAbility.abilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
           session.setQueuedAbility(ability);
         }
@@ -243,5 +266,148 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
           this.session.closeShrineMenu();
         }
     }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleClick = async ({ pixel }: ClickCommand) => {
+    const { session, state } = this;
+    // TODO I wish we had a widget library...
+    const playerUnit = session.getPlayerUnit();
+    const abilityRects = this._getAbilityRects(playerUnit);
+    for (const [abilityName, rect] of abilityRects) {
+      if (Rect.containsPoint(rect, pixel)) {
+        const ability = UnitAbility.abilityForName(abilityName);
+        await this._handleAbility(ability);
+      }
+    }
+
+    const topIcons = TopMenuRenderer.getIconRects();
+    for (const { icon, rect } of topIcons) {
+      if (Rect.containsPoint(rect, pixel)) {
+        switch (icon) {
+          case TopMenuIcon.MAP:
+            session.setScreen(GameScreen.MAP);
+            return;
+          case TopMenuIcon.INVENTORY:
+            session.prepareInventoryScreen(session.getPlayerUnit());
+            session.setScreen(GameScreen.INVENTORY);
+            return;
+          case TopMenuIcon.CHARACTER:
+            session.setScreen(GameScreen.CHARACTER);
+            return;
+        }
+      }
+    }
+
+    if (session.isShowingShrineMenu()) {
+      const shrineOptionRects = this._getShrineOptionRects();
+      for (const [option, rect] of shrineOptionRects) {
+        if (Rect.containsPoint(rect, pixel)) {
+          await option.onUse(state);
+          session.closeShrineMenu();
+        }
+      }
+    }
+
+    const coordinates = this._pixelToGrid(pixel);
+
+    const playerCoordinates = playerUnit.getCoordinates();
+    if (
+      !Coordinates.equals(coordinates, playerCoordinates) &&
+      !isAdjacent(coordinates, playerCoordinates)
+    ) {
+      return;
+    }
+    const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
+    const key = (() => {
+      if (dx === 0 && dy === 0) {
+        return 'ENTER';
+      }
+      // TODO this is so hacky
+      if (getShrine(playerUnit.getMap(), coordinates)) {
+        playerUnit.setDirection(pointAt(playerUnit.getCoordinates(), coordinates));
+        return 'ENTER';
+      }
+      if (dy === -1 && dx === 0) {
+        return 'UP';
+      }
+      if (dy === 1 && dx === 0) {
+        return 'DOWN';
+      }
+      if (dx === -1 && dy === 0) {
+        return 'LEFT';
+      }
+      if (dx === 1 && dy === 0) {
+        return 'RIGHT';
+      }
+      return null;
+    })();
+    if (key === 'ENTER') {
+      await this._handleEnter();
+    } else if (isArrowKey(key)) {
+      await this._handleArrowKey(key as ArrowKey, []);
+    }
+  };
+
+  private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel): Coordinates => {
+    const playerUnit = this.session.getPlayerUnit();
+    const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+    const { screenWidth, screenHeight } = this.gameConfig;
+    return {
+      x: Math.floor((pixelX - (screenWidth - TILE_WIDTH) / 2) / TILE_WIDTH + playerX),
+      y: Math.floor((pixelY - (screenHeight - TILE_HEIGHT) / 2) / TILE_HEIGHT + playerY)
+    };
+  };
+
+  /**
+   * TODO this is where I wish we had a widget library...
+   */
+  private _getAbilityRects = (playerUnit: Unit): [AbilityName, Rect][] => {
+    const numberedAbilities =
+      playerUnit.getPlayerUnitClass()?.getNumberedAbilities(playerUnit) ?? [];
+    const rightAlignedAbilities =
+      playerUnit.getPlayerUnitClass()?.getRightAlignedAbilities(playerUnit) ?? [];
+    const abilityRects: [AbilityName, Rect][] = [];
+
+    for (let i = 0; i < numberedAbilities.length; i++) {
+      // TODO muy hardcoding, duplicates logic in HUDRenderer
+      const rect = {
+        left: 173 + 25 * i,
+        top: 306,
+        width: 20,
+        height: 20
+      };
+      abilityRects.push([numberedAbilities[i].name, rect]);
+    }
+
+    for (let i = 0; i < rightAlignedAbilities.length; i++) {
+      // TODO muy hardcoding, duplicates logic in HUDRenderer
+      const rect = {
+        left: 402 + i * 25,
+        top: 306,
+        width: 20,
+        height: 20
+      };
+      abilityRects.push([rightAlignedAbilities[i].name, rect]);
+    }
+
+    return abilityRects;
+  };
+
+  private _getShrineOptionRects = (): [ShrineOption, Rect][] => {
+    const shrineMenuState = this.session.getShrineMenuState();
+    const shrineOptionRects: [ShrineOption, Rect][] = [];
+    const { screenWidth, screenHeight } = this.gameConfig;
+    for (let i = 0; i < shrineMenuState.options.length; i++) {
+      const option = shrineMenuState.options[i];
+      const rect = {
+        left: screenWidth / 4 + 10,
+        top: screenHeight / 4 + 10 + 20 * i,
+        width: screenWidth / 2 - 20,
+        height: 20
+      };
+      shrineOptionRects.push([option, rect]);
+    }
+    return shrineOptionRects;
   };
 }

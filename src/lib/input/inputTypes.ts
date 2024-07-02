@@ -1,3 +1,5 @@
+import { Pixel } from '@lib/geometry/Pixel';
+
 export type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 export type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0';
 export type FunctionKey =
@@ -42,3 +44,12 @@ export type KeyCommand = Readonly<{
   key: Key;
   modifiers: ModifierKey[];
 }>;
+
+export type ClickCommand = Readonly<{
+  pixel: Pixel;
+}>;
+
+export type Handler<E> = (event: E) => Promise<void>;
+export type KeyHandler = Handler<KeyboardEvent>;
+export type ClickHandler = Handler<MouseEvent>;
+export type TouchHandler = Handler<TouchEvent>;

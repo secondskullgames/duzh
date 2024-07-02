@@ -35,12 +35,9 @@ export class ShrineMenuRenderer implements Renderer {
     const { screenWidth, screenHeight } = gameConfig;
     const left = screenWidth / 4;
     const top = screenHeight / 4;
-    graphics.drawScaledImage(image, {
-      left,
-      top,
-      width: screenWidth / 2,
-      height: screenHeight / 2
-    });
+    const width = screenWidth / 2;
+    const height = screenHeight / 2;
+    graphics.drawScaledImage(image, { left, top, width, height });
 
     const options = checkNotNull(session.getShrineMenuState()).options;
 

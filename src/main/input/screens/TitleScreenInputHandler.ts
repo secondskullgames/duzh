@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
@@ -38,4 +38,17 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
   };
 
   handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleClick = async (_: ClickCommand) => {
+    const { session, mapController } = this;
+
+    if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
+      await mapController.loadDebugMap();
+    } else {
+      await mapController.loadFirstMap();
+    }
+    session.startGameTimer();
+    session.setScreen(GameScreen.GAME);
+  };
 }

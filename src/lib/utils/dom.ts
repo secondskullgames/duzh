@@ -1,11 +1,27 @@
 export const toggleFullScreen = async () => {
   if (document.fullscreenElement) {
-    await document.exitFullscreen();
-    document.body.classList.remove('fullscreen');
+    await exitFullScreen();
   } else {
-    await document.documentElement.requestFullscreen();
-    document.body.classList.add('fullscreen');
+    await enterFullScreen();
   }
+};
+
+export const enterFullScreen = async () => {
+  try {
+    await document.documentElement.requestFullscreen?.();
+  } catch (e) {
+    // ignored
+  }
+  document.body.classList.add('fullscreen');
+};
+
+export const exitFullScreen = async () => {
+  try {
+    await document.exitFullscreen?.();
+  } catch (e) {
+    // ignored
+  }
+  document.body.classList.remove('fullscreen');
 };
 
 type CanvasProps = Readonly<{
@@ -50,3 +66,5 @@ export const getOffscreenCanvasContext = (
     willReadFrequently: true
   }) as OffscreenCanvasRenderingContext2D;
 };
+
+export const isMobileDevice = (): boolean => navigator.maxTouchPoints > 0;

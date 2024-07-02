@@ -1,9 +1,10 @@
 import InputHandler from '@lib/input/InputHandler';
-import { mapToCommand } from '@main/input/inputMappers';
+import { mapToKeyCommand, mapToClickCommand } from '@main/input/inputMappers';
 import { ScreenInputHandler } from '@main/input/screens/ScreenInputHandler';
 import ScreenHandlers from '@main/input/screens/ScreenHandlers';
 import { Session } from '@main/core/Session';
-import type { KeyCommand } from '@lib/input/inputTypes';
+import { isMobileDevice } from '@lib/utils/dom';
+import type { KeyCommand, ClickCommand } from '@lib/input/inputTypes';
 
 type Props = Readonly<{
   screenHandlers: ScreenHandlers;
@@ -12,7 +13,7 @@ type Props = Readonly<{
 
 export const createInputHandler = ({ session, screenHandlers }: Props): InputHandler => {
   const onKeyDown = async (event: KeyboardEvent) => {
-    const command: KeyCommand | null = mapToCommand(event);
+    const command: KeyCommand | null = mapToKeyCommand(event);
     if (!command) {
       return;
     }
@@ -23,7 +24,7 @@ export const createInputHandler = ({ session, screenHandlers }: Props): InputHan
 
   const onKeyUp = async (event: KeyboardEvent) => {
     event.preventDefault();
-    const command: KeyCommand | null = mapToCommand(event);
+    const command: KeyCommand | null = mapToKeyCommand(event);
     if (!command) {
       return;
     }
@@ -31,5 +32,31 @@ export const createInputHandler = ({ session, screenHandlers }: Props): InputHan
     await handler.handleKeyUp(command);
   };
 
-  return new InputHandler({ onKeyDown, onKeyUp });
+  const onClick = async (event: MouseEvent) => {
+    if (!isMobileDevice()) {
+      return;
+    }
+    event.preventDefault();
+    const command: ClickCommand | null = mapToClickCommand(event);
+    if (!command) {
+      return;
+    }
+    const handler: ScreenInputHandler = screenHandlers.getHandler(session.getScreen());
+    await handler.handleClick(command);
+  };
+
+  const onTouchDown = async (event: TouchEvent) => {
+    if (!isMobileDevice()) {
+      return;
+    }
+    event.preventDefault();
+    const command: ClickCommand | null = mapToClickCommand(event);
+    if (!command) {
+      return;
+    }
+    const handler: ScreenInputHandler = screenHandlers.getHandler(session.getScreen());
+    await handler.handleClick(command);
+  };
+
+  return new InputHandler({ onKeyDown, onKeyUp, onClick, onTouchDown });
 };

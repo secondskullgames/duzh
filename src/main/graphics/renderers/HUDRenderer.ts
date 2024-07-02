@@ -199,13 +199,12 @@ export default class HUDRenderer implements Renderer {
         );
       }
     }
-    const nonNumberedAbilities = playerUnit
-      .getAbilities()
-      .filter(ability => !isNumberedAbility(ability));
+    const nonNumberedAbilities = playerUnitClass.getRightAlignedAbilities(playerUnit);
     // TODO massive code duplication
     for (let i = 0; i < nonNumberedAbilities.length; i++) {
       const ability = nonNumberedAbilities[i];
       const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);
+      // 163 + 5 + (640-163-163) - 20 - 60 + (25*i)
       const left =
         LEFT_PANE_WIDTH +
         BORDER_PADDING +
@@ -213,25 +212,23 @@ export default class HUDRenderer implements Renderer {
         ABILITIES_INNER_MARGIN * (-4 + i) +
         ABILITY_ICON_WIDTH * (-3 + i);
 
-      if (ability.icon) {
-        await this._renderAbility(ability, { x: left, y: top }, graphics);
-        await this._drawText(
-          `${hotkey}`,
-          FontName.APPLE_II,
-          { x: left + 10, y: top + 24 },
-          Colors.WHITE,
-          Alignment.CENTER,
-          graphics
-        );
-        await this._drawText(
-          `${ability.manaCost}`,
-          FontName.APPLE_II,
-          { x: left + 10, y: top + 24 + LINE_HEIGHT },
-          Colors.LIGHT_GRAY,
-          Alignment.CENTER,
-          graphics
-        );
-      }
+      await this._renderAbility(ability, { x: left, y: top }, graphics);
+      await this._drawText(
+        `${hotkey}`,
+        FontName.APPLE_II,
+        { x: left + 10, y: top + 24 },
+        Colors.WHITE,
+        Alignment.CENTER,
+        graphics
+      );
+      await this._drawText(
+        `${ability.manaCost}`,
+        FontName.APPLE_II,
+        { x: left + 10, y: top + 24 + LINE_HEIGHT },
+        Colors.LIGHT_GRAY,
+        Alignment.CENTER,
+        graphics
+      );
     }
   };
 
