@@ -45,6 +45,11 @@ export type KeyCommand = Readonly<{
   modifiers: ModifierKey[];
 }>;
 
-export type TouchCommand = Readonly<{
+export type ClickCommand = Readonly<{
   pixel: Pixel;
 }>;
+
+export type Handler<E> = (event: E) => Promise<void>;
+export type KeyHandler = Handler<KeyboardEvent>;
+export type ClickHandler = Handler<MouseEvent>;
+export type TouchHandler = Handler<TouchEvent>;

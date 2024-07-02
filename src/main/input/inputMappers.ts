@@ -1,5 +1,12 @@
 import { Direction } from '@lib/geometry/Direction';
-import { ArrowKey, KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
+import {
+  ArrowKey,
+  KeyCommand,
+  ModifierKey,
+  ClickCommand,
+  TouchHandler,
+  ClickHandler
+} from '@lib/input/inputTypes';
 
 export const mapToKeyCommand = (e: KeyboardEvent): KeyCommand | null => {
   const modifiers = [
@@ -88,15 +95,16 @@ export const getDirection = (key: ArrowKey): Direction => {
   }
 };
 
-export const mapToTouchCommand = (event: TouchEvent): TouchCommand => {
+export const mapToClickCommand = (event: MouseEvent | TouchEvent): ClickCommand => {
   const { left, top, width, height } = (
     event.target as HTMLCanvasElement
   ).getBoundingClientRect();
   const { width: canvasWidth, height: canvasHeight } = event.target as HTMLCanvasElement;
-  const touch = event.touches[0];
+
+  const { clientX, clientY } = event instanceof TouchEvent ? event.touches[0] : event;
   const pixel = {
-    x: Math.round((touch.clientX - left) * (canvasWidth / width)),
-    y: Math.round((touch.clientY - top) * (canvasHeight / height))
+    x: Math.round((clientX - left) * (canvasWidth / width)),
+    y: Math.round((clientY - top) * (canvasHeight / height))
   };
   return { pixel };
 };

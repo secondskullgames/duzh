@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
@@ -37,7 +37,7 @@ export default class VictoryScreenInputHandler implements ScreenInputHandler {
   handleKeyUp = async () => {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleTouchDown = async (_: TouchCommand) => {
+  handleClick = async (_: ClickCommand) => {
     const { state, session } = this;
     await showSplashScreen(state, session);
     state.reset();

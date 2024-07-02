@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Session } from '@main/core/Session';
@@ -33,7 +33,7 @@ export default class HelpScreenInputHandler implements ScreenInputHandler {
   handleKeyUp = async () => {};
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleTouchDown = async (_: TouchCommand) => {
+  handleClick = async (_: ClickCommand) => {
     const { session } = this;
     session.setScreen(GameScreen.GAME);
   };

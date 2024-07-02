@@ -1,13 +1,10 @@
-import { Feature } from '@main/utils/features';
+import { ClickHandler, Handler, KeyHandler, TouchHandler } from '@lib/input/inputTypes';
 import { injectable } from 'inversify';
-
-type Handler<E> = (event: E) => Promise<void>;
-type KeyHandler = (event: KeyboardEvent) => Promise<void>;
-type TouchHandler = (event: TouchEvent) => Promise<void>;
 
 type Props = Readonly<{
   onKeyDown: KeyHandler;
   onKeyUp: KeyHandler;
+  onClick: ClickHandler;
   onTouchDown: TouchHandler;
 }>;
 
@@ -15,17 +12,20 @@ type Props = Readonly<{
 export default class InputHandler {
   private readonly keyDownHandler: KeyHandler;
   private readonly keyUpHandler: KeyHandler;
-  private readonly touchDownHandler: TouchHandler;
+  private readonly clickHandler: ClickHandler;
+  private readonly touchHandler: TouchHandler;
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: KeyHandler | null = null;
   private _onKeyUp: KeyHandler | null = null;
-  private _onTouchDown: TouchHandler | null = null;
+  private _onClick: ClickHandler | null = null;
+  private _onTouch: TouchHandler | null = null;
 
-  constructor({ onKeyDown, onKeyUp, onTouchDown }: Props) {
+  constructor({ onKeyDown, onKeyUp, onClick, onTouchDown }: Props) {
     this.keyDownHandler = onKeyDown;
     this.keyUpHandler = onKeyUp;
-    this.touchDownHandler = onTouchDown;
+    this.clickHandler = onClick;
+    this.touchHandler = onTouchDown;
     this.busy = false;
     this.eventTarget = null;
   }
@@ -50,13 +50,13 @@ export default class InputHandler {
   addEventListener = (target: HTMLElement) => {
     this._onKeyDown = this._wrapHandler(this.keyDownHandler);
     this._onKeyUp = this.keyUpHandler;
-    this._onTouchDown = this._wrapHandler(this.touchDownHandler);
+    this._onClick = this._wrapHandler(this.clickHandler);
+    this._onTouch = this._wrapHandler(this.touchHandler);
 
     target.addEventListener('keydown', this._onKeyDown);
     target.addEventListener('keyup', this._onKeyUp);
-    if (Feature.isEnabled(Feature.MOBILE_WEB)) {
-      target.addEventListener('touchstart', this._onTouchDown);
-    }
+    target.addEventListener('click', this._onClick);
+    target.addEventListener('touchstart', this._onTouch);
     this.eventTarget = target;
   };
 

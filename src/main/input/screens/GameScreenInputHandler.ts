@@ -8,7 +8,7 @@ import {
   Key,
   KeyCommand,
   ModifierKey,
-  TouchCommand
+  ClickCommand
 } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
@@ -35,6 +35,7 @@ import { GameConfig } from '@main/core/GameConfig';
 import { Rect } from '@lib/geometry/Rect';
 import Unit from '@main/units/Unit';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -268,7 +269,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleTouchDown = async ({ pixel }: TouchCommand) => {
+  handleClick = async ({ pixel }: ClickCommand) => {
     // TODO I wish we had a widget library...
     const playerUnit = this.session.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
@@ -302,9 +303,20 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     const coordinates = this._pixelToGrid(pixel);
 
     const playerCoordinates = playerUnit.getCoordinates();
+    if (
+      !Coordinates.equals(coordinates, playerCoordinates) &&
+      !isAdjacent(coordinates, playerCoordinates)
+    ) {
+      return;
+    }
     const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
     const key = (() => {
       if (dx === 0 && dy === 0) {
+        return 'ENTER';
+      }
+      // TODO this is so hacky
+      if (getShrine(playerUnit.getMap(), coordinates)) {
+        playerUnit.setDirection(pointAt(playerUnit.getCoordinates(), coordinates));
         return 'ENTER';
       }
       if (dy === -1 && dx === 0) {

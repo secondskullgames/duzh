@@ -1,5 +1,5 @@
 import { ScreenInputHandler } from './ScreenInputHandler';
-import { type KeyCommand, ModifierKey, TouchCommand } from '@lib/input/inputTypes';
+import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
 import { GameScreen } from '@main/core/GameScreen';
@@ -76,7 +76,7 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
 
   // TODO
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleTouchDown = async ({ pixel }: TouchCommand) => {
+  handleClick = async ({ pixel }: ClickCommand) => {
     const { state, session } = this;
     const playerUnit = session.getPlayerUnit();
     const inventoryState = session.getInventoryState();

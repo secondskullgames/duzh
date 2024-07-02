@@ -28,7 +28,7 @@ export default class ScreenHandlers {
       [GameScreen.NONE]: {
         handleKeyDown: async () => {},
         handleKeyUp: async () => {},
-        handleTouchDown: async () => {}
+        handleClick: async () => {}
       },
       [GameScreen.CHARACTER]: characterScreenInputHandler,
       [GameScreen.GAME]: gameScreenInputHandler,
