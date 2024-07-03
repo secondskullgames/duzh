@@ -8,7 +8,8 @@ module.exports = {
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:import/recommended"
+        "plugin:import/recommended",
+        "plugin:compat/recommended"
     ],
     "settings": {
         "import/resolver": {
@@ -25,7 +26,8 @@ module.exports = {
     },
     "plugins": [
         "@typescript-eslint",
-        "prefer-arrow"
+        "prefer-arrow",
+        "compat"
     ],
     "rules": {
         "@typescript-eslint/no-namespace": "off",

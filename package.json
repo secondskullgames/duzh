@@ -13,6 +13,13 @@
     "npm": ">=7.0.0",
     "node": ">=16.0.0 <19.0.0"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "iOS 16",
+    "not op_mini all"
+  ],
   "scripts": {
     "gen-schema": "node --loader ts-node/esm scripts/gen-schema.ts",
     "build": "npm -v && node -v && npm run gen-schema && webpack",
@@ -33,11 +40,13 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "ajv": "^8.12.0",
+    "browserslist": "^4.23.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^6.10.0",
     "eslint": "^8.57.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-import-resolver-webpack": "^0.13.8",
+    "eslint-plugin-compat": "^5.0.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "file-loader": "^6.2.0",
