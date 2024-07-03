@@ -10,10 +10,10 @@ type Props = Readonly<{
 
 @injectable()
 export default class InputHandler {
-  private readonly keyDownHandler: KeyHandler;
-  private readonly keyUpHandler: KeyHandler;
-  private readonly clickHandler: ClickHandler;
-  private readonly touchHandler: TouchHandler;
+  readonly keyDownHandler: KeyHandler;
+  readonly keyUpHandler: KeyHandler;
+  readonly clickHandler: ClickHandler;
+  readonly touchHandler: TouchHandler;
   private busy: boolean;
   private eventTarget: HTMLElement | null;
   private _onKeyDown: KeyHandler | null = null;

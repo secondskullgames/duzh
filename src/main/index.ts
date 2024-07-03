@@ -10,19 +10,19 @@ import { MapController, MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
 import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
-import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
+import { enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';
 import { Engine, EngineImpl } from '@main/core/Engine';
 import { FontBundle } from '@lib/graphics/Fonts';
 import ScreenHandlers from '@main/input/screens/ScreenHandlers';
 import { createInputHandler } from '@main/input/createInputHandler';
+import { createKonvaContext } from '@lib/utils/konva';
 import { Container } from 'inversify';
 
 type Props = Readonly<{
-  rootElement: HTMLElement;
+  rootElement: HTMLDivElement;
   gameConfig: GameConfig;
 }>;
 
@@ -53,18 +53,16 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
   const state = await container.getAsync<GameState>(GameState);
   const session = await container.getAsync<Session>(Session);
-  const canvas = createCanvas({
+  const konvaContext = createKonvaContext({
+    parentElement: rootElement,
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
   });
-  rootElement.appendChild(canvas);
-  canvas.tabIndex = 0;
-  canvas.focus();
-  const canvasGraphics = Graphics.forCanvas(canvas);
-
+  konvaContext.canvasLayer.draw();
+  konvaContext.stage.draw();
   const renderer = await container.getAsync(GameRenderer);
   const inputHandler = await container.getAsync(InputHandler);
-  inputHandler.addEventListener(canvas);
+  inputHandler.addEventListener(document.body);
 
   if (isMobileDevice()) {
     await enterFullScreen();
@@ -77,12 +75,18 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   }
   await showSplashScreen(state, session);
   setInterval(async () => {
-    await renderer.render(canvasGraphics);
+    await renderer.render(konvaContext.canvasGraphics);
+    //const ctx = konvaContext.canvasGraphics;
+    //ctx.fill(Colors.RED);
+    konvaContext.canvasLayer.draw();
+    konvaContext.stage.draw();
   }, 20);
 };
 
 const main = async () => {
-  const rootElement = checkNotNull(document.getElementById('container'));
+  const rootElement = checkNotNull(
+    document.getElementById('container') as HTMLDivElement
+  );
   const gameConfig: GameConfig = {
     mapSpecs: mapSpecsJson as MapSpec[],
     screenWidth: 640,

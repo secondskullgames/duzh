@@ -58,6 +58,7 @@
     "webpack-dev-server": "^5.0.3"
   },
   "dependencies": {
+    "konva": "^9.3.12",
     "pathfinding": "^0.4.18"
   }
 }
