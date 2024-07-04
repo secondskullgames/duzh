@@ -53,9 +53,6 @@ export class MapScene implements Scene {
     session.setScene(SceneName.GAME);
   };
 
-  /**
-   * @override {@link Renderer#render}
-   */
   render = async (graphics: Graphics) => {
     const { session } = this;
     const map = checkNotNull(session.getMap());

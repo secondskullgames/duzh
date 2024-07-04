@@ -430,9 +430,6 @@ export class GameScene implements Scene {
     return shrineOptionRects;
   };
 
-  /**
-   * @override {@link Renderer#render}
-   */
   render = async (graphics: Graphics) => {
     graphics.fillRect(
       {

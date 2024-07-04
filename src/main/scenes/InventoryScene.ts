@@ -178,9 +178,6 @@ export class InventoryScene implements Scene {
     return itemRects;
   };
 
-  /**
-   * @override {@link Renderer#render}
-   */
   render = async (graphics: Graphics) => {
     await this._drawBackground(graphics);
     this._drawEquipment(graphics);

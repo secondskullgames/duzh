@@ -60,9 +60,6 @@ export class CharacterScene implements Scene {
     session.setScene(SceneName.GAME);
   };
 
-  /**
-   * @override {@link Renderer#render}
-   */
   render = async (graphics: Graphics) => {
     const { imageFactory } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
