@@ -82,16 +82,7 @@ export default class GameRenderer implements Renderer {
     switch (screen) {
       case GameScreen.TITLE: {
         await this._renderSplashScreen(TITLE_FILENAME);
-        const halfSeconds = Math.floor(new Date().getTime() / 500);
-        if (halfSeconds % 2 === 0) {
-          await this._drawText(
-            'PRESS ENTER TO BEGIN',
-            FontName.APPLE_II,
-            { x: 320, y: 300 },
-            Colors.WHITE,
-            Alignment.CENTER
-          );
-        }
+
         break;
       }
       case GameScreen.GAME:

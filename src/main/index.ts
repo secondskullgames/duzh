@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { Debug } from './core/Debug';
 import { GameState, GameStateImpl } from './core/GameState';
-import GameRenderer from './graphics/renderers/GameRenderer';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
@@ -12,47 +11,43 @@ import InputHandler from '@lib/input/InputHandler';
 import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';
 import { Engine, EngineImpl } from '@main/core/Engine';
 import { FontBundle } from '@lib/graphics/Fonts';
 import ScreenHandlers from '@main/input/screens/ScreenHandlers';
 import { createInputHandler } from '@main/input/createInputHandler';
-import { Container } from 'inversify';
+import { Container } from '@lib/ui/Container';
+import { Container as InversifyContainer } from 'inversify';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
   gameConfig: GameConfig;
 }>;
 
-const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
-  const container = new Container({
+const setupContainer = async ({
+  rootElement,
+  gameConfig
+}: Props): Promise<InversifyContainer> => {
+  const inversifyContainer = new InversifyContainer({
     defaultScope: 'Singleton',
     autoBindInjectable: true
   });
-  container.bind(GameConfig).toConstantValue(gameConfig);
-  container.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
+  inversifyContainer.bind(GameConfig).toConstantValue(gameConfig);
+  inversifyContainer.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
     const fontFactory = context.container.get(FontFactory);
     return fontFactory.loadFonts();
   });
-  container.bind(Session).to(SessionImpl);
-  container.bind(AssetLoader).to(AssetLoaderImpl);
-  container.bind(GameState).to(GameStateImpl);
-  container.bind(MapController).to(MapControllerImpl);
-  container.bind(InputHandler).toDynamicValue(async context => {
+  inversifyContainer.bind(Session).to(SessionImpl);
+  inversifyContainer.bind(AssetLoader).to(AssetLoaderImpl);
+  inversifyContainer.bind(GameState).to(GameStateImpl);
+  inversifyContainer.bind(MapController).to(MapControllerImpl);
+  inversifyContainer.bind(InputHandler).toDynamicValue(async context => {
     const screenHandlers = context.container.get(ScreenHandlers);
     const session = context.container.get<Session>(Session);
     return createInputHandler({ session, screenHandlers });
   });
-  container.bind(Engine).to(EngineImpl);
-  return container;
-};
-
-const init = async ({ rootElement, gameConfig }: Props) => {
-  const container = await setupContainer({ rootElement, gameConfig });
-  const state = await container.getAsync<GameState>(GameState);
-  const session = await container.getAsync<Session>(Session);
+  inversifyContainer.bind(Engine).to(EngineImpl);
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -60,24 +55,32 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   rootElement.appendChild(canvas);
   canvas.tabIndex = 0;
   canvas.focus();
-  const canvasGraphics = Graphics.forCanvas(canvas);
+  const container = new Container({ canvas });
+  inversifyContainer.bind(Container).toConstantValue(container);
+  return inversifyContainer;
+};
 
-  const renderer = await container.getAsync(GameRenderer);
-  const inputHandler = await container.getAsync(InputHandler);
-  inputHandler.addEventListener(canvas);
+const init = async ({ rootElement, gameConfig }: Props) => {
+  const inversifyContainer = await setupContainer({ rootElement, gameConfig });
+  const state = await inversifyContainer.getAsync<GameState>(GameState);
+  const session = await inversifyContainer.getAsync<Session>(Session);
+
+  const inputHandler = await inversifyContainer.getAsync(InputHandler);
+  const container = await inversifyContainer.getAsync(Container);
+  inputHandler.addEventListener(container.canvas);
 
   if (isMobileDevice()) {
     await enterFullScreen();
   }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = container.get(Debug);
+    const debug = inversifyContainer.get(Debug);
     debug.attachToWindow();
   } else {
     document.getElementById('debug')?.remove();
   }
   await showSplashScreen(state, session);
   setInterval(async () => {
-    await renderer.render(canvasGraphics);
+    await container.render();
   }, 20);
 };
 

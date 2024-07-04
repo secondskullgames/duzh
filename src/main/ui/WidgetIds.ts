@@ -1,0 +1,3 @@
+export enum WidgetIds {
+  TITLE_SCREEN_BACKGROUND = 'TITLE_SCREEN_BACKGROUND'
+}

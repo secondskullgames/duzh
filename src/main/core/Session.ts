@@ -7,13 +7,18 @@ import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { injectable } from 'inversify';
+import { ImageWidget } from '@main/ui/ImageWidget';
+import { WidgetIds } from '@main/ui/WidgetIds';
+import { GameConfig } from '@main/core/GameConfig';
+import { Container } from '@lib/ui/Container';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { inject, injectable } from 'inversify';
 
 export interface Session {
   startGameTimer: () => void;
   endGameTimer: () => void;
   getScreen: () => GameScreen;
-  setScreen: (screen: GameScreen) => void;
+  setScreen: (screen: GameScreen) => Promise<void>;
   showPrevScreen: () => void;
   setShrineMenuState: (shrineMenuState: ShrineMenuState) => void;
   getShrineMenuState: () => ShrineMenuState;
@@ -59,7 +64,14 @@ export class SessionImpl implements Session {
   private turn: number;
   private queuedAbility: UnitAbility | null;
 
-  constructor() {
+  constructor(
+    @inject(GameConfig)
+    private readonly gameConfig: GameConfig,
+    @inject(Container)
+    private readonly container: Container,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
+  ) {
     this.ticker = new Ticker();
     this.screen = GameScreen.NONE;
     this.prevScreen = null;
@@ -90,9 +102,11 @@ export class SessionImpl implements Session {
   };
 
   getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => {
+  setScreen = async (screen: GameScreen) => {
+    this._unloadScreenWidgets(this.screen);
     this.prevScreen = this.screen;
     this.screen = screen;
+    await this._loadScreenWidgets(this.screen);
   };
 
   /**
@@ -198,5 +212,30 @@ export class SessionImpl implements Session {
     const endTime = this.endTime ?? new Date();
     const milliseconds = endTime.getTime() - startTime.getTime();
     return milliseconds / 1000;
+  };
+
+  private _loadScreenWidgets = async (screen: GameScreen) => {
+    switch (screen) {
+      case GameScreen.TITLE: {
+        const background = new ImageWidget({
+          id: WidgetIds.TITLE_SCREEN_BACKGROUND,
+          image: await this.imageFactory.getImage({ filename: 'title2' }),
+          rect: {
+            left: 0,
+            top: 0,
+            width: this.gameConfig.screenWidth,
+            height: this.gameConfig.screenHeight
+          }
+        });
+        this.container.addWidget(background);
+      }
+    }
+  };
+
+  private _unloadScreenWidgets = (screen: GameScreen) => {
+    switch (screen) {
+      case GameScreen.TITLE:
+        this.container.removeWidgetById(WidgetIds.TITLE_SCREEN_BACKGROUND);
+    }
   };
 }

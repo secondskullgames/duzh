@@ -16,7 +16,6 @@ export interface Graphics {
   putImageData: (imageData: ImageData, topLeft: Pixel) => void;
   getWidth: () => number;
   getHeight: () => number;
-  getImageBitmap: () => Promise<ImageBitmap>;
 }
 
 class CanvasGraphics implements Graphics {
@@ -67,10 +66,6 @@ class CanvasGraphics implements Graphics {
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;
-  getImageBitmap = async (): Promise<ImageBitmap> => {
-    const imageData = this.context.getImageData(0, 0, this.getWidth(), this.getHeight());
-    return createImageBitmap(imageData);
-  };
 
   drawRect = (rect: Rect, color: Color): void => {
     const { context } = this;
@@ -122,10 +117,6 @@ class OffscreenCanvasGraphics implements Graphics {
 
   getWidth = () => this.canvas.width;
   getHeight = () => this.canvas.height;
-
-  getImageBitmap = async (): Promise<ImageBitmap> => {
-    return this.canvas.transferToImageBitmap();
-  };
 
   clear = (): void => {
     const { canvas, context } = this;

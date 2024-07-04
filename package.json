@@ -15,7 +15,7 @@
   },
   "scripts": {
     "gen-schema": "node --loader ts-node/esm scripts/gen-schema.ts",
-    "build": "npm -v && node -v && npm run gen-schema && webpack",
+    "build": "npm run gen-schema && webpack",
     "dev": "webpack serve",
     "clean": "rimraf build && rimraf electron/build && rimraf src/gen-schema",
     "test": "jest",
