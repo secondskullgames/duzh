@@ -1,14 +1,14 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class TitleScreenInputHandler implements ScreenInputHandler {
+export default class TitleScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Session)
     private readonly session: Session,
@@ -31,7 +31,7 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
             await mapController.loadFirstMap();
           }
           session.startGameTimer();
-          session.setScreen(GameScreen.GAME);
+          session.setScene(SceneName.GAME);
         }
         break;
     }
@@ -49,6 +49,6 @@ export default class TitleScreenInputHandler implements ScreenInputHandler {
       await mapController.loadFirstMap();
     }
     session.startGameTimer();
-    session.setScreen(GameScreen.GAME);
+    session.setScene(SceneName.GAME);
   };
 }

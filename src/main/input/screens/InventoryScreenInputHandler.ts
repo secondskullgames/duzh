@@ -1,8 +1,8 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Rect } from '@lib/geometry/Rect';
@@ -12,7 +12,7 @@ import { displayableItemCategories } from '@main/core/session/InventoryState';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class InventoryScreenInputHandler implements ScreenInputHandler {
+export default class InventoryScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Session)
     private readonly session: Session,
@@ -47,16 +47,16 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
         }
         break;
       case 'TAB':
-        session.setScreen(GameScreen.GAME);
+        session.setScene(SceneName.GAME);
         break;
       case 'M':
-        session.setScreen(GameScreen.MAP);
+        session.setScene(SceneName.MAP);
         break;
       case 'F1':
-        session.setScreen(GameScreen.HELP);
+        session.setScene(SceneName.HELP);
         break;
       case 'ESCAPE':
-        session.setScreen(GameScreen.GAME);
+        session.setScene(SceneName.GAME);
     }
   };
 
@@ -101,7 +101,7 @@ export default class InventoryScreenInputHandler implements ScreenInputHandler {
         return;
       }
     }
-    session.setScreen(GameScreen.GAME);
+    session.setScene(SceneName.GAME);
   };
 
   /** TODO this sucks */

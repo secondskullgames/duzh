@@ -1,4 +1,4 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { getDirection } from '../inputMappers';
 import Sounds from '../../sounds/Sounds';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
@@ -13,7 +13,7 @@ import {
 import { toggleFullScreen } from '@lib/utils/dom';
 import { pickupItem } from '@main/actions/pickupItem';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
 import { GameState } from '@main/core/GameState';
@@ -40,7 +40,7 @@ import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRe
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class GameScreenInputHandler implements ScreenInputHandler {
+export default class GameScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Engine)
     private readonly engine: Engine,
@@ -74,11 +74,11 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await engine.playTurn();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
-      session.setScreen(GameScreen.INVENTORY);
+      session.setScene(SceneName.INVENTORY);
     } else if (key === 'M') {
-      session.setScreen(GameScreen.MAP);
+      session.setScene(SceneName.MAP);
     } else if (key === 'C') {
-      session.setScreen(GameScreen.CHARACTER);
+      session.setScene(SceneName.CHARACTER);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
@@ -86,7 +86,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         await this._handleEnter();
       }
     } else if (key === 'F1') {
-      session.setScreen(GameScreen.HELP);
+      session.setScene(SceneName.HELP);
     }
   };
 
@@ -286,14 +286,14 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (Rect.containsPoint(rect, pixel)) {
         switch (icon) {
           case TopMenuIcon.MAP:
-            session.setScreen(GameScreen.MAP);
+            session.setScene(SceneName.MAP);
             return;
           case TopMenuIcon.INVENTORY:
             session.prepareInventoryScreen(session.getPlayerUnit());
-            session.setScreen(GameScreen.INVENTORY);
+            session.setScene(SceneName.INVENTORY);
             return;
           case TopMenuIcon.CHARACTER:
-            session.setScreen(GameScreen.CHARACTER);
+            session.setScene(SceneName.CHARACTER);
             return;
         }
       }

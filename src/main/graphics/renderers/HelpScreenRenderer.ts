@@ -11,7 +11,7 @@ import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class HelpScreenRenderer implements Renderer {
+export class HelpScreenRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,

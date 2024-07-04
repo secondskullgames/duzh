@@ -1,12 +1,12 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { ClickCommand, type KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { Session } from '@main/core/Session';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class MapScreenInputHandler implements ScreenInputHandler {
+export default class MapScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Session)
     private readonly session: Session
@@ -18,10 +18,10 @@ export default class MapScreenInputHandler implements ScreenInputHandler {
 
     switch (key) {
       case 'M':
-        session.setScreen(GameScreen.GAME);
+        session.setScene(SceneName.GAME);
         break;
       case 'F1':
-        session.setScreen(GameScreen.HELP);
+        session.setScene(SceneName.HELP);
         break;
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
@@ -29,7 +29,7 @@ export default class MapScreenInputHandler implements ScreenInputHandler {
         }
         break;
       case 'ESCAPE':
-        session.setScreen(GameScreen.GAME);
+        session.setScene(SceneName.GAME);
     }
   };
 
@@ -38,6 +38,6 @@ export default class MapScreenInputHandler implements ScreenInputHandler {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     const { session } = this;
-    session.setScreen(GameScreen.GAME);
+    session.setScene(SceneName.GAME);
   };
 }

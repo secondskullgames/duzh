@@ -1,4 +1,4 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@lib/utils/dom';
@@ -7,7 +7,7 @@ import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class GameOverScreenInputHandler implements ScreenInputHandler {
+export default class GameOverScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Session)
     private readonly session: Session,

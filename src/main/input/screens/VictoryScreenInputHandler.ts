@@ -1,14 +1,14 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
+import { SceneInputHandler } from './SceneInputHandler';
 import { type KeyCommand, ModifierKey, ClickCommand } from '@lib/input/inputTypes';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class VictoryScreenInputHandler implements ScreenInputHandler {
+export default class VictoryScreenInputHandler implements SceneInputHandler {
   constructor(
     @inject(Session)
     private readonly session: Session,
@@ -30,7 +30,7 @@ export default class VictoryScreenInputHandler implements ScreenInputHandler {
         }
         break;
       case 'ESCAPE':
-        session.setScreen(GameScreen.GAME);
+        session.setScene(SceneName.GAME);
     }
   };
 
