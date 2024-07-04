@@ -1,9 +1,11 @@
 import { SceneName } from '@main/scenes/SceneName';
-import { Renderer } from '@main/graphics/renderers/Renderer';
-import { SceneInputHandler } from '@main/input/screens/SceneInputHandler';
+import { Graphics } from '@lib/graphics/Graphics';
+import { ClickCommand, KeyCommand } from '@lib/input/inputTypes';
 
 export interface Scene {
   readonly name: SceneName;
-  readonly renderer: Renderer;
-  readonly inputHandler: SceneInputHandler;
+  render: (graphics: Graphics) => Promise<void>;
+  handleKeyDown: (command: KeyCommand) => Promise<void>;
+  handleKeyUp: (command: KeyCommand) => Promise<void>;
+  handleClick: (event: ClickCommand) => Promise<void>;
 }

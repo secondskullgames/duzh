@@ -17,7 +17,7 @@ export const createInputHandler = ({ session }: Props): InputHandler => {
     event.preventDefault();
     const currentScene = session.getCurrentScene();
     if (currentScene) {
-      await currentScene.inputHandler.handleKeyDown(command);
+      await currentScene.handleKeyDown(command);
     }
   };
 
@@ -29,7 +29,7 @@ export const createInputHandler = ({ session }: Props): InputHandler => {
     }
     const currentScene = session.getCurrentScene();
     if (currentScene) {
-      await currentScene.inputHandler.handleKeyUp(command);
+      await currentScene.handleKeyUp(command);
     }
   };
 
@@ -44,7 +44,7 @@ export const createInputHandler = ({ session }: Props): InputHandler => {
     }
     const currentScene = session.getCurrentScene();
     if (currentScene) {
-      await currentScene.inputHandler.handleClick(command);
+      await currentScene.handleClick(command);
     }
   };
 
@@ -59,7 +59,7 @@ export const createInputHandler = ({ session }: Props): InputHandler => {
     }
     const currentScene = session.getCurrentScene();
     if (currentScene) {
-      await currentScene.inputHandler.handleClick(command);
+      await currentScene.handleClick(command);
     }
   };
 

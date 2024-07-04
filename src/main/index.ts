@@ -23,7 +23,7 @@ import { InventoryScene } from '@main/scenes/InventoryScene';
 import { CharacterScene } from '@main/scenes/CharacterScene';
 import { VictoryScene } from '@main/scenes/VictoryScene';
 import { HelpScene } from '@main/scenes/HelpScene';
-import { GameOverScene } from '@main/scenes/GameOverScreen';
+import { GameOverScene } from '@main/scenes/GameOverScene';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
@@ -100,8 +100,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   setInterval(async () => {
     const currentScene = session.getCurrentScene();
     if (currentScene) {
-      const renderer = currentScene.renderer;
-      await renderer.render(canvasGraphics);
+      await currentScene.render(canvasGraphics);
     }
   }, 20);
 };

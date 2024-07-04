@@ -1,65 +1,53 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
-import { formatTimestamp } from '@lib/utils/time';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { inject, injectable } from 'inversify';
 
-const BACKGROUND_FILENAME = 'victory2';
+const BACKGROUND_FILENAME = 'gameover';
 
 @injectable()
-export class VictoryScene implements Scene {
-  readonly name = SceneName.VICTORY;
+export class GameOverScene implements Scene {
+  readonly name = SceneName.GAME_OVER;
 
   constructor(
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
     @inject(Session)
     private readonly session: Session,
     @inject(GameState)
-    private readonly state: GameState,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
+    private readonly state: GameState
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
-    const { session, imageFactory } = this;
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const image = await this.imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
       width: graphics.getWidth(),
       height: graphics.getHeight()
     });
-    const elapsedTurns = session.getTurn();
-    const elapsedTime = formatTimestamp(session.getElapsedTime());
-    const lines = [
-      `Finished in ${elapsedTurns} turns (${elapsedTime})`,
-      'PRESS ENTER TO PLAY AGAIN'
-    ];
-    let y = 300;
-    for (const line of lines) {
-      this._drawText(
-        line,
-        FontName.APPLE_II,
-        { x: 320, y },
-        Colors.WHITE,
-        Alignment.CENTER,
-        graphics
-      );
-      y += 20;
-    }
+    this._drawText(
+      'PRESS ENTER TO PLAY AGAIN',
+      FontName.APPLE_II,
+      { x: 320, y: 300 },
+      Colors.WHITE,
+      Alignment.CENTER,
+      graphics
+    );
   };
 
   private _drawText = (
@@ -82,6 +70,7 @@ export class VictoryScene implements Scene {
   handleKeyDown = async (command: KeyCommand) => {
     const { state, session } = this;
     const { key, modifiers } = command;
+
     switch (key) {
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
@@ -92,8 +81,6 @@ export class VictoryScene implements Scene {
           session.reset();
         }
         break;
-      case 'ESCAPE':
-        session.setScene(SceneName.GAME);
     }
   };
 
