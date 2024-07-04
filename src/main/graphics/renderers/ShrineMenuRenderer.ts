@@ -8,7 +8,6 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';

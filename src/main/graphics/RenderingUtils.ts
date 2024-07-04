@@ -1,6 +1,5 @@
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Image } from '@lib/graphics/images/Image';
 
 export enum Alignment {
   LEFT = 'left',
