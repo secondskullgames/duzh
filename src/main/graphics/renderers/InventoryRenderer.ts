@@ -44,21 +44,26 @@ export default class InventoryRenderer implements Renderer {
    */
   render = async (graphics: Graphics) => {
     await this._drawBackground(graphics);
-    await this._drawEquipment(graphics);
-    await this._drawInventory(graphics);
-    await this._drawTooltip(graphics);
+    this._drawEquipment(graphics);
+    this._drawInventory(graphics);
+    this._drawTooltip(graphics);
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
+    fontName: FontName,
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, graphics, pixel, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 
   private _drawBackground = async (graphics: Graphics) => {
@@ -77,12 +82,12 @@ export default class InventoryRenderer implements Renderer {
     });
   };
 
-  private _drawEquipment = async (graphics: Graphics) => {
+  private _drawEquipment = (graphics: Graphics) => {
     const { session } = this;
     const inventory = session.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
-    await this._drawText(
+    this._drawText(
       'EQUIPMENT',
       FontName.APPLE_II,
       { x: this.inventoryWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
@@ -92,7 +97,7 @@ export default class InventoryRenderer implements Renderer {
       Alignment.CENTER,
       graphics
     );
-    await this._drawText(
+    this._drawText(
       'INVENTORY',
       FontName.APPLE_II,
       { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
@@ -110,7 +115,7 @@ export default class InventoryRenderer implements Renderer {
     const playerUnit = session.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${getSlotName(equipment.slot)} - ${equipment.getName()}`;
-      await this._drawText(
+      this._drawText(
         text,
         FontName.APPLE_II,
         { x: equipmentLeft, y },
@@ -122,7 +127,7 @@ export default class InventoryRenderer implements Renderer {
     }
   };
 
-  private _drawInventory = async (graphics: Graphics) => {
+  private _drawInventory = (graphics: Graphics) => {
     const inventory = this.session.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
@@ -132,7 +137,7 @@ export default class InventoryRenderer implements Renderer {
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;
       const top = INVENTORY_TOP + 40;
-      await this._drawText(
+      this._drawText(
         inventoryCategories[i],
         FontName.APPLE_II,
         { x, y: top },
@@ -168,7 +173,7 @@ export default class InventoryRenderer implements Renderer {
         } else {
           color = Colors.WHITE;
         }
-        await this._drawText(
+        this._drawText(
           items[i].name,
           FontName.APPLE_II,
           { x, y },
@@ -180,7 +185,7 @@ export default class InventoryRenderer implements Renderer {
     }
   };
 
-  private _drawTooltip = async (graphics: Graphics) => {
+  private _drawTooltip = (graphics: Graphics) => {
     const { session } = this;
     const left = 10;
     const top = graphics.getHeight() * 0.6;
@@ -223,7 +228,7 @@ export default class InventoryRenderer implements Renderer {
       let lineTop = top + 5;
       for (const line of lines) {
         if (line.length > 0) {
-          await this._drawText(
+          this._drawText(
             line,
             FontName.APPLE_II,
             { x: lineLeft, y: lineTop },

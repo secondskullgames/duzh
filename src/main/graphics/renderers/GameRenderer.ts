@@ -5,7 +5,6 @@ import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Coordinates } from '@lib/geometry/Coordinates';
 import { createCanvas, isMobileDevice } from '@lib/utils/dom';
 import { GameScreen } from '@main/core/GameScreen';
 import { Feature } from '@main/utils/features';
@@ -21,6 +20,7 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { formatTimestamp } from '@lib/utils/time';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
+import { Pixel } from '@lib/geometry/Pixel';
 import { inject, injectable } from 'inversify';
 
 const GAME_OVER_FILENAME = 'gameover';
@@ -84,12 +84,13 @@ export default class GameRenderer implements Renderer {
         await this._renderSplashScreen(TITLE_FILENAME);
         const halfSeconds = Math.floor(new Date().getTime() / 500);
         if (halfSeconds % 2 === 0) {
-          await this._drawText(
+          this._drawText(
             'PRESS ENTER TO BEGIN',
             FontName.APPLE_II,
             { x: 320, y: 300 },
             Colors.WHITE,
-            Alignment.CENTER
+            Alignment.CENTER,
+            this.bufferGraphics
           );
         }
         break;
@@ -113,12 +114,13 @@ export default class GameRenderer implements Renderer {
         ];
         let y = 300;
         for (const line of lines) {
-          await this._drawText(
+          this._drawText(
             line,
             FontName.APPLE_II,
             { x: 320, y },
             Colors.WHITE,
-            Alignment.CENTER
+            Alignment.CENTER,
+            this.bufferGraphics
           );
           y += 20;
         }
@@ -126,12 +128,13 @@ export default class GameRenderer implements Renderer {
       }
       case GameScreen.GAME_OVER:
         await this._renderSplashScreen(GAME_OVER_FILENAME);
-        await this._drawText(
+        this._drawText(
           'PRESS ENTER TO PLAY AGAIN',
           FontName.APPLE_II,
           { x: 320, y: 300 },
           Colors.WHITE,
-          Alignment.CENTER
+          Alignment.CENTER,
+          this.bufferGraphics
         );
         break;
       case GameScreen.MAP:
@@ -202,12 +205,13 @@ export default class GameRenderer implements Renderer {
         { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
         Colors.BLACK
       );
-      await this._drawText(
+      this._drawText(
         messages[i],
         FontName.APPLE_II,
         { x: left, y: y + 2 },
         Colors.WHITE,
-        Alignment.LEFT
+        Alignment.LEFT,
+        this.bufferGraphics
       );
     }
   };
@@ -238,14 +242,20 @@ export default class GameRenderer implements Renderer {
     await this.helpScreenRenderer.render(this.bufferGraphics);
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
-    coordinates: Coordinates,
+    fontName: FontName,
+    pixel: Pixel,
     color: Color,
-    textAlign: Alignment
+    textAlign: Alignment,
+    graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, this.bufferGraphics, coordinates, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }

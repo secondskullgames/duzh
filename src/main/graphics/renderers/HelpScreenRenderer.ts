@@ -45,7 +45,7 @@ export default class HelpScreenRenderer implements Renderer {
 
     for (let i = 0; i < intro.length; i++) {
       const y = top + LINE_HEIGHT * i;
-      await this._drawText(
+      this._drawText(
         intro[i],
         FontName.APPLE_II,
         { x: left, y },
@@ -62,7 +62,7 @@ export default class HelpScreenRenderer implements Renderer {
         Colors.BLACK
       );
       const [key, description] = keys[i];
-      await this._drawText(
+      this._drawText(
         key,
         FontName.APPLE_II,
         { x: left, y },
@@ -70,7 +70,7 @@ export default class HelpScreenRenderer implements Renderer {
         Alignment.LEFT,
         graphics
       );
-      await this._drawText(
+      this._drawText(
         description,
         FontName.APPLE_II,
         { x: left + 200, y },
@@ -81,15 +81,20 @@ export default class HelpScreenRenderer implements Renderer {
     }
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
+    fontName: FontName,
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, graphics, pixel, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }

@@ -46,7 +46,7 @@ export class ShrineMenuRenderer implements Renderer {
 
     for (const option of options) {
       const color = this._getOptionColor(option);
-      await this._drawText(
+      this._drawText(
         option.label,
         FontName.APPLE_II,
         { x, y },
@@ -66,15 +66,20 @@ export class ShrineMenuRenderer implements Renderer {
     return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
+    fontName: FontName,
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, graphics, pixel, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }

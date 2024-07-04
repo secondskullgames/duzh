@@ -1,6 +1,5 @@
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Image } from '@lib/graphics/images/Image';
 
 export enum Alignment {
   LEFT = 'left',
@@ -9,7 +8,7 @@ export enum Alignment {
 }
 
 export const drawAligned = (
-  image: Image,
+  image: ImageData,
   graphics: Graphics,
   { x, y }: Pixel,
   alignment: Alignment
@@ -26,5 +25,5 @@ export const drawAligned = (
       left = x + image.width;
       break;
   }
-  graphics.drawImage(image, { x: left, y });
+  graphics.putImageData(image, { x: left, y });
 };
