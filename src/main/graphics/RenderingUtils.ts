@@ -9,7 +9,7 @@ export enum Alignment {
 }
 
 export const drawAligned = (
-  image: Image,
+  image: ImageData,
   graphics: Graphics,
   { x, y }: Pixel,
   alignment: Alignment
@@ -26,5 +26,5 @@ export const drawAligned = (
       left = x + image.width;
       break;
   }
-  graphics.drawImage(image, { x: left, y });
+  graphics.putImageData(image, { x: left, y });
 };

@@ -12,7 +12,7 @@ export interface Graphics {
   drawImage: (image: Image, topLeft: Pixel) => void;
   drawImageBitmap: (bitmap: ImageBitmap, topLeft: Pixel) => void;
   drawScaledImage: (image: Image, rect: Rect) => void;
-  getImageData: () => ImageData;
+  getImageData: (rect?: Rect) => ImageData;
   putImageData: (imageData: ImageData, topLeft: Pixel) => void;
   getWidth: () => number;
   getHeight: () => number;
@@ -57,7 +57,10 @@ class CanvasGraphics implements Graphics {
     this.context.drawImage(image.bitmap, rect.left, rect.top, rect.width, rect.height);
   };
 
-  getImageData = (): ImageData => {
+  getImageData = (rect?: Rect): ImageData => {
+    if (rect) {
+      return this.context.getImageData(rect.left, rect.top, rect.width, rect.height);
+    }
     return this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
   };
 
@@ -112,7 +115,10 @@ class OffscreenCanvasGraphics implements Graphics {
     this.context.drawImage(image.bitmap, rect.left, rect.top, rect.width, rect.height);
   };
 
-  getImageData = (): ImageData => {
+  getImageData = (rect?: Rect): ImageData => {
+    if (rect) {
+      return this.context.getImageData(rect.left, rect.top, rect.width, rect.height);
+    }
     return this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
   };
 

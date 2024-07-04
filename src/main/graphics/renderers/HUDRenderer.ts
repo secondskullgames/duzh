@@ -58,9 +58,9 @@ export default class HUDRenderer implements Renderer {
    */
   render = async (graphics: Graphics) => {
     await this._renderFrame(graphics);
-    await this._renderLeftPanel(graphics);
+    this._renderLeftPanel(graphics);
     await this._renderMiddlePanel(graphics);
-    await this._renderRightPanel(graphics);
+    this._renderRightPanel(graphics);
   };
 
   private _renderFrame = async (graphics: Graphics) => {
@@ -86,7 +86,7 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = async (graphics: Graphics) => {
+  private _renderLeftPanel = (graphics: Graphics) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
 
@@ -117,7 +117,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
-      await this._drawText(
+      this._drawText(
         lines[i],
         FontName.APPLE_II,
         { x: left, y },
@@ -128,13 +128,13 @@ export default class HUDRenderer implements Renderer {
     }
 
     if (Feature.isEnabled(Feature.HUD_BARS)) {
-      await this._renderLifeBar(playerUnit, graphics, {
+      this._renderLifeBar(playerUnit, graphics, {
         left,
         top: top + LINE_HEIGHT * 2 - 2,
         width: 50,
         height: 10
       });
-      await this._renderManaBar(playerUnit, graphics, {
+      this._renderManaBar(playerUnit, graphics, {
         left,
         top: top + LINE_HEIGHT * 3 - 2,
         width: 50,
@@ -143,7 +143,7 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderLifeBar = async (unit: Unit, graphics: Graphics, rect: Rect) => {
+  private _renderLifeBar = (unit: Unit, graphics: Graphics, rect: Rect) => {
     const width = Math.round((unit.getLife() / unit.getMaxLife()) * rect.width);
     graphics.fillRect(
       { left: rect.left, top: rect.top, width, height: rect.height },
@@ -151,7 +151,7 @@ export default class HUDRenderer implements Renderer {
     );
   };
 
-  private _renderManaBar = async (unit: Unit, graphics: Graphics, rect: Rect) => {
+  private _renderManaBar = (unit: Unit, graphics: Graphics, rect: Rect) => {
     const width = Math.round((unit.getMana() / unit.getMaxMana()) * rect.width);
     graphics.fillRect(
       { left: rect.left, top: rect.top, width, height: rect.height },
@@ -181,7 +181,7 @@ export default class HUDRenderer implements Renderer {
 
       if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top }, graphics);
-        await this._drawText(
+        this._drawText(
           `${hotkey}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 },
@@ -189,7 +189,7 @@ export default class HUDRenderer implements Renderer {
           Alignment.CENTER,
           graphics
         );
-        await this._drawText(
+        this._drawText(
           `${ability.manaCost}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 + LINE_HEIGHT },
@@ -213,7 +213,7 @@ export default class HUDRenderer implements Renderer {
         ABILITY_ICON_WIDTH * (-3 + i);
 
       await this._renderAbility(ability, { x: left, y: top }, graphics);
-      await this._drawText(
+      this._drawText(
         `${hotkey}`,
         FontName.APPLE_II,
         { x: left + 10, y: top + 24 },
@@ -221,7 +221,7 @@ export default class HUDRenderer implements Renderer {
         Alignment.CENTER,
         graphics
       );
-      await this._drawText(
+      this._drawText(
         `${ability.manaCost}`,
         FontName.APPLE_II,
         { x: left + 10, y: top + 24 + LINE_HEIGHT },
@@ -232,7 +232,7 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = async (graphics: Graphics) => {
+  private _renderRightPanel = (graphics: Graphics) => {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
@@ -253,7 +253,7 @@ export default class HUDRenderer implements Renderer {
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
-      await this._drawText(
+      this._drawText(
         lines[i],
         FontName.APPLE_II,
         { x: left, y },
@@ -295,15 +295,20 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
+    fontName: FontName,
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, graphics, pixel, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }

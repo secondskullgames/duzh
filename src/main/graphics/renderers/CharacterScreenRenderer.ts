@@ -47,7 +47,7 @@ export default class CharacterScreenRenderer implements Renderer {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     let top = 20;
-    await this._drawText(
+    this._drawText(
       'Character Statistics',
       FontName.APPLE_II,
       { x: graphics.getWidth() / 2, y: top },
@@ -64,7 +64,7 @@ export default class CharacterScreenRenderer implements Renderer {
         `Dexterity: ${playerUnit.getDexterity()}`
       ];
       for (const line of lines) {
-        await this._drawText(
+        this._drawText(
           line,
           FontName.APPLE_II,
           { x: 20, y: top },
@@ -87,7 +87,7 @@ export default class CharacterScreenRenderer implements Renderer {
         `Steps Taken: ${playerUnit.getLifetimeStepsTaken()}`
       ];
       for (const line of lines) {
-        await this._drawText(
+        this._drawText(
           line,
           FontName.APPLE_II,
           { x: 20, y: top },
@@ -100,15 +100,20 @@ export default class CharacterScreenRenderer implements Renderer {
     }
   };
 
-  private _drawText = async (
+  private _drawText = (
     text: string,
-    font: FontName,
+    fontName: FontName,
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const image = await this.textRenderer.renderText(text, font, color);
-    drawAligned(image, graphics, pixel, textAlign);
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }
