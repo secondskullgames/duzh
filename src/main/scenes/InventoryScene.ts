@@ -108,7 +108,6 @@ export class InventoryScene implements Scene {
     }
   };
 
-  // TODO
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async ({ pixel }: ClickCommand) => {
     const { state, session } = this;
@@ -155,7 +154,6 @@ export class InventoryScene implements Scene {
     return itemCategoryRects;
   };
 
-  /** TODO this sucks */
   private _getItemRects = (): [InventoryItem, Rect][] => {
     const { session } = this;
     const inventoryScreenState = session.getInventoryState();
