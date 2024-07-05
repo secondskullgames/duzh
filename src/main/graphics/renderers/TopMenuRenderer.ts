@@ -2,13 +2,13 @@ import { Renderer } from '@main/graphics/renderers/Renderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Rect } from '@lib/geometry/Rect';
-import { GameConfig } from '@main/core/GameConfig';
 import { inject, injectable } from 'inversify';
 
 export enum TopMenuIcon {
   MAP = 'MAP',
   INVENTORY = 'INVENTORY',
-  CHARACTER = 'CHARACTER'
+  CHARACTER = 'CHARACTER',
+  HELP = 'HELP'
 }
 
 export type TopMenuIconWithRect = Readonly<{
@@ -21,9 +21,7 @@ export type TopMenuIconWithRect = Readonly<{
 export default class TopMenuRenderer implements Renderer {
   constructor(
     @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig
+    private readonly imageFactory: ImageFactory
   ) {}
 
   /**
@@ -41,7 +39,12 @@ export default class TopMenuRenderer implements Renderer {
   };
 
   static getIconRects = (): TopMenuIconWithRect[] => {
-    const icons = [TopMenuIcon.MAP, TopMenuIcon.INVENTORY, TopMenuIcon.CHARACTER];
+    const icons = [
+      TopMenuIcon.MAP,
+      TopMenuIcon.INVENTORY,
+      TopMenuIcon.CHARACTER,
+      TopMenuIcon.HELP
+    ];
     const iconsWithRects: TopMenuIconWithRect[] = [];
     const screenWidth = 640; // TODO this sucks
     for (let i = 0; i < icons.length; i++) {
@@ -52,7 +55,7 @@ export default class TopMenuRenderer implements Renderer {
         height: 20
       };
       const icon = icons[i];
-      const filename = (() => {
+      const filename: string = (() => {
         switch (icon) {
           case TopMenuIcon.MAP:
             return 'menu/map_icon';
@@ -60,6 +63,8 @@ export default class TopMenuRenderer implements Renderer {
             return 'menu/char_icon';
           case TopMenuIcon.INVENTORY:
             return 'menu/inv_icon';
+          case TopMenuIcon.HELP:
+            return 'menu/help_icon';
         }
       })();
       iconsWithRects.push({ icon, filename, rect });

@@ -314,6 +314,9 @@ export class GameScene implements Scene {
           case TopMenuIcon.CHARACTER:
             session.setScene(SceneName.CHARACTER);
             return;
+          case TopMenuIcon.HELP:
+            session.setScene(SceneName.HELP);
+            return;
         }
       }
     }
