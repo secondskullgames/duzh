@@ -52,7 +52,7 @@ export const PiercingAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
     }
 
-    const nextCoordinates = Coordinates.plus(coordinates, unit.getDirection());
+    const nextCoordinates = Coordinates.plusDirection(coordinates, unit.getDirection());
     const nextUnit = map.getUnit(nextCoordinates);
     if (nextUnit) {
       const attack: Attack = {

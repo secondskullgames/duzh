@@ -49,7 +49,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {
-      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+      const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
         if (!isBlocked(map, coordinates)) {
           tiles.push(coordinates);
@@ -78,7 +78,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
     const tiles: Coordinates[] = [];
 
     for (const direction of Direction.values()) {
-      const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+      const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
         if (!isBlocked(map, coordinates)) {
           tiles.push(coordinates);

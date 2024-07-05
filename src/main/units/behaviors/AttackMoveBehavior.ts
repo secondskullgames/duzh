@@ -28,7 +28,7 @@ export class AttackMoveBehavior implements UnitBehavior {
     const map = session.getMap();
     const { direction } = this;
     unit.setDirection(direction);
-    const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+    const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
     if (!map.contains(coordinates)) {
       return new StayOrder();

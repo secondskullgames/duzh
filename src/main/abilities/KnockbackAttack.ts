@@ -58,13 +58,13 @@ export const KnockbackAttack: UnitAbility = {
 
       targetUnit.setStunned(stunDuration);
       if (targetUnit.getLife() > 0) {
-        const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
+        const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(map, first)) {
           await moveUnit(targetUnit, first, session, state);
           if (TWO_TILES) {
             await sleep(75);
             if (targetUnit.getLife() > 0) {
-              const second = Coordinates.plus(first, direction);
+              const second = Coordinates.plusDirection(first, direction);
               if (map.contains(second) && !isBlocked(map, second)) {
                 await moveUnit(targetUnit, second, session, state);
               }

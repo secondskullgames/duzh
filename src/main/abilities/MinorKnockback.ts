@@ -55,7 +55,7 @@ export const MinorKnockback: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
 
       if (targetUnit.getLife() > 0) {
-        const first = Coordinates.plus(targetUnit.getCoordinates(), direction);
+        const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(map, first)) {
           await moveUnit(targetUnit, first, session, state);
         }

@@ -1,7 +1,6 @@
 import DynamicSprite from './DynamicSprite';
 import Equipment from '../../equipment/Equipment';
 import Activity from '../../units/Activity';
-import { Direction } from '@lib/geometry/Direction';
 import { Offsets } from '@lib/geometry/Offsets';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Unit from '@main/units/Unit';
@@ -33,7 +32,7 @@ export class EquipmentSprite extends DynamicSprite<Equipment> {
         return Activity.toString(unit.getActivity());
       }
     })();
-    const direction = Direction.toString(unit.getDirection());
+    const direction = unit.getDirection();
     const frameNumber = unit.getFrameNumber();
     return `${animationName}_${direction}_${frameNumber}`;
   };

@@ -18,9 +18,9 @@ const damageCoefficient = 1;
 const stunDuration = 1;
 const range = 10;
 
-const _findTargetUnit = (unit: Unit, { dx, dy }: Direction): Unit | null => {
+const _findTargetUnit = (unit: Unit, direction: Direction): Unit | null => {
   const map = unit.getMap();
-  let coordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+  let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
   for (let i = 0; i < range; i++) {
     if (!map.contains(coordinates)) {
       return null;
@@ -31,7 +31,7 @@ const _findTargetUnit = (unit: Unit, { dx, dy }: Direction): Unit | null => {
     } else if (isBlocked(map, coordinates)) {
       return null;
     }
-    coordinates = Coordinates.plus(coordinates, { dx, dy });
+    coordinates = Coordinates.plusDirection(coordinates, direction);
   }
   return null;
 };
@@ -65,7 +65,7 @@ export const Scorpion: UnitAbility = {
   ) => {
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
-    const { dx, dy } = direction;
+    const { dx, dy } = Direction.getOffsets(direction);
     unit.setDirection(direction);
     const targetUnit = _findTargetUnit(unit, direction);
     unit.spendMana(manaCost);

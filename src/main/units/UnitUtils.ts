@@ -58,7 +58,7 @@ export const isHostile = (first: Unit, second: Unit): boolean =>
   first.getFaction() !== second.getFaction();
 
 const isFrontalAttack = (defender: Unit, attacker: Unit) => {
-  const aheadCoordinates = Coordinates.plus(
+  const aheadCoordinates = Coordinates.plusDirection(
     defender.getCoordinates(),
     defender.getDirection()
   );

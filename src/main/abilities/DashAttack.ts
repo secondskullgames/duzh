@@ -5,7 +5,7 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import Sounds from '@main/sounds/Sounds';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
@@ -33,12 +33,14 @@ const attack: Attack = {
 
 const _doKnockback = async (
   targetUnit: Unit,
-  { dx, dy }: Direction,
+  direction: Direction,
   session: Session,
   state: GameState
 ) => {
-  const { x, y } = targetUnit.getCoordinates();
-  const targetCoordinates = { x: x + dx, y: y + dy };
+  const targetCoordinates = Coordinates.plusDirection(
+    targetUnit.getCoordinates(),
+    direction
+  );
   await moveUnit(targetUnit, targetCoordinates, session, state);
 };
 
@@ -82,7 +84,8 @@ export const DashAttack: UnitAbility = {
         if (targetUnit) {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
           if (!isBlocked(map, behindCoordinates)) {
-            await _doKnockback(targetUnit, { dx, dy } as Direction, session, state);
+            const direction = offsetsToDirection({ dx, dy });
+            await _doKnockback(targetUnit, direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
           }
           if (i === numTiles - 1) {

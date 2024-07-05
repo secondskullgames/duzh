@@ -23,7 +23,7 @@ export class RoboTurtleController implements UnitController {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const nextCoordinates = Coordinates.plus(
+      const nextCoordinates = Coordinates.plusDirection(
         unit.getCoordinates(),
         unit.getDirection()
       );

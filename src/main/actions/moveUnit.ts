@@ -20,7 +20,7 @@ export const moveUnit = async (
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
       // TODO - why are we using the next coordinates?
-      const nextCoordinates = Coordinates.plus(
+      const nextCoordinates = Coordinates.plusDirection(
         unit.getCoordinates(),
         unit.getDirection()
       );

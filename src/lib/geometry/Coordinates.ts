@@ -1,4 +1,5 @@
 import { Offsets } from '@lib/geometry/Offsets';
+import { Direction } from '@lib/geometry/Direction';
 
 export type Coordinates = Readonly<{
   x: number;
@@ -13,6 +14,13 @@ export namespace Coordinates {
     x: x + dx,
     y: y + dy
   });
+
+  export const plusDirection = (
+    coordinates: Coordinates,
+    direction: Direction
+  ): Coordinates => {
+    return Coordinates.plus(coordinates, Direction.getOffsets(direction));
+  };
 
   export const difference = (first: Coordinates, second: Coordinates): Offsets => ({
     dx: second.x - first.x,

@@ -73,8 +73,8 @@ export const canDash = (
   }
 
   if (coordinates) {
-    const plusOne = Coordinates.plus(unit.getCoordinates(), unit.getDirection());
-    const plusTwo = Coordinates.plus(plusOne, unit.getDirection());
+    const plusOne = Coordinates.plusDirection(unit.getCoordinates(), unit.getDirection());
+    const plusTwo = Coordinates.plusDirection(plusOne, unit.getDirection());
     return (
       map.contains(plusOne) &&
       map.contains(plusTwo) &&
