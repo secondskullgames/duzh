@@ -32,7 +32,7 @@ import { pickupItem } from '@main/actions/pickupItem';
 import { TileType } from '@models/TileType';
 import { Rect } from '@lib/geometry/Rect';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
-import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
@@ -46,6 +46,7 @@ import Colors from '@main/graphics/Colors';
 import { FontName } from '@main/graphics/Fonts';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
+import { Direction } from '@lib/geometry/Direction';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -350,16 +351,17 @@ export class GameScene implements Scene {
         playerUnit.setDirection(pointAt(playerUnit.getCoordinates(), coordinates));
         return 'ENTER';
       }
-      if (dy === -1 && dx === 0) {
+      const direction = offsetsToDirection({ dx, dy });
+      if (direction === Direction.N) {
         return 'UP';
       }
-      if (dy === 1 && dx === 0) {
+      if (direction === Direction.S) {
         return 'DOWN';
       }
-      if (dx === -1 && dy === 0) {
+      if (direction === Direction.W) {
         return 'LEFT';
       }
-      if (dx === 1 && dy === 0) {
+      if (direction === Direction.E) {
         return 'RIGHT';
       }
       return null;

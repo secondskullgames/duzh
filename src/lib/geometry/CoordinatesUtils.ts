@@ -1,6 +1,7 @@
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Direction } from '@lib/geometry/Direction';
 import { checkState } from '@lib/utils/preconditions';
+import { Offsets } from '@lib/geometry/Offsets';
 
 export const manhattanDistance = (first: Coordinates, second: Coordinates): number =>
   Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
@@ -25,8 +26,10 @@ export const isInStraightLine = (first: Coordinates, second: Coordinates): boole
 
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));
-  const dx = second.x - first.x;
-  const dy = second.y - first.y;
+  return offsetsToDirection(Coordinates.difference(first, second));
+};
+
+export const offsetsToDirection = ({ dx, dy }: Offsets): Direction => {
   if (Math.abs(dx) > Math.abs(dy)) {
     return { dx: Math.sign(dx), dy: 0 } as Direction;
   } else {
