@@ -14,6 +14,7 @@ import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
+// TODO correctly sized background
 const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 

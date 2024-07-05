@@ -13,10 +13,10 @@
   "enemyColors": {},
   "itemColors": {
     "RED": "life_potion",
-    "MAGENTA": "life_potion"
+    "MAGENTA": "freeze_scroll"
   },
   "equipmentColors": {
-    "BLUE": "god_sword"
+    "BLUE": "fire_sword"
   },
   "objectColors": {
     "GREEN": "shrine"

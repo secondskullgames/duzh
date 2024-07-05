@@ -17,7 +17,7 @@ export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   }
   if (equipment.tooltip) {
     lines.push('');
-    lines.push(...equipment.tooltip.split('\n'));
+    lines.push(...splitTooltipToLines(equipment.tooltip, 27));
   }
   return lines.join('\n');
 };
@@ -42,3 +42,24 @@ export const getSlotName = (slot: EquipmentSlot): string => {
 };
 
 const _floatToPercent = (value: number): string => `${(value * 100).toFixed(0)}%`;
+
+export const splitTooltipToLines = (tooltip: string, maxLineLength: number): string[] => {
+  if (tooltip.includes('\n')) {
+    return tooltip.split('\n').flatMap(line => splitTooltipToLines(line, maxLineLength));
+  }
+  const tokens = tooltip.split(' ');
+  const lines = [];
+  let currentLineTokens: string[] = [];
+  for (const token of tokens) {
+    if ([...currentLineTokens, token].join(' ').length < maxLineLength) {
+      currentLineTokens.push(token);
+    } else {
+      lines.push(currentLineTokens.join(' '));
+      currentLineTokens = [token];
+    }
+  }
+  if (currentLineTokens.length > 0) {
+    lines.push(currentLineTokens.join(' '));
+  }
+  return lines;
+};
