@@ -1,4 +1,3 @@
-import Colors from './Colors';
 import { createCanvas, getCanvasContext } from '@lib/utils/dom';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontBundle, FontDefinition, FontInstance } from '@lib/graphics/Fonts';
