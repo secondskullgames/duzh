@@ -31,8 +31,8 @@ export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
 
 export const offsetsToDirection = ({ dx, dy }: Offsets): Direction => {
   if (Math.abs(dx) > Math.abs(dy)) {
-    return { dx: Math.sign(dx), dy: 0 } as Direction;
+    return dx >= 0 ? Direction.E : Direction.W;
   } else {
-    return { dx: 0, dy: Math.sign(dy) } as Direction;
+    return dy >= 0 ? Direction.S : Direction.N;
   }
 };

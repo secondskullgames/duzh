@@ -114,7 +114,7 @@ export default class SpriteFactory {
     direction: Direction,
     paletteSwaps: PaletteSwaps
   ) => {
-    const filename = `${spriteName}/${spriteName}_${Direction.toString(direction)}_1`;
+    const filename = `${spriteName}/${spriteName}_${direction}_1`;
     const offsets = (() => {
       switch (spriteName) {
         case 'arrow':
@@ -250,7 +250,7 @@ export default class SpriteFactory {
               break;
           }
 
-          const frameKey = `${animationName}_${Direction.toString(direction)}_${i}`;
+          const frameKey = `${animationName}_${direction}_${i}`;
           const image = await this.imageFactory.getImage({
             filenames,
             transparentColor: Colors.WHITE,

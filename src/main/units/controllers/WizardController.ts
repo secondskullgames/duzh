@@ -76,7 +76,7 @@ const _canSummon = (unit: Unit, map: MapInstance): boolean => {
 const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
   const map = unit.getMap();
   const targetCoordinates = Direction.values()
-    .map(direction => Coordinates.plus(unit.getCoordinates(), direction))
+    .map(direction => Coordinates.plusDirection(unit.getCoordinates(), direction))
     .find(coordinates => map.contains(coordinates) && !isBlocked(map, coordinates));
   return targetCoordinates ?? null;
 };

@@ -53,17 +53,16 @@ export const Blink: UnitAbility = {
 };
 
 const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boolean => {
-  const { dx, dy } = pointAt(start, end);
-  let { x, y } = start;
-  while (!Coordinates.equals({ x, y }, end)) {
-    x += dx;
-    y += dy;
-    if (Coordinates.equals({ x, y }, end)) {
-      return isBlocked(map, { x, y });
+  const direction = pointAt(start, end);
+  let coordinates = start;
+  while (!Coordinates.equals(coordinates, end)) {
+    coordinates = Coordinates.plusDirection(coordinates, direction);
+    if (Coordinates.equals(coordinates, end)) {
+      return isBlocked(map, coordinates);
     } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
       // do nothing
     } else {
-      return map.getTile({ x, y }).isBlocking();
+      return map.getTile(coordinates).isBlocking();
     }
   }
   throw new Error();

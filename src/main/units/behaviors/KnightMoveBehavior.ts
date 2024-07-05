@@ -48,7 +48,7 @@ const _getKnightMoveTargets = (unit: Unit): Coordinates[] => {
   for (const path of paths) {
     let coordinates = unit.getCoordinates();
     for (const direction of path) {
-      coordinates = Coordinates.plus(coordinates, direction);
+      coordinates = Coordinates.plusDirection(coordinates, direction);
     }
     if (!isBlocked(map, coordinates)) {
       targets.push(coordinates);

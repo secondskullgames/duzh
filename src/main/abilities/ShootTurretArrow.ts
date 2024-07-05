@@ -34,13 +34,14 @@ export const ShootTurretArrow: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
-    unit.setDirection({ dx, dy });
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
     unit.spendMana(manaCost);
 
     const coordinatesList = [];
-    let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+    let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    const { dx, dy } = Direction.getOffsets(direction);
     while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
@@ -51,7 +52,7 @@ export const ShootTurretArrow: UnitAbility = {
     if (targetUnit) {
       const damage = getRangedDamage(unit);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
+      await playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
@@ -63,7 +64,7 @@ export const ShootTurretArrow: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null, state);
+      await playArrowAnimation(unit, direction, coordinatesList, null, state);
     }
   }
 };

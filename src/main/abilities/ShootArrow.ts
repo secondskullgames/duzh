@@ -42,13 +42,14 @@ export const ShootArrow: UnitAbility = {
     }
 
     const map = session.getMap();
-    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
-    unit.setDirection({ dx, dy });
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
     unit.spendMana(manaCost);
 
     const coordinatesList = [];
-    let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+    let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    const { dx, dy } = Direction.getOffsets(direction);
     while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
@@ -58,7 +59,7 @@ export const ShootArrow: UnitAbility = {
     const targetUnit = map.getUnit({ x, y });
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
+      await playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
@@ -82,7 +83,7 @@ export const ShootArrow: UnitAbility = {
         }
       }
     } else {
-      await playArrowAnimation(unit, { dx, dy }, coordinatesList, null, state);
+      await playArrowAnimation(unit, direction, coordinatesList, null, state);
     }
   }
 };

@@ -23,12 +23,12 @@ export const shootFirebolt = async (
   session: Session,
   state: GameState
 ) => {
-  const { dx, dy } = direction;
+  const { dx, dy } = Direction.getOffsets(direction);
   unit.setDirection(direction);
 
   const map = session.getMap();
   const coordinatesList = [];
-  let { x, y } = Coordinates.plus(unit.getCoordinates(), direction);
+  let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
   while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
     coordinatesList.push({ x, y });
     x += dx;
@@ -38,7 +38,7 @@ export const shootFirebolt = async (
   const targetUnit = map.getUnit({ x, y });
   if (targetUnit) {
     state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFireboltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
+    await playFireboltAnimation(unit, direction, coordinatesList, targetUnit, state);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
@@ -55,7 +55,7 @@ export const shootFirebolt = async (
         .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
     }
   } else {
-    await playFireboltAnimation(unit, { dx, dy }, coordinatesList, null, state);
+    await playFireboltAnimation(unit, direction, coordinatesList, null, state);
   }
 };
 

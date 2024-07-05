@@ -13,7 +13,7 @@ export const walk = async (
   session: Session,
   state: GameState
 ) => {
-  const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+  const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
   const map = unit.getMap();
   if (!map.contains(coordinates) || isBlocked(map, coordinates)) {

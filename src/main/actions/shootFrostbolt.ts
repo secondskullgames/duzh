@@ -23,12 +23,12 @@ export const shootFrostbolt = async (
   session: Session,
   state: GameState
 ) => {
-  const { dx, dy } = direction;
+  const { dx, dy } = Direction.getOffsets(direction);
   unit.setDirection(direction);
 
   const map = session.getMap();
   const coordinatesList = [];
-  let { x, y } = Coordinates.plus(unit.getCoordinates(), direction);
+  let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
   while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
     coordinatesList.push({ x, y });
     x += dx;
@@ -38,7 +38,7 @@ export const shootFrostbolt = async (
   const targetUnit = map.getUnit({ x, y });
   if (targetUnit) {
     state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFireballAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
+    await playFireballAnimation(unit, direction, coordinatesList, targetUnit, state);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
@@ -55,7 +55,7 @@ export const shootFrostbolt = async (
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
     }
   } else {
-    await playFireballAnimation(unit, { dx, dy }, coordinatesList, null, state);
+    await playFireballAnimation(unit, direction, coordinatesList, null, state);
   }
 };
 

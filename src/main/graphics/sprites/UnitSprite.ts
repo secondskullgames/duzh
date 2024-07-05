@@ -1,7 +1,6 @@
 import DynamicSprite from './DynamicSprite';
 import Activity from '../../units/Activity';
 import Unit from '../../units/Unit';
-import { Direction } from '@lib/geometry/Direction';
 import { Offsets } from '@lib/geometry/Offsets';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { maxBy } from '@lib/utils/arrays';
@@ -27,7 +26,7 @@ export class UnitSprite extends DynamicSprite<Unit> {
         return Activity.toString(target.getActivity());
       }
     })();
-    const direction = Direction.toString(target.getDirection());
+    const direction = target.getDirection();
     const frameNumber = target.getFrameNumber();
     return `${animationName}_${direction}_${frameNumber}`;
   };

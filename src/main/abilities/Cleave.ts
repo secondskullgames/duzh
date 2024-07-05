@@ -63,17 +63,17 @@ export const Cleave: UnitAbility = {
 const _getTargetUnits = (unit: Unit, direction: Direction): Unit[] => {
   const map = unit.getMap();
   const coordinates = unit.getCoordinates();
-  const targetCoordinates = Coordinates.plus(coordinates, direction);
+  const targetCoordinates = Coordinates.plusDirection(coordinates, direction);
   const targetUnit = map.getUnit(targetCoordinates);
   if (!targetUnit) {
     return [];
   }
 
-  const leftCoordinates = Coordinates.plus(
+  const leftCoordinates = Coordinates.plusDirection(
     targetCoordinates,
     Direction.rotateCounterClockwise(direction)
   );
-  const rightCoordinates = Coordinates.plus(
+  const rightCoordinates = Coordinates.plusDirection(
     targetCoordinates,
     Direction.rotateClockwise(direction)
   );

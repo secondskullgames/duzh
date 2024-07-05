@@ -1,80 +1,69 @@
-export type Direction = Readonly<{
-  dx: -1 | 0 | 1;
-  dy: -1 | 0 | 1;
-}>;
+import { Offsets } from '@lib/geometry/Offsets';
 
-type DirectionName = 'N' | 'E' | 'S' | 'W';
+export enum Direction {
+  N = 'N',
+  E = 'E',
+  S = 'S',
+  W = 'W'
+}
 
 export namespace Direction {
-  export const N: Direction = { dx: 0, dy: -1 };
-  export const E: Direction = { dx: 1, dy: 0 };
-  export const S: Direction = { dx: 0, dy: 1 };
-  export const W: Direction = { dx: -1, dy: 0 };
-  const _nameToDirection: Record<DirectionName, Direction> = { N, E, S, W };
+  export const values = (): Direction[] => [
+    Direction.N,
+    Direction.E,
+    Direction.S,
+    Direction.W
+  ];
 
-  const _getName = (direction: Direction): DirectionName => {
-    for (const [name, dir] of Object.entries(_nameToDirection)) {
-      if (Direction.equals(dir, direction)) {
-        return name as DirectionName;
-      }
+  export const getOffsets = (direction: Direction): Offsets => {
+    switch (direction) {
+      case Direction.N:
+        return { dx: 0, dy: -1 };
+      case Direction.E:
+        return { dx: 1, dy: 0 };
+      case Direction.S:
+        return { dx: 0, dy: 1 };
+      case Direction.W:
+        return { dx: -1, dy: 0 };
     }
-    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 
-  export const values = (): Direction[] => [N, E, S, W];
-
-  export const equals = (first: Direction, second: Direction): boolean =>
-    first.dx === second.dx && first.dy === second.dy;
-
-  export const toString = (direction: Direction): string => {
-    if (equals(direction, Direction.N)) {
-      return 'N';
-    } else if (equals(direction, Direction.E)) {
-      return 'E';
-    } else if (equals(direction, Direction.S)) {
-      return 'S';
-    } else if (equals(direction, Direction.W)) {
-      return 'W';
-    }
-    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
-  };
-
-  const _legacyDirectionLookup: Record<DirectionName, string> = {
-    N: 'NW',
-    E: 'NE',
-    S: 'SE',
-    W: 'SW'
+  const _legacyDirectionLookup: Record<Direction, string> = {
+    [Direction.N]: 'NW',
+    [Direction.E]: 'NE',
+    [Direction.S]: 'SE',
+    [Direction.W]: 'SW'
   };
 
   export const toLegacyDirection = (direction: Direction): string => {
-    return _legacyDirectionLookup[_getName(direction)];
+    return _legacyDirectionLookup[direction];
   };
 
   export const getDefaultUnitDirection = (): Direction => Direction.S;
 
   export const rotateClockwise = (direction: Direction): Direction => {
-    if (equals(direction, N)) {
-      return E;
-    } else if (equals(direction, E)) {
-      return S;
-    } else if (equals(direction, S)) {
-      return W;
-    } else if (equals(direction, W)) {
-      return N;
+    switch (direction) {
+      case Direction.N:
+        return Direction.E;
+      case Direction.E:
+        return Direction.S;
+      case Direction.S:
+        return Direction.W;
+      case Direction.W:
+        return Direction.N;
     }
-    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 
   export const rotateCounterClockwise = (direction: Direction): Direction => {
-    if (equals(direction, N)) {
-      return W;
-    } else if (equals(direction, W)) {
-      return S;
-    } else if (equals(direction, S)) {
-      return E;
-    } else if (equals(direction, E)) {
-      return N;
+    switch (direction) {
+      case Direction.N:
+        return Direction.W;
+      case Direction.W:
+        return Direction.S;
+      case Direction.S:
+        return Direction.E;
+      case Direction.E:
+        return Direction.N;
     }
-    throw new Error(`Invalid direction ${JSON.stringify(direction)}`);
   };
 }

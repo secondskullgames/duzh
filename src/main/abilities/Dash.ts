@@ -9,6 +9,7 @@ import { moveUnit } from '@main/actions/moveUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Direction } from '@lib/geometry/Direction';
 
 const manaCost = 4;
 
@@ -25,11 +26,12 @@ export const Dash: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
-    unit.setDirection({ dx, dy });
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
 
     const distance = 2;
     let { x, y } = unit.getCoordinates();
+    const { dx, dy } = Direction.getOffsets(direction);
     let moved = false;
     for (let i = 0; i < distance; i++) {
       x += dx;

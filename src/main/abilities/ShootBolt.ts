@@ -32,13 +32,14 @@ export const ShootBolt: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    const { dx, dy } = pointAt(unit.getCoordinates(), coordinates);
-    unit.setDirection({ dx, dy });
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
+    const { dx, dy } = Direction.getOffsets(direction);
 
     // unit.spendMana(0); // TODO
 
     const coordinatesList = [];
-    let { x, y } = Coordinates.plus(unit.getCoordinates(), { dx, dy });
+    let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
     while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
       coordinatesList.push({ x, y });
       x += dx;
@@ -53,7 +54,7 @@ export const ShootBolt: UnitAbility = {
         targetUnit
       });
       const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      await playBoltAnimation(unit, { dx, dy }, coordinatesList, targetUnit, state);
+      await playBoltAnimation(unit, direction, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
@@ -61,7 +62,7 @@ export const ShootBolt: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      await playBoltAnimation(unit, { dx, dy }, coordinatesList, null, state);
+      await playBoltAnimation(unit, direction, coordinatesList, null, state);
     }
   }
 };

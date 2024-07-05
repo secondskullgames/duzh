@@ -24,7 +24,7 @@ export class AbilityOrder implements UnitOrder {
    * @override {@link UnitOrder#execute}
    */
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    const coordinates = Coordinates.plus(unit.getCoordinates(), this.direction);
+    const coordinates = Coordinates.plusDirection(unit.getCoordinates(), this.direction);
     await this.ability.use(unit, coordinates, session, state);
   };
 }

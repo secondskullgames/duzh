@@ -28,7 +28,7 @@ export class AttackOrder implements UnitOrder {
     const map = unit.getMap();
     const { direction } = this;
     unit.setDirection(direction);
-    const coordinates = Coordinates.plus(unit.getCoordinates(), direction);
+    const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
     check(map.contains(coordinates));
 
     const targetUnit = map.getUnit(coordinates);

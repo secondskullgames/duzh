@@ -196,7 +196,10 @@ export class GameScene implements Scene {
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
-    const nextCoordinates = Coordinates.plus(coordinates, playerUnit.getDirection());
+    const nextCoordinates = Coordinates.plusDirection(
+      coordinates,
+      playerUnit.getDirection()
+    );
     const item = getItem(map, coordinates);
     const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
@@ -351,19 +354,16 @@ export class GameScene implements Scene {
         return 'ENTER';
       }
       const direction = offsetsToDirection({ dx, dy });
-      if (Direction.equals(direction, Direction.N)) {
-        return 'UP';
+      switch (direction) {
+        case Direction.N:
+          return 'UP';
+        case Direction.S:
+          return 'DOWN';
+        case Direction.W:
+          return 'LEFT';
+        case Direction.E:
+          return 'RIGHT';
       }
-      if (Direction.equals(direction, Direction.S)) {
-        return 'DOWN';
-      }
-      if (Direction.equals(direction, Direction.W)) {
-        return 'LEFT';
-      }
-      if (Direction.equals(direction, Direction.E)) {
-        return 'RIGHT';
-      }
-      return null;
     })();
     if (key === 'ENTER') {
       await this._handleEnter();
