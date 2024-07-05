@@ -32,7 +32,7 @@ import { pickupItem } from '@main/actions/pickupItem';
 import { TileType } from '@models/TileType';
 import { Rect } from '@lib/geometry/Rect';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
-import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
@@ -46,6 +46,7 @@ import Colors from '@main/graphics/Colors';
 import { FontName } from '@main/graphics/Fonts';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
+import { Direction } from '@lib/geometry/Direction';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -297,6 +298,7 @@ export class GameScene implements Scene {
       if (Rect.containsPoint(rect, pixel)) {
         const ability = UnitAbility.abilityForName(abilityName);
         await this._handleAbility(ability);
+        return;
       }
     }
 
@@ -327,6 +329,7 @@ export class GameScene implements Scene {
         if (Rect.containsPoint(rect, pixel)) {
           await option.onUse(state);
           session.closeShrineMenu();
+          return;
         }
       }
     }
@@ -334,32 +337,30 @@ export class GameScene implements Scene {
     const coordinates = this._pixelToGrid(pixel);
 
     const playerCoordinates = playerUnit.getCoordinates();
-    if (
-      !Coordinates.equals(coordinates, playerCoordinates) &&
-      !isAdjacent(coordinates, playerCoordinates)
-    ) {
-      return;
-    }
     const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
     const key = (() => {
       if (dx === 0 && dy === 0) {
         return 'ENTER';
       }
       // TODO this is so hacky
-      if (getShrine(playerUnit.getMap(), coordinates)) {
+      if (
+        isAdjacent(coordinates, playerCoordinates) &&
+        getShrine(playerUnit.getMap(), coordinates)
+      ) {
         playerUnit.setDirection(pointAt(playerUnit.getCoordinates(), coordinates));
         return 'ENTER';
       }
-      if (dy === -1 && dx === 0) {
+      const direction = offsetsToDirection({ dx, dy });
+      if (Direction.equals(direction, Direction.N)) {
         return 'UP';
       }
-      if (dy === 1 && dx === 0) {
+      if (Direction.equals(direction, Direction.S)) {
         return 'DOWN';
       }
-      if (dx === -1 && dy === 0) {
+      if (Direction.equals(direction, Direction.W)) {
         return 'LEFT';
       }
-      if (dx === 1 && dy === 0) {
+      if (Direction.equals(direction, Direction.E)) {
         return 'RIGHT';
       }
       return null;
@@ -393,22 +394,24 @@ export class GameScene implements Scene {
 
     for (let i = 0; i < numberedAbilities.length; i++) {
       // TODO muy hardcoding, duplicates logic in HUDRenderer
+      // has a bit of extra padding
       const rect = {
-        left: 173 + 25 * i,
+        left: 173 + 25 * i - 2,
         top: 306,
-        width: 20,
-        height: 20
+        width: 25,
+        height: 50
       };
       abilityRects.push([numberedAbilities[i].name, rect]);
     }
 
     for (let i = 0; i < rightAlignedAbilities.length; i++) {
       // TODO muy hardcoding, duplicates logic in HUDRenderer
+      // has a bit of extra padding
       const rect = {
-        left: 402 + i * 25,
+        left: 402 + i * 25 - 2,
         top: 306,
-        width: 20,
-        height: 20
+        width: 25,
+        height: 50
       };
       abilityRects.push([rightAlignedAbilities[i].name, rect]);
     }
