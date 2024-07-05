@@ -45,7 +45,7 @@ export class TextRenderer {
 
     const width = text.length * font.letterWidth;
     const height = font.letterHeight;
-    this.graphics.fill(backgroundColor);
+    this.graphics.fill(Colors.WHITE);
 
     for (let i = 0; i < text.length; i++) {
       const char = text.charAt(i);
@@ -55,7 +55,10 @@ export class TextRenderer {
 
     const imageData = this.graphics.getImageData({ left: 0, top: 0, width, height });
 
-    const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
+    const paletteSwaps = PaletteSwaps.builder()
+      .addMapping(Colors.BLACK, color)
+      .addMapping(Colors.WHITE, backgroundColor)
+      .build();
     const swapped = replaceColors(imageData, paletteSwaps);
 
     this.imageCache[key] = swapped;

@@ -3,7 +3,7 @@ import { SceneName } from '@main/scenes/SceneName';
 import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
-import { toggleFullScreen } from '@lib/utils/dom';
+import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { Feature } from '@main/utils/features';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { TextRenderer } from '@main/graphics/TextRenderer';
@@ -32,8 +32,30 @@ export class TitleScene implements Scene {
     private readonly textRenderer: TextRenderer
   ) {}
 
-  handleKeyDown = async (command: KeyCommand) => {
+  private _handleStartGame = async () => {
     const { session, mapController } = this;
+    if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
+      await mapController.loadDebugMap();
+    } else {
+      await mapController.loadFirstMap();
+    }
+    session.startGameTimer();
+    session.setScene(SceneName.GAME);
+    session
+      .getTicker()
+      .log('Welcome to the Dungeons of Duzh!', { turn: session.getTurn() });
+    if (isMobileDevice()) {
+      session
+        .getTicker()
+        .log('Press the ? icon in the upper-right for instructions.', {
+          turn: session.getTurn()
+        });
+    } else {
+      session.getTicker().log('Press F1 for instructions.', { turn: session.getTurn() });
+    }
+  };
+
+  handleKeyDown = async (command: KeyCommand) => {
     const { key, modifiers } = command;
 
     switch (key) {
@@ -41,13 +63,7 @@ export class TitleScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-            await mapController.loadDebugMap();
-          } else {
-            await mapController.loadFirstMap();
-          }
-          session.startGameTimer();
-          session.setScene(SceneName.GAME);
+          await this._handleStartGame();
         }
         break;
     }
@@ -57,15 +73,7 @@ export class TitleScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session, mapController } = this;
-
-    if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap();
-    } else {
-      await mapController.loadFirstMap();
-    }
-    session.startGameTimer();
-    session.setScene(SceneName.GAME);
+    await this._handleStartGame();
   };
 
   render = async (graphics: Graphics): Promise<void> => {
