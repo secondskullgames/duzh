@@ -75,6 +75,7 @@ class CanvasGraphics implements Graphics {
     return createImageBitmap(imageData);
   };
 
+  /** TODO - this is *not* pixel-perfect */
   drawRect = (rect: Rect, color: Color): void => {
     const { context } = this;
     context.strokeStyle = color.hex;

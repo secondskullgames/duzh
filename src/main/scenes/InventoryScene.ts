@@ -21,7 +21,7 @@ import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
-import { getSlotName } from '@main/equipment/EquipmentUtils';
+import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { inject, injectable } from 'inversify';
 
@@ -29,8 +29,7 @@ const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
 const INVENTORY_MARGIN = 10;
 
-// TODO correctly sized background
-const INVENTORY_BACKGROUND_FILENAME = 'inventory_background';
+const INVENTORY_BACKGROUND_FILENAME = 'inventory2';
 
 @injectable()
 export class InventoryScene implements Scene {
@@ -282,7 +281,7 @@ export class InventoryScene implements Scene {
       if (inventoryCategories[i] === inventory.getSelectedItemCategory()) {
         // TODO can we make a `drawLine`?
         const rect = {
-          left: x - categoryWidth / 2 + 4,
+          left: Math.round(x - categoryWidth / 2 + 4),
           top: INVENTORY_TOP + 54,
           width: categoryWidth - 8,
           height: 1
@@ -322,10 +321,7 @@ export class InventoryScene implements Scene {
   private _drawTooltip = (graphics: Graphics) => {
     const { session } = this;
     const left = 10;
-    const top = graphics.getHeight() * 0.6;
-    const width = graphics.getWidth() * 0.4;
-    const height = graphics.getHeight() * 0.4 - 10;
-    graphics.drawRect({ left, top, width, height }, Colors.GRAY_128);
+    const top = Math.round(graphics.getHeight() * 0.6);
 
     const lines: string[] | null = (() => {
       const inventory = session.getInventoryState();
@@ -335,9 +331,7 @@ export class InventoryScene implements Scene {
         lines.push(selectedEquipment.getName());
         const tooltip = selectedEquipment.getTooltip();
         if (tooltip) {
-          for (const line of tooltip.split('\n')) {
-            lines.push(line);
-          }
+          lines.push(...splitTooltipToLines(tooltip, 27));
         }
         return lines;
       }
@@ -347,9 +341,7 @@ export class InventoryScene implements Scene {
         lines.push(selectedItem.name);
         const tooltip = selectedItem.getTooltip();
         if (tooltip) {
-          for (const line of tooltip.split('\n')) {
-            lines.push(line);
-          }
+          lines.push(...splitTooltipToLines(tooltip, 27));
         }
 
         return lines;

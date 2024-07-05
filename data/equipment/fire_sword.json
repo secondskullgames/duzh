@@ -16,5 +16,6 @@
   "stats": {
     "damage": 6
   },
-  "script": "fire_sword"
+  "script": "fire_sword",
+  "tooltip": "A sword that burns with the power of fire."
 }
