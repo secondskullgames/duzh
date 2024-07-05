@@ -13,8 +13,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';
 import { inject, injectable } from 'inversify';
 
-// TODO correctly sized background
-const BACKGROUND_FILENAME = 'inventory_background';
+const BACKGROUND_FILENAME = 'bordered_background';
 
 @injectable()
 export class ShrineMenuRenderer implements Renderer {

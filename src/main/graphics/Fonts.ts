@@ -63,8 +63,8 @@ export class FontFactory {
   private _loadFont = async (fontDefinition: FontDefinition): Promise<FontInstance> => {
     const width = NUM_CHARACTERS * fontDefinition.letterWidth;
     const image = await this.imageFactory.getImage({
-      filename: `fonts/${fontDefinition.src}`,
-      transparentColor: Colors.WHITE
+      filename: `fonts/${fontDefinition.src}`
+      //transparentColor: Colors.WHITE
     });
 
     const canvas = createCanvas({

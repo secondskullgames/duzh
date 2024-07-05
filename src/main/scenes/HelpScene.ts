@@ -12,7 +12,10 @@ import Colors from '@main/graphics/Colors';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { inject, injectable } from 'inversify';
+
+const BACKGROUND_FILENAME = 'bordered_background';
 
 @injectable()
 export class HelpScene implements Scene {
@@ -24,7 +27,9 @@ export class HelpScene implements Scene {
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
     @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer
+    private readonly textRenderer: TextRenderer,
+    @inject(ImageFactory)
+    private readonly imageFactory: ImageFactory
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -54,10 +59,17 @@ export class HelpScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    graphics.fill(Colors.BLACK);
+    const { imageFactory } = this;
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    graphics.drawScaledImage(image, {
+      left: 0,
+      top: 0,
+      width: this.gameConfig.screenWidth,
+      height: this.gameConfig.screenHeight
+    });
 
-    const left = 4;
-    const top = 4;
+    const left = 10;
+    const top = 10;
 
     const intro = [
       'Welcome to the Dungeons of Duzh! To escape, you must brave untold',
@@ -108,10 +120,6 @@ export class HelpScene implements Scene {
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + LINE_HEIGHT * i;
-      graphics.fillRect(
-        { left, top: y, width: this.gameConfig.screenWidth, height: LINE_HEIGHT },
-        Colors.BLACK
-      );
       const [key, description] = keys[i];
       this._drawText(
         key,
@@ -145,10 +153,6 @@ export class HelpScene implements Scene {
 
     for (let i = 0; i < keys.length; i++) {
       const y = top + LINE_HEIGHT * i;
-      graphics.fillRect(
-        { left, top: y, width: this.gameConfig.screenWidth, height: LINE_HEIGHT },
-        Colors.BLACK
-      );
       const [key, description] = keys[i];
       this._drawText(
         key,
@@ -161,7 +165,7 @@ export class HelpScene implements Scene {
       this._drawText(
         description,
         FontName.APPLE_II,
-        { x: left + 250, y },
+        { x: left + 225, y },
         Colors.WHITE,
         Alignment.LEFT,
         graphics
