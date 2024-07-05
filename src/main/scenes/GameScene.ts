@@ -1,8 +1,10 @@
-import { ScreenInputHandler } from './ScreenInputHandler';
-import { getDirection } from '../inputMappers';
-import Sounds from '../../sounds/Sounds';
-import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
-import UnitOrder from '@main/units/orders/UnitOrder';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
+import { Engine } from '@main/core/Engine';
+import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
+import { MapController } from '@main/maps/MapController';
+import { GameConfig } from '@main/core/GameConfig';
 import {
   ArrowKey,
   ClickCommand,
@@ -10,37 +12,46 @@ import {
   KeyCommand,
   ModifierKey
 } from '@lib/input/inputTypes';
-import { toggleFullScreen } from '@lib/utils/dom';
-import { pickupItem } from '@main/actions/pickupItem';
-import { AbilityOrder } from '@main/units/orders/AbilityOrder';
-import { GameScreen } from '@main/core/GameScreen';
-import { getItem, getShrine } from '@main/maps/MapUtils';
-import { Feature } from '@main/utils/features';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
-import { MapController } from '@main/maps/MapController';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
-import { Engine } from '@main/core/Engine';
-import { TileType } from '@models/TileType';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
-import { UnitAbility } from '@main/abilities/UnitAbility';
-import { Dash } from '@main/abilities/Dash';
+import Sounds from '@main/sounds/Sounds';
+import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
+import { getDirection } from '@main/input/inputMappers';
+import UnitOrder from '@main/units/orders/UnitOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { AbilityOrder } from '@main/units/orders/AbilityOrder';
+import { Feature } from '@main/utils/features';
 import { Strafe } from '@main/abilities/Strafe';
+import { Dash } from '@main/abilities/Dash';
+import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
+import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Pixel } from '@lib/geometry/Pixel';
-import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
-import { GameConfig } from '@main/core/GameConfig';
+import { getItem, getShrine } from '@main/maps/MapUtils';
+import { pickupItem } from '@main/actions/pickupItem';
+import { TileType } from '@models/TileType';
 import { Rect } from '@lib/geometry/Rect';
-import Unit from '@main/units/Unit';
-import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
-import { ShrineOption } from '@main/core/session/ShrineMenuState';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
+import { isAdjacent, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { Pixel } from '@lib/geometry/Pixel';
+import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import Unit from '@main/units/Unit';
+import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
+import { Renderer } from '@main/graphics/renderers/Renderer';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import { Graphics } from '@lib/graphics/Graphics';
+import Colors from '@main/graphics/Colors';
+import { FontName } from '@main/graphics/Fonts';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
+import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class GameScreenInputHandler implements ScreenInputHandler {
+export class GameScene implements Scene {
+  readonly name = SceneName.GAME;
+
   constructor(
     @inject(Engine)
     private readonly engine: Engine,
@@ -51,7 +62,15 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(GameConfig)
-    private readonly gameConfig: GameConfig
+    private readonly gameConfig: GameConfig,
+    @inject(TextRenderer)
+    private readonly textRenderer: TextRenderer,
+    @inject(GameScreenViewportRenderer)
+    private readonly viewportRenderer: Renderer,
+    @inject(HUDRenderer)
+    private readonly hudRenderer: Renderer,
+    @inject(TopMenuRenderer)
+    private readonly topMenuRenderer: Renderer
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -74,11 +93,11 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       await engine.playTurn();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
-      session.setScreen(GameScreen.INVENTORY);
+      session.setScene(SceneName.INVENTORY);
     } else if (key === 'M') {
-      session.setScreen(GameScreen.MAP);
+      session.setScene(SceneName.MAP);
     } else if (key === 'C') {
-      session.setScreen(GameScreen.CHARACTER);
+      session.setScene(SceneName.CHARACTER);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
@@ -86,7 +105,7 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
         await this._handleEnter();
       }
     } else if (key === 'F1') {
-      session.setScreen(GameScreen.HELP);
+      session.setScene(SceneName.HELP);
     }
   };
 
@@ -286,14 +305,14 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       if (Rect.containsPoint(rect, pixel)) {
         switch (icon) {
           case TopMenuIcon.MAP:
-            session.setScreen(GameScreen.MAP);
+            session.setScene(SceneName.MAP);
             return;
           case TopMenuIcon.INVENTORY:
             session.prepareInventoryScreen(session.getPlayerUnit());
-            session.setScreen(GameScreen.INVENTORY);
+            session.setScene(SceneName.INVENTORY);
             return;
           case TopMenuIcon.CHARACTER:
-            session.setScreen(GameScreen.CHARACTER);
+            session.setScene(SceneName.CHARACTER);
             return;
         }
       }
@@ -409,5 +428,83 @@ export default class GameScreenInputHandler implements ScreenInputHandler {
       shrineOptionRects.push([option, rect]);
     }
     return shrineOptionRects;
+  };
+
+  render = async (graphics: Graphics) => {
+    graphics.fillRect(
+      {
+        left: 0,
+        top: 0,
+        width: graphics.getWidth(),
+        height: graphics.getHeight()
+      },
+      Colors.BLACK
+    );
+
+    await this.viewportRenderer.render(graphics);
+    await this.hudRenderer.render(graphics);
+    await this._renderTicker(graphics);
+
+    if (isMobileDevice()) {
+      await this.topMenuRenderer.render(graphics);
+    }
+
+    if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
+      if (this.session.isTurnInProgress()) {
+        this._drawTurnProgressIndicator(graphics);
+      }
+    }
+  };
+
+  private _renderTicker = async (graphics: Graphics) => {
+    const { session } = this;
+    const messages = session.getTicker().getRecentMessages(session.getTurn());
+
+    const left = 0;
+    const top = 0;
+
+    for (let i = 0; i < messages.length; i++) {
+      const y = top + LINE_HEIGHT * i;
+      graphics.fillRect(
+        { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
+        Colors.BLACK
+      );
+      this._drawText(
+        messages[i],
+        FontName.APPLE_II,
+        { x: left, y: y + 2 },
+        Colors.WHITE,
+        Alignment.LEFT,
+        graphics
+      );
+    }
+  };
+
+  private _drawTurnProgressIndicator = (graphics: Graphics) => {
+    if (this.session.isTurnInProgress()) {
+      const width = 20;
+      const height = 20;
+      const left = graphics.getWidth() - width;
+      const top = 0;
+      const rect = { left, top, width, height };
+      graphics.fillRect(rect, Colors.DARK_GRAY);
+    }
+  };
+
+  private _drawText = (
+    text: string,
+    fontName: FontName,
+    pixel: Pixel,
+    color: Color,
+    textAlign: Alignment,
+    graphics: Graphics
+  ) => {
+    const imageData = this.textRenderer.renderText({
+      text,
+      fontName,
+      color,
+      backgroundColor: Colors.BLACK
+    });
+    drawAligned(imageData, graphics, pixel, textAlign);
   };
 }

@@ -11,7 +11,7 @@ import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import { floorFire } from '@main/actions/floorFire';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
@@ -111,7 +111,7 @@ export default class ItemFactory {
       state: GameState,
       session: Session
     ) => {
-      session.setScreen(GameScreen.GAME);
+      session.setScene(SceneName.GAME);
       await floorFire(unit, damage, state, session);
     };
 
@@ -150,7 +150,7 @@ export default class ItemFactory {
       state: GameState,
       session: Session
     ) => {
-      session.setScreen(GameScreen.GAME);
+      session.setScene(SceneName.GAME);
       await shootFireball(unit, unit.getDirection(), damage, session, state);
     };
 
@@ -172,7 +172,7 @@ export default class ItemFactory {
       state: GameState,
       session: Session
     ) => {
-      session.setScreen(GameScreen.GAME);
+      session.setScene(SceneName.GAME);
       await castFreeze(unit, 5, duration, session, state);
     };
 

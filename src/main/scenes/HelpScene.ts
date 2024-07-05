@@ -1,23 +1,57 @@
-import { Renderer } from './Renderer';
-import { LINE_HEIGHT } from '../constants';
-import { FontName } from '../Fonts';
-import { Alignment, drawAligned } from '../RenderingUtils';
-import { TextRenderer } from '../TextRenderer';
-import Colors from '../Colors';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
+import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
+import { toggleFullScreen } from '@lib/utils/dom';
+import { Session } from '@main/core/Session';
+import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@lib/geometry/Pixel';
-import { GameConfig } from '@main/core/GameConfig';
 import { Color } from '@lib/graphics/Color';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
+import Colors from '@main/graphics/Colors';
+import { LINE_HEIGHT } from '@main/graphics/constants';
+import { GameConfig } from '@main/core/GameConfig';
+import { TextRenderer } from '@main/graphics/TextRenderer';
 import { inject, injectable } from 'inversify';
 
 @injectable()
-export default class HelpScreenRenderer implements Renderer {
+export class HelpScene implements Scene {
+  readonly name = SceneName.HELP;
+
   constructor(
+    @inject(Session)
+    private readonly session: Session,
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer
   ) {}
+
+  handleKeyDown = async (command: KeyCommand) => {
+    const { session } = this;
+    const { key, modifiers } = command;
+
+    switch (key) {
+      case 'F1':
+        session.showPrevScene();
+        break;
+      case 'ENTER':
+        if (modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        }
+        break;
+      case 'ESCAPE':
+        session.setScene(SceneName.GAME);
+    }
+  };
+
+  handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleClick = async (_: ClickCommand) => {
+    const { session } = this;
+    session.setScene(SceneName.GAME);
+  };
 
   render = async (graphics: Graphics) => {
     graphics.fill(Colors.BLACK);

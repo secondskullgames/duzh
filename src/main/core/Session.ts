@@ -1,20 +1,23 @@
 import Ticker from './Ticker';
-import { GameScreen } from './GameScreen';
 import { InventoryCategory, InventoryState } from './session/InventoryState';
+import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
 import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Scene } from '@main/scenes/Scene';
 import { injectable } from 'inversify';
 
 export interface Session {
   startGameTimer: () => void;
   endGameTimer: () => void;
-  getScreen: () => GameScreen;
-  setScreen: (screen: GameScreen) => void;
-  showPrevScreen: () => void;
+  getScenes: () => Scene[];
+  addScene: (scene: Scene) => void;
+  getCurrentScene: () => Scene | null;
+  setScene: (sceneName: SceneName) => void;
+  showPrevScene: () => void;
   setShrineMenuState: (shrineMenuState: ShrineMenuState) => void;
   getShrineMenuState: () => ShrineMenuState;
   isShowingShrineMenu: () => boolean;
@@ -48,8 +51,9 @@ export class SessionImpl implements Session {
   private readonly ticker: Ticker;
   private startTime: Date | null;
   private endTime: Date | null;
-  private screen: GameScreen;
-  private prevScreen: GameScreen | null;
+  private readonly scenes: Scene[];
+  private currentScene: Scene | null;
+  private prevScene: Scene | null;
   private inventoryState: InventoryState | null;
   private shrineMenuState: ShrineMenuState | null;
   private playerUnit: Unit | null;
@@ -61,8 +65,9 @@ export class SessionImpl implements Session {
 
   constructor() {
     this.ticker = new Ticker();
-    this.screen = GameScreen.NONE;
-    this.prevScreen = null;
+    this.scenes = [];
+    this.currentScene = null;
+    this.prevScene = null;
     this.inventoryState = null;
     this.shrineMenuState = null;
     this._isTurnInProgress = false;
@@ -89,21 +94,24 @@ export class SessionImpl implements Session {
     this.playerUnit = unit;
   };
 
-  getScreen = (): GameScreen => this.screen;
-  setScreen = (screen: GameScreen) => {
-    this.prevScreen = this.screen;
-    this.screen = screen;
+  getScenes = (): Scene[] => this.scenes;
+  addScene = (scene: Scene) => this.scenes.push(scene);
+  getCurrentScene = (): Scene | null => this.currentScene;
+  setScene = (sceneName: SceneName) => {
+    // TODO consider indexing by scene name
+    this.prevScene = this.currentScene;
+    this.currentScene = checkNotNull(this.scenes.find(scene => scene.name === sceneName));
   };
 
   /**
    * TODO: make this a stack
    */
-  showPrevScreen = () => {
-    if (this.prevScreen) {
-      this.screen = this.prevScreen;
-      this.prevScreen = null;
+  showPrevScene = () => {
+    if (this.prevScene) {
+      this.currentScene = this.prevScene;
+      this.prevScene = null;
     } else {
-      this.screen = GameScreen.GAME;
+      this.setScene(SceneName.GAME);
     }
   };
 
@@ -151,8 +159,8 @@ export class SessionImpl implements Session {
   getTicker = (): Ticker => this.ticker;
 
   reset = (): void => {
-    this.screen = GameScreen.TITLE;
-    this.prevScreen = null;
+    this.currentScene = null;
+    this.prevScene = null;
     this.ticker.clear();
     this.playerUnit = null;
     this.mapIndex = -1;

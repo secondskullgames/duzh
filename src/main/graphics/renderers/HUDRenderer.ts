@@ -204,7 +204,6 @@ export default class HUDRenderer implements Renderer {
     for (let i = 0; i < nonNumberedAbilities.length; i++) {
       const ability = nonNumberedAbilities[i];
       const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);
-      // 163 + 5 + (640-163-163) - 20 - 60 + (25*i)
       const left =
         LEFT_PANE_WIDTH +
         BORDER_PADDING +

@@ -1,13 +1,16 @@
-import { Renderer } from './Renderer';
-import Colors from '../Colors';
-import { TextRenderer } from '../TextRenderer';
-import { Alignment, drawAligned } from '../RenderingUtils';
-import { FontName } from '../Fonts';
-import { Pixel } from '@lib/geometry/Pixel';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
+import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Session } from '@main/core/Session';
+import { toggleFullScreen } from '@lib/utils/dom';
 import { GameConfig } from '@main/core/GameConfig';
+import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { FontName } from '@main/graphics/Fonts';
+import Colors from '@main/graphics/Colors';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
+import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { inject, injectable } from 'inversify';
 
@@ -15,7 +18,9 @@ const BACKGROUND_FILENAME = 'inventory_background';
 const LINE_HEIGHT = 15;
 
 @injectable()
-export default class CharacterScreenRenderer implements Renderer {
+export class CharacterScene implements Scene {
+  readonly name = SceneName.CHARACTER;
+
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
@@ -27,9 +32,34 @@ export default class CharacterScreenRenderer implements Renderer {
     private readonly imageFactory: ImageFactory
   ) {}
 
-  /**
-   * @override {@link Renderer#render}
-   */
+  handleKeyDown = async (command: KeyCommand) => {
+    const { session } = this;
+
+    switch (command.key) {
+      case 'C':
+        session.setScene(SceneName.GAME);
+        break;
+      case 'F1':
+        session.setScene(SceneName.HELP);
+        break;
+      case 'ENTER':
+        if (command.modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        }
+        break;
+      case 'ESCAPE':
+        session.setScene(SceneName.GAME);
+    }
+  };
+
+  handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleClick = async (_: ClickCommand) => {
+    const { session } = this;
+    session.setScene(SceneName.GAME);
+  };
+
   render = async (graphics: Graphics) => {
     const { imageFactory } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });

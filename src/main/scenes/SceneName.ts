@@ -1,5 +1,4 @@
-export enum GameScreen {
-  NONE = 'NONE',
+export enum SceneName {
   CHARACTER = 'CHARACTER',
   GAME = 'GAME',
   GAME_OVER = 'GAME_OVER',

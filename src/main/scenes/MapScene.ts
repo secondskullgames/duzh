@@ -1,27 +1,58 @@
-import { Renderer } from './Renderer';
-import Colors from '../Colors';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Graphics } from '@lib/graphics/Graphics';
-import { getItem, getShrine } from '@main/maps/MapUtils';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
 import { Session } from '@main/core/Session';
+import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
+import { toggleFullScreen } from '@lib/utils/dom';
 import { Color } from '@lib/graphics/Color';
-import { isHostile } from '@main/units/UnitUtils';
+import { Graphics } from '@lib/graphics/Graphics';
+import { checkNotNull } from '@lib/utils/preconditions';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import Colors from '@main/graphics/Colors';
 import { TileType } from '@models/TileType';
+import { isHostile } from '@main/units/UnitUtils';
+import { getItem, getShrine } from '@main/maps/MapUtils';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
 
 @injectable()
-export default class MapScreenRenderer implements Renderer {
+export class MapScene implements Scene {
+  readonly name = SceneName.MAP;
+
   constructor(
     @inject(Session)
     private readonly session: Session
   ) {}
 
-  /**
-   * @override {@link Renderer#render}
-   */
+  handleKeyDown = async (command: KeyCommand) => {
+    const { session } = this;
+    const { key, modifiers } = command;
+
+    switch (key) {
+      case 'M':
+        session.setScene(SceneName.GAME);
+        break;
+      case 'F1':
+        session.setScene(SceneName.HELP);
+        break;
+      case 'ENTER':
+        if (modifiers.includes(ModifierKey.ALT)) {
+          await toggleFullScreen();
+        }
+        break;
+      case 'ESCAPE':
+        session.setScene(SceneName.GAME);
+    }
+  };
+
+  handleKeyUp = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  handleClick = async (_: ClickCommand) => {
+    const { session } = this;
+    session.setScene(SceneName.GAME);
+  };
+
   render = async (graphics: Graphics) => {
     const { session } = this;
     const map = checkNotNull(session.getMap());

@@ -21,7 +21,7 @@ import { inject, injectable } from 'inversify';
 const SHADOW_FILENAME = 'shadow';
 
 @injectable()
-export default class GameScreenRenderer implements Renderer {
+export default class GameScreenViewportRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,

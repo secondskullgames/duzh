@@ -4,7 +4,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { check, checkState } from '@lib/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
-import { GameScreen } from '@main/core/GameScreen';
+import { SceneName } from '@main/scenes/SceneName';
 import MapInstance from '@main/maps/MapInstance';
 import { GameConfig } from '@main/core/GameConfig';
 import MusicController from '@main/sounds/MusicController';
@@ -62,7 +62,7 @@ export class MapControllerImpl implements MapController {
     const nextMapIndex = session.getMapIndex() + 1;
     if (!this._hasMap(nextMapIndex)) {
       session.endGameTimer();
-      session.setScreen(GameScreen.VICTORY);
+      session.setScene(SceneName.VICTORY);
     } else {
       session.setMapIndex(nextMapIndex);
       const map = await this._loadMap(nextMapIndex);
