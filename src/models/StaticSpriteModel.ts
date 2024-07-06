@@ -6,5 +6,7 @@ export type StaticSpriteModel = Readonly<{
     dy: number;
   };
   transparentColor: string;
-  paletteSwaps?: Record<string, string>;
+  paletteSwaps?: {
+    [key: string]: string;
+  };
 }>;
