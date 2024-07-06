@@ -75,7 +75,7 @@ export default abstract class AbstractMapGenerator {
     height: number,
     level: number
   ): TileType[][] => {
-    const iterations = 10;
+    const iterations = 100;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       let tiles;
       try {

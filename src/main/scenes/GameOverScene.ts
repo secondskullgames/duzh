@@ -76,9 +76,9 @@ export class GameOverScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await showSplashScreen(state, session);
           state.reset();
           session.reset();
+          await showSplashScreen(state, session);
         }
         break;
     }
@@ -89,8 +89,8 @@ export class GameOverScene implements Scene {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     const { state, session } = this;
-    await showSplashScreen(state, session);
     state.reset();
     session.reset();
+    await showSplashScreen(state, session);
   };
 }
