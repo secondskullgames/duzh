@@ -38,7 +38,7 @@ export const shootFrostbolt = async (
   const targetUnit = map.getUnit({ x, y });
   if (targetUnit) {
     state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFireballAnimation(unit, direction, coordinatesList, targetUnit, state);
+    await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, state);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
@@ -55,16 +55,11 @@ export const shootFrostbolt = async (
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
     }
   } else {
-    await playFireballAnimation(unit, direction, coordinatesList, null, state);
+    await playFrostboltAnimation(unit, direction, coordinatesList, null, state);
   }
 };
 
-/**
- * TODO: fully copy-pasted from ShootArrow
- * Probably want to extract a shared `shootArrow` action
- * Still better than using AnimationFactory
- */
-const playFireballAnimation = async (
+const playFrostboltAnimation = async (
   source: Unit,
   direction: Direction,
   coordinatesList: Coordinates[],
@@ -84,11 +79,11 @@ const playFireballAnimation = async (
     map.isTileRevealed(coordinates)
   );
 
-  // fireball movement frames
+  // frostbolt movement frames
   for (const coordinates of visibleCoordinatesList) {
     const projectile = await state
       .getProjectileFactory()
-      .createFireball(coordinates, map, direction);
+      .createFrostbolt(coordinates, map, direction);
     map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);

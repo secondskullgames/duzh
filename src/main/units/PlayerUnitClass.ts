@@ -27,7 +27,8 @@ const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
   2: [AbilityName.HEAVY_ATTACK],
   3: [AbilityName.KNOCKBACK_ATTACK],
   4: [AbilityName.STUN_ATTACK],
-  5: [AbilityName.DASH_ATTACK]
+  5: [AbilityName.DASH_ATTACK],
+  6: [AbilityName.CLEAVE]
 };
 
 const learnableAbilities = [
