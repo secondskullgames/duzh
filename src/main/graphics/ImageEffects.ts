@@ -15,4 +15,8 @@ export namespace ImageEffects {
     name: 'FROZEN',
     apply: (img: ImageData) => replaceAll(img, Colors.CYAN)
   };
+  export const SHOCKED: ImageEffect = {
+    name: 'WHITE',
+    apply: (img: ImageData) => replaceAll(img, Colors.WHITE)
+  };
 }

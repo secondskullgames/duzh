@@ -165,19 +165,18 @@ export class GeneratedMapFactory {
     while (itemsRemaining > 0) {
       // TODO: this is a hack to force a bronze sword on the first level
       // I don't want to design a better DSL for map generation right now
-      if (Feature.isEnabled(Feature.FORCE_BRONZE_SWORD)) {
-        if (
-          mapModel.levelNumber === 1 &&
-          !this.state.getGeneratedEquipmentIds().includes('bronze_sword')
-        ) {
-          itemSpecs.push({
-            type: ItemType.EQUIPMENT,
-            id: 'bronze_sword'
-          });
-          itemsRemaining--;
-          this.state.recordEquipmentGenerated('bronze_sword');
-          continue;
-        }
+      if (
+        Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
+        mapModel.levelNumber === 1 &&
+        !this.state.getGeneratedEquipmentIds().includes('bronze_sword')
+      ) {
+        itemSpecs.push({
+          type: ItemType.EQUIPMENT,
+          id: 'bronze_sword'
+        });
+        itemsRemaining--;
+        this.state.recordEquipmentGenerated('bronze_sword');
+        continue;
       } else {
         const chosenItemSpec = await this.itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,

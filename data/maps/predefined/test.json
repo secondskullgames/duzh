@@ -10,10 +10,11 @@
     "DARK_GRAY": "WALL"
   },
   "defaultTile": "FLOOR",
-  "enemyColors": {},
+  "enemyColors": {
+    "MAGENTA": "grunt"
+  },
   "itemColors": {
-    "RED": "life_potion",
-    "MAGENTA": "freeze_scroll"
+    "RED": "chain_lightning_scroll"
   },
   "equipmentColors": {
     "BLUE": "fire_sword"

@@ -1,0 +1,16 @@
+{
+  "$schema": "../../src/gen-schema/ConsumableItemModel.schema.json",
+  "id": "chain_lightning_scroll",
+  "name": "Scroll of Chain Lightning",
+  "level": 3,
+  "rarity": 3,
+  "mapSprite": "map_scroll",
+  "type": "scroll",
+  "params": {
+    "spell": "chain_lightning",
+    "damage": "50"
+  },
+  "paletteSwaps": {
+    "DARK_RED": "WHITE"
+  }
+}

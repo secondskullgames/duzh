@@ -21,7 +21,7 @@ export class UnitSprite extends DynamicSprite<Unit> {
     const animationName = (() => {
       const effect = this._getEffect(target);
       if (effect) {
-        return effect.toLowerCase();
+        return StatusEffect.toString(effect);
       } else {
         return Activity.toString(target.getActivity());
       }

@@ -1,7 +1,7 @@
 {
   "$schema": "../../src/gen-schema/ConsumableItemModel.schema.json",
   "id": "floor_fire_scroll",
-  "name": "Scroll of Floor Fire",
+  "name": "Scroll of Fire",
   "level": 2,
   "rarity": 2,
   "mapSprite": "map_scroll",

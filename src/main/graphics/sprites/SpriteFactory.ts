@@ -248,6 +248,9 @@ export default class SpriteFactory {
             case 'frozen':
               effects.push(ImageEffects.FROZEN);
               break;
+            case 'shocked':
+              effects.push(ImageEffects.SHOCKED);
+              break;
           }
 
           const frameKey = `${animationName}_${direction}_${i}`;

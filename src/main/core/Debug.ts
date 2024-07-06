@@ -74,7 +74,7 @@ export class Debug {
   private killEnemies = async (map: MapInstance) => {
     for (const unit of map.getAllUnits()) {
       if (unit.getFaction() === Faction.ENEMY) {
-        map.removeUnit(unit);
+        await die(unit, this.state, this.session);
       }
     }
   };
