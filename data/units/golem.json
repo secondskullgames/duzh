@@ -13,9 +13,9 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "strength": 12,
+  "strength": 14,
   "dexterity": 0,
-  "life": 60,
+  "life": 70,
   "mana": 10,
   "aiParameters": {
     "speed": 0.7,
