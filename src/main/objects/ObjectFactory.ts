@@ -263,7 +263,7 @@ export default class ObjectFactory {
           {
             label: '+1 Melee Damage',
             onUse: async (state: GameState) => {
-              playerUnit.increaseStrength(1);
+              playerUnit.increaseMeleeDamage(1);
               // TODO
               state.getSoundPlayer().playSound(Sounds.USE_POTION);
             }
@@ -273,7 +273,7 @@ export default class ObjectFactory {
           {
             label: '+2 Missile Damage',
             onUse: async (state: GameState) => {
-              playerUnit.increaseDexterity(2);
+              playerUnit.increaseRangedDamage(2);
               // TODO
               state.getSoundPlayer().playSound(Sounds.USE_POTION);
             }

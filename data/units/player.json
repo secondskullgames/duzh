@@ -19,8 +19,8 @@
     "PLAYER_SHOULDERS": "DARK_GREEN",
     "PLAYER_THIGHS": "DARK_BROWN"
   },
-  "strength": 4,
-  "dexterity": 2,
+  "meleeDamage": 4,
+  "rangedDamage": 2,
   "life": 50,
   "mana": 10,
   "abilities": ["ATTACK", "DASH"]

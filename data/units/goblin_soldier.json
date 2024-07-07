@@ -17,8 +17,8 @@
   },
   "life": 35,
   "mana": 10,
-  "strength": 4,
-  "dexterity": 0,
+  "meleeDamage": 4,
+  "rangedDamage": 0,
   "equipment": [
     "green_chain_mail",
     "green_cone_hat",

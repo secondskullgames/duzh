@@ -15,8 +15,8 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "strength": 3,
-  "dexterity": 0,
+  "meleeDamage": 3,
+  "rangedDamage": 0,
   "life": 30,
   "mana": 0,
   "equipment": [

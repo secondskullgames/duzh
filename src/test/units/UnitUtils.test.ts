@@ -27,8 +27,8 @@ describe('UnitUtils', () => {
   } as Equipment;
 
   const unit = {
-    getStrength: () => 2,
-    getDexterity: () => 2,
+    getMeleeDamage: () => 2,
+    getRangedDamage: () => 2,
     getEquipment: () =>
       ({
         getAll: () => [sword, bow, mail, shield]

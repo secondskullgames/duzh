@@ -19,8 +19,8 @@
     "DARK_RED": "DARK_RED_CGA",
     "DARK_TEAL": "DARK_BLUE_CGA"
   },
-  "strength": 6,
-  "dexterity": 2,
+  "meleeDamage": 6,
+  "rangedDamage": 2,
   "life": 100,
   "mana": 6,
   "abilities": ["ATTACK"]

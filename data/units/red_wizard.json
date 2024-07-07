@@ -11,8 +11,8 @@
   },
   "life": 120,
   "mana": 10,
-  "strength": 7,
-  "dexterity": 2,
+  "meleeDamage": 7,
+  "rangedDamage": 2,
   "aiParameters": {
     "speed": 0.95,
     "visionRange": 10,

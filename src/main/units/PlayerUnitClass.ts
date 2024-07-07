@@ -16,11 +16,7 @@ export interface PlayerUnitClass {
   getAbilityForHotkey: (hotkey: Key, unit: Unit) => UnitAbility | null;
   getNumberedAbilities: (unit: Unit) => UnitAbility[];
   getRightAlignedAbilities: (unit: Unit) => UnitAbility[];
-  // if LEVEL_UP_SCREEN=false...
   getAbilitiesLearnedAtLevel: (levelNumber: number) => AbilityName[];
-  // if LEVEL_UP_SCREEN=true...
-  getAllPossibleLearnableAbilities: () => AbilityName[];
-  getAbilityDependencies: (ability: AbilityName) => AbilityName[];
 }
 
 const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
@@ -30,18 +26,6 @@ const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
   5: [AbilityName.DASH_ATTACK],
   6: [AbilityName.CLEAVE]
 };
-
-const learnableAbilities = [
-  AbilityName.BLINK,
-  AbilityName.CLEAVE,
-  AbilityName.DASH_ATTACK,
-  //AbilityName.SHOOT_FIREBALL,
-  AbilityName.HEAVY_ATTACK,
-  AbilityName.KNOCKBACK_ATTACK,
-  AbilityName.PIERCE,
-  AbilityName.SCORPION,
-  AbilityName.STUN_ATTACK
-];
 
 const cumulativeKillsToNextLevel = [
   4, // 4,
@@ -104,21 +88,6 @@ class DefaultClass implements PlayerUnitClass {
 
   getAbilitiesLearnedAtLevel = (levelNumber: number): AbilityName[] => {
     return abilitiesLearnedAtLevel[levelNumber] ?? [];
-  };
-
-  getAllPossibleLearnableAbilities = (): AbilityName[] => learnableAbilities;
-
-  getAbilityDependencies = (ability: AbilityName): AbilityName[] => {
-    switch (ability) {
-      case AbilityName.CLEAVE:
-        return [AbilityName.HEAVY_ATTACK];
-      case AbilityName.PIERCE:
-        return [AbilityName.KNOCKBACK_ATTACK];
-      case AbilityName.DASH_ATTACK:
-        return [AbilityName.KNOCKBACK_ATTACK];
-      default:
-        return [];
-    }
   };
 
   getCumulativeKillsToNextLevel = (currentLevel: number): number | null => {

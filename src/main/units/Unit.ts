@@ -81,8 +81,8 @@ export default class Unit implements Entity {
   private manaRemainder: number;
   private lifePerTurn: number;
   private manaPerTurn: number;
-  private strength: number;
-  private dexterity: number;
+  private meleeDamage: number;
+  private rangedDamge: number;
   private readonly unitClass: string;
   private readonly unitType: UnitType;
   private readonly controller: UnitController;
@@ -136,8 +136,8 @@ export default class Unit implements Entity {
     this.manaRemainder = 0;
     this.lifePerTurn = STARTING_LIFE_PER_TURN; // TODO move to model?
     this.manaPerTurn = STARTING_MANA_PER_TURN; // TODO move to model?
-    this.strength = model.strength;
-    this.dexterity = model.dexterity;
+    this.meleeDamage = model.meleeDamage;
+    this.rangedDamge = model.rangedDamage;
     this.unitClass = model.id;
     this.unitType = model.type;
     this.experienceRewarded = model.experience ?? null;
@@ -187,8 +187,10 @@ export default class Unit implements Entity {
 
   getLife = () => this.life;
   getMaxLife = () => this.maxLife;
+  getLifePerTurn = () => this.lifePerTurn;
   getMana = () => this.mana;
   getMaxMana = () => this.maxMana;
+  getManaPerTurn = () => this.manaPerTurn;
   getLevel = () => this.level;
   getInventory = (): InventoryMap => this.inventory;
   getEquipment = (): EquipmentMap => this.equipment;
@@ -355,12 +357,12 @@ export default class Unit implements Entity {
     this.manaPerTurn += amount;
   };
 
-  increaseStrength = (amount: number) => {
-    this.strength += amount;
+  increaseMeleeDamage = (amount: number) => {
+    this.meleeDamage += amount;
   };
 
-  increaseDexterity = (amount: number) => {
-    this.dexterity += amount;
+  increaseRangedDamage = (amount: number) => {
+    this.rangedDamge += amount;
   };
 
   learnAbility = (ability: UnitAbility) => {
@@ -443,8 +445,8 @@ export default class Unit implements Entity {
     this.effects.decrement();
   };
 
-  getStrength = (): number => this.strength;
-  getDexterity = (): number => this.dexterity;
+  getMeleeDamage = (): number => this.meleeDamage;
+  getRangedDamage = (): number => this.rangedDamge;
 
   getEffects = (): UnitStatusEffects => this.effects;
 

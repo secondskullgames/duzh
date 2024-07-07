@@ -3,7 +3,7 @@ import { EquipmentSlot } from '@models/EquipmentSlot';
 import { Coordinates } from '@lib/geometry/Coordinates';
 
 export const getMeleeDamage = (unit: Unit): number => {
-  let damage = unit.getStrength();
+  let damage = unit.getMeleeDamage();
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.slot !== EquipmentSlot.RANGED_WEAPON) {
@@ -15,7 +15,7 @@ export const getMeleeDamage = (unit: Unit): number => {
 };
 
 export const getRangedDamage = (unit: Unit): number => {
-  let damage = unit.getDexterity();
+  let damage = unit.getRangedDamage();
 
   for (const equipment of unit.getEquipment().getAll()) {
     switch (equipment.slot) {

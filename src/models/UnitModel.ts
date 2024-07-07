@@ -13,8 +13,8 @@ export type UnitModel = Readonly<{
   abilities: string[];
   aiParameters?: AIParameters;
   equipment?: string[];
-  strength: number;
-  dexterity: number;
+  meleeDamage: number;
+  rangedDamage: number;
   /**
    * undefined if this should not be randomly placed as an enemy
    */
