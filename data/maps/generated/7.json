@@ -8,11 +8,11 @@
   "height": 32,
   "enemies": {
     "types": ["goblin_soldier", "green_blob", "goblin_archer"],
-    "min": 10,
-    "max": 12
+    "min": 11,
+    "max": 13
   },
   "items": {
-    "min": 2,
+    "min": 1,
     "max": 2
   },
   "fogOfWar": {

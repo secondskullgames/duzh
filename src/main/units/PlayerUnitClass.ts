@@ -67,7 +67,7 @@ class DefaultClass implements PlayerUnitClass {
       case AbilityName.SHOOT_ARROW:
       case AbilityName.SHOOT_FIREBOLT:
       case AbilityName.SHOOT_FROSTBOLT:
-        return ' ';
+        return null;
       default: {
         const index = unit
           .getAbilities()
