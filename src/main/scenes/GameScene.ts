@@ -187,7 +187,11 @@ export class GameScene implements Scene {
     const { session } = this;
     const playerUnit = session.getPlayerUnit();
     if (ability.isEnabled(playerUnit)) {
-      session.setQueuedAbility(ability);
+      if (session.getQueuedAbility() === ability) {
+        session.setQueuedAbility(null);
+      } else {
+        session.setQueuedAbility(ability);
+      }
     }
   };
 
