@@ -8,8 +8,8 @@
   "equipment": [],
   "life": 100,
   "mana": 10,
-  "strength": 6,
-  "dexterity": 20,
+  "meleeDamage": 6,
+  "rangedDamage": 20,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 10,

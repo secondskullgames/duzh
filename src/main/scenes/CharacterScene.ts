@@ -90,8 +90,12 @@ export class CharacterScene implements Scene {
 
     {
       const lines = [
-        `Strength: ${playerUnit.getStrength()}`,
-        `Dexterity: ${playerUnit.getDexterity()}`
+        `Life: ${playerUnit.getLife()}`,
+        `Life per Turn: ${playerUnit.getLifePerTurn()}`,
+        `Mana: ${playerUnit.getMaxMana()}`,
+        `Mana per Turn: ${playerUnit.getManaPerTurn()}`,
+        `Melee Damage: ${playerUnit.getMeleeDamage()}`,
+        `Ranged Damage: ${playerUnit.getRangedDamage()}`
       ];
       for (const line of lines) {
         this._drawText(

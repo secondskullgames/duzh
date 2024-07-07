@@ -15,8 +15,8 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "strength": 2,
-  "dexterity": 2,
+  "meleeDamage": 2,
+  "rangedDamage": 2,
   "life": 40,
   "mana": 5,
   "equipment": [

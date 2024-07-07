@@ -11,8 +11,8 @@
   },
   "life": 200,
   "mana": 0,
-  "strength": 10,
-  "dexterity": 2,
+  "meleeDamage": 10,
+  "rangedDamage": 2,
   "equipment": [
     "bronze_chain_mail",
     "iron_helmet",

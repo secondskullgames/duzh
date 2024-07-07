@@ -13,8 +13,8 @@
     "DARK_RED": "DARK_BLUE",
     "TEAL": "CYAN"
   },
-  "strength": 12,
-  "dexterity": 0,
+  "meleeDamage": 12,
+  "rangedDamage": 0,
   "life": 60,
   "mana": 10,
   "aiParameters": {

@@ -10,16 +10,7 @@ export const levelUp = (unit: Unit, session: Session) => {
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
-
-    if (Feature.isEnabled(Feature.LEVEL_UP_SCREEN)) {
-      unit.increaseMaxLife(playerUnitClass.lifePerLevel);
-      unit.increaseMaxMana(playerUnitClass.manaPerLevel);
-      unit.increaseStrength(playerUnitClass.strengthPerLevel);
-      ticker.log(`Welcome to level ${unit.getLevel()}!  Press L to choose an ability.`, {
-        turn: session.getTurn()
-      });
-      unit.awardAbilityPoint();
-    } else if (Feature.isEnabled(Feature.SHRINES)) {
+    if (Feature.isEnabled(Feature.SHRINES)) {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()
@@ -30,7 +21,7 @@ export const levelUp = (unit: Unit, session: Session) => {
     } else {
       unit.increaseMaxLife(playerUnitClass.lifePerLevel);
       unit.increaseMaxMana(playerUnitClass.manaPerLevel);
-      unit.increaseStrength(playerUnitClass.strengthPerLevel);
+      unit.increaseMeleeDamage(playerUnitClass.meleeDamagePerLevel);
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()

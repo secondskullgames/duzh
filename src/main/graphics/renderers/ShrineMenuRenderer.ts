@@ -41,14 +41,29 @@ export class ShrineMenuRenderer implements Renderer {
     const options = checkNotNull(session.getShrineMenuState()).options;
 
     let y = top + 10;
-    const x = left + 20;
+    const x = left + 10;
+
+    const lines = ['You have found a shrine.', 'Choose a blessing:'];
+    for (const line of lines) {
+      this._drawText(
+        line,
+        FontName.APPLE_II,
+        { x, y },
+        Colors.WHITE,
+        Alignment.LEFT,
+        graphics
+      );
+      y += 20;
+    }
+
+    y += 20;
 
     for (const option of options) {
       const color = this._getOptionColor(option);
       this._drawText(
         option.label,
         FontName.APPLE_II,
-        { x, y },
+        { x: x + 10, y },
         color,
         Alignment.LEFT,
         graphics

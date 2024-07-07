@@ -7,8 +7,8 @@
   "paletteSwaps": {},
   "life": 120,
   "mana": 30,
-  "strength": 8,
-  "dexterity": 0,
+  "meleeDamage": 8,
+  "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.7,
     "visionRange": 10,

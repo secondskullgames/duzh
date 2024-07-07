@@ -11,7 +11,7 @@
   },
   "defaultTile": "FLOOR",
   "enemyColors": {
-    "MAGENTA": "grunt"
+    "MAGENTA": "shade"
   },
   "itemColors": {
     "RED": "chain_lightning_scroll"
