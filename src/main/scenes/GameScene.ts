@@ -339,6 +339,7 @@ export class GameScene implements Scene {
           return;
         }
       }
+      return;
     }
 
     const coordinates = this._pixelToGrid(pixel);
@@ -430,8 +431,8 @@ export class GameScene implements Scene {
     for (let i = 0; i < shrineMenuState.options.length; i++) {
       const option = shrineMenuState.options[i];
       const rect = {
-        left: screenWidth / 4 + 10,
-        top: screenHeight / 4 + 10 + 20 * i,
+        left: screenWidth / 4 + 20,
+        top: screenHeight / 4 + 70 + 20 * i,
         width: screenWidth / 2 - 20,
         height: 20
       };

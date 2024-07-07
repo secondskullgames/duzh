@@ -388,19 +388,6 @@ export default class Unit implements Entity {
     return this.abilityPoints;
   };
 
-  getCurrentlyLearnableAbilities = (): AbilityName[] => {
-    if (this.playerUnitClass) {
-      return this.playerUnitClass
-        .getAllPossibleLearnableAbilities()
-        .filter(abilityName => !this.hasAbility(abilityName))
-        .filter(abilityName => {
-          const dependencies = this.playerUnitClass!.getAbilityDependencies(abilityName);
-          return dependencies.every(dep => this.hasAbility(dep));
-        });
-    }
-    return [];
-  };
-
   getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
   private _upkeep = async (state: GameState, session: Session) => {
