@@ -11,8 +11,8 @@ import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
 
 // TODO this should be enemy-specific? add loot tables
-const ITEM_DROP_CHANCE = 0.3;
-const GLOBE_DROP_CHANCE = 0.3;
+const ITEM_DROP_CHANCE = 0.1;
+const GLOBE_DROP_CHANCE = 0.2;
 const HEALTH_GLOBE_DROP_CHANCE = 1;
 const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;

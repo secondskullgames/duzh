@@ -62,4 +62,19 @@ export default class ProjectileFactory {
       sprite
     });
   };
+
+  createFrostbolt = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    direction: Direction
+  ): Promise<Projectile> => {
+    const sprite = await this.spriteFactory.createStaticSprite('frostbolt');
+    return new Projectile({
+      name: 'Frostbolt',
+      coordinates,
+      map,
+      direction,
+      sprite
+    });
+  };
 }

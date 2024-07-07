@@ -13,8 +13,9 @@
   },
   "items": {
     "min": 2,
-    "max": 3
+    "max": 2
   },
+  "shrines": 1,
   "fogOfWar": {
     "enabled": true,
     "radius": 4,

@@ -27,7 +27,8 @@ const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
   2: [AbilityName.HEAVY_ATTACK],
   3: [AbilityName.KNOCKBACK_ATTACK],
   4: [AbilityName.STUN_ATTACK],
-  5: [AbilityName.DASH_ATTACK]
+  5: [AbilityName.DASH_ATTACK],
+  6: [AbilityName.CLEAVE]
 };
 
 const learnableAbilities = [
@@ -66,7 +67,7 @@ class DefaultClass implements PlayerUnitClass {
       case AbilityName.SHOOT_ARROW:
       case AbilityName.SHOOT_FIREBOLT:
       case AbilityName.SHOOT_FROSTBOLT:
-        return ' ';
+        return null;
       default: {
         const index = unit
           .getAbilities()

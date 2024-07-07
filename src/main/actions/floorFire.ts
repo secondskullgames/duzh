@@ -18,19 +18,19 @@ export const floorFire = async (
 ) => {
   const map = unit.getMap();
   // TODO - optimization opportunity
-  const adjacentUnits: Unit[] = map.getAllUnits().filter(u => {
+  const targets: Unit[] = map.getAllUnits().filter(u => {
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), u.getCoordinates());
     return [-1, 0, 1].includes(dx) && [-1, 0, 1].includes(dy) && !(dx === 0 && dy === 0);
   });
 
   state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
 
-  for (let i = 0; i < adjacentUnits.length; i++) {
+  for (let i = 0; i < targets.length; i++) {
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-    for (let j = 0; j < adjacentUnits.length; j++) {
-      adjacentUnits[j].setActivity(Activity.STANDING, 1, unit.getDirection());
+    for (let j = 0; j < targets.length; j++) {
+      targets[j].setActivity(Activity.STANDING, 1, unit.getDirection());
       if (j === i) {
-        const targetUnit = adjacentUnits[j];
+        const targetUnit = targets[j];
         targetUnit.getEffects().addEffect(StatusEffect.DAMAGED, 1);
         targetUnit.getEffects().addEffect(StatusEffect.BURNING, 1);
         const damageTaken = await dealDamage(damage, {
@@ -45,18 +45,18 @@ export const floorFire = async (
           recordKill(unit, targetUnit, session, state);
         }
       } else {
-        adjacentUnits[j].getEffects().removeEffect(StatusEffect.DAMAGED);
-        adjacentUnits[j].getEffects().removeEffect(StatusEffect.BURNING);
+        targets[j].getEffects().removeEffect(StatusEffect.DAMAGED);
+        targets[j].getEffects().removeEffect(StatusEffect.BURNING);
       }
     }
     await sleep(150);
   }
 
   unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-  for (let i = 0; i < adjacentUnits.length; i++) {
-    adjacentUnits[i].setActivity(Activity.STANDING, 1, unit.getDirection());
-    adjacentUnits[i].getEffects().removeEffect(StatusEffect.DAMAGED);
-    adjacentUnits[i].getEffects().removeEffect(StatusEffect.BURNING);
+  for (const target of targets) {
+    target.setActivity(Activity.STANDING, 1, target.getDirection());
+    target.getEffects().removeEffect(StatusEffect.DAMAGED);
+    target.getEffects().removeEffect(StatusEffect.BURNING);
   }
 };
 

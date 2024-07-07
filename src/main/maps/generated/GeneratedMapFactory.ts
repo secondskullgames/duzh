@@ -165,19 +165,18 @@ export class GeneratedMapFactory {
     while (itemsRemaining > 0) {
       // TODO: this is a hack to force a bronze sword on the first level
       // I don't want to design a better DSL for map generation right now
-      if (Feature.isEnabled(Feature.FORCE_BRONZE_SWORD)) {
-        if (
-          mapModel.levelNumber === 1 &&
-          !this.state.getGeneratedEquipmentIds().includes('bronze_sword')
-        ) {
-          itemSpecs.push({
-            type: ItemType.EQUIPMENT,
-            id: 'bronze_sword'
-          });
-          itemsRemaining--;
-          this.state.recordEquipmentGenerated('bronze_sword');
-          continue;
-        }
+      if (
+        Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
+        mapModel.levelNumber === 1 &&
+        !this.state.getGeneratedEquipmentIds().includes('bronze_sword')
+      ) {
+        itemSpecs.push({
+          type: ItemType.EQUIPMENT,
+          id: 'bronze_sword'
+        });
+        itemsRemaining--;
+        this.state.recordEquipmentGenerated('bronze_sword');
+        continue;
       } else {
         const chosenItemSpec = await this.itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,
@@ -200,8 +199,7 @@ export class GeneratedMapFactory {
     }
 
     if (Feature.isEnabled(Feature.SHRINES)) {
-      // TODO this should be part of the model
-      const numShrines = map.levelNumber % 2 === 0 ? 1 : 0;
+      const numShrines = mapModel.shrines;
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
         const shrine = await this.objectFactory.createShrine(coordinates, map);

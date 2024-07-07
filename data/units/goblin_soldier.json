@@ -31,7 +31,7 @@
     "fleeThreshold": 0.1
   },
   "levelParameters": {
-    "rarity": 2
+    "rarity": 3
   },
   "abilities": ["ATTACK", "MINOR_KNOCKBACK", "HEAVY_ATTACK"],
   "experience": 1

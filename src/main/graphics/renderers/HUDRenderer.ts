@@ -181,14 +181,16 @@ export default class HUDRenderer implements Renderer {
 
       if (ability.icon) {
         await this._renderAbility(ability, { x: left, y: top }, graphics);
-        this._drawText(
-          `${hotkey}`,
-          FontName.APPLE_II,
-          { x: left + 10, y: top + 24 },
-          Colors.WHITE,
-          Alignment.CENTER,
-          graphics
-        );
+        if (hotkey) {
+          this._drawText(
+            `${hotkey}`,
+            FontName.APPLE_II,
+            { x: left + 10, y: top + 24 },
+            Colors.WHITE,
+            Alignment.CENTER,
+            graphics
+          );
+        }
         this._drawText(
           `${ability.manaCost}`,
           FontName.APPLE_II,
@@ -212,14 +214,16 @@ export default class HUDRenderer implements Renderer {
         ABILITY_ICON_WIDTH * (-3 + i);
 
       await this._renderAbility(ability, { x: left, y: top }, graphics);
-      this._drawText(
-        `${hotkey}`,
-        FontName.APPLE_II,
-        { x: left + 10, y: top + 24 },
-        Colors.WHITE,
-        Alignment.CENTER,
-        graphics
-      );
+      if (hotkey) {
+        this._drawText(
+          `${hotkey}`,
+          FontName.APPLE_II,
+          { x: left + 10, y: top + 24 },
+          Colors.WHITE,
+          Alignment.CENTER,
+          graphics
+        );
+      }
       this._drawText(
         `${ability.manaCost}`,
         FontName.APPLE_II,

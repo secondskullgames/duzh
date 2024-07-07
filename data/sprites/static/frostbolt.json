@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
+  "name": "frostbolt",
+  "filename": "fireball",
+  "offsets": {
+    "dx": -4,
+    "dy": -8
+  },
+  "transparentColor": "WHITE",
+  "paletteSwaps": {
+    "RED": "BLUE",
+    "YELLOW": "WHITE",
+    "ORANGE": "CYAN"
+  }
+}

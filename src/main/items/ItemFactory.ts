@@ -23,6 +23,7 @@ import { ItemCategory } from '@models/ItemCategory';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
+import { radialChainLightning } from '@main/actions/radialChainLightning';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 
@@ -119,11 +120,29 @@ export default class ItemFactory {
       name,
       category: ItemCategory.SCROLL,
       onUse,
-      tooltip: [
-        'Unleashes a wave of fire',
-        'in all directions that',
-        `deals ${damage} damage`
-      ].join('\n')
+      tooltip: `Unleashes a wave of fire in all directions that deals ${damage} damage`
+    });
+  };
+
+  createScrollOfChainLightning = async (
+    name: string,
+    damage: number
+  ): Promise<InventoryItem> => {
+    const onUse: ItemProc = async (
+      _: InventoryItem,
+      unit: Unit,
+      state: GameState,
+      session: Session
+    ) => {
+      session.setScene(SceneName.GAME);
+      await radialChainLightning(unit, damage, state, session);
+    };
+
+    return new InventoryItem({
+      name,
+      category: ItemCategory.SCROLL,
+      onUse,
+      tooltip: `Unleashes a wave of chain lightning in all directions that deals ${damage} damage`
     });
   };
 
@@ -136,7 +155,7 @@ export default class ItemFactory {
       name,
       category: ItemCategory.SCROLL,
       onUse,
-      tooltip: ['Reveals the entire map'].join('\n')
+      tooltip: 'Reveals the entire map'
     });
   };
 
@@ -158,7 +177,7 @@ export default class ItemFactory {
       name,
       category: ItemCategory.SCROLL,
       onUse,
-      tooltip: ['Shoots a fireball that deals', `${damage} damage`].join('\n')
+      tooltip: `Shoots a fireball that deals ${damage} damage`
     });
   };
 
@@ -269,6 +288,10 @@ export default class ItemFactory {
           case 'freeze': {
             const duration = parseInt(model.params?.duration ?? '0');
             return this.createScrollOfFreeze(model.name, duration);
+          }
+          case 'chain_lightning': {
+            const damage = parseInt(model.params?.damage ?? '0');
+            return this.createScrollOfChainLightning(model.name, damage);
           }
           default:
             throw new Error(`Unknown spell: ${JSON.stringify(spell)}`);

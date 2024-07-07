@@ -39,18 +39,21 @@ export const Cleave: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    const direction = pointAt(unit.getCoordinates(), coordinates);
-    unit.setDirection(direction);
+    const initialDirection = pointAt(unit.getCoordinates(), coordinates);
+    unit.setDirection(initialDirection);
 
-    const targetUnits = _getTargetUnits(unit, direction);
+    const targetUnits = _getTargetUnits(unit);
     if (targetUnits.length > 0) {
       unit.spendMana(manaCost);
     }
 
     // TODO: consider making this simultaneous
     for (const targetUnit of targetUnits) {
+      const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
+      unit.setDirection(direction);
       await attackUnit(unit, targetUnit, attack, session, state);
     }
+    unit.setDirection(initialDirection);
   }
 };
 
@@ -60,24 +63,19 @@ export const Cleave: UnitAbility = {
  * attacking unit, plus any units to the left or right of that
  * unit.
  */
-const _getTargetUnits = (unit: Unit, direction: Direction): Unit[] => {
+const _getTargetUnits = (unit: Unit): Unit[] => {
   const map = unit.getMap();
   const coordinates = unit.getCoordinates();
-  const targetCoordinates = Coordinates.plusDirection(coordinates, direction);
-  const targetUnit = map.getUnit(targetCoordinates);
-  if (!targetUnit) {
-    return [];
+  const initialDirection = unit.getDirection();
+  let direction = initialDirection;
+  const targetUnits: Unit[] = [];
+  for (let i = 0; i < 4; i++) {
+    const targetCoordinates = Coordinates.plusDirection(coordinates, direction);
+    const targetUnit = map.getUnit(targetCoordinates);
+    if (targetUnit) {
+      targetUnits.push(targetUnit);
+    }
+    direction = Direction.rotateClockwise(direction);
   }
-
-  const leftCoordinates = Coordinates.plusDirection(
-    targetCoordinates,
-    Direction.rotateCounterClockwise(direction)
-  );
-  const rightCoordinates = Coordinates.plusDirection(
-    targetCoordinates,
-    Direction.rotateClockwise(direction)
-  );
-  const leftUnit = map.getUnit(leftCoordinates);
-  const rightUnit = map.getUnit(rightCoordinates);
-  return [leftUnit, targetUnit, rightUnit].filter(Boolean) as Unit[];
+  return targetUnits;
 };

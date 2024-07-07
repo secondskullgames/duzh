@@ -28,6 +28,34 @@ export namespace Direction {
     }
   };
 
+  export const fromOffsets = ({ dx, dy }: Offsets): Direction => {
+    if (dx === 0 && dy === -1) {
+      return Direction.N;
+    } else if (dx === 1 && dy === 0) {
+      return Direction.E;
+    } else if (dx === 0 && dy === 1) {
+      return Direction.S;
+    } else if (dx === -1 && dy === 0) {
+      return Direction.W;
+    } else {
+      throw new Error(`Invalid offsets: ${dx}, ${dy}`);
+    }
+  };
+
+  export const fromOffsetsOptional = ({ dx, dy }: Offsets): Direction | null => {
+    if (dx === 0 && dy === -1) {
+      return Direction.N;
+    } else if (dx === 1 && dy === 0) {
+      return Direction.E;
+    } else if (dx === 0 && dy === 1) {
+      return Direction.S;
+    } else if (dx === -1 && dy === 0) {
+      return Direction.W;
+    } else {
+      return null;
+    }
+  };
+
   const _legacyDirectionLookup: Record<Direction, string> = {
     [Direction.N]: 'NW',
     [Direction.E]: 'NE',
