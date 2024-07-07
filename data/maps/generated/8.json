@@ -8,8 +8,8 @@
   "height": 34,
   "enemies": {
     "types": ["goblin_soldier", "golem", "fire_golem", "scorpion"],
-    "min": 12,
-    "max": 14
+    "min": 11,
+    "max": 12
   },
   "items": {
     "min": 1,

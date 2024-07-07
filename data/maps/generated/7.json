@@ -8,8 +8,8 @@
   "height": 32,
   "enemies": {
     "types": ["goblin_soldier", "green_blob", "goblin_archer"],
-    "min": 11,
-    "max": 13
+    "min": 10,
+    "max": 12
   },
   "items": {
     "min": 1,

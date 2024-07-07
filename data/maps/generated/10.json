@@ -8,8 +8,8 @@
   "height": 38,
   "enemies": {
     "types": ["golem", "fire_golem", "scorpion", "green_blob", "robed_wizard"],
-    "min": 15,
-    "max": 18
+    "min": 12,
+    "max": 14
   },
   "items": {
     "min": 1,
