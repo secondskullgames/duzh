@@ -9,7 +9,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 export interface PlayerUnitClass {
   readonly lifePerLevel: number;
   readonly manaPerLevel: number;
-  readonly strengthPerLevel: number;
+  readonly meleeDamagePerLevel: number;
   readonly maxLevel: number;
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
   getHotkeyForAbility: (ability: UnitAbility, unit: Unit) => string | null;
@@ -42,7 +42,7 @@ const cumulativeKillsToNextLevel = [
 class DefaultClass implements PlayerUnitClass {
   readonly lifePerLevel = 0;
   readonly manaPerLevel = 2;
-  readonly strengthPerLevel = 0;
+  readonly meleeDamagePerLevel = 0;
   readonly maxLevel = 10;
 
   getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {

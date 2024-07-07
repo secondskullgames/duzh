@@ -21,7 +21,7 @@ export const levelUp = (unit: Unit, session: Session) => {
     } else {
       unit.increaseMaxLife(playerUnitClass.lifePerLevel);
       unit.increaseMaxMana(playerUnitClass.manaPerLevel);
-      unit.increaseMeleeDamage(playerUnitClass.strengthPerLevel);
+      unit.increaseMeleeDamage(playerUnitClass.meleeDamagePerLevel);
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()
