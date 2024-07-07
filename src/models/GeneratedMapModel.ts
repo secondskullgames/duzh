@@ -13,6 +13,7 @@ export type GeneratedMapModel = Readonly<{
     max: number;
   };
   items: Range;
+  shrines: number;
   fogOfWar: FogOfWarParams;
 }>;
 

@@ -199,8 +199,7 @@ export class GeneratedMapFactory {
     }
 
     if (Feature.isEnabled(Feature.SHRINES)) {
-      // TODO this should be part of the model
-      const numShrines = map.levelNumber % 2 === 0 ? 1 : 0;
+      const numShrines = mapModel.shrines;
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
         const shrine = await this.objectFactory.createShrine(coordinates, map);
