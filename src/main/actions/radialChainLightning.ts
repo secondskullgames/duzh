@@ -43,7 +43,6 @@ export const radialChainLightning = async (
     if (!targetUnit) {
       break;
     }
-    console.log(`${targetUnit.getId()} ${targetUnit.getName()}`);
     const adjacentTargets: Unit[] = getAdjacentEnemies(targetUnit, map)
       .filter(u => !queue.includes(u))
       .filter(u => !alreadyDamagedEnemies.includes(u));
