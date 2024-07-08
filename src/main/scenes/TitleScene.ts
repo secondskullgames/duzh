@@ -1,6 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
 import { MapController } from '@main/maps/MapController';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
@@ -13,6 +12,7 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const TITLE_FILENAME = 'title2';
@@ -22,8 +22,8 @@ export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
   constructor(
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(ImageFactory)
@@ -33,7 +33,8 @@ export class TitleScene implements Scene {
   ) {}
 
   private _handleStartGame = async () => {
-    const { session, mapController } = this;
+    const { engine, mapController } = this;
+    const session = engine.getSession();
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap();
     } else {

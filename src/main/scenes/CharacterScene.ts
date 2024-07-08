@@ -2,7 +2,6 @@ import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Session } from '@main/core/Session';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
@@ -12,6 +11,7 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
@@ -24,8 +24,8 @@ export class CharacterScene implements Scene {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -33,7 +33,8 @@ export class CharacterScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
 
     switch (command.key) {
       case 'C':
@@ -56,7 +57,8 @@ export class CharacterScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     session.setScene(SceneName.GAME);
   };
 
@@ -74,7 +76,8 @@ export class CharacterScene implements Scene {
   };
 
   private _renderStatistics = async (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const playerUnit = session.getPlayerUnit();
     let top = 20;
     this._drawText(

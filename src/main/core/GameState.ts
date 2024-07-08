@@ -32,8 +32,6 @@ export interface GameState {
   getModelLoader: () => ModelLoader;
 }
 
-export const GameState = Symbol('GameState');
-
 /**
  * Global mutable state
  */

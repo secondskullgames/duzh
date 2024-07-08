@@ -5,12 +5,12 @@ import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
@@ -20,8 +20,8 @@ export class ShrineMenuRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -29,7 +29,8 @@ export class ShrineMenuRenderer implements Renderer {
   ) {}
 
   render = async (graphics: Graphics) => {
-    const { imageFactory, gameConfig, session } = this;
+    const { imageFactory, gameConfig, engine } = this;
+    const session = engine.getSession();
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     const { screenWidth, screenHeight } = gameConfig;
     const left = screenWidth / 4;
@@ -73,9 +74,9 @@ export class ShrineMenuRenderer implements Renderer {
   };
 
   private _getOptionColor = (option: ShrineOption): Color => {
-    const selectedOption = checkNotNull(
-      this.session.getShrineMenuState()
-    ).getSelectedOption();
+    const { engine } = this;
+    const session = engine.getSession();
+    const selectedOption = checkNotNull(session.getShrineMenuState()).getSelectedOption();
     const isSelected = selectedOption.label === option.label;
     return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
   };

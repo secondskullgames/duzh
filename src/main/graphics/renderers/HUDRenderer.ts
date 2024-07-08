@@ -7,7 +7,6 @@ import { FontName } from '../Fonts';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Session } from '@main/core/Session';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/units/Unit';
 import { Rect } from '@lib/geometry/Rect';
@@ -19,6 +18,7 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -41,8 +41,8 @@ export default class HUDRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     gameConfig: GameConfig,
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -64,8 +64,10 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderFrame = async (graphics: Graphics) => {
+    const { engine, imageFactory } = this;
+    const session = engine.getSession();
     const fillColor = (() => {
-      const playerUnit = this.session.getPlayerUnit();
+      const playerUnit = session.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
         return Colors.GRAY_128;
       } else {
@@ -76,7 +78,7 @@ export default class HUDRenderer implements Renderer {
       { left: 0, top: this.TOP, width: this.WIDTH, height: HEIGHT },
       fillColor
     );
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename: HUD_FILENAME,
       transparentColor: Colors.BLACK
     });
@@ -87,7 +89,8 @@ export default class HUDRenderer implements Renderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   private _renderLeftPanel = (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const playerUnit = session.getPlayerUnit();
 
     const lines = [];
@@ -160,7 +163,8 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
@@ -236,7 +240,8 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderRightPanel = (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
@@ -272,7 +277,8 @@ export default class HUDRenderer implements Renderer {
     topLeft: Pixel,
     graphics: Graphics
   ) => {
-    const { imageFactory, session } = this;
+    const { imageFactory, engine } = this;
+    const session = engine.getSession();
     const playerUnit = session.getPlayerUnit();
     const queuedAbility = session.getQueuedAbility();
 

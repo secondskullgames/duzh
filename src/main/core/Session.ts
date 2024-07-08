@@ -44,8 +44,6 @@ export interface Session {
   setQueuedAbility: (ability: UnitAbility | null) => void;
 }
 
-export const Session = Symbol('Session');
-
 @injectable()
 export class SessionImpl implements Session {
   private readonly ticker: Ticker;
