@@ -1,4 +1,4 @@
-import AbstractMapGenerator from './AbstractMapGenerator';
+import { AbstractMapGenerator } from './AbstractMapGenerator';
 import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -6,9 +6,20 @@ import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';
 
-class PathMapGenerator extends AbstractMapGenerator {
-  constructor(tileFactory: TileFactory) {
+type Props = Readonly<{
+  numPoints: number;
+  tileFactory: TileFactory;
+}>;
+
+/**
+ * A map generator which randomly places points on a map and uses a pathfinding
+ * algorithm to connect them with irregularly shaped paths of floor tiles.
+ */
+export class PathMapGenerator extends AbstractMapGenerator {
+  private readonly numPoints: number;
+  constructor({ tileFactory, numPoints }: Props) {
     super(tileFactory);
+    this.numPoints = numPoints;
   }
 
   /** @override {@link AbstractMapGenerator#generateTiles} */
@@ -22,15 +33,13 @@ class PathMapGenerator extends AbstractMapGenerator {
       tiles.push(row);
     }
 
-    const numPoints = 20;
-
     const firstPoint = _randomEmptyTile(tiles);
     tiles[firstPoint.y][firstPoint.x] = TileType.NONE;
 
     const pathfinder = Pathfinder.create({ heuristic: Heuristic.MANHATTAN });
 
     let lastPoint = firstPoint;
-    for (let i = 1; i < numPoints; i++) {
+    for (let i = 1; i < this.numPoints; i++) {
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const nextPoint = _randomEmptyTile(tiles);
@@ -97,5 +106,3 @@ const _addWalls = (tiles: TileType[][]) => {
     }
   }
 };
-
-export default PathMapGenerator;

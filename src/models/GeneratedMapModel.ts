@@ -3,8 +3,8 @@ import { FogOfWarParams } from './FogOfWarParams';
 export type GeneratedMapModel = Readonly<{
   id: string;
   levelNumber: number;
-  algorithm?: Algorithm;
-  tileSet?: string;
+  algorithm: Algorithm;
+  tileSet: string;
   width: number;
   height: number;
   enemies: {
@@ -21,7 +21,8 @@ export enum Algorithm {
   ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
   DEFAULT = 'DEFAULT',
   PATH = 'PATH',
-  BLOB = 'BLOB'
+  BLOB = 'BLOB',
+  RANDOM = 'RANDOM'
 }
 
 export type Range = Readonly<{

@@ -2,7 +2,7 @@ import UnitOrder from '../orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { isBlocked } from '@main/maps/MapUtils';
+import { getDoor, isBlocked } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
@@ -36,7 +36,12 @@ export class AttackMoveBehavior implements UnitBehavior {
       if (!isBlocked(map, coordinates)) {
         return new MoveOrder({ coordinates });
       } else {
-        return new AttackOrder({ direction });
+        const door = getDoor(map, coordinates);
+        if (door?.isClosed()) {
+          return new MoveOrder({ coordinates });
+        } else {
+          return new AttackOrder({ direction });
+        }
       }
     }
   };

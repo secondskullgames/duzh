@@ -6,6 +6,9 @@ import { checkNotNull } from '@lib/utils/preconditions';
  */
 export const randInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1) + min);
+export const randFloat = (min: number, max: number): number => {
+  return Math.random() * (max - min) + min;
+};
 export const randBoolean = () => randInt(0, 1) === 1;
 export const random = () => Math.random();
 export const randChance = (chance: number) => Math.random() <= chance;

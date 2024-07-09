@@ -1,4 +1,4 @@
-import AbstractMapGenerator from './AbstractMapGenerator';
+import { AbstractMapGenerator } from './AbstractMapGenerator';
 import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -6,9 +6,21 @@ import { Rect } from '@lib/geometry/Rect';
 import { randInt, shuffle } from '@lib/utils/random';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 
-class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
-  constructor(tileFactory: TileFactory) {
+const minRoomWidth = 4;
+const minRoomHeight = 3;
+const maxRoomWidth = 7;
+const maxRoomHeight = 7;
+
+type Props = Readonly<{
+  fillRate: number;
+  tileFactory: TileFactory;
+}>;
+
+export class DefaultMapGenerator extends AbstractMapGenerator {
+  private readonly fillRate: number;
+  constructor({ tileFactory, fillRate }: Props) {
     super(tileFactory);
+    this.fillRate = fillRate;
   }
 
   generateTiles = (width: number, height: number): TileType[][] => {
@@ -24,10 +36,10 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
     const rooms: Rect[] = [];
     do {
       rooms.push(_addRandomRoom(tiles));
-    } while (_countFloorTiles(tiles) <= width * height * 0.25);
+    } while (_countFloorTiles(tiles) <= width * height * this.fillRate);
 
     shuffle(rooms);
-    const allTiles = _coordinatesInRect({
+    const allTiles = Rect.getAllCoordinates({
       left: 1,
       top: 2,
       width: width - 2,
@@ -37,8 +49,8 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
     const pathfinder = Pathfinder.create({ heuristic: Heuristic.MANHATTAN });
 
     for (let i = 1; i < rooms.length; i++) {
-      const firstTiles = _coordinatesInRect(rooms[i - 1]);
-      const secondTiles = _coordinatesInRect(rooms[i]);
+      const firstTiles = Rect.getAllCoordinates(rooms[i - 1]);
+      const secondTiles = Rect.getAllCoordinates(rooms[i]);
       shuffle(firstTiles);
       shuffle(secondTiles);
 
@@ -70,11 +82,6 @@ class RoomCorridorMapGenerator3 extends AbstractMapGenerator {
   };
 }
 
-const minRoomWidth = 4;
-const minRoomHeight = 3;
-const maxRoomWidth = 6;
-const maxRoomHeight = 6;
-
 const _addRandomRoom = (tiles: TileType[][]): Rect => {
   const emptyTiles: Coordinates[] = [];
   for (let y = 2; y < tiles.length - 1; y++) {
@@ -102,7 +109,7 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
       width: width + 2,
       height: height + 4
     };
-    const bigRectCoordinates: Coordinates[] = _coordinatesInRect(bigRect).filter(
+    const bigRectCoordinates: Coordinates[] = Rect.getAllCoordinates(bigRect).filter(
       ({ x, y }) => x >= 1 && x < tiles[0].length - 1 && y >= 2 && y < tiles.length - 1
     );
 
@@ -111,7 +118,7 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
     }
 
     const roomRect = { left, top, width, height };
-    const roomCoordinates: Coordinates[] = _coordinatesInRect(roomRect);
+    const roomCoordinates: Coordinates[] = Rect.getAllCoordinates(roomRect);
 
     if (roomCoordinates.some(({ x, y }) => tiles[y][x] === TileType.FLOOR)) {
       continue;
@@ -123,16 +130,6 @@ const _addRandomRoom = (tiles: TileType[][]): Rect => {
     return roomRect;
   }
   throw new Error();
-};
-
-const _coordinatesInRect = ({ left, top, width, height }: Rect): Coordinates[] => {
-  const coordinates = [];
-  for (let y = top; y < top + height; y++) {
-    for (let x = left; x < left + width; x++) {
-      coordinates.push({ x, y });
-    }
-  }
-  return coordinates;
 };
 
 const _countFloorTiles = (tiles: TileType[][]): number => {
@@ -163,5 +160,3 @@ const _addWalls = (tiles: TileType[][]) => {
     }
   }
 };
-
-export default RoomCorridorMapGenerator3;

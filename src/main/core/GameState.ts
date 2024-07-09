@@ -1,5 +1,5 @@
 import MapInstance from '../maps/MapInstance';
-import ItemFactory from '../items/ItemFactory';
+import { ItemFactory } from '../items/ItemFactory';
 import UnitFactory from '../units/UnitFactory';
 import ObjectFactory from '../objects/ObjectFactory';
 import MusicController from '../sounds/MusicController';

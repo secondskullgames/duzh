@@ -5,7 +5,7 @@ import RegionConnector from './RegionConnector';
 import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
-import AbstractMapGenerator from '../AbstractMapGenerator';
+import { AbstractMapGenerator } from '../AbstractMapGenerator';
 import TileFactory from '../../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 
@@ -18,7 +18,7 @@ type Props = Readonly<{
 const MIN_ROOM_FRACTION = 0.4;
 const MAX_ROOM_FRACTION = 0.8;
 
-export default class RoomCorridorMapGenerator extends AbstractMapGenerator {
+export class RoomCorridorMapGenerator extends AbstractMapGenerator {
   /**
    * inner width, not including wall
    */

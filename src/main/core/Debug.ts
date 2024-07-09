@@ -2,7 +2,7 @@ import { GameState } from './GameState';
 import { Session } from './Session';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import Sounds from '../sounds/Sounds';
-import ItemFactory from '../items/ItemFactory';
+import { ItemFactory } from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';

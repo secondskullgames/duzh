@@ -17,6 +17,7 @@ export enum Feature {
   GOD_MODE = 'GOD_MODE',
   MOBILE_WEB = 'MOBILE_WEB',
   HUD_BARS = 'HUD_BARS',
+  ROOMS_AND_CORRIDORS_2 = 'ROOMS_AND_CORRIDORS_2',
   SHRINES = 'SHRINES',
   STAIRS_UP = 'STAIRS_UP',
   TITLE_MUSIC = 'TITLE_MUSIC'
@@ -40,6 +41,7 @@ export namespace Feature {
     [Feature.GOD_MODE]: false,
     [Feature.HUD_BARS]: true,
     [Feature.MOBILE_WEB]: true,
+    [Feature.ROOMS_AND_CORRIDORS_2]: true,
     [Feature.SHRINES]: true,
     [Feature.STAIRS_UP]: false,
     [Feature.TITLE_MUSIC]: true

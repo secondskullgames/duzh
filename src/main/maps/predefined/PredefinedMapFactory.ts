@@ -1,14 +1,12 @@
-import Door, { DoorState } from '../../objects/Door';
 import Tile from '../../tiles/Tile';
 import Unit from '../../units/Unit';
 import GameObject from '../../objects/GameObject';
 import MapInstance from '../MapInstance';
 import TileFactory from '../../tiles/TileFactory';
-import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../units/UnitFactory';
 import ObjectFactory from '../../objects/ObjectFactory';
 import MusicController from '../../sounds/MusicController';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
+import { ItemFactory } from '@main/items/ItemFactory';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileType } from '@models/TileType';
@@ -30,7 +28,6 @@ export class PredefinedMapFactory {
     private readonly objectFactory: ObjectFactory,
     private readonly unitFactory: UnitFactory,
     private readonly itemFactory: ItemFactory,
-    private readonly spriteFactory: SpriteFactory,
     private readonly modelLoader: ModelLoader,
     private readonly musicController: MusicController
   ) {}
@@ -192,16 +189,12 @@ export class PredefinedMapFactory {
             objectName === 'door_horizontal'
               ? DoorDirection.HORIZONTAL
               : DoorDirection.VERTICAL;
-          const sprite = await this.spriteFactory.createDoorSprite();
-
-          const door = new Door({
-            name: 'Door',
-            direction: doorDirection,
-            state: DoorState.CLOSED,
-            coordinates: { x, y },
-            map,
-            sprite
-          });
+          const door = await this.objectFactory.createDoor(
+            { x, y },
+            doorDirection,
+            false,
+            map
+          );
           objects.push(door);
         } else {
           if (objectName === 'mirror') {
