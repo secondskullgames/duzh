@@ -8,11 +8,10 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'gameover';
@@ -26,10 +25,8 @@ export class GameOverScene implements Scene {
     private readonly imageFactory: ImageFactory,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(Session)
-    private readonly session: Session,
-    @inject(GameState)
-    private readonly state: GameState
+    @inject(Engine)
+    private readonly engine: Engine
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
@@ -68,7 +65,9 @@ export class GameOverScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     const { key, modifiers } = command;
 
     switch (key) {
@@ -88,7 +87,9 @@ export class GameOverScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     state.reset();
     session.reset();
     await showSplashScreen(state, session);

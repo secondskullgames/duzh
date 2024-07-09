@@ -3,7 +3,6 @@ import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
-import { Session } from '@main/core/Session';
 import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
@@ -13,6 +12,7 @@ import { LINE_HEIGHT } from '@main/graphics/constants';
 import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
@@ -22,8 +22,8 @@ export class HelpScene implements Scene {
   readonly name = SceneName.HELP;
 
   constructor(
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
     @inject(TextRenderer)
@@ -33,7 +33,8 @@ export class HelpScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const { key, modifiers } = command;
 
     switch (key) {
@@ -54,7 +55,8 @@ export class HelpScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     session.setScene(SceneName.GAME);
   };
 

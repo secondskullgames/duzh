@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import { Debug } from './core/Debug';
-import { GameState, GameStateImpl } from './core/GameState';
+import { GameStateImpl } from './core/GameState';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import { Session, SessionImpl } from './core/Session';
+import { SessionImpl } from './core/Session';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
@@ -44,22 +44,19 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     const fontFactory = context.container.get(FontFactory);
     return fontFactory.loadFonts();
   });
-  container.bind(Session).to(SessionImpl);
   container.bind(AssetLoader).to(AssetLoaderImpl);
-  container.bind(GameState).to(GameStateImpl);
   container.bind(MapController).to(MapControllerImpl);
-  container.bind(InputHandler).toDynamicValue(async context => {
-    const session = context.container.get<Session>(Session);
-    return createInputHandler({ session });
-  });
-  container.bind(Engine).to(EngineImpl);
+  const session = new SessionImpl();
+  const state = await container.getAsync(GameStateImpl);
+  const engine = new EngineImpl(session, state);
+  container.bind(InputHandler).toConstantValue(createInputHandler({ engine }));
+  container.bind(Engine).toConstantValue(engine);
   return container;
 };
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const state = await container.getAsync<GameState>(GameState);
-  const session = await container.getAsync<Session>(Session);
+  const engine = await container.getAsync<Engine>(Engine);
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -91,6 +88,8 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     [SceneName.TITLE]: await container.getAsync(TitleScene),
     [SceneName.VICTORY]: await container.getAsync(VictoryScene)
   };
+  const session = engine.getSession();
+  const state = engine.getState();
   for (const scene of Object.values(scenes)) {
     session.addScene(scene);
   }

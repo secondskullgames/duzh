@@ -1,7 +1,5 @@
 import MapFactory from './MapFactory';
 import UnitFactory from '../units/UnitFactory';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { check, checkState } from '@lib/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { SceneName } from '@main/scenes/SceneName';
@@ -9,6 +7,7 @@ import MapInstance from '@main/maps/MapInstance';
 import { GameConfig } from '@main/core/GameConfig';
 import MusicController from '@main/sounds/MusicController';
 import { MapType } from '@models/MapType';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 export interface MapController {
@@ -23,10 +22,8 @@ export const MapController = Symbol('MapController');
 @injectable()
 export class MapControllerImpl implements MapController {
   constructor(
-    @inject(Session)
-    private readonly session: Session,
-    @inject(GameState)
-    private readonly state: GameState,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(MapFactory)
     private readonly mapFactory: MapFactory,
     @inject(UnitFactory)
@@ -38,7 +35,8 @@ export class MapControllerImpl implements MapController {
   ) {}
 
   loadFirstMap = async () => {
-    const { session, unitFactory, musicController } = this;
+    const { engine, unitFactory, musicController } = this;
+    const session = engine.getSession();
     checkState(session.getMapIndex() === -1);
     session.setMapIndex(0);
     const map = await this._loadMap(0);
@@ -57,7 +55,8 @@ export class MapControllerImpl implements MapController {
   };
 
   loadNextMap = async () => {
-    const { session, musicController } = this;
+    const { engine, musicController } = this;
+    const session = engine.getSession();
     musicController.stop();
     const nextMapIndex = session.getMapIndex() + 1;
     if (!this._hasMap(nextMapIndex)) {
@@ -81,7 +80,8 @@ export class MapControllerImpl implements MapController {
   };
 
   loadPreviousMap = async () => {
-    const { musicController, session } = this;
+    const { musicController, engine } = this;
+    const session = engine.getSession();
     checkState(session.getMapIndex() > 0);
     const previousMapIndex = session.getMapIndex() - 1;
     session.setMapIndex(previousMapIndex);
@@ -99,7 +99,8 @@ export class MapControllerImpl implements MapController {
   };
 
   loadDebugMap = async () => {
-    const { session, musicController, mapFactory, unitFactory } = this;
+    const { engine, musicController, mapFactory, unitFactory } = this;
+    const session = engine.getSession();
 
     const map = await mapFactory.loadMap({ type: MapType.GENERATED, id: 'test' });
     session.setMap(map);
@@ -115,7 +116,8 @@ export class MapControllerImpl implements MapController {
   };
 
   private _loadMap = async (mapIndex: number): Promise<MapInstance> => {
-    const { state, gameConfig, mapFactory } = this;
+    const { engine, gameConfig, mapFactory } = this;
+    const state = engine.getState();
     const mapSpecs = gameConfig.mapSpecs;
     check(this._hasMap(mapIndex));
     if (!state.isMapLoaded(mapIndex)) {

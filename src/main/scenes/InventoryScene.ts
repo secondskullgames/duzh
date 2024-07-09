@@ -1,7 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
@@ -23,6 +21,7 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;
@@ -38,10 +37,8 @@ export class InventoryScene implements Scene {
   private readonly inventoryHeight: number;
 
   constructor(
-    @inject(Session)
-    private readonly session: Session,
-    @inject(GameState)
-    private readonly state: GameState,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(GameConfig)
     gameConfig: GameConfig,
     @inject(TextRenderer)
@@ -54,7 +51,8 @@ export class InventoryScene implements Scene {
   }
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const { key, modifiers } = command;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
@@ -96,7 +94,9 @@ export class InventoryScene implements Scene {
   handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
     const selectedItem = inventory.getSelectedItem();
@@ -109,7 +109,9 @@ export class InventoryScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
     const inventoryState = session.getInventoryState();
 
@@ -154,7 +156,8 @@ export class InventoryScene implements Scene {
   };
 
   private _getItemRects = (): [InventoryItem, Rect][] => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const inventoryScreenState = session.getInventoryState();
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
@@ -216,7 +219,8 @@ export class InventoryScene implements Scene {
   };
 
   private _drawEquipment = (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const inventory = session.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
@@ -261,7 +265,9 @@ export class InventoryScene implements Scene {
   };
 
   private _drawInventory = (graphics: Graphics) => {
-    const inventory = this.session.getInventoryState();
+    const { engine } = this;
+    const session = engine.getSession();
+    const inventory = session.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
@@ -293,10 +299,7 @@ export class InventoryScene implements Scene {
     // draw inventory items
     const selectedItemCategory = inventory.getSelectedItemCategory();
     if (selectedItemCategory) {
-      const items = inventory.getItems(
-        this.session.getPlayerUnit(),
-        selectedItemCategory
-      );
+      const items = inventory.getItems(session.getPlayerUnit(), selectedItemCategory);
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -319,7 +322,8 @@ export class InventoryScene implements Scene {
   };
 
   private _drawTooltip = (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const left = 10;
     const top = Math.round(graphics.getHeight() * 0.6);
 

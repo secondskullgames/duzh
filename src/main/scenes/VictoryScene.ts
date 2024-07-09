@@ -1,7 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -14,6 +12,7 @@ import { Color } from '@lib/graphics/Color';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'victory2';
@@ -23,10 +22,8 @@ export class VictoryScene implements Scene {
   readonly name = SceneName.VICTORY;
 
   constructor(
-    @inject(Session)
-    private readonly session: Session,
-    @inject(GameState)
-    private readonly state: GameState,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -34,7 +31,8 @@ export class VictoryScene implements Scene {
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
-    const { session, imageFactory } = this;
+    const { engine, imageFactory } = this;
+    const session = engine.getSession();
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -80,7 +78,9 @@ export class VictoryScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     const { key, modifiers } = command;
     switch (key) {
       case 'ENTER':
@@ -101,7 +101,9 @@ export class VictoryScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { state, session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
+    const state = engine.getState();
     state.reset();
     session.reset();
     await showSplashScreen(state, session);

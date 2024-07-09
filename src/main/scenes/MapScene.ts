@@ -11,6 +11,7 @@ import Colors from '@main/graphics/Colors';
 import { TileType } from '@models/TileType';
 import { isHostile } from '@main/units/UnitUtils';
 import { getItem, getShrine } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
@@ -20,12 +21,13 @@ export class MapScene implements Scene {
   readonly name = SceneName.MAP;
 
   constructor(
-    @inject(Session)
-    private readonly session: Session
+    @inject(Engine)
+    private readonly engine: Engine
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const { key, modifiers } = command;
 
     switch (key) {
@@ -49,12 +51,14 @@ export class MapScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     session.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const map = checkNotNull(session.getMap());
 
     graphics.fill(backgroundColor);

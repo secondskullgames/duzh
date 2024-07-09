@@ -8,7 +8,6 @@ import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Session } from '@main/core/Session';
 import Entity from '@main/entities/Entity';
 import { Debug } from '@main/core/Debug';
 import { GameConfig } from '@main/core/GameConfig';
@@ -16,6 +15,7 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
@@ -25,8 +25,8 @@ export default class GameScreenViewportRenderer implements Renderer {
   constructor(
     @inject(GameConfig)
     private readonly gameConfig: GameConfig,
-    @inject(Session)
-    private readonly session: Session,
+    @inject(Engine)
+    private readonly engine: Engine,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
     @inject(ShrineMenuRenderer)
@@ -36,13 +36,15 @@ export default class GameScreenViewportRenderer implements Renderer {
   ) {}
 
   render = async (graphics: Graphics) => {
+    const { engine } = this;
+    const session = engine.getSession();
     graphics.fill(Colors.BLACK);
 
     this._renderTiles(graphics);
     await this._renderEntities(graphics);
 
     // TODO: consider a generic menu system
-    if (this.session.isShowingShrineMenu()) {
+    if (session.isShowingShrineMenu()) {
       await this._renderShrineMenu(graphics);
     }
   };
@@ -74,7 +76,9 @@ export default class GameScreenViewportRenderer implements Renderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const playerUnit = this.session.getPlayerUnit();
+    const { engine } = this;
+    const session = engine.getSession();
+    const playerUnit = session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: (x - playerX) * TILE_WIDTH + (this.gameConfig.screenWidth - TILE_WIDTH) / 2,
@@ -83,7 +87,9 @@ export default class GameScreenViewportRenderer implements Renderer {
   };
 
   private _renderTiles = (graphics: Graphics) => {
-    const map = this.session.getMap();
+    const { engine } = this;
+    const session = engine.getSession();
+    const map = session.getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -102,7 +108,9 @@ export default class GameScreenViewportRenderer implements Renderer {
    * Render all entities, one row at a time.
    */
   private _renderEntities = async (graphics: Graphics) => {
-    const map = this.session.getMap();
+    const { engine } = this;
+    const session = engine.getSession();
+    const map = session.getMap();
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
@@ -152,12 +160,15 @@ export default class GameScreenViewportRenderer implements Renderer {
   };
 
   private _isTileRevealed = (coordinates: Coordinates): boolean => {
-    const map = this.session.getMap();
+    const { engine } = this;
+    const session = engine.getSession();
+    const map = session.getMap();
     return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
-    const { session } = this;
+    const { engine } = this;
+    const session = engine.getSession();
     const map = session.getMap();
     const unit = map.getUnit(coordinates);
 

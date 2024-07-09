@@ -20,7 +20,6 @@ import {
   weightedRandom,
   WeightedRandomChoice
 } from '@lib/utils/random';
-import { GameState } from '@main/core/GameState';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
 import UnitFactory from '@main/units/UnitFactory';
@@ -33,6 +32,7 @@ import MapItem from '@main/objects/MapItem';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import { Direction } from '@lib/geometry/Direction';
 import { DoorDirection } from '@models/DoorDirection';
+import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -48,8 +48,8 @@ export class GeneratedMapFactory {
     private readonly unitFactory: UnitFactory,
     @inject(ObjectFactory)
     private readonly objectFactory: ObjectFactory,
-    @inject(GameState)
-    private readonly state: GameState
+    @inject(Engine)
+    private readonly engine: Engine
   ) {}
 
   loadMap = async (mapId: string): Promise<MapInstance> => {
@@ -169,6 +169,8 @@ export class GeneratedMapFactory {
     map: MapInstance,
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
+    const { engine, itemFactory } = this;
+    const state = engine.getState();
     const objects: GameObject[] = [];
     const candidateLocations = this._getCandidateObjectLocations(map);
 
@@ -181,23 +183,23 @@ export class GeneratedMapFactory {
       if (
         Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
         mapModel.levelNumber === 1 &&
-        !this.state.getGeneratedEquipmentIds().includes('bronze_sword')
+        !state.getGeneratedEquipmentIds().includes('bronze_sword')
       ) {
         itemSpecs.push({
           type: ItemType.EQUIPMENT,
           id: 'bronze_sword'
         });
         itemsRemaining--;
-        this.state.recordEquipmentGenerated('bronze_sword');
+        state.recordEquipmentGenerated('bronze_sword');
         continue;
       } else {
-        const chosenItemSpec = await this.itemFactory.chooseRandomMapItemForLevel(
+        const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,
-          this.state
+          state
         );
         itemSpecs.push(chosenItemSpec);
         if (chosenItemSpec.type === ItemType.EQUIPMENT) {
-          this.state.recordEquipmentGenerated(chosenItemSpec.id);
+          state.recordEquipmentGenerated(chosenItemSpec.id);
         }
       }
       itemsRemaining--;

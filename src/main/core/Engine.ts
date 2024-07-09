@@ -5,9 +5,11 @@ import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/units/Unit';
 import { sortBy } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 
 export interface Engine {
+  getState: () => GameState;
+  getSession: () => Session;
   playTurn: () => Promise<void>;
 }
 
@@ -16,11 +18,12 @@ export const Engine = Symbol('Engine');
 @injectable()
 export class EngineImpl implements Engine {
   constructor(
-    @inject(Session)
     private readonly session: Session,
-    @inject(GameState)
     private readonly state: GameState
   ) {}
+
+  getState = (): GameState => this.state;
+  getSession = (): Session => this.session;
 
   playTurn = async () => {
     const { state, session } = this;
