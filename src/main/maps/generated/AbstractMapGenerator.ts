@@ -6,7 +6,7 @@ import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
 
-export default abstract class AbstractMapGenerator {
+export abstract class AbstractMapGenerator {
   protected constructor(private readonly tileFactory: TileFactory) {}
 
   generateMap = async (

@@ -3,6 +3,7 @@ import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 import MapInstance from '@main/maps/MapInstance';
 import { DoorDirection } from '@models/DoorDirection';
 import { Coordinates } from '@lib/geometry/Coordinates';
+import { checkState } from '@lib/utils/preconditions';
 
 export enum DoorState {
   OPEN = 'OPEN',
@@ -17,6 +18,7 @@ type Props = Readonly<{
   name: string;
   direction: DoorDirection;
   state: DoorState;
+  locked: boolean;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: DynamicSprite<Door>;
@@ -25,8 +27,9 @@ type Props = Readonly<{
 export default class Door extends GameObject {
   private readonly _direction: DoorDirection;
   private _state: DoorState;
+  private _locked: boolean;
 
-  constructor({ name, direction, state, coordinates, map, sprite }: Props) {
+  constructor({ name, direction, state, locked, coordinates, map, sprite }: Props) {
     super({
       name,
       coordinates,
@@ -37,24 +40,31 @@ export default class Door extends GameObject {
     sprite.bind(this);
     this._direction = direction;
     this._state = state;
+    this._locked = locked;
   }
 
-  isOpen = () => this._state === DoorState.OPEN;
-  isClosed = () => this._state === DoorState.CLOSED;
+  isOpen = (): boolean => this._state === DoorState.OPEN;
+  isClosed = (): boolean => this._state === DoorState.CLOSED;
+  isLocked = (): boolean => this._locked;
 
-  open = async () => {
+  unlock = () => {
+    this._locked = false;
+  };
+
+  open = () => {
+    checkState(!this._locked);
     this._state = DoorState.OPEN;
   };
 
-  close = async () => {
+  close = () => {
     this._state = DoorState.CLOSED;
   };
 
-  toggleOpen = async () => {
+  toggleOpen = () => {
     if (this._state === DoorState.OPEN) {
-      await this.close();
+      this.close();
     } else {
-      await this.open();
+      this.open();
     }
   };
 
@@ -65,5 +75,5 @@ export default class Door extends GameObject {
   playTurnAction = async () => {};
 
   /** @override {@link Entity#isBlocking} */
-  isBlocking = (): boolean => this._state === DoorState.CLOSED;
+  isBlocking = (): boolean => this.isClosed();
 }

@@ -95,7 +95,7 @@ const createSectionConnector = (): SectionConnector => {
     const connections = possibleConnections.filter(connection => {
       const connectionDistance = checkNotNull(distances.get(connection));
       minDistance = checkNotNull(minDistance);
-      return connectionDistance <= minDistance * 1.5;
+      return connectionDistance <= minDistance * 100;
     });
     const roomToExit = new Map<Rect, Coordinates>();
 

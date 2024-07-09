@@ -1,4 +1,4 @@
-import AbstractMapGenerator from './AbstractMapGenerator';
+import { AbstractMapGenerator } from './AbstractMapGenerator';
 import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -6,9 +6,21 @@ import { comparing, range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';
 import { isAdjacent } from '@lib/geometry/CoordinatesUtils';
 
-class BlobMapGenerator extends AbstractMapGenerator {
-  constructor(tileFactory: TileFactory) {
+const minCenterXRatio = 3 / 8;
+const maxCenterXRatio = 5 / 8;
+const minCenterYRatio = 3 / 8;
+const maxCenterYRatio = 5 / 8;
+
+type Props = Readonly<{
+  tileFactory: TileFactory;
+  fillRate: number;
+}>;
+
+export class BlobMapGenerator extends AbstractMapGenerator {
+  private readonly fillRate: number;
+  constructor({ tileFactory, fillRate }: Props) {
     super(tileFactory);
+    this.fillRate = fillRate;
   }
 
   /**
@@ -23,7 +35,7 @@ class BlobMapGenerator extends AbstractMapGenerator {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
-    const targetNumFloorTiles: number = this._getTargetNumFloorTiles(width * height);
+    const targetNumFloorTiles = Math.round(width * height * this.fillRate);
     while (this._getFloorTiles(tiles).length < targetNumFloorTiles) {
       if (!this._addFloorTile(tiles)) {
         break;
@@ -46,15 +58,9 @@ class BlobMapGenerator extends AbstractMapGenerator {
   };
 
   private _placeInitialTile = (width: number, height: number, tiles: TileType[][]) => {
-    const x = randInt((width * 3) / 8, (width * 5) / 8);
-    const y = randInt((height * 3) / 8, (height * 5) / 8);
+    const x = randInt(width * minCenterXRatio, width * maxCenterXRatio);
+    const y = randInt(height * minCenterYRatio, height * maxCenterYRatio);
     tiles[y][x] = TileType.FLOOR;
-  };
-
-  private _getTargetNumFloorTiles = (max: number) => {
-    const minRatio = 0.3;
-    const maxRatio = 0.6;
-    return randInt(Math.round(max * minRatio), Math.round(max * maxRatio));
   };
 
   private _getFloorTiles = (tiles: TileType[][]): Coordinates[] => {
@@ -248,5 +254,3 @@ class BlobMapGenerator extends AbstractMapGenerator {
     return score;
   };
 }
-
-export default BlobMapGenerator;

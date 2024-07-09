@@ -1,4 +1,5 @@
 import { Offsets } from '@lib/geometry/Offsets';
+import { Coordinates } from '@lib/geometry/Coordinates';
 
 export enum Direction {
   N = 'N',
@@ -92,6 +93,22 @@ export namespace Direction {
         return Direction.E;
       case Direction.E:
         return Direction.N;
+    }
+  };
+
+  export const between = (first: Coordinates, second: Coordinates): Direction => {
+    const dx = second.x - first.x;
+    const dy = second.y - first.y;
+    if (dx === 0 && dy === -1) {
+      return Direction.N;
+    } else if (dx === 1 && dy === 0) {
+      return Direction.E;
+    } else if (dx === 0 && dy === 1) {
+      return Direction.S;
+    } else if (dx === -1 && dy === 0) {
+      return Direction.W;
+    } else {
+      throw new Error(`Invalid direction: ${dx}, ${dy}`);
     }
   };
 }

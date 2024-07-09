@@ -101,7 +101,7 @@ export class MapControllerImpl implements MapController {
   loadDebugMap = async () => {
     const { session, musicController, mapFactory, unitFactory } = this;
 
-    const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' });
+    const map = await mapFactory.loadMap({ type: MapType.GENERATED, id: 'test' });
     session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),

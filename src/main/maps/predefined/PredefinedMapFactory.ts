@@ -1,4 +1,3 @@
-import Door, { DoorState } from '../../objects/Door';
 import Tile from '../../tiles/Tile';
 import Unit from '../../units/Unit';
 import GameObject from '../../objects/GameObject';
@@ -192,16 +191,12 @@ export class PredefinedMapFactory {
             objectName === 'door_horizontal'
               ? DoorDirection.HORIZONTAL
               : DoorDirection.VERTICAL;
-          const sprite = await this.spriteFactory.createDoorSprite();
-
-          const door = new Door({
-            name: 'Door',
-            direction: doorDirection,
-            state: DoorState.CLOSED,
-            coordinates: { x, y },
-            map,
-            sprite
-          });
+          const door = await this.objectFactory.createDoor(
+            { x, y },
+            doorDirection,
+            false,
+            map
+          );
           objects.push(door);
         } else {
           if (objectName === 'mirror') {

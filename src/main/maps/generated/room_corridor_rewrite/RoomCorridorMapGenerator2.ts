@@ -2,15 +2,19 @@ import Section from './Section';
 import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
-import AbstractMapGenerator from '../AbstractMapGenerator';
+import { AbstractMapGenerator } from '../AbstractMapGenerator';
 import TileFactory from '../../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Rect } from '@lib/geometry/Rect';
 
-const MIN_ROOM_WIDTH = 4;
-const MIN_ROOM_HEIGHT = 4;
 const HORIZONTAL_SECTION_PADDING = 2;
 const VERTICAL_SECTION_PADDING = 2;
+
+type Props = Readonly<{
+  minRoomWidth: number;
+  minRoomHeight: number;
+  tileFactory: TileFactory;
+}>;
 
 /**
  * This class generates randomized room-and-corridor levels similar to those used in Rogue and other classic
@@ -25,6 +29,8 @@ const VERTICAL_SECTION_PADDING = 2;
  * Note that this was ported from a previous Java implementation and may not be idiomatic Typescript.
  */
 class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
+  private readonly minRoomWidth: number;
+  private readonly minRoomHeight: number;
   // The following ASCII diagram looks horrible but is necessary to explain how section sizing works.
   // Section dimensions are calculated as the sum of room dimensions, two sets of padding, and an extra
   // row/column for section boundaries.
@@ -40,8 +46,10 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor(tileFactory: TileFactory) {
+  constructor({ minRoomWidth, minRoomHeight, tileFactory }: Props) {
     super(tileFactory);
+    this.minRoomWidth = minRoomWidth;
+    this.minRoomHeight = minRoomHeight;
   }
 
   generateTiles = (width: number, height: number): TileType[][] => {
@@ -57,8 +65,8 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
 
   private _createSplitter = (): SectionSplitter =>
     SectionSplitter.create({
-      minRoomWidth: MIN_ROOM_WIDTH,
-      minRoomHeight: MIN_ROOM_HEIGHT,
+      minRoomWidth: this.minRoomWidth,
+      minRoomHeight: this.minRoomHeight,
       horizontalSectionPadding: HORIZONTAL_SECTION_PADDING,
       verticalSectionPadding: VERTICAL_SECTION_PADDING
     });

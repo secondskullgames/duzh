@@ -2,12 +2,14 @@
   "$schema": "../../../src/gen-schema/GeneratedMapModel.schema.json",
   "id": "test",
   "levelNumber": 1,
-  "width": 32,
-  "height": 24,
+  "algorithm": "ROOMS_AND_CORRIDORS",
+  "tileSet": "dungeon_cga",
+  "width": 40,
+  "height": 30,
   "enemies": {
-    "types": ["green_snake", "red_snake"],
-    "min": 5,
-    "max": 5
+    "types": ["green_snake", "red_snake", "grunt"],
+    "min": 10,
+    "max": 20
   },
   "items": {
     "min": 1,
@@ -15,7 +17,8 @@
   },
   "shrines": 0,
   "fogOfWar": {
-    "enabled": false,
+    "enabled": true,
+    "radius": 3,
     "spawnEnemies": true,
     "spawnedUnitClass": "shade",
     "spawnRate": 0.01,

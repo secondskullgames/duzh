@@ -21,4 +21,19 @@ export namespace Rect {
     x: rect.left,
     y: rect.top
   });
+
+  export const getAllCoordinates = ({
+    left,
+    top,
+    width,
+    height
+  }: Rect): Coordinates[] => {
+    const coordinates = [];
+    for (let y = top; y < top + height; y++) {
+      for (let x = left; x < left + width; x++) {
+        coordinates.push({ x, y });
+      }
+    }
+    return coordinates;
+  };
 }

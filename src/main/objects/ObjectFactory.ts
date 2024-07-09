@@ -18,6 +18,8 @@ import Shrine from '@main/objects/Shrine';
 import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
 import { randChoice, sample } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
+import Door, { DoorState } from '@main/objects/Door';
+import { DoorDirection } from '@models/DoorDirection';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -298,6 +300,25 @@ export default class ObjectFactory {
       map,
       sprite,
       onUse
+    });
+  };
+
+  createDoor = async (
+    coordinates: Coordinates,
+    direction: DoorDirection,
+    locked: boolean,
+    map: MapInstance
+  ): Promise<Door> => {
+    const sprite = await this.spriteFactory.createDoorSprite();
+
+    return new Door({
+      name: 'Door',
+      direction,
+      state: DoorState.CLOSED,
+      locked,
+      coordinates,
+      map,
+      sprite
     });
   };
 }
