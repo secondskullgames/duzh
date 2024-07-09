@@ -3,11 +3,10 @@ import Unit from '../../units/Unit';
 import GameObject from '../../objects/GameObject';
 import MapInstance from '../MapInstance';
 import TileFactory from '../../tiles/TileFactory';
-import ItemFactory from '../../items/ItemFactory';
 import UnitFactory from '../../units/UnitFactory';
 import ObjectFactory from '../../objects/ObjectFactory';
 import MusicController from '../../sounds/MusicController';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
+import { ItemFactory } from '@main/items/ItemFactory';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileType } from '@models/TileType';
@@ -29,7 +28,6 @@ export class PredefinedMapFactory {
     private readonly objectFactory: ObjectFactory,
     private readonly unitFactory: UnitFactory,
     private readonly itemFactory: ItemFactory,
-    private readonly spriteFactory: SpriteFactory,
     private readonly modelLoader: ModelLoader,
     private readonly musicController: MusicController
   ) {}

@@ -28,7 +28,7 @@ type Props = Readonly<{
  *
  * Note that this was ported from a previous Java implementation and may not be idiomatic Typescript.
  */
-class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
+export class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   private readonly minRoomWidth: number;
   private readonly minRoomHeight: number;
   // The following ASCII diagram looks horrible but is necessary to explain how section sizing works.
@@ -71,5 +71,3 @@ class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
       verticalSectionPadding: VERTICAL_SECTION_PADDING
     });
 }
-
-export default RoomCorridorMapGenerator2;

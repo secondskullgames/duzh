@@ -4,7 +4,7 @@ import Unit from './Unit';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import Equipment from '@main/equipment/Equipment';
-import ItemFactory from '@main/items/ItemFactory';
+import { ItemFactory } from '@main/items/ItemFactory';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { UnitModel } from '@models/UnitModel';

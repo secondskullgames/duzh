@@ -1,14 +1,14 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import RoomCorridorMapGenerator from './room_corridor/RoomCorridorMapGenerator';
-import RoomCorridorMapGenerator2 from './room_corridor_rewrite/RoomCorridorMapGenerator2';
+import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
+import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import { DefaultMapGenerator } from './DefaultMapGenerator';
 import { BlobMapGenerator } from './BlobMapGenerator';
 import { PathMapGenerator } from './PathMapGenerator';
 import { getUnoccupiedLocations } from './MapGenerationUtils';
 import MapInstance from '../MapInstance';
-import ItemFactory, { ItemSpec, ItemType } from '../../items/ItemFactory';
 import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../objects/GameObject';
+import { ItemFactory, ItemSpec, ItemType } from '@main/items/ItemFactory';
 import { UnitModel } from '@models/UnitModel';
 import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
 import ModelLoader from '@main/assets/ModelLoader';

@@ -38,7 +38,7 @@ export type ItemSpec = Readonly<{
 }>;
 
 @injectable()
-export default class ItemFactory {
+export class ItemFactory {
   constructor(
     private readonly spriteFactory: SpriteFactory,
     private readonly modelLoader: ModelLoader
