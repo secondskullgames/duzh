@@ -15,9 +15,6 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "rarity": 3
-  },
   "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],
   "experience": 1
 }

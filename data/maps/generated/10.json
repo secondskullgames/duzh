@@ -7,7 +7,28 @@
   "width": 38,
   "height": 38,
   "enemies": {
-    "types": ["golem", "fire_golem", "scorpion", "green_blob", "robed_wizard"],
+    "types": [
+      {
+        "type": "golem",
+        "chance": 0.25
+      },
+      {
+        "type": "fire_golem",
+        "chance": 0.25
+      },
+      {
+        "type": "scorpion",
+        "chance": 0.2
+      },
+      {
+        "type": "green_blob",
+        "chance": 0.2
+      },
+      {
+        "type": "robed_wizard",
+        "chance": 0.1
+      }
+    ],
     "min": 12,
     "max": 14
   },

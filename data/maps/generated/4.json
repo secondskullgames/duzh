@@ -7,7 +7,24 @@
   "width": 30,
   "height": 20,
   "enemies": {
-    "types": ["grunt", "red_beetle", "goblin_soldier"],
+    "types": [
+      {
+        "type": "grunt",
+        "chance": 0.4
+      },
+      {
+        "type": "red_beetle",
+        "chance": 0.2
+      },
+      {
+        "type": "goblin_soldier",
+        "chance": 0.2
+      },
+      {
+        "type": "goblin_archer",
+        "chance": 0.2
+      }
+    ],
     "min": 7,
     "max": 9
   },

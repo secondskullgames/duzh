@@ -7,7 +7,24 @@
   "width": 34,
   "height": 34,
   "enemies": {
-    "types": ["goblin_soldier", "golem", "fire_golem", "scorpion"],
+    "types": [
+      {
+        "type": "goblin_soldier",
+        "chance": 0.4
+      },
+      {
+        "type": "golem",
+        "chance": 0.2
+      },
+      {
+        "type": "fire_golem",
+        "chance": 0.2
+      },
+      {
+        "type": "scorpion",
+        "chance": 0.2
+      }
+    ],
     "min": 11,
     "max": 12
   },

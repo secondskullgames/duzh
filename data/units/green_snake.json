@@ -15,9 +15,6 @@
     "aggressiveness": 0.5,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "rarity": 2
-  },
   "abilities": ["ATTACK"],
   "experience": 1
 }

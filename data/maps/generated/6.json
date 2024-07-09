@@ -7,7 +7,24 @@
   "width": 30,
   "height": 30,
   "enemies": {
-    "types": ["goblin_soldier", "red_beetle", "golem", "robo_turtle"],
+    "types": [
+      {
+        "type": "goblin_soldier",
+        "chance": 0.4
+      },
+      {
+        "type": "red_beetle",
+        "chance": 0.2
+      },
+      {
+        "type": "golem",
+        "chance": 0.2
+      },
+      {
+        "type": "robo_turtle",
+        "chance": 0.2
+      }
+    ],
     "min": 9,
     "max": 10
   },
