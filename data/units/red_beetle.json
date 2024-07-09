@@ -15,9 +15,6 @@
     "aggressiveness": 0.8,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "rarity": 3
-  },
   "abilities": ["ATTACK", "DASH"],
   "experience": 1
 }

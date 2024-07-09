@@ -8,7 +8,8 @@ export type GeneratedMapModel = Readonly<{
   width: number;
   height: number;
   enemies: {
-    types: string[];
+    /* By convention, these should add up to 1.0 */
+    types: { chance: number; type: string }[];
     min: number;
     max: number;
   };

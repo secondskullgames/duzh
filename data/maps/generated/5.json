@@ -7,7 +7,20 @@
   "width": 28,
   "height": 28,
   "enemies": {
-    "types": ["grunt", "goblin_soldier", "green_blob"],
+    "types": [
+      {
+        "type": "grunt",
+        "chance": 0.4
+      },
+      {
+        "type": "goblin_soldier",
+        "chance": 0.4
+      },
+      {
+        "type": "green_blob",
+        "chance": 0.2
+      }
+    ],
     "min": 8,
     "max": 9
   },

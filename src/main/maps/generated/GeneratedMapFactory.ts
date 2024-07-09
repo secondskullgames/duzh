@@ -129,17 +129,12 @@ export class GeneratedMapFactory {
     ).filter(coordinates => !isOccupied(map, coordinates));
     let unitsRemaining = randInt(model.enemies.min, model.enemies.max);
 
-    const possibleUnitModels = await this._getPossibleUnitModels(model);
+    const enemyUnitModels = await this._getEnemyUnitModels(model);
     const choices: WeightedRandomChoice<UnitModel>[] = [];
     while (unitsRemaining > 0) {
-      // weighted random, favoring higher-level units
-      for (const model of possibleUnitModels) {
+      for (const [model, chance] of enemyUnitModels) {
         const key = model.id;
-        // Each rarity is 2x less common than the previous rarity.
-        // So P[rarity] = 2 ^ -rarity
-        const rarity = model?.levelParameters!.rarity ?? 0;
-        const weight = 0.5 ** rarity;
-        choices.push({ key, weight, value: model });
+        choices.push({ key, weight: chance, value: model });
       }
       const unitModel = weightedRandom(choices);
       const coordinates = randChoice(candidateLocations);
@@ -159,10 +154,15 @@ export class GeneratedMapFactory {
     return units;
   };
 
-  private _getPossibleUnitModels = async (
+  /** @return a list of [unit model, chance] */
+  private _getEnemyUnitModels = async (
     model: GeneratedMapModel
-  ): Promise<UnitModel[]> => {
-    return Promise.all(model.enemies.types.map(this.modelLoader.loadUnitModel));
+  ): Promise<[UnitModel, number][]> => {
+    return Promise.all(
+      model.enemies.types.map(async ({ chance, type }) => {
+        return [await this.modelLoader.loadUnitModel(type), chance];
+      })
+    );
   };
 
   private _generateObjects = async (

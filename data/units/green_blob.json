@@ -15,9 +15,6 @@
     "aggressiveness": 0.7,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "rarity": 3
-  },
   "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
   "experience": 1
 }

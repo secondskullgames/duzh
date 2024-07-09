@@ -7,7 +7,18 @@
   "width": 40,
   "height": 30,
   "enemies": {
-    "types": ["green_snake", "red_snake", "grunt"],
+    "types": [{
+      "type": "green_snake",
+      "chance": 0.4
+    },
+    {
+      "type": "red_snake",
+      "chance": 0.4
+    },
+    {
+      "type": "grunt",
+      "chance": 0.2
+    }],
     "min": 10,
     "max": 20
   },

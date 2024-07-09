@@ -7,7 +7,24 @@
   "width": 36,
   "height": 36,
   "enemies": {
-    "types": ["goblin_archer", "golem", "fire_golem", "green_blob"],
+    "types": [
+      {
+        "type": "goblin_archer",
+        "chance": 0.25
+      },
+      {
+        "type": "golem",
+        "chance": 0.25
+      },
+      {
+        "type": "fire_golem",
+        "chance": 0.25
+      },
+      {
+        "type": "green_blob",
+        "chance": 0.25
+      }
+    ],
     "min": 11,
     "max": 13
   },

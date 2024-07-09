@@ -15,12 +15,6 @@ export type UnitModel = Readonly<{
   equipment?: string[];
   meleeDamage: number;
   rangedDamage: number;
-  /**
-   * undefined if this should not be randomly placed as an enemy
-   */
-  levelParameters?: {
-    rarity: number;
-  };
   life: number;
   mana: number;
   paletteSwaps: {

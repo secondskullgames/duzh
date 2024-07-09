@@ -15,9 +15,6 @@
     "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
-  "levelParameters": {
-    "rarity": 4
-  },
   "abilities": ["ATTACK", "TELEPORT", "SUMMON"],
   "summonedUnitClass": "golem_spawn",
   "experience": 1
