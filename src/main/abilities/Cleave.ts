@@ -6,8 +6,7 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 import type { UnitAbility } from './UnitAbility';
 
 const damageCoefficient = 2;
@@ -31,13 +30,14 @@ export class Cleave implements UnitAbility {
   manaCost = 8;
   icon = 'icon7';
   innate = false;
+
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const initialDirection = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(initialDirection);
 

@@ -12,6 +12,7 @@ import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 
 const damageCoefficient = 1;
 const stunDuration = 1;
@@ -30,31 +31,19 @@ const attack: Attack = {
   }
 };
 
-const _doKnockback = async (
-  targetUnit: Unit,
-  direction: Direction,
-  session: Session,
-  state: GameState
-) => {
-  const targetCoordinates = Coordinates.plusDirection(
-    targetUnit.getCoordinates(),
-    direction
-  );
-  await moveUnit(targetUnit, targetCoordinates, session, state);
-};
-
 export class DashAttack implements UnitAbility {
   readonly name = AbilityName.DASH_ATTACK;
   readonly manaCost = 10;
   readonly icon = 'icon5';
   readonly innate = false;
+
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);
@@ -84,7 +73,7 @@ export class DashAttack implements UnitAbility {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
           if (!isBlocked(map, behindCoordinates)) {
             const direction = offsetsToDirection({ dx, dy });
-            await _doKnockback(targetUnit, direction, session, state);
+            await this._doKnockback(targetUnit, direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
           }
           if (i === numTiles - 1) {
@@ -97,5 +86,18 @@ export class DashAttack implements UnitAbility {
         await sleep(100);
       }
     }
+  };
+
+  private _doKnockback = async (
+    targetUnit: Unit,
+    direction: Direction,
+    session: Session,
+    state: GameState
+  ) => {
+    const targetCoordinates = Coordinates.plusDirection(
+      targetUnit.getCoordinates(),
+      direction
+    );
+    await moveUnit(targetUnit, targetCoordinates, session, state);
   };
 }

@@ -5,27 +5,27 @@ import Sounds from '@main/sounds/Sounds';
 import Activity from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 
 export class FastTeleport implements UnitAbility {
   readonly name = AbilityName.FAST_TELEPORT;
   readonly icon = null;
   readonly manaCost = 4;
   readonly innate = false;
+
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates | null,
-    session: Session,
-    state: GameState
-  ) => {
+
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
     if (!coordinates) {
       throw new Error('FastTeleport requires a target!');
     }
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = unit.getMap();
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));

@@ -8,8 +8,7 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 
 const damageCoefficient = 1;
 
@@ -19,14 +18,13 @@ export class PiercingAttack implements UnitAbility {
   readonly icon = 'icon1'; // TODO
   readonly innate = false;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

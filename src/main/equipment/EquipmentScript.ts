@@ -4,7 +4,7 @@ import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
-import { ShootBolt } from '@main/abilities/ShootBolt';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 export type EquipmentScriptName =
   | 'bolt_sword'
@@ -47,7 +47,7 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await new ShootBolt().use(unit, target, session, state);
+      await state.getAbilityFactory().abilityForName(AbilityName.BOLT).use(unit, target);
     }
   }
 };

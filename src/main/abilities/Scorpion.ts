@@ -7,11 +7,10 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 
 const damageCoefficient = 1;
 const stunDuration = 1;
@@ -37,13 +36,14 @@ export class Scorpion implements UnitAbility {
   readonly manaCost = 10;
   readonly icon = 'scorpion_icon';
   readonly innate = false;
+
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const { dx, dy } = Direction.getOffsets(direction);

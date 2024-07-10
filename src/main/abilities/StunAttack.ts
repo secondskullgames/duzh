@@ -6,8 +6,7 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 
 const damageCoefficient = 1;
 const stunDuration = 2;
@@ -18,18 +17,17 @@ export class StunAttack implements UnitAbility {
   readonly icon = 'icon2';
   readonly innate = false;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates | null,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
     if (!coordinates) {
       throw new Error('StunAttack requires a target!');
     }
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

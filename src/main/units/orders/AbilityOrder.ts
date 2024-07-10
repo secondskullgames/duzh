@@ -23,8 +23,10 @@ export class AbilityOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
     const coordinates = Coordinates.plusDirection(unit.getCoordinates(), this.direction);
-    await this.ability.use(unit, coordinates, session, state);
+    await this.ability.use(unit, coordinates);
   };
 }

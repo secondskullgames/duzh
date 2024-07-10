@@ -1,8 +1,6 @@
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 
 /**
  * Currently, a UnitAbility can really be one of three things:
@@ -24,10 +22,5 @@ export interface UnitAbility {
 
   isEnabled: (unit: Unit) => boolean;
 
-  use: (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => Promise<void>;
+  use: (unit: Unit, coordinates: Coordinates) => Promise<void>;
 }

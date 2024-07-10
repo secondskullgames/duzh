@@ -6,8 +6,7 @@ import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 
 const damageCoefficient = 1;
 
@@ -20,16 +19,15 @@ export class MinorStunAttack implements UnitAbility {
   readonly icon = 'icon2';
   readonly innate = false;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => {
     return unit.getMana() >= this.manaCost;
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
 
     const direction = pointAt(unit.getCoordinates(), coordinates);

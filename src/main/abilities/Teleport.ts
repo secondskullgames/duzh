@@ -6,10 +6,9 @@ import Activity from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 
 export const range = 3;
 
@@ -21,12 +20,9 @@ export class Teleport implements UnitAbility {
 
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates | null,
-    session: Session,
-    state: GameState
-  ) => {
+  constructor(private readonly engine: Engine) {}
+
+  use = async (unit: Unit, coordinates: Coordinates | null) => {
     if (!coordinates) {
       throw new Error('Teleport requires a target!');
     }
@@ -35,6 +31,8 @@ export class Teleport implements UnitAbility {
       throw new Error(`Can't teleport more than ${range} units`);
     }
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
 
     const maybeSleep = async () => {

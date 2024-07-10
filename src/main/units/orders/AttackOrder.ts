@@ -24,6 +24,7 @@ export class AttackOrder implements UnitOrder {
     this.direction = direction;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
     const map = unit.getMap();
     const { direction } = this;
@@ -35,7 +36,7 @@ export class AttackOrder implements UnitOrder {
     if (targetUnit) {
       const abilityFactory = state.getAbilityFactory();
       const attackAbility = abilityFactory.abilityForName(AbilityName.ATTACK);
-      await attackAbility.use(unit, coordinates, session, state);
+      await attackAbility.use(unit, coordinates);
       return;
     }
 

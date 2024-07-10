@@ -5,9 +5,8 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?
@@ -31,15 +30,16 @@ export class NormalAttack implements UnitAbility {
   readonly icon = null;
   readonly manaCost = 0;
   readonly innate = true;
+
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = () => true;
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+
+  use = async (unit: Unit, coordinates: Coordinates) => {
     // TODO: verify coordinates are adjacent
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

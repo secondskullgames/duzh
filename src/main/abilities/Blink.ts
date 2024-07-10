@@ -7,9 +7,8 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Engine } from '@main/core/Engine';
 
 export class Blink implements UnitAbility {
   readonly name = AbilityName.BLINK;
@@ -17,18 +16,17 @@ export class Blink implements UnitAbility {
   readonly icon = 'blink_icon';
   readonly innate = false;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
     if (!coordinates) {
       throw new Error('Blink requires a target!');
     }
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = unit.getMap();
     const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
 

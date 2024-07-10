@@ -10,12 +10,12 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { EquipmentSlot } from '@models/EquipmentSlot';
+import { Engine } from '@main/core/Engine';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
@@ -27,6 +27,8 @@ export class ShootArrow implements UnitAbility {
   readonly manaCost = 5;
   readonly innate = true;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = (unit: Unit) => {
     return (
       unit.getMana() >= this.manaCost &&
@@ -34,16 +36,13 @@ export class ShootArrow implements UnitAbility {
     );
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
     if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

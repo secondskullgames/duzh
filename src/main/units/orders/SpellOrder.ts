@@ -23,7 +23,8 @@ export class SpellOrder implements UnitOrder {
   /**
    * @override {@link UnitOrder#execute}
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    await this.ability.use(unit, this.coordinates, session, state);
+    await this.ability.use(unit, this.coordinates);
   };
 }

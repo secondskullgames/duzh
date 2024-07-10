@@ -4,8 +4,7 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { shootFireball } from '@main/actions/shootFireball';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Engine } from '@main/core/Engine';
 
 const damage = 20;
 
@@ -15,14 +14,13 @@ export class ShootFireball implements UnitAbility {
   readonly manaCost = 25;
   readonly innate = false;
 
+  constructor(private readonly engine: Engine) {}
+
   isEnabled = () => true;
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const state = this.engine.getState();
+    const session = this.engine.getSession();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.spendMana(this.manaCost);
     await shootFireball(unit, direction, damage, session, state);
