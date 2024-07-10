@@ -24,7 +24,6 @@ type CreateUnitParams = Readonly<{
   level: number;
   coordinates: Coordinates;
   map: MapInstance;
-  playerUnitClass?: PlayerUnitClass;
 }>;
 
 @injectable()
@@ -35,7 +34,9 @@ export default class UnitFactory {
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory,
     @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader
+    private readonly modelLoader: ModelLoader,
+    @inject(PlayerUnitClass)
+    private readonly playerUnitClass: PlayerUnitClass
   ) {}
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
@@ -61,7 +62,8 @@ export default class UnitFactory {
       map: params.map,
       equipment: equipmentList,
       sprite,
-      playerUnitClass: params.playerUnitClass
+      playerUnitClass:
+        params.faction === Faction.PLAYER ? this.playerUnitClass : undefined
     });
   };
 
@@ -72,7 +74,6 @@ export default class UnitFactory {
       controller: new PlayerUnitController(),
       level: 1,
       coordinates,
-      map,
-      playerUnitClass: PlayerUnitClass.DEFAULT
+      map
     });
 }

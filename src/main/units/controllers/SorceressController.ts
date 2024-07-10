@@ -13,7 +13,6 @@ import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
 import AvoidUnitBehavior from '@main/units/behaviors/AvoidUnitBehavior';
 import WanderBehavior from '@main/units/behaviors/WanderBehavior';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 
 const teleportChance = 0.2;
 const shootChance = 0.5;
@@ -23,24 +22,30 @@ export default class SorceressController implements UnitController {
    * @override {@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, session);
+    const behavior = this._getBehavior(unit, state, session);
     return behavior.issueOrder(unit, state, session);
   };
 
-  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
+  private _getBehavior = (
+    unit: Unit,
+    state: GameState,
+    session: Session
+  ): UnitBehavior => {
     const aiParameters = checkNotNull(unit.getAiParameters());
     const nearestEnemyUnit = session.getPlayerUnit();
     const distanceToNearestEnemy = hypotenuse(
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()
     );
-    const fastTeleportAbility = UnitAbility.abilityForName(AbilityName.FAST_TELEPORT);
+    const fastTeleportAbility = state
+      .getAbilityFactory()
+      .abilityForName(AbilityName.FAST_TELEPORT);
     const canTeleport =
       unit.hasAbility(AbilityName.FAST_TELEPORT) &&
       unit.getMana() >= fastTeleportAbility.manaCost;
     const wantsToTeleport =
       distanceToNearestEnemy <= aiParameters.visionRange && randChance(teleportChance);
-    const canShoot = this._canShoot(unit, nearestEnemyUnit);
+    const canShoot = this._canShoot(unit, nearestEnemyUnit, state);
     const wantsToShoot = randChance(shootChance);
 
     if (canShoot && wantsToShoot) {
@@ -54,7 +59,7 @@ export default class SorceressController implements UnitController {
     }
   };
 
-  private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
+  private _canShoot = (unit: Unit, targetUnit: Unit, state: GameState): boolean => {
     const aiParameters = checkNotNull(unit.getAiParameters());
 
     const { visionRange } = aiParameters;
@@ -64,9 +69,9 @@ export default class SorceressController implements UnitController {
       targetUnit.getCoordinates()
     );
 
-    const shootTurretArrowAbility = UnitAbility.abilityForName(
-      AbilityName.SHOOT_TURRET_ARROW
-    );
+    const shootTurretArrowAbility = state
+      .getAbilityFactory()
+      .abilityForName(AbilityName.SHOOT_TURRET_ARROW);
 
     return (
       unit.getMana() >= shootTurretArrowAbility.manaCost &&

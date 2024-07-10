@@ -13,7 +13,6 @@ import { Session } from '@main/core/Session';
 import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -29,11 +28,13 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
-    if (_canTeleport(unit)) {
+    if (_canTeleport(unit, state)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+        const teleportAbility = state
+          .getAbilityFactory()
+          .abilityForName(AbilityName.TELEPORT);
         return new AbilityOrder({ direction, ability: teleportAbility });
       }
     }
@@ -100,8 +101,8 @@ export default class AvoidUnitBehavior implements UnitBehavior {
 /**
  * TODO does not account for FastTeleport
  */
-const _canTeleport = (unit: Unit): boolean => {
-  const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+const _canTeleport = (unit: Unit, state: GameState): boolean => {
+  const teleportAbility = state.getAbilityFactory().abilityForName(AbilityName.TELEPORT);
   return (
     unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= teleportAbility.manaCost
   );

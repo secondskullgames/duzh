@@ -17,7 +17,8 @@ export default class KnightMoveBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const fastTeleportAbility = UnitAbility.abilityForName(AbilityName.FAST_TELEPORT);
+    const abilityFactory = state.getAbilityFactory();
+    const fastTeleportAbility = abilityFactory.abilityForName(AbilityName.FAST_TELEPORT);
     const canTeleport = unit.getMana() >= fastTeleportAbility.manaCost;
     if (canTeleport) {
       const targets = _getKnightMoveTargets(unit);

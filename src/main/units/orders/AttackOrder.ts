@@ -34,7 +34,8 @@ export class AttackOrder implements UnitOrder {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      const attackAbility = UnitAbility.abilityForName(AbilityName.ATTACK);
+      const abilityFactory = state.getAbilityFactory();
+      const attackAbility = abilityFactory.abilityForName(AbilityName.ATTACK);
       await attackAbility.use(unit, coordinates, session, state);
       return;
     }

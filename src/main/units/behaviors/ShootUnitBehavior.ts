@@ -32,8 +32,10 @@ export default class ShootUnitBehavior implements UnitBehavior {
 
     const atLeastOneTileAway =
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1;
-    if (atLeastOneTileAway && canShoot(unit, targetUnit)) {
-      const shootArrowAbility = UnitAbility.abilityForName(AbilityName.SHOOT_ARROW);
+    if (atLeastOneTileAway && canShoot(unit, targetUnit, state)) {
+      const shootArrowAbility = state
+        .getAbilityFactory()
+        .abilityForName(AbilityName.SHOOT_ARROW);
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       return new AbilityOrder({ direction, ability: shootArrowAbility });
     }
@@ -43,8 +45,8 @@ export default class ShootUnitBehavior implements UnitBehavior {
   };
 }
 
-const canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-  const ability = UnitAbility.abilityForName(AbilityName.SHOOT_ARROW);
+const canShoot = (unit: Unit, targetUnit: Unit, state: GameState): boolean => {
+  const ability = state.getAbilityFactory().abilityForName(AbilityName.SHOOT_ARROW);
   return (
     unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null &&
     unit.getMana() >= ability.manaCost &&

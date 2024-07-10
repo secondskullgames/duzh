@@ -118,8 +118,9 @@ export class GameScene implements Scene {
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
 
-    const strafeAbility = UnitAbility.abilityForName(AbilityName.STRAFE);
-    const dashAbility = UnitAbility.abilityForName(AbilityName.DASH);
+    const abilityFactory = state.getAbilityFactory();
+    const strafeAbility = abilityFactory.abilityForName(AbilityName.STRAFE);
+    const dashAbility = abilityFactory.abilityForName(AbilityName.DASH);
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
@@ -131,7 +132,8 @@ export class GameScene implements Scene {
       ];
       for (const abilityName of possibleAbilities) {
         if (playerUnit.hasAbility(abilityName)) {
-          const ability = UnitAbility.abilityForName(abilityName);
+          const abilityFactory = state.getAbilityFactory();
+          const ability = abilityFactory.abilityForName(abilityName);
           if (ability.isEnabled(playerUnit)) {
             order = new AbilityOrder({ direction, ability });
           }
@@ -227,7 +229,9 @@ export class GameScene implements Scene {
   private _handleModifierKeyDown = async (key: ModifierKey) => {
     const { engine } = this;
     const session = engine.getSession();
+    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
+
     switch (key) {
       case ModifierKey.SHIFT: {
         for (const abilityName of [
@@ -235,7 +239,8 @@ export class GameScene implements Scene {
           // TODO why not SHOOT_FIREBOLT?
           AbilityName.SHOOT_FROSTBOLT
         ]) {
-          const ability = UnitAbility.abilityForName(abilityName);
+          const abilityFactory = state.getAbilityFactory();
+          const ability = abilityFactory.abilityForName(abilityName);
           if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
             session.setQueuedAbility(ability);
           }
@@ -243,7 +248,8 @@ export class GameScene implements Scene {
         break;
       }
       case ModifierKey.ALT: {
-        const ability = UnitAbility.abilityForName(AbilityName.DASH);
+        const abilityFactory = state.getAbilityFactory();
+        const ability = abilityFactory.abilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
           session.setQueuedAbility(ability);
         }
@@ -313,7 +319,8 @@ export class GameScene implements Scene {
     const abilityRects = this._getAbilityRects(playerUnit);
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
-        const ability = UnitAbility.abilityForName(abilityName);
+        const abilityFactory = state.getAbilityFactory();
+        const ability = abilityFactory.abilityForName(abilityName);
         await this._handleAbility(ability);
         return;
       }

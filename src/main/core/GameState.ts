@@ -7,6 +7,7 @@ import ProjectileFactory from '../objects/ProjectileFactory';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { clear } from '@lib/utils/arrays';
 import ModelLoader from '@main/assets/ModelLoader';
+import { AbilityFactory } from '@main/abilities/AbilityFactory';
 import { inject, injectable } from 'inversify';
 
 /**
@@ -30,6 +31,7 @@ export interface GameState {
   getSoundPlayer: () => SoundPlayer;
   getMusicController: () => MusicController;
   getModelLoader: () => ModelLoader;
+  getAbilityFactory: () => AbilityFactory;
 }
 
 /**
@@ -53,7 +55,9 @@ export class GameStateImpl implements GameState {
     @inject(ProjectileFactory)
     private readonly projectileFactory: ProjectileFactory,
     @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader
+    private readonly modelLoader: ModelLoader,
+    @inject(AbilityFactory)
+    private readonly abilityFactory: AbilityFactory
   ) {
     this.maps = [];
     this.generatedEquipmentIds = [];
@@ -89,4 +93,5 @@ export class GameStateImpl implements GameState {
   getSoundPlayer = (): SoundPlayer => this.soundPlayer;
   getMusicController = (): MusicController => this.musicController;
   getModelLoader = (): ModelLoader => this.modelLoader;
+  getAbilityFactory = (): AbilityFactory => this.abilityFactory;
 }

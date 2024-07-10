@@ -3,11 +3,13 @@ import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
 import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { UnitAbility } from '@main/abilities/UnitAbility';
+import { GameState } from '@main/core/GameState';
 
-export const levelUp = (unit: Unit, session: Session) => {
+export const levelUp = (unit: Unit, state: GameState, session: Session) => {
   const ticker = session.getTicker();
+  const abilityFactory = state.getAbilityFactory();
   unit.incrementLevel();
+
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
     if (Feature.isEnabled(Feature.SHRINES)) {
@@ -16,7 +18,7 @@ export const levelUp = (unit: Unit, session: Session) => {
         unit.getLevel()
       );
       for (const abilityName of abilitiesToLearn) {
-        unit.learnAbility(UnitAbility.abilityForName(abilityName));
+        unit.learnAbility(abilityFactory.abilityForName(abilityName));
       }
     } else {
       unit.increaseMaxLife(playerUnitClass.lifePerLevel);
@@ -27,7 +29,7 @@ export const levelUp = (unit: Unit, session: Session) => {
         unit.getLevel()
       );
       for (const abilityName of abilitiesToLearn) {
-        unit.learnAbility(UnitAbility.abilityForName(abilityName));
+        unit.learnAbility(abilityFactory.abilityForName(abilityName));
       }
     }
   }

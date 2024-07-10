@@ -38,7 +38,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
   }
 
   /** @override */
-  issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
     const map = session.getMap();
     const pathToTarget = findPath(
@@ -50,9 +50,10 @@ export default class AttackUnitBehavior implements UnitBehavior {
     if (pathToTarget.length > 2) {
       const second = pathToTarget[2];
       const direction = pointAt(unit.getCoordinates(), second);
-      if (canDash(unit, second, map)) {
+      if (canDash(unit, second, map, state)) {
+        const dashAbility = state.getAbilityFactory().abilityForName(AbilityName.DASH);
         return new AbilityOrder({
-          ability: UnitAbility.abilityForName(AbilityName.DASH),
+          ability: dashAbility,
           direction
         });
       }
@@ -64,7 +65,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       if (unitAtPoint === null) {
         return new MoveOrder({ coordinates });
       } else if (unitAtPoint === targetUnit) {
-        const ability = this._chooseAbility(unit);
+        const ability = this._chooseAbility(unit, state);
         const direction = pointAt(unit.getCoordinates(), coordinates);
         return new AbilityOrder({ ability, direction });
       }
@@ -72,15 +73,16 @@ export default class AttackUnitBehavior implements UnitBehavior {
     return new StayOrder();
   };
 
-  private _chooseAbility = (unit: Unit): UnitAbility => {
+  private _chooseAbility = (unit: Unit, state: GameState): UnitAbility => {
     const possibleAbilities = unit
       .getAbilities()
+      .map(state.getAbilityFactory().abilityForName)
       .filter(ability => allowedSpecialAbilityNames.includes(ability.name))
       .filter(ability => unit.getMana() >= ability.manaCost);
 
     if (possibleAbilities.length > 0) {
       return randChoice(possibleAbilities);
     }
-    return UnitAbility.abilityForName(AbilityName.ATTACK);
+    return state.getAbilityFactory().abilityForName(AbilityName.ATTACK);
   };
 }

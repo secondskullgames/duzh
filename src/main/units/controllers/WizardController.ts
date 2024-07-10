@@ -18,7 +18,6 @@ import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -39,18 +38,22 @@ export default class WizardController implements UnitController {
     }
     const map = session.getMap();
 
-    if (_canSummon(unit, map) && _wantsToSummon()) {
+    if (_canSummon(unit, map, state) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        const summonAbility = UnitAbility.abilityForName(AbilityName.SUMMON);
+        const summonAbility = state
+          .getAbilityFactory()
+          .abilityForName(AbilityName.SUMMON);
         return new SpellOrder({ ability: summonAbility, coordinates });
       }
     }
 
-    if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
+    if (_canTeleport(unit, state) && _wantsToTeleport(unit, closestEnemyUnit)) {
       const coordinates = _getTargetTeleportCoordinates(unit);
       if (coordinates) {
-        const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+        const teleportAbility = state
+          .getAbilityFactory()
+          .abilityForName(AbilityName.TELEPORT);
         return new SpellOrder({ ability: teleportAbility, coordinates });
       }
     }
@@ -66,9 +69,9 @@ export default class WizardController implements UnitController {
   };
 }
 
-const _canSummon = (unit: Unit, map: MapInstance): boolean => {
+const _canSummon = (unit: Unit, map: MapInstance, state: GameState): boolean => {
   const summonedUnitClass = checkNotNull(unit.getSummonedUnitClass());
-  const summonAbility = UnitAbility.abilityForName(AbilityName.SUMMON);
+  const summonAbility = state.getAbilityFactory().abilityForName(AbilityName.SUMMON);
   return (
     unit.hasAbility(AbilityName.SUMMON) &&
     unit.getMana() >= summonAbility.manaCost &&
@@ -92,8 +95,8 @@ const _wantsToTeleport = (unit: Unit, closestEnemyUnit: Unit) => {
   return distanceToEnemyUnit <= teleportMinDistance && randChance(teleportChance);
 };
 
-const _canTeleport = (unit: Unit) => {
-  const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+const _canTeleport = (unit: Unit, state: GameState) => {
+  const teleportAbility = state.getAbilityFactory().abilityForName(AbilityName.TELEPORT);
   return (
     unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= teleportAbility.manaCost
   );

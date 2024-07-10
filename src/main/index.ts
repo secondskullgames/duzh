@@ -27,6 +27,7 @@ import { GameOverScene } from '@main/scenes/GameOverScene';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
+import { PlayerUnitClass, PlayerUnitClassImpl } from '@main/units/PlayerUnitClass';
 import { Container } from 'inversify';
 
 type Props = Readonly<{
@@ -46,6 +47,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   });
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
+  container.bind(PlayerUnitClass).to(PlayerUnitClassImpl);
   const session = new SessionImpl();
   const state = await container.getAsync(GameStateImpl);
   const engine = new EngineImpl(session, state);

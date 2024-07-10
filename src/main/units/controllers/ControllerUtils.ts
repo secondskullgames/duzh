@@ -14,7 +14,7 @@ import SorceressController from '@main/units/controllers/SorceressController';
 import { minBy } from '@lib/utils/arrays';
 import { isHostile } from '@main/units/UnitUtils';
 import { RoboTurtleController } from '@main/units/controllers/RoboTurtleController';
-import { UnitAbility } from '@main/abilities/UnitAbility';
+import { GameState } from '@main/core/GameState';
 
 export const canMove = (unit: Unit): boolean => {
   const aiParameters = checkNotNull(
@@ -66,9 +66,10 @@ export const chooseUnitController = (unitClass: string): UnitController => {
 export const canDash = (
   unit: Unit,
   coordinates: Coordinates | undefined,
-  map: MapInstance
+  map: MapInstance,
+  state: GameState
 ) => {
-  const dashAbility = UnitAbility.abilityForName(AbilityName.DASH);
+  const dashAbility = state.getAbilityFactory().abilityForName(AbilityName.DASH);
   if (!unit.hasAbility(AbilityName.DASH) || dashAbility.isEnabled(unit)) {
     return false;
   }

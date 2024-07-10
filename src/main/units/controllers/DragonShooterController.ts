@@ -11,7 +11,6 @@ import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityName } from '@main/abilities/AbilityName';
 
 const teleportChance = 0.25;
@@ -22,18 +21,22 @@ export default class DragonShooterController implements UnitController {
    * @override {@link UnitController#issueOrder}
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, session);
+    const behavior = this._getBehavior(unit, state, session);
     return behavior.issueOrder(unit, state, session);
   };
 
-  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
+  private _getBehavior = (
+    unit: Unit,
+    state: GameState,
+    session: Session
+  ): UnitBehavior => {
     const nearestEnemyUnit = session.getPlayerUnit();
     const distanceToNearestEnemy = hypotenuse(
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()
     );
     const wantsToTeleport = distanceToNearestEnemy <= 2 || randChance(teleportChance);
-    const canShoot = this._canShoot(unit, nearestEnemyUnit);
+    const canShoot = this._canShoot(unit, nearestEnemyUnit, state);
     const wantsToShoot = randChance(shootChance);
 
     if (wantsToTeleport) {
@@ -45,7 +48,7 @@ export default class DragonShooterController implements UnitController {
     }
   };
 
-  private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
+  private _canShoot = (unit: Unit, targetUnit: Unit, state: GameState): boolean => {
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
       'DragonShooterController requires aiParams!'
@@ -58,9 +61,9 @@ export default class DragonShooterController implements UnitController {
       targetUnit.getCoordinates()
     );
 
-    const shootTurretArrowAbility = UnitAbility.abilityForName(
-      AbilityName.SHOOT_TURRET_ARROW
-    );
+    const shootTurretArrowAbility = state
+      .getAbilityFactory()
+      .abilityForName(AbilityName.SHOOT_TURRET_ARROW);
 
     return (
       unit.getMana() >= shootTurretArrowAbility.manaCost &&

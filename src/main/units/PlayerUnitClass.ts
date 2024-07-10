@@ -2,6 +2,8 @@ import Unit from './Unit';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Key, NumberKey } from '@lib/input/inputTypes';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { AbilityFactory } from '@main/abilities/AbilityFactory';
+import { injectable } from 'inversify';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -18,6 +20,8 @@ export interface PlayerUnitClass {
   getRightAlignedAbilities: (unit: Unit) => UnitAbility[];
   getAbilitiesLearnedAtLevel: (levelNumber: number) => AbilityName[];
 }
+
+export const PlayerUnitClass = Symbol('PlayerUnitClass');
 
 const abilitiesLearnedAtLevel: Record<number, AbilityName[]> = {
   2: [AbilityName.HEAVY_ATTACK],
@@ -39,11 +43,14 @@ const cumulativeKillsToNextLevel = [
   108 // 20
 ];
 
-class DefaultClass implements PlayerUnitClass {
+@injectable()
+export class PlayerUnitClassImpl implements PlayerUnitClass {
   readonly lifePerLevel = 0;
   readonly manaPerLevel = 2;
   readonly meleeDamagePerLevel = 0;
   readonly maxLevel = 10;
+
+  constructor(private readonly abilityFactory: AbilityFactory) {}
 
   getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {
     switch (ability.name) {
@@ -55,6 +62,7 @@ class DefaultClass implements PlayerUnitClass {
       default: {
         const index = unit
           .getAbilities()
+          .map(this.abilityFactory.abilityForName)
           .filter(ability => !ability.innate)
           .indexOf(ability);
         if (index === -1) {
@@ -68,10 +76,16 @@ class DefaultClass implements PlayerUnitClass {
   getAbilityForHotkey = (hotkey: Key, unit: Unit): UnitAbility | null => {
     if (hotkey.match(/^\d$/)) {
       const index = parseInt(hotkey);
-      return unit.getAbilities().filter(ability => !ability.innate)[index - 1];
+      return unit
+        .getAbilities()
+        .map(this.abilityFactory.abilityForName)
+        .filter(ability => !ability.innate)[index - 1];
     } else if (hotkey === 'ALT') {
       return (
-        unit.getAbilities().find(ability => ability.name === AbilityName.DASH) ?? null
+        unit
+          .getAbilities()
+          .map(this.abilityFactory.abilityForName)
+          .find(ability => ability.name === AbilityName.DASH) ?? null
       );
     } else {
       return null;
@@ -79,11 +93,17 @@ class DefaultClass implements PlayerUnitClass {
   };
 
   getNumberedAbilities = (unit: Unit): UnitAbility[] => {
-    return unit.getAbilities().filter(ability => !ability.innate);
+    return unit
+      .getAbilities()
+      .map(this.abilityFactory.abilityForName)
+      .filter(ability => !ability.innate);
   };
 
   getRightAlignedAbilities = (unit: Unit): UnitAbility[] => {
-    return unit.getAbilities().filter(ability => ability.innate && ability.icon);
+    return unit
+      .getAbilities()
+      .map(this.abilityFactory.abilityForName)
+      .filter(ability => ability.innate && ability.icon);
   };
 
   getAbilitiesLearnedAtLevel = (levelNumber: number): AbilityName[] => {
@@ -94,7 +114,3 @@ class DefaultClass implements PlayerUnitClass {
     return cumulativeKillsToNextLevel[currentLevel - 1] ?? null;
   };
 }
-
-export const PlayerUnitClass = {
-  DEFAULT: new DefaultClass()
-};

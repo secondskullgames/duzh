@@ -24,7 +24,7 @@ export default class Equipment {
   private readonly sprite: Sprite;
   readonly slot: EquipmentSlot;
   private readonly name: string;
-  readonly ability: UnitAbility | null;
+  readonly abilityName: AbilityName | null;
   readonly script: EquipmentScriptName | null;
   private _unit: Unit | null;
   private readonly tooltip: string;
@@ -37,9 +37,8 @@ export default class Equipment {
     this.absorbAmount = model.stats.absorbAmount ?? 0;
     this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
-    this.ability = model.ability
-      ? UnitAbility.abilityForName(model.ability as AbilityName)
-      : null;
+    // TODO validate
+    this.abilityName = model.ability ? (model.ability as AbilityName) : null;
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this.tooltip = getEquipmentTooltip(model);
     this._unit = null;

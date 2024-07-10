@@ -8,7 +8,6 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -26,11 +25,11 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const { targetUnit } = this;
 
-    const canShoot = _canShoot(unit, targetUnit);
+    const canShoot = _canShoot(unit, targetUnit, state);
     if (canShoot) {
-      const shootTurretArrowAbility = UnitAbility.abilityForName(
-        AbilityName.SHOOT_TURRET_ARROW
-      );
+      const shootTurretArrowAbility = state
+        .getAbilityFactory()
+        .abilityForName(AbilityName.SHOOT_TURRET_ARROW);
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       return new AbilityOrder({
         direction,
@@ -42,8 +41,11 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
   };
 }
 
-const _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-  const ability = UnitAbility.abilityForName(AbilityName.SHOOT_TURRET_ARROW);
+const _canShoot = (unit: Unit, targetUnit: Unit, state: GameState): boolean => {
+  const ability = state
+    .getAbilityFactory()
+    .abilityForName(AbilityName.SHOOT_TURRET_ARROW);
+
   return (
     unit.getMana() >= ability.manaCost &&
     isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&

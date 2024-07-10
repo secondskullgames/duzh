@@ -165,6 +165,8 @@ export default class HUDRenderer implements Renderer {
   private _renderMiddlePanel = async (graphics: Graphics) => {
     const { engine } = this;
     const session = engine.getSession();
+    const state = engine.getState();
+    const abilityFactory = state.getAbilityFactory();
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
@@ -174,7 +176,10 @@ export default class HUDRenderer implements Renderer {
       ability.name !== AbilityName.SHOOT_ARROW &&
       ability.name !== AbilityName.SHOOT_FIREBOLT &&
       ability.name !== AbilityName.SHOOT_FROSTBOLT;
-    const numberedAbilities = playerUnit.getAbilities().filter(isNumberedAbility);
+    const numberedAbilities = playerUnit
+      .getAbilities()
+      .map(abilityFactory.abilityForName)
+      .filter(isNumberedAbility);
     for (let i = 0; i < numberedAbilities.length; i++) {
       const ability = numberedAbilities[i];
       const hotkey = playerUnitClass.getHotkeyForAbility(ability, playerUnit);

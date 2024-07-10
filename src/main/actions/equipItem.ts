@@ -12,11 +12,13 @@ export const equipItem = async (
 ) => {
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
-    _unequipItem(currentEquipment, unit);
+    _unequipItem(currentEquipment, unit, state);
   }
   unit.getEquipment().add(equipment);
-  if (equipment.ability) {
-    unit.learnAbility(equipment.ability);
+  if (equipment.abilityName) {
+    const abilityFactory = state.getAbilityFactory();
+    const ability = abilityFactory.abilityForName(equipment.abilityName);
+    unit.learnAbility(ability);
   }
   equipment.attach(unit);
   session
@@ -25,13 +27,15 @@ export const equipItem = async (
   state.getSoundPlayer().playSound(Sounds.BLOCKED);
 };
 
-const _unequipItem = (equipment: Equipment, unit: Unit) => {
+const _unequipItem = (equipment: Equipment, unit: Unit, state: GameState) => {
   const inventoryItem = equipment.inventoryItem;
   if (inventoryItem) {
     unit.getInventory().add(inventoryItem);
   }
-  if (equipment.ability) {
-    unit.unlearnAbility(equipment.ability);
+  if (equipment.abilityName) {
+    const abilityFactory = state.getAbilityFactory();
+    const ability = abilityFactory.abilityForName(equipment.abilityName);
+    unit.unlearnAbility(ability);
   }
   equipment.unattach(unit);
 };

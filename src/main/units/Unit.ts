@@ -92,7 +92,7 @@ export default class Unit implements Entity {
    * For now, this is not auto-incremented and only used for certain animations (see Animations.ts)
    */
   private frameNumber: number;
-  private readonly abilities: UnitAbility[];
+  private readonly abilities: AbilityName[];
 
   private readonly effects: UnitStatusEffects;
 
@@ -145,9 +145,8 @@ export default class Unit implements Entity {
     this.activity = Activity.STANDING;
     this.direction = Direction.getDefaultUnitDirection();
     this.frameNumber = 1;
-    this.abilities = model.abilities.map(abilityName =>
-      UnitAbility.abilityForName(abilityName as AbilityName)
-    );
+    // TODO validate
+    this.abilities = model.abilities.map(abilityName => abilityName as AbilityName);
     this.turnsSinceCombatAction = null;
 
     this.aiParameters = model.aiParameters ?? null;
@@ -202,7 +201,7 @@ export default class Unit implements Entity {
   getFrameNumber = () => this.frameNumber;
   getAbilities = () => this.abilities;
   hasAbility = (abilityName: AbilityName): boolean =>
-    this.abilities.some(ability => ability.name === abilityName);
+    this.abilities.some(ability => ability === abilityName);
 
   /**
    * @override
@@ -366,11 +365,11 @@ export default class Unit implements Entity {
   };
 
   learnAbility = (ability: UnitAbility) => {
-    this.abilities.push(ability);
+    this.abilities.push(ability.name);
   };
 
   unlearnAbility = (ability: UnitAbility) => {
-    const index = this.abilities.indexOf(ability);
+    const index = this.abilities.indexOf(ability.name);
     check(index >= 0);
     this.abilities.splice(index, 1);
   };

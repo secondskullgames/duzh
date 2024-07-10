@@ -40,8 +40,9 @@ export class Debug {
   levelUp = async () => {
     const { engine } = this;
     const session = engine.getSession();
+    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
-    _levelUp(playerUnit, session);
+    _levelUp(playerUnit, state, session);
   };
 
   awardEquipment = async () => {
