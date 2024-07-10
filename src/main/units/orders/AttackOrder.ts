@@ -7,7 +7,6 @@ import { getSpawner } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityName } from '@main/abilities/AbilityName';
 
 type Props = Readonly<{

@@ -10,7 +10,6 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import UnitOrder from '@main/units/orders/UnitOrder';
 import StayOrder from '@main/units/orders/StayOrder';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityName } from '@main/abilities/AbilityName';
 
 export default class KnightMoveBehavior implements UnitBehavior {

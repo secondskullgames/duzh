@@ -5,7 +5,6 @@ import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { EquipmentModel } from '@models/EquipmentModel';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityName } from '@main/abilities/AbilityName';
 
 const DRAW_BEHIND_PREFIX = '_B';

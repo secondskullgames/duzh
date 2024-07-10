@@ -13,7 +13,6 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 
 type Props = Readonly<{
   targetUnit: Unit;
