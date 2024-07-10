@@ -7,8 +7,7 @@ import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Summon } from '@main/abilities/Summon';
-import { range as TELEPORT_RANGE, Teleport } from '@main/abilities/Teleport';
+import { range as TELEPORT_RANGE } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -19,6 +18,7 @@ import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { UnitAbility } from '@main/abilities/UnitAbility';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -42,14 +42,16 @@ export default class WizardController implements UnitController {
     if (_canSummon(unit, map) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Summon, coordinates });
+        const summonAbility = UnitAbility.abilityForName(AbilityName.SUMMON);
+        return new SpellOrder({ ability: summonAbility, coordinates });
       }
     }
 
     if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
       const coordinates = _getTargetTeleportCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Teleport, coordinates });
+        const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+        return new SpellOrder({ ability: teleportAbility, coordinates });
       }
     }
 
@@ -66,9 +68,10 @@ export default class WizardController implements UnitController {
 
 const _canSummon = (unit: Unit, map: MapInstance): boolean => {
   const summonedUnitClass = checkNotNull(unit.getSummonedUnitClass());
+  const summonAbility = UnitAbility.abilityForName(AbilityName.SUMMON);
   return (
     unit.hasAbility(AbilityName.SUMMON) &&
-    unit.getMana() >= Summon.manaCost &&
+    unit.getMana() >= summonAbility.manaCost &&
     getUnitsOfClass(map, summonedUnitClass).length <= maxSummonedUnits
   );
 };
@@ -90,7 +93,10 @@ const _wantsToTeleport = (unit: Unit, closestEnemyUnit: Unit) => {
 };
 
 const _canTeleport = (unit: Unit) => {
-  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+  const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+  return (
+    unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= teleportAbility.manaCost
+  );
 };
 
 const _wantsToSummon = () => {

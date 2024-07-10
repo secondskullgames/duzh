@@ -11,16 +11,17 @@ import { getSpawner } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
-const manaCost = 0;
 const damageCoefficient = 1;
 
-export const PiercingAttack: UnitAbility = {
-  name: AbilityName.PIERCE,
-  manaCost,
-  icon: 'icon1', // TODO
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class PiercingAttack implements UnitAbility {
+  readonly name = AbilityName.PIERCE;
+  readonly manaCost = 0; // ??
+  readonly icon = 'icon1'; // TODO
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -84,5 +85,5 @@ export const PiercingAttack: UnitAbility = {
     if (nextSpawner && nextSpawner.isBlocking()) {
       await attackObject(unit, nextSpawner, state);
     }
-  }
-};
+  };
+}

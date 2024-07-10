@@ -13,7 +13,6 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 10;
 const damageCoefficient = 1;
 const stunDuration = 1;
 
@@ -44,13 +43,13 @@ const _doKnockback = async (
   await moveUnit(targetUnit, targetCoordinates, session, state);
 };
 
-export const DashAttack: UnitAbility = {
-  name: AbilityName.DASH_ATTACK,
-  manaCost,
-  icon: 'icon5',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class DashAttack implements UnitAbility {
+  readonly name = AbilityName.DASH_ATTACK;
+  readonly manaCost = 10;
+  readonly icon = 'icon5';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -73,7 +72,7 @@ export const DashAttack: UnitAbility = {
     }
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const numTiles = 2;
     for (let i = 0; i < 2; i++) {
@@ -98,5 +97,5 @@ export const DashAttack: UnitAbility = {
         await sleep(100);
       }
     }
-  }
-};
+  };
+}

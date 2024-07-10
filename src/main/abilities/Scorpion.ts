@@ -13,28 +13,10 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 10;
 const damageCoefficient = 1;
 const stunDuration = 1;
 const range = 10;
-
-const _findTargetUnit = (unit: Unit, direction: Direction): Unit | null => {
-  const map = unit.getMap();
-  let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-  for (let i = 0; i < range; i++) {
-    if (!map.contains(coordinates)) {
-      return null;
-    }
-    const targetUnit = map.getUnit(coordinates);
-    if (targetUnit) {
-      return targetUnit;
-    } else if (isBlocked(map, coordinates)) {
-      return null;
-    }
-    coordinates = Coordinates.plusDirection(coordinates, direction);
-  }
-  return null;
-};
+const sleepDuration = 75;
 
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
@@ -50,14 +32,13 @@ const attack: Attack = {
   }
 };
 
-const sleepDuration = 75;
-export const Scorpion: UnitAbility = {
-  name: AbilityName.SCORPION,
-  manaCost,
-  icon: 'scorpion_icon',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class Scorpion implements UnitAbility {
+  readonly name = AbilityName.SCORPION;
+  readonly manaCost = 10;
+  readonly icon = 'scorpion_icon';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -67,8 +48,8 @@ export const Scorpion: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const { dx, dy } = Direction.getOffsets(direction);
     unit.setDirection(direction);
-    const targetUnit = _findTargetUnit(unit, direction);
-    unit.spendMana(manaCost);
+    const targetUnit = this._findTargetUnit(unit, direction);
+    unit.spendMana(this.manaCost);
     const projectile = await state
       .getProjectileFactory()
       .createArrow(coordinates, map, direction);
@@ -114,5 +95,23 @@ export const Scorpion: UnitAbility = {
     if (targetUnit) {
       targetUnit.setStunned(stunDuration);
     }
-  }
-};
+  };
+
+  private _findTargetUnit = (unit: Unit, direction: Direction): Unit | null => {
+    const map = unit.getMap();
+    let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    for (let i = 0; i < range; i++) {
+      if (!map.contains(coordinates)) {
+        return null;
+      }
+      const targetUnit = map.getUnit(coordinates);
+      if (targetUnit) {
+        return targetUnit;
+      } else if (isBlocked(map, coordinates)) {
+        return null;
+      }
+      coordinates = Coordinates.plusDirection(coordinates, direction);
+    }
+    return null;
+  };
+}

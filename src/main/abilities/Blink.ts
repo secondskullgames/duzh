@@ -11,15 +11,15 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 10;
+export class Blink implements UnitAbility {
+  readonly name = AbilityName.BLINK;
+  readonly manaCost = 10;
+  readonly icon = 'blink_icon';
+  readonly innate = false;
 
-export const Blink: UnitAbility = {
-  name: AbilityName.BLINK,
-  manaCost,
-  icon: 'blink_icon',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -41,29 +41,33 @@ export const Blink: UnitAbility = {
       x: x + dx * distance,
       y: y + dy * distance
     };
-    const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
+    const blocked = this._isBlocked(unit.getCoordinates(), targetCoordinates, map);
 
     if (blocked) {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     } else {
       await moveUnit(unit, targetCoordinates, session, state);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     }
-  }
-};
+  };
 
-const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boolean => {
-  const direction = pointAt(start, end);
-  let coordinates = start;
-  while (!Coordinates.equals(coordinates, end)) {
-    coordinates = Coordinates.plusDirection(coordinates, direction);
-    if (Coordinates.equals(coordinates, end)) {
-      return isBlocked(map, coordinates);
-    } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
-      // do nothing
-    } else {
-      return map.getTile(coordinates).isBlocking();
+  private _isBlocked = (
+    start: Coordinates,
+    end: Coordinates,
+    map: MapInstance
+  ): boolean => {
+    const direction = pointAt(start, end);
+    let coordinates = start;
+    while (!Coordinates.equals(coordinates, end)) {
+      coordinates = Coordinates.plusDirection(coordinates, direction);
+      if (Coordinates.equals(coordinates, end)) {
+        return isBlocked(map, coordinates);
+      } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
+        // do nothing
+      } else {
+        return map.getTile(coordinates).isBlocking();
+      }
     }
-  }
-  throw new Error();
-};
+    throw new Error();
+  };
+}

@@ -19,13 +19,15 @@ const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): str
   return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootBolt: UnitAbility = {
-  name: AbilityName.BOLT,
-  icon: null,
-  manaCost: 0,
-  innate: false,
-  isEnabled: () => true,
-  use: async (
+export class ShootBolt implements UnitAbility {
+  readonly name = AbilityName.BOLT;
+  readonly icon = null;
+  readonly manaCost = 0;
+  readonly innate = false;
+
+  readonly isEnabled = () => true;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -64,8 +66,8 @@ export const ShootBolt: UnitAbility = {
     } else {
       await playBoltAnimation(unit, direction, coordinatesList, null, state);
     }
-  }
-};
+  };
+}
 
 /**
  * TODO: fully copy-pasted from ShootArrow

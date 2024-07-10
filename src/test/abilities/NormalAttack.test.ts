@@ -38,7 +38,8 @@ describe('NormalAttack', () => {
     const coordinates = { x: 2, y: 1 };
     const session = {} as Session;
     const state = {} as GameState;
-    await NormalAttack.use(unit, coordinates, session, state);
+    const normalAttack = new NormalAttack();
+    await normalAttack.use(unit, coordinates, session, state);
     expect(_attackUnit).toHaveBeenCalled();
   });
 
@@ -71,7 +72,8 @@ describe('NormalAttack', () => {
     const coordinates = { x: 2, y: 1 };
     const session = {} as Session;
     const state = {} as GameState;
-    await NormalAttack.use(unit, coordinates, session, state);
+    const normalAttack = new NormalAttack();
+    await normalAttack.use(unit, coordinates, session, state);
     expect(_attackUnit).not.toHaveBeenCalled();
   });
 });

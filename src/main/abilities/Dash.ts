@@ -11,15 +11,15 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
 
-const manaCost = 4;
+export class Dash implements UnitAbility {
+  readonly name = AbilityName.DASH;
+  readonly manaCost = 4;
+  readonly icon = 'icon5';
+  readonly innate = true;
 
-export const Dash: UnitAbility = {
-  name: AbilityName.DASH,
-  manaCost,
-  icon: 'icon5',
-  innate: true,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -48,9 +48,9 @@ export const Dash: UnitAbility = {
     }
 
     if (moved) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

@@ -9,7 +9,6 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 6;
 const damageCoefficient = 1;
 const burnDuration = 5;
 
@@ -27,13 +26,15 @@ const attack: Attack = {
   }
 };
 
-export const BurningAttack: UnitAbility = {
-  name: AbilityName.BURNING_ATTACK,
-  manaCost,
-  icon: null,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class BurningAttack implements UnitAbility {
+  readonly name = AbilityName.BURNING_ATTACK;
+  readonly manaCost = 6;
+  readonly icon = null;
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -45,9 +46,9 @@ export const BurningAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       await attackUnit(unit, targetUnit, attack, session, state);
       targetUnit.setBurning(burnDuration);
     }
-  }
-};
+  };
+}

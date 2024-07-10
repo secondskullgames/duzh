@@ -9,7 +9,6 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 6;
 const damageCoefficient = 1.5;
 
 const attack: Attack = {
@@ -26,13 +25,13 @@ const attack: Attack = {
   }
 };
 
-export const HeavyAttack: UnitAbility = {
-  name: AbilityName.HEAVY_ATTACK,
-  manaCost,
-  icon: 'icon1',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class HeavyAttack implements UnitAbility {
+  readonly name = AbilityName.HEAVY_ATTACK;
+  readonly manaCost = 6;
+  readonly icon = 'icon1';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -44,8 +43,8 @@ export const HeavyAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       await attackUnit(unit, targetUnit, attack, session, state);
     }
-  }
-};
+  };
+}

@@ -9,15 +9,13 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 
-const manaCost = 4;
-
-export const FreeMove: UnitAbility = {
-  name: AbilityName.FREE_MOVE,
-  manaCost,
-  icon: 'icon5',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class FreeMove implements UnitAbility {
+  readonly name = AbilityName.FREE_MOVE;
+  readonly manaCost = 4;
+  readonly icon = 'icon5';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -32,9 +30,9 @@ export const FreeMove: UnitAbility = {
     const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
     if (!isBlocked(map, targetCoordinates)) {
       await moveUnit(unit, targetCoordinates, session, state);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

@@ -8,15 +8,15 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
-const manaCost = 25;
+export class Summon implements UnitAbility {
+  readonly name = AbilityName.SUMMON;
+  readonly manaCost = 25;
+  readonly icon = null;
+  readonly innate = false;
 
-export const Summon: UnitAbility = {
-  name: AbilityName.SUMMON,
-  manaCost,
-  icon: null,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -41,6 +41,6 @@ export const Summon: UnitAbility = {
       map
     });
     map.addUnit(summonedUnit);
-    unit.spendMana(manaCost);
-  }
-};
+    unit.spendMana(this.manaCost);
+  };
+}

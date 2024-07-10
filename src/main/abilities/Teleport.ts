@@ -12,15 +12,16 @@ import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
 export const range = 3;
-const manaCost = 20;
 
-export const Teleport: UnitAbility = {
-  name: AbilityName.TELEPORT,
-  icon: null,
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class Teleport implements UnitAbility {
+  readonly name = AbilityName.TELEPORT;
+  readonly icon = null;
+  readonly manaCost = 20;
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -45,7 +46,7 @@ export const Teleport: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
 
       for (let i = 1; i <= 4; i++) {
@@ -69,5 +70,5 @@ export const Teleport: UnitAbility = {
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

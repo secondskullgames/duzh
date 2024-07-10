@@ -11,16 +11,15 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 8;
 const damageCoefficient = 0.5;
 
-export const MinorKnockback: UnitAbility = {
-  name: AbilityName.MINOR_KNOCKBACK,
-  manaCost,
-  icon: 'icon6',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class MinorKnockback implements UnitAbility {
+  readonly name = AbilityName.MINOR_KNOCKBACK;
+  readonly manaCost = 8;
+  readonly icon = 'icon6';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -33,7 +32,7 @@ export const MinorKnockback: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
@@ -61,5 +60,5 @@ export const MinorKnockback: UnitAbility = {
         }
       }
     }
-  }
-};
+  };
+}

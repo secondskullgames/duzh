@@ -17,21 +17,24 @@ import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 
-const manaCost = 5;
-
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootArrow: UnitAbility = {
-  name: AbilityName.SHOOT_ARROW,
-  icon: 'harpoon_icon',
-  manaCost,
-  innate: true,
-  isEnabled: unit =>
-    unit.getMana() >= manaCost &&
-    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null,
-  use: async (
+export class ShootArrow implements UnitAbility {
+  readonly name = AbilityName.SHOOT_ARROW;
+  readonly icon = 'harpoon_icon';
+  readonly manaCost = 5;
+  readonly innate = true;
+
+  isEnabled = (unit: Unit) => {
+    return (
+      unit.getMana() >= this.manaCost &&
+      unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null
+    );
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -45,7 +48,7 @@ export const ShootArrow: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -85,8 +88,8 @@ export const ShootArrow: UnitAbility = {
     } else {
       await playArrowAnimation(unit, direction, coordinatesList, null, state);
     }
-  }
-};
+  };
+}
 
 const playArrowAnimation = async (
   source: Unit,

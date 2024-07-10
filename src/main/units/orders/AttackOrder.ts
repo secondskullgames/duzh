@@ -1,6 +1,5 @@
 import UnitOrder from './UnitOrder';
 import Unit from '@main/units/Unit';
-import { NormalAttack } from '@main/abilities/NormalAttack';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { attackObject } from '@main/actions/attackObject';
@@ -8,6 +7,8 @@ import { getSpawner } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 type Props = Readonly<{
   direction: Direction;
@@ -33,7 +34,8 @@ export class AttackOrder implements UnitOrder {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await NormalAttack.use(unit, coordinates, session, state);
+      const attackAbility = UnitAbility.abilityForName(AbilityName.ATTACK);
+      await attackAbility.use(unit, coordinates, session, state);
       return;
     }
 

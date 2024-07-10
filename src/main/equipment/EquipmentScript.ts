@@ -47,7 +47,7 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await ShootBolt.use(unit, target, session, state);
+      await new ShootBolt().use(unit, target, session, state);
     }
   }
 };

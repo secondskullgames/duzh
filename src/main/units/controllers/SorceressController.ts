@@ -2,7 +2,6 @@ import { UnitController } from './UnitController';
 import UnitOrder from '../orders/UnitOrder';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
-import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { GameState } from '@main/core/GameState';
@@ -13,8 +12,8 @@ import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
 import AvoidUnitBehavior from '@main/units/behaviors/AvoidUnitBehavior';
 import WanderBehavior from '@main/units/behaviors/WanderBehavior';
-import { FastTeleport } from '@main/abilities/FastTeleport';
 import { AbilityName } from '@main/abilities/AbilityName';
+import { UnitAbility } from '@main/abilities/UnitAbility';
 
 const teleportChance = 0.2;
 const shootChance = 0.5;
@@ -35,9 +34,10 @@ export default class SorceressController implements UnitController {
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()
     );
+    const fastTeleportAbility = UnitAbility.abilityForName(AbilityName.FAST_TELEPORT);
     const canTeleport =
       unit.hasAbility(AbilityName.FAST_TELEPORT) &&
-      unit.getMana() >= FastTeleport.manaCost;
+      unit.getMana() >= fastTeleportAbility.manaCost;
     const wantsToTeleport =
       distanceToNearestEnemy <= aiParameters.visionRange && randChance(teleportChance);
     const canShoot = this._canShoot(unit, nearestEnemyUnit);
@@ -64,8 +64,12 @@ export default class SorceressController implements UnitController {
       targetUnit.getCoordinates()
     );
 
+    const shootTurretArrowAbility = UnitAbility.abilityForName(
+      AbilityName.SHOOT_TURRET_ARROW
+    );
+
     return (
-      unit.getMana() >= ShootTurretArrow.manaCost &&
+      unit.getMana() >= shootTurretArrowAbility.manaCost &&
       distanceToTarget <= visionRange &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
       hasUnblockedStraightLineBetween(

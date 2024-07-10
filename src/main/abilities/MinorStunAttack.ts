@@ -9,19 +9,22 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
-const manaCost = 10;
 const damageCoefficient = 1;
 
 /**
  * A one-turn variant of {@link StunAttack}
  */
-export const MinorStunAttack: UnitAbility = {
-  name: AbilityName.MINOR_STUN_ATTACK,
-  manaCost,
-  icon: 'icon2',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class MinorStunAttack implements UnitAbility {
+  readonly name = AbilityName.MINOR_STUN_ATTACK;
+  readonly manaCost = 10;
+  readonly icon = 'icon2';
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => {
+    return unit.getMana() >= this.manaCost;
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -34,7 +37,7 @@ export const MinorStunAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
@@ -56,5 +59,5 @@ export const MinorStunAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
       targetUnit.setStunned(1);
     }
-  }
-};
+  };
+}

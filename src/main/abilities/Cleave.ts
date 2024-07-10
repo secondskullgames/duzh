@@ -10,7 +10,6 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 8;
 const damageCoefficient = 2;
 
 const attack: Attack = {
@@ -27,13 +26,13 @@ const attack: Attack = {
   }
 };
 
-export const Cleave: UnitAbility = {
-  name: AbilityName.CLEAVE,
-  manaCost,
-  icon: 'icon7',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class Cleave implements UnitAbility {
+  name = AbilityName.CLEAVE;
+  manaCost = 8;
+  icon = 'icon7';
+  innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -42,9 +41,9 @@ export const Cleave: UnitAbility = {
     const initialDirection = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(initialDirection);
 
-    const targetUnits = _getTargetUnits(unit);
+    const targetUnits = this._getTargetUnits(unit);
     if (targetUnits.length > 0) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     }
 
     // TODO: consider making this simultaneous
@@ -54,28 +53,28 @@ export const Cleave: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
     }
     unit.setDirection(initialDirection);
-  }
-};
+  };
 
-/**
- * Returns the units that will be affected by a cleave attack.
- * Specifically, this means the unit directly ahead of the
- * attacking unit, plus any units to the left or right of that
- * unit.
- */
-const _getTargetUnits = (unit: Unit): Unit[] => {
-  const map = unit.getMap();
-  const coordinates = unit.getCoordinates();
-  const initialDirection = unit.getDirection();
-  let direction = initialDirection;
-  const targetUnits: Unit[] = [];
-  for (let i = 0; i < 4; i++) {
-    const targetCoordinates = Coordinates.plusDirection(coordinates, direction);
-    const targetUnit = map.getUnit(targetCoordinates);
-    if (targetUnit) {
-      targetUnits.push(targetUnit);
+  /**
+   * Returns the units that will be affected by a cleave attack.
+   * Specifically, this means the unit directly ahead of the
+   * attacking unit, plus any units to the left or right of that
+   * unit.
+   */
+  private _getTargetUnits = (unit: Unit): Unit[] => {
+    const map = unit.getMap();
+    const coordinates = unit.getCoordinates();
+    const initialDirection = unit.getDirection();
+    let direction = initialDirection;
+    const targetUnits: Unit[] = [];
+    for (let i = 0; i < 4; i++) {
+      const targetCoordinates = Coordinates.plusDirection(coordinates, direction);
+      const targetUnit = map.getUnit(targetCoordinates);
+      if (targetUnit) {
+        targetUnits.push(targetUnit);
+      }
+      direction = Direction.rotateClockwise(direction);
     }
-    direction = Direction.rotateClockwise(direction);
-  }
-  return targetUnits;
-};
+    return targetUnits;
+  };
+}

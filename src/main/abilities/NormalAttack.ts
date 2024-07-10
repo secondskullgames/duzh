@@ -26,13 +26,13 @@ const attack: Attack = {
   }
 };
 
-export const NormalAttack: UnitAbility = {
-  name: AbilityName.ATTACK,
-  icon: null,
-  manaCost: 0,
-  innate: true,
-  isEnabled: () => true,
-  use: async (
+export class NormalAttack implements UnitAbility {
+  readonly name = AbilityName.ATTACK;
+  readonly icon = null;
+  readonly manaCost = 0;
+  readonly innate = true;
+  isEnabled = () => true;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -48,5 +48,5 @@ export const NormalAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
       unit.gainMana(MANA_RETURNED);
     }
-  }
-};
+  };
+}

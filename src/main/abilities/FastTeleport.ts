@@ -10,15 +10,13 @@ import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 4;
-
-export const FastTeleport: UnitAbility = {
-  name: AbilityName.FAST_TELEPORT,
-  icon: null,
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class FastTeleport implements UnitAbility {
+  readonly name = AbilityName.FAST_TELEPORT;
+  readonly icon = null;
+  readonly manaCost = 4;
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates | null,
     session: Session,
@@ -33,12 +31,12 @@ export const FastTeleport: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       await moveUnit(unit, coordinates, session, state);
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

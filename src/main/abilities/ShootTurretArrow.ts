@@ -15,19 +15,19 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 
-const manaCost = 5;
-
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
 };
 
-export const ShootTurretArrow: UnitAbility = {
-  name: AbilityName.SHOOT_TURRET_ARROW,
-  icon: null,
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class ShootTurretArrow implements UnitAbility {
+  readonly name = AbilityName.SHOOT_TURRET_ARROW;
+  readonly icon = null;
+  readonly manaCost = 5;
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -37,7 +37,7 @@ export const ShootTurretArrow: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const coordinatesList = [];
     let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -66,8 +66,8 @@ export const ShootTurretArrow: UnitAbility = {
     } else {
       await playArrowAnimation(unit, direction, coordinatesList, null, state);
     }
-  }
-};
+  };
+}
 
 /**
  * TODO: fully copy-pasted from ShootArrow

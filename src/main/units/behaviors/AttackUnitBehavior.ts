@@ -5,7 +5,6 @@ import StayOrder from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { canDash } from '../controllers/ControllerUtils';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { NormalAttack } from '@main/abilities/NormalAttack';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@lib/utils/random';
@@ -82,6 +81,6 @@ export default class AttackUnitBehavior implements UnitBehavior {
     if (possibleAbilities.length > 0) {
       return randChoice(possibleAbilities);
     }
-    return NormalAttack;
+    return UnitAbility.abilityForName(AbilityName.ATTACK);
   };
 }

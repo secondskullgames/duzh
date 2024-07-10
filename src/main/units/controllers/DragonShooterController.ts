@@ -3,7 +3,6 @@ import UnitOrder from '../orders/UnitOrder';
 import StayBehavior from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
-import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { GameState } from '@main/core/GameState';
@@ -12,6 +11,8 @@ import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 const teleportChance = 0.25;
 const shootChance = 0.9;
@@ -57,8 +58,12 @@ export default class DragonShooterController implements UnitController {
       targetUnit.getCoordinates()
     );
 
+    const shootTurretArrowAbility = UnitAbility.abilityForName(
+      AbilityName.SHOOT_TURRET_ARROW
+    );
+
     return (
-      unit.getMana() >= ShootTurretArrow.manaCost &&
+      unit.getMana() >= shootTurretArrowAbility.manaCost &&
       distanceToTarget <= visionRange &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
       hasUnblockedStraightLineBetween(

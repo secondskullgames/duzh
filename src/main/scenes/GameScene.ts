@@ -19,8 +19,6 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { Feature } from '@main/utils/features';
-import { Strafe } from '@main/abilities/Strafe';
-import { Dash } from '@main/abilities/Dash';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { checkNotNull } from '@lib/utils/preconditions';
@@ -120,6 +118,9 @@ export class GameScene implements Scene {
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
 
+    const strafeAbility = UnitAbility.abilityForName(AbilityName.STRAFE);
+    const dashAbility = UnitAbility.abilityForName(AbilityName.DASH);
+
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
       // TODO need to centralize this logic
@@ -140,15 +141,15 @@ export class GameScene implements Scene {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
-      if (Strafe.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Strafe });
+      if (strafeAbility.isEnabled(playerUnit)) {
+        order = new AbilityOrder({ direction, ability: strafeAbility });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (Dash.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Dash });
+      if (dashAbility.isEnabled(playerUnit)) {
+        order = new AbilityOrder({ direction, ability: dashAbility });
       }
     } else {
       const ability = session.getQueuedAbility();

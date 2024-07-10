@@ -3,7 +3,7 @@ import UnitOrder from '../orders/UnitOrder';
 import StayOrder from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Teleport, range as teleportRange } from '@main/abilities/Teleport';
+import { range as teleportRange } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -13,6 +13,7 @@ import { Session } from '@main/core/Session';
 import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
+import { UnitAbility } from '@main/abilities/UnitAbility';
 
 type Props = Readonly<{
   targetUnit: Unit;
@@ -32,7 +33,8 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        return new AbilityOrder({ direction, ability: Teleport });
+        const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+        return new AbilityOrder({ direction, ability: teleportAbility });
       }
     }
 
@@ -95,6 +97,12 @@ export default class AvoidUnitBehavior implements UnitBehavior {
   };
 }
 
+/**
+ * TODO does not account for FastTeleport
+ */
 const _canTeleport = (unit: Unit): boolean => {
-  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+  const teleportAbility = UnitAbility.abilityForName(AbilityName.TELEPORT);
+  return (
+    unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= teleportAbility.manaCost
+  );
 };

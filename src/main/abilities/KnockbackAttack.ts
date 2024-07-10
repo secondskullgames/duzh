@@ -12,18 +12,17 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 6;
 const damageCoefficient = 1;
 const stunDuration = 1;
 const TWO_TILES = false;
 
-export const KnockbackAttack: UnitAbility = {
-  name: AbilityName.KNOCKBACK_ATTACK,
-  manaCost,
-  icon: 'icon6',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  use: async (
+export class KnockbackAttack implements UnitAbility {
+  readonly name = AbilityName.KNOCKBACK_ATTACK;
+  readonly manaCost = 6;
+  readonly icon = 'icon6';
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -35,7 +34,7 @@ export const KnockbackAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
@@ -73,5 +72,5 @@ export const KnockbackAttack: UnitAbility = {
         }
       }
     }
-  }
-};
+  };
+}
