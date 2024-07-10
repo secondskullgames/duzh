@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Debug } from './core/Debug';
-import { GameStateImpl } from './core/GameState';
+import { GameState, GameStateImpl } from './core/GameState';
 import { showSplashScreen } from './actions/showSplashScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
@@ -48,11 +48,14 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
   container.bind(PlayerUnitClass).to(PlayerUnitClassImpl);
+  container.bind(GameState).to(GameStateImpl);
+  container.bind(Engine).to(EngineImpl);
   const session = new SessionImpl();
-  const state = await container.getAsync(GameStateImpl);
-  const engine = new EngineImpl(session, state);
+  const state: GameState = await container.getAsync(GameState);
+  const engine: Engine = await container.getAsync(Engine);
+  engine.setState(state);
+  engine.setSession(session);
   container.bind(InputHandler).toConstantValue(createInputHandler({ engine }));
-  container.bind(Engine).toConstantValue(engine);
   return container;
 };
 

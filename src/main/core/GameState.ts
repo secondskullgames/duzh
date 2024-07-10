@@ -34,6 +34,8 @@ export interface GameState {
   getAbilityFactory: () => AbilityFactory;
 }
 
+export const GameState = Symbol('GameState');
+
 /**
  * Global mutable state
  */

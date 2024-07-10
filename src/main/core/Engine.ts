@@ -5,11 +5,14 @@ import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/units/Unit';
 import { sortBy } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
+import { checkNotNull } from '@lib/utils/preconditions';
 import { injectable } from 'inversify';
 
 export interface Engine {
   getState: () => GameState;
+  setState: (state: GameState) => void;
   getSession: () => Session;
+  setSession: (session: Session) => void;
   playTurn: () => Promise<void>;
 }
 
@@ -17,16 +20,21 @@ export const Engine = Symbol('Engine');
 
 @injectable()
 export class EngineImpl implements Engine {
-  constructor(
-    private readonly session: Session,
-    private readonly state: GameState
-  ) {}
+  private _state: GameState | null = null;
+  private _session: Session | null = null;
 
-  getState = (): GameState => this.state;
-  getSession = (): Session => this.session;
+  getState = (): GameState => checkNotNull(this._state);
+  setState = (state: GameState) => {
+    this._state = state;
+  };
+  getSession = (): Session => checkNotNull(this._session);
+  setSession = (session: Session) => {
+    this._session = session;
+  };
 
   playTurn = async () => {
-    const { state, session } = this;
+    const state = this.getState();
+    const session = this.getSession();
     const map = session.getMap();
     session.setTurnInProgress(true);
     const sortedUnits = _sortUnits(map.getAllUnits());
