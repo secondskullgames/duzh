@@ -5,8 +5,6 @@ import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavio
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
@@ -15,6 +13,8 @@ import AvoidNearestEnemyBehavior from '@main/units/behaviors/AvoidNearestEnemyBe
 import WanderBehavior from '@main/units/behaviors/WanderBehavior';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { AbilityName } from '@main/abilities/AbilityName';
+import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import StayBehavior from '@main/units/behaviors/StayBehavior';
 
 const teleportChance = 0.2;
 const shootChance = 0.5;
@@ -23,14 +23,17 @@ export default class SorceressController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, session);
+  issueOrder = (unit: Unit): UnitOrder => {
+    const behavior = this._getBehavior(unit);
     return behavior.issueOrder(unit);
   };
 
-  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
+  private _getBehavior = (unit: Unit): UnitBehavior => {
     const aiParameters = checkNotNull(unit.getAiParameters());
-    const nearestEnemyUnit = session.getPlayerUnit();
+    const nearestEnemyUnit = getNearestEnemyUnit(unit);
+    if (!nearestEnemyUnit) {
+      return new StayBehavior();
+    }
     const distanceToNearestEnemy = hypotenuse(
       unit.getCoordinates(),
       nearestEnemyUnit.getCoordinates()

@@ -10,8 +10,6 @@ import { range as TELEPORT_RANGE, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
@@ -32,12 +30,12 @@ export default class WizardController implements UnitController {
    * if we have mana to Teleport, and player is within X tiles, cast Teleport;
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const closestEnemyUnit = getNearestEnemyUnit(unit);
     if (!closestEnemyUnit) {
       return StayOrder.create();
     }
-    const map = session.getMap();
+    const map = unit.getMap();
 
     if (_canSummon(unit, map) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);

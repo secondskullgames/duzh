@@ -7,8 +7,6 @@ import WanderBehavior from '../behaviors/WanderBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import StayBehavior from '@main/units/behaviors/StayBehavior';
 
@@ -20,8 +18,7 @@ enum Action {
 }
 
 export default class BasicEnemyController implements UnitController {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const behavior = this._getBehavior(unit);
     return behavior.issueOrder(unit);
   };

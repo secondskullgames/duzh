@@ -1,7 +1,5 @@
 import { StayOrder } from '@main/units/orders/StayOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import Unit from '@main/units/Unit';
 import { UnitController } from '@main/units/controllers/UnitController';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -13,8 +11,7 @@ import { AttackOrder } from '@main/units/orders/AttackOrder';
 import { canMove } from '@main/units/controllers/ControllerUtils';
 
 export class RoboTurtleController implements UnitController {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  issueOrder = (unit: Unit, _state: GameState, _session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     if (!canMove(unit)) {
       return StayOrder.create();
     }
