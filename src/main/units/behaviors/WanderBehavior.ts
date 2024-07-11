@@ -6,9 +6,9 @@ import { randChoice } from '@lib/utils/random';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
+import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
@@ -25,7 +25,7 @@ export default class WanderBehavior implements UnitBehavior {
 
     if (possibleDirections.length > 0) {
       const direction = randChoice(possibleDirections);
-      return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
+      return getMoveOrAttackOrder(unit, direction);
     }
     return StayOrder.create();
   };

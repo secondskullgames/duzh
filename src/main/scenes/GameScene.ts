@@ -21,7 +21,6 @@ import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { Feature } from '@main/utils/features';
 import { Strafe } from '@main/abilities/Strafe';
 import { Dash } from '@main/abilities/Dash';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -45,6 +44,7 @@ import { FontName } from '@main/graphics/Fonts';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
 import { Direction } from '@lib/geometry/Direction';
+import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -115,7 +115,6 @@ export class GameScene implements Scene {
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { engine } = this;
-    const state = engine.getState();
     const session = engine.getSession();
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
@@ -156,11 +155,7 @@ export class GameScene implements Scene {
       if (ability) {
         order = AbilityOrder.create({ ability, direction });
       } else {
-        order = new AttackMoveBehavior({ direction }).issueOrder(
-          playerUnit,
-          state,
-          session
-        );
+        order = getMoveOrAttackOrder(playerUnit, direction);
       }
     }
 
