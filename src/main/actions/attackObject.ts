@@ -2,7 +2,7 @@ import Unit from '../units/Unit';
 import Spawner, { SpawnerState } from '../objects/Spawner';
 import Sounds from '../sounds/Sounds';
 import GameObject, { ObjectType } from '../objects/GameObject';
-import Activity from '../units/Activity';
+import { Activity } from '../units/Activity';
 import { sleep } from '@lib/utils/promises';
 import { GameState } from '@main/core/GameState';
 

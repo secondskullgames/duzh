@@ -1,7 +1,7 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Sounds from '@main/sounds/Sounds';
-import Activity from '@main/units/Activity';
+import { Activity } from '@main/units/Activity';
 import Unit from '@main/units/Unit';
 import { getRangedDamage } from '@main/units/UnitUtils';
 import { Direction } from '@lib/geometry/Direction';

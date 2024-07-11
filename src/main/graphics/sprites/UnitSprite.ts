@@ -1,5 +1,5 @@
 import DynamicSprite from './DynamicSprite';
-import Activity from '../../units/Activity';
+import { Activity } from '../../units/Activity';
 import Unit from '../../units/Unit';
 import { Offsets } from '@lib/geometry/Offsets';
 import { StatusEffect } from '@main/units/effects/StatusEffect';

@@ -3,7 +3,7 @@ import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import Activity from '../units/Activity';
+import { Activity } from '../units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

@@ -2,7 +2,7 @@ import { UnitController } from './controllers/UnitController';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import { calculateTotalIncomingDamage } from './UnitUtils';
-import Activity from './Activity';
+import { Activity } from './Activity';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
