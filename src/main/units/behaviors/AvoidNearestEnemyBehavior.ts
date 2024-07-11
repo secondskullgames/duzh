@@ -8,27 +8,25 @@ import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { maxBy } from '@lib/utils/arrays';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
-import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse, manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
+import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { checkNotNull } from '@lib/utils/preconditions';
 
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
-
-export default class AvoidUnitBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
+export default class AvoidNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const { targetUnit } = this;
+  issueOrder = (unit: Unit): UnitOrder => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    const visionRange = checkNotNull(unit.getAiParameters()).visionRange;
+    if (hypotenuse(unit.getCoordinates(), targetUnit.getCoordinates()) > visionRange) {
+      return StayOrder.create();
+    }
+
     if (_canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {

@@ -1,10 +1,10 @@
 import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
 import { UnitOrder } from '../orders/UnitOrder';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
-import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
+import ShootNearestEnemyBehavior from '../behaviors/ShootNearestEnemyBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
@@ -19,7 +19,7 @@ export default class ArcherController implements UnitController {
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const behavior = this._getBehavior(unit, session);
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 
   private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
@@ -39,12 +39,12 @@ export default class ArcherController implements UnitController {
     if (!canMove(unit)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
-      return new AvoidUnitBehavior({ targetUnit: playerUnit });
+      return new AvoidNearestEnemyBehavior();
     } else if (distanceToPlayer <= visionRange) {
       if (unit.isInCombat()) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootNearestEnemyBehavior();
       } else if (randChance(aggressiveness)) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootNearestEnemyBehavior();
       } else {
         return new WanderBehavior();
       }

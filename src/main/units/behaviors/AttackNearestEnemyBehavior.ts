@@ -3,20 +3,15 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { StayOrder } from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
-import { canDash } from '../controllers/ControllerUtils';
+import { canDash, getNearestEnemyUnit } from '../controllers/ControllerUtils';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { NormalAttack } from '@main/abilities/NormalAttack';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@lib/utils/random';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { findPath } from '@main/maps/MapUtils';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
-
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
+import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 const allowedSpecialAbilityNames = [
   AbilityName.BURNING_ATTACK,
@@ -28,20 +23,23 @@ const allowedSpecialAbilityNames = [
 ];
 
 /**
- * A behavior in which the unit attacks a target unit.  The unit will move
+ * A behavior in which the unit attacks the nearest enemy unit.  The unit will move
  * towards the target unit and use abilities as appropriate.
  */
-export default class AttackUnitBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
+export default class AttackNearestEnemyBehavior implements UnitBehavior {
   /** @override */
-  issueOrder = (unit: Unit, _: GameState, session: Session): UnitOrder => {
-    const { targetUnit } = this;
-    const map = session.getMap();
+  issueOrder = (unit: Unit): UnitOrder => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    const visionRange = checkNotNull(unit.getAiParameters()).visionRange;
+    if (hypotenuse(unit.getCoordinates(), targetUnit.getCoordinates()) > visionRange) {
+      return StayOrder.create();
+    }
+
+    const map = unit.getMap();
     const pathToTarget = findPath(
       unit.getCoordinates(),
       targetUnit.getCoordinates(),

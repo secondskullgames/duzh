@@ -11,7 +11,7 @@ import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
-import AvoidUnitBehavior from '@main/units/behaviors/AvoidUnitBehavior';
+import AvoidNearestEnemyBehavior from '@main/units/behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '@main/units/behaviors/WanderBehavior';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -25,7 +25,7 @@ export default class SorceressController implements UnitController {
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const behavior = this._getBehavior(unit, session);
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 
   private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
@@ -48,7 +48,7 @@ export default class SorceressController implements UnitController {
     } else if (canTeleport && wantsToTeleport) {
       return new KnightMoveBehavior();
     } else if (distanceToNearestEnemy <= aiParameters.visionRange) {
-      return new AvoidUnitBehavior({ targetUnit: nearestEnemyUnit });
+      return new AvoidNearestEnemyBehavior();
     } else {
       return new WanderBehavior();
     }

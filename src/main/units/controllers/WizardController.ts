@@ -1,6 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit } from './ControllerUtils';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
@@ -58,9 +58,9 @@ export default class WizardController implements UnitController {
     }
 
     const behavior = randChance(avoidChance)
-      ? new AvoidUnitBehavior({ targetUnit: closestEnemyUnit })
+      ? new AvoidNearestEnemyBehavior()
       : new WanderBehavior();
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 }
 

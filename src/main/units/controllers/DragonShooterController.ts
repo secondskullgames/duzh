@@ -22,7 +22,7 @@ export default class DragonShooterController implements UnitController {
    */
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const behavior = this._getBehavior(unit, session);
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 
   private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
