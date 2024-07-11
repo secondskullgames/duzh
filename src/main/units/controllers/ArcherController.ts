@@ -1,5 +1,5 @@
 import { UnitController } from './UnitController';
-import { canMove, getNearestEnemyUnit } from './ControllerUtils';
+import { canMove, getNearestEnemyUnit, isInVisionRange } from './ControllerUtils';
 import { UnitOrder } from '../orders/UnitOrder';
 import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
@@ -9,7 +9,6 @@ import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 
 export default class ArcherController implements UnitController {
   /**
@@ -30,18 +29,13 @@ export default class ArcherController implements UnitController {
       unit.getAiParameters(),
       'ArcherController requires aiParams!'
     );
-    const { aggressiveness, visionRange, fleeThreshold } = aiParameters;
-
-    const distanceToPlayer = hypotenuse(
-      unit.getCoordinates(),
-      targetUnit.getCoordinates()
-    );
+    const { aggressiveness, fleeThreshold } = aiParameters;
 
     if (!canMove(unit)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
       return new AvoidNearestEnemyBehavior();
-    } else if (distanceToPlayer <= visionRange) {
+    } else if (isInVisionRange(unit, targetUnit)) {
       if (unit.isInCombat()) {
         return new ShootNearestEnemyBehavior();
       } else if (randChance(aggressiveness)) {

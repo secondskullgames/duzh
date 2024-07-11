@@ -5,12 +5,14 @@ import { UnitBehavior } from '../behaviors/UnitBehavior';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
-import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
 
 const teleportChance = 0.25;
 const shootChance = 0.9;
@@ -47,21 +49,9 @@ export default class DragonShooterController implements UnitController {
   };
 
   private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-    const aiParameters = checkNotNull(
-      unit.getAiParameters(),
-      'DragonShooterController requires aiParams!'
-    );
-
-    const { visionRange } = aiParameters;
-
-    const distanceToTarget = hypotenuse(
-      unit.getCoordinates(),
-      targetUnit.getCoordinates()
-    );
-
     return (
       unit.getMana() >= ShootTurretArrow.manaCost &&
-      distanceToTarget <= visionRange &&
+      isInVisionRange(unit, targetUnit) &&
       isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
       hasUnblockedStraightLineBetween(
         unit.getMap(),

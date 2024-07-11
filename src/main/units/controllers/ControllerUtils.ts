@@ -85,3 +85,10 @@ export const canDash = (
   }
   return false;
 };
+
+export const isInVisionRange = (unit: Unit, target: Unit): boolean => {
+  const aiParameters = checkNotNull(unit.getAiParameters());
+  const { visionRange } = aiParameters;
+  const distanceToTarget = hypotenuse(unit.getCoordinates(), target.getCoordinates());
+  return distanceToTarget <= visionRange;
+};

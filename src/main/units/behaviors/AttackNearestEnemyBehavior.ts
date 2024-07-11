@@ -3,15 +3,18 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { StayOrder } from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
-import { canDash, getNearestEnemyUnit } from '../controllers/ControllerUtils';
+import {
+  canDash,
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '../controllers/ControllerUtils';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { NormalAttack } from '@main/abilities/NormalAttack';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@lib/utils/random';
 import { findPath } from '@main/maps/MapUtils';
-import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { pointAt } from '@lib/geometry/CoordinatesUtils';
 
 const allowedSpecialAbilityNames = [
   AbilityName.BURNING_ATTACK,
@@ -34,8 +37,7 @@ export default class AttackNearestEnemyBehavior implements UnitBehavior {
       return StayOrder.create();
     }
 
-    const visionRange = checkNotNull(unit.getAiParameters()).visionRange;
-    if (hypotenuse(unit.getCoordinates(), targetUnit.getCoordinates()) > visionRange) {
+    if (!isInVisionRange(unit, targetUnit)) {
       return StayOrder.create();
     }
 

@@ -6,17 +6,18 @@ import { ShootArrow } from '@main/abilities/ShootArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
 import {
-  pointAt,
-  manhattanDistance,
   isInStraightLine,
-  hypotenuse
+  manhattanDistance,
+  pointAt
 } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
 import { StayOrder } from '@main/units/orders/StayOrder';
-import { checkNotNull } from '@lib/utils/preconditions';
 
 export default class ShootNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
@@ -26,8 +27,7 @@ export default class ShootNearestEnemyBehavior implements UnitBehavior {
       return StayOrder.create();
     }
 
-    const visionRange = checkNotNull(unit.getAiParameters()).visionRange;
-    if (hypotenuse(unit.getCoordinates(), targetUnit.getCoordinates()) > visionRange) {
+    if (!isInVisionRange(unit, targetUnit)) {
       return StayOrder.create();
     }
 

@@ -3,16 +3,18 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { StayOrder } from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Teleport, range as teleportRange } from '@main/abilities/Teleport';
+import { range as teleportRange, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { maxBy } from '@lib/utils/arrays';
-import { hypotenuse, manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
-import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
-import { checkNotNull } from '@lib/utils/preconditions';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
 
 export default class AvoidNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
@@ -22,8 +24,7 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
       return StayOrder.create();
     }
 
-    const visionRange = checkNotNull(unit.getAiParameters()).visionRange;
-    if (hypotenuse(unit.getCoordinates(), targetUnit.getCoordinates()) > visionRange) {
+    if (!isInVisionRange(unit, targetUnit)) {
       return StayOrder.create();
     }
 
