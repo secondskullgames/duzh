@@ -19,7 +19,7 @@ import StayBehavior from '@main/units/behaviors/StayBehavior';
 const teleportChance = 0.2;
 const shootChance = 0.5;
 
-export default class SorceressController implements UnitController {
+export class SorceressController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
@@ -47,7 +47,7 @@ export default class SorceressController implements UnitController {
     const wantsToShoot = randChance(shootChance);
 
     if (canShoot && wantsToShoot) {
-      return new ShootUnitStationaryBehavior({ targetUnit: nearestEnemyUnit });
+      return new ShootUnitStationaryBehavior();
     } else if (canTeleport && wantsToTeleport) {
       return new KnightMoveBehavior();
     } else if (distanceToNearestEnemy <= aiParameters.visionRange) {

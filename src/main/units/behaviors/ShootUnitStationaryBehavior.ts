@@ -8,21 +8,17 @@ import Unit from '@main/units/Unit';
 import { isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
+import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 export default class ShootUnitStationaryBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
-    const { targetUnit } = this;
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    // TODO check vision
 
     const canShoot = _canShoot(unit, targetUnit);
     if (canShoot) {

@@ -66,7 +66,7 @@ export class EngineImpl implements Engine {
       return;
     }
     if (unit.canMove()) {
-      const order = unit.getController().issueOrder(unit, state, session);
+      const order = unit.getController().issueOrder(unit);
       await this.orderExecutor.executeOrder(unit, order, state, session);
     }
     await unit.endOfTurn(state, session);

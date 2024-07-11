@@ -11,7 +11,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
-import SorceressController from '@main/units/controllers/SorceressController';
+import { SorceressController } from '@main/units/controllers/SorceressController';
 import { minBy } from '@lib/utils/arrays';
 import { isHostile } from '@main/units/UnitUtils';
 import { RoboTurtleController } from '@main/units/controllers/RoboTurtleController';

@@ -40,7 +40,7 @@ export default class DragonShooterController implements UnitController {
     if (wantsToTeleport) {
       return new KnightMoveBehavior();
     } else if (canShoot && wantsToShoot) {
-      return new ShootUnitStationaryBehavior({ targetUnit: nearestEnemyUnit });
+      return new ShootUnitStationaryBehavior();
     } else {
       return new StayBehavior();
     }
