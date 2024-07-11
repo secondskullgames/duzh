@@ -52,9 +52,6 @@ export default class Projectile implements Entity {
   /** @override {@link Entity#getSprite} */
   getSprite = (): Sprite => this.sprite;
 
-  /** @override {@link Entity#update} */
-  playTurnAction = async () => {};
-
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => false;
 

@@ -25,7 +25,6 @@ import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
-import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -213,20 +212,6 @@ export default class Unit implements Entity {
   getSummonedUnitClass = () => this.summonedUnitClass;
 
   /** @override */
-  playTurnAction = async (state: GameState, session: Session) => {
-    await this._upkeep(state, session);
-    if (this.life <= 0) {
-      return;
-    }
-    if (this._canMove()) {
-      const order = this.controller.issueOrder(this, state, session);
-      // TODO figure out where to inject this
-      await new OrderExecutor().executeOrder(this, order, state, session);
-    }
-    await this._endOfTurn(state, session);
-  };
-
-  /** @override */
   isBlocking = (): boolean => true;
 
   /**
@@ -392,7 +377,7 @@ export default class Unit implements Entity {
 
   getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
-  private _upkeep = async (state: GameState, session: Session) => {
+  upkeep = async (state: GameState, session: Session) => {
     // life regeneration
     this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
@@ -418,7 +403,7 @@ export default class Unit implements Entity {
     }
   };
 
-  private _endOfTurn = async (state: GameState, session: Session) => {
+  endOfTurn = async (state: GameState, session: Session) => {
     for (const effect of this.effects.getEffects()) {
       switch (effect) {
         case StatusEffect.BURNING:
@@ -439,7 +424,7 @@ export default class Unit implements Entity {
 
   getEffects = (): UnitStatusEffects => this.effects;
 
-  private _canMove = (): boolean => {
+  canMove = (): boolean => {
     return (
       !this.effects.hasEffect(StatusEffect.FROZEN) &&
       !this.effects.hasEffect(StatusEffect.STUNNED)

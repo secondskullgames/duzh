@@ -28,9 +28,6 @@ export default class Bonus extends GameObject {
     this.onUse = onUse;
   }
 
-  /** @override {@link Entity#update} */
-  playTurnAction = async () => {};
-
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => false;
 }

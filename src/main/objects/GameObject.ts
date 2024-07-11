@@ -3,8 +3,6 @@ import Sprite from '@main/graphics/sprites/Sprite';
 import { EntityType } from '@main/entities/EntityType';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 
 export enum ObjectType {
   SPAWNER = 'spawner',
@@ -62,9 +60,6 @@ export default abstract class GameObject implements Entity {
 
   /** @override */
   getType = (): EntityType => EntityType.OBJECT;
-
-  /** @override */
-  abstract playTurnAction: (state: GameState, session: Session) => Promise<void>;
 
   /** @override */
   abstract isBlocking: () => boolean;

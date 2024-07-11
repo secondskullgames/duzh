@@ -61,9 +61,6 @@ export default class Tile implements Entity {
     }
   };
 
-  /** @override */
-  playTurnAction = async () => {};
-
   getTileType = (): TileType => this.tileType;
 
   /**
