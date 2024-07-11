@@ -1,7 +1,7 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import StayOrder from '../orders/StayOrder';
+import { StayOrder } from '../orders/StayOrder';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
@@ -30,13 +30,13 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
     const canShoot = _canShoot(unit, targetUnit);
     if (canShoot) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      return new AbilityOrder({
+      return AbilityOrder.create({
         direction,
         ability: ShootTurretArrow
       });
     }
 
-    return new StayOrder();
+    return StayOrder.create();
   };
 }
 

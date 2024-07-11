@@ -2,8 +2,6 @@ import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit } from './ControllerUtils';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -19,6 +17,8 @@ import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
+import { StayOrder } from '@main/units/orders/StayOrder';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -35,26 +35,26 @@ export default class WizardController implements UnitController {
   issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
     const closestEnemyUnit = getNearestEnemyUnit(unit);
     if (!closestEnemyUnit) {
-      return new StayOrder();
+      return StayOrder.create();
     }
     const map = session.getMap();
 
     if (_canSummon(unit, map) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Summon, coordinates });
+        return SpellOrder.create({ ability: Summon, coordinates });
       }
     }
 
     if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
       const coordinates = _getTargetTeleportCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Teleport, coordinates });
+        return SpellOrder.create({ ability: Teleport, coordinates });
       }
     }
 
     if (!canMove(unit)) {
-      return new StayOrder();
+      return StayOrder.create();
     }
 
     const behavior = randChance(avoidChance)

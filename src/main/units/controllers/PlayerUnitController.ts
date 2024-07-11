@@ -1,6 +1,6 @@
 import { UnitController } from './UnitController';
-import StayOrder from '../orders/StayOrder';
-import UnitOrder from '../orders/UnitOrder';
+import { StayOrder } from '../orders/StayOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 
 export default class PlayerUnitController implements UnitController {
   private queuedOrder: UnitOrder | null;
@@ -22,6 +22,6 @@ export default class PlayerUnitController implements UnitController {
       this.queuedOrder = null;
       return queuedOrder;
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 }

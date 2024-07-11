@@ -25,6 +25,7 @@ import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
+import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -219,7 +220,8 @@ export default class Unit implements Entity {
     }
     if (this._canMove()) {
       const order = this.controller.issueOrder(this, state, session);
-      await order.execute(this, state, session);
+      // TODO figure out where to inject this
+      await new OrderExecutor().executeOrder(this, order, state, session);
     }
     await this._endOfTurn(state, session);
   };

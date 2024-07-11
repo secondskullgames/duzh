@@ -1,6 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove } from './ControllerUtils';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';

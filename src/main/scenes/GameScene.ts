@@ -14,7 +14,7 @@ import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
 import Sounds from '@main/sounds/Sounds';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { getDirection } from '@main/input/inputMappers';
-import UnitOrder from '@main/units/orders/UnitOrder';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
@@ -132,7 +132,7 @@ export class GameScene implements Scene {
         if (playerUnit.hasAbility(abilityName)) {
           const ability = UnitAbility.abilityForName(abilityName);
           if (ability.isEnabled(playerUnit)) {
-            order = new AbilityOrder({ direction, ability });
+            order = AbilityOrder.create({ direction, ability });
           }
         }
       }
@@ -141,20 +141,20 @@ export class GameScene implements Scene {
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
       if (Strafe.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Strafe });
+        order = AbilityOrder.create({ direction, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
       if (Dash.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Dash });
+        order = AbilityOrder.create({ direction, ability: Dash });
       }
     } else {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
       if (ability) {
-        order = new AbilityOrder({ ability, direction });
+        order = AbilityOrder.create({ ability, direction });
       } else {
         order = new AttackMoveBehavior({ direction }).issueOrder(
           playerUnit,

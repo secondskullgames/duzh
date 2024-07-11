@@ -1,6 +1,6 @@
 import { UnitController } from './UnitController';
 import { canMove, canSee, getNearestEnemyUnit } from './ControllerUtils';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
 import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';

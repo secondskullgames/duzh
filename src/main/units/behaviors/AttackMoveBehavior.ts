@@ -1,4 +1,4 @@
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -6,7 +6,7 @@ import { getDoor, isBlocked } from '@main/maps/MapUtils';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
-import StayOrder from '@main/units/orders/StayOrder';
+import { StayOrder } from '@main/units/orders/StayOrder';
 import { MoveOrder } from '@main/units/orders/MoveOrder';
 import { AttackOrder } from '@main/units/orders/AttackOrder';
 
@@ -31,16 +31,16 @@ export class AttackMoveBehavior implements UnitBehavior {
     const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
     if (!map.contains(coordinates)) {
-      return new StayOrder();
+      return StayOrder.create();
     } else {
       if (!isBlocked(map, coordinates)) {
-        return new MoveOrder({ coordinates });
+        return MoveOrder.create({ coordinates });
       } else {
         const door = getDoor(map, coordinates);
         if (door?.isClosed()) {
-          return new MoveOrder({ coordinates });
+          return MoveOrder.create({ coordinates });
         } else {
-          return new AttackOrder({ direction });
+          return AttackOrder.create({ direction });
         }
       }
     }

@@ -8,9 +8,9 @@ import { SpellOrder } from '@main/units/orders/SpellOrder';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import UnitOrder from '@main/units/orders/UnitOrder';
-import StayOrder from '@main/units/orders/StayOrder';
 import { FastTeleport } from '@main/abilities/FastTeleport';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
+import { StayOrder } from '@main/units/orders/StayOrder';
 
 export default class KnightMoveBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
@@ -21,13 +21,13 @@ export default class KnightMoveBehavior implements UnitBehavior {
       const targets = _getKnightMoveTargets(unit);
       if (!isEmpty(targets)) {
         const target = randChoice(targets);
-        return new SpellOrder({
+        return SpellOrder.create({
           coordinates: target,
           ability: FastTeleport
         });
       }
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 }
 

@@ -1,4 +1,4 @@
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';

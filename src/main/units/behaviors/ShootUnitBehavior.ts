@@ -1,6 +1,6 @@
 import AttackUnitBehavior from './AttackUnitBehavior';
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { ShootArrow } from '@main/abilities/ShootArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -35,7 +35,7 @@ export default class ShootUnitBehavior implements UnitBehavior {
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1;
     if (atLeastOneTileAway && canShoot(unit, targetUnit)) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      return new AbilityOrder({ direction, ability: ShootArrow });
+      return AbilityOrder.create({ direction, ability: ShootArrow });
     }
 
     // TODO - instantiating this here is a hack

@@ -1,6 +1,6 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
+import { UnitOrder } from '../orders/UnitOrder';
+import { StayOrder } from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Teleport, range as teleportRange } from '@main/abilities/Teleport';
@@ -32,7 +32,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        return new AbilityOrder({ direction, ability: Teleport });
+        return AbilityOrder.create({ direction, ability: Teleport });
       }
     }
 
@@ -41,7 +41,7 @@ export default class AvoidUnitBehavior implements UnitBehavior {
       const direction = pointAt(unit.getCoordinates(), targetCoordinates);
       return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 
   private _getTargetTeleportCoordinates = (unit: Unit, closestEnemyUnit: Unit) => {

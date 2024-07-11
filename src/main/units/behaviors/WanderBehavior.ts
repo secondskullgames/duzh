@@ -1,6 +1,4 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -9,6 +7,8 @@ import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
+import { StayOrder } from '@main/units/orders/StayOrder';
 
 export default class WanderBehavior implements UnitBehavior {
   /** @override */
@@ -27,6 +27,6 @@ export default class WanderBehavior implements UnitBehavior {
       const direction = randChoice(possibleDirections);
       return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 }

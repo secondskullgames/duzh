@@ -1,7 +1,7 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import StayOrder from '../orders/StayOrder';
+import { StayOrder } from '../orders/StayOrder';
 import { MoveOrder } from '../orders/MoveOrder';
 import { canDash } from '../controllers/ControllerUtils';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -52,7 +52,7 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const second = pathToTarget[2];
       const direction = pointAt(unit.getCoordinates(), second);
       if (canDash(unit, second, map)) {
-        return new AbilityOrder({
+        return AbilityOrder.create({
           ability: UnitAbility.abilityForName(AbilityName.DASH),
           direction
         });
@@ -63,14 +63,14 @@ export default class AttackUnitBehavior implements UnitBehavior {
       const coordinates = pathToTarget[1]; // first tile is the unit's own tile
       const unitAtPoint = map.getUnit(coordinates);
       if (unitAtPoint === null) {
-        return new MoveOrder({ coordinates });
+        return MoveOrder.create({ coordinates });
       } else if (unitAtPoint === targetUnit) {
         const ability = this._chooseAbility(unit);
         const direction = pointAt(unit.getCoordinates(), coordinates);
-        return new AbilityOrder({ ability, direction });
+        return AbilityOrder.create({ ability, direction });
       }
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 
   private _chooseAbility = (unit: Unit): UnitAbility => {

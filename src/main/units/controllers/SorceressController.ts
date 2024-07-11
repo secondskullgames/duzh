@@ -1,5 +1,5 @@
 import { UnitController } from './UnitController';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
