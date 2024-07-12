@@ -54,6 +54,7 @@ export const Dash: UnitAbility = {
     }
 
     if (moved) {
+      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
       unit.spendMana(manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);

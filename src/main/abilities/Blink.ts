@@ -10,8 +10,10 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { checkState } from '@lib/utils/preconditions';
+import { Direction } from '@lib/geometry/Direction';
 
 const manaCost = 10;
+const distance = 2;
 
 export const Blink: UnitAbility = {
   name: AbilityName.BLINK,
@@ -29,22 +31,16 @@ export const Blink: UnitAbility = {
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Blink requires a target!');
-    }
-
     const map = unit.getMap();
-    const { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
+    const direction = Direction.between(unit.getCoordinates(), coordinates);
 
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
+    unit.setDirection(direction);
 
-    const distance = 2;
-    const { x, y } = unit.getCoordinates();
-
-    const targetCoordinates = {
-      x: x + dx * distance,
-      y: y + dy * distance
-    };
+    const { dx, dy } = Direction.getOffsets(direction);
+    const targetCoordinates = Coordinates.plus(unit.getCoordinates(), {
+      dx: distance * dx,
+      dy: distance * dy
+    });
     const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
     checkState(!blocked);
 

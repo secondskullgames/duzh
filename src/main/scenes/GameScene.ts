@@ -154,8 +154,14 @@ export class GameScene implements Scene {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (Dash.isEnabled(playerUnit)) {
+      const coordinates = Coordinates.plusDirection(
+        playerUnit.getCoordinates(),
+        direction
+      );
+      if (Dash.isEnabled(playerUnit) && Dash.isLegal(playerUnit, coordinates)) {
         order = AbilityOrder.create({ direction, ability: Dash });
+      } else {
+        this.soundPlayer.playSound(Sounds.BLOCKED);
       }
     } else {
       const ability = session.getQueuedAbility();
@@ -177,6 +183,8 @@ export class GameScene implements Scene {
       const playerController = playerUnit.getController() as PlayerUnitController;
       playerController.queueOrder(order);
       await engine.playTurn();
+    } else {
+      this.soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 

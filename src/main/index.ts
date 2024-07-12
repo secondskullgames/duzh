@@ -48,9 +48,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   });
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
-  container
-    .bind(SoundPlayer)
-    .toConstantValue(new SoundPlayer({ polyphony: 1, gain: 0.15 }));
+  container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
   const session = new SessionImpl();
   const state = await container.getAsync(GameStateImpl);
   const orderExecutor = await container.getAsync(OrderExecutor);

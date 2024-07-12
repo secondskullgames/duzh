@@ -39,7 +39,8 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
       const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-      return getMoveOrAttackOrder(unit, direction);
+      // TODO
+      return getMoveOrAttackOrder(unit, direction) ?? StayOrder.create();
     }
     return StayOrder.create();
   };

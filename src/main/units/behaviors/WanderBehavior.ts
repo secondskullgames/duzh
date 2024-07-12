@@ -23,7 +23,8 @@ export class WanderBehavior implements UnitBehavior {
 
     if (possibleDirections.length > 0) {
       const direction = randChoice(possibleDirections);
-      return getMoveOrAttackOrder(unit, direction);
+      // TODO
+      return getMoveOrAttackOrder(unit, direction) ?? StayOrder.create();
     }
     return StayOrder.create();
   };
