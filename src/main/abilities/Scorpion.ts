@@ -11,8 +11,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
-import { hasUnblockedStraightLineBetween, isBlocked } from '@main/maps/MapUtils';
-import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { isBlocked } from '@main/maps/MapUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;

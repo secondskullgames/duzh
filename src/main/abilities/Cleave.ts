@@ -8,7 +8,6 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import type { UnitAbility } from './UnitAbility';
 
 const manaCost = 8;
