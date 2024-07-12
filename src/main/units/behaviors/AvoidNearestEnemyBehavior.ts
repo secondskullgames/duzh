@@ -1,47 +1,47 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
+import { UnitOrder } from '../orders/UnitOrder';
+import { StayOrder } from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Teleport, range as teleportRange } from '@main/abilities/Teleport';
+import { range as teleportRange, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { maxBy } from '@lib/utils/arrays';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
+import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
 
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
-
-export default class AvoidUnitBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
+export default class AvoidNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const { targetUnit } = this;
+  issueOrder = (unit: Unit): UnitOrder => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    if (!isInVisionRange(unit, targetUnit)) {
+      return StayOrder.create();
+    }
+
     if (_canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        return new AbilityOrder({ direction, ability: Teleport });
+        return AbilityOrder.create({ direction, ability: Teleport });
       }
     }
 
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
       const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-      return new AttackMoveBehavior({ direction }).issueOrder(unit, state, session);
+      return getMoveOrAttackOrder(unit, direction);
     }
-    return new StayOrder();
+    return StayOrder.create();
   };
 
   private _getTargetTeleportCoordinates = (unit: Unit, closestEnemyUnit: Unit) => {

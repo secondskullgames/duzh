@@ -3,7 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import Activity from '@main/units/Activity';
+import { Activity } from '@main/units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';

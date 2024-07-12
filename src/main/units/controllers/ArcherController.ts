@@ -1,50 +1,45 @@
 import { UnitController } from './UnitController';
-import { canMove } from './ControllerUtils';
-import UnitOrder from '../orders/UnitOrder';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import { canMove, getNearestEnemyUnit, isInVisionRange } from './ControllerUtils';
+import { UnitOrder } from '../orders/UnitOrder';
+import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import StayBehavior from '../behaviors/StayBehavior';
-import ShootUnitBehavior from '../behaviors/ShootUnitBehavior';
+import ShootNearestEnemyBehavior from '../behaviors/ShootNearestEnemyBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
-import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 
 export default class ArcherController implements UnitController {
   /**
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const behavior = this._getBehavior(unit, session);
-    return behavior.issueOrder(unit, state, session);
+  issueOrder = (unit: Unit): UnitOrder => {
+    const behavior = this._getBehavior(unit);
+    return behavior.issueOrder(unit);
   };
 
-  private _getBehavior = (unit: Unit, session: Session): UnitBehavior => {
-    const playerUnit = session.getPlayerUnit();
+  private _getBehavior = (unit: Unit): UnitBehavior => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return new StayBehavior();
+    }
 
     const aiParameters = checkNotNull(
       unit.getAiParameters(),
       'ArcherController requires aiParams!'
     );
-    const { aggressiveness, visionRange, fleeThreshold } = aiParameters;
-
-    const distanceToPlayer = hypotenuse(
-      unit.getCoordinates(),
-      playerUnit.getCoordinates()
-    );
+    const { aggressiveness, fleeThreshold } = aiParameters;
 
     if (!canMove(unit)) {
       return new StayBehavior();
     } else if (unit.getLife() / unit.getMaxLife() < fleeThreshold) {
-      return new AvoidUnitBehavior({ targetUnit: playerUnit });
-    } else if (distanceToPlayer <= visionRange) {
+      return new AvoidNearestEnemyBehavior();
+    } else if (isInVisionRange(unit, targetUnit)) {
       if (unit.isInCombat()) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootNearestEnemyBehavior();
       } else if (randChance(aggressiveness)) {
-        return new ShootUnitBehavior({ targetUnit: playerUnit });
+        return new ShootNearestEnemyBehavior();
       } else {
         return new WanderBehavior();
       }

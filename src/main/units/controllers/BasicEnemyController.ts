@@ -1,14 +1,12 @@
 import { UnitController } from './UnitController';
 import { canMove, canSee, getNearestEnemyUnit } from './ControllerUtils';
-import UnitOrder from '../orders/UnitOrder';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
-import AttackUnitBehavior from '../behaviors/AttackUnitBehavior';
+import { UnitOrder } from '../orders/UnitOrder';
+import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
+import AttackNearestEnemyBehavior from '../behaviors/AttackNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import StayBehavior from '@main/units/behaviors/StayBehavior';
 
@@ -20,19 +18,18 @@ enum Action {
 }
 
 export default class BasicEnemyController implements UnitController {
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const behavior = this._getBehavior(unit);
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 
   private _getBehavior = (unit: Unit): UnitBehavior => {
     const action = this._getAction(unit);
-    const nearestEnemyUnit = getNearestEnemyUnit(unit);
     switch (action) {
       case Action.ATTACK:
-        return new AttackUnitBehavior({ targetUnit: checkNotNull(nearestEnemyUnit) });
+        return new AttackNearestEnemyBehavior();
       case Action.FLEE:
-        return new AvoidUnitBehavior({ targetUnit: checkNotNull(nearestEnemyUnit) });
+        return new AvoidNearestEnemyBehavior();
       case Action.STAY:
         return new StayBehavior();
       case Action.WANDER:

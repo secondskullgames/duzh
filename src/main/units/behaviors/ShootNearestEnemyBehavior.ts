@@ -1,45 +1,46 @@
-import AttackUnitBehavior from './AttackUnitBehavior';
+import AttackNearestEnemyBehavior from './AttackNearestEnemyBehavior';
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { ShootArrow } from '@main/abilities/ShootArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
 import {
-  pointAt,
+  isInStraightLine,
   manhattanDistance,
-  isInStraightLine
+  pointAt
 } from '@lib/geometry/CoordinatesUtils';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
+import { StayOrder } from '@main/units/orders/StayOrder';
 
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
-
-export default class ShootUnitBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
+export default class ShootNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const { targetUnit } = this;
+  issueOrder = (unit: Unit): UnitOrder => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    if (!isInVisionRange(unit, targetUnit)) {
+      return StayOrder.create();
+    }
 
     const atLeastOneTileAway =
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1;
     if (atLeastOneTileAway && canShoot(unit, targetUnit)) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      return new AbilityOrder({ direction, ability: ShootArrow });
+      return AbilityOrder.create({ direction, ability: ShootArrow });
     }
 
     // TODO - instantiating this here is a hack
-    return new AttackUnitBehavior({ targetUnit }).issueOrder(unit, state, session);
+    // and now, it no longer makes sense.  Oh well
+    return new AttackNearestEnemyBehavior().issueOrder(unit);
   };
 }
 

@@ -1,42 +1,35 @@
 import { UnitBehavior } from './UnitBehavior';
-import UnitOrder from '../orders/UnitOrder';
+import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import StayOrder from '../orders/StayOrder';
+import { StayOrder } from '../orders/StayOrder';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-
-type Props = Readonly<{
-  targetUnit: Unit;
-}>;
+import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 export default class ShootUnitStationaryBehavior implements UnitBehavior {
-  private readonly targetUnit: Unit;
-
-  constructor({ targetUnit }: Props) {
-    this.targetUnit = targetUnit;
-  }
-
   /** @override {@link UnitBehavior#issueOrder} */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
-    const { targetUnit } = this;
+  issueOrder = (unit: Unit): UnitOrder => {
+    const targetUnit = getNearestEnemyUnit(unit);
+    if (!targetUnit) {
+      return StayOrder.create();
+    }
+
+    // TODO check vision
 
     const canShoot = _canShoot(unit, targetUnit);
     if (canShoot) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      return new AbilityOrder({
+      return AbilityOrder.create({
         direction,
         ability: ShootTurretArrow
       });
     }
 
-    return new StayOrder();
+    return StayOrder.create();
   };
 }
 

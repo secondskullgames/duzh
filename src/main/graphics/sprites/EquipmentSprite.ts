@@ -1,6 +1,6 @@
 import DynamicSprite from './DynamicSprite';
 import Equipment from '../../equipment/Equipment';
-import Activity from '../../units/Activity';
+import { Activity } from '../../units/Activity';
 import { Offsets } from '@lib/geometry/Offsets';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Unit from '@main/units/Unit';

@@ -1,6 +1,9 @@
-import UnitOrder from './UnitOrder';
+import { OrderType } from '@main/units/orders/UnitOrder';
 
-export default class StayOrder implements UnitOrder {
-  /** @override {@link UnitOrder#execute} */
-  execute = async () => {};
+export type StayOrder = Readonly<{
+  type: OrderType.STAY;
+}>;
+
+export namespace StayOrder {
+  export const create = (): StayOrder => ({ type: OrderType.STAY });
 }

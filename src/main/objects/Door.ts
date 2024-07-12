@@ -71,9 +71,6 @@ export default class Door extends GameObject {
   getDirection = (): DoorDirection => this._direction;
   getState = (): DoorState => this._state;
 
-  /** @override {@link Entity#update} */
-  playTurnAction = async () => {};
-
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => this.isClosed();
 }

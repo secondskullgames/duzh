@@ -27,8 +27,5 @@ export default class MapItem extends GameObject {
   }
 
   /** @override */
-  playTurnAction = async () => {};
-
-  /** @override */
   isBlocking = (): boolean => false;
 }

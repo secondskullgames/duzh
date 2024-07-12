@@ -1,9 +1,7 @@
 import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit } from './ControllerUtils';
-import AvoidUnitBehavior from '../behaviors/AvoidUnitBehavior';
+import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
 import WanderBehavior from '../behaviors/WanderBehavior';
-import UnitOrder from '../orders/UnitOrder';
-import StayOrder from '../orders/StayOrder';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -12,13 +10,13 @@ import { range as TELEPORT_RANGE, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
 import { maxBy } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
+import { StayOrder } from '@main/units/orders/StayOrder';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -32,35 +30,35 @@ export default class WizardController implements UnitController {
    * if we have mana to Teleport, and player is within X tiles, cast Teleport;
    * @override {@link UnitController#issueOrder}
    */
-  issueOrder = (unit: Unit, state: GameState, session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     const closestEnemyUnit = getNearestEnemyUnit(unit);
     if (!closestEnemyUnit) {
-      return new StayOrder();
+      return StayOrder.create();
     }
-    const map = session.getMap();
+    const map = unit.getMap();
 
     if (_canSummon(unit, map) && _wantsToSummon()) {
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Summon, coordinates });
+        return SpellOrder.create({ ability: Summon, coordinates });
       }
     }
 
     if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
       const coordinates = _getTargetTeleportCoordinates(unit);
       if (coordinates) {
-        return new SpellOrder({ ability: Teleport, coordinates });
+        return SpellOrder.create({ ability: Teleport, coordinates });
       }
     }
 
     if (!canMove(unit)) {
-      return new StayOrder();
+      return StayOrder.create();
     }
 
     const behavior = randChance(avoidChance)
-      ? new AvoidUnitBehavior({ targetUnit: closestEnemyUnit })
+      ? new AvoidNearestEnemyBehavior()
       : new WanderBehavior();
-    return behavior.issueOrder(unit, state, session);
+    return behavior.issueOrder(unit);
   };
 }
 

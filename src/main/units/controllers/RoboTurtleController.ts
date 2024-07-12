@@ -1,7 +1,5 @@
-import StayOrder from '@main/units/orders/StayOrder';
-import UnitOrder from '@main/units/orders/UnitOrder';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { StayOrder } from '@main/units/orders/StayOrder';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { UnitController } from '@main/units/controllers/UnitController';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -13,10 +11,9 @@ import { AttackOrder } from '@main/units/orders/AttackOrder';
 import { canMove } from '@main/units/controllers/ControllerUtils';
 
 export class RoboTurtleController implements UnitController {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  issueOrder = (unit: Unit, _state: GameState, _session: Session): UnitOrder => {
+  issueOrder = (unit: Unit): UnitOrder => {
     if (!canMove(unit)) {
-      return new StayOrder();
+      return StayOrder.create();
     }
 
     const initialDirection = unit.getDirection();
@@ -28,16 +25,16 @@ export class RoboTurtleController implements UnitController {
         unit.getDirection()
       );
       if (!isBlocked(unit.getMap(), nextCoordinates)) {
-        return new MoveOrder({ coordinates: nextCoordinates });
+        return MoveOrder.create({ coordinates: nextCoordinates });
       }
       const targetUnit = unit.getMap().getUnit(nextCoordinates);
       if (targetUnit && isHostile(unit, targetUnit)) {
-        return new AttackOrder({ direction: unit.getDirection() });
+        return AttackOrder.create({ direction: unit.getDirection() });
       }
 
       unit.setDirection(Direction.rotateClockwise(unit.getDirection()));
       if (unit.getDirection() === initialDirection) {
-        return new StayOrder();
+        return StayOrder.create();
       }
     }
   };

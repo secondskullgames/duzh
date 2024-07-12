@@ -14,14 +14,13 @@ import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
 import Sounds from '@main/sounds/Sounds';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { getDirection } from '@main/input/inputMappers';
-import UnitOrder from '@main/units/orders/UnitOrder';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { Feature } from '@main/utils/features';
 import { Strafe } from '@main/abilities/Strafe';
 import { Dash } from '@main/abilities/Dash';
-import { AttackMoveBehavior } from '@main/units/behaviors/AttackMoveBehavior';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -45,6 +44,7 @@ import { FontName } from '@main/graphics/Fonts';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
 import { Direction } from '@lib/geometry/Direction';
+import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -115,7 +115,6 @@ export class GameScene implements Scene {
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { engine } = this;
-    const state = engine.getState();
     const session = engine.getSession();
     const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
@@ -132,7 +131,7 @@ export class GameScene implements Scene {
         if (playerUnit.hasAbility(abilityName)) {
           const ability = UnitAbility.abilityForName(abilityName);
           if (ability.isEnabled(playerUnit)) {
-            order = new AbilityOrder({ direction, ability });
+            order = AbilityOrder.create({ direction, ability });
           }
         }
       }
@@ -141,26 +140,22 @@ export class GameScene implements Scene {
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
       if (Strafe.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Strafe });
+        order = AbilityOrder.create({ direction, ability: Strafe });
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
       if (Dash.isEnabled(playerUnit)) {
-        order = new AbilityOrder({ direction, ability: Dash });
+        order = AbilityOrder.create({ direction, ability: Dash });
       }
     } else {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
       if (ability) {
-        order = new AbilityOrder({ ability, direction });
+        order = AbilityOrder.create({ ability, direction });
       } else {
-        order = new AttackMoveBehavior({ direction }).issueOrder(
-          playerUnit,
-          state,
-          session
-        );
+        order = getMoveOrAttackOrder(playerUnit, direction);
       }
     }
 

@@ -1,30 +1,18 @@
-import UnitOrder from './UnitOrder';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { OrderType } from '@main/units/orders/UnitOrder';
 
-type Props = Readonly<{
+export type AbilityOrder = Readonly<{
+  type: OrderType.ABILITY;
   ability: UnitAbility;
   direction: Direction;
 }>;
 
-export class AbilityOrder implements UnitOrder {
-  private readonly ability: UnitAbility;
-  private readonly direction: Direction;
+type Props = Omit<AbilityOrder, 'type'>;
 
-  constructor({ ability, direction }: Props) {
-    this.ability = ability;
-    this.direction = direction;
-  }
-
-  /**
-   * @override {@link UnitOrder#execute}
-   */
-  execute = async (unit: Unit, state: GameState, session: Session): Promise<void> => {
-    const coordinates = Coordinates.plusDirection(unit.getCoordinates(), this.direction);
-    await this.ability.use(unit, coordinates, session, state);
-  };
+export namespace AbilityOrder {
+  export const create = (props: Props): AbilityOrder => ({
+    ...props,
+    type: OrderType.ABILITY
+  });
 }

@@ -2,7 +2,7 @@ import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import Activity from '../units/Activity';
+import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';

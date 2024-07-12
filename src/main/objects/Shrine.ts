@@ -30,9 +30,6 @@ export default class Shrine extends GameObject {
     this._isDepleted = false;
   }
 
-  /** @override {@link Entity#playTurnAction} */
-  playTurnAction = async () => {};
-
   /** @override {@link Entity#isBlocking} */
   isBlocking = (): boolean => true;
 

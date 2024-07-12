@@ -1,7 +1,7 @@
 import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../units/Unit';
-import Activity from '../units/Activity';
+import { Activity } from '../units/Activity';
 import { GameState } from '@main/core/GameState';
 import { sleep } from '@lib/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
