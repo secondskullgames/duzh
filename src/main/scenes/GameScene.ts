@@ -138,8 +138,6 @@ export class GameScene implements Scene {
           );
           if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
             order = AbilityOrder.create({ direction, ability });
-          } else {
-            this.soundPlayer.playSound(Sounds.BLOCKED);
           }
         }
       }
@@ -160,8 +158,6 @@ export class GameScene implements Scene {
       );
       if (Dash.isEnabled(playerUnit) && Dash.isLegal(playerUnit, coordinates)) {
         order = AbilityOrder.create({ direction, ability: Dash });
-      } else {
-        this.soundPlayer.playSound(Sounds.BLOCKED);
       }
     } else {
       const ability = session.getQueuedAbility();
@@ -184,6 +180,7 @@ export class GameScene implements Scene {
       playerController.queueOrder(order);
       await engine.playTurn();
     } else {
+      playerUnit.setDirection(direction);
       this.soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
